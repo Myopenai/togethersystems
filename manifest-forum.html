@@ -582,13 +582,19 @@ function buildPayload(){
 }
 
 /* Init */
-/* Portal öffnen mit Token (ohne HMAC, offline-/Single-File-freundlich) zur aktuellen manifest-portal.html */
+/* Portal öffnen mit Token (ohne HMAC, offline-/Single-File-freundlich).
+   - Wenn Datei online unter ts-portal/pages.dev läuft → relative URL.
+   - Wenn Datei lokal (file://) geöffnet wird → feste Online-URL verwenden. */
 document.addEventListener('click', async (e)=>{
 	const t = e.target;
 	if(t && t.id === 'openPortalBtn'){
 		const uid = getOrCreateUserId();
 		const ts = String(motNow());
-		const baseUrl = './manifest-portal.html';
+		let baseUrl = './manifest-portal.html';
+		if(location.protocol === 'file:'){
+			// Lokale Kopie → direkt die Online-Portal-URL öffnen
+			baseUrl = 'https://ts-portal.pages.dev/manifest-portal.html';
+		}
 		const url = `${baseUrl}#mot=${encodeURIComponent(MOT_ACCESS_TOKEN)}&uid=${encodeURIComponent(uid)}&ts=${encodeURIComponent(ts)}`;
 		window.open(url, '_blank');
 	}
