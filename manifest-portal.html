@@ -529,8 +529,74 @@ body.public-view{ --cursor: not-allowed }
 		</section>
 	</div>
 
-<script type="module">
-import { parseHashParams, markUserVerified, getUserContext } from './mot-core.js';
+<script>
+// Eingebetteter Minimal-Core, damit das Portal auch als heruntergeladene Datei (file://) funktioniert.
+const MOT_STORAGE_KEYS = {
+	USER_ID: 'mot_user_id_v1',
+	VERIFIED: 'mot_verified_v1'
+};
+function generateRandomId(length = 22){
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	const array = new Uint32Array(length);
+	if (window.crypto && window.crypto.getRandomValues) {
+		window.crypto.getRandomValues(array);
+		for (let i = 0; i < length; i++) {
+			result += chars[array[i] % chars.length];
+		}
+	} else {
+		for (let i = 0; i < length; i++) {
+			result += chars[Math.floor(Math.random() * chars.length)];
+		}
+	}
+	return result;
+}
+function getOrCreateUserId(){
+	try{
+		let uid = localStorage.getItem(MOT_STORAGE_KEYS.USER_ID);
+		if(!uid){
+			uid = generateRandomId();
+			localStorage.setItem(MOT_STORAGE_KEYS.USER_ID, uid);
+		}
+		return uid;
+	}catch{
+		return generateRandomId();
+	}
+}
+function parseHashParams(){
+	const hash = window.location.hash && window.location.hash.startsWith('#')
+		? window.location.hash.slice(1)
+		: window.location.hash || '';
+	const params = new URLSearchParams(hash);
+	const obj = {};
+	for (const [k, v] of params.entries()) obj[k] = v;
+	return obj;
+}
+function markUserVerified({ uid, mot, ts, sig } = {}){
+	if(!uid) uid = getOrCreateUserId();
+	try{
+		localStorage.setItem(MOT_STORAGE_KEYS.USER_ID, uid);
+		localStorage.setItem(
+			MOT_STORAGE_KEYS.VERIFIED,
+			JSON.stringify({ uid, mot: mot || null, ts: ts || null, sig: sig || null })
+		);
+	}catch{/* ignore */}
+}
+function isUserVerified(){
+	try{
+		const raw = localStorage.getItem(MOT_STORAGE_KEYS.VERIFIED);
+		if(!raw) return false;
+		const data = JSON.parse(raw);
+		return !!(data && data.uid);
+	}catch{
+		return false;
+	}
+}
+function getUserContext(){
+	const uid = getOrCreateUserId();
+	const verified = isUserVerified();
+	return { uid, verified };
+}
 
 const REACTIONS = [
 	{key:'like', label:'Gefällt mir'},
