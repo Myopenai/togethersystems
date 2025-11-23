@@ -74,13 +74,13 @@
 			<span class="tag">ohne externe URLs</span>
 		</div>
 		<nav role="tablist" aria-label="Bereiche">
-			<button class="active" data-tab="dashboard" aria-selected="true" fdprocessedid="1i76q8">Dashboard</button>
-			<button data-tab="daten" aria-selected="false" fdprocessedid="xjk7mi">Daten</button>
-			<button data-tab="berichte" aria-selected="false" fdprocessedid="ur1hl">Berichte</button>
-			<button data-tab="hilfe" aria-selected="false" fdprocessedid="wqtds">Hilfe</button>
+			<button class="active" data-tab="dashboard" aria-selected="true">Dashboard</button>
+			<button data-tab="daten" aria-selected="false">Daten</button>
+			<button data-tab="berichte" aria-selected="false">Berichte</button>
+			<button data-tab="hilfe" aria-selected="false">Hilfe</button>
 		</nav>
 		<div class="toolbar">
-			<button id="themeToggle" title="Theme umschalten (hell/dunkel)" fdprocessedid="g3os7o">🌓 Theme</button>
+			<button id="themeToggle" title="Theme umschalten (hell/dunkel)">🌓 Theme</button>
 			<a class="btn ghost" href="./admin.html" title="Verwaltung">⚙️ Admin</a>
 			<a class="btn" href="./online/online/manifest-portal.html" title="Zum Portal wechseln">➡️ Zum Portal</a>
 		</div>
@@ -186,7 +186,7 @@
 			<li>3) Optional Haken “Auch online ans Portal senden” setzen → automatische Übermittlung.</li>
 			<li>4) Alternativ: Export JSON/CSV und im Portal importieren.</li>
 		</ul>
-		<a class="btn" href="./manifest-forum.html" download="">Manifest‑Forum herunterladen</a>
+		<a class="btn" id="manifestDownloadLink" href="./manifest-forum.html" download="">Manifest‑Forum herunterladen</a>
 	</section>
 
 	<dialog id="editor">
@@ -550,6 +550,32 @@
 				body: JSON.stringify(obj)
 			}).catch(()=>{/* ignore network errors; local copy persists */});
 		}
+
+		// Hinweis beim Manifest-Download: Desktop-Verknüpfung & Installation
+		try{
+			const dl = document.getElementById('manifestDownloadLink');
+			if(dl){
+				dl.addEventListener('click', function(e){
+					if(localStorage.getItem('portal.manifestDesktopHintShown') === '1') return;
+					e.preventDefault();
+					const msg = [
+						'Manifest-Forum wird jetzt heruntergeladen.',
+						'Empfohlene nächsten Schritte:',
+						'',
+						'1) Speichere die Datei an einem festen Ort (z.B. Dokumente/ManifestForum).',
+						'2) Lege dir eine Desktop-Verknüpfung an (Rechtsklick → „Senden an“ → „Desktop (Verknüpfung erstellen)“).',
+						'3) Auf dem Handy kannst du das Portal später als „App“ zum Startbildschirm hinzufügen (Browser-Hinweis).',
+						'',
+						'Weiter mit Download?'
+					].join('\n');
+					const ok = window.confirm(msg);
+					localStorage.setItem('portal.manifestDesktopHintShown', '1');
+					if(ok){
+						window.location.href = dl.href;
+					}
+				}, { once:false });
+			}
+		}catch{}
 	})();
 	</script>
 
