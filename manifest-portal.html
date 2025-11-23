@@ -59,6 +59,38 @@ input[type="url"], input[type="text"]{
 .grid-2{display:grid;gap:12px;grid-template-columns:1fr 1fr}
 .warn{color:#fbbf24}
 .ok{color:#34d399}
+.live-chat{
+	border-top:1px solid var(--border);
+	margin-top:8px;
+	padding-top:8px;
+}
+.live-chat-messages{
+	max-height:220px;
+	overflow-y:auto;
+	margin-bottom:8px;
+	font-size:13px;
+}
+.live-chat-message{
+	margin-bottom:4px;
+}
+.live-chat-message .meta{
+	font-size:11px;
+	color:var(--muted);
+}
+.live-chat-input{
+	display:flex;
+	gap:6px;
+	align-items:center;
+}
+.live-chat-input input{
+	flex:1;
+	min-width:0;
+	padding:6px 8px;
+	border-radius:10px;
+	border:1px solid var(--border);
+	background:#0b0f14;
+	color:var(--ink);
+}
 
 /* Public copy-protection (soft) */
 .public-view .content{user-select:none;-webkit-user-select:none}
@@ -220,8 +252,36 @@ body.public-view{ --cursor: not-allowed }
 					<pre class="kbd" id="roomJsonBox" style="margin-top:6px;min-height:80px;"></pre>
 					<p class="muted">Dieses JSON kannst du 1:1 an dein Backend (API oder Signaling‑Server) weitergeben.</p>
 				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="title">Direktverbinden (Auto‑Connect)</h3>
+					<p class="muted">Optionales Stichwort, um dich mit anderen Thinkern zu koppeln (z. B. „projekt_alpha“, „familie“, „beratung“). Das Matching läuft automatisch im Hintergrund.</p>
+					<label class="muted" style="font-size:12px;display:block;margin-bottom:4px;">
+						Raum-Stichwort:
+						<input id="pairCodeInput" type="text" placeholder="z.B. projekt_alpha, familie, beratung">
+					</label>
+					<div class="muted" id="connectStatus" style="font-size:12px;margin-top:4px;">
+						Warte auf Verbindungsaufbau …
+					</div>
+				</div>
 			</aside>
 		</div>
+		<section class="panel" id="liveRoom" style="margin-top:18px;display:none;">
+			<div class="pad">
+				<h3 class="title">Live-Raum</h3>
+				<p class="muted" id="liveRoomInfo">Noch kein Live-Raum aktiv. Sobald ein Match gefunden wird, erscheint hier die Verbindungsinformation.</p>
+				<div class="live-chat" id="liveChat" style="display:none;">
+					<h4 class="title" style="font-size:13px;margin-top:4px;">Live-Textkanal</h4>
+					<div class="live-chat-messages" id="liveChatMessages"></div>
+					<div class="live-chat-input">
+						<input id="liveChatInput" type="text" placeholder="Nachricht eingeben und Enter drücken …">
+						<button class="btn alt" id="liveChatSendBtn" type="button">Senden</button>
+					</div>
+					<p class="muted" style="font-size:11px;margin-top:4px;">
+						Der Textkanal läuft über den Signaling-Server (WebSocket). Video- und Datei-Kanäle können später auf derselben room_id aufsetzen.
+					</p>
+				</div>
+			</div>
+		</section>
 	</div>
 
 <script>
@@ -234,6 +294,13 @@ const REACTIONS = [
 	{key:'curious', label:'Interessant'},
 	{key:'entertainment', label:'Rappig'}
 ];
+
+// Präsenz-/Auto-Connect-Konfiguration (Backend-Endpunkte anpassbar)
+// Für lokalen Test: http://localhost:3000/api/presence
+// Für Produktion:   https://deine-domain.tld/api/presence
+const PRESENCE_API_BASE = 'http://localhost:3000/api/presence';
+const HEARTBEAT_INTERVAL_MS = 25000;
+const MATCH_INTERVAL_MS = 5000;
 
 /* Access control: public vs verified
    Offline-App will open portal with URL hash: #mot=TOKEN&ts=...&sig=...
@@ -261,6 +328,267 @@ async function hmacSHA256Hex(key, data){
 function setVerifiedUI(on){
 	document.body.classList.toggle('public-view', !on);
 	document.getElementById('initLiveBtn').disabled = !on;
+}
+function updateConnectStatus(msg){
+	const el = document.getElementById('connectStatus');
+	if(el) el.textContent = msg;
+}
+
+// Token aus URL-Hash oder lokalem Speicher lesen (vom Offline-Manifest gesetzt)
+function readManifestToken(){
+	const p = parseHashParams();
+	if(p.token && p.sig && p.ts){
+		return { token:p.token, sig:p.sig, ts:p.ts };
+	}
+	try{
+		const raw = localStorage.getItem('mot_token');
+		if(raw){
+			const obj = JSON.parse(raw);
+			if(obj && obj.token){
+				return obj;
+			}
+		}
+	}catch{/* still offline */}
+	return null;
+}
+
+// Mit Backend verifizieren, wer dieser Thinker ist
+async function verifyTokenWithBackend(tokenObj){
+	if(!tokenObj || !tokenObj.token) return null;
+	try{
+		const res = await fetch(`${PRESENCE_API_BASE}/verify`, {
+			method:'POST',
+			headers:{'Content-Type':'application/json'},
+			body: JSON.stringify(tokenObj)
+		});
+		if(!res.ok) return null;
+		const data = await res.json();
+		if(!data || !data.thinker_id) return null;
+		return data; // { thinker_id, pair_code? }
+	}catch{
+		return null;
+	}
+}
+
+let currentIdentity = null;
+let heartbeatTimer = null;
+let matchTimer = null;
+let currentRoomId = null;
+let liveSocket = null;
+
+function getEffectivePairCode(identity){
+	const input = document.getElementById('pairCodeInput');
+	const manual = input ? input.value.trim() : '';
+	if(manual) return manual;
+	if(identity && identity.pair_code) return String(identity.pair_code);
+	return '';
+}
+
+function startPresenceHeartbeat(identity){
+	if(!identity || !identity.thinker_id) return;
+	currentIdentity = identity;
+	if(heartbeatTimer) clearInterval(heartbeatTimer);
+
+	const send = async (status='online')=>{
+		try{
+			const pair_code = getEffectivePairCode(identity);
+			await fetch(`${PRESENCE_API_BASE}/heartbeat`, {
+				method:'POST',
+				headers:{'Content-Type':'application/json'},
+				body: JSON.stringify({
+					thinker_id: identity.thinker_id,
+					pair_code,
+					status
+				})
+			});
+		}catch{/* offline oder Backend noch nicht aktiv */}
+	};
+
+	// sofort einen Heartbeat senden, dann zyklisch
+	send('online');
+	heartbeatTimer = setInterval(()=>send('online'), HEARTBEAT_INTERVAL_MS);
+
+	// Beim Schließen optional "offline" melden
+	window.addEventListener('beforeunload', ()=>send('offline'));
+
+	// Wenn User den Pair-Code ändert, nächsten Heartbeat mit neuem Code senden
+	const input = document.getElementById('pairCodeInput');
+	if(input){
+		input.addEventListener('input', ()=>{
+			updateConnectStatus('Änderung übernommen. Warte auf zweiten Teilnehmer …');
+			send('online');
+		});
+	}
+}
+
+function startMatchLoop(identity){
+	if(!identity || !identity.thinker_id) return;
+	if(matchTimer) clearInterval(matchTimer);
+
+	const liveRoom = document.getElementById('liveRoom');
+	const liveRoomInfo = document.getElementById('liveRoomInfo');
+
+	const check = async ()=>{
+		try{
+			const pair_code = getEffectivePairCode(identity);
+			if(!pair_code){
+				updateConnectStatus('Optional: Raum-Stichwort eingeben, um automatisch verbunden zu werden.');
+				return;
+			}
+			updateConnectStatus(`Warte auf zweiten Thinker mit Stichwort „${pair_code}“…`);
+			const res = await fetch(`${PRESENCE_API_BASE}/match`, {
+				method:'POST',
+				headers:{'Content-Type':'application/json'},
+				body: JSON.stringify({
+					thinker_id: identity.thinker_id,
+					pair_code
+				})
+			});
+			if(!res.ok) return;
+			const data = await res.json();
+			if(data && data.room_id){
+				if(currentRoomId === data.room_id) return;
+				currentRoomId = data.room_id;
+				updateConnectStatus(`Verbunden mit Raum „${data.room_id}“. Live-Raum geöffnet.`);
+				if(liveRoom && liveRoomInfo){
+					liveRoom.style.display = 'block';
+					liveRoomInfo.textContent = `Du bist in Raum „${data.room_id}“ mit Stichwort „${pair_code}“ verbunden. Dein Backend kann diese room_id für Chat, Video oder Datei-Transfer verwenden.`;
+					initLiveChat(currentIdentity, data.room_id);
+				}
+			}
+		}catch{
+			// Backend noch nicht verfügbar – leise weiterprobieren
+		}
+	};
+
+	check();
+	matchTimer = setInterval(check, MATCH_INTERVAL_MS);
+}
+
+async function autoConnectFromToken(){
+	const tokenObj = readManifestToken();
+	if(!tokenObj){
+		updateConnectStatus('Noch kein Token erkannt. Du kannst das Portal trotzdem zum Lesen verwenden.');
+		return;
+	}
+	const identity = await verifyTokenWithBackend(tokenObj);
+	if(!identity){
+		updateConnectStatus('Token konnte nicht verifiziert werden. Prüfe Backend oder nutze das Portal nur zum Lesen.');
+		return;
+	}
+	setVerifiedUI(true);
+	startPresenceHeartbeat(identity);
+	startMatchLoop(identity);
+	updateConnectStatus('Verifiziert. Warte auf zweiten Teilnehmer oder gib ein gemeinsames Raum-Stichwort ein.');
+}
+
+// Live-Textkanal über WebSocket (Signaling-Server)
+function initLiveChat(identity, roomId){
+	const liveChat = document.getElementById('liveChat');
+	const messagesEl = document.getElementById('liveChatMessages');
+	const inputEl = document.getElementById('liveChatInput');
+	const sendBtn = document.getElementById('liveChatSendBtn');
+
+	if(!liveChat || !messagesEl || !inputEl || !sendBtn) return;
+
+	// Vorherige Verbindung schließen
+	if(liveSocket && liveSocket.readyState === WebSocket.OPEN){
+		try{ liveSocket.close(); }catch{}
+	}
+
+	liveChat.style.display = 'block';
+	messagesEl.innerHTML = '';
+
+	const signalUrl = (document.getElementById('signalUrl')?.value || '').trim();
+	if(!signalUrl){
+		appendChatSystem(messagesEl, 'Kein Signaling-Server konfiguriert. Trage oben eine WSS-URL ein, um den Live-Textkanal zu nutzen.');
+		return;
+	}
+
+	let ws;
+	try{
+		ws = new WebSocket(signalUrl);
+		liveSocket = ws;
+	}catch(err){
+		appendChatSystem(messagesEl, 'Verbindung zum Signaling-Server fehlgeschlagen: '+(err?.message||String(err)));
+		return;
+	}
+
+	ws.addEventListener('open', ()=>{
+		appendChatSystem(messagesEl, `Verbindung zum Signaling-Server hergestellt. Raum „${roomId}“ wird beigetreten …`);
+		ws.send(JSON.stringify({
+			type: 'join',
+			room_id: roomId,
+			thinker_id: identity?.thinker_id || null
+		}));
+	});
+
+	ws.addEventListener('message', (event)=>{
+		let msg;
+		try{
+			msg = JSON.parse(event.data);
+		}catch{
+			return;
+		}
+		if(!msg || msg.room_id !== roomId) return;
+
+		if(msg.type === 'system'){
+			appendChatSystem(messagesEl, `System: Teilnehmer-Event („${msg.event||'event'}“) im Raum.`);
+			return;
+		}
+		if(msg.type === 'message'){
+			const from = msg.from || 'Unbekannt';
+			const text = msg.payload?.text || '';
+			if(!text) return;
+			appendChatMessage(messagesEl, from, text, msg.at);
+			return;
+		}
+	});
+
+	ws.addEventListener('close', ()=>{
+		appendChatSystem(messagesEl, 'Verbindung zum Signaling-Server wurde geschlossen.');
+	});
+	ws.addEventListener('error', ()=>{
+		appendChatSystem(messagesEl, 'Fehler auf der Signaling-Verbindung.');
+	});
+
+	function sendCurrent(){
+		const text = (inputEl.value||'').trim();
+		if(!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+		ws.send(JSON.stringify({
+			type: 'message',
+			room_id: roomId,
+			thinker_id: identity?.thinker_id || null,
+			payload: { text }
+		}));
+		appendChatMessage(messagesEl, 'Du', text, Date.now());
+		inputEl.value = '';
+	}
+
+	sendBtn.onclick = sendCurrent;
+	inputEl.onkeydown = (ev)=>{
+		if(ev.key === 'Enter'){
+			ev.preventDefault();
+			sendCurrent();
+		}
+	};
+}
+
+function appendChatSystem(container, text){
+	const div = document.createElement('div');
+	div.className = 'live-chat-message';
+	div.innerHTML = `<div class="meta">System</div><div>${e(text)}</div>`;
+	container.appendChild(div);
+	container.scrollTop = container.scrollHeight;
+}
+
+function appendChatMessage(container, from, text, at){
+	const div = document.createElement('div');
+	div.className = 'live-chat-message';
+	const time = at ? new Date(at).toLocaleTimeString() : '';
+	div.innerHTML = `<div class="meta">${e(from)} ${time? '· '+e(time):''}</div><div>${e(text)}</div>`;
+	container.appendChild(div);
+	container.scrollTop = container.scrollHeight;
 }
 async function tryAutoVerify(){
 	const p = parseHashParams();
@@ -458,6 +786,8 @@ window.addEventListener('keydown', (e)=>{
 	renderFeed({posts:[]});
 	// Try auto verify via hash params
 	await tryAutoVerify();
+	// Auto-Connect: Token lesen, mit Backend verifizieren und Präsenz/Matching starten
+	await autoConnectFromToken();
 })();
 </script>
 </body>

@@ -525,7 +525,7 @@ function buildPayload(){
 }
 
 /* Init */
-/* Portal open with HMAC proof in URL hash (always to the verified online portal URL) */
+/* Portal open with HMAC proof in URL hash (immer zur lokalen/aktuellen manifest-portal.html) */
 async function hmacSHA256Hex(key, data){
 	const enc = new TextEncoder();
 	const cryptoKey = await crypto.subtle.importKey('raw', enc.encode(key), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
@@ -538,7 +538,7 @@ document.addEventListener('click', async (e)=>{
 		const ts = String(motNow());
 		const data = `${MOT_ACCESS_TOKEN}.${ts}`;
 		const sig = await hmacSHA256Hex(MOT_ACCESS_TOKEN, data);
-		const baseUrl = 'https://businessconnecthub.pages.dev/manifest-portal.html';
+		const baseUrl = './manifest-portal.html';
 		const url = `${baseUrl}#mot=${encodeURIComponent(MOT_ACCESS_TOKEN)}&ts=${encodeURIComponent(ts)}&sig=${encodeURIComponent(sig)}`;
 		window.open(url, '_blank');
 	}
