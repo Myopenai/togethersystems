@@ -141,6 +141,16 @@ body.public-view{ --cursor: not-allowed }
 					<p class="muted">Wenn du das Offline-Forum nutzt und über „Portal öffnen“ kommst, wird der Token automatisch im Link übergeben. Manuell kannst du ihn hier einfügen.</p>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="title">Token-URL generieren (No‑Code)</h3>
+					<p class="muted">Gib ein Basis‑Token ein, klicke auf „URL generieren“ und kopiere die fertige Portal‑Adresse inklusive <code>#mot</code>, <code>ts</code> und <code>sig</code>.</p>
+					<div class="grid-2">
+						<input id="genBaseToken" type="text" placeholder="Dein Basis‑Token (z. B. mot-shared-token-v1)">
+						<button class="btn alt" id="generateUrlBtn" type="button">URL generieren</button>
+					</div>
+					<p class="muted" style="margin-top:6px">Fertige URL (kann 1:1 weitergegeben werden):</p>
+					<textarea id="generatedUrl" class="kbd" readonly rows="3" style="width:100%;min-height:72px;"></textarea>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
 					<h3 class="title">Daten laden</h3>
 					<div class="row">
 						<label for="jsonFile" class="btn alt" style="cursor:pointer">JSON importieren</label>
@@ -149,6 +159,12 @@ body.public-view{ --cursor: not-allowed }
 					</div>
 					<p class="muted">Für Live-Betrieb kann hier eine API-Quelle konfiguriert werden.</p>
 					<div style="margin-top:10px">
+						<select id="apiPreset" class="muted" style="width:100%;margin-bottom:6px;background:#0b0f14;border:1px solid var(--border);border-radius:10px;padding:6px 8px;">
+							<option value="">API-Vorlage wählen (optional)</option>
+							<option value="supabase">Supabase REST (Beispiel)</option>
+							<option value="firebase">Firebase Callable (Beispiel)</option>
+							<option value="custom">Eigene URL (manuell)</option>
+						</select>
 						<input id="apiUrl" type="url" placeholder="https://deine-seite.tld/api/manifest/list">
 						<div class="row" style="margin-top:8px">
 							<button class="btn" id="fetchBtn">Von API laden</button>
@@ -166,10 +182,43 @@ body.public-view{ --cursor: not-allowed }
 						<li>Signierte Kontrakte (Upload/Download)</li>
 					</ul>
 					<div class="row">
+						<select id="signalPreset" class="muted" style="width:100%;margin-bottom:6px;background:#0b0f14;border:1px solid var(--border);border-radius:10px;padding:6px 8px;">
+							<option value="">Signaling-Vorlage wählen (optional)</option>
+							<option value="twilio">Twilio Video (Beispiel)</option>
+							<option value="ably">Ably Realtime (Beispiel)</option>
+							<option value="custom">Eigene WSS-URL (manuell)</option>
+						</select>
+					</div>
+					<div class="row">
 						<input id="signalUrl" type="url" placeholder="wss://signaling.deine-seite.tld (optional)">
 						<button class="btn alt" id="initLiveBtn" disabled>Live initialisieren</button>
 					</div>
 					<p class="muted">Sobald verifiziert und Signaling konfiguriert ist, werden Live-Funktionen aktiviert.</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="title">Live-Raum erstellen (No‑Code)</h3>
+					<p class="muted">Definiere einen Raum komplett über Formular. Das Portal erzeugt das passende JSON für dein Backend.</p>
+					<div class="row">
+						<select id="roomType" style="flex:1;min-width:120px;background:#0b0f14;border:1px solid var(--border);border-radius:10px;padding:6px 8px;color:var(--fg);">
+							<option value="text">Text‑Raum</option>
+							<option value="video">Video‑Raum</option>
+							<option value="file">Datei‑Austausch</option>
+							<option value="contract">Vertrags‑Raum</option>
+						</select>
+						<input id="roomId" type="text" placeholder="Raum-ID (z. B. post-123 oder wabe A-2)" style="flex:1;min-width:160px;">
+					</div>
+					<p class="muted" style="margin-top:6px">Rechte in diesem Raum:</p>
+					<div class="row" style="font-size:12px;color:var(--muted);margin-top:2px">
+						<label><input type="checkbox" id="permRead" checked> lesen</label>
+						<label><input type="checkbox" id="permSend" checked> senden</label>
+						<label><input type="checkbox" id="permSign"> unterschreiben</label>
+						<label><input type="checkbox" id="permUpload"> hochladen</label>
+					</div>
+					<div class="row" style="margin-top:8px">
+						<button class="btn alt" id="buildRoomJsonBtn" type="button">Raum‑JSON anzeigen</button>
+					</div>
+					<pre class="kbd" id="roomJsonBox" style="margin-top:6px;min-height:80px;"></pre>
+					<p class="muted">Dieses JSON kannst du 1:1 an dein Backend (API oder Signaling‑Server) weitergeben.</p>
 				</div>
 			</aside>
 		</div>
@@ -308,6 +357,93 @@ document.getElementById('initLiveBtn').addEventListener('click', ()=>{
 	if(!url){ alert('Signaling URL angeben (wss://...)'); return; }
 	alert('Live-Funktionen werden mit Signaling-Server initialisiert.\nHinweis: Diese Demo aktiviert erst nach Backend-Konfiguration.');
 });
+
+/* API/Signaling Presets (No‑Code Helfer) */
+const apiPresetSel = document.getElementById('apiPreset');
+const apiUrlInput = document.getElementById('apiUrl');
+if(apiPresetSel && apiUrlInput){
+	apiPresetSel.addEventListener('change', ()=>{
+		const v = apiPresetSel.value;
+		if(v === 'supabase'){
+			apiUrlInput.value = 'https://DEIN-PROJEKT.supabase.co/rest/v1/manifest';
+		}else if(v === 'firebase'){
+			apiUrlInput.value = 'https://us-central1-DEIN-PROJEKT.cloudfunctions.net/manifestList';
+		}else if(v === 'custom'){
+			apiUrlInput.value = '';
+			apiUrlInput.placeholder = 'Eigene API-URL (z. B. https://deine-seite.tld/api/manifest/list)';
+		}
+	});
+}
+
+const signalPresetSel = document.getElementById('signalPreset');
+const signalUrlInput = document.getElementById('signalUrl');
+if(signalPresetSel && signalUrlInput){
+	signalPresetSel.addEventListener('change', ()=>{
+		const v = signalPresetSel.value;
+		if(v === 'twilio'){
+			signalUrlInput.value = 'wss://DEIN-TWILIO-SIGNALING-ENDPUNKT';
+		}else if(v === 'ably'){
+			signalUrlInput.value = 'wss://realtime.ably.io?key=DEIN-ABLY-SCHLUESSEL';
+		}else if(v === 'custom'){
+			signalUrlInput.value = '';
+			signalUrlInput.placeholder = 'Eigene WSS-URL (z. B. wss://signaling.deine-seite.tld)';
+		}
+	});
+}
+
+/* Token-URL Generator (No‑Code) */
+const genBaseTokenInput = document.getElementById('genBaseToken');
+const generateUrlBtn = document.getElementById('generateUrlBtn');
+const generatedUrlBox = document.getElementById('generatedUrl');
+if(generateUrlBtn && genBaseTokenInput && generatedUrlBox){
+	generateUrlBtn.addEventListener('click', async ()=>{
+		const base = genBaseTokenInput.value.trim();
+		if(!base){
+			alert('Bitte zuerst ein Basis-Token eingeben.');
+			return;
+		}
+		try{
+			const ts = Date.now().toString();
+			const data = `${base}.${ts}`;
+			const sig = await hmacSHA256Hex(base, data);
+			const url = new URL(window.location.href);
+			url.hash = `mot=${encodeURIComponent(base)}&ts=${encodeURIComponent(ts)}&sig=${encodeURIComponent(sig)}`;
+			generatedUrlBox.value = url.toString();
+		}catch(err){
+			generatedUrlBox.value = 'Fehler beim Erzeugen der URL: ' + (err?.message || String(err));
+		}
+	});
+}
+
+/* Live-Raum JSON Builder (No‑Code) */
+const roomTypeSel = document.getElementById('roomType');
+const roomIdInput = document.getElementById('roomId');
+const permRead = document.getElementById('permRead');
+const permSend = document.getElementById('permSend');
+const permSign = document.getElementById('permSign');
+const permUpload = document.getElementById('permUpload');
+const buildRoomJsonBtn = document.getElementById('buildRoomJsonBtn');
+const roomJsonBox = document.getElementById('roomJsonBox');
+if(buildRoomJsonBtn && roomTypeSel && roomIdInput && roomJsonBox){
+	buildRoomJsonBtn.addEventListener('click', ()=>{
+		const id = roomIdInput.value.trim();
+		if(!id){
+			alert('Bitte eine Raum-ID eintragen (z. B. post-123 oder wabe A-2).');
+			return;
+		}
+		const room = {
+			type: roomTypeSel.value || 'text',
+			roomId: id,
+			permissions: {
+				read: !!permRead?.checked,
+				send: !!permSend?.checked,
+				sign: !!permSign?.checked,
+				upload: !!permUpload?.checked
+			}
+		};
+		roomJsonBox.textContent = JSON.stringify({ rooms:[room] }, null, 2);
+	});
+}
 
 /* Anti copy for public viewers (soft) */
 window.addEventListener('contextmenu', (e)=>{ if(document.body.classList.contains('public-view')) e.preventDefault(); }, {capture:true});
