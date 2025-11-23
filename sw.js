@@ -3,7 +3,7 @@ const CACHE_NAME = 'businessconnecthub-cache-v1';
 const ASSETS = [
   './index.html',
   './Portal – Start.html',
-  './Portal – Start_files/icon.png',
+  './icon.png',
   './manifest-forum.html',
   './manifest-portal.html',
   './online/online/manifest-portal.html',
