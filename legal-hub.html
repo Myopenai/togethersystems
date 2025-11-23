@@ -282,5 +282,121 @@
       <a href="https://orcid.org/0009-0003-1328-2430" target="_blank" rel="noreferrer noopener">ORCID</a>
     </p>
   </main>
+  <section class="card" style="max-width:960px;margin:0 auto 40px;border-radius:18px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.96);padding:14px 16px;">
+    <h2>Verträge hochladen &amp; mit Vouchern/Räumen verknüpfen (Demo)</h2>
+    <p>
+      Hier kannst du zu Demonstrationszwecken einen Vertrags‑ oder Angebots‑Scan auswählen und ihn lokal mit einem
+      Voucher und einem Kommunikationsraum verknüpfen. Die Dateien selbst werden nicht auf einen Server hochgeladen,
+      sondern nur als Eintrag im Browser gemerkt.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:.83rem;color:var(--muted);">
+      <div style="flex:1 1 220px;min-width:220px;">
+        <label for="contractFile">PDF / Scan wählen</label>
+        <input id="contractFile" type="file" accept=".pdf,image/*">
+        <label for="contractVoucherId" style="margin-top:6px;display:block;">Zugehöriger Voucher‑ID (z.&nbsp;B. aus „Voucher &amp; Termine“)</label>
+        <input id="contractVoucherId" type="text" placeholder="v-...">
+        <label for="contractRoomId" style="margin-top:6px;display:block;">Zugehöriger Raum (z.&nbsp;B. room:, wabe: oder voucher:...)</label>
+        <input id="contractRoomId" type="text" placeholder="z.B. voucher:v-..., room:hypothek-..., wabe:A-1">
+        <button id="contractLinkBtn" type="button" style="margin-top:8px;">Verknüpfung lokal speichern</button>
+        <p class="tiny">
+          Hinweis: Die Datei bleibt auf deinem Gerät; gespeichert wird nur der Hinweis
+          „diese Datei gehört zu diesem Voucher/Raum“ im lokalen Speicher (<code>localStorage</code>).
+        </p>
+      </div>
+      <div style="flex:1 1 260px;min-width:260px;">
+        <h3 style="font-size:.95rem;margin:0 0 6px;">Lokale Vertrags‑Verknüpfungen</h3>
+        <p class="tiny" style="margin-top:0;">
+          Diese Liste zeigt alle Einträge, die lokal unter diesem Browser gesichert wurden.
+          Sie kann als Grundlage dienen, um die Daten später in eine echte Datenbank zu migrieren.
+        </p>
+        <table style="width:100%;border-collapse:collapse;font-size:.75rem;">
+          <thead>
+            <tr>
+              <th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Datei</th>
+              <th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Voucher</th>
+              <th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Raum</th>
+            </tr>
+          </thead>
+          <tbody id="contractLinkTableBody">
+            <tr><td colspan="3" style="padding:4px 6px;color:var(--muted);">Noch keine Verknüpfungen gespeichert.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <script>
+  (function(){
+    const STORAGE_KEY = 'ts_legal_contract_links_v1';
+    const fileInput = document.getElementById('contractFile');
+    const voucherInput = document.getElementById('contractVoucherId');
+    const roomInput = document.getElementById('contractRoomId');
+    const saveBtn = document.getElementById('contractLinkBtn');
+    const tableBody = document.getElementById('contractLinkTableBody');
+
+    function loadLinks(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      }catch{
+        return [];
+      }
+    }
+    function saveLinks(list){
+      try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      }catch{}
+    }
+    function renderLinks(){
+      const list = loadLinks();
+      if(!tableBody) return;
+      if(!list.length){
+        tableBody.innerHTML = '<tr><td colspan="3" style="padding:4px 6px;color:var(--muted);">Noch keine Verknüpfungen gespeichert.</td></tr>';
+        return;
+      }
+      tableBody.innerHTML = list.map(l => {
+        const fn = (l.fileName || 'unbenannte Datei') + (l.fileSize ? ' ('+Math.round(l.fileSize/1024)+' KB)' : '');
+        return '<tr>'
+          + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+escapeHtml(fn)+'</td>'
+          + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+escapeHtml(l.voucherId || '—')+'</td>'
+          + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+escapeHtml(l.roomId || '—')+'</td>'
+          + '</tr>';
+      }).join('');
+    }
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[m]));
+    }
+    if(saveBtn){
+      saveBtn.addEventListener('click', ()=>{
+        const file = (fileInput && fileInput.files && fileInput.files[0]) ? fileInput.files[0] : null;
+        const voucherId = voucherInput ? voucherInput.value.trim() : '';
+        const roomId = roomInput ? roomInput.value.trim() : '';
+        if(!file && !voucherId && !roomId){
+          alert('Bitte mindestens eine Datei oder eine Voucher/Raum‑ID angeben.');
+          return;
+        }
+        const list = loadLinks();
+        list.push({
+          id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8),
+          fileName: file ? file.name : null,
+          fileSize: file ? file.size : null,
+          fileType: file ? file.type : null,
+          voucherId: voucherId || null,
+          roomId: roomId || null,
+          createdAt: new Date().toISOString()
+        });
+        saveLinks(list);
+        renderLinks();
+        if(fileInput) fileInput.value = '';
+        if(voucherInput) voucherInput.value = '';
+        if(roomInput) roomInput.value = '';
+      });
+    }
+    renderLinks();
+  })();
+  </script>
 </body>
 </html>
