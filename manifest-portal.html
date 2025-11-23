@@ -122,6 +122,62 @@ body.public-view{ --cursor: not-allowed }
 }
 .ts-brand-links a:hover{text-decoration:underline;}
 
+.voucher-layout{
+	display:grid;
+	grid-template-columns:1.4fr .9fr;
+	gap:16px;
+}
+@media(max-width:960px){
+	.voucher-layout{grid-template-columns:1fr;}
+}
+.voucher-list{
+	display:flex;
+	flex-direction:column;
+	gap:10px;
+}
+.voucher-card{
+	border:1px solid var(--border);
+	border-radius:12px;
+	padding:10px 12px;
+	background:#0b0f14;
+	cursor:pointer;
+}
+.voucher-card-header{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	margin-bottom:4px;
+}
+.voucher-badge{
+	font-size:11px;
+	padding:2px 6px;
+	border-radius:999px;
+	border:1px solid var(--border);
+}
+.voucher-badge.status-issued{border-color:#38bdf8;color:#bae6fd;}
+.voucher-badge.status-booked{border-color:#22c55e;color:#bbf7d0;}
+.voucher-badge.status-consumed{border-color:#a855f7;color:#e9d5ff;}
+.voucher-badge.status-expired{border-color:#f97373;color:#fee2e2;}
+.voucher-meta{
+	font-size:11px;
+	color:var(--muted);
+}
+.slot-list{
+	display:flex;
+	flex-direction:column;
+	gap:6px;
+	font-size:12px;
+}
+.slot-item{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	border:1px solid var(--border);
+	border-radius:10px;
+	padding:6px 8px;
+	background:#020617;
+}
+
 </style>
 </head>
 <body class="public-view">
@@ -141,6 +197,9 @@ body.public-view{ --cursor: not-allowed }
       <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
       <a href="./legal-hub.html">Legal-Hub</a>
       <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="./TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
+      <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
+      <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
     </div>
   </div>
 
@@ -265,6 +324,75 @@ body.public-view{ --cursor: not-allowed }
 				</div>
 			</aside>
 		</div>
+		<section class="panel" style="margin-top:18px;">
+			<div class="pad">
+				<h3 class="title">Voucher &amp; Termine</h3>
+				<p class="muted">
+					Hier verwaltest du zeitbasierte Leistungen (Vouchers) und buchbare Termine. Wähle oben deine Rolle und klicke auf einen Voucher,
+					um freie Slots zu sehen und Buchungen vorzunehmen.
+				</p>
+				<div class="row" style="margin-top:8px;">
+					<button class="btn alt" id="voucherModeCustomer" type="button">Ich bin Kunde</button>
+					<button class="btn alt" id="voucherModeIssuer" type="button">Ich bin Anbieter</button>
+					<button class="btn" id="btnVoucherRefresh" type="button">Aktualisieren</button>
+				</div>
+				<div class="voucher-layout" style="margin-top:10px;">
+					<div>
+						<h4 class="title" style="margin-bottom:4px;">Vouchers</h4>
+						<div class="voucher-list" id="voucherList"></div>
+					</div>
+					<div>
+						<h4 class="title" style="margin-bottom:4px;">Verfügbare Slots</h4>
+						<div class="slot-list" id="slotList"></div>
+					</div>
+				</div>
+				<p class="muted" style="font-size:11px;margin-top:6px;">
+					Die Daten kommen aus der lokalen Voucher-API (In-Memory, http://localhost:3200/api). Für echte Deployments sollte hier eine Datenbank angebunden werden.
+				</p>
+			</div>
+		</section>
+		<section class="panel" style="margin-top:18px;">
+			<div class="pad">
+				<h3 class="title">Gesellschaftlicher Pfeiler · Freiwillige Beteiligung</h3>
+				<p class="muted">
+					TogetherSystems ist wie eine Armbanduhr mit Gürtelschnalle: Offline‑Manifest und Online‑Portal schnappen zusammen,
+					sobald du „online“ gehst – und lösen sich wieder, wenn du das Gerät trennst. Dieses dauerhafte Zusammenspiel verdient
+					eine freiwillige Beteiligung derjenigen, die es regelmäßig nutzen.
+				</p>
+				<p class="muted">
+					Mit jedem Beitrag zwischen <strong>5&nbsp;€</strong> und <strong>33.000&nbsp;€</strong> hilfst du, diesen Pfeiler zu stabilisieren
+					und weitere Projekte des Producers (über 500 geplante Pfeiler) zu ermöglichen. Nach Erreichen der 33.000&nbsp;€ kann die Plattform
+					in Absprache mit Förderern weiter ausgebaut werden.
+				</p>
+				<div class="row" style="margin-top:6px;">
+					<a class="btn" href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener">
+						💠 Beitrag 5–33.000&nbsp;€
+					</a>
+					<a class="btn alt" href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener">
+						🏛️ Großunternehmen / Stiftungen
+					</a>
+				</div>
+				<p class="muted" style="margin-top:6px;font-size:11px;">
+					Die Nutzung des Portals bleibt frei, ohne Accounts und ohne Paywall. Die Einsammlung ist ein Zusatz‑Kanal für alle,
+					die das System als dauerhaften gesellschaftlichen Baustein sehen.
+				</p>
+			</div>
+		</section>
+		<section class="panel" style="margin-top:18px;">
+			<div class="pad">
+				<h3 class="title">Immobilien &amp; Hypotheken (Demo)</h3>
+				<p class="muted">
+					Dieser Bereich zeigt beispielhaft, wie der Hypotheken-Flow aus dem Meta-Transaktionsportal implementiert wird.
+					Die Daten kommen aus der lokalen Mortgage-API (In-Memory).
+				</p>
+				<div class="row" style="margin-top:8px;">
+					<button class="btn alt" id="btnLoadApplications" type="button">Meine Anfragen laden</button>
+					<button class="btn alt" id="btnLoadOffers" type="button">Meine Angebote laden</button>
+					<button class="btn alt" id="btnNewApplication" type="button">Beispiel-Anfrage erzeugen</button>
+				</div>
+				<pre class="kbd" id="mortgageOutput" style="margin-top:8px;max-height:260px;"></pre>
+			</div>
+		</section>
 		<section class="panel" id="liveRoom" style="margin-top:18px;display:none;">
 			<div class="pad">
 				<h3 class="title">Live-Raum</h3>
@@ -284,7 +412,9 @@ body.public-view{ --cursor: not-allowed }
 		</section>
 	</div>
 
-<script>
+<script type="module">
+import { parseHashParams, markUserVerified, getUserContext } from './mot-core.js';
+
 const REACTIONS = [
 	{key:'like', label:'Gefällt mir'},
 	{key:'celebrate', label:'Gefeliciteerd'},
@@ -299,6 +429,7 @@ const REACTIONS = [
 // Für lokalen Test: http://localhost:3000/api/presence
 // Für Produktion:   https://deine-domain.tld/api/presence
 const PRESENCE_API_BASE = 'http://localhost:3000/api/presence';
+const VOUCHER_API_BASE = 'http://localhost:3200/api';
 const HEARTBEAT_INTERVAL_MS = 25000;
 const MATCH_INTERVAL_MS = 5000;
 
@@ -309,16 +440,6 @@ const MATCH_INTERVAL_MS = 5000;
 const TOKEN_PARAM = 'mot';
 const SIG_PARAM = 'sig';
 const TS_PARAM = 'ts';
-// Shared secret name used by offline file; here we verify with the token itself as HMAC key.
-function parseHashParams(){
-	const h = location.hash.startsWith('#')? location.hash.slice(1) : location.hash;
-	const q = new URLSearchParams(h);
-	return {
-		token: q.get(TOKEN_PARAM)||'',
-		sig: q.get(SIG_PARAM)||'',
-		ts: q.get(TS_PARAM)||''
-	};
-}
 async function hmacSHA256Hex(key, data){
 	const enc = new TextEncoder();
 	const cryptoKey = await crypto.subtle.importKey('raw', enc.encode(key), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
@@ -591,7 +712,13 @@ function appendChatMessage(container, from, text, at){
 	container.scrollTop = container.scrollHeight;
 }
 async function tryAutoVerify(){
-	const p = parseHashParams();
+	const params = parseHashParams();
+	const p = {
+		token: params[TOKEN_PARAM] || '',
+		sig: params[SIG_PARAM] || '',
+		ts: params[TS_PARAM] || '',
+		uid: params.uid || null
+	};
 	if(!p.token || !p.sig || !p.ts) return false;
 	// Freshness check (5 minutes)
 	const skew = Math.abs(Date.now() - Number(p.ts));
@@ -601,6 +728,8 @@ async function tryAutoVerify(){
 	if (expect === p.sig){
 		setVerifiedUI(true);
 		document.getElementById('token').value = p.token;
+		// User lokal als verified markieren (inklusive optionaler uid aus Hash)
+		markUserVerified({ uid: p.uid, mot: p.token, ts: p.ts, sig: p.sig });
 		return true;
 	}
 	return false;
@@ -773,6 +902,219 @@ if(buildRoomJsonBtn && roomTypeSel && roomIdInput && roomJsonBox){
 	});
 }
 
+// Voucher & Termine UI
+let voucherMode = 'customer'; // 'customer' | 'issuer'
+let selectedVoucher = null;
+const voucherListEl = document.getElementById('voucherList');
+const slotListEl = document.getElementById('slotList');
+const voucherModeCustomerBtn = document.getElementById('voucherModeCustomer');
+const voucherModeIssuerBtn = document.getElementById('voucherModeIssuer');
+const voucherRefreshBtn = document.getElementById('btnVoucherRefresh');
+
+function setVoucherMode(mode){
+	voucherMode = mode === 'issuer' ? 'issuer' : 'customer';
+	if(voucherModeCustomerBtn && voucherModeIssuerBtn){
+		if(voucherMode === 'customer'){
+			voucherModeCustomerBtn.classList.add('btn');
+			voucherModeCustomerBtn.classList.remove('alt');
+			voucherModeIssuerBtn.classList.add('alt');
+		}else{
+			voucherModeIssuerBtn.classList.add('btn');
+			voucherModeIssuerBtn.classList.remove('alt');
+			voucherModeCustomerBtn.classList.add('alt');
+		}
+	}
+	loadVouchers();
+}
+
+async function loadVouchers(){
+	if(!voucherListEl) return;
+	const { uid } = getUserContext();
+	let url = `${VOUCHER_API_BASE}/voucher/list`;
+	const params = new URLSearchParams();
+	if(voucherMode === 'issuer'){
+		params.set('issuerUid', uid);
+	}else{
+		params.set('holderUid', uid);
+	}
+	url += `?${params.toString()}`;
+	voucherListEl.innerHTML = '<div class="muted">Lade Vouchers …</div>';
+	slotListEl && (slotListEl.innerHTML = '');
+	selectedVoucher = null;
+	try{
+		const res = await fetch(url);
+		const data = await res.json();
+		const items = data.items || [];
+		if(!items.length){
+			voucherListEl.innerHTML = '<div class="muted">Keine Vouchers gefunden.</div>';
+			return;
+		}
+		voucherListEl.innerHTML = '';
+		items.forEach(v => {
+			const card = document.createElement('div');
+			card.className = 'voucher-card';
+			card.dataset.voucherId = v.voucherId;
+			const statusClass = `status-${(v.status||'').toLowerCase()}`;
+			const priceText = v.price && typeof v.price.amount === 'number'
+				? `${(v.price.amount/100).toFixed(2)} ${(v.price.currency||'').toUpperCase()}`
+				: '';
+			card.innerHTML = `
+				<div class="voucher-card-header">
+					<div>
+						<div style="font-size:13px;font-weight:600;">${e(v.title || v.serviceType || v.voucherId)}</div>
+						<div class="voucher-meta">
+							${v.serviceType ? e(v.serviceType) : ''}${priceText ? ' · '+e(priceText):''}
+						</div>
+					</div>
+					<span class="voucher-badge ${statusClass}">${e(v.status || '—')}</span>
+				</div>
+				<div class="voucher-meta">
+					Gültig: ${(v.validFrom||'').slice(0,10)} – ${(v.validUntil||'').slice(0,10) || 'offen'}
+				</div>
+			`;
+			card.addEventListener('click', ()=> {
+				selectedVoucher = v;
+				loadSlotsForVoucher(v);
+			});
+			voucherListEl.appendChild(card);
+		});
+	}catch(err){
+		voucherListEl.innerHTML = `<div class="muted">Fehler beim Laden: ${e(err?.message||String(err))}</div>`;
+	}
+}
+
+async function loadSlotsForVoucher(voucher){
+	if(!slotListEl || !voucher || !voucher.voucherId) return;
+	slotListEl.innerHTML = '<div class="muted">Lade verfügbare Slots …</div>';
+	try{
+		const res = await fetch(`${VOUCHER_API_BASE}/slots/available?voucherId=${encodeURIComponent(voucher.voucherId)}`);
+		const data = await res.json();
+		const items = data.items || [];
+		if(!items.length){
+			slotListEl.innerHTML = '<div class="muted">Keine freien Slots verfügbar.</div>';
+			return;
+		}
+		slotListEl.innerHTML = '';
+		items.forEach(slot => {
+			const div = document.createElement('div');
+			div.className = 'slot-item';
+			const start = new Date(slot.start);
+			const end = new Date(slot.end);
+			div.innerHTML = `
+				<div>
+					<div>${start.toLocaleDateString()} · ${start.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} – ${end.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+					<div class="voucher-meta">${e(voucher.title || voucher.serviceType || voucher.voucherId)}</div>
+				</div>
+				<button class="btn alt" type="button">Buchen</button>
+			`;
+			const btn = div.querySelector('button');
+			btn.addEventListener('click', ()=> bookSlot(voucher, slot));
+			slotListEl.appendChild(div);
+		});
+	}catch(err){
+		slotListEl.innerHTML = `<div class="muted">Fehler beim Laden der Slots: ${e(err?.message||String(err))}</div>`;
+	}
+}
+
+async function bookSlot(voucher, slot){
+	if(!voucher || !slot) return;
+	if(!confirm('Diesen Termin wirklich buchen?')) return;
+	const { uid } = getUserContext();
+	try{
+		const res = await fetch(`${VOUCHER_API_BASE}/voucher/book`, {
+			method:'POST',
+			headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+			body: JSON.stringify({
+				voucherId: voucher.voucherId,
+				slotId: slot.slotId,
+				holderUid: uid
+			})
+		});
+		const data = await res.json();
+		if(!res.ok || !data.ok){
+			alert('Buchung fehlgeschlagen: ' + (data.error || res.statusText));
+			return;
+		}
+		alert('Termin gebucht.');
+		// Liste aktualisieren
+		loadVouchers();
+		slotListEl && (slotListEl.innerHTML = '');
+	}catch(err){
+		alert('Fehler bei der Buchung: ' + (err?.message || String(err)));
+	}
+}
+// Hypotheken-Demo-Modul
+const mortgageOutput = document.getElementById('mortgageOutput');
+const btnLoadApplications = document.getElementById('btnLoadApplications');
+const btnLoadOffers = document.getElementById('btnLoadOffers');
+const btnNewApplication = document.getElementById('btnNewApplication');
+
+async function loadMortgageApplications(){
+	if(!mortgageOutput) return;
+	const { uid } = getUserContext();
+	try{
+		const res = await fetch('http://localhost:3300/api/hypotheken/anfrage/list?role=borrower', {
+			headers: {
+				'Accept':'application/json',
+				'X-MOT-User': uid
+			}
+		});
+		const data = await res.json();
+		mortgageOutput.textContent = JSON.stringify(data, null, 2);
+	}catch(err){
+		mortgageOutput.textContent = 'Fehler beim Laden der Anfragen: ' + (err?.message || String(err));
+	}
+}
+
+async function loadMortgageOffers(){
+	if(!mortgageOutput) return;
+	const { uid } = getUserContext();
+	try{
+		const res = await fetch('http://localhost:3300/api/hypotheken/angebot/list?role=borrower', {
+			headers: {
+				'Accept':'application/json',
+				'X-MOT-User': uid
+			}
+		});
+		const data = await res.json();
+		mortgageOutput.textContent = JSON.stringify(data, null, 2);
+	}catch(err){
+		mortgageOutput.textContent = 'Fehler beim Laden der Angebote: ' + (err?.message || String(err));
+	}
+}
+
+async function createExampleMortgageApplication(){
+	if(!mortgageOutput) return;
+	const { uid } = getUserContext();
+	const example = {
+		propertyId: 'house-123',
+		desiredLoan: { amount: 36000000, currency: 'EUR' },
+		desiredDurationYears: 20,
+		desiredRateType: 'fixed',
+		maxInterestRate: 0.04,
+		meta: {
+			employmentStatus: 'employee',
+			netIncomeMonthly: 380000,
+			otherLoans: []
+		}
+	};
+	try{
+		const res = await fetch('http://localhost:3300/api/hypotheken/anfrage', {
+			method:'POST',
+			headers: {
+				'Content-Type':'application/json',
+				'Accept':'application/json',
+				'X-MOT-User': uid
+			},
+			body: JSON.stringify(example)
+		});
+		const data = await res.json();
+		mortgageOutput.textContent = JSON.stringify(data, null, 2);
+	}catch(err){
+		mortgageOutput.textContent = 'Fehler beim Erzeugen der Beispiel-Anfrage: ' + (err?.message || String(err));
+	}
+}
+
 /* Anti copy for public viewers (soft) */
 window.addEventListener('contextmenu', (e)=>{ if(document.body.classList.contains('public-view')) e.preventDefault(); }, {capture:true});
 window.addEventListener('keydown', (e)=>{
@@ -788,6 +1130,18 @@ window.addEventListener('keydown', (e)=>{
 	await tryAutoVerify();
 	// Auto-Connect: Token lesen, mit Backend verifizieren und Präsenz/Matching starten
 	await autoConnectFromToken();
+	// Hypotheken-Demo-Buttons verdrahten
+	if(btnLoadApplications) btnLoadApplications.addEventListener('click', loadMortgageApplications);
+	if(btnLoadOffers) btnLoadOffers.addEventListener('click', loadMortgageOffers);
+	if(btnNewApplication) btnNewApplication.addEventListener('click', createExampleMortgageApplication);
+	// Voucher & Termine UI initialisieren
+	if(voucherModeCustomerBtn) voucherModeCustomerBtn.addEventListener('click', ()=> setVoucherMode('customer'));
+	if(voucherModeIssuerBtn) voucherModeIssuerBtn.addEventListener('click', ()=> setVoucherMode('issuer'));
+	if(voucherRefreshBtn) voucherRefreshBtn.addEventListener('click', loadVouchers);
+	// Standard: Kunde-Ansicht
+	if(voucherListEl && slotListEl){
+		setVoucherMode('customer');
+	}
 })();
 </script>
 </body>

@@ -143,6 +143,9 @@ footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
       <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
       <a href="./legal-hub.html">Legal-Hub</a>
       <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="./TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
+      <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
+      <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
     </div>
   </div>
 
@@ -233,6 +236,26 @@ footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
 					<p class="hint">Dies sendet deine lokal gespeicherten Beiträge gesammelt an den angegebenen Endpoint. Es erfolgt keine automatische Veröffentlichung ohne deine Aktion.</p>
 					<pre class="kbd" id="publishStatus" style="margin-top:8px;white-space:pre-wrap;max-height:180px;overflow:auto"></pre>
 				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="sec-title">Unterstütze Manifest of Thinkers</h3>
+					<p class="hint">
+						Diese Offline‑Datei ist nicht „von selbst“ entstanden – hinter ihr stehen viel Zeit, Wissen und Emotion.
+						Wenn du dauerhaft mitdenkst und mitschreibst, kannst du freiwillig einen Beitrag leisten:
+						ab <strong>5&nbsp;€</strong> bis zu einem Kampagnen‑Ziel von <strong>33.000&nbsp;€</strong>.
+					</p>
+					<div class="row" style="margin-top:6px">
+						<a class="btn" href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener">
+							💠 Beitrag 5–33.000&nbsp;€
+						</a>
+						<a class="btn gray" href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener">
+							🏛️ Großunternehmer / MKB
+						</a>
+					</div>
+					<p class="hint" style="margin-top:6px">
+						Die Kommunikation bleibt frei, ohne Login und ohne Pflicht. Deine Beteiligung hilft, die Plattform zu erhalten
+						und weitere „Pfeiler“ für die Gesellschaft aufzubauen.
+					</p>
+				</div>
 			</aside>
 		</div>
 
@@ -241,7 +264,9 @@ footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
 		</footer>
 	</div>
 
-<script>
+<script type="module">
+import { getOrCreateUserId } from './mot-core.js';
+
 /* Storage */
 const DB_KEY = 'mot_forum_v1';
 // Shared access token: included in distributed offline file; same for all official copies.
@@ -535,11 +560,12 @@ async function hmacSHA256Hex(key, data){
 document.addEventListener('click', async (e)=>{
 	const t = e.target;
 	if(t && t.id === 'openPortalBtn'){
+		const uid = getOrCreateUserId();
 		const ts = String(motNow());
 		const data = `${MOT_ACCESS_TOKEN}.${ts}`;
 		const sig = await hmacSHA256Hex(MOT_ACCESS_TOKEN, data);
 		const baseUrl = './manifest-portal.html';
-		const url = `${baseUrl}#mot=${encodeURIComponent(MOT_ACCESS_TOKEN)}&ts=${encodeURIComponent(ts)}&sig=${encodeURIComponent(sig)}`;
+		const url = `${baseUrl}#mot=${encodeURIComponent(MOT_ACCESS_TOKEN)}&uid=${encodeURIComponent(uid)}&ts=${encodeURIComponent(ts)}&sig=${encodeURIComponent(sig)}`;
 		window.open(url, '_blank');
 	}
 });

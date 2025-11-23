@@ -246,6 +246,9 @@
       <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
       <a href="./legal-hub.html">Legal-Hub</a>
       <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="./TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
+      <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
+      <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
     </div>
   </div>
   <main>
@@ -294,11 +297,20 @@
           Branding: T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) 
           <a href="https://orcid.org/0009-0003-1328-2430" target="_blank" rel="noreferrer noopener">ORCID</a>
         </p>
+        <p class="tiny">
+          <span class="pill">
+            💠
+            <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget"
+               target="_blank" rel="noreferrer noopener">Pfeiler mit 5–33.000&nbsp;€ stützen</a>
+          </span>
+        </p>
       </aside>
     </div>
   </main>
 
-  <script>
+  <script type="module">
+  import { getOrCreateUserId, parseHashParams } from './mot-core.js';
+
   (function(){
     const STORAGE_KEY = 'honeycomb_v1';
     const GRID_COLUMNS = 6;
@@ -355,7 +367,8 @@
 
     function buildRoomUrl(cell){
       const url = new URL(window.location.href);
-      url.hash = '#wabe=' + encodeURIComponent(cell.id);
+      const uid = getOrCreateUserId();
+      url.hash = '#wabe=' + encodeURIComponent(cell.id) + '&uid=' + encodeURIComponent(uid);
       return url.toString();
     }
 
@@ -432,12 +445,11 @@
       render();
     });
 
-    // Falls eine Wabe über die URL übergeben wurde (#wabe=...)
+    // Falls eine Wabe über die URL übergeben wurde (#wabe=... [&uid=...])
     (function hydrateFromHash(){
-      const hash = window.location.hash || '';
-      const m = hash.match(/wabe=([^&]+)/);
-      if(!m) return;
-      const id = decodeURIComponent(m[1]);
+      const params = parseHashParams();
+      const id = params.wabe ? decodeURIComponent(params.wabe) : null;
+      if(!id) return;
       const cell = model.cells.find(c=>c.id===id);
       if(cell){
         focusedId = cell.id;
