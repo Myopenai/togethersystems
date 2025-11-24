@@ -1350,6 +1350,15 @@ function enqueueTelemetry(ev){
 async function flushTelemetry(){
 	const batch = telemetryQueue;
 	if(!batch.length) return;
+	// Deaktiviere Telemetry auf GitHub Pages (keine API verfügbar)
+	if (location.hostname.includes('github.io') || location.hostname.includes('github.com')) {
+		telemetryQueue = [];
+		if(telemetryTimer){
+			clearTimeout(telemetryTimer);
+			telemetryTimer = null;
+		}
+		return;
+	}
 	telemetryQueue = [];
 	if(telemetryTimer){
 		clearTimeout(telemetryTimer);
