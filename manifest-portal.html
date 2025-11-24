@@ -891,20 +891,26 @@ let MORTGAGE_API_BASE = null; // Wird dynamisch erkannt
 		return;
 	}
 	
-	if (VOUCHER_API_BASE === null) {
-		// Versuche, /api zu erreichen (Health-Check) - NUR wenn nicht GitHub Pages
-		try {
-			const testRes = await fetch('/api/voucher/list?holderUid=test', { method: 'GET' });
-			if (testRes.ok || testRes.status === 400) { // 400 ist OK, bedeutet dass API existiert
-				VOUCHER_API_BASE = '/api';
-			} else {
-				VOUCHER_API_BASE = null; // API nicht verfügbar
+		if (VOUCHER_API_BASE === null) {
+			// Versuche, /api zu erreichen (Health-Check) - NUR wenn nicht GitHub Pages
+			try {
+				const testRes = await fetch('/api/voucher/list?holderUid=test', { method: 'GET' });
+				if (testRes.ok || testRes.status === 400) { // 400 ist OK, bedeutet dass API existiert
+					VOUCHER_API_BASE = '/api';
+					MORTGAGE_API_BASE = '/api'; // Mortgage API auf derselben Base
+				} else {
+					VOUCHER_API_BASE = null; // API nicht verfügbar
+					MORTGAGE_API_BASE = null;
+				}
+			} catch (e) {
+				VOUCHER_API_BASE = null; // API nicht verfügbar, deaktiviere API-Calls
+				MORTGAGE_API_BASE = null;
+				console.warn('Voucher API nicht verfügbar. Voucher-Funktionen sind deaktiviert. Für volle Funktionalität deploye auf Cloudflare Pages.');
 			}
-		} catch (e) {
-			VOUCHER_API_BASE = null; // API nicht verfügbar, deaktiviere API-Calls
-			console.warn('Voucher API nicht verfügbar. Voucher-Funktionen sind deaktiviert. Für volle Funktionalität deploye auf Cloudflare Pages.');
+		} else {
+			// Wenn VOUCHER_API_BASE bereits gesetzt ist (z.B. durch detectVoucherApiBase), setze auch MORTGAGE_API_BASE
+			MORTGAGE_API_BASE = VOUCHER_API_BASE;
 		}
-	}
 })();
 const HEARTBEAT_INTERVAL_MS = 25000;
 const MATCH_INTERVAL_MS = 5000;
