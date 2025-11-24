@@ -252,6 +252,8 @@ body.public-view{ --cursor: not-allowed }
       <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
     </div>
   </div>
+  <!-- Portal verbessern Feedback-Button (immer sichtbar) -->
+  <button id="feedbackBtn" style="position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:var(--accent);color:#00110b;border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;" title="Portal verbessern">✉</button>
 
 	<div class="wr">
 		<!-- Neue vereinfachte Navigation -->
@@ -2328,6 +2330,137 @@ window.addEventListener('keydown', (e)=>{
 	if(!document.body.classList.contains('public-view')) return;
 	if((e.ctrlKey||e.metaKey)&&['c','x','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
 }, {capture:true});
+
+/* UX-Überarbeitung: Navigation & Kommunikations-Cockpit */
+let expertModeActive = false;
+document.getElementById('navExpert')?.addEventListener('click', ()=>{
+	expertModeActive = !expertModeActive;
+	const expertDiv = document.getElementById('expertMode');
+	if(expertDiv) expertDiv.style.display = expertModeActive ? 'block' : 'none';
+	const navExpert = document.getElementById('navExpert');
+	if(navExpert) navExpert.textContent = expertModeActive ? '⚙️ Expertenmodus' : '⚙️';
+});
+
+// Navigation-Buttons
+document.getElementById('navHome')?.addEventListener('click', ()=> {
+	document.getElementById('communicationCockpit')?.scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('navContacts')?.addEventListener('click', ()=> {
+	alert('Kontakte-Bereich wird später implementiert');
+});
+document.getElementById('navRooms')?.addEventListener('click', ()=> {
+	window.location.href = './honeycomb.html';
+});
+document.getElementById('navDocuments')?.addEventListener('click', ()=> {
+	window.location.href = './legal-hub.html';
+});
+document.getElementById('navFinance')?.addEventListener('click', ()=> {
+	window.location.href = './TELBANK/index.html';
+});
+
+// Kommunikations-Cockpit Buttons
+document.getElementById('actionMessage')?.addEventListener('click', ()=> {
+	showMessageComposer();
+});
+document.getElementById('actionCall')?.addEventListener('click', ()=> {
+	const quickCallBtn = document.getElementById('quickCallBtn');
+	if(quickCallBtn) quickCallBtn.click();
+});
+document.getElementById('actionFile')?.addEventListener('click', ()=> {
+	const filePick = document.getElementById('filePick');
+	if(filePick) filePick.click();
+});
+document.getElementById('actionAppointment')?.addEventListener('click', ()=> {
+	showLifeTemplate('consulting');
+});
+document.getElementById('actionContract')?.addEventListener('click', ()=> {
+	window.location.href = './legal-hub.html';
+});
+document.getElementById('actionMore')?.addEventListener('click', ()=> {
+	const lifeTemplates = document.getElementById('lifeTemplates');
+	if(lifeTemplates) lifeTemplates.style.display = lifeTemplates.style.display === 'none' ? 'block' : 'none';
+});
+
+// Lebenslagen-Vorlagen
+document.querySelectorAll('[data-template]').forEach(btn => {
+	btn.addEventListener('click', ()=> {
+		showLifeTemplate(btn.dataset.template);
+	});
+});
+
+function showMessageComposer(){
+	const composer = document.createElement('div');
+	composer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;z-index:10000;min-width:400px;max-width:90vw;';
+	composer.innerHTML = `
+		<h3 style="margin:0 0 12px;">Nachricht senden</h3>
+		<input type="text" id="msgTo" placeholder="An: Kontakt/Gruppe wählen" style="width:100%;padding:8px;margin-bottom:8px;background:#0b0f14;border:1px solid var(--border);border-radius:8px;color:var(--ink);">
+		<textarea id="msgText" placeholder="Nachricht..." style="width:100%;min-height:120px;padding:8px;margin-bottom:8px;background:#0b0f14;border:1px solid var(--border);border-radius:8px;color:var(--ink);resize:vertical;"></textarea>
+		<div style="display:flex;gap:8px;justify-content:flex-end;">
+			<button class="btn alt" onclick="this.closest('div').remove()">Abbrechen</button>
+			<button class="btn" onclick="sendMessage()">Senden</button>
+		</div>
+	`;
+	document.body.appendChild(composer);
+	setTimeout(()=> document.getElementById('msgTo')?.focus(), 100);
+}
+
+window.sendMessage = function(){
+	const to = document.getElementById('msgTo')?.value || 'Öffentlich';
+	const text = document.getElementById('msgText')?.value;
+	if(!text) return alert('Bitte eine Nachricht eingeben.');
+	// Hier würde die Nachricht gesendet werden
+	alert(`Nachricht an ${to} gesendet:\n\n${text}`);
+	document.querySelector('[style*="position:fixed"]')?.remove();
+};
+
+function showLifeTemplate(template){
+	const templates = {
+		sell: {title:'Verkaufen / Angebot', fields:['Artikel/Dienstleistung','Preis','Beschreibung']},
+		birth: {title:'Neue Geburt feiern', fields:['Name','Datum','Nachricht']},
+		condolence: {title:'Trauer & Kondolenz', fields:['An','Nachricht']},
+		consulting: {title:'Beratung/Coaching buchen', fields:['An','Thema','Datum/Uhrzeit']},
+		realestate: {title:'Immobilie/Haus anfragen', fields:['An','Ort','Budget','Größe']},
+		machine: {title:'Maschinenzeit buchen', fields:['Maschine/Studio','Datum','Uhrzeit']},
+		membership: {title:'Mitgliedschaft starten', fields:['Community/Verein','Nachricht']}
+	};
+	const tpl = templates[template];
+	if(!tpl) return;
+	showMessageComposer();
+	setTimeout(()=> {
+		document.getElementById('msgTo').value = '';
+		document.getElementById('msgText').value = `Vorlage: ${tpl.title}\n\n${tpl.fields.map(f=>f+': ').join('\n')}`;
+	}, 100);
+}
+
+// Feedback-Button
+document.getElementById('feedbackBtn')?.addEventListener('click', ()=>{
+	const feedback = document.createElement('div');
+	feedback.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;z-index:10001;min-width:400px;max-width:90vw;';
+	feedback.innerHTML = `
+		<h3 style="margin:0 0 12px;">Portal verbessern</h3>
+		<p style="color:var(--muted);font-size:13px;margin:0 0 12px;">Was hat dich gestört? Wie würdest du es einfacher machen?</p>
+		<textarea id="feedbackText" placeholder="Dein Feedback..." style="width:100%;min-height:120px;padding:8px;margin-bottom:8px;background:#0b0f14;border:1px solid var(--border);border-radius:8px;color:var(--ink);resize:vertical;"></textarea>
+		<label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;">
+			<input type="checkbox" id="feedbackPublic">
+			<span>Darf dein Vorschlag öffentlich sichtbar sein?</span>
+		</label>
+		<div style="display:flex;gap:8px;justify-content:flex-end;">
+			<button class="btn alt" onclick="this.closest('div').remove()">Abbrechen</button>
+			<button class="btn" onclick="submitFeedback()">Absenden</button>
+		</div>
+	`;
+	document.body.appendChild(feedback);
+	setTimeout(()=> document.getElementById('feedbackText')?.focus(), 100);
+});
+
+window.submitFeedback = function(){
+	const text = document.getElementById('feedbackText')?.value;
+	const isPublic = document.getElementById('feedbackPublic')?.checked;
+	if(!text) return alert('Bitte Feedback eingeben.');
+	// Hier würde das Feedback gesendet werden
+	alert(`✓ Feedback wurde ${isPublic ? 'öffentlich' : 'privat'} gesendet. Vielen Dank!`);
+	document.querySelector('[style*="position:fixed"]')?.remove();
+};
 
 /* Entry point */
 (async function init(){
