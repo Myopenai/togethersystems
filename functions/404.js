@@ -11,6 +11,12 @@ export async function onRequest(context) {
     '/togethersystems/TsysytemsT/TsysytemsT.html': '/TsysytemsT/TsysytemsT.html',
     '/TsysytemsT/TsysytemsT.html': '/TsysytemsT/TsysytemsT.html',
     '/tsysytemst/tsysytemst.html': '/TsysytemsT/TsysytemsT.html', // Case-insensitive Fallback
+    '/togethersystems/TELBANK/index.html': '/TELBANK/index.html',
+    '/TELBANK/index.html': '/TELBANK/index.html',
+    '/telbank/index.html': '/TELBANK/index.html', // Case-insensitive Fallback
+    // GitHub Pages Base-Path Unterstützung
+    '/togethersystems/TELBANK/': '/TELBANK/index.html',
+    '/togethersystems/TsysytemsT/': '/TsysytemsT/TsysytemsT.html',
   };
 
   // Prüfe auf bekannte Pfade (case-insensitive)
@@ -77,6 +83,7 @@ export async function onRequest(context) {
     <div class="links">
       <a href="/">Portal</a>
       <a href="/manifest-portal.html">Online-Portal</a>
+      <a href="/TELBANK/index.html">Telbank</a>
       <a href="/TsysytemsT/TsysytemsT.html">One Network</a>
       <a href="/index.html">Startseite</a>
     </div>

@@ -322,7 +322,7 @@ class TpgaTelbankApp {
     }
 
     this.$flowCount.textContent =
-      "(" + this.flows.length.toString() + (this.flows.length === 1 ? " flow)" : " flows)");
+      "(" + this.flows.length.toString() + (this.flows.length === 1 ? " flow" : " flows") + ")";
   }
 }
 
