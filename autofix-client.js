@@ -4,9 +4,15 @@
 
 // Prüfe ob wir auf Cloudflare Pages sind (wo die API verfügbar ist)
 function isCloudflarePages() {
-  return location.hostname.includes('pages.dev') || 
+  return (location.hostname.includes('pages.dev') || 
          location.hostname.includes('workers.dev') || 
-         location.hostname.includes('cloudflare');
+         location.hostname.includes('cloudflare')) &&
+         !location.hostname.includes('github.io'); // GitHub Pages explizit ausschließen
+}
+
+// Prüfe ob wir auf GitHub Pages sind (keine Serverless Functions)
+function isGitHubPages() {
+  return location.hostname.includes('github.io');
 }
 
 export const AUTOFIX_CONFIG = {
@@ -14,7 +20,7 @@ export const AUTOFIX_CONFIG = {
   NOTIFY_ENDPOINT: '/api/autofix/notify',
   STATUS_ENDPOINT: '/api/autofix/status',
   ENABLED: true, // Immer aktiviert - funktioniert jetzt komplett client-seitig
-  USE_BACKEND: isCloudflarePages(), // Backend-Logging nur auf Cloudflare Pages
+  USE_BACKEND: isCloudflarePages() && !isGitHubPages(), // Backend-Logging NUR auf Cloudflare Pages, NICHT auf GitHub Pages
 };
 
 let autofixEventSource = null;
@@ -401,9 +407,13 @@ window.fetch = async function(...args) {
 
 // Server-Sent Events für Live-Benachrichtigungen (optional, nur wenn Backend verfügbar)
 function connectAutofixNotifications() {
-  if (!AUTOFIX_CONFIG.USE_BACKEND) {
-    // Auf GitHub Pages: Benachrichtigungen werden direkt client-seitig angezeigt
-    console.log('🔧 Autofix: Client-seitig aktiv (Backend-Logging deaktiviert)');
+  if (!AUTOFIX_CONFIG.USE_BACKEND || isGitHubPages()) {
+    // Auf GitHub Pages: KEINE Backend-Verbindung versuchen
+    if (isGitHubPages()) {
+      console.log('🔧 Autofix: GitHub Pages erkannt - Backend-Calls deaktiviert');
+    } else {
+      console.log('🔧 Autofix: Client-seitig aktiv (Backend-Logging deaktiviert)');
+    }
     return;
   }
   if (autofixEventSource) return; // Bereits verbunden

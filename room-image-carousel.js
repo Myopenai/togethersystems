@@ -14,7 +14,7 @@ const ROOM_CAROUSEL_CONFIG = {
     'https://source.unsplash.com/800x600/?ocean,water',
     'https://source.unsplash.com/800x600/?forest,green',
   ],
-  // Lokale Bilder (gegebene Bilder)
+  // Lokale Bilder (gegebene Bilder) - mit Fallback auf öffentliche Bilder
   LOCAL_IMAGES: [
     './GLI5_msWMAAPink.jpg',
     './unnamed(6).jpg',
@@ -23,6 +23,12 @@ const ROOM_CAROUSEL_CONFIG = {
     './unnamed(26).jpg',
     './unnamed(29).jpg',
     './Schermafbeelding 2025-11-05 010211.png',
+  ],
+  // Fallback-Bilder wenn lokale nicht verfügbar
+  FALLBACK_IMAGES: [
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
   ],
   // Karussell-Einstellungen
   ROTATION_INTERVAL: 8000, // 8 Sekunden
@@ -45,9 +51,9 @@ async function loadCarouselImages() {
     try {
       // Prüfe ob Bild existiert (async check mit Timeout)
       const img = new Image();
-      await new Promise((resolve) => {
+      await new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
-          resolve(); // Timeout: Bild nicht gefunden
+          reject(new Error('Image load timeout')); // Timeout: Bild nicht gefunden
         }, 2000); // 2 Sekunden Timeout
         
         img.onload = () => {
@@ -61,15 +67,32 @@ async function loadCarouselImages() {
         };
         img.onerror = () => {
           clearTimeout(timeout);
-          // Bild existiert nicht, überspringen
-          resolve();
+          // Bild existiert nicht, verwende Fallback
+          reject(new Error(`Failed to load ${localPath}`));
         };
         img.src = localPath;
       });
     } catch (e) {
-      // Fehler beim Laden, überspringen
-      console.warn(`Bild nicht gefunden: ${localPath}`);
+      // Fehler beim Laden, verwende Fallback
+      console.warn(`Bild nicht gefunden: ${localPath} - verwende Fallback`);
+      const fallbackIndex = images.length % ROOM_CAROUSEL_CONFIG.FALLBACK_IMAGES.length;
+      images.push({
+        src: ROOM_CAROUSEL_CONFIG.FALLBACK_IMAGES[fallbackIndex],
+        type: 'fallback',
+        loaded: false,
+      });
     }
+  }
+  
+  // Wenn keine lokalen Bilder geladen wurden, verwende nur Fallbacks
+  if (images.length === 0) {
+    ROOM_CAROUSEL_CONFIG.FALLBACK_IMAGES.forEach((url) => {
+      images.push({
+        src: url,
+        type: 'fallback',
+        loaded: false,
+      });
+    });
   }
   
   // Öffentliche Bilder hinzufügen
