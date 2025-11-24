@@ -1,4 +1,4 @@
-const CACHE_NAME = 'businessconnecthub-cache-v1';
+const CACHE_NAME = 'businessconnecthub-cache-v2';
 
 const ASSETS = [
   './index.html',

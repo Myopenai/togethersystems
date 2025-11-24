@@ -212,7 +212,9 @@ window.addEventListener('error', (event) => {
 });
 
 // Export für globale Verwendung
+// Export für globale Verwendung
 window.enqueueError = enqueueError;
+export { enqueueError };
 
 // Unhandled Promise Rejection Handler
 window.addEventListener('unhandledrejection', (event) => {
