@@ -130,7 +130,7 @@ footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
   <div class="ts-brand-banner">
     <div>
       <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
-      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</span>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430 | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf" target="_blank" rel="noopener noreferrer" style="color:#a5b4fc;text-decoration:underline;">Businessplan</a> | T,.0031613803782.T,,.(C)R.D.TEL-DR.TEL</span>
     </div>
     <div class="ts-brand-links">
       <a href="./index.html">Portal</a>
@@ -183,13 +183,29 @@ footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
 							<input id="initials" type="text" maxlength="4" placeholder="z. B. RDT">
 						</div>
 						<div style="flex:1;min-width:200px">
-							<label for="identity">Optionale Info/Logo-URL (Data-URL oder http...)</label>
-							<input id="identity" type="url" placeholder="data:image/png;base64,... oder https://.../logo.png">
+							<label for="identity">Logo (URL oder Upload)</label>
+							<input id="identity" type="url" placeholder="https://.../logo.png oder Upload verwenden">
+							<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+								<label class="btn secondary" for="logoUpload" style="display:inline-block;cursor:pointer">
+									📷 Logo hochladen
+								</label>
+								<button type="button" class="btn secondary" id="useEULogo" style="display:inline-block;cursor:pointer" title="EU-Logo verwenden (Made in Europe)">
+									🇪🇺 EU-Logo verwenden
+								</button>
+							</div>
+							<input id="logoUpload" type="file" accept="image/*" style="display:none">
+							<div id="logoPreview" style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+								<a id="logoPreviewLink" href="" target="_blank" rel="noopener noreferrer" style="display:none;">
+									<img id="logoPreviewImg" src="" alt="Logo-Vorschau" style="max-width:120px;max-height:60px;border-radius:8px;border:1px solid var(--border);cursor:pointer;">
+								</a>
+								<button type="button" class="btn ghost" id="removeLogo" style="display:none;font-size:12px;">Entfernen</button>
+							</div>
 						</div>
 					</div>
 					<div class="row" style="margin-top:12px">
 						<button class="btn" id="addPostBtn">Beitrag speichern</button>
 						<button class="btn gray" id="clearComposerBtn">Eingabe leeren</button>
+						<button class="btn secondary" id="aiAssistBtn" title="KI-Assistent: Titel, Tags und Zusammenfassung vorschlagen">🤖 KI-Assistenz</button>
 					</div>
 				</div>
 
@@ -425,11 +441,18 @@ function render(){
 		const el = document.createElement('div');
 		el.className = 'post';
 		el.innerHTML = `
-			<h3>${escapeHtml(p.title || 'Ohne Titel')}</h3>
-			<div class="meta">
-				<span>${new Date(p.createdAt).toLocaleString()}</span>
-				${p.initials ? `<span>· ${escapeHtml(p.initials)}</span>`:''}
-				${p.tags?.length ? `<span>· Tags: ${p.tags.map(escapeHtml).join(', ')}</span>`:''}
+			<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:8px">
+				${(p.logoUrl || p.identity) && ((p.logoUrl || p.identity).startsWith('data:image') || (p.logoUrl || p.identity).startsWith('./assets/') || (p.logoUrl || p.identity).startsWith('http')) 
+					? `<a href="${escapeHtml(p.logoUrl || p.identity)}" target="_blank" rel="noopener noreferrer" style="display:inline-block;line-height:0;flex-shrink:0;"><img src="${escapeHtml(p.logoUrl || p.identity)}" alt="Logo" style="width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid var(--border);cursor:pointer;"></a>`
+					: ''}
+				<div style="flex:1">
+					<h3>${escapeHtml(p.title || 'Ohne Titel')}</h3>
+					<div class="meta">
+						<span>${new Date(p.createdAt).toLocaleString()}</span>
+						${p.initials ? `<span>· ${escapeHtml(p.initials)}</span>`:''}
+						${p.tags?.length ? `<span>· Tags: ${p.tags.map(escapeHtml).join(', ')}</span>`:''}
+					</div>
+				</div>
 			</div>
 			<div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(p.content)}</div>
 			<div class="reactions" data-idx="${idx}">
@@ -479,9 +502,11 @@ addPostBtn.addEventListener('click', ()=>{
 	const initials = initialsEl.value.trim();
 	const identity = identityEl.value.trim();
 	const db = loadDB();
+	const logoUrl = identityEl.value.trim() || null;
 	db.posts.unshift({
 		id: crypto.randomUUID(),
-		title, content, tags, initials, identity,
+		title, content, tags, initials, identity: identityEl.value.trim() || null,
+		logoUrl: logoUrl, // Speichere logoUrl zusätzlich für Portal-Anzeige
 		reactions: {},
 		comments: [],
 		createdAt: Date.now()
@@ -491,7 +516,116 @@ addPostBtn.addEventListener('click', ()=>{
 });
 clearComposerBtn.addEventListener('click', ()=>{
 	titleEl.value='';contentEl.value='';tagsEl.value='';initialsEl.value='';
+	identityEl.value='';
+	const preview = document.getElementById('logoPreview');
+	if(preview) preview.style.display = 'none';
 });
+
+/* Logo Upload */
+const logoUploadEl = document.getElementById('logoUpload');
+const logoPreviewEl = document.getElementById('logoPreview');
+const logoPreviewImgEl = document.getElementById('logoPreviewImg');
+const removeLogoEl = document.getElementById('removeLogo');
+
+if(logoUploadEl){
+	logoUploadEl.addEventListener('change', async (e)=>{
+		const file = e.target.files?.[0];
+		if(!file) return;
+		
+		// Validate file type
+		if(!file.type.startsWith('image/')){
+			alert('Bitte wähle eine Bilddatei aus.');
+			e.target.value = '';
+			return;
+		}
+		
+		// Validate file size (max 2MB)
+		if(file.size > 2 * 1024 * 1024){
+			alert('Bild zu groß. Maximal 2MB erlaubt.');
+			e.target.value = '';
+			return;
+		}
+		
+		// Convert to Data URL
+		try{
+			const reader = new FileReader();
+			reader.onload = (ev) => {
+				const dataUrl = ev.target.result;
+				identityEl.value = dataUrl;
+				if(logoPreviewImgEl) {
+					logoPreviewImgEl.src = dataUrl;
+					logoPreviewImgEl.style.maxHeight = '60px';
+					logoPreviewImgEl.style.width = 'auto';
+				}
+				// Logo als klickbaren Link setzen
+				if(logoPreviewLinkEl) {
+					logoPreviewLinkEl.href = dataUrl;
+					logoPreviewLinkEl.style.display = 'inline-block';
+				}
+				if(logoPreviewEl) logoPreviewEl.style.display = 'flex';
+				if(removeLogoEl) removeLogoEl.style.display = 'inline-block';
+			};
+			reader.onerror = () => {
+				alert('Fehler beim Lesen der Datei.');
+			};
+			reader.readAsDataURL(file);
+		}catch(err){
+			alert('Fehler: ' + (err.message || 'Unbekannt'));
+		}
+	});
+}
+
+if(removeLogoEl){
+	removeLogoEl.addEventListener('click', ()=>{
+		identityEl.value = '';
+		const logoPreviewLinkEl = document.getElementById('logoPreviewLink');
+		if(logoPreviewEl) logoPreviewEl.style.display = 'none';
+		if(logoPreviewLinkEl) logoPreviewLinkEl.style.display = 'none';
+		if(removeLogoEl) removeLogoEl.style.display = 'none';
+		if(logoUploadEl) logoUploadEl.value = '';
+	});
+}
+
+/* EU-Logo Button */
+const useEULogoBtn = document.getElementById('useEULogo');
+const logoPreviewLinkEl = document.getElementById('logoPreviewLink');
+const EU_LOGO_URL = './assets/eu-logo.svg';
+const EU_LOGO_LINK_URL = './assets/eu-logo.svg'; // Kann geändert werden zu Info-Seite
+
+if(useEULogoBtn){
+	useEULogoBtn.addEventListener('click', ()=>{
+		identityEl.value = EU_LOGO_URL;
+		if(logoPreviewImgEl) {
+			logoPreviewImgEl.src = EU_LOGO_URL;
+			logoPreviewImgEl.style.maxHeight = '60px';
+			logoPreviewImgEl.style.width = 'auto';
+		}
+		if(logoPreviewLinkEl) {
+			logoPreviewLinkEl.href = EU_LOGO_LINK_URL;
+			logoPreviewLinkEl.style.display = 'inline-block';
+		}
+		if(logoPreviewEl) logoPreviewEl.style.display = 'flex';
+		if(removeLogoEl) removeLogoEl.style.display = 'inline-block';
+	});
+}
+
+// Show preview if identity field already has a value
+if(identityEl && identityEl.value){
+	const logoUrl = identityEl.value;
+	if(logoUrl.startsWith('data:image') || logoUrl.startsWith('./assets/') || logoUrl.startsWith('http')){
+		if(logoPreviewImgEl) {
+			logoPreviewImgEl.src = logoUrl;
+			logoPreviewImgEl.style.maxHeight = '60px';
+			logoPreviewImgEl.style.width = 'auto';
+		}
+		if(logoPreviewLinkEl) {
+			logoPreviewLinkEl.href = logoUrl;
+			logoPreviewLinkEl.style.display = 'inline-block';
+		}
+		if(logoPreviewEl) logoPreviewEl.style.display = 'flex';
+		if(removeLogoEl) removeLogoEl.style.display = 'inline-block';
+	}
+}
 
 /* Events: reactions and comments via delegation */
 postList.addEventListener('click', (e)=>{
@@ -564,10 +698,20 @@ if(downloadSelfBtn){
 	});
 }
 function renderStaticSite(db){
-	const items = db.posts.map(p=>`
+	const items = db.posts.map(p=>{
+		const logoUrl = p.logoUrl || p.identity;
+		const logoHtml = logoUrl && (logoUrl.startsWith('data:image') || logoUrl.startsWith('./assets/') || logoUrl.startsWith('http'))
+			? `<a href="${escapeHtml(logoUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-block;line-height:0;flex-shrink:0;"><img src="${escapeHtml(logoUrl)}" alt="Logo" style="width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid #e5e7eb;cursor:pointer;"></a>`
+			: '';
+		return `
 		<article style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px">
-			<h3 style="margin:0 0 6px;font:600 18px system-ui">${escapeHtml(p.title||'Ohne Titel')}</h3>
-			<div style="color:#6b7280;font:12px system-ui">${new Date(p.createdAt).toLocaleString()} ${p.initials? '· '+escapeHtml(p.initials):''} ${p.tags?.length? '· Tags: '+p.tags.map(escapeHtml).join(', '):''}</div>
+			<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:8px">
+				${logoHtml}
+				<div style="flex:1">
+					<h3 style="margin:0 0 6px;font:600 18px system-ui">${escapeHtml(p.title||'Ohne Titel')}</h3>
+					<div style="color:#6b7280;font:12px system-ui">${new Date(p.createdAt).toLocaleString()} ${p.initials? '· '+escapeHtml(p.initials):''} ${p.tags?.length? '· Tags: '+p.tags.map(escapeHtml).join(', '):''}</div>
+				</div>
+			</div>
 			<div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(p.content)}</div>
 			<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
 				${REACTIONS.map(r=>{
@@ -577,7 +721,7 @@ function renderStaticSite(db){
 			</div>
 			${p.comments?.length? `<div style="margin-top:10px">${p.comments.map(c=>`<div style="border:1px solid #e5e7eb;background:#fafafa;border-radius:10px;padding:8px 10px;margin-top:6px"><strong>${escapeHtml(c.by||'Anon')}</strong>: ${escapeHtml(c.text)} <span style="color:#6b7280;font:12px system-ui;margin-left:6px">${new Date(c.at).toLocaleString()}</span></div>`).join('')}</div>`:''}
 		</article>
-	`).join('\n');
+	`;}).join('\n');
 	return `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -671,7 +815,48 @@ if(meshSyncBtnEl && meshStatusEl){
 }
 trySeedComposer();
 render();
+
+/* AI-Assistent Integration */
+const aiAssistBtn = document.getElementById('aiAssistBtn');
+if(aiAssistBtn && typeof AIManifestAssistant !== 'undefined'){
+	aiAssistBtn.addEventListener('click', async ()=>{
+		const content = contentEl.value.trim();
+		if(!content || content.length < 20){
+			alert('Bitte gib mindestens 20 Zeichen Inhalt ein, damit die KI-Assistenz hilfreiche Vorschläge machen kann.');
+			return;
+		}
+		
+		aiAssistBtn.disabled = true;
+		aiAssistBtn.textContent = '🤖 Analysiere...';
+		
+		try{
+			const result = await AIManifestAssistant.suggestTitleAndSummary(content);
+			if(result){
+				// Titel vorschlagen
+				if(!titleEl.value.trim() && result.title){
+					titleEl.value = result.title;
+				}
+				// Tags vorschlagen
+				const existingTags = parseTags(tagsEl.value || '');
+				const newTags = result.tags.filter(t => !existingTags.includes(t));
+				if(newTags.length > 0){
+					const currentTags = tagsEl.value ? tagsEl.value + ', ' : '';
+					tagsEl.value = currentTags + newTags.join(', ');
+				}
+				alert('✅ KI-Vorschläge eingefügt!\n\nTitel: ' + (result.title || '(unverändert)') + '\nTags: ' + newTags.join(', ') + '\n\nZusammenfassung: ' + result.summary);
+			}else{
+				alert('⚠️ KI-Assistenz konnte keine Vorschläge generieren. Bitte versuche es später erneut.');
+			}
+		}catch(err){
+			alert('Fehler bei KI-Assistenz: ' + (err?.message || String(err)));
+		}finally{
+			aiAssistBtn.disabled = false;
+			aiAssistBtn.textContent = '🤖 KI-Assistenz';
+		}
+	});
+}
 </script>
+<script src="./ai-frontend-integration.js"></script>
 <script type="module" src="./autofix-client.js"></script>
 </body>
 </html>

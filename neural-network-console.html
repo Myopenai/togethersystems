@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Neural Network Console – TogetherSystems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root{
+      --bg:#020617;
+      --fg:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#22c55e;
+      --accent2:#38bdf8;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --border:#1f2937;
+      --card:rgba(15,23,42,.96);
+      --font: system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;
+    }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:var(--font);
+      background:radial-gradient(circle at top,#0f172a 0,#020617 60%,#000 100%);
+      color:var(--fg);
+    }
+    .ts-brand-banner{
+      background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+      color:#e5e7eb;
+      padding:4px 12px;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong{font-weight:600;}
+    .ts-brand-sub{opacity:.78; display:block;}
+    .ts-brand-links a{
+      color:#a5b4fc;
+      text-decoration:none;
+      font-size:11px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+    .ts-brand-links a:hover{text-decoration:underline;}
+    main{
+      max-width:1200px;
+      margin:16px auto 40px;
+      padding:0 16px 40px;
+    }
+    h1{margin:0 0 4px;font-size:1.6rem;}
+    h2{margin:0 0 8px;font-size:1.15rem;}
+    .muted{color:var(--muted);font-size:.85rem;}
+    .card{
+      background:var(--card);
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,.35);
+      padding:16px;
+      box-shadow:0 18px 40px rgba(15,23,42,.8);
+      margin-bottom:16px;
+    }
+    .grid{
+      display:grid;
+      gap:16px;
+      margin-top:16px;
+    }
+    .grid.cols-2{grid-template-columns:repeat(2, 1fr);}
+    @media (max-width:768px){
+      .grid.cols-2{grid-template-columns:1fr;}
+    }
+    .btn{
+      background:var(--accent);
+      color:#000;
+      border:none;
+      padding:8px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:500;
+    }
+    .btn:hover{opacity:.9;}
+    .btn.secondary{
+      background:rgba(148,163,184,.2);
+      color:var(--fg);
+    }
+    textarea{
+      width:100%;
+      min-height:120px;
+      background:rgba(6,10,26,.95);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:10px;
+      color:var(--fg);
+      font-family:monospace;
+      font-size:13px;
+    }
+    .result{
+      background:rgba(34,197,94,.1);
+      border:1px solid rgba(34,197,94,.3);
+      border-radius:8px;
+      padding:12px;
+      margin-top:12px;
+      white-space:pre-wrap;
+      font-size:13px;
+    }
+    .operation-btn{
+      background:rgba(148,163,184,.1);
+      border:1px solid var(--border);
+      color:var(--fg);
+      padding:10px 14px;
+      border-radius:8px;
+      cursor:pointer;
+      margin:4px;
+      display:inline-block;
+    }
+    .operation-btn:hover{
+      background:rgba(148,163,184,.2);
+      border-color:var(--accent);
+    }
+    .operation-btn.active{
+      background:var(--accent);
+      color:#000;
+      border-color:var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430 | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf" target="_blank" rel="noopener noreferrer" style="color:#a5b4fc;text-decoration:underline;">Businessplan</a> | T,.0031613803782.T,,.(C)R.D.TEL-DR.TEL</span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./production-dashboard.html">📊 Production Dashboard</a>
+      <a href="./neural-network-console.html">🧠 Neural Network</a>
+    </div>
+  </div>
+  <main>
+    <header>
+      <h1>🧠 Neural Network Console</h1>
+      <p class="muted">
+        KI-Orchestrierungs-Layer für TogetherSystems: Manifest-Assistent, Übersetzung, Moderation, Business-Intelligenz
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>KI-Operationen</h2>
+      <div style="margin-bottom:12px;">
+        <button class="operation-btn active" data-op="manifest.assist">Manifest-Assistent</button>
+        <button class="operation-btn" data-op="translate">Übersetzung</button>
+        <button class="operation-btn" data-op="summarize">Zusammenfassung</button>
+        <button class="operation-btn" data-op="tag.generate">Tag-Generierung</button>
+        <button class="operation-btn" data-op="moderate">Moderation</button>
+        <button class="operation-btn" data-op="business.intelligence">Business-Intelligenz</button>
+      </div>
+      <textarea id="inputText" placeholder="Gebe hier Text ein oder wähle eine Operation..."></textarea>
+      <div style="margin-top:12px;">
+        <button class="btn" id="executeBtn">🚀 Ausführen</button>
+        <button class="btn secondary" id="clearBtn">Löschen</button>
+      </div>
+      <div id="result" class="result" style="display:none;"></div>
+    </section>
+
+    <section class="grid cols-2">
+      <div class="card">
+        <h2>Manifest-Assistent</h2>
+        <p class="muted">Vorschläge für Titel, Tags, Zusammenfassung basierend auf deinem Text.</p>
+        <button class="btn" id="manifestAssistBtn">Beispiel ausführen</button>
+      </div>
+      <div class="card">
+        <h2>Business-Intelligenz</h2>
+        <p class="muted">Analyse von Voucher-Daten, Auslastung, Forecasts.</p>
+        <button class="btn" id="biBtn">Analysiere</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Neural Network Status</h2>
+      <div id="neuralStatus" class="muted">Lade Status...</div>
+      <div style="margin-top:12px;">
+        <div class="muted">Architektur: AI Gateway → Orchestrierung → KI-Services</div>
+        <div class="muted" style="margin-top:4px;">Status: ✅ Basis-Infrastruktur aktiv</div>
+        <div class="muted" style="margin-top:4px;">Nächste Phase: Integration externer KI-APIs (OpenAI, Claude, etc.)</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./ai-frontend-integration.js"></script>
+  <script>
+  (function(){
+    const inputText = document.getElementById('inputText');
+    const executeBtn = document.getElementById('executeBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const resultDiv = document.getElementById('result');
+    const opButtons = document.querySelectorAll('.operation-btn');
+    let currentOperation = 'manifest.assist';
+
+    // Operation auswählen
+    opButtons.forEach(btn => {
+      btn.addEventListener('click', ()=>{
+        opButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentOperation = btn.dataset.op;
+      });
+    });
+
+    // Ausführen
+    executeBtn.addEventListener('click', async ()=>{
+      const input = inputText.value.trim();
+      if(!input){
+        alert('Bitte Text eingeben.');
+        return;
+      }
+
+      executeBtn.disabled = true;
+      executeBtn.textContent = '🔄 Verarbeite...';
+      resultDiv.style.display = 'none';
+
+      try{
+        let result;
+        const API_BASE = '/api/ai/gateway';
+
+        const requestBody = {
+          operation: currentOperation,
+          input: currentOperation === 'business.intelligence' 
+            ? { query: input || 'voucher_analytics' }
+            : (typeof input === 'string' ? { content: input, text: input }[currentOperation === 'translate' || currentOperation === 'summarize' ? 'text' : 'content'] : input),
+        };
+
+        const res = await fetch(API_BASE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        const data = await res.json();
+        if(data.ok){
+          resultDiv.style.display = 'block';
+          resultDiv.textContent = JSON.stringify(data.result, null, 2);
+        }else{
+          resultDiv.style.display = 'block';
+          resultDiv.style.borderColor = 'var(--danger)';
+          resultDiv.textContent = 'Fehler: ' + (data.error || 'Unbekannt');
+        }
+      }catch(err){
+        resultDiv.style.display = 'block';
+        resultDiv.style.borderColor = 'var(--danger)';
+        resultDiv.textContent = 'Fehler: ' + (err?.message || String(err));
+      }finally{
+        executeBtn.disabled = false;
+        executeBtn.textContent = '🚀 Ausführen';
+      }
+    });
+
+    // Löschen
+    clearBtn.addEventListener('click', ()=>{
+      inputText.value = '';
+      resultDiv.style.display = 'none';
+    });
+
+    // Beispiel-Manifest-Assist
+    const manifestAssistBtn = document.getElementById('manifestAssistBtn');
+    if(manifestAssistBtn && typeof AIManifestAssistant !== 'undefined'){
+      manifestAssistBtn.addEventListener('click', async ()=>{
+        inputText.value = 'Ich denke über die Zukunft der europäischen KI nach. Wie können Mittelständler zusammenarbeiten, um gemeinsam stärker zu sein als große Konzerne?';
+        currentOperation = 'manifest.assist';
+        opButtons.forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-op="manifest.assist"]').classList.add('active');
+        executeBtn.click();
+      });
+    }
+
+    // Business Intelligence
+    const biBtn = document.getElementById('biBtn');
+    if(biBtn && typeof AIBusinessIntelligence !== 'undefined'){
+      biBtn.addEventListener('click', async ()=>{
+        inputText.value = 'voucher_analytics';
+        currentOperation = 'business.intelligence';
+        opButtons.forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-op="business.intelligence"]').classList.add('active');
+        executeBtn.click();
+      });
+    }
+
+    // Status
+    const neuralStatus = document.getElementById('neuralStatus');
+    neuralStatus.textContent = '✅ Neural Network Console aktiv – AI Gateway bereit';
+  })();
+  </script>
+  <script type="module" src="./autofix-client.js"></script>
+</body>
+</html>
+

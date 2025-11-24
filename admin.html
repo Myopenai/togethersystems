@@ -58,7 +58,7 @@
   <div class="ts-brand-banner">
     <div>
       <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
-      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</span>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430 | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf" target="_blank" rel="noopener noreferrer" style="color:#a5b4fc;text-decoration:underline;">Businessplan</a> | T,.0031613803782.T,,.(C)R.D.TEL-DR.TEL</span>
     </div>
     <div class="ts-brand-links">
       <a href="./index.html">Portal</a>
@@ -74,6 +74,7 @@
       <a href="TELBANK/index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 Telbank</a>
       <a href="business-admin.html" title="Business-Admin – Vouchers & Buchungen">📊 Business-Admin</a>
       <a href="admin-monitoring.html" title="Monitoring & Events">📈 Monitoring</a>
+      <a href="production-dashboard.html" title="Production Dashboard – Vollständige System-Übersicht">📊 Production Dashboard</a>
       <a href="TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
       <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
       <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
@@ -233,6 +234,47 @@
 			localStorage.setItem('portal.updatedAt', new Date().toISOString());
 			updateStats();
 			alert('Notizen gespeichert.');
+		}
+	})();
+	</script>
+	<script src="./backup-restore.js"></script>
+	<script>
+	// Enhanced backup functionality with restoreTSBackup
+	(function(){
+		const $ = sel => document.querySelector(sel);
+		
+		// Override saveBackup to use new system
+		const originalSaveBackup = window.saveBackup;
+		if(window.createTSBackup){
+			$('#backupSave').addEventListener('click', function(e){
+				e.preventDefault();
+				const result = window.createTSBackup(true);
+				if(result.success){
+					alert('✅ Backup erfolgreich erstellt!\n\nID: ' + result.backupId + '\nZeitstempel: ' + result.timestamp);
+				} else {
+					alert('❌ Backup-Fehler: ' + (result.error || 'Unbekannt'));
+				}
+			}, {once: false});
+		}
+		
+		// Enhanced loadBackup to use new system
+		const originalLoadBackup = window.loadBackup;
+		if(window.restoreTSBackupFromFile){
+			$('#backupLoad').addEventListener('change', async function(e){
+				const file = e.target.files?.[0];
+				if(!file) return;
+				
+				try{
+					const result = await window.restoreTSBackupFromFile(file);
+					if(result.success){
+						alert('✅ Backup erfolgreich wiederhergestellt!\n\nSicherheits-Backup erstellt: ' + result.safetyBackupId);
+						location.reload(); // Reload to show restored data
+					}
+				}catch(err){
+					alert('❌ Wiederherstellungs-Fehler: ' + err.message);
+				}
+				e.target.value = '';
+			}, {once: false});
 		}
 	})();
 	</script>
