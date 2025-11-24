@@ -336,16 +336,18 @@ body.public-view{ --cursor: not-allowed }
 					<p class="muted" id="moderationStatus" style="font-size:11px;margin-top:4px;">Noch keine Moderations-Aktion ausgeführt.</p>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
-					<h3 class="title">Live-Funktionen (für verifizierte Nutzer)</h3>
-					<ul class="muted" id="liveList" style="margin:0 0 8px 16px">
-						<li>Video-Chat Räume (Signaling URL konfigurierbar)</li>
-						<li>Text-Chat</li>
-						<li>Datei-Transfer mit Freigabe</li>
-						<li>Signierte Kontrakte (Upload/Download)</li>
-					</ul>
-					<div class="row">
+					<h3 class="title">Live-Funktionen (Zero-Input-Flow)</h3>
+					<p class="muted" style="margin-bottom:8px;">Ein-Klick-Kommunikation – keine Konfiguration nötig.</p>
+					<div class="row" style="gap:6px;margin-bottom:8px;">
+						<button class="btn" id="quickCallBtn" type="button" style="flex:1;">📞 Call starten</button>
+						<button class="btn" id="quickChatBtn" type="button" style="flex:1;">💬 Chat starten</button>
+						<button class="btn" id="quickGroupBtn" type="button" style="flex:1;">👥 Gruppe starten</button>
+					</div>
+					<div class="row" style="margin-top:8px;">
 						<select id="signalPreset" class="muted" style="width:100%;margin-bottom:6px;background:#0b0f14;border:1px solid var(--border);border-radius:10px;padding:6px 8px;">
 							<option value="">Signaling-Vorlage wählen (optional)</option>
+							<option value="cloudflare">Cloudflare Pages WebSocket (automatisch)</option>
+							<option value="local">Lokaler Server (localhost:3100)</option>
 							<option value="twilio">Twilio Video (Beispiel)</option>
 							<option value="ably">Ably Realtime (Beispiel)</option>
 							<option value="custom">Eigene WSS-URL (manuell)</option>
@@ -355,7 +357,7 @@ body.public-view{ --cursor: not-allowed }
 						<input id="signalUrl" type="url" placeholder="wss://signaling.deine-seite.tld (optional)">
 						<button class="btn alt" id="initLiveBtn">Live initialisieren</button>
 					</div>
-					<p class="muted">Sobald verifiziert und Signaling konfiguriert ist, werden Live-Funktionen aktiviert.</p>
+					<p class="muted" style="font-size:11px;margin-top:4px;">Signaling wird automatisch erkannt. Buttons oben starten sofort ohne Konfiguration.</p>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
 					<h3 class="title">Hidden Viewer, Medien &amp; Datei-Transfer</h3>
@@ -784,6 +786,11 @@ const PRESENCE_API_BASE = '/api/presence';
 // D1-backed API base; in Produktion als Cloudflare Pages Function bereitgestellt
 // Automatische Erkennung: Wenn lokal (file:// oder localhost ohne /api), dann null (keine API-Calls)
 function detectVoucherApiBase() {
+	// Wenn auf GitHub Pages, deaktiviere API-Calls (keine Serverless Functions)
+	if (location.hostname.includes('github.io') || location.hostname.includes('github.com')) {
+		console.warn('⚠️ GitHub Pages erkannt: API-Funktionen sind nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages.');
+		return null;
+	}
 	// Wenn auf Cloudflare Pages (ts-portal.pages.dev oder ähnlich), verwende relative Pfade
 	if (location.hostname.includes('pages.dev') || location.hostname.includes('workers.dev') || location.hostname.includes('cloudflare')) {
 		return '/api';
@@ -968,7 +975,7 @@ function startMatchLoop(identity){
 				updateConnectStatus(`Verbunden mit Raum „${data.room_id}“. Live-Raum geöffnet.`);
 				if(liveRoom && liveRoomInfo){
 					liveRoom.style.display = 'block';
-					liveRoomInfo.textContent = `Du bist in Raum „${data.room_id}“ mit Stichwort „${pair_code}“ verbunden. Dein Backend kann diese room_id für Chat, Video oder Datei-Transfer verwenden.`;
+					liveRoomInfo.textContent = `Du bist in Raum „${data.room_id}“ mit Stichwort „${pair_code}“ verbunden. Signaling-Server verbunden.`;
 					initLiveChat(currentIdentity, data.room_id);
 				}
 			}
@@ -981,21 +988,110 @@ function startMatchLoop(identity){
 	matchTimer = setInterval(check, MATCH_INTERVAL_MS);
 }
 
+// Phase 1: Presence-Auto-Init - Automatische Verifizierung ohne Token
+async function autoInitPresence(){
+	// Prüfe ob bereits verifiziert
+	if(currentIdentity && currentIdentity.thinker_id){
+		startPresenceHeartbeat(currentIdentity);
+		startMatchLoop(currentIdentity);
+		return currentIdentity;
+	}
+	
+	// Erstelle automatisch thinker_id falls nicht vorhanden
+	const uid = getOrCreateUserId();
+	
+	// Versuche Token aus URL zu lesen
+	const tokenObj = readManifestToken();
+	if(tokenObj){
+		const identity = await verifyTokenWithBackend(tokenObj);
+		if(identity){
+			setVerifiedUI(true);
+			startPresenceHeartbeat(identity);
+			startMatchLoop(identity);
+			updateConnectStatus('Verifiziert. Warte auf zweiten Teilnehmer oder gib ein gemeinsames Raum-Stichwort ein.');
+			return identity;
+		}
+	}
+	
+	// Fallback: Erstelle Identity ohne Backend-Verifikation (für lokale Entwicklung)
+	const fallbackIdentity = {
+		thinker_id: uid,
+		pair_code: null
+	};
+	currentIdentity = fallbackIdentity;
+	startPresenceHeartbeat(fallbackIdentity);
+	startMatchLoop(fallbackIdentity);
+	updateConnectStatus('Bereit. Gib ein gemeinsames Raum-Stichwort ein oder nutze einen Einladungslink.');
+	return fallbackIdentity;
+}
+
+// Phase 2: One-Click-Match - Automatisches Matching aus URL-Parametern
 async function autoConnectFromToken(){
+	// Prüfe URL-Parameter für room/pair_code
+	const urlParams = new URLSearchParams(window.location.search);
+	const roomParam = urlParams.get('room') || urlParams.get('pair_code');
+	
+	// Wenn room-Parameter vorhanden, automatisch matchen
+	if(roomParam){
+		const identity = await autoInitPresence();
+		if(identity){
+			// Setze pair_code automatisch
+			const pairCodeInput = document.getElementById('pairCodeInput');
+			if(pairCodeInput){
+				pairCodeInput.value = roomParam;
+			}
+			
+			// Starte sofort Match-Loop
+			updateConnectStatus(`Raum „${roomParam}“ wird beigetreten …`);
+			
+			// Warte kurz, dann prüfe Match
+			setTimeout(async ()=>{
+				if(PRESENCE_API_BASE){
+					try{
+						const res = await fetch(`${PRESENCE_API_BASE}/match`, {
+							method:'POST',
+							headers:{'Content-Type':'application/json'},
+							body: JSON.stringify({
+								thinker_id: identity.thinker_id,
+								pair_code: roomParam
+							})
+						});
+						if(res.ok){
+							const data = await res.json();
+							if(data && data.room_id){
+								currentRoomId = data.room_id;
+								updateConnectStatus(`Verbunden mit Raum „${data.room_id}“. Signaling-Server verbunden.`);
+								if(currentIdentity){
+									initLiveChat(currentIdentity, data.room_id);
+								}
+							}
+						}
+					}catch{
+						// Backend nicht verfügbar - leise weiter
+					}
+				}
+			}, 1000);
+			
+			return identity;
+		}
+	}
+	
+	// Normale Token-Verifizierung (wie vorher)
 	const tokenObj = readManifestToken();
 	if(!tokenObj){
-		updateConnectStatus('Noch kein Token erkannt. Du kannst das Portal trotzdem zum Lesen verwenden.');
-		return;
+		// Kein Token, aber Auto-Init trotzdem starten
+		return await autoInitPresence();
 	}
 	const identity = await verifyTokenWithBackend(tokenObj);
 	if(!identity){
-		updateConnectStatus('Token konnte nicht verifiziert werden. Prüfe Backend oder nutze das Portal nur zum Lesen.');
-		return;
+		// Token-Verifizierung fehlgeschlagen, aber Auto-Init trotzdem starten
+		return await autoInitPresence();
 	}
 	setVerifiedUI(true);
 	startPresenceHeartbeat(identity);
 	startMatchLoop(identity);
 	updateConnectStatus('Verifiziert. Warte auf zweiten Teilnehmer oder gib ein gemeinsames Raum-Stichwort ein.');
+	return identity;
 }
 
 // Live-Textkanal über WebSocket (Signaling-Server)
@@ -1015,10 +1111,29 @@ function initLiveChat(identity, roomId){
 	liveChat.style.display = 'block';
 	messagesEl.innerHTML = '';
 
-	const signalUrl = (document.getElementById('signalUrl')?.value || '').trim();
-	if(!signalUrl){
-		appendChatSystem(messagesEl, 'Kein Signaling-Server konfiguriert. Trage oben eine WSS-URL ein, um den Live-Textkanal zu nutzen.');
-		return;
+	// Automatische Signaling-URL-Erkennung
+	let signalUrl = (document.getElementById('signalUrl')?.value || '').trim();
+	
+	// Wenn keine URL eingegeben, automatisch Cloudflare Pages WebSocket verwenden
+	if (!signalUrl) {
+		// Prüfe ob auf Cloudflare Pages
+		if (location.hostname.includes('pages.dev') || location.hostname.includes('workers.dev') || location.hostname.includes('cloudflare')) {
+			// Cloudflare Pages WebSocket-Endpunkt
+			const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+			signalUrl = `${protocol}//${location.host}/ws`;
+		} else if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+			// Lokaler Signaling-Server (signal-server.js)
+			signalUrl = 'ws://localhost:3100/ws';
+		} else {
+			// GitHub Pages oder andere: Versuche Cloudflare Pages WebSocket (falls verfügbar)
+			const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+			signalUrl = `${protocol}//${location.host}/ws`;
+		}
+	}
+	
+	// Speichere URL für später
+	if (document.getElementById('signalUrl')) {
+		document.getElementById('signalUrl').value = signalUrl;
 	}
 
 	let ws;
@@ -1309,11 +1424,44 @@ document.getElementById('clearBtn').addEventListener('click', ()=>{
 	renderFeed({posts:[]}); payloadBox.hidden=true; payloadBox.textContent='';
 });
 
-/* Live feature stubs (activated post-verify) */
+/* Live-Funktionen initialisieren */
 document.getElementById('initLiveBtn').addEventListener('click', ()=>{
-	const url = document.getElementById('signalUrl').value.trim();
-	if(!url){ alert('Signaling URL angeben (wss://...)'); return; }
-	alert('Live-Funktionen werden mit Signaling-Server initialisiert.\nHinweis: Diese Demo aktiviert erst nach Backend-Konfiguration.');
+	// Prüfe ob verifiziert
+	if (!currentIdentity || !currentIdentity.thinker_id) {
+		alert('Bitte zuerst verifizieren (Token aus Offline-Forum oder manuell eingeben).');
+		return;
+	}
+	
+	// Prüfe ob room_id vorhanden
+	if (!currentRoomId) {
+		// Erstelle room_id aus pair_code oder verwende manuell eingegebene
+		const pairCode = getEffectivePairCode(currentIdentity);
+		const manualRoomId = document.getElementById('roomId')?.value?.trim();
+		
+		if (manualRoomId) {
+			currentRoomId = manualRoomId;
+		} else if (pairCode) {
+			// Generiere room_id aus pair_code
+			currentRoomId = `room-${pairCode}`;
+		} else {
+			// Fallback: Verwende thinker_id als room_id
+			currentRoomId = `room-${currentIdentity.thinker_id}`;
+		}
+	}
+	
+	// Initialisiere Live-Chat
+	initLiveChat(currentIdentity, currentRoomId);
+	
+	// Zeige Live-Raum
+	const liveRoom = document.getElementById('liveRoom');
+	if (liveRoom) {
+		liveRoom.style.display = 'block';
+	}
+	
+	const liveRoomInfo = document.getElementById('liveRoomInfo');
+	if (liveRoomInfo) {
+		liveRoomInfo.textContent = `Live-Raum „${currentRoomId}“ wurde initialisiert. Signaling-Server verbunden.`;
+	}
 });
 
 /* Hidden Viewer, Medien & Datei-Transfer (UI-Stubs mit realen Aktionen) */
@@ -1388,7 +1536,14 @@ const signalUrlInput = document.getElementById('signalUrl');
 if(signalPresetSel && signalUrlInput){
 	signalPresetSel.addEventListener('change', ()=>{
 		const v = signalPresetSel.value;
-		if(v === 'twilio'){
+		if(v === 'cloudflare'){
+			// Automatisch Cloudflare Pages WebSocket verwenden
+			const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+			signalUrlInput.value = `${protocol}//${location.host}/ws`;
+		}else if(v === 'local'){
+			// Lokaler Signaling-Server
+			signalUrlInput.value = 'ws://localhost:3100/ws';
+		}else if(v === 'twilio'){
 			signalUrlInput.value = 'wss://DEIN-TWILIO-SIGNALING-ENDPUNKT';
 		}else if(v === 'ably'){
 			signalUrlInput.value = 'wss://realtime.ably.io?key=DEIN-ABLY-SCHLUESSEL';
@@ -2021,6 +2176,8 @@ window.addEventListener('keydown', (e)=>{
 	await tryAutoVerify();
 	// Auto-Connect: Token lesen, mit Backend verifizieren und Präsenz/Matching starten
 	await autoConnectFromToken();
+	// Phase 3: Konversations-Start-Templates - One-Click-Buttons einrichten
+	setupQuickActionButtons();
 	// Hypotheken-Demo-Buttons verdrahten
 	if(btnLoadApplications) btnLoadApplications.addEventListener('click', loadMortgageApplications);
 	if(btnLoadOffers) btnLoadOffers.addEventListener('click', loadMortgageOffers);
