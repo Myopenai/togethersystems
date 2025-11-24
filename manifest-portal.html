@@ -1236,9 +1236,20 @@ function initLiveChat(identity, roomId){
 		liveSocket = ws;
 	}catch(err){
 		appendChatSystem(messagesEl, 'Verbindung zum Signaling-Server fehlgeschlagen: '+(err?.message||String(err)));
+		// Auf GitHub Pages: Zeige hilfreiche Meldung
+		if(location.hostname.includes('github.io') || location.hostname.includes('github.com')){
+			appendChatSystem(messagesEl, '💡 Tipp: Für Live-Chat-Funktionalität deploye auf Cloudflare Pages.');
+		}
 		return;
 	}
-
+	
+	// WebSocket Error-Handler für GitHub Pages
+	ws.addEventListener('error', ()=>{
+		if(location.hostname.includes('github.io') || location.hostname.includes('github.com')){
+			appendChatSystem(messagesEl, '⚠️ WebSocket-Verbindung fehlgeschlagen. GitHub Pages unterstützt keine WebSocket-Verbindungen.');
+		}
+	});
+	
 	ws.addEventListener('open', ()=>{
 		appendChatSystem(messagesEl, `Verbindung zum Signaling-Server hergestellt. Raum „${roomId}“ wird beigetreten …`);
 		ws.send(JSON.stringify({
