@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Wabenräume – TogetherSystems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root{
+      --bg:#050816;
+      --fg:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#38bdf8;
+      --accent-soft:rgba(56,189,248,.15);
+      --border:#1f2937;
+      --danger:#f97373;
+      --card:#020617;
+      --shadow:0 18px 45px rgba(15,23,42,.8);
+      --font: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,sans-serif;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:var(--font);
+      background:radial-gradient(circle at top,#0f172a 0,#020617 55%,#000 100%);
+      color:var(--fg);
+      -webkit-font-smoothing:antialiased;
+    }
+    .ts-brand-banner{
+      background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+      color:#e5e7eb;
+      padding:4px 12px;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong{font-weight:600;}
+    .ts-brand-sub{opacity:.78; display:block;}
+    .ts-brand-links a{
+      color:#a5b4fc;
+      text-decoration:none;
+      font-size:11px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+    .ts-brand-links a:hover{text-decoration:underline;}
+    main{
+      max-width:1100px;
+      margin:14px auto 40px;
+      padding:0 16px 40px;
+    }
+    header h1{
+      margin:0 0 4px;
+      font-size:1.45rem;
+      letter-spacing:.03em;
+    }
+    header p{
+      margin:0;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+    .layout{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:minmax(0,2.1fr) minmax(0,1.1fr);
+      gap:18px;
+    }
+    @media (max-width:860px){
+      .layout{grid-template-columns:1fr;}
+    }
+    .card{
+      background:linear-gradient(145deg,rgba(15,23,42,.98),rgba(15,23,42,.92));
+      border-radius:18px;
+      padding:14px 14px 16px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(148,163,184,.35);
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size:1.05rem;
+    }
+    .card p{
+      margin:0 0 6px;
+      font-size:.85rem;
+      color:var(--muted);
+    }
+    .honeycomb{
+      position:relative;
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:6px;
+      padding:8px 4px 4px;
+    }
+    @media (max-width:640px){
+      .honeycomb{grid-template-columns:repeat(4,1fr);}
+    }
+    .cell{
+      position:relative;
+      padding-top:115%; /* hex ratio */
+      cursor:pointer;
+      filter:drop-shadow(0 6px 10px rgba(15,23,42,.9));
+      transition:transform .12s ease-out, filter .12s ease-out;
+    }
+    .cell-inner{
+      position:absolute;
+      inset:10%;
+      background:radial-gradient(circle at 30% 0,#38bdf8 0,rgba(56,189,248,.05) 40%,rgba(15,23,42,1) 90%);
+      clip-path:polygon(25% 3%,75% 3%,97% 50%,75% 97%,25% 97%,3% 50%);
+      border:1px solid rgba(148,163,184,.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:4px;
+      text-align:center;
+      overflow:hidden;
+    }
+    .cell-image{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:0.4;
+      transition:opacity 0.3s;
+      z-index:0;
+    }
+    .cell-image.active{
+      opacity:0.6;
+    }
+    .cell-label{
+      font-size:.7rem;
+      line-height:1.15;
+      position:relative;
+      z-index:1;
+      text-shadow:0 1px 3px rgba(0,0,0,0.8);
+      color:#fff;
+    }
+    .cell.free .cell-inner{
+      background:radial-gradient(circle at 30% 0,#22c55e 0,rgba(34,197,94,.16) 45%,#020617 95%);
+      border-color:rgba(74,222,128,.9);
+    }
+    .cell.reserved .cell-inner{
+      background:radial-gradient(circle at 20% 0,#38bdf8 0,rgba(56,189,248,.18) 45%,#020617 95%);
+      border-color:rgba(129,140,248,.9);
+    }
+    .cell.focused .cell-inner{
+      box-shadow:0 0 0 2px rgba(129,140,248,.9);
+    }
+    .cell:hover{
+      transform:translateY(-1px) scale(1.01);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:2px 7px;
+      border-radius:999px;
+      font-size:.68rem;
+      border:1px solid rgba(148,163,184,.55);
+      background:rgba(15,23,42,.9);
+      color:var(--muted);
+      margin-right:4px;
+    }
+    .pill-dot{
+      width:6px;
+      height:6px;
+      border-radius:999px;
+      background:#22c55e;
+    }
+    .pill-dot.busy{background:#f97316;}
+    .pill-dot.multi{background:#38bdf8;}
+    label{
+      display:block;
+      font-size:.8rem;
+      margin:6px 0 2px;
+      color:var(--muted);
+    }
+    input, select, button, textarea{
+      font:inherit;
+    }
+    input[type="text"]{
+      width:100%;
+      padding:6px 7px;
+      border-radius:9px;
+      border:1px solid rgba(75,85,99,.8);
+      background:#020617;
+      color:var(--fg);
+    }
+    input[type="text"]:focus{
+      outline:none;
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(56,189,248,.7);
+    }
+    button{
+      border:none;
+      border-radius:999px;
+      padding:6px 11px;
+      margin-top:8px;
+      font-size:.8rem;
+      background:radial-gradient(circle at 0 0,#38bdf8,#0ea5e9);
+      color:#0b1120;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow:0 10px 22px rgba(8,47,73,.7);
+    }
+    button.secondary{
+      background:transparent;
+      color:var(--muted);
+      border-radius:999px;
+      border:1px dashed rgba(148,163,184,.6);
+      box-shadow:none;
+      margin-left:6px;
+    }
+    button:active{
+      transform:translateY(1px);
+      box-shadow:0 4px 12px rgba(15,23,42,.9);
+    }
+    .status-line{
+      font-size:.78rem;
+      color:var(--muted);
+      margin-top:6px;
+    }
+    .status-line strong{color:#e5e7eb;}
+    .explain-list{
+      padding-left:18px;
+      margin:7px 0 0;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+    .explain-list li{
+      margin:2px 0;
+    }
+    .legal-note{
+      font-size:.7rem;
+      color:var(--muted);
+      margin-top:10px;
+    }
+    .legal-note a{color:#a5b4fc;}
+    .tiny{
+      font-size:.62rem;
+      color:var(--muted);
+      margin-top:10px;
+    }
+    /* Bildkarussell für Räume */
+    .room-image-carousel{
+      margin-top:18px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      background:var(--card);
+    }
+    .carousel-wrapper{
+      position:relative;
+      width:100%;
+      padding-top:56.25%; /* 16:9 Aspect Ratio */
+      overflow:hidden;
+    }
+    .carousel-image{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:0;
+      transition:opacity 1s ease-in-out;
+    }
+    .carousel-image.active{
+      opacity:1;
+    }
+    .carousel-overlay{
+      position:absolute;
+      bottom:0;
+      left:0;
+      right:0;
+      height:40%;
+      background:linear-gradient(to top, rgba(2,6,23,0.9), transparent);
+      pointer-events:none;
+    }
+    .carousel-controls{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      padding:0 12px;
+      pointer-events:none;
+    }
+    .carousel-btn{
+      pointer-events:auto;
+      background:rgba(15,23,42,0.8);
+      border:1px solid var(--border);
+      color:var(--fg);
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size:20px;
+      font-weight:bold;
+      transition:all 0.2s;
+    }
+    .carousel-btn:hover{
+      background:rgba(56,189,248,0.2);
+      border-color:var(--accent);
+    }
+    .carousel-indicators{
+      position:absolute;
+      bottom:12px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:6px;
+      pointer-events:none;
+    }
+    .indicator-dot{
+      pointer-events:auto;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:rgba(148,163,184,0.4);
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    .indicator-dot.active{
+      background:var(--accent);
+      width:24px;
+      border-radius:4px;
+    }
+    .indicator-dot:hover{
+      background:rgba(56,189,248,0.6);
+    }
+    /* Farbsplashes für Räume */
+    .cell[data-room-color]{
+      position:relative;
+    }
+    .cell[data-room-color]::before{
+      content:'';
+      position:absolute;
+      inset:-15%;
+      background:var(--room-color-splash, transparent);
+      opacity:0.5;
+      border-radius:50%;
+      filter:blur(25px);
+      z-index:-1;
+      transition:opacity 0.3s, transform 0.3s;
+      transform:scale(1.1);
+    }
+    .cell.focused[data-room-color]::before{
+      opacity:0.7;
+      transform:scale(1.2);
+    }
+    .cell:hover[data-room-color]::before{
+      opacity:0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./help-portal.html">Portal-Hilfe</a>
+      <a href="./manifest-forum.html">Manifest</a>
+      <a href="./help-manifest.html">Manifest-Hilfe</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./help-online-portal.html">Online-Portal-Hilfe</a>
+      <a href="./honeycomb.html">Wabenräume</a>
+      <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
+      <a href="./legal-hub.html">Legal-Hub</a>
+      <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="./TELBANK/index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 TPGA Telbank</a>
+      <a href="./business-admin.html" title="Business-Admin – Vouchers & Buchungen">📊 Business-Admin</a>
+      <a href="./admin-monitoring.html" title="Monitoring & Events">📈 Monitoring</a>
+      <a href="./TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
+      <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
+      <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
+    </div>
+  </div>
+  <main>
+    <header>
+      <h1>Wabenräume</h1>
+      <p>
+        Hier entstehen Kommunikationsräume automatisch in Waben. 
+        Nutzer müssen keine Nummern oder komplizierten Codes kennen – eine Wabe anklicken reicht.
+      </p>
+    </header>
+
+    <div class="layout">
+      <section class="card">
+        <h2>Wabenübersicht</h2>
+        <p>Jede Wabe kann von einer oder mehreren Personen genutzt werden. Grün = frei, Blau = bereits reserviert.</p>
+        <div class="honeycomb" id="honeycomb"></div>
+        <div class="status-line" id="statusLine"></div>
+      </section>
+
+      <aside class="card">
+        <h2>Aktuelle Auswahl</h2>
+        <p id="currentCell">Noch keine Wabe gewählt. Klicke links auf eine Wabe, um sie zu markieren.</p>
+
+        <!-- Bildkarussell für Raum -->
+        <div id="roomCarouselContainer"></div>
+
+        <label for="displayName">Dein Name oder Kürzel (optional, für die lokale Anzeige)</label>
+        <input id="displayName" type="text" placeholder="z.B. T,., Alex, Team A">
+
+        <button id="reserveBtn">Wabe für mich markieren</button>
+        <button id="freeBtn" class="secondary">Markierung wieder freigeben</button>
+
+        <p class="status-line" id="roomUrl"></p>
+
+        <h2>Wie funktioniert das?</h2>
+        <ul class="explain-list">
+          <li>Das System erzeugt automatisch ein Wabengitter (wie ein Bienenstock).</li>
+          <li>Jede Wabe hat eine einfache Kennung (z.B. A-1, B-3). Der Benutzer muss sie sich nicht merken – der Link kann geteilt werden.</li>
+          <li>Wer dieselbe Wabe öffnet, befindet sich im selben Kommunikationsraum.</li>
+          <li>Mehrere Nutzer können die gleiche Wabe nutzen – für schnelle Verabredungen und Mikro-Räume.</li>
+        </ul>
+
+        <p class="legal-note">
+          Technisch werden die Waben lokal im Browser gespeichert (<code>localStorage.honeycomb_v1</code>). 
+          Für echte Live-Kommunikation (Video, Chat, etc.) kann später ein eigener TogetherSystems-Hub oder ein externer Signaling-Server angebunden werden.
+        </p>
+
+        <p class="tiny">
+          Branding: T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) 
+          <a href="https://orcid.org/0009-0003-1328-2430" target="_blank" rel="noreferrer noopener">ORCID</a>
+        </p>
+        <p class="tiny">
+          <span class="pill">
+            💠
+            <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget"
+               target="_blank" rel="noreferrer noopener">
+              Freie Wabenräume als Pfeiler mit 5–33.000&nbsp;€ stützen
+            </a>
+          </span>
+          <br>
+          <span class="pill">
+            🏛️
+            <a href="https://www.tinyurl.com/bugcompany"
+               target="_blank" rel="noreferrer noopener">
+              Firmen &amp; Stiftungen: Funk‑Infrastruktur mitfinanzieren
+            </a>
+          </span>
+        </p>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="./autofix-client.js"></script>
+  <script type="module" src="./room-image-carousel.js"></script>
+  <script type="module">
+  import { getOrCreateUserId, parseHashParams } from './mot-core.js';
+  import { initRoomImageCarousel } from './room-image-carousel.js';
+
+  (function(){
+    const STORAGE_KEY = 'honeycomb_v1';
+    const GRID_COLUMNS = 6;
+    const GRID_ROWS = 6;
+
+    function loadModel(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return null;
+        return JSON.parse(raw);
+      }catch(e){
+        console.warn('Konnte Wabenmodell nicht lesen', e);
+        return null;
+      }
+    }
+    function saveModel(model){
+      try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(model));
+      }catch(e){
+        console.warn('Konnte Wabenmodell nicht speichern', e);
+      }
+    }
+
+    function createDefaultModel(){
+      const cells = [];
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let idCounter = 1;
+      for(let r=0;r<GRID_ROWS;r++){
+        for(let c=0;c<GRID_COLUMNS;c++){
+          const label = letters[r] + '-' + (c+1);
+          cells.push({
+            id: 'cell-' + idCounter++,
+            label,
+            reservedBy: null,
+            createdAt: Date.now()
+          });
+        }
+      }
+      return { version:1, cells };
+    }
+
+    const model = loadModel() || createDefaultModel();
+    saveModel(model);
+
+    const honeycombEl = document.getElementById('honeycomb');
+    const statusLine = document.getElementById('statusLine');
+    const currentCellEl = document.getElementById('currentCell');
+    const roomUrlEl = document.getElementById('roomUrl');
+    const reserveBtn = document.getElementById('reserveBtn');
+    const freeBtn = document.getElementById('freeBtn');
+    const nameInput = document.getElementById('displayName');
+
+    let focusedId = null;
+    
+    // Farbsplash-Generierung
+    function generateRoomColorSplash(cellId) {
+      // Generiere konsistente Farbe basierend auf Zell-ID
+      const hash = cellId.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      const hue = Math.abs(hash) % 360;
+      return `radial-gradient(circle, hsl(${hue}, 70%, 50%), transparent 70%)`;
+    }
+
+    function buildRoomUrl(cell){
+      const url = new URL(window.location.href);
+      const uid = getOrCreateUserId();
+      url.hash = '#wabe=' + encodeURIComponent(cell.id) + '&uid=' + encodeURIComponent(uid);
+      return url.toString();
+    }
+
+    function render(){
+      const cells = model.cells;
+      honeycombEl.innerHTML = '';
+      let reservedCount = 0;
+      cells.forEach(cell =>{
+        if(cell.reservedBy) reservedCount++;
+        const cellEl = document.createElement('div');
+        cellEl.className = 'cell ' + (cell.reservedBy ? 'reserved' : 'free') + (cell.id===focusedId ? ' focused':'');
+        cellEl.dataset.id = cell.id;
+
+        const inner = document.createElement('div');
+        inner.className = 'cell-inner';
+
+        // Bild für diese Zelle (aus Karussell-Pool)
+        const cellImage = document.createElement('img');
+        cellImage.className = 'cell-image';
+        cellImage.alt = `Raum ${cell.label}`;
+        // Zufälliges Bild basierend auf Zell-ID (konsistent)
+        const imageIndex = Math.abs(cell.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 8;
+        const imageUrl = `https://source.unsplash.com/400x400/?nature,landscape&sig=${imageIndex}`;
+        cellImage.src = imageUrl;
+        cellImage.loading = 'lazy';
+        inner.appendChild(cellImage);
+
+        const label = document.createElement('div');
+        label.className = 'cell-label';
+        label.innerHTML = '<strong>' + cell.label + '</strong><br>' + (cell.reservedBy ? cell.reservedBy : 'frei');
+
+        inner.appendChild(label);
+        cellEl.appendChild(inner);
+        
+        // Farbsplash für diese Zelle generieren
+        const splashColor = generateRoomColorSplash(cell.id);
+        cellEl.setAttribute('data-room-color', cell.id);
+        cellEl.style.setProperty('--room-color-splash', splashColor);
+        
+        // Bildwechsel alle 10 Sekunden (Karussell-Effekt)
+        setInterval(() => {
+          const newIndex = (imageIndex + Math.floor(Date.now() / 10000)) % 8;
+          const newUrl = `https://source.unsplash.com/400x400/?nature,landscape&sig=${newIndex}`;
+          cellImage.src = newUrl;
+        }, 10000);
+
+        cellEl.addEventListener('click', ()=>{
+          focusedId = cell.id;
+          updateSidePanel(cell);
+          render();
+        });
+
+        honeycombEl.appendChild(cellEl);
+      });
+
+      const freeCount = model.cells.length - reservedCount;
+      statusLine.innerHTML = '<span class="pill"><span class="pill-dot"></span>frei: ' + freeCount + '</span>'
+        + '<span class="pill"><span class="pill-dot busy"></span>belegt: ' + reservedCount + '</span>'
+        + '<span class="pill"><span class="pill-dot multi"></span>gesamt: ' + model.cells.length + '</span>';
+    }
+
+    function updateSidePanel(cell){
+      if(!cell){
+        currentCellEl.textContent = 'Noch keine Wabe gewählt. Klicke links auf eine Wabe, um sie zu markieren.';
+        roomUrlEl.textContent = '';
+        return;
+      }
+      currentCellEl.textContent = 'Aktuelle Wabe: ' + cell.label + (cell.reservedBy ? ' – reserviert von: ' + cell.reservedBy : ' (noch frei)');
+      const link = buildRoomUrl(cell);
+      roomUrlEl.innerHTML = '<strong>Teile diesen Link</strong>, damit andere in dieselbe Wabe kommen:<br><code style="word-break:break-all;">' + link + '</code>';
+    }
+
+    reserveBtn.addEventListener('click', ()=>{
+      if(!focusedId){
+        alert('Bitte zuerst eine Wabe auswählen.');
+        return;
+      }
+      const name = nameInput.value.trim() || 'unbenannter User';
+      const cell = model.cells.find(c=>c.id===focusedId);
+      if(!cell) return;
+      cell.reservedBy = name;
+      saveModel(model);
+      updateSidePanel(cell);
+      render();
+    });
+
+    freeBtn.addEventListener('click', ()=>{
+      if(!focusedId){
+        alert('Bitte zuerst eine Wabe auswählen.');
+        return;
+      }
+      const cell = model.cells.find(c=>c.id===focusedId);
+      if(!cell) return;
+      cell.reservedBy = null;
+      saveModel(model);
+      updateSidePanel(cell);
+      render();
+    });
+
+    // Falls eine Wabe über die URL übergeben wurde (#wabe=... [&uid=...])
+    (function hydrateFromHash(){
+      const params = parseHashParams();
+      const id = params.wabe ? decodeURIComponent(params.wabe) : null;
+      if(!id) return;
+      const cell = model.cells.find(c=>c.id===id);
+      if(cell){
+        focusedId = cell.id;
+        updateSidePanel(cell);
+      }
+    })();
+
+    // Sofort rendern, damit Tests die .cell Elemente finden
+    render();
+    
+    // Bildkarussell initialisieren
+    initRoomImageCarousel('#roomCarouselContainer');
+  })();
+  </script>
+</body>
+</html>

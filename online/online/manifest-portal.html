@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manifest of Thinkers – Portal</title>
+<style>
+:root{
+	--bg:#0f1419;
+	--card:#111827;
+	--ink:#e5e7eb;
+	--muted:#9ca3af;
+	--accent:#10b981;
+	--accent-2:#f59e0b;
+	--border:#1f2937;
+	--radius:14px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+	margin:0;background:linear-gradient(180deg,#0b0f14,#0f1419 50%,#0b0f14);
+	color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,Oxygen,Cantarell,"Helvetica Neue",Arial,sans-serif;
+}
+.wr{max-width:1200px;margin:0 auto;padding:18px}
+.hero{
+	border-radius:22px;padding:20px;border:1px solid var(--border);
+	background:
+		radial-gradient(600px 200px at 10% 0%,#10b98122,transparent 60%),
+		radial-gradient(600px 200px at 90% 0%,#f59e0b22,transparent 60%),
+		var(--card);
+}
+.header{display:flex;align-items:center;gap:14px}
+.badge{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#00110b;font-weight:800}
+h1{margin:0;font-size:22px}
+.sub{color:var(--muted);font-size:13px}
+.grid{display:grid;gap:18px;grid-template-columns:1.2fr .8fr;margin-top:18px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.pad{padding:16px}
+.title{font-size:14px;color:#d1d5db;margin:0 0 8px}
+.btn{background:var(--accent);color:#00110b;border:none;border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer}
+.btn.alt{background:#1f2937;color:#e5e7eb;border:1px solid var(--border)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input[type="file"]{display:none}
+input[type="url"], input[type="text"]{
+	width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0b0f14;color:var(--ink)
+}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--border);border-radius:999px;padding:6px 10px;background:#0b0f14;color:#d1d5db;font-size:12px}
+.feed{padding:0}
+.entry{padding:16px;border-top:1px solid var(--border)}
+.entry:first-child{border-top:none}
+.entry h3{margin:0 0 6px;font-size:18px}
+.meta{color:var(--muted);font-size:12px}
+.reactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.reaction{border:1px solid var(--border);border-radius:999px;padding:6px 10px;background:#0b0f14}
+.comment{margin-top:8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#0b0f14}
+.muted{color:var(--muted);font-size:12px}
+.kbd{background:#0b0f14;border:1px solid var(--border);border-bottom-width:2px;padding:8px 10px;border-radius:10px;color:#d1d5db;white-space:pre-wrap;max-height:260px;overflow:auto}
+.grid-2{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.warn{color:#fbbf24}
+.ok{color:#34d399}
+
+/* Public copy-protection (soft) */
+.public-view .content{user-select:none;-webkit-user-select:none}
+.public-view *{ -webkit-touch-callout:none }
+/* Harder attempts */
+body.public-view{ --cursor: not-allowed }
+.public-view .content::selection { background: transparent }
+</style>
+</head>
+<body class="public-view">
+	<div class="wr">
+		<div class="hero">
+			<div class="header">
+				<div class="badge">MoT</div>
+				<div>
+					<h1>Manifest of Thinkers – Portal</h1>
+					<div class="sub">Öffentliche Ansicht (nur lesen) · Verifizierte Nutzer schalten Live-Funktionen frei</div>
+				</div>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<span class="pill" title="Nur verifizierte Nutzer mit Offline-Datei">Zugang: eingeschränkt</span>
+				<span class="pill">Multilingual</span>
+				<span class="pill">Business & Teams</span>
+				<span class="pill">Kontrakte & Transfer</span>
+			</div>
+		</div>
+
+		<div class="grid" style="margin-top:18px">
+			<main class="panel feed" id="feed"></main>
+			<aside class="panel">
+				<div class="pad">
+					<h3 class="title">Verifizierung (nur Offline-Forum-Nutzer)</h3>
+					<div class="grid-2">
+						<input id="token" type="text" placeholder="Token aus Offline-Forum (automatisch via Link)">
+						<button class="btn" id="verifyBtn">Verifizieren</button>
+					</div>
+					<p class="muted">Wenn du das Offline-Forum nutzt und über „Portal öffnen“ kommst, wird der Token automatisch im Link übergeben. Manuell kannst du ihn hier einfügen.</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="title">Daten laden</h3>
+					<div class="row">
+						<label for="jsonFile" class="btn alt" style="cursor:pointer">JSON importieren</label>
+						<input id="jsonFile" type="file" accept="application/json">
+						<button class="btn alt" id="payloadBtn">Payload anzeigen</button>
+					</div>
+					<p class="muted">Für Live-Betrieb kann hier eine API-Quelle konfiguriert werden.</p>
+					<div style="margin-top:10px">
+						<input id="apiUrl" type="url" placeholder="https://deine-seite.tld/api/manifest/list">
+						<div class="row" style="margin-top:8px">
+							<button class="btn" id="fetchBtn">Von API laden</button>
+							<button class="btn alt" id="clearBtn">Feed leeren</button>
+						</div>
+					</div>
+					<pre class="kbd" id="payloadBox" hidden></pre>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="title">Live-Funktionen (für verifizierte Nutzer)</h3>
+					<ul class="muted" id="liveList" style="margin:0 0 8px 16px">
+						<li>Video-Chat Räume (Signaling URL konfigurierbar)</li>
+						<li>Text-Chat</li>
+						<li>Datei-Transfer mit Freigabe</li>
+						<li>Signierte Kontrakte (Upload/Download)</li>
+					</ul>
+					<div class="row">
+						<input id="signalUrl" type="url" placeholder="wss://signaling.deine-seite.tld (optional)">
+						<button class="btn alt" id="initLiveBtn" disabled>Live initialisieren</button>
+					</div>
+					<p class="muted">Sobald verifiziert und Signaling konfiguriert ist, werden Live-Funktionen aktiviert.</p>
+				</div>
+			</aside>
+		</div>
+	</div>
+
+<script>
+const REACTIONS = [
+	{key:'like', label:'Gefällt mir'},
+	{key:'celebrate', label:'Gefeliciteerd'},
+	{key:'support', label:'Stützen'},
+	{key:'love', label:'Gewaltig'},
+	{key:'insightful', label:'Verheldernd'},
+	{key:'curious', label:'Interessant'},
+	{key:'entertainment', label:'Rappig'}
+];
+
+/* Access control: public vs verified
+   Offline-App will open portal with URL hash: #mot=TOKEN&ts=...&sig=...
+   Portal verifies HMAC-SHA256(sig) over `${TOKEN}.${ts}` with shared secret name "MOT_ACCESS_TOKEN".
+*/
+const TOKEN_PARAM = 'mot';
+const SIG_PARAM = 'sig';
+const TS_PARAM = 'ts';
+// Shared secret name used by offline file; here we verify with the token itself as HMAC key.
+function parseHashParams(){
+	const h = location.hash.startsWith('#')? location.hash.slice(1) : location.hash;
+	const q = new URLSearchParams(h);
+	return {
+		token: q.get(TOKEN_PARAM)||'',
+		sig: q.get(SIG_PARAM)||'',
+		ts: q.get(TS_PARAM)||''
+	};
+}
+async function hmacSHA256Hex(key, data){
+	const enc = new TextEncoder();
+	const cryptoKey = await crypto.subtle.importKey('raw', enc.encode(key), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+	const sig = await crypto.subtle.sign('HMAC', cryptoKey, enc.encode(data));
+	return [...new Uint8Array(sig)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function setVerifiedUI(on){
+	document.body.classList.toggle('public-view', !on);
+	document.getElementById('initLiveBtn').disabled = !on;
+}
+async function tryAutoVerify(){
+	const p = parseHashParams();
+	if(!p.token || !p.sig || !p.ts) return false;
+	// Freshness check (5 minutes)
+	const skew = Math.abs(Date.now() - Number(p.ts));
+	if(!Number.isFinite(skew) || skew > 5*60*1000) return false;
+	const data = `${p.token}.${p.ts}`;
+	const expect = await hmacSHA256Hex(p.token, data);
+	if (expect === p.sig){
+		setVerifiedUI(true);
+		document.getElementById('token').value = p.token;
+		return true;
+	}
+	return false;
+}
+document.getElementById('verifyBtn').addEventListener('click', async ()=>{
+	const t = document.getElementById('token').value.trim();
+	if(!t) return alert('Token eingeben.');
+	// Manual verify = enable features (shared secret possession)
+	setVerifiedUI(true);
+});
+
+/* Feed rendering */
+const feed = document.getElementById('feed');
+function renderFeed(db){
+	feed.innerHTML = '';
+	const posts = db?.posts||[];
+	if(!posts.length){
+		const empty = document.createElement('div');
+		empty.className = 'pad';
+		empty.innerHTML = `<div class="muted">Keine Beiträge geladen.</div>`;
+		feed.appendChild(empty);
+		return;
+	}
+	posts.forEach(p=>{
+		const el = document.createElement('article');
+		el.className = 'entry';
+		el.innerHTML = `
+			<h3>${e(p.title||'Ohne Titel')}</h3>
+			<div class="meta">${new Date(p.createdAt).toLocaleString()} ${p.initials? '· '+e(p.initials):''} ${p.tags?.length? '· Tags: '+p.tags.map(e).join(', '):''}</div>
+			<div class="content" style="margin-top:8px;white-space:pre-wrap">${e(p.content)}</div>
+			<div class="reactions">
+				${REACTIONS.map(r=>{
+					const c = p.reactions?.[r.key]||0;
+					return c? `<span class="reaction">${r.label} (${c})</span>` : '';
+				}).join('')}
+			</div>
+			${p.comments?.length? `<div style="margin-top:10px">${p.comments.map(c=>`<div class="comment"><strong>${e(c.by||'Anon')}</strong>: ${e(c.text)} <span class="meta" style="margin-left:6px">${new Date(c.at).toLocaleString()}</span></div>`).join('')}</div>`:''}
+		`;
+		feed.appendChild(el);
+	});
+}
+function e(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+/* Payload viewer */
+const payloadBox = document.getElementById('payloadBox');
+document.getElementById('payloadBtn').addEventListener('click', ()=>{
+	payloadBox.hidden = !payloadBox.hidden;
+});
+
+/* Import JSON file */
+const jsonFile = document.getElementById('jsonFile');
+jsonFile.addEventListener('change', async ()=>{
+	const f = jsonFile.files?.[0]; if(!f) return;
+	const text = await f.text();
+	try{
+		const data = JSON.parse(text);
+		if(!data || !Array.isArray(data.posts)) throw new Error('Ungültiges Format');
+		renderFeed(data);
+		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
+	}catch(err){ alert('Import fehlgeschlagen: '+err.message); }
+	jsonFile.value = '';
+});
+
+/* API fetch */
+document.getElementById('fetchBtn').addEventListener('click', async ()=>{
+	const url = document.getElementById('apiUrl').value.trim();
+	if(!url) return alert('API URL angeben.');
+	try{
+		const res = await fetch(url, {headers:{'Accept':'application/json'}});
+		const data = await res.json();
+		renderFeed(data);
+		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
+	}catch(err){ alert('API Fehler: '+err.message); }
+});
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+	renderFeed({posts:[]}); payloadBox.hidden=true; payloadBox.textContent='';
+});
+
+/* Live feature stubs (activated post-verify) */
+document.getElementById('initLiveBtn').addEventListener('click', ()=>{
+	const url = document.getElementById('signalUrl').value.trim();
+	if(!url){ alert('Signaling URL angeben (wss://...)'); return; }
+	alert('Live-Funktionen werden mit Signaling-Server initialisiert.\nHinweis: Diese Demo aktiviert erst nach Backend-Konfiguration.');
+});
+
+/* Anti copy for public viewers (soft) */
+window.addEventListener('contextmenu', (e)=>{ if(document.body.classList.contains('public-view')) e.preventDefault(); }, {capture:true});
+window.addEventListener('keydown', (e)=>{
+	if(!document.body.classList.contains('public-view')) return;
+	if((e.ctrlKey||e.metaKey)&&['c','x','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
+}, {capture:true});
+
+/* Entry point */
+(async function init(){
+	// Public mode by default
+	renderFeed({posts:[]});
+	// Try auto verify via hash params
+	await tryAutoVerify();
+})();
+</script>
+</body>
+</html>
+
