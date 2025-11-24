@@ -240,11 +240,11 @@ body.public-view{ --cursor: not-allowed }
       <a href="./help-manifest.html">Manifest-Hilfe</a>
       <a href="./manifest-portal.html">Online-Portal</a>
       <a href="./help-online-portal.html">Online-Portal-Hilfe</a>
-      <a href="./honeycomb.html">Wabenräume</a>
+					<a href="./honeycomb.html">Räume & Gruppen</a>
       <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
-      <a href="./legal-hub.html">Legal-Hub</a>
+					<a href="./legal-hub.html">Verträge & Recht</a>
       <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
-      <a href="TELBANK/index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 Telbank</a>
+					<a href="TELBANK/index.html" title="Zahlungen & Guthaben">💰 Zahlungen & Guthaben</a>
       <a href="business-admin.html" title="Business-Admin – Vouchers & Buchungen">📊 Business-Admin</a>
       <a href="admin-monitoring.html" title="Monitoring & Events">📈 Monitoring</a>
       <a href="TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
@@ -254,40 +254,108 @@ body.public-view{ --cursor: not-allowed }
   </div>
 
 	<div class="wr">
-		<div class="hero" data-ambient-slot="hero-portal">
-			<div class="header">
-				<div class="badge">MoT</div>
-				<div>
-					<h1>Manifest of Thinkers – Portal</h1>
-					<div class="sub">Öffentliche Ansicht (nur lesen) · Verifizierte Nutzer schalten Live-Funktionen frei</div>
+		<!-- Neue vereinfachte Navigation -->
+		<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;">
+			<div style="display:flex;align-items:center;gap:8px;">
+				<strong style="font-size:16px;">TogetherSystems</strong>
+				<span style="color:var(--muted);font-size:12px;">– deine Kommunikations-Schaltzentrale für Business & Alltag</span>
+			</div>
+			<div style="display:flex;gap:8px;flex-wrap:wrap;">
+				<button class="btn" id="navHome" style="font-size:12px;padding:6px 12px;">🏠 Home</button>
+				<button class="btn alt" id="navContacts" style="font-size:12px;padding:6px 12px;">👥 Kontakte</button>
+				<button class="btn alt" id="navRooms" style="font-size:12px;padding:6px 12px;">🏛️ Räume</button>
+				<button class="btn alt" id="navDocuments" style="font-size:12px;padding:6px 12px;">📄 Dokumente</button>
+				<button class="btn alt" id="navFinance" style="font-size:12px;padding:6px 12px;">💰 Finanzen</button>
+				<button class="btn alt" id="navExpert" style="font-size:12px;padding:6px 12px;" title="Expertenmodus">⚙️</button>
+			</div>
+		</div>
+
+		<!-- Kommunikations-Cockpit: "Was möchtest du tun?" -->
+		<div class="hero" data-ambient-slot="hero-portal" id="communicationCockpit" style="margin-bottom:18px;">
+			<div style="text-align:center;padding:20px;">
+				<h2 style="margin:0 0 12px;font-size:20px;">Was möchtest du tun?</h2>
+				<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px;margin-top:16px;">
+					<button class="btn" id="actionMessage" style="padding:16px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+						<span style="font-size:24px;">💬</span>
+						<span>Nachricht senden</span>
+					</button>
+					<button class="btn" id="actionCall" style="padding:16px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+						<span style="font-size:24px;">📞</span>
+						<span>Call starten</span>
+					</button>
+					<button class="btn" id="actionFile" style="padding:16px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+						<span style="font-size:24px;">📎</span>
+						<span>Datei senden</span>
+					</button>
+					<button class="btn" id="actionAppointment" style="padding:16px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+						<span style="font-size:24px;">📅</span>
+						<span>Termin anbieten</span>
+					</button>
+					<button class="btn" id="actionContract" style="padding:16px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+						<span style="font-size:24px;">📝</span>
+						<span>Vertrag senden</span>
+					</button>
+					<button class="btn alt" id="actionMore" style="padding:16px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+						<span style="font-size:24px;">➕</span>
+						<span>Mehr...</span>
+					</button>
 				</div>
 			</div>
-			<div class="row" style="margin-top:10px">
-				<span class="pill" title="Nur verifizierte Nutzer mit Offline-Datei">Zugang: eingeschränkt</span>
-				<span class="pill">Multilingual</span>
-				<span class="pill">Business & Teams</span>
-				<span class="pill">Kontrakte & Transfer</span>
-			</div>
-			<div class="row" style="margin-top:10px">
-				<button class="btn alt" id="bonusBtn" type="button">
-					Bonus-Ökosystem &amp; Modul‑Mesh anzeigen
-				</button>
+		</div>
+
+		<!-- Lebenslagen-Vorlagen (versteckt, wird bei "Mehr..." angezeigt) -->
+		<div class="panel" id="lifeTemplates" style="display:none;margin-bottom:18px;">
+			<div class="pad">
+				<h3 class="title">Lebenslagen-Vorlagen</h3>
+				<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:10px;margin-top:12px;">
+					<button class="btn alt" data-template="sell" style="padding:12px;text-align:left;">
+						<strong>💰 Verkaufen / Angebot</strong><br>
+						<small style="opacity:0.7;">Artikel oder Dienstleistung anbieten</small>
+					</button>
+					<button class="btn alt" data-template="birth" style="padding:12px;text-align:left;">
+						<strong>👶 Neue Geburt feiern</strong><br>
+						<small style="opacity:0.7;">Geburtsanzeige & Glückwünsche</small>
+					</button>
+					<button class="btn alt" data-template="condolence" style="padding:12px;text-align:left;">
+						<strong>🕯️ Trauer & Kondolenz</strong><br>
+						<small style="opacity:0.7;">Beileidsbekundung senden</small>
+					</button>
+					<button class="btn alt" data-template="consulting" style="padding:12px;text-align:left;">
+						<strong>💼 Beratung/Coaching buchen</strong><br>
+						<small style="opacity:0.7;">Termin für Beratung anfragen</small>
+					</button>
+					<button class="btn alt" data-template="realestate" style="padding:12px;text-align:left;">
+						<strong>🏠 Immobilie/Haus anfragen</strong><br>
+						<small style="opacity:0.7;">Hypotheken-Anfrage stellen</small>
+					</button>
+					<button class="btn alt" data-template="machine" style="padding:12px;text-align:left;">
+						<strong>⚙️ Maschinenzeit buchen</strong><br>
+						<small style="opacity:0.7;">Studio oder Gerät reservieren</small>
+					</button>
+					<button class="btn alt" data-template="membership" style="padding:12px;text-align:left;">
+						<strong>👥 Mitgliedschaft starten</strong><br>
+						<small style="opacity:0.7;">Community oder Verein beitreten</small>
+					</button>
+				</div>
 			</div>
 		</div>
 
 		<div class="grid" style="margin-top:18px">
 			<main class="panel feed" id="feed"></main>
 			<aside class="panel">
+				<!-- Verifizierung bleibt sichtbar (wichtig für User) -->
 				<div class="pad">
-					<h3 class="title">Verifizierung (nur Offline-Forum-Nutzer)</h3>
+					<h3 class="title">Verifizierung</h3>
 					<div class="grid-2">
 						<input id="token" type="text" placeholder="Token aus Offline-Forum (automatisch via Link)">
 						<button class="btn" id="verifyBtn">Verifizieren</button>
 					</div>
-					<p class="muted">Wenn du das Offline-Forum nutzt und über „Portal öffnen“ kommst, wird der Token automatisch im Link übergeben. Manuell kannst du ihn hier einfügen.</p>
+					<p class="muted">Wenn du das Offline-Forum nutzt und über „Portal öffnen" kommst, wird der Token automatisch im Link übergeben. Manuell kannst du ihn hier einfügen.</p>
 				</div>
+				<!-- Tech-Blöcke: Nur im Expertenmodus sichtbar -->
+				<div id="expertMode" style="display:none;">
 				<div class="pad" style="border-top:1px solid var(--border)">
-					<h3 class="title">Token-URL generieren (No-Code)</h3>
+					<h3 class="title">Token-URL generieren (Expertenmodus)</h3>
 					<p class="muted">Gib ein Basis‑Token ein, klicke auf „URL generieren“ und kopiere die fertige Portal‑Adresse inklusive <code>#mot</code>, <code>ts</code> und <code>sig</code>.</p>
 					<div class="grid-2">
 						<input id="genBaseToken" type="text" placeholder="Dein Basis‑Token (z. B. mot-shared-token-v1)">
@@ -493,7 +561,7 @@ body.public-view{ --cursor: not-allowed }
 		</section>
 		<section class="panel" id="voucher-panel" style="margin-top:18px;">
 			<div class="pad">
-				<h3 class="title" role="heading">Voucher &amp; Termine</h3>
+				<h3 class="title" role="heading">Termine &amp; Buchungen</h3>
 				<p class="muted">
 					Hier verwaltest du zeitbasierte Leistungen (Vouchers) und buchbare Termine. Wähle oben deine Rolle und klicke auf einen Voucher,
 					um freie Slots zu sehen und Buchungen vorzunehmen. Über die Branchen‑Vorlagen kannst du typische Angebote mit einem Klick erstellen.
