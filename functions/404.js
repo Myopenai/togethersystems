@@ -17,6 +17,9 @@ export async function onRequest(context) {
     // GitHub Pages Base-Path Unterstützung
     '/togethersystems/TELBANK/': '/TELBANK/index.html',
     '/togethersystems/TsysytemsT/': '/TsysytemsT/TsysytemsT.html',
+    // Assets und Config
+    '/togethersystems/assets/branding/de_rechtspraak_128.png': '/assets/branding/de_rechtspraak_128.png',
+    '/togethersystems/config/providers.json': '/config/providers.json',
   };
 
   // Prüfe auf bekannte Pfade (case-insensitive)

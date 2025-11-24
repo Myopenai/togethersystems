@@ -24,8 +24,16 @@ git commit -m $commitMessage
 Write-Host "✅ Commit erstellt" -ForegroundColor Green
 Write-Host ""
 
+# Pull zuerst (falls Remote Änderungen hat)
+Write-Host "4. Hole Remote-Änderungen..." -ForegroundColor Yellow
+git pull origin main --allow-unrelated-histories
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠️  Pull hatte Probleme, aber wir versuchen trotzdem zu pushen..." -ForegroundColor Yellow
+}
+Write-Host ""
+
 # Push zu GitHub
-Write-Host "4. Pushe zu GitHub..." -ForegroundColor Yellow
+Write-Host "5. Pushe zu GitHub..." -ForegroundColor Yellow
 git push origin main
 Write-Host ""
 

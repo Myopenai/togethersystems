@@ -2173,6 +2173,78 @@ async function createExampleMortgageApplication(){
 	}
 }
 
+/* Zero-Input-Flow: Quick Action Buttons Setup */
+function setupQuickActionButtons(){
+	const quickCallBtn = document.getElementById('quickCallBtn');
+	const quickChatBtn = document.getElementById('quickChatBtn');
+	const quickGroupBtn = document.getElementById('quickGroupBtn');
+	
+	if(quickCallBtn){
+		quickCallBtn.addEventListener('click', async ()=>{
+			if (!currentIdentity || !currentIdentity.thinker_id) {
+				alert('Bitte zuerst verifizieren (Token aus Offline-Forum oder manuell eingeben).');
+				return;
+			}
+			// Generiere room_id für Call
+			if (!currentRoomId) {
+				const pairCode = getEffectivePairCode(currentIdentity);
+				currentRoomId = pairCode ? `room-${pairCode}` : `room-${currentIdentity.thinker_id}`;
+			}
+			// Initialisiere Video-Call (UI-Stub, später echte WebRTC-Integration)
+			alert(`📞 Call wird gestartet für Raum: ${currentRoomId}\n\nHinweis: Video-Call-Funktionalität wird später mit WebRTC integriert.`);
+			initLiveChat(currentIdentity, currentRoomId);
+		});
+	}
+	
+	if(quickChatBtn){
+		quickChatBtn.addEventListener('click', async ()=>{
+			if (!currentIdentity || !currentIdentity.thinker_id) {
+				alert('Bitte zuerst verifizieren (Token aus Offline-Forum oder manuell eingeben).');
+				return;
+			}
+			// Generiere room_id für Chat
+			if (!currentRoomId) {
+				const pairCode = getEffectivePairCode(currentIdentity);
+				currentRoomId = pairCode ? `room-${pairCode}` : `room-${currentIdentity.thinker_id}`;
+			}
+			// Initialisiere Text-Chat
+			initLiveChat(currentIdentity, currentRoomId);
+			const liveRoom = document.getElementById('liveRoom');
+			if (liveRoom) {
+				liveRoom.style.display = 'block';
+			}
+			const liveRoomInfo = document.getElementById('liveRoomInfo');
+			if (liveRoomInfo) {
+				liveRoomInfo.textContent = `💬 Chat-Raum „${currentRoomId}“ wurde gestartet.`;
+			}
+		});
+	}
+	
+	if(quickGroupBtn){
+		quickGroupBtn.addEventListener('click', async ()=>{
+			if (!currentIdentity || !currentIdentity.thinker_id) {
+				alert('Bitte zuerst verifizieren (Token aus Offline-Forum oder manuell eingeben).');
+				return;
+			}
+			// Generiere room_id für Gruppe
+			if (!currentRoomId) {
+				const pairCode = getEffectivePairCode(currentIdentity);
+				currentRoomId = pairCode ? `group-${pairCode}` : `group-${currentIdentity.thinker_id}`;
+			}
+			// Initialisiere Gruppen-Session
+			initLiveChat(currentIdentity, currentRoomId);
+			const liveRoom = document.getElementById('liveRoom');
+			if (liveRoom) {
+				liveRoom.style.display = 'block';
+			}
+			const liveRoomInfo = document.getElementById('liveRoomInfo');
+			if (liveRoomInfo) {
+				liveRoomInfo.textContent = `👥 Gruppen-Session „${currentRoomId}“ wurde gestartet.`;
+			}
+		});
+	}
+}
+
 /* Anti copy for public viewers (soft) */
 window.addEventListener('contextmenu', (e)=>{ if(document.body.classList.contains('public-view')) e.preventDefault(); }, {capture:true});
 window.addEventListener('keydown', (e)=>{
