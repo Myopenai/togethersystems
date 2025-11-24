@@ -600,7 +600,34 @@
       }
       currentCellEl.textContent = 'Aktuelle Wabe: ' + cell.label + (cell.reservedBy ? ' – reserviert von: ' + cell.reservedBy : ' (noch frei)');
       const link = buildRoomUrl(cell);
-      roomUrlEl.innerHTML = '<strong>Teile diesen Link</strong>, damit andere in dieselbe Wabe kommen:<br><code style="word-break:break-all;">' + link + '</code>';
+      roomUrlEl.innerHTML = '<strong>Teile diesen Link</strong>, damit andere in dieselbe Wabe kommen: <button id="copyLinkBtn" style="background:#38bdf8;color:#00110b;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;margin-left:6px;" title="Link kopieren">📋 Link kopieren</button><br><code style="word-break:break-all;display:block;margin-top:6px;padding:6px;background:#0f172a;border-radius:6px;">' + link + '</code>';
+      // Link-Kopier-Button Funktionalität
+      const copyBtn = document.getElementById('copyLinkBtn');
+      if(copyBtn){
+        copyBtn.addEventListener('click', async ()=>{
+          try{
+            await navigator.clipboard.writeText(link);
+            copyBtn.textContent = '✓ Kopiert!';
+            copyBtn.style.background = '#22c55e';
+            setTimeout(()=>{
+              copyBtn.textContent = '📋 Link kopieren';
+              copyBtn.style.background = '#38bdf8';
+            }, 2000);
+            // Popup-Hinweis
+            const popup = document.createElement('div');
+            popup.style.cssText = 'position:fixed;top:20px;right:20px;background:#22c55e;color:#00110b;padding:12px 16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:10000;font-size:13px;max-width:300px;';
+            popup.innerHTML = '✓ Link wurde kopiert!<br><small style="opacity:0.8;">Du kannst ihn jetzt mit Rechtsklick → Einfügen überall einfügen.</small>';
+            document.body.appendChild(popup);
+            setTimeout(()=>{
+              popup.style.opacity = '0';
+              popup.style.transition = 'opacity 0.3s';
+              setTimeout(()=> popup.remove(), 300);
+            }, 3000);
+          }catch(err){
+            alert('Link konnte nicht kopiert werden. Bitte manuell markieren und kopieren.');
+          }
+        });
+      }
     }
 
     reserveBtn.addEventListener('click', ()=>{

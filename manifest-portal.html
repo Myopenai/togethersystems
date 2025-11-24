@@ -2261,7 +2261,9 @@ window.addEventListener('keydown', (e)=>{
 	// Auto-Connect: Token lesen, mit Backend verifizieren und Präsenz/Matching starten
 	await autoConnectFromToken();
 	// Phase 3: Konversations-Start-Templates - One-Click-Buttons einrichten
-	setupQuickActionButtons();
+	if(typeof setupQuickActionButtons === 'function'){
+		setupQuickActionButtons();
+	}
 	// Hypotheken-Demo-Buttons verdrahten
 	if(btnLoadApplications) btnLoadApplications.addEventListener('click', loadMortgageApplications);
 	if(btnLoadOffers) btnLoadOffers.addEventListener('click', loadMortgageOffers);
