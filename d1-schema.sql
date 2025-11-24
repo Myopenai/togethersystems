@@ -94,4 +94,57 @@ CREATE TABLE IF NOT EXISTS mortgage_offers (
   FOREIGN KEY (application_id) REFERENCES mortgage_applications(id)
 );
 
+-- Contracts (Legal Hub) and links to vouchers/rooms
+CREATE TABLE IF NOT EXISTS contracts (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  mime_type TEXT,
+  byte_size INTEGER,
+  storage_url TEXT NOT NULL,
+  hash_sha256 TEXT,
+  created_by TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS contract_links (
+  id TEXT PRIMARY KEY,
+  contract_id TEXT NOT NULL,
+  voucher_id TEXT,
+  room_id TEXT,
+  role TEXT,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (contract_id) REFERENCES contracts(id)
+);
+
+-- Generic events/audit log
+CREATE TABLE IF NOT EXISTS events (
+  id TEXT PRIMARY KEY,
+  type TEXT NOT NULL,
+  actor_id TEXT,
+  subject_type TEXT,
+  subject_id TEXT,
+  meta TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_events_type ON events(type);
+CREATE INDEX IF NOT EXISTS idx_events_created_at ON events(created_at);
+
+-- Simple rate limit table (per key/window)
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key TEXT PRIMARY KEY,
+  window_start TEXT NOT NULL,
+  count INTEGER NOT NULL
+);
+
+-- Telemetry events (Psychologie / UI-Layer)
+CREATE TABLE IF NOT EXISTS telemetry_events (
+  id TEXT PRIMARY KEY,
+  type TEXT NOT NULL,
+  path TEXT,
+  actor_uid TEXT,
+  meta TEXT,
+  created_at TEXT NOT NULL
+);
+
 

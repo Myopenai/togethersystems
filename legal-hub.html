@@ -161,6 +161,9 @@
       <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
       <a href="./legal-hub.html">Legal-Hub</a>
       <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="./TELBANK/index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 Telbank</a>
+      <a href="./business-admin.html" title="Business-Admin – Vouchers & Buchungen">📊 Business-Admin</a>
+      <a href="./admin-monitoring.html" title="Monitoring & Events">📈 Monitoring</a>
       <a href="./TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
       <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
       <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
@@ -169,7 +172,7 @@
 
   <main>
     <header>
-      <h1>Trusted Legal Space &amp; Authentic Document Layer</h1>
+      <h1>Legal-Hub</h1>
       <p>
         Dieser Bereich bündelt Branding, Verifikation und rechtliche Hinweise der Applikation.
         Er ist als neutrale Informations- und Einstiegsseite gedacht, nicht als rechtsverbindliche Beratung.
@@ -297,10 +300,16 @@
         <input id="contractVoucherId" type="text" placeholder="v-...">
         <label for="contractRoomId" style="margin-top:6px;display:block;">Zugehöriger Raum (z.&nbsp;B. room:, wabe: oder voucher:...)</label>
         <input id="contractRoomId" type="text" placeholder="z.B. voucher:v-..., room:hypothek-..., wabe:A-1">
-        <button id="contractLinkBtn" type="button" style="margin-top:8px;">Verknüpfung lokal speichern</button>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:.75rem;">
+          <input id="contractOnlineToggle" type="checkbox">
+          Online in D1/R2 speichern (statt nur lokal)
+        </label>
+        <button id="contractLinkBtn" type="button" style="margin-top:8px;">Verknüpfung speichern</button>
         <p class="tiny">
-          Hinweis: Die Datei bleibt auf deinem Gerät; gespeichert wird nur der Hinweis
+          Hinweis: Ohne Häkchen bleibt die Datei auf deinem Gerät; gespeichert wird nur der Hinweis
           „diese Datei gehört zu diesem Voucher/Raum“ im lokalen Speicher (<code>localStorage</code>).
+          Mit Häkchen wird sie in einen dedizierten Storage‑Bucket (z.&nbsp;B. Cloudflare R2) hochgeladen
+          und mit Voucher/Raum in der Datenbank verknüpft.
         </p>
       </div>
       <div style="flex:1 1 260px;min-width:260px;">
@@ -332,6 +341,7 @@
     const roomInput = document.getElementById('contractRoomId');
     const saveBtn = document.getElementById('contractLinkBtn');
     const tableBody = document.getElementById('contractLinkTableBody');
+    const onlineToggle = document.getElementById('contractOnlineToggle');
 
     function loadLinks(){
       try{
@@ -363,6 +373,23 @@
           + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+escapeHtml(l.roomId || '—')+'</td>'
           + '</tr>';
       }).join('');
+
+      // Optional: Online-Contracts aus D1/R2 ergänzen
+      fetch('/api/contracts/list')
+        .then(r=>r.ok?r.json():null)
+        .then(data=>{
+          if(!data || !Array.isArray(data.items) || !data.items.length) return;
+          const rows = data.items.map(c=>{
+            const fn = (c.name || 'Contract') + (c.byteSize ? ' ('+Math.round(c.byteSize/1024)+' KB)' : '');
+            return '<tr>'
+              + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">[online] '+escapeHtml(fn)+'</td>'
+              + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">—</td>'
+              + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+escapeHtml(c.storageUrl || '—')+'</td>'
+              + '</tr>';
+          }).join('');
+          tableBody.innerHTML += rows;
+        })
+        .catch(()=>{ /* optional / offline */ });
     }
     function escapeHtml(s){
       return String(s).replace(/[&<>"']/g, m=>({
@@ -378,6 +405,37 @@
           alert('Bitte mindestens eine Datei oder eine Voucher/Raum‑ID angeben.');
           return;
         }
+
+        if(onlineToggle && onlineToggle.checked){
+          // Online-Upload via /api/contracts/upload
+          const formData = new FormData();
+          if(file) formData.append('file', file);
+          if(voucherId) formData.append('voucherId', voucherId);
+          if(roomId) formData.append('roomId', roomId);
+          // optional actorId für Audit-Log; hier aus LocalStorage/MOT-ID entnehmbar
+          try{
+            const uid = localStorage.getItem('mot_user_id_v1') || '';
+            if(uid) formData.append('actorId', uid);
+          }catch{/* ignore */}
+          fetch('/api/contracts/upload', {
+            method:'POST',
+            body: formData
+          }).then(r=>r.json().catch(()=>null)).then(data=>{
+            if(!data || !data.ok){
+              alert('Online-Upload fehlgeschlagen: '+(data && data.error ? data.error : 'Unbekannter Fehler'));
+              return;
+            }
+            alert('Vertrag wurde online gespeichert und verknüpft.');
+            renderLinks();
+            if(fileInput) fileInput.value = '';
+            if(voucherInput) voucherInput.value = '';
+            if(roomInput) roomInput.value = '';
+          }).catch(err=>{
+            alert('Online-Upload nicht erreichbar: '+(err?.message||String(err)));
+          });
+          return;
+        }
+
         const list = loadLinks();
         list.push({
           id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8),
@@ -398,5 +456,6 @@
     renderLinks();
   })();
   </script>
+  <script type="module" src="./autofix-client.js"></script>
 </body>
 </html>

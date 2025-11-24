@@ -116,10 +116,28 @@
       justify-content:center;
       padding:4px;
       text-align:center;
+      overflow:hidden;
+    }
+    .cell-image{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:0.4;
+      transition:opacity 0.3s;
+      z-index:0;
+    }
+    .cell-image.active{
+      opacity:0.6;
     }
     .cell-label{
       font-size:.7rem;
       line-height:1.15;
+      position:relative;
+      z-index:1;
+      text-shadow:0 1px 3px rgba(0,0,0,0.8);
+      color:#fff;
     }
     .cell.free .cell-inner{
       background:radial-gradient(circle at 30% 0,#22c55e 0,rgba(34,197,94,.16) 45%,#020617 95%);
@@ -227,6 +245,121 @@
       color:var(--muted);
       margin-top:10px;
     }
+    /* Bildkarussell für Räume */
+    .room-image-carousel{
+      margin-top:18px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      background:var(--card);
+    }
+    .carousel-wrapper{
+      position:relative;
+      width:100%;
+      padding-top:56.25%; /* 16:9 Aspect Ratio */
+      overflow:hidden;
+    }
+    .carousel-image{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:0;
+      transition:opacity 1s ease-in-out;
+    }
+    .carousel-image.active{
+      opacity:1;
+    }
+    .carousel-overlay{
+      position:absolute;
+      bottom:0;
+      left:0;
+      right:0;
+      height:40%;
+      background:linear-gradient(to top, rgba(2,6,23,0.9), transparent);
+      pointer-events:none;
+    }
+    .carousel-controls{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      padding:0 12px;
+      pointer-events:none;
+    }
+    .carousel-btn{
+      pointer-events:auto;
+      background:rgba(15,23,42,0.8);
+      border:1px solid var(--border);
+      color:var(--fg);
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size:20px;
+      font-weight:bold;
+      transition:all 0.2s;
+    }
+    .carousel-btn:hover{
+      background:rgba(56,189,248,0.2);
+      border-color:var(--accent);
+    }
+    .carousel-indicators{
+      position:absolute;
+      bottom:12px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:6px;
+      pointer-events:none;
+    }
+    .indicator-dot{
+      pointer-events:auto;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:rgba(148,163,184,0.4);
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    .indicator-dot.active{
+      background:var(--accent);
+      width:24px;
+      border-radius:4px;
+    }
+    .indicator-dot:hover{
+      background:rgba(56,189,248,0.6);
+    }
+    /* Farbsplashes für Räume */
+    .cell[data-room-color]{
+      position:relative;
+    }
+    .cell[data-room-color]::before{
+      content:'';
+      position:absolute;
+      inset:-15%;
+      background:var(--room-color-splash, transparent);
+      opacity:0.5;
+      border-radius:50%;
+      filter:blur(25px);
+      z-index:-1;
+      transition:opacity 0.3s, transform 0.3s;
+      transform:scale(1.1);
+    }
+    .cell.focused[data-room-color]::before{
+      opacity:0.7;
+      transform:scale(1.2);
+    }
+    .cell:hover[data-room-color]::before{
+      opacity:0.6;
+    }
   </style>
 </head>
 <body>
@@ -246,6 +379,9 @@
       <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
       <a href="./legal-hub.html">Legal-Hub</a>
       <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="./TELBANK/index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 TPGA Telbank</a>
+      <a href="./business-admin.html" title="Business-Admin – Vouchers & Buchungen">📊 Business-Admin</a>
+      <a href="./admin-monitoring.html" title="Monitoring & Events">📈 Monitoring</a>
       <a href="./TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
       <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
       <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
@@ -253,7 +389,7 @@
   </div>
   <main>
     <header>
-      <h1>Wabenräume – kontaktieren wie im Bienenstock</h1>
+      <h1>Wabenräume</h1>
       <p>
         Hier entstehen Kommunikationsräume automatisch in Waben. 
         Nutzer müssen keine Nummern oder komplizierten Codes kennen – eine Wabe anklicken reicht.
@@ -271,6 +407,9 @@
       <aside class="card">
         <h2>Aktuelle Auswahl</h2>
         <p id="currentCell">Noch keine Wabe gewählt. Klicke links auf eine Wabe, um sie zu markieren.</p>
+
+        <!-- Bildkarussell für Raum -->
+        <div id="roomCarouselContainer"></div>
 
         <label for="displayName">Dein Name oder Kürzel (optional, für die lokale Anzeige)</label>
         <input id="displayName" type="text" placeholder="z.B. T,., Alex, Team A">
@@ -318,8 +457,11 @@
     </div>
   </main>
 
+  <script type="module" src="./autofix-client.js"></script>
+  <script type="module" src="./room-image-carousel.js"></script>
   <script type="module">
   import { getOrCreateUserId, parseHashParams } from './mot-core.js';
+  import { initRoomImageCarousel } from './room-image-carousel.js';
 
   (function(){
     const STORAGE_KEY = 'honeycomb_v1';
@@ -374,6 +516,16 @@
     const nameInput = document.getElementById('displayName');
 
     let focusedId = null;
+    
+    // Farbsplash-Generierung
+    function generateRoomColorSplash(cellId) {
+      // Generiere konsistente Farbe basierend auf Zell-ID
+      const hash = cellId.split('').reduce((acc, char) => {
+        return ((acc << 5) - acc) + char.charCodeAt(0);
+      }, 0);
+      const hue = Math.abs(hash) % 360;
+      return `radial-gradient(circle, hsl(${hue}, 70%, 50%), transparent 70%)`;
+    }
 
     function buildRoomUrl(cell){
       const url = new URL(window.location.href);
@@ -395,12 +547,35 @@
         const inner = document.createElement('div');
         inner.className = 'cell-inner';
 
+        // Bild für diese Zelle (aus Karussell-Pool)
+        const cellImage = document.createElement('img');
+        cellImage.className = 'cell-image';
+        cellImage.alt = `Raum ${cell.label}`;
+        // Zufälliges Bild basierend auf Zell-ID (konsistent)
+        const imageIndex = Math.abs(cell.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 8;
+        const imageUrl = `https://source.unsplash.com/400x400/?nature,landscape&sig=${imageIndex}`;
+        cellImage.src = imageUrl;
+        cellImage.loading = 'lazy';
+        inner.appendChild(cellImage);
+
         const label = document.createElement('div');
         label.className = 'cell-label';
         label.innerHTML = '<strong>' + cell.label + '</strong><br>' + (cell.reservedBy ? cell.reservedBy : 'frei');
 
         inner.appendChild(label);
         cellEl.appendChild(inner);
+        
+        // Farbsplash für diese Zelle generieren
+        const splashColor = generateRoomColorSplash(cell.id);
+        cellEl.setAttribute('data-room-color', cell.id);
+        cellEl.style.setProperty('--room-color-splash', splashColor);
+        
+        // Bildwechsel alle 10 Sekunden (Karussell-Effekt)
+        setInterval(() => {
+          const newIndex = (imageIndex + Math.floor(Date.now() / 10000)) % 8;
+          const newUrl = `https://source.unsplash.com/400x400/?nature,landscape&sig=${newIndex}`;
+          cellImage.src = newUrl;
+        }, 10000);
 
         cellEl.addEventListener('click', ()=>{
           focusedId = cell.id;
@@ -467,7 +642,11 @@
       }
     })();
 
+    // Sofort rendern, damit Tests die .cell Elemente finden
     render();
+    
+    // Bildkarussell initialisieren
+    initRoomImageCarousel('#roomCarouselContainer');
   })();
   </script>
 </body>

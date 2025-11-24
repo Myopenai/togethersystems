@@ -15,6 +15,8 @@
 	--accent-2:#f59e0b;
 	--border:#1f2937;
 	--radius:14px;
+	/* Ambient-Overlay wird von ambient-media.js gesetzt (neon/grün, „Sunset-Strip“-Gefühl) */
+	--ambient-overlay: radial-gradient(420px 260px at 5% 105%, rgba(34,197,94,0.25), transparent 70%);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -28,7 +30,26 @@ body{
 	background:
 		radial-gradient(600px 200px at 10% 0%,#10b98122,transparent 60%),
 		radial-gradient(600px 200px at 90% 0%,#f59e0b22,transparent 60%),
+		var(--ambient-overlay),
 		var(--card);
+	position:relative;
+	overflow:hidden;
+}
+/* Leichter Lichtblitz beim Theme-Wechsel */
+.hero.ambient-pulse::after{
+	content:'';
+	position:absolute;
+	inset:-20%;
+	background:radial-gradient(circle at 10% -10%,rgba(190,242,100,0.35),transparent 60%);
+	mix-blend-mode:screen;
+	opacity:0;
+	pointer-events:none;
+	animation:ambientPulse 900ms ease-out forwards;
+}
+@keyframes ambientPulse{
+	0%{opacity:0;}
+	20%{opacity:0.8;}
+	100%{opacity:0;}
 }
 .header{display:flex;align-items:center;gap:14px}
 .badge{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#00110b;font-weight:800}
@@ -98,6 +119,11 @@ input[type="url"], input[type="text"]{
 /* Harder attempts */
 body.public-view{ --cursor: not-allowed }
 .public-view .content::selection { background: transparent }
+
+.dimmed-feed .entry{
+	opacity:0.4;
+	filter:grayscale(0.3);
+}
 
 /* TogetherSystems Branding-Leiste */
 .ts-brand-banner{
@@ -207,6 +233,7 @@ body.public-view{ --cursor: not-allowed }
       <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</span>
     </div>
     <div class="ts-brand-links">
+      <a href="./index.html">← Zurück</a>
       <a href="./index.html">Portal</a>
       <a href="./help-portal.html">Portal-Hilfe</a>
       <a href="./manifest-forum.html">Manifest</a>
@@ -217,6 +244,9 @@ body.public-view{ --cursor: not-allowed }
       <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
       <a href="./legal-hub.html">Legal-Hub</a>
       <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="./TELBANK/index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 Telbank</a>
+      <a href="./business-admin.html" title="Business-Admin – Vouchers & Buchungen">📊 Business-Admin</a>
+      <a href="./admin-monitoring.html" title="Monitoring & Events">📈 Monitoring</a>
       <a href="./TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
       <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
       <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
@@ -224,7 +254,7 @@ body.public-view{ --cursor: not-allowed }
   </div>
 
 	<div class="wr">
-		<div class="hero">
+		<div class="hero" data-ambient-slot="hero-portal">
 			<div class="header">
 				<div class="badge">MoT</div>
 				<div>
@@ -237,6 +267,11 @@ body.public-view{ --cursor: not-allowed }
 				<span class="pill">Multilingual</span>
 				<span class="pill">Business & Teams</span>
 				<span class="pill">Kontrakte & Transfer</span>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<button class="btn alt" id="bonusBtn" type="button">
+					Bonus-Ökosystem &amp; Modul‑Mesh anzeigen
+				</button>
 			</div>
 		</div>
 
@@ -252,7 +287,7 @@ body.public-view{ --cursor: not-allowed }
 					<p class="muted">Wenn du das Offline-Forum nutzt und über „Portal öffnen“ kommst, wird der Token automatisch im Link übergeben. Manuell kannst du ihn hier einfügen.</p>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
-					<h3 class="title">Token-URL generieren (No‑Code)</h3>
+					<h3 class="title">Token-URL generieren (No-Code)</h3>
 					<p class="muted">Gib ein Basis‑Token ein, klicke auf „URL generieren“ und kopiere die fertige Portal‑Adresse inklusive <code>#mot</code>, <code>ts</code> und <code>sig</code>.</p>
 					<div class="grid-2">
 						<input id="genBaseToken" type="text" placeholder="Dein Basis‑Token (z. B. mot-shared-token-v1)">
@@ -285,6 +320,22 @@ body.public-view{ --cursor: not-allowed }
 					<pre class="kbd" id="payloadBox" hidden></pre>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="title">Admin-Moderation</h3>
+					<p class="muted">Werkzeuge, um den öffentlichen Feed lokal zu steuern (nur in diesem Browser wirksam).</p>
+					<div class="row">
+						<button class="btn alt" id="verbergenBtn" type="button">Beiträge verbergen</button>
+						<button class="btn alt" id="sichtbarBtn" type="button">Beiträge sichtbar machen</button>
+						<button class="btn alt" id="statsBtn" type="button">Statistik anzeigen</button>
+					</div>
+					<div class="row" style="margin-top:6px;">
+						<select id="moderationScope" class="muted" style="width:100%;background:#0b0f14;border:1px solid var(--border);border-radius:10px;padding:6px 8px;">
+							<option value="local">Nur dieser Browser</option>
+							<option value="session">Aktuelle Sitzung</option>
+						</select>
+					</div>
+					<p class="muted" id="moderationStatus" style="font-size:11px;margin-top:4px;">Noch keine Moderations-Aktion ausgeführt.</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
 					<h3 class="title">Live-Funktionen (für verifizierte Nutzer)</h3>
 					<ul class="muted" id="liveList" style="margin:0 0 8px 16px">
 						<li>Video-Chat Räume (Signaling URL konfigurierbar)</li>
@@ -302,12 +353,35 @@ body.public-view{ --cursor: not-allowed }
 					</div>
 					<div class="row">
 						<input id="signalUrl" type="url" placeholder="wss://signaling.deine-seite.tld (optional)">
-						<button class="btn alt" id="initLiveBtn" disabled>Live initialisieren</button>
+						<button class="btn alt" id="initLiveBtn">Live initialisieren</button>
 					</div>
 					<p class="muted">Sobald verifiziert und Signaling konfiguriert ist, werden Live-Funktionen aktiviert.</p>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
-					<h3 class="title">Live-Raum erstellen (No‑Code)</h3>
+					<h3 class="title">Hidden Viewer, Medien &amp; Datei-Transfer</h3>
+					<p class="muted">
+						Dieser Bereich bündelt die UI für einen versteckten Viewer, einfache Medien-Steuerung
+						und einen R2‑Datei‑Transfer (Demo‑Status, ohne Pflicht‑Backend).
+					</p>
+					<div class="row" style="margin-top:4px;">
+						<button class="btn alt" id="loadHiddenBtn" type="button">Hidden Viewer laden</button>
+					</div>
+					<div class="row" style="margin-top:8px;">
+						<input id="filePick" type="file" multiple>
+						<span class="muted" id="filePickStatus" style="font-size:11px;">Noch keine Dateien ausgewählt.</span>
+					</div>
+					<div class="row" style="margin-top:4px;">
+						<input id="p2pFileInput" type="file" multiple>
+						<span class="muted" style="font-size:11px;">P2P‑Datei‑Transfer (Demo‑Eingang, optionales Mesh/R2‑Backend).</span>
+					</div>
+					<div class="row" style="margin-top:8px;">
+						<button class="btn alt" id="startMediaBtn" type="button">Media starten</button>
+						<button class="btn alt" id="stopMediaBtn" type="button">Media stoppen</button>
+					</div>
+					<p class="muted" id="mediaStatus" style="font-size:11px;margin-top:4px;">Media-/Streams sind noch inaktiv.</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="title">Live-Raum erstellen (No-Code)</h3>
 					<p class="muted">Definiere einen Raum komplett über Formular. Das Portal erzeugt das passende JSON für dein Backend.</p>
 					<div class="row">
 						<select id="roomType" style="flex:1;min-width:120px;background:#0b0f14;border:1px solid var(--border);border-radius:10px;padding:6px 8px;color:var(--fg);">
@@ -326,7 +400,7 @@ body.public-view{ --cursor: not-allowed }
 						<label><input type="checkbox" id="permUpload"> hochladen</label>
 					</div>
 					<div class="row" style="margin-top:8px">
-						<button class="btn alt" id="buildRoomJsonBtn" type="button">Raum‑JSON anzeigen</button>
+						<button class="btn alt" id="buildRoomJsonBtn" type="button" aria-label="Raum-JSON anzeigen">Raum-JSON anzeigen</button>
 					</div>
 					<pre class="kbd" id="roomJsonBox" style="margin-top:6px;min-height:80px;"></pre>
 					<p class="muted">Dieses JSON kannst du 1:1 an dein Backend (API oder Signaling‑Server) weitergeben.</p>
@@ -417,7 +491,7 @@ body.public-view{ --cursor: not-allowed }
 		</section>
 		<section class="panel" id="voucher-panel" style="margin-top:18px;">
 			<div class="pad">
-				<h3 class="title">Voucher &amp; Termine</h3>
+				<h3 class="title" role="heading">Voucher &amp; Termine</h3>
 				<p class="muted">
 					Hier verwaltest du zeitbasierte Leistungen (Vouchers) und buchbare Termine. Wähle oben deine Rolle und klicke auf einen Voucher,
 					um freie Slots zu sehen und Buchungen vorzunehmen. Über die Branchen‑Vorlagen kannst du typische Angebote mit einem Klick erstellen.
@@ -450,13 +524,13 @@ body.public-view{ --cursor: not-allowed }
 					</div>
 				</div>
 				<p class="muted" style="font-size:11px;margin-top:6px;">
-					Die Daten kommen aus der lokalen Voucher-API (In-Memory, http://localhost:3200/api). Für echte Deployments sollte hier eine Datenbank angebunden werden.
+					Die Daten kommen aus der Cloudflare Pages Functions API (/api/voucher/*). Für lokale Entwicklung sollte hier ein lokaler Server gestartet werden.
 				</p>
 			</div>
 		</section>
 		<section class="panel" id="events-memberships-panel" style="margin-top:18px;">
 			<div class="pad">
-				<h3 class="title">Events &amp; Memberships – Übersicht</h3>
+				<h3 class="title" role="heading">Events &amp; Memberships – Übersicht</h3>
 				<p class="muted">
 					Diese Übersicht fasst alle Vouchers für Beratungs‑/Therapie‑Sessions und Membership‑Zugänge zusammen,
 					die du ausgestellt hast. So siehst du auf einen Blick, wie viele Events und Mitgliedschaften aktiv sind.
@@ -465,6 +539,65 @@ body.public-view{ --cursor: not-allowed }
 				<p class="muted" style="font-size:11px;margin-top:4px;">
 					Technischer Hinweis: Die Daten werden aus derselben Voucher‑API gelesen wie „Voucher &amp; Termine“
 					und nach <code>serviceType</code> gefiltert (<code>consulting.session</code>, <code>therapy.session</code>, <code>membership.access</code>).
+				</p>
+			</div>
+		</section>
+		<section class="panel" id="my-bookings-panel" style="margin-top:18px;">
+			<div class="pad">
+				<h3 class="title" role="heading">Meine Buchungen (Autopilot-Übersicht)</h3>
+				<p class="muted">
+					Hier siehst du alle Termine, die mit deiner Browser‑ID gebucht wurden.
+					Die Daten kommen direkt aus der Datenbank (<code>voucher_bookings</code>).
+				</p>
+				<div class="slot-list" id="myBookingsList" style="margin-top:8px;"></div>
+			</div>
+		</section>
+		<section class="panel" id="verticals-panel" style="margin-top:18px;">
+			<div class="pad">
+				<h3 class="title" role="heading">Vertikale Konsolen – Maschinen, Events, Memberships</h3>
+				<p class="muted">
+					Diese drei Übersichten zeigen dieselben Voucher‑Daten aus unterschiedlichen Blickwinkeln:
+					<strong>Maschinenzeit</strong>, <strong>Events &amp; Sessions</strong> und <strong>Memberships</strong>.
+					Die Daten stammen direkt aus der D1‑basierten Voucher‑API.
+				</p>
+				<div class="voucher-layout" style="margin-top:10px;">
+					<div>
+						<h4 class="title" style="margin-bottom:4px;">⚙️ Maschinenzeit</h4>
+						<table style="width:100%;border-collapse:collapse;font-size:11px;">
+							<thead>
+								<tr>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Maschine</th>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Standort</th>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Preis</th>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Status</th>
+								</tr>
+							</thead>
+							<tbody id="machinesTableBody">
+								<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Noch keine Maschinen‑Vouchers gefunden.</td></tr>
+							</tbody>
+						</table>
+					</div>
+					<div>
+						<h4 class="title" style="margin-bottom:4px;">🎫 Events &amp; 👥 Memberships</h4>
+						<table style="width:100%;border-collapse:collapse;font-size:11px;">
+							<thead>
+								<tr>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Typ</th>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Titel</th>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Status</th>
+									<th style="border-bottom:1px solid var(--border);text-align:left;padding:4px 6px;">Zeitraum</th>
+								</tr>
+							</thead>
+							<tbody id="eventsMembershipsTableBody">
+								<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Noch keine Events/Memberships gefunden.</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<p class="muted" style="font-size:11px;margin-top:6px;">
+					Technischer Hinweis: Maschinenzeit nutzt <code>serviceType='machine.timeslot'</code>,
+					Events <code>consulting.session</code>/<code>therapy.session</code>/<code>realestate.viewing</code>,
+					Memberships <code>membership.access</code>. Alle Daten kommen aus <code>/api/voucher/list</code>.
 				</p>
 			</div>
 		</section>
@@ -492,6 +625,28 @@ body.public-view{ --cursor: not-allowed }
 				<p class="muted" style="margin-top:6px;font-size:11px;">
 					Die Nutzung des Portals bleibt frei, ohne Accounts und ohne Paywall. Die Einsammlung ist ein Zusatz‑Kanal für alle,
 					die das System als dauerhaften gesellschaftlichen Baustein sehen.
+				</p>
+			</div>
+		</section>
+		<section class="panel" id="yfood-sponsor" style="margin-top:18px;">
+			<div class="pad">
+				<h3 class="title">🍽️ YFood – Complete Food &amp; Trink-Food</h3>
+				<p class="muted">
+					YFood bietet vollständige Mahlzeiten und Getränke für unterwegs. Perfekt für alle, die sich ausgewogen ernähren möchten, ohne Zeit zu verlieren.
+				</p>
+				<div style="margin-top:12px;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;border:1px solid var(--border);">
+					<iframe 
+						style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+						src="https://www.youtube.com/embed/ZYOQiBDsZo0" 
+						title="YFood Werbung" 
+						frameborder="0" 
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+						allowfullscreen>
+					</iframe>
+				</div>
+				<p class="muted" style="margin-top:8px;font-size:11px;">
+					<a href="https://www.yfood.eu" target="_blank" rel="noopener" style="color:var(--accent);">YFood auf yfood.eu entdecken</a> · 
+					Vollständige Mahlzeiten &amp; Trink-Food für deinen Alltag
 				</p>
 			</div>
 		</section>
@@ -525,6 +680,21 @@ body.public-view{ --cursor: not-allowed }
 						Der Textkanal läuft über den Signaling-Server (WebSocket). Video- und Datei-Kanäle können später auf derselben room_id aufsetzen.
 					</p>
 				</div>
+			</div>
+		</section>
+		<section class="panel" id="suppliers-panel" style="margin-top:18px;">
+			<div class="pad">
+				<h3 class="title">Lieferanten &amp; Provider – Milchkannen-Übersicht</h3>
+				<p class="muted">
+					Dieser Bereich zeigt eine vereinfachte Übersicht der aktuell konfigurierten Provider-Profile
+					(„Milchkannen“), die sich automatisch an das Portal anhängen können. Die technische Quelle ist
+					<code>config/providers.json</code>. Er ist in erster Linie zur Orientierung und Dokumentation gedacht.
+				</p>
+				<div id="suppliersList" class="slot-list" style="margin-top:8px;"></div>
+				<p class="muted" style="font-size:11px;margin-top:6px;">
+					Technischer Hinweis: Die Daten werden über <code>router.js</code> geladen. Neue Lieferanten können
+					später über dasselbe Schema eingehängt werden (Bauern, Provider, Autohändler, weitere Branchen).
+				</p>
 			</div>
 		</section>
 	</div>
@@ -611,9 +781,43 @@ const REACTIONS = [
 // Präsenz-/Auto-Connect-Konfiguration (Backend-Endpunkte anpassbar)
 // In Cloudflare Pages/Workers-Setup: relative Route /api/presence
 const PRESENCE_API_BASE = '/api/presence';
-const VOUCHER_API_BASE = 'http://localhost:3200/api';
+// D1-backed API base; in Produktion als Cloudflare Pages Function bereitgestellt
+// Automatische Erkennung: Wenn lokal (file:// oder localhost ohne /api), dann null (keine API-Calls)
+function detectVoucherApiBase() {
+	// Wenn auf Cloudflare Pages (ts-portal.pages.dev oder ähnlich), verwende relative Pfade
+	if (location.hostname.includes('pages.dev') || location.hostname.includes('workers.dev') || location.hostname.includes('cloudflare')) {
+		return '/api';
+	}
+	// Wenn lokal (file:// oder localhost ohne API-Server), deaktiviere API-Calls
+	if (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+		// Prüfe, ob /api verfügbar ist (schneller Health-Check)
+		return null; // Wird später dynamisch geprüft
+	}
+	// Standard: relative Pfade (für Cloudflare Pages)
+	return '/api';
+}
+let VOUCHER_API_BASE = detectVoucherApiBase();
+
+// Dynamische API-Base-URL-Erkennung beim Laden
+(async function initApiBase() {
+	if (VOUCHER_API_BASE === null) {
+		// Versuche, /api zu erreichen (Health-Check)
+		try {
+			const testRes = await fetch('/api/voucher/list?holderUid=test', { method: 'GET' });
+			if (testRes.ok || testRes.status === 400) { // 400 ist OK, bedeutet dass API existiert
+				VOUCHER_API_BASE = '/api';
+			} else {
+				VOUCHER_API_BASE = null; // API nicht verfügbar
+			}
+		} catch (e) {
+			VOUCHER_API_BASE = null; // API nicht verfügbar, deaktiviere API-Calls
+			console.warn('Voucher API nicht verfügbar. Voucher-Funktionen sind deaktiviert. Für volle Funktionalität deploye auf Cloudflare Pages.');
+		}
+	}
+})();
 const HEARTBEAT_INTERVAL_MS = 25000;
 const MATCH_INTERVAL_MS = 5000;
+const TELEMETRY_ENDPOINT = '/api/telemetry';
 
 /* Access control: public vs verified
    Offline-App will open portal with URL hash: #mot=TOKEN&ts=...&sig=...
@@ -630,7 +834,6 @@ async function hmacSHA256Hex(key, data){
 }
 function setVerifiedUI(on){
 	document.body.classList.toggle('public-view', !on);
-	document.getElementById('initLiveBtn').disabled = !on;
 }
 function updateConnectStatus(msg){
 	const el = document.getElementById('connectStatus');
@@ -662,6 +865,7 @@ function readManifestToken(){
 // Mit Backend verifizieren, wer dieser Thinker ist
 async function verifyTokenWithBackend(tokenObj){
 	if(!tokenObj || !tokenObj.token) return null;
+	if(!PRESENCE_API_BASE) return null; // API nicht verfügbar
 	try{
 		const res = await fetch(`${PRESENCE_API_BASE}/verify`, {
 			method:'POST',
@@ -697,6 +901,7 @@ function startPresenceHeartbeat(identity){
 	if(heartbeatTimer) clearInterval(heartbeatTimer);
 
 	const send = async (status='online')=>{
+		if(!PRESENCE_API_BASE) return; // API nicht verfügbar
 		try{
 			const pair_code = getEffectivePairCode(identity);
 			await fetch(`${PRESENCE_API_BASE}/heartbeat`, {
@@ -735,7 +940,11 @@ function startMatchLoop(identity){
 	const liveRoom = document.getElementById('liveRoom');
 	const liveRoomInfo = document.getElementById('liveRoomInfo');
 
-	const check = async ()=>{
+		const check = async ()=>{
+		if(!PRESENCE_API_BASE) {
+			updateConnectStatus('Presence-API nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.');
+			return;
+		}
 		try{
 			const pair_code = getEffectivePairCode(identity);
 			if(!pair_code){
@@ -966,6 +1175,105 @@ function renderFeed(db){
 }
 function e(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 
+/* Admin-Moderation Logik (lokal, ohne Backend) */
+const verbergenBtn = document.getElementById('verbergenBtn');
+const sichtbarBtn = document.getElementById('sichtbarBtn');
+const statsBtn = document.getElementById('statsBtn');
+const moderationScope = document.getElementById('moderationScope');
+const moderationStatus = document.getElementById('moderationStatus');
+if(verbergenBtn && moderationStatus && feed){
+	verbergenBtn.addEventListener('click', ()=>{
+		feed.classList.add('dimmed-feed');
+		const scope = moderationScope?.value || 'local';
+		moderationStatus.textContent = scope === 'session'
+			? 'Beiträge im aktuellen View ausgeblendet (Sitzungs‑Scope, nur UI).'
+			: 'Beiträge im aktuellen Browser ausgeblendet (nur lokale Ansicht).';
+	});
+}
+if(sichtbarBtn && moderationStatus && feed){
+	sichtbarBtn.addEventListener('click', ()=>{
+		feed.classList.remove('dimmed-feed');
+		moderationStatus.textContent = 'Beiträge wieder vollständig sichtbar (lokale Ansicht).';
+	});
+}
+if(statsBtn && moderationStatus && feed){
+	statsBtn.addEventListener('click', ()=>{
+		const total = feed.querySelectorAll('.entry').length;
+		moderationStatus.textContent = total
+			? `Aktuelle Beiträge im Feed: ${total}.`
+			: 'Aktuell sind keine Beiträge im Feed geladen.';
+	});
+}
+
+// Psychologie / Telemetrie – einfacher Client
+let telemetryQueue = [];
+let telemetryTimer = null;
+
+function enqueueTelemetry(ev){
+	try{
+		telemetryQueue.push(ev);
+		if(telemetryQueue.length >= 10){
+			flushTelemetry();
+		}else if(!telemetryTimer){
+			telemetryTimer = setTimeout(flushTelemetry, 3000);
+		}
+	}catch{/* ignore */}
+}
+
+async function flushTelemetry(){
+	const batch = telemetryQueue;
+	if(!batch.length) return;
+	telemetryQueue = [];
+	if(telemetryTimer){
+		clearTimeout(telemetryTimer);
+		telemetryTimer = null;
+	}
+	try{
+		await fetch(TELEMETRY_ENDPOINT, {
+			method:'POST',
+			headers:{'Content-Type':'application/json'},
+			body: JSON.stringify(batch)
+		});
+	}catch{/* offline / optional */}
+}
+
+function installBasicTelemetry(){
+	const { uid } = getUserContext();
+	const base = {
+		path: window.location.pathname + window.location.hash,
+		actorUid: uid
+	};
+	enqueueTelemetry({ type:'page.view', ...base, meta:{ ts: Date.now() } });
+
+	// Einfache "Rage Click" Erkennung
+	let lastClickTime = 0;
+	let lastTargetKey = '';
+	let clickCount = 0;
+
+	document.addEventListener('click', (ev)=>{
+		const now = Date.now();
+		const target = ev.target;
+		const key = target && target.closest ? (target.closest('[data-telemetry-key]')?.getAttribute('data-telemetry-key') || target.tagName) : (target.tagName || 'UNKNOWN');
+
+		if(now - lastClickTime < 800 && key === lastTargetKey){
+			clickCount++;
+		}else{
+			clickCount = 1;
+			lastTargetKey = key;
+		}
+		lastClickTime = now;
+
+		enqueueTelemetry({ type:'ui.click', ...base, meta:{ key, x: ev.clientX, y: ev.clientY } });
+
+		if(clickCount >= 4){
+			enqueueTelemetry({ type:'ui.rage_click', ...base, meta:{ key, count: clickCount } });
+			clickCount = 0;
+		}
+	}, {capture:true});
+
+	// Form-Abbrüche können später ergänzt werden; Platzhalter als Hinweis
+}
+
 /* Payload viewer */
 const payloadBox = document.getElementById('payloadBox');
 document.getElementById('payloadBtn').addEventListener('click', ()=>{
@@ -1007,6 +1315,56 @@ document.getElementById('initLiveBtn').addEventListener('click', ()=>{
 	if(!url){ alert('Signaling URL angeben (wss://...)'); return; }
 	alert('Live-Funktionen werden mit Signaling-Server initialisiert.\nHinweis: Diese Demo aktiviert erst nach Backend-Konfiguration.');
 });
+
+/* Hidden Viewer, Medien & Datei-Transfer (UI-Stubs mit realen Aktionen) */
+const loadHiddenBtn = document.getElementById('loadHiddenBtn');
+const filePickInput = document.getElementById('filePick');
+const filePickStatus = document.getElementById('filePickStatus');
+const startMediaBtn = document.getElementById('startMediaBtn');
+const stopMediaBtn = document.getElementById('stopMediaBtn');
+const mediaStatus = document.getElementById('mediaStatus');
+let mediaActive = false;
+
+if(loadHiddenBtn){
+	loadHiddenBtn.addEventListener('click', ()=>{
+		const liveRoom = document.getElementById('liveRoom');
+		if(liveRoom){
+			liveRoom.style.display = 'block';
+			const info = document.getElementById('liveRoomInfo');
+			if(info){
+				info.textContent = 'Hidden Viewer geöffnet. Sobald ein echter Raum aktiv ist, werden hier Live-Inhalte eingeblendet.';
+			}
+		}
+	});
+}
+if(filePickInput && filePickStatus){
+	filePickInput.addEventListener('change', ()=>{
+		const files = Array.from(filePickInput.files || []);
+		if(!files.length){
+			filePickStatus.textContent = 'Noch keine Dateien ausgewählt.';
+			return;
+		}
+		filePickStatus.textContent = `${files.length} Datei(en) ausgewählt – bereit für Upload zu einem R2-Endpunkt.`;
+	});
+}
+function updateMediaStatus(){
+	if(!mediaStatus) return;
+	mediaStatus.textContent = mediaActive
+		? 'Media-Demo aktiv (UI-Ebene). Ein echter Stream kann später an diese Steuerung andocken.'
+		: 'Media-/Streams sind noch inaktiv.';
+}
+if(startMediaBtn){
+	startMediaBtn.addEventListener('click', ()=>{
+		mediaActive = true;
+		updateMediaStatus();
+	});
+}
+if(stopMediaBtn){
+	stopMediaBtn.addEventListener('click', ()=>{
+		mediaActive = false;
+		updateMediaStatus();
+	});
+}
 
 /* API/Signaling Presets (No‑Code Helfer) */
 const apiPresetSel = document.getElementById('apiPreset');
@@ -1106,6 +1464,9 @@ const voucherModeIssuerBtn = document.getElementById('voucherModeIssuer');
 const voucherRefreshBtn = document.getElementById('btnVoucherRefresh');
 const voucherTemplateButtons = document.querySelectorAll('[data-voucher-template]');
 const eventsMembershipsOutput = document.getElementById('eventsMembershipsOutput');
+const machinesTableBody = document.getElementById('machinesTableBody');
+const eventsMembershipsTableBody = document.getElementById('eventsMembershipsTableBody');
+const myBookingsList = document.getElementById('myBookingsList');
 
 function setVoucherMode(mode){
 	voucherMode = mode === 'issuer' ? 'issuer' : 'customer';
@@ -1125,6 +1486,10 @@ function setVoucherMode(mode){
 
 async function loadVouchers(){
 	if(!voucherListEl) return;
+	if(!VOUCHER_API_BASE) {
+		voucherListEl.innerHTML = '<div class="muted">Voucher-API nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.</div>';
+		return;
+	}
 	const { uid } = getUserContext();
 	let url = `${VOUCHER_API_BASE}/voucher/list`;
 	const params = new URLSearchParams();
@@ -1139,6 +1504,10 @@ async function loadVouchers(){
 	selectedVoucher = null;
 	try{
 		const res = await fetch(url);
+		if(!res.ok) {
+			voucherListEl.innerHTML = `<div class="muted">Fehler beim Laden: ${res.status} ${res.statusText}</div>`;
+			return;
+		}
 		const data = await res.json();
 		const items = data.items || [];
 		if(!items.length){
@@ -1181,10 +1550,19 @@ async function loadVouchers(){
 
 async function loadSlotsForVoucher(voucher){
 	if(!slotListEl || !voucher || !voucher.voucherId) return;
+	if(!VOUCHER_API_BASE) {
+		slotListEl.innerHTML = '<div class="muted">Voucher-API nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.</div>';
+		if(slotCalendarEl) slotCalendarEl.innerHTML = '';
+		return;
+	}
 	slotListEl.innerHTML = '<div class="muted">Lade verfügbare Slots …</div>';
 	if(slotCalendarEl) slotCalendarEl.innerHTML = '';
 	try{
 		const res = await fetch(`${VOUCHER_API_BASE}/slots/available?voucherId=${encodeURIComponent(voucher.voucherId)}`);
+		if(!res.ok) {
+			slotListEl.innerHTML = `<div class="muted">Fehler beim Laden der Slots: ${res.status} ${res.statusText}</div>`;
+			return;
+		}
 		const data = await res.json();
 		const items = data.items || [];
 		if(!items.length){
@@ -1224,6 +1602,10 @@ async function loadSlotsForVoucher(voucher){
 
 async function bookSlot(voucher, slot){
 	if(!voucher || !slot) return;
+	if(!VOUCHER_API_BASE) {
+		alert('Voucher-API nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.');
+		return;
+	}
 	if(!confirm('Diesen Termin wirklich buchen?')) return;
 	const { uid } = getUserContext();
 	try{
@@ -1241,10 +1623,13 @@ async function bookSlot(voucher, slot){
 			alert('Buchung fehlgeschlagen: ' + (data.error || res.statusText));
 			return;
 		}
-		alert('Termin gebucht.');
-		// Liste aktualisieren
+		alert('Termin gebucht.\n\nDatum: ' + new Date(slot.start).toLocaleString());
+		// Listen aktualisieren: Vouchers, Slots, vertikale Konsolen & persönliche Buchungen
 		loadVouchers();
 		slotListEl && (slotListEl.innerHTML = '');
+		loadVerticalConsoles();
+		loadEventsMembershipsOverview();
+		loadMyBookings();
 	}catch(err){
 		alert('Fehler bei der Buchung: ' + (err?.message || String(err)));
 	}
@@ -1281,6 +1666,7 @@ const VOUCHER_TEMPLATES = {
 		durationMinutes: 60*24
 	}
 };
+const DEFAULT_VOUCHER_TEMPLATE_KEYS = ['consulting','therapy','viewing','machine','membership'];
 async function issueVoucherTemplate(templateKey){
 	const tpl = VOUCHER_TEMPLATES[templateKey];
 	if(!tpl) return;
@@ -1301,20 +1687,71 @@ async function issueVoucherTemplate(templateKey){
 		terms: { template: templateKey }
 	};
 	try{
+		if (!VOUCHER_API_BASE) {
+			alert('Voucher‑API ist nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.');
+			return;
+		}
 		const res = await fetch(`${VOUCHER_API_BASE}/voucher/issue`, {
 			method:'POST',
 			headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
 			body: JSON.stringify(body)
 		});
+		if (!res.ok) {
+			const errorText = await res.text().catch(() => res.statusText);
+			let errorMsg = `HTTP ${res.status}: ${errorText}`;
+			try {
+				const errorData = JSON.parse(errorText);
+				if (errorData.error) errorMsg = errorData.error;
+			} catch {}
+			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + errorMsg);
+			// Fehler an Autofix melden
+			if (window.enqueueError) {
+				window.enqueueError(new Error(errorMsg), { type: 'voucher_issue_error', templateKey });
+			}
+			return;
+		}
 		const data = await res.json();
-		if(!res.ok || !data.ok){
-			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + (data.error || res.statusText));
+		if(!data || !data.ok){
+			const errorMsg = data?.error || 'Unbekannter Fehler';
+			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + errorMsg);
+			// Fehler an Autofix melden
+			if (window.enqueueError) {
+				window.enqueueError(new Error(errorMsg), { type: 'voucher_issue_error', templateKey });
+			}
 			return;
 		}
 		alert('Voucher aus Vorlage erstellt.');
 		loadVouchers();
 	}catch(err){
-		alert('Fehler beim Ausstellen der Vorlage: ' + (err?.message || String(err)));
+		const errorMsg = err?.message || String(err);
+		alert('Fehler beim Ausstellen der Vorlage: ' + errorMsg);
+		// Fehler an Autofix melden
+		if (window.enqueueError) {
+			window.enqueueError(err, { type: 'voucher_issue_error', templateKey });
+		}
+	}
+}
+
+async function ensureDefaultVouchersForIssuer(){
+	// Autopilot: Wenn dieser Browser noch nie Standard-Voucher ausgestellt hat,
+	// einmalig die wichtigsten Templates erzeugen, damit der User sofort echte Daten sieht.
+	try{
+		if(!VOUCHER_API_BASE) return;
+		if(localStorage.getItem('mot_default_vouchers_issued_v1')) return;
+		const { uid } = getUserContext();
+		const res = await fetch(`${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`, {
+			headers:{ 'Accept':'application/json' }
+		});
+		const data = await res.json();
+		const items = data.items || [];
+		if(items.length > 0) return; // Es gibt schon Vouchers, nichts tun
+
+		for(const key of DEFAULT_VOUCHER_TEMPLATE_KEYS){
+			await issueVoucherTemplate(key);
+		}
+		localStorage.setItem('mot_default_vouchers_issued_v1', '1');
+	}catch{
+		// leise scheitern, Autopilot ist optional
 	}
 }
 function renderSlotCalendar(slots){
@@ -1394,6 +1831,109 @@ async function loadEventsMembershipsOverview(){
 		eventsMembershipsOutput.textContent = 'Fehler beim Laden der Übersicht: ' + (err?.message || String(err));
 	}
 }
+
+async function loadMyBookings(){
+	if(!myBookingsList || !VOUCHER_API_BASE) return;
+	const { uid } = getUserContext();
+	myBookingsList.innerHTML = '<div class="muted">Lade deine Buchungen …</div>';
+	try{
+		const res = await fetch(`${VOUCHER_API_BASE}/voucher/bookings?holderUid=${encodeURIComponent(uid)}`, {
+			headers:{ 'Accept':'application/json' }
+		});
+		const data = await res.json();
+		const items = data.items || [];
+		if(!items.length){
+			myBookingsList.innerHTML = '<div class="muted">Keine Buchungen gefunden.</div>';
+			return;
+		}
+		myBookingsList.innerHTML = '';
+		items.forEach(b=>{
+			const row = document.createElement('div');
+			row.className = 'slot-item';
+			const start = b.slotStart ? new Date(b.slotStart) : null;
+			const end = b.slotEnd ? new Date(b.slotEnd) : null;
+			const range = (start && end)
+				? `${start.toLocaleDateString()} · ${start.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} – ${end.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`
+				: '—';
+			row.innerHTML = `
+				<div>
+					<div>${e(range)}</div>
+					<div class="voucher-meta">Voucher: ${e(b.voucherId || '—')}</div>
+				</div>
+				<span class="voucher-badge status-${(b.status||'').toLowerCase()}">${e(b.status || '—')}</span>
+			`;
+			myBookingsList.appendChild(row);
+		});
+	}catch(err){
+		myBookingsList.innerHTML = '<div class="muted">Fehler beim Laden deiner Buchungen: '+e(err?.message||String(err))+'</div>';
+	}
+}
+
+async function loadVerticalConsoles(){
+	if(!machinesTableBody && !eventsMembershipsTableBody) return;
+	if(!VOUCHER_API_BASE) {
+		if(machinesTableBody) machinesTableBody.innerHTML = '<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Voucher-API nicht verfügbar.</td></tr>';
+		if(eventsMembershipsTableBody) eventsMembershipsTableBody.innerHTML = '<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Voucher-API nicht verfügbar.</td></tr>';
+		return;
+	}
+	const { uid } = getUserContext();
+	try{
+		const url = `${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`;
+		const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
+		const data = await res.json();
+		const items = data.items || [];
+
+		const machines = items.filter(v => v.serviceType === 'machine.timeslot');
+		const eventTypes = ['consulting.session','therapy.session','realestate.viewing'];
+		const events = items.filter(v => eventTypes.includes(v.serviceType));
+		const memberships = items.filter(v => v.serviceType === 'membership.access');
+
+		if(machinesTableBody){
+			if(!machines.length){
+				machinesTableBody.innerHTML = '<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Noch keine Maschinen‑Vouchers gefunden.</td></tr>';
+			}else{
+				machinesTableBody.innerHTML = machines.map(v=>{
+					const priceText = v.price && typeof v.price.amount === 'number'
+						? `${(v.price.amount/100).toFixed(2)} ${(v.price.currency||'').toUpperCase()}`
+						: '—';
+					const period = `${(v.validFrom||'').slice(0,10)} – ${(v.validUntil||'').slice(0,10) || 'offen'}`;
+					// Standort wird aktuell aus terms.location oder terms.site gelesen (wenn vorhanden)
+					const location = (v.terms && (v.terms.location || v.terms.site)) || '—';
+					return `<tr>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(v.title || 'Maschinenzeit')}</td>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(location)}</td>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(priceText)}</td>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(v.status || '—')} (${e(period)})</td>
+					</tr>`;
+				}).join('');
+			}
+		}
+
+		if(eventsMembershipsTableBody){
+			const combined = [...events, ...memberships];
+			if(!combined.length){
+				eventsMembershipsTableBody.innerHTML = '<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Noch keine Events/Memberships gefunden.</td></tr>';
+			}else{
+				eventsMembershipsTableBody.innerHTML = combined.map(v=>{
+					const period = `${(v.validFrom||'').slice(0,10)} – ${(v.validUntil||'').slice(0,10) || 'offen'}`;
+					return `<tr>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(v.serviceType || '—')}</td>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(v.title || '')}</td>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(v.status || '—')}</td>
+						<td style="padding:4px 6px;border-bottom:1px solid var(--border);">${e(period)}</td>
+					</tr>`;
+				}).join('');
+			}
+		}
+	}catch(err){
+		if(machinesTableBody){
+			machinesTableBody.innerHTML = '<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Fehler beim Laden der Maschinen‑Konsole: '+e(err?.message||String(err))+'</td></tr>';
+		}
+		if(eventsMembershipsTableBody){
+			eventsMembershipsTableBody.innerHTML = '<tr><td colspan="4" style="padding:4px 6px;color:var(--muted);">Fehler beim Laden der Events/Memberships‑Konsole: '+e(err?.message||String(err))+'</td></tr>';
+		}
+	}
+}
 // Hypotheken-Demo-Modul
 const mortgageOutput = document.getElementById('mortgageOutput');
 const btnLoadApplications = document.getElementById('btnLoadApplications');
@@ -1404,7 +1944,7 @@ async function loadMortgageApplications(){
 	if(!mortgageOutput) return;
 	const { uid } = getUserContext();
 	try{
-		const res = await fetch('http://localhost:3300/api/hypotheken/anfrage/list?role=borrower', {
+		const res = await fetch('/api/mortgage/application-list?role=borrower', {
 			headers: {
 				'Accept':'application/json',
 				'X-MOT-User': uid
@@ -1421,7 +1961,7 @@ async function loadMortgageOffers(){
 	if(!mortgageOutput) return;
 	const { uid } = getUserContext();
 	try{
-		const res = await fetch('http://localhost:3300/api/hypotheken/angebot/list?role=borrower', {
+		const res = await fetch('/api/mortgage/offer-list?role=borrower', {
 			headers: {
 				'Accept':'application/json',
 				'X-MOT-User': uid
@@ -1450,7 +1990,7 @@ async function createExampleMortgageApplication(){
 		}
 	};
 	try{
-		const res = await fetch('http://localhost:3300/api/hypotheken/anfrage', {
+		const res = await fetch('/api/mortgage/application', {
 			method:'POST',
 			headers: {
 				'Content-Type':'application/json',
@@ -1502,8 +2042,48 @@ window.addEventListener('keydown', (e)=>{
 		});
 	}
 	await loadEventsMembershipsOverview();
+	await loadVerticalConsoles();
+	await loadMyBookings();
+	// Autopilot: Standard-Voucher einmalig erzeugen, falls noch nichts existiert
+	await ensureDefaultVouchersForIssuer();
+	installBasicTelemetry();
 })();
 </script>
+<script type="module">
+import { loadProviders } from './router.js';
+
+async function renderSuppliers() {
+	const container = document.getElementById('suppliersList');
+	if (!container) return;
+	container.textContent = 'Lade Provider-Profile …';
+	try {
+		const providers = await loadProviders();
+		if (!providers.length) {
+			container.textContent = 'Keine Provider-Profile konfiguriert.';
+			return;
+		}
+		container.innerHTML = providers.map(p => {
+			const tags = Array.isArray(p.tags) && p.tags.length ? ` · Tags: ${p.tags.join(', ')}` : '';
+			const status = p.enabled === false ? 'deaktiviert' : 'aktiv';
+			return `
+				<div class="slot-item">
+					<div>
+						<div><strong>${p.label || p.id}</strong> <span class="voucher-meta">(${p.category || 'other'} · ${p.connector || 'n/a'})</span></div>
+						<div class="voucher-meta">${p.description || ''}${tags}</div>
+					</div>
+					<span class="voucher-badge status-${status}">${status}</span>
+				</div>
+			`;
+		}).join('');
+	} catch (err) {
+		container.textContent = 'Fehler beim Laden der Provider-Profile: ' + (err?.message || String(err));
+	}
+}
+
+renderSuppliers().catch(() => {});
+</script>
+<script src="./ambient-media.js"></script>
+<script type="module" src="./autofix-client.js"></script>
 </body>
 </html>
 

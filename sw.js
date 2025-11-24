@@ -2,21 +2,36 @@ const CACHE_NAME = 'businessconnecthub-cache-v1';
 
 const ASSETS = [
   './index.html',
-  './Portal – Start.html',
   './icon.png',
   './manifest-forum.html',
   './manifest-portal.html',
-  './online/online/manifest-portal.html',
   './admin.html',
   './honeycomb.html',
   './legal-hub.html',
-  './assets/branding/de_rechtspraak_128.png'
+  './business-admin.html',
+  './admin-monitoring.html',
+  './TELBANK/index.html',
+  './mot-core.js',
+  './autofix-client.js',
+  './room-image-carousel.js',
+  './ambient-media.js'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      // Einzelne Assets hinzufügen mit Fehlerbehandlung
+      return Promise.allSettled(
+        ASSETS.map(asset => 
+          cache.add(asset).catch(err => {
+            console.warn(`Service Worker: Konnte ${asset} nicht cachen:`, err);
+            return null;
+          })
+        )
+      );
+    })
   );
+  self.skipWaiting(); // Sofort aktivieren
 });
 
 self.addEventListener('activate', event => {
