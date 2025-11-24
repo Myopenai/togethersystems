@@ -878,12 +878,14 @@ function detectVoucherApiBase() {
 	return '/api';
 }
 let VOUCHER_API_BASE = detectVoucherApiBase();
+let MORTGAGE_API_BASE = null; // Wird dynamisch erkannt
 
 // Dynamische API-Base-URL-Erkennung beim Laden
 (async function initApiBase() {
 	// Wenn GitHub Pages erkannt, KEINEN Health-Check machen (würde 404-Fehler produzieren)
 	if (location.hostname.includes('github.io') || location.hostname.includes('github.com')) {
 		VOUCHER_API_BASE = null;
+		MORTGAGE_API_BASE = null;
 		window.PRESENCE_API_BASE = null; // Auch Presence API deaktivieren
 		console.warn('⚠️ GitHub Pages erkannt: Alle API-Funktionen sind deaktiviert. Für volle Funktionalität deploye auf Cloudflare Pages.');
 		return;
@@ -2188,14 +2190,22 @@ const btnNewApplication = document.getElementById('btnNewApplication');
 
 async function loadMortgageApplications(){
 	if(!mortgageOutput) return;
+	if(!MORTGAGE_API_BASE) {
+		mortgageOutput.textContent = 'Mortgage-API ist nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.';
+		return;
+	}
 	const { uid } = getUserContext();
 	try{
-		const res = await fetch('/api/mortgage/application-list?role=borrower', {
+		const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application-list?role=borrower`, {
 			headers: {
 				'Accept':'application/json',
 				'X-MOT-User': uid
 			}
 		});
+		if(!res.ok) {
+			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
+			return;
+		}
 		const data = await res.json();
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
@@ -2205,14 +2215,22 @@ async function loadMortgageApplications(){
 
 async function loadMortgageOffers(){
 	if(!mortgageOutput) return;
+	if(!MORTGAGE_API_BASE) {
+		mortgageOutput.textContent = 'Mortgage-API ist nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.';
+		return;
+	}
 	const { uid } = getUserContext();
 	try{
-		const res = await fetch('/api/mortgage/offer-list?role=borrower', {
+		const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/offer-list?role=borrower`, {
 			headers: {
 				'Accept':'application/json',
 				'X-MOT-User': uid
 			}
 		});
+		if(!res.ok) {
+			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
+			return;
+		}
 		const data = await res.json();
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
@@ -2222,6 +2240,10 @@ async function loadMortgageOffers(){
 
 async function createExampleMortgageApplication(){
 	if(!mortgageOutput) return;
+	if(!MORTGAGE_API_BASE) {
+		alert('Mortgage-API ist nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.');
+		return;
+	}
 	const { uid } = getUserContext();
 	const example = {
 		propertyId: 'house-123',
@@ -2236,7 +2258,7 @@ async function createExampleMortgageApplication(){
 		}
 	};
 	try{
-		const res = await fetch('/api/mortgage/application', {
+		const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application`, {
 			method:'POST',
 			headers: {
 				'Content-Type':'application/json',
@@ -2245,6 +2267,10 @@ async function createExampleMortgageApplication(){
 			},
 			body: JSON.stringify(example)
 		});
+		if(!res.ok) {
+			mortgageOutput.textContent = `Fehler beim Erstellen: ${res.status} ${res.statusText}`;
+			return;
+		}
 		const data = await res.json();
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
