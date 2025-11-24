@@ -1214,8 +1214,12 @@ function initLiveChat(identity, roomId){
 		} else if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
 			// Lokaler Signaling-Server (signal-server.js)
 			signalUrl = 'ws://localhost:3100/ws';
+		} else if (location.hostname.includes('github.io') || location.hostname.includes('github.com')) {
+			// GitHub Pages: WebSocket nicht verfügbar, deaktiviere
+			appendChatSystem(messagesEl, '⚠️ WebSocket-Verbindungen sind auf GitHub Pages nicht verfügbar. Bitte deploye auf Cloudflare Pages für Live-Chat.');
+			return;
 		} else {
-			// GitHub Pages oder andere: Versuche Cloudflare Pages WebSocket (falls verfügbar)
+			// Andere Domains: Versuche Cloudflare Pages WebSocket (falls verfügbar)
 			const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
 			signalUrl = `${protocol}//${location.host}/ws`;
 		}

@@ -374,22 +374,24 @@
           + '</tr>';
       }).join('');
 
-      // Optional: Online-Contracts aus D1/R2 ergänzen
-      fetch('/api/contracts/list')
-        .then(r=>r.ok?r.json():null)
-        .then(data=>{
-          if(!data || !Array.isArray(data.items) || !data.items.length) return;
-          const rows = data.items.map(c=>{
-            const fn = (c.name || 'Contract') + (c.byteSize ? ' ('+Math.round(c.byteSize/1024)+' KB)' : '');
-            return '<tr>'
-              + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">[online] '+escapeHtml(fn)+'</td>'
-              + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">—</td>'
-              + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+escapeHtml(c.storageUrl || '—')+'</td>'
-              + '</tr>';
-          }).join('');
-          tableBody.innerHTML += rows;
-        })
-        .catch(()=>{ /* optional / offline */ });
+      // Optional: Online-Contracts aus D1/R2 ergänzen (nur wenn API verfügbar)
+      if(!location.hostname.includes('github.io') && !location.hostname.includes('github.com')){
+        fetch('/api/contracts/list')
+          .then(r=>r.ok?r.json():null)
+          .then(data=>{
+            if(!data || !Array.isArray(data.items) || !data.items.length) return;
+            const rows = data.items.map(c=>{
+              const fn = (c.name || 'Contract') + (c.byteSize ? ' ('+Math.round(c.byteSize/1024)+' KB)' : '');
+              return '<tr>'
+                + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">[online] '+escapeHtml(fn)+'</td>'
+                + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">—</td>'
+                + '<td style="padding:4px 6px;border-bottom:1px solid var(--border);">'+escapeHtml(c.storageUrl || '—')+'</td>'
+                + '</tr>';
+            }).join('');
+            tableBody.innerHTML += rows;
+          })
+          .catch(()=>{ /* optional / offline */ });
+      }
     }
     function escapeHtml(s){
       return String(s).replace(/[&<>"']/g, m=>({
@@ -407,6 +409,11 @@
         }
 
         if(onlineToggle && onlineToggle.checked){
+          // Online-Upload via /api/contracts/upload (nur wenn API verfügbar)
+          if(location.hostname.includes('github.io') || location.hostname.includes('github.com')){
+            alert('Online-Upload ist auf GitHub Pages nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.');
+            return;
+          }
           // Online-Upload via /api/contracts/upload
           const formData = new FormData();
           if(file) formData.append('file', file);

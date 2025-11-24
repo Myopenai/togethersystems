@@ -221,6 +221,10 @@ class TpgaTelbankApp {
 
   async sendTransferToBackend(flow) {
     // Optional server-side logging; configure base via global or default relative API path.
+    // Deaktiviere auf GitHub Pages (keine Serverless Functions)
+    if (location.hostname.includes('github.io') || location.hostname.includes('github.com')) {
+      return; // Kein Backend-Logging auf GitHub Pages
+    }
     const base =
       window.TELBANK_TRANSFER_API_BASE || "/api/telbank";
     if (!base) return;
