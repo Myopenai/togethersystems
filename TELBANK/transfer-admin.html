@@ -244,7 +244,7 @@
           try {
             const res = await fetch(url, { headers: { Accept: 'application/json' } });
             if (!res.ok) throw new Error('HTTP ' + res.status);
-            const data = await res.json();
+            const data = await res.ok ? res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
             renderTable(data.items || []);
           } catch (err) {
             tableWrapper.innerHTML =

@@ -168,3 +168,4 @@ const EU_LOGO_LINK_URL = '/info/eu-logo'; // Statt './assets/eu-logo.svg'
 **Status**: ✅ **VOLLSTÄNDIG IMPLEMENTIERT**  
 **Alle Logos sind klickbar und funktionsfähig!**
 
+

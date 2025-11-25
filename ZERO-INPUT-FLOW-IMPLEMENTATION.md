@@ -251,3 +251,4 @@ function setupQuickActionButtons(){
 3. ⏭ Committen & Pushen
 4. ⏭ Phase 4 & 5 nach und nach umsetzen
 
+

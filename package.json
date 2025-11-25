@@ -6,7 +6,13 @@
   "scripts": {
     "test": "echo \"Nutze npm run test:e2e für die End-to-End-Tests\"",
     "test:e2e": "cd businessconnecthub-playwright-tests-full && npx playwright test --project=Chromium",
-    "test:e2e:ci": "cd businessconnecthub-playwright-tests-full && npx playwright test"
+    "test:e2e:ci": "cd businessconnecthub-playwright-tests-full && npx playwright test",
+    "autofix": "node fix-all-api-errors.js && node fix-response-json-errors.js",
+    "autotest": "node simple-error-checker.js",
+    "autonomous": "node autonomous-self-testing-system.js",
+    "watch": "node autonomous-code-watcher.js",
+    "build": "node production-build-with-auto-fix.js",
+    "build:production": "node production-build-with-auto-fix.js && node autonomous-self-testing-system.js"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +20,9 @@
   "dependencies": {
     "express": "^5.1.0",
     "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "playwright": "^1.57.0"
   }
 }

@@ -346,7 +346,7 @@
 			let obj = { id: nanoid(), title:'', category:'', notes:'', createdAt: new Date().toISOString() };
 			if(editId){
 				const found = items.find(x=> String(x.id)===String(editId));
-				if(found) obj = JSON.parse(JSON.stringify(found));
+				if(found) obj = (function() { try { return (function() { try { return (function() { try { return JSON.parse(JSON.stringify(found); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })());
 			}
 			$('#f_title').value = obj.title||'';
 			$('#f_category').value = obj.category||'';
@@ -359,7 +359,7 @@
 		}
 
 		function saveEditor(){
-			const obj = JSON.parse($('#editor').dataset.current||'{}');
+			const obj = (function() { try { return (function() { try { return (function() { try { return JSON.parse($('#editor'); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })().dataset.current||'{}');
 			obj.title = $('#f_title').value.trim();
 			obj.category = $('#f_category').value.trim();
 			obj.notes = $('#f_notes').value;
@@ -403,7 +403,7 @@
 			try{
 				const raw = localStorage.getItem('portal.items');
 				if(!raw) return [];
-				const arr = JSON.parse(raw);
+				const arr = (function() { try { return (function() { try { return (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })();
 				return Array.isArray(arr)? arr : [];
 			}catch{ return []; }
 		}

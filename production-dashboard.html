@@ -343,10 +343,14 @@
     function e(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 
     async function loadDashboardData(){
-      try{
-        const res = await fetch(`${API_BASE}/admin/dashboard`);
+      try {
+          const res = await fetch(`${API_BASE}/admin/dashboard`);
+        } catch (err) {
+          console.error('API error:', err);
+          return null;
+        }
         if(!res.ok) throw new Error(`API-Fehler: ${res.status}`);
-        const data = await res.json();
+        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
         if(!data.ok) throw new Error(data.error || 'Unbekannter Fehler');
         dashboardData = data;
         return data;
@@ -507,9 +511,13 @@
 
     async function createBackup(){
       if(!confirm('Backup jetzt erstellen?')) return;
-      try{
-        const res = await fetch(`${API_BASE}/admin/backup/create`, {method:'POST'});
-        const data = await res.json();
+      try {
+          const res = await fetch(`${API_BASE}/admin/backup/create`, {method:'POST'});
+        } catch (err) {
+          console.error('API error:', err);
+          return null;
+        }
+        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
         if(data.ok){
           alert('✅ Backup erfolgreich erstellt!');
           loadAllData();

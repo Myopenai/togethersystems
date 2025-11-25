@@ -42,3 +42,4 @@ Der Businessplan-Link erscheint in der `ts-brand-sub` Zeile nach den bestehenden
 
 **Status**: ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
 
+

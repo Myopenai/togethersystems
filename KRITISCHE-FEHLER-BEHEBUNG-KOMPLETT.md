@@ -99,3 +99,4 @@ const CACHE_NAME = 'businessconnecthub-cache-v2'; // Version erhöhen
 4. ✅ Service Worker Cache aktualisieren
 5. ✅ Alle Änderungen committen und pushen
 
+

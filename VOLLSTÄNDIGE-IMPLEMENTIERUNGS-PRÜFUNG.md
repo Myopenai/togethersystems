@@ -190,3 +190,4 @@ git push origin main
 2. Browser-Cache leeren
 3. Hard Reload (Strg+Shift+R)
 
+

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TogetherSystems Beta - Produktions-Portal</title>
+  <link rel="stylesheet" href="../ui/styles.css">
+  <style>
+    .beta-banner {
+      background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+      color: #000;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .beta-info {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1.5rem;
+      margin: 2rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="beta-banner">
+    🧪 BETA-PRODUKTIONS-PORTAL - Formel 1 Prinzip: Ersatzwagen für Testing
+  </div>
+
+  <div class="beta-info">
+    <h2>Beta-Portal Konzept</h2>
+    <p><strong>Formel 1 Prinzip:</strong> Dieses Portal ist der "Ersatzwagen" - 1:1 Abbild des Originals, aber für Beta-Testing.</p>
+    <p>Alle Submissions von Entwicklern werden hier getestet, bevor sie ins Original-Portal übernommen werden.</p>
+    <p>So bleibt das Original stabil, während neue Features hier erprobt werden.</p>
+  </div>
+
+  <div id="betaContent" style="padding: 2rem;">
+    <h2>Beta-Features</h2>
+    <div id="betaFeatures"></div>
+  </div>
+
+  <script src="../core/event-bus.js"></script>
+  <script src="../core/storage.js"></script>
+  <script src="../core/beta-portal.js"></script>
+  <script>
+    let betaPortalManager;
+
+    async function init() {
+      await storage.init();
+      betaPortalManager = new BetaPortalManager(storage, eventBus);
+      await betaPortalManager.enableBetaMode();
+      await loadBetaFeatures();
+    }
+
+    async function loadBetaFeatures() {
+      const features = await betaPortalManager.getBetaFeatures();
+      const status = await betaPortalManager.getBetaStatus();
+
+      document.getElementById('betaFeatures').innerHTML = features.length === 0 ?
+        '<p>Noch keine Beta-Features aktiv</p>' :
+        features.map(feature => `
+          <div class="network-card">
+            <h3>${escapeHtml(feature.name)}</h3>
+            <p>${escapeHtml(feature.description)}</p>
+            <p><strong>Status:</strong> ${feature.status}</p>
+            <p><strong>Aktiv seit:</strong> ${new Date(feature.enabledAt).toLocaleString('de-DE')}</p>
+            ${feature.approvedForProduction ? 
+              '<span class="badge verified">✓ Bereit für Production</span>' : 
+              '<button class="btn-secondary" onclick="testFeature(\'' + feature.id + '\')">Testen</button>'
+            }
+          </div>
+        `).join('');
+
+      document.getElementById('betaContent').innerHTML = `
+        <h2>Beta-Features (${status.testingFeatures} in Testing, ${status.approvedFeatures} bereit)</h2>
+        <div id="betaFeatures"></div>
+      `;
+    }
+
+    async function testFeature(featureId) {
+      const result = prompt('Test-Ergebnis eingeben:');
+      if (result) {
+        await betaPortalManager.testBetaFeature(featureId, {
+          result: result,
+          testedBy: 'user'
+        });
+        await loadBetaFeatures();
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    init();
+  </script>
+</body>
+</html>
+

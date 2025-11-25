@@ -148,3 +148,4 @@ Du kannst:
 - Cloudflare Pages ist immer nur an ein konkretes Repo/Projekt gebunden – wohin du pushst, ist egal, solange Cloudflare das richtige Repo zieht
 - Du musst keine Worker-Dateien umbauen. Das Routing `/api/...` und `/ws` ist sauber
 
+

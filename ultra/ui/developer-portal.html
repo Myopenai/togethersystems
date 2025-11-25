@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Portal - Together Systems</title>
+  <link rel="stylesheet" href="../ui/styles.css">
+  <style>
+    .developer-portal {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .welcome-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    .welcome-section h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .welcome-section p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+    .ceoc-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    .sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .section-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .section-card h2 {
+      color: #667eea;
+      margin-bottom: 1rem;
+    }
+    .code-submission-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .code-submission-form textarea {
+      min-height: 200px;
+      font-family: 'Courier New', monospace;
+    }
+    .digital-notar-section {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    .beta-portal-info {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="developer-portal">
+    <div class="welcome-section">
+      <h1>🚀 Developer Portal</h1>
+      <p>Willkommen bei Together Systems International TTT</p>
+      <p>Du bist ein <span class="ceoc-badge">CEOC - Center Edge of Circle</span></p>
+      <p>Grenzenlose Beteiligung • Keine GitHub-Einladung nötig • Community-getrieben</p>
+    </div>
+
+    <div class="sections">
+      <!-- Entwickler-Registrierung -->
+      <div class="section-card">
+        <h2>👨‍💻 Entwickler werden</h2>
+        <form id="developerRegistrationForm">
+          <div class="form-group">
+            <label>Name:</label>
+            <input type="text" id="devName" required>
+          </div>
+          <div class="form-group">
+            <label>E-Mail (optional):</label>
+            <input type="email" id="devEmail">
+          </div>
+          <div class="form-group">
+            <label>Skills (kommagetrennt):</label>
+            <input type="text" id="devSkills" placeholder="JavaScript, React, Node.js">
+          </div>
+          <div class="form-group">
+            <label>Level:</label>
+            <select id="devLevel">
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary">Registrieren</button>
+        </form>
+
+        <div class="digital-notar-section">
+          <h3>🔐 Digital Notar Verifizierung</h3>
+          <p>Erhöhe dein Vertrauen durch Digital Notar Verifizierung</p>
+          <button class="btn-secondary" onclick="showDigitalNotarForm()">Jetzt verifizieren</button>
+        </div>
+      </div>
+
+      <!-- Code Submission -->
+      <div class="section-card">
+        <h2>💻 Code einreichen</h2>
+        <form id="codeSubmissionForm" class="code-submission-form">
+          <div class="form-group">
+            <label>Titel:</label>
+            <input type="text" id="submissionTitle" required>
+          </div>
+          <div class="form-group">
+            <label>Beschreibung:</label>
+            <textarea id="submissionDescription" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Code:</label>
+            <textarea id="submissionCode" required placeholder="// Dein Code hier..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Kategorie:</label>
+            <select id="submissionCategory">
+              <option value="feature">Feature</option>
+              <option value="bugfix">Bugfix</option>
+              <option value="extension">Extension</option>
+              <option value="improvement">Verbesserung</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary">Einreichen</button>
+        </form>
+      </div>
+
+      <!-- Beta Portal -->
+      <div class="section-card">
+        <h2>🧪 Beta-Produktions-Portal</h2>
+        <p>Deine Submissions werden im Beta-Portal getestet, bevor sie ins Original übernommen werden.</p>
+        <div class="beta-portal-info">
+          <strong>Formel 1 Prinzip:</strong> Ein Ersatzwagen (Beta) läuft parallel zum Gewinnermodell (Original).
+          Bei Erfolg wird das Feature ins Original übernommen.
+        </div>
+        <button class="btn-primary" onclick="openBetaPortal()">Beta-Portal öffnen</button>
+      </div>
+
+      <!-- Meine Submissions -->
+      <div class="section-card">
+        <h2>📋 Meine Submissions</h2>
+        <div id="mySubmissions"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../core/event-bus.js"></script>
+  <script src="../core/storage.js"></script>
+  <script src="../core/developer-onboarding.js"></script>
+  <script src="../core/beta-portal.js"></script>
+  <script>
+    let developerOnboarding, betaPortalManager;
+    let currentDeveloper = null;
+
+    async function init() {
+      await storage.init();
+      developerOnboarding = new DeveloperOnboarding(storage, eventBus);
+      betaPortalManager = new BetaPortalManager(storage, eventBus);
+
+      // Developer Registration
+      document.getElementById('developerRegistrationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await registerDeveloper();
+      });
+
+      // Code Submission
+      document.getElementById('codeSubmissionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await submitCode();
+      });
+
+      // Prüfe ob bereits registriert
+      const identity = await storage.get('identity');
+      if (identity) {
+        const developers = await developerOnboarding.getDevelopers();
+        currentDeveloper = developers.find(d => d.identityId === identity.id);
+        if (currentDeveloper) {
+          loadMySubmissions();
+        }
+      }
+    }
+
+    async function registerDeveloper() {
+      const identity = await storage.get('identity');
+      if (!identity) {
+        alert('Bitte zuerst Identität erstellen');
+        return;
+      }
+
+      const developer = await developerOnboarding.registerDeveloper({
+        name: document.getElementById('devName').value,
+        email: document.getElementById('devEmail').value,
+        skills: document.getElementById('devSkills').value.split(',').map(s => s.trim()),
+        level: document.getElementById('devLevel').value,
+        identityId: identity.id
+      });
+
+      currentDeveloper = developer;
+      alert('Erfolgreich als Entwickler registriert! Du bist jetzt ein CEOC.');
+      loadMySubmissions();
+    }
+
+    async function submitCode() {
+      if (!currentDeveloper) {
+        alert('Bitte zuerst als Entwickler registrieren');
+        return;
+      }
+
+      const submission = await developerOnboarding.submitCode(currentDeveloper.id, {
+        title: document.getElementById('submissionTitle').value,
+        description: document.getElementById('submissionDescription').value,
+        code: document.getElementById('submissionCode').value,
+        category: document.getElementById('submissionCategory').value
+      });
+
+      // Feature im Beta-Portal aktivieren
+      await betaPortalManager.enableBetaFeature(`feature-${submission.id}`, {
+        name: submission.title,
+        description: submission.description,
+        code: submission.code,
+        developerId: currentDeveloper.id
+      });
+
+      alert('Code erfolgreich eingereicht! Wird jetzt im Beta-Portal getestet.');
+      document.getElementById('codeSubmissionForm').reset();
+      loadMySubmissions();
+    }
+
+    async function loadMySubmissions() {
+      if (!currentDeveloper) return;
+
+      const submissions = await developerOnboarding.getSubmissions();
+      const mySubs = submissions.filter(s => s.developerId === currentDeveloper.id);
+
+      document.getElementById('mySubmissions').innerHTML = mySubs.length === 0 ?
+        '<p>Noch keine Submissions</p>' :
+        mySubs.map(sub => `
+          <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+            <h3>${escapeHtml(sub.title)}</h3>
+            <p>${escapeHtml(sub.description)}</p>
+            <span class="status-badge status-${sub.status}">${sub.status}</span>
+            <small>${new Date(sub.submittedAt).toLocaleString('de-DE')}</small>
+          </div>
+        `).join('');
+    }
+
+    function showDigitalNotarForm() {
+      // TODO: Digital Notar Integration
+      alert('Digital Notar Verifizierung wird implementiert');
+    }
+
+    function openBetaPortal() {
+      window.open('/ultra/beta/', '_blank');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    init();
+  </script>
+</body>
+</html>
+

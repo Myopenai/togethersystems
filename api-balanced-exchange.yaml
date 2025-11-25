@@ -1,0 +1,763 @@
+openapi: 3.0.3
+info:
+  title: TogetherSystems – Gleichgewichts-Börse API
+  version: 1.0.0
+  description: |
+    API für Real-Bilanz-System und Gleichgewichts-Instrumente.
+    Nur Instrumente mit positivem Netto-Wert sind handelbar.
+    
+    Motto: "Wir bewegen die Welt. Die Welt bewegt uns. Ihnen kostet das Geld. Uns ist das egal."
+  contact:
+    name: TogetherSystems Support
+    url: https://myopenai.github.io/togethersystems/
+
+servers:
+  - url: https://ts-portal.pages.dev/api
+    description: Cloudflare Pages (Production)
+  - url: http://localhost:8788/api
+    description: Local Development
+
+tags:
+  - name: Real-Bilanz
+    description: Real-Transaktionen und -Bilanzen erfassen
+  - name: Instrumente
+    description: Gleichgewichts-Instrumente verwalten
+  - name: Nachrichten
+    description: User-zu-User-Nachrichten (inkl. Offline-Support)
+
+paths:
+  #########################################
+  # REAL-BILANZ
+  #########################################
+  
+  /real/entities:
+    post:
+      tags: [Real-Bilanz]
+      summary: Neue Entity anlegen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityCreate'
+      responses:
+        '200':
+          description: Entity erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityResponse'
+    
+    get:
+      tags: [Real-Bilanz]
+      summary: Entities auflisten
+      parameters:
+        - name: kind
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste von Entities
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      entities:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Entity'
+  
+  /real/transactions:
+    post:
+      tags: [Real-Bilanz]
+      summary: Real-Transaktion erfassen
+      description: |
+        Erfasst eine Real-Transaktion (Einnahme, Ausgabe, Schaden, Nutzen, Risiko).
+        Wird später für Netto-Wert-Berechnung aggregiert.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RealTransactionCreate'
+      responses:
+        '200':
+          description: Transaktion erfasst
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      transaction:
+                        $ref: '#/components/schemas/RealTransaction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    
+    get:
+      tags: [Real-Bilanz]
+      summary: Transaktionen auflisten
+      parameters:
+        - name: entity_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [income, expense, damage, benefit, risk]
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Liste von Transaktionen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      transactions:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RealTransaction'
+  
+  /real/balances/{entity_id}:
+    get:
+      tags: [Real-Bilanz]
+      summary: Real-Bilanzen für Entity abrufen
+      parameters:
+        - name: entity_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Liste von Bilanzen
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      balances:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RealBalance'
+  
+  /real/balances/recompute:
+    post:
+      tags: [Real-Bilanz]
+      summary: Real-Bilanz neu berechnen (Admin/Cron)
+      description: |
+        Aggregiert Transaktionen zu einer Real-Bilanz für einen Zeitraum.
+        Netto-Wert = total_benefit + total_income - total_expense - total_damage - total_risk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [entity_id, period_start, period_end]
+              properties:
+                entity_id:
+                  type: string
+                period_start:
+                  type: string
+                  format: date-time
+                period_end:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Bilanz berechnet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      balance:
+                        $ref: '#/components/schemas/RealBalance'
+  
+  #########################################
+  # GLEICHGEWICHTS-INSTRUMENTE
+  #########################################
+  
+  /instruments:
+    post:
+      tags: [Instrumente]
+      summary: Neues Instrument erstellen
+      description: |
+        Erstellt ein handelbares Instrument auf Basis einer positiven Real-Bilanz.
+        Nur Bilanzen mit net_value > 0 sind erlaubt.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstrumentCreate'
+      responses:
+        '200':
+          description: Instrument erstellt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      instrument:
+                        $ref: '#/components/schemas/Instrument'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          description: Real-Bilanz hat negativen Netto-Wert
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "negative_net_value"
+                  message:
+                    type: string
+                    example: "Instrument kann nur auf positiver Real-Bilanz erstellt werden"
+    
+    get:
+      tags: [Instrumente]
+      summary: Instrumente auflisten
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, active, suspended, retired]
+        - name: entity_id
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste von Instrumenten
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      instruments:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Instrument'
+  
+  /instruments/{id}:
+    get:
+      tags: [Instrumente]
+      summary: Instrument-Details abrufen
+      description: |
+        Liefert Instrument inkl. vollständiger Real-Bilanz (Waage).
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Instrument-Details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      instrument:
+                        $ref: '#/components/schemas/Instrument'
+                      balance:
+                        $ref: '#/components/schemas/RealBalance'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    patch:
+      tags: [Instrumente]
+      summary: Instrument aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [draft, active, suspended, retired]
+      responses:
+        '200':
+          description: Instrument aktualisiert
+  
+  /instruments/{id}/activate:
+    post:
+      tags: [Instrumente]
+      summary: Instrument aktivieren
+      description: |
+        Setzt Status auf 'active'. Instrument wird handelbar.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Instrument aktiviert
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "active"
+  
+  #########################################
+  # NACHRICHTEN-SYSTEM
+  #########################################
+  
+  /messages/send:
+    post:
+      tags: [Nachrichten]
+      summary: Nachricht senden
+      description: |
+        Sendet eine Nachricht von User A an User B.
+        Wird im Portal gepuffert, falls Empfänger offline.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageCreate'
+      responses:
+        '200':
+          description: Nachricht gesendet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: Empfänger nicht gefunden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "recipient_not_found"
+                  message:
+                    type: string
+                    example: "Recipient user does not exist"
+  
+  /messages/pending:
+    get:
+      tags: [Nachrichten]
+      summary: Ungelieferte Nachrichten abholen
+      description: |
+        Für Manifest-Portal: Holt alle Nachrichten, die noch nicht geliefert wurden.
+        Wird beim Online-Gehen aufgerufen.
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Liste von Nachrichten
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      messages:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Message'
+  
+  /messages/ack:
+    post:
+      tags: [Nachrichten]
+      summary: Nachrichten als geliefert bestätigen
+      description: |
+        Empfänger bestätigt, dass Nachrichten lokal angekommen sind.
+        Setzt delivered_at.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, message_ids]
+              properties:
+                user_id:
+                  type: string
+                message_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Bestätigt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      acked:
+                        type: array
+                        items:
+                          type: string
+
+components:
+  schemas:
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    EntityCreate:
+      type: object
+      required: [kind, name]
+      properties:
+        kind:
+          type: string
+          enum: [company, project, cooperative]
+        name:
+          type: string
+        description:
+          type: string
+    
+    EntityResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        data:
+          type: object
+          properties:
+            entity:
+              $ref: '#/components/schemas/Entity'
+    
+    RealTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+        entity_id:
+          type: string
+        category:
+          type: string
+          enum: [income, expense, damage, benefit, risk]
+        label:
+          type: string
+        amount:
+          type: number
+        unit:
+          type: string
+        direction:
+          type: string
+          enum: [positive, negative]
+        weight:
+          type: number
+        occurred_at:
+          type: string
+          format: date-time
+        meta:
+          type: object
+    
+    RealTransactionCreate:
+      type: object
+      required: [entity_id, category, amount, unit, direction, weight, occurred_at]
+      properties:
+        entity_id:
+          type: string
+        category:
+          type: string
+          enum: [income, expense, damage, benefit, risk]
+        label:
+          type: string
+        amount:
+          type: number
+        unit:
+          type: string
+        direction:
+          type: string
+          enum: [positive, negative]
+        weight:
+          type: number
+        occurred_at:
+          type: string
+          format: date-time
+        meta:
+          type: object
+    
+    RealBalance:
+      type: object
+      properties:
+        id:
+          type: string
+        entity_id:
+          type: string
+        period_start:
+          type: string
+          format: date-time
+        period_end:
+          type: string
+          format: date-time
+        total_income:
+          type: number
+        total_expense:
+          type: number
+        total_damage:
+          type: number
+        total_benefit:
+          type: number
+        total_risk:
+          type: number
+        net_value:
+          type: number
+        currency:
+          type: string
+        meta:
+          type: object
+    
+    Instrument:
+      type: object
+      properties:
+        id:
+          type: string
+        entity_id:
+          type: string
+        balance_id:
+          type: string
+        symbol:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [draft, active, suspended, retired]
+        net_value:
+          type: number
+        currency:
+          type: string
+        units_issued:
+          type: number
+        creation_reason:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        activated_at:
+          type: string
+          format: date-time
+    
+    InstrumentCreate:
+      type: object
+      required: [entity_id, balance_id, symbol, name, units_issued]
+      properties:
+        entity_id:
+          type: string
+        balance_id:
+          type: string
+        symbol:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        units_issued:
+          type: number
+    
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        sender_id:
+          type: string
+        recipient_id:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        content_preview:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        delivered_at:
+          type: string
+          format: date-time
+        read_at:
+          type: string
+          format: date-time
+        meta:
+          type: object
+    
+    MessageCreate:
+      type: object
+      required: [from_user_id, to_user_id, body]
+      properties:
+        from_user_id:
+          type: string
+        to_user_id:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        meta:
+          type: object
+  
+  responses:
+    BadRequest:
+      description: Ungültige Anfrage
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              error:
+                type: string
+              message:
+                type: string
+    
+    NotFound:
+      description: Ressource nicht gefunden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "not_found"
+              message:
+                type: string
+
+

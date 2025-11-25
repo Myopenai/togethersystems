@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Nicht-implementierte Aktionen</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 { margin-bottom: 2rem; color: #333; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+    .stat-label {
+      color: #666;
+      margin-top: 0.5rem;
+    }
+    .actions-table {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #333;
+    }
+    .priority-high { color: #d93025; font-weight: 600; }
+    .priority-medium { color: #f57c00; }
+    .priority-low { color: #666; }
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.875rem;
+    }
+    .status-unimplemented {
+      background: #ffebee;
+      color: #c62828;
+    }
+    .status-implemented {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .filter-bar {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .filter-bar select, .filter-bar input {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .export-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>🚀 Admin Dashboard - Nicht-implementierte Aktionen</h1>
+    
+    <div class="stats" id="stats"></div>
+    
+    <div class="filter-bar">
+      <select id="priorityFilter">
+        <option value="all">Alle Prioritäten</option>
+        <option value="high">Hoch</option>
+        <option value="medium">Mittel</option>
+        <option value="low">Niedrig</option>
+      </select>
+      <select id="statusFilter">
+        <option value="all">Alle Status</option>
+        <option value="unimplemented">Nicht implementiert</option>
+        <option value="implemented">Implementiert</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="Suche...">
+      <button class="export-btn" onclick="exportData()">Exportieren</button>
+    </div>
+    
+    <div class="actions-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Aktion</th>
+            <th>User</th>
+            <th>Priorität</th>
+            <th>Status</th>
+            <th>Zeitstempel</th>
+            <th>Kontext</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="actionsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="../core/event-bus.js"></script>
+  <script src="../core/storage.js"></script>
+  <script src="../core/action-tracker.js"></script>
+  <script>
+    let actionTracker;
+    let allActions = [];
+
+    async function init() {
+      await storage.init();
+      actionTracker = new ActionTracker(storage, eventBus);
+      await loadData();
+      renderStats();
+      renderTable();
+      
+      // Filter-Listener
+      document.getElementById('priorityFilter').addEventListener('change', renderTable);
+      document.getElementById('statusFilter').addEventListener('change', renderTable);
+      document.getElementById('searchInput').addEventListener('input', renderTable);
+    }
+
+    async function loadData() {
+      allActions = await actionTracker.getAllUnimplementedActions();
+    }
+
+    function renderStats() {
+      const stats = {
+        total: allActions.length,
+        unimplemented: allActions.filter(a => a.status === 'unimplemented').length,
+        implemented: allActions.filter(a => a.status === 'implemented').length,
+        highPriority: allActions.filter(a => a.priority === 'high').length
+      };
+
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${stats.total}</div>
+          <div class="stat-label">Gesamt</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${stats.unimplemented}</div>
+          <div class="stat-label">Nicht implementiert</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${stats.implemented}</div>
+          <div class="stat-label">Implementiert</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${stats.highPriority}</div>
+          <div class="stat-label">Hohe Priorität</div>
+        </div>
+      `;
+    }
+
+    function renderTable() {
+      const priorityFilter = document.getElementById('priorityFilter').value;
+      const statusFilter = document.getElementById('statusFilter').value;
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+      let filtered = allActions;
+
+      if (priorityFilter !== 'all') {
+        filtered = filtered.filter(a => a.priority === priorityFilter);
+      }
+
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter(a => a.status === statusFilter);
+      }
+
+      if (searchTerm) {
+        filtered = filtered.filter(a => 
+          a.actionName.toLowerCase().includes(searchTerm) ||
+          a.userId.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      const tbody = document.getElementById('actionsTableBody');
+      tbody.innerHTML = filtered.map(action => `
+        <tr>
+          <td>${action.id}</td>
+          <td><strong>${escapeHtml(action.actionName)}</strong></td>
+          <td>${escapeHtml(action.userId)}</td>
+          <td class="priority-${action.priority}">${action.priority}</td>
+          <td>
+            <span class="status-badge status-${action.status}">
+              ${action.status === 'unimplemented' ? 'Nicht implementiert' : 'Implementiert'}
+            </span>
+          </td>
+          <td>${new Date(action.timestamp).toLocaleString('de-DE')}</td>
+          <td><pre style="font-size: 0.75rem; max-width: 200px; overflow: auto;">${JSON.stringify(action.context, null, 2)}</pre></td>
+          <td>
+            ${action.status === 'unimplemented' ? 
+              `<button onclick="markAsImplemented('${action.id}')">Als implementiert markieren</button>` :
+              '✓ Implementiert'
+            }
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function markAsImplemented(actionId) {
+      await actionTracker.markAsImplemented(actionId);
+      await loadData();
+      renderStats();
+      renderTable();
+    }
+
+    function exportData() {
+      const dataStr = JSON.stringify(allActions, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `unimplemented-actions-${Date.now()}.json`;
+      a.click();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    init();
+  </script>
+</body>
+</html>
+

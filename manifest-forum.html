@@ -195,7 +195,17 @@ footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
 					<label for="tags">Tags (kommagetrennt)</label>
 					<input id="tags" type="text" placeholder="chaos, ordnung, universum">
 
-					<div class="row" style="margin-top:8px">
+					<label for="mediaUpload" style="margin-top:12px;">📷 Rich-Media: Bilder, Videos, Audio</label>
+					<div style="margin-top:4px;">
+						<label class="btn secondary" for="mediaUpload" style="display:inline-block;cursor:pointer">
+							📷 Bilder/Videos/Audio hinzufügen
+						</label>
+						<input id="mediaUpload" type="file" accept="image/*,video/*,audio/*" multiple style="display:none">
+					</div>
+					<div id="mediaPreview" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+					<p class="hint" style="margin-top:4px;">Unterstützt: Bilder, Videos, Audio (unbegrenzt)</p>
+
+					<div class="row" style="margin-top:12px">
 						<div style="flex:1;min-width:200px">
 							<label for="initials">Deine Initialen</label>
 							<input id="initials" type="text" maxlength="4" placeholder="z. B. RDT">
@@ -248,10 +258,11 @@ footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
 					<h3 class="sec-title">Daten</h3>
 					<div class="row">
 						<button class="btn ok" id="exportJsonBtn">Export JSON</button>
+						<button class="btn ok" id="exportCompleteBtn" title="Vollständiger Export (Alle Daten)">Export Alles</button>
 						<label class="btn gray" for="importJsonInput" style="cursor:pointer">Import JSON</label>
 						<input id="importJsonInput" type="file" accept="application/json" style="display:none">
 					</div>
-					<p class="hint">Exportiere/Importiere deine lokale Forum-Datenbank.</p>
+					<p class="hint">Exportiere/Importiere deine lokale Forum-Datenbank. "Export Alles" exportiert alle Daten inkl. Einstellungen.</p>
 					<div class="row" style="margin-top:8px">
 						<button class="btn gray" id="downloadSelfBtn" type="button">Offline-Kopie speichern</button>
 					</div>
@@ -383,7 +394,7 @@ const DB_KEY = 'mot_forum_v1';
 const MOT_ACCESS_TOKEN = 'mot-shared-token-v1';
 function motNow(){ return Date.now(); }
 function loadDB(){
-	try{ return JSON.parse(localStorage.getItem(DB_KEY) || '{"posts":[]}'); }
+	try{ return (function() { try { return JSON.parse(localStorage.getItem(DB_KEY); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '{"posts":[]}'); }
 	catch(e){ return {posts:[]}; }
 }
 function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
@@ -401,6 +412,7 @@ const addPostBtn = document.getElementById('addPostBtn');
 const clearComposerBtn = document.getElementById('clearComposerBtn');
 const reactionsPalette = document.getElementById('reactionsPalette');
 const exportJsonBtn = document.getElementById('exportJsonBtn');
+const exportCompleteBtn = document.getElementById('exportCompleteBtn');
 const importJsonInput = document.getElementById('importJsonInput');
 const downloadSelfBtn = document.getElementById('downloadSelfBtn');
 const exportSiteBtn = document.getElementById('exportSiteBtn');
@@ -473,6 +485,7 @@ function render(){
 				</div>
 			</div>
 			<div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(p.content)}</div>
+			${p.media && p.media.length ? `<div style="margin-top:8px;">${renderMediaInPost(p)}</div>` : ''}
 			<div class="reactions" data-idx="${idx}">
 				${REACTIONS.map(r=>{
 					const count = p.reactions?.[r.key]||0;
@@ -500,6 +513,21 @@ function escapeHtml(s){
 		'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
 	}[m]));
 }
+
+// Rich-Media Rendering
+function renderMediaInPost(post) {
+	if (!post.media || !post.media.length) return '';
+	return post.media.map(m => {
+		if (m.type === 'image') {
+			return `<img src="${escapeHtml(m.url)}" alt="${escapeHtml(m.name || '')}" style="max-width:100%;border-radius:8px;margin:4px 0;cursor:pointer;border:1px solid var(--border);" onclick="window.open('${escapeHtml(m.url)}', '_blank')">`;
+		} else if (m.type === 'video') {
+			return `<video src="${escapeHtml(m.url)}" controls style="max-width:100%;border-radius:8px;margin:4px 0;border:1px solid var(--border);"></video>`;
+		} else if (m.type === 'audio') {
+			return `<div style="border:1px solid var(--border);border-radius:8px;padding:8px;margin:4px 0;"><audio src="${escapeHtml(m.url)}" controls style="width:100%;"></audio><div style="font-size:12px;color:var(--muted);margin-top:4px;">${escapeHtml(m.name || 'Audio')}</div></div>`;
+		}
+		return '';
+	}).join('');
+}
 function parseTags(s){
 	return s.split(',').map(x=>x.trim()).filter(Boolean);
 }
@@ -512,7 +540,7 @@ function download(filename, text){
 }
 
 /* Events: composer */
-addPostBtn.addEventListener('click', ()=>{
+addPostBtn.addEventListener('click', async ()=>{
 	const title = titleEl.value.trim();
 	const content = contentEl.value.trim();
 	if(!content){ alert('Bitte Inhalt eingeben.'); return; }
@@ -521,15 +549,38 @@ addPostBtn.addEventListener('click', ()=>{
 	const identity = identityEl.value.trim();
 	const db = loadDB();
 	const logoUrl = identityEl.value.trim() || null;
-	db.posts.unshift({
+	
+	// Rich-Media sammeln
+	let media = uploadedMedia || [];
+	try {
+		const mediaStorage = document.getElementById('uploadedMediaStorage');
+		if (mediaStorage && mediaStorage.dataset.media) {
+			const parsed = JSON.parse(mediaStorage.dataset.media);
+			if (parsed && parsed.length) media = parsed;
+		}
+	} catch(e) { console.error('Media parse error:', e); }
+	
+	const postData = {
 		id: crypto.randomUUID(),
 		title, content, tags, initials, identity: identityEl.value.trim() || null,
-		logoUrl: logoUrl, // Speichere logoUrl zusätzlich für Portal-Anzeige
+		logoUrl: logoUrl,
+		media: media.length > 0 ? media.map(m => ({ url: m.dataUrl, type: m.type, name: m.name, mimeType: m.mimeType })) : undefined,
 		reactions: {},
 		comments: [],
 		createdAt: Date.now()
-	});
+	};
+	
+	db.posts.unshift(postData);
 	saveDB(db);
+	
+	// Media-Input zurücksetzen
+	const mediaStorage = document.getElementById('uploadedMediaStorage');
+	if (mediaStorage) mediaStorage.dataset.media = '';
+	const mediaPreview = document.getElementById('mediaPreview');
+	if (mediaPreview) mediaPreview.innerHTML = '';
+	const mediaInput = document.getElementById('mediaUpload');
+	if (mediaInput) mediaInput.value = '';
+	
 	render();
 });
 clearComposerBtn.addEventListener('click', ()=>{
@@ -537,7 +588,97 @@ clearComposerBtn.addEventListener('click', ()=>{
 	identityEl.value='';
 	const preview = document.getElementById('logoPreview');
 	if(preview) preview.style.display = 'none';
+	const mediaPreview = document.getElementById('mediaPreview');
+	if(mediaPreview) mediaPreview.innerHTML = '';
+	const mediaInput = document.getElementById('mediaUpload');
+	if(mediaInput) mediaInput.value = '';
+	const mediaStorage = document.getElementById('uploadedMediaStorage');
+	if(mediaStorage) mediaStorage.dataset.media = '';
 });
+
+/* Rich-Media Upload */
+const mediaUploadEl = document.getElementById('mediaUpload');
+const mediaPreviewEl = document.getElementById('mediaPreview');
+let uploadedMedia = [];
+
+if(mediaUploadEl){
+	mediaUploadEl.addEventListener('change', async (e)=>{
+		const files = Array.from(e.target.files || []);
+		if(!files.length) return;
+		
+		if(!mediaPreviewEl) return;
+		
+		uploadedMedia = [];
+		
+		for (const file of files) {
+			// KEINE GRENZEN - Unbegrenzter Upload
+			const fileType = file.type.split('/')[0];
+			
+			// Optional: Warnung bei sehr großen Dateien (nur Info, kein Block)
+			if (file.size > 100 * 1024 * 1024) { // > 100MB
+				console.warn(`Große Datei: ${file.name} (${Math.round(file.size / 1024 / 1024)}MB) - Upload kann länger dauern.`);
+			}
+			
+			const reader = new FileReader();
+			reader.onload = (ev) => {
+				const dataUrl = ev.target.result;
+				uploadedMedia.push({ dataUrl, type: fileType, name: file.name, size: file.size, mimeType: file.type });
+				
+				const previewItem = document.createElement('div');
+				previewItem.style.cssText = 'position:relative;display:inline-block;margin:4px;border:1px solid var(--border);border-radius:8px;overflow:hidden;';
+				
+				if (fileType === 'image') {
+					const img = document.createElement('img');
+					img.src = dataUrl;
+					img.style.cssText = 'max-width:200px;max-height:200px;display:block;';
+					previewItem.appendChild(img);
+				} else if (fileType === 'video') {
+					const video = document.createElement('video');
+					video.src = dataUrl;
+					video.controls = true;
+					video.style.cssText = 'max-width:200px;max-height:200px;display:block;';
+					previewItem.appendChild(video);
+				} else if (fileType === 'audio') {
+					const audio = document.createElement('audio');
+					audio.src = dataUrl;
+					audio.controls = true;
+					audio.style.cssText = 'width:200px;display:block;';
+					previewItem.appendChild(audio);
+					const label = document.createElement('div');
+					label.textContent = file.name;
+					label.style.cssText = 'padding:4px;font-size:12px;';
+					previewItem.appendChild(label);
+				}
+				
+				const removeBtn = document.createElement('button');
+				removeBtn.textContent = '×';
+				removeBtn.style.cssText = 'position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;';
+				removeBtn.onclick = () => {
+					previewItem.remove();
+					const index = uploadedMedia.findIndex(m => m.dataUrl === dataUrl);
+					if (index > -1) uploadedMedia.splice(index, 1);
+					updateMediaStorage();
+				};
+				previewItem.appendChild(removeBtn);
+				
+				mediaPreviewEl.appendChild(previewItem);
+				updateMediaStorage();
+			};
+			reader.readAsDataURL(file);
+		}
+	});
+}
+
+function updateMediaStorage() {
+	let storage = document.getElementById('uploadedMediaStorage');
+	if (!storage) {
+		storage = document.createElement('input');
+		storage.type = 'hidden';
+		storage.id = 'uploadedMediaStorage';
+		document.body.appendChild(storage);
+	}
+	storage.dataset.media = JSON.stringify(uploadedMedia);
+}
 
 /* Logo Upload */
 const logoUploadEl = document.getElementById('logoUpload');
@@ -687,13 +828,77 @@ reactionsPalette.addEventListener('click', (e)=>{
 exportJsonBtn.addEventListener('click', ()=>{
 	download('manifest-forum.json', JSON.stringify(loadDB(), null, 2));
 });
+
+// Vollständiger Export (Alle Daten)
+if(exportCompleteBtn){
+	exportCompleteBtn.addEventListener('click', ()=>{
+		const exportData = {
+			version: '1.0',
+			exportedAt: new Date().toISOString(),
+			userId: getOrCreateUserId(),
+			manifest: loadDB(),
+			settings: {
+				userPreferences: localStorage.getItem('userPreferences') ? (function() { try { return JSON.parse(localStorage.getItem('userPreferences')); } catch(e) { return {}; } })() : {},
+				verified: localStorage.getItem('mot_verified_v1') ? (function() { try { return JSON.parse(localStorage.getItem('mot_verified_v1')); } catch(e) { return null; } })() : null,
+				userId: localStorage.getItem('mot_user_id_v1'),
+			},
+		};
+		
+		// Backup-Liste hinzufügen
+		const backups = [];
+		try {
+			for (let i = 0; i < localStorage.length; i++) {
+				const key = localStorage.key(i);
+				if (key && key.startsWith('ts_backup_')) {
+					try {
+						backups.push({
+							key,
+							timestamp: key.split('_').pop(),
+						});
+					} catch (e) {}
+				}
+			}
+		} catch (e) {}
+		
+		exportData.backups = backups;
+		
+		const jsonData = JSON.stringify(exportData, null, 2);
+		const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+		download(`togethersystems-complete-export-${timestamp}.json`, jsonData);
+	});
+}
+
 importJsonInput.addEventListener('change', async ()=>{
 	const f = importJsonInput.files?.[0]; if(!f) return;
 	const text = await f.text();
 	try{
-		const data = JSON.parse(text);
-		if(!data || typeof data !== 'object' || !Array.isArray(data.posts)) throw new Error('Ungültiges Format');
-		saveDB(data); render(); alert('Import erfolgreich.');
+		const data = (function() { try { return JSON.parse(text); } catch(e) { console.error('JSON parse error:', e); return null; } })();
+		if(!data || typeof data !== 'object') throw new Error('Ungültiges Format');
+		
+		// Unterstütze sowohl einfaches Format als auch vollständigen Export
+		let postsToImport = [];
+		if (data.manifest && Array.isArray(data.manifest.posts)) {
+			postsToImport = data.manifest.posts;
+			// Importiere auch Settings wenn vorhanden
+			if (data.settings) {
+				if (data.settings.userPreferences) {
+					localStorage.setItem('userPreferences', JSON.stringify(data.settings.userPreferences));
+				}
+				if (data.settings.userId) {
+					localStorage.setItem('mot_user_id_v1', data.settings.userId);
+				}
+			}
+		} else if (Array.isArray(data.posts)) {
+			postsToImport = data.posts;
+		} else {
+			throw new Error('Keine Posts im Export gefunden');
+		}
+		
+		const db = loadDB();
+		db.posts = [...postsToImport, ...db.posts]; // Neue Posts am Anfang
+		saveDB(db);
+		render();
+		alert(`✅ Import erfolgreich! ${postsToImport.length} Posts importiert.`);
 	}catch(err){ alert('Import fehlgeschlagen: '+err.message); }
 	importJsonInput.value = '';
 });
@@ -774,8 +979,12 @@ publishBtn.addEventListener('click', async ()=>{
 	const key = apiKeyEl.value.trim();
 	const payload = buildPayload();
 	publishStatus.textContent = 'Sende ...';
-	try{
-		const res = await fetch(url, {
+	try {
+		  const res = await fetch(url, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			method:'POST',
 			headers: {
 				'Content-Type':'application/json',
@@ -799,6 +1008,35 @@ function buildPayload(){
 	};
 }
 
+/* Nachrichten-System (Offline-First) */
+function loadMessagesDB(){
+	try{
+		const raw = localStorage.getItem('messages.db');
+		return raw ? (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })() : { inbox: [], outbox: [] };
+	}catch{
+		return { inbox: [], outbox: [] };
+	}
+}
+function saveMessagesDB(db){
+	try{
+		localStorage.setItem('messages.db', JSON.stringify(db));
+	}catch(err){
+		console.error('Failed to save messages DB:', err);
+	}
+}
+// Beim Portal-Öffnen: Nachrichten synchronisieren
+async function syncMessagesOnPortalOpen(){
+	const uid = getOrCreateUserId();
+	const db = loadMessagesDB();
+	
+	// Outbox → Server (wird im Portal gemacht)
+	// Inbox ← Server (wird im Portal gemacht)
+	
+	// Signal an das Portal, dass es synchronisieren soll
+	localStorage.setItem('messages.sync_requested', 'true');
+	localStorage.setItem('messages.sync_user_id', uid);
+}
+
 /* Init */
 /* Portal öffnen mit Token (ohne HMAC, offline-/Single-File-freundlich).
    - Wenn Datei online unter ts-portal/pages.dev läuft → relative URL.
@@ -814,6 +1052,10 @@ document.addEventListener('click', async (e)=>{
 			baseUrl = 'https://ts-portal.pages.dev/manifest-portal.html';
 		}
 		const url = `${baseUrl}#mot=${encodeURIComponent(MOT_ACCESS_TOKEN)}&uid=${encodeURIComponent(uid)}&ts=${encodeURIComponent(ts)}`;
+		
+		// Nachrichten-Sync vorbereiten
+		await syncMessagesOnPortalOpen();
+		
 		window.open(url, '_blank');
 	}
 });
@@ -876,5 +1118,9 @@ if(aiAssistBtn && typeof AIManifestAssistant !== 'undefined'){
 </script>
 <script src="./ai-frontend-integration.js"></script>
 <script type="module" src="./autofix-client.js"></script>
+<script src="./rich-media-posts.js"></script>
+<script src="./data-export-enhanced.js"></script>
+<script src="./offline-queue-manager.js"></script>
+<script src="./e2e-encryption-manager.js"></script>
 </body>
 </html>

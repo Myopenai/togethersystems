@@ -297,6 +297,8 @@ body.public-view{ --cursor: not-allowed }
 				<button class="btn alt" id="navRooms" style="font-size:12px;padding:6px 12px;">🏛️ Räume</button>
 				<button class="btn alt" id="navDocuments" style="font-size:12px;padding:6px 12px;">📄 Dokumente</button>
 				<button class="btn alt" id="navFinance" style="font-size:12px;padding:6px 12px;">💰 Finanzen</button>
+				<button class="btn alt" id="navBalancedExchange" style="font-size:12px;padding:6px 12px;" title="Gleichgewichts-Börse – Initiator der neuen Börsenführung">⚖️ Börse</button>
+				<button class="btn alt" id="navMessages" style="font-size:12px;padding:6px 12px;">💬 Nachrichten</button>
 				<button class="btn alt" id="navExpert" style="font-size:12px;padding:6px 12px;" title="Expertenmodus">⚙️</button>
 			</div>
 		</div>
@@ -766,6 +768,76 @@ body.public-view{ --cursor: not-allowed }
 				<pre class="kbd" id="mortgageOutput" style="margin-top:8px;max-height:260px;"></pre>
 			</div>
 		</section>
+		<section class="panel" id="balanced-exchange-panel" style="margin-top:18px;display:none;">
+			<div class="pad">
+				<h3 class="title">⚖️ Gleichgewichts-Börse – Initiator der neuen Börsenführung</h3>
+				<p class="muted" style="margin-bottom:12px;">
+					<strong style="color:var(--accent);">Die erste echte Bilanz-Börse:</strong> Nur Instrumente mit positivem Netto-Wert sind handelbar. 
+					Alles wird auf die Waage gelegt – Gewinne UND Verluste sind sichtbar. Keine versteckten Kosten, keine Spekulation ohne Basis.
+				</p>
+				<div class="row" style="margin-top:8px;flex-wrap:wrap;">
+					<button class="btn" id="btnLoadInstruments" type="button">📊 Instrumente laden</button>
+					<button class="btn alt" id="btnNewEntity" type="button">➕ Neue Entity</button>
+					<button class="btn alt" id="btnLoadBalances" type="button">⚖️ Real-Bilanzen</button>
+					<button class="btn alt" id="btnRefreshExchange" type="button">🔄 Aktualisieren</button>
+				</div>
+				<div class="voucher-layout" style="margin-top:16px;">
+					<div>
+						<h4 class="title" style="margin-bottom:8px;">Handelbare Instrumente</h4>
+						<div id="instrumentsList" class="voucher-list">
+							<div class="muted">Lade Instrumente …</div>
+						</div>
+					</div>
+					<div>
+						<h4 class="title" style="margin-bottom:8px;">Real-Bilanz-Waage</h4>
+						<div id="balanceWaage" style="padding:12px;border:1px solid var(--border);border-radius:12px;background:#0b0f14;min-height:200px;">
+							<div class="muted">Wähle ein Instrument aus, um die vollständige Waage zu sehen</div>
+						</div>
+					</div>
+				</div>
+				<div style="margin-top:16px;padding:12px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:12px;">
+					<h4 class="title" style="color:var(--accent);margin-bottom:4px;">Wie funktioniert die Gleichgewichts-Börse?</h4>
+					<p class="muted" style="font-size:12px;margin:0;">
+						<strong>1. Real-Bilanz:</strong> Jede Transaktion (Einnahme, Ausgabe, Schaden, Nutzen) wird erfasst.<br>
+						<strong>2. Netto-Wert:</strong> Berechnet als Nutzen + Einnahmen - Ausgaben - Schäden - Risiken.<br>
+						<strong>3. Instrumente:</strong> Nur bei positivem Netto-Wert werden handelbare Instrumente erstellt.<br>
+						<strong>4. Transparenz:</strong> Die vollständige Waage (alle Kosten vs. alle Nutzen) ist immer sichtbar.
+					</p>
+				</div>
+			</div>
+		</section>
+		<section class="panel" id="messages-panel" style="margin-top:18px;display:none;">
+			<div class="pad">
+				<h3 class="title">💬 Nachrichten</h3>
+				<p class="muted" style="margin-bottom:12px;">
+					User-zu-User-Kommunikation mit Offline-Support. Nachrichten werden im Portal gepuffert und beim Online-Gehen synchronisiert.
+				</p>
+				<div class="row" style="margin-top:8px;flex-wrap:wrap;">
+					<button class="btn" id="btnMessagesInbox" type="button">📥 Eingang</button>
+					<button class="btn alt" id="btnMessagesOutbox" type="button">📤 Ausgang</button>
+					<button class="btn alt" id="btnMessagesCompose" type="button">✏️ Neue Nachricht</button>
+					<button class="btn alt" id="btnSyncMessages" type="button">🔄 Synchronisieren</button>
+				</div>
+				<div class="voucher-layout" style="margin-top:16px;">
+					<div>
+						<h4 class="title" style="margin-bottom:8px;" id="messagesListTitle">Eingang</h4>
+						<div id="messagesList" class="voucher-list" style="max-height:400px;overflow-y:auto;">
+							<div class="muted">Lade Nachrichten …</div>
+						</div>
+					</div>
+					<div>
+						<h4 class="title" style="margin-bottom:8px;">Nachricht verfassen</h4>
+						<div style="display:flex;flex-direction:column;gap:8px;">
+							<input id="messageToInput" type="text" placeholder="Empfänger-User-ID">
+							<input id="messageSubjectInput" type="text" placeholder="Betreff (optional)">
+							<textarea id="messageBodyInput" style="min-height:120px;padding:8px;background:#0b0f14;border:1px solid var(--border);border-radius:8px;color:var(--ink);font-family:inherit;" placeholder="Nachricht eingeben..."></textarea>
+							<button class="btn" id="btnSendMessage" type="button">📤 Senden</button>
+						</div>
+					</div>
+				</div>
+				<div id="messagePopupContainer" style="position:fixed;top:20px;right:20px;z-index:10000;max-width:400px;"></div>
+			</div>
+		</section>
 		<section class="panel" id="liveRoom" style="margin-top:18px;display:none;">
 			<div class="pad">
 				<h3 class="title">Live-Raum</h3>
@@ -857,7 +929,7 @@ function isUserVerified(){
 	try{
 		const raw = localStorage.getItem(MOT_STORAGE_KEYS.VERIFIED);
 		if(!raw) return false;
-		const data = JSON.parse(raw);
+		const data = (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })();
 		return !!(data && data.uid);
 	}catch{
 		return false;
@@ -979,7 +1051,7 @@ function readManifestToken(){
 	try{
 		const raw = localStorage.getItem('mot_token');
 		if(raw){
-			const obj = JSON.parse(raw);
+			const obj = (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })();
 			if(obj && obj.token){
 				return obj;
 			}
@@ -992,17 +1064,22 @@ function readManifestToken(){
 async function verifyTokenWithBackend(tokenObj){
 	if(!tokenObj || !tokenObj.token) return null;
 	if(!PRESENCE_API_BASE) return null; // API nicht verfügbar
-	try{
-		const res = await fetch(`${PRESENCE_API_BASE}/verify`, {
+	try {
+		  const res = await fetch(`${PRESENCE_API_BASE}/verify`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			method:'POST',
 			headers:{'Content-Type':'application/json'},
 			body: JSON.stringify(tokenObj)
 		});
 		if(!res.ok) return null;
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		if(!data || !data.thinker_id) return null;
 		return data; // { thinker_id, pair_code? }
-	}catch{
+	}catch(err){
+		console.error('API error:', err);
 		return null;
 	}
 }
@@ -1078,7 +1155,12 @@ function startMatchLoop(identity){
 				return;
 			}
 			updateConnectStatus(`Warte auf zweiten Thinker mit Stichwort „${pair_code}“…`);
-			const res = await fetch(`${PRESENCE_API_BASE}/match`, {
+						try {
+			  const res = await fetch(`${PRESENCE_API_BASE}/match`, {
+			} catch (err) {
+			  console.error('API error:', err);
+			  return null;
+			}
 				method:'POST',
 				headers:{'Content-Type':'application/json'},
 				body: JSON.stringify({
@@ -1087,7 +1169,7 @@ function startMatchLoop(identity){
 				})
 			});
 			if(!res.ok) return;
-			const data = await res.json();
+			const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 			if(data && data.room_id){
 				if(currentRoomId === data.room_id) return;
 				currentRoomId = data.room_id;
@@ -1166,8 +1248,12 @@ async function autoConnectFromToken(){
 			// Warte kurz, dann prüfe Match
 			setTimeout(async ()=>{
 				if(PRESENCE_API_BASE){
-					try{
-						const res = await fetch(`${PRESENCE_API_BASE}/match`, {
+					try {
+						  const res = await fetch(`${PRESENCE_API_BASE}/match`, {
+						} catch (err) {
+						  console.error('API error:', err);
+						  return null;
+						}
 							method:'POST',
 							headers:{'Content-Type':'application/json'},
 							body: JSON.stringify({
@@ -1176,7 +1262,7 @@ async function autoConnectFromToken(){
 							})
 						});
 						if(res.ok){
-							const data = await res.json();
+							const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 							if(data && data.room_id){
 								currentRoomId = data.room_id;
 								updateConnectStatus(`Verbunden mit Raum „${data.room_id}“. Signaling-Server verbunden.`);
@@ -1291,7 +1377,7 @@ function initLiveChat(identity, roomId){
 	ws.addEventListener('message', (event)=>{
 		let msg;
 		try{
-			msg = JSON.parse(event.data);
+			msg = (function() { try { return JSON.parse(event.data); } catch(e) { console.error('JSON parse error:', e); return null; } })();
 		}catch{
 			return;
 		}
@@ -1547,7 +1633,7 @@ jsonFile.addEventListener('change', async ()=>{
 	const f = jsonFile.files?.[0]; if(!f) return;
 	const text = await f.text();
 	try{
-		const data = JSON.parse(text);
+		const data = (function() { try { return JSON.parse(text); } catch(e) { console.error('JSON parse error:', e); return null; } })();
 		if(!data || !Array.isArray(data.posts)) throw new Error('Ungültiges Format');
 		renderFeed(data);
 		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
@@ -1559,9 +1645,13 @@ jsonFile.addEventListener('change', async ()=>{
 document.getElementById('fetchBtn').addEventListener('click', async ()=>{
 	const url = document.getElementById('apiUrl').value.trim();
 	if(!url) return alert('API URL angeben.');
-	try{
-		const res = await fetch(url, {headers:{'Accept':'application/json'}});
-		const data = await res.json();
+	try {
+		  const res = await fetch(url, {headers:{'Accept':'application/json'}});
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		renderFeed(data);
 		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
 	}catch(err){ alert('API Fehler: '+err.message); }
@@ -1803,13 +1893,17 @@ async function loadVouchers(){
 	voucherListEl.innerHTML = '<div class="muted">Lade Vouchers …</div>';
 	slotListEl && (slotListEl.innerHTML = '');
 	selectedVoucher = null;
-	try{
-		const res = await fetch(url);
+	try {
+		  const res = await fetch(url);
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 		if(!res.ok) {
 			voucherListEl.innerHTML = `<div class="muted">Fehler beim Laden: ${res.status} ${res.statusText}</div>`;
 			return;
 		}
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		const items = data.items || [];
 		if(!items.length){
 			voucherListEl.innerHTML = '<div class="muted">Keine Vouchers gefunden.</div>';
@@ -1858,13 +1952,17 @@ async function loadSlotsForVoucher(voucher){
 	}
 	slotListEl.innerHTML = '<div class="muted">Lade verfügbare Slots …</div>';
 	if(slotCalendarEl) slotCalendarEl.innerHTML = '';
-	try{
-		const res = await fetch(`${VOUCHER_API_BASE}/slots/available?voucherId=${encodeURIComponent(voucher.voucherId)}`);
+	try {
+		  const res = await fetch(`${VOUCHER_API_BASE}/slots/available?voucherId=${encodeURIComponent(voucher.voucherId)}`);
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 		if(!res.ok) {
 			slotListEl.innerHTML = `<div class="muted">Fehler beim Laden der Slots: ${res.status} ${res.statusText}</div>`;
 			return;
 		}
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		const items = data.items || [];
 		if(!items.length){
 			slotListEl.innerHTML = '<div class="muted">Keine freien Slots verfügbar.</div>';
@@ -1909,8 +2007,12 @@ async function bookSlot(voucher, slot){
 	}
 	if(!confirm('Diesen Termin wirklich buchen?')) return;
 	const { uid } = getUserContext();
-	try{
-		const res = await fetch(`${VOUCHER_API_BASE}/voucher/book`, {
+	try {
+		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/book`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			method:'POST',
 			headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
 			body: JSON.stringify({
@@ -1919,7 +2021,7 @@ async function bookSlot(voucher, slot){
 				holderUid: uid
 			})
 		});
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		if(!res.ok || !data.ok){
 			alert('Buchung fehlgeschlagen: ' + (data.error || res.statusText));
 			return;
@@ -1992,7 +2094,12 @@ async function issueVoucherTemplate(templateKey){
 			alert('Voucher‑API ist nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.');
 			return;
 		}
-		const res = await fetch(`${VOUCHER_API_BASE}/voucher/issue`, {
+				try {
+		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/issue`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			method:'POST',
 			headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
 			body: JSON.stringify(body)
@@ -2011,7 +2118,7 @@ async function issueVoucherTemplate(templateKey){
 			}
 			return;
 		}
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		if(!data || !data.ok){
 			const errorMsg = data?.error || 'Unbekannter Fehler';
 			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + errorMsg);
@@ -2040,10 +2147,15 @@ async function ensureDefaultVouchersForIssuer(){
 		if(!VOUCHER_API_BASE) return;
 		if(localStorage.getItem('mot_default_vouchers_issued_v1')) return;
 		const { uid } = getUserContext();
-		const res = await fetch(`${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`, {
+				try {
+		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			headers:{ 'Accept':'application/json' }
 		});
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		const items = data.items || [];
 		if(items.length > 0) return; // Es gibt schon Vouchers, nichts tun
 
@@ -2104,8 +2216,13 @@ async function loadEventsMembershipsOverview(){
 	let text = '';
 	try{
 		const url = `${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`;
-		const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
-		const data = await res.json();
+				try {
+		  const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		const items = data.items || [];
 		const relevantTypes = ['consulting.session','therapy.session','membership.access'];
 		const relevant = items.filter(v => relevantTypes.includes(v.serviceType));
@@ -2137,11 +2254,15 @@ async function loadMyBookings(){
 	if(!myBookingsList || !VOUCHER_API_BASE) return;
 	const { uid } = getUserContext();
 	myBookingsList.innerHTML = '<div class="muted">Lade deine Buchungen …</div>';
-	try{
-		const res = await fetch(`${VOUCHER_API_BASE}/voucher/bookings?holderUid=${encodeURIComponent(uid)}`, {
+	try {
+		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/bookings?holderUid=${encodeURIComponent(uid)}`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			headers:{ 'Accept':'application/json' }
 		});
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		const items = data.items || [];
 		if(!items.length){
 			myBookingsList.innerHTML = '<div class="muted">Keine Buchungen gefunden.</div>';
@@ -2180,8 +2301,13 @@ async function loadVerticalConsoles(){
 	const { uid } = getUserContext();
 	try{
 		const url = `${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`;
-		const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
-		const data = await res.json();
+				try {
+		  const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		const items = data.items || [];
 
 		const machines = items.filter(v => v.serviceType === 'machine.timeslot');
@@ -2248,8 +2374,12 @@ async function loadMortgageApplications(){
 		return;
 	}
 	const { uid } = getUserContext();
-	try{
-		const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application-list?role=borrower`, {
+	try {
+		  const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application-list?role=borrower`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			headers: {
 				'Accept':'application/json',
 				'X-MOT-User': uid
@@ -2259,7 +2389,7 @@ async function loadMortgageApplications(){
 			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
 			return;
 		}
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Laden der Anfragen: ' + (err?.message || String(err));
@@ -2273,8 +2403,12 @@ async function loadMortgageOffers(){
 		return;
 	}
 	const { uid } = getUserContext();
-	try{
-		const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/offer-list?role=borrower`, {
+	try {
+		  const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/offer-list?role=borrower`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			headers: {
 				'Accept':'application/json',
 				'X-MOT-User': uid
@@ -2284,7 +2418,7 @@ async function loadMortgageOffers(){
 			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
 			return;
 		}
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Laden der Angebote: ' + (err?.message || String(err));
@@ -2310,8 +2444,12 @@ async function createExampleMortgageApplication(){
 			otherLoans: []
 		}
 	};
-	try{
-		const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application`, {
+	try {
+		  const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application`, {
+		} catch (err) {
+		  console.error('API error:', err);
+		  return null;
+		}
 			method:'POST',
 			headers: {
 				'Content-Type':'application/json',
@@ -2324,7 +2462,7 @@ async function createExampleMortgageApplication(){
 			mortgageOutput.textContent = `Fehler beim Erstellen: ${res.status} ${res.statusText}`;
 			return;
 		}
-		const data = await res.json();
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Erzeugen der Beispiel-Anfrage: ' + (err?.message || String(err));
@@ -2613,9 +2751,172 @@ async function renderSuppliers() {
 }
 
 renderSuppliers().catch(() => {});
+
+// Navigation für Gleichgewichts-Börse und Nachrichten
+(function setupNavigation() {
+  // Gleichgewichts-Börse Tab
+  const navBalancedExchange = document.getElementById('navBalancedExchange');
+  const balancedExchangePanel = document.getElementById('balanced-exchange-panel');
+  
+  if (navBalancedExchange && balancedExchangePanel) {
+    navBalancedExchange.addEventListener('click', () => {
+      // Alle Panels verstecken
+      document.querySelectorAll('.panel').forEach(p => {
+        if (p.id !== 'balanced-exchange-panel') {
+          p.style.display = 'none';
+        }
+      });
+      // Gleichgewichts-Börse-Panel zeigen
+      balancedExchangePanel.style.display = 'block';
+      // Scroll zu Panel
+      balancedExchangePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Button-Status aktualisieren
+      document.querySelectorAll('[id^="nav"]').forEach(btn => {
+        btn.classList.remove('btn');
+        btn.classList.add('btn', 'alt');
+      });
+      navBalancedExchange.classList.remove('alt');
+      navBalancedExchange.classList.add('btn');
+      // Lade Instrumente
+      if (typeof window.loadInstruments === 'function') {
+        window.loadInstruments();
+      }
+    });
+  }
+  
+  // Nachrichten Tab
+  const navMessages = document.getElementById('navMessages');
+  const messagesPanel = document.getElementById('messages-panel');
+  
+  if (navMessages && messagesPanel) {
+    navMessages.addEventListener('click', () => {
+      // Alle Panels verstecken
+      document.querySelectorAll('.panel').forEach(p => {
+        if (p.id !== 'messages-panel') {
+          p.style.display = 'none';
+        }
+      });
+      // Nachrichten-Panel zeigen
+      messagesPanel.style.display = 'block';
+      // Scroll zu Panel
+      messagesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Button-Status aktualisieren
+      document.querySelectorAll('[id^="nav"]').forEach(btn => {
+        btn.classList.remove('btn');
+        btn.classList.add('btn', 'alt');
+      });
+      navMessages.classList.remove('alt');
+      navMessages.classList.add('btn');
+      // Lade Inbox
+      if (typeof window.loadMessagesInbox === 'function') {
+        window.loadMessagesInbox();
+      }
+    });
+  }
+  
+  // Gleichgewichts-Börse Buttons
+  const btnLoadInstruments = document.getElementById('btnLoadInstruments');
+  if (btnLoadInstruments) {
+    btnLoadInstruments.addEventListener('click', () => {
+      if (typeof window.loadInstruments === 'function') {
+        window.loadInstruments();
+      }
+    });
+  }
+  
+  const btnRefreshExchange = document.getElementById('btnRefreshExchange');
+  if (btnRefreshExchange) {
+    btnRefreshExchange.addEventListener('click', () => {
+      if (typeof window.loadInstruments === 'function') {
+        window.loadInstruments();
+      }
+    });
+  }
+  
+  // Nachrichten Buttons
+  const btnMessagesInbox = document.getElementById('btnMessagesInbox');
+  if (btnMessagesInbox) {
+    btnMessagesInbox.addEventListener('click', () => {
+      if (typeof window.loadMessagesInbox === 'function') {
+        window.loadMessagesInbox();
+      }
+    });
+  }
+  
+  const btnMessagesOutbox = document.getElementById('btnMessagesOutbox');
+  if (btnMessagesOutbox) {
+    btnMessagesOutbox.addEventListener('click', () => {
+      if (typeof window.loadMessagesOutbox === 'function') {
+        window.loadMessagesOutbox();
+      }
+    });
+  }
+  
+  const btnSyncMessages = document.getElementById('btnSyncMessages');
+  if (btnSyncMessages) {
+    btnSyncMessages.addEventListener('click', async () => {
+      if (typeof window.syncMessages === 'function') {
+        await window.syncMessages();
+        if (typeof window.loadMessagesInbox === 'function') {
+          window.loadMessagesInbox();
+        }
+      }
+    });
+  }
+  
+  const btnSendMessage = document.getElementById('btnSendMessage');
+  if (btnSendMessage) {
+    btnSendMessage.addEventListener('click', async () => {
+      const to = document.getElementById('messageToInput')?.value?.trim();
+      const subject = document.getElementById('messageSubjectInput')?.value?.trim();
+      const body = document.getElementById('messageBodyInput')?.value?.trim();
+      
+      if (!to || !body) {
+        alert('Bitte Empfänger und Nachricht eingeben.');
+        return;
+      }
+      
+      if (typeof window.sendMessage === 'function') {
+        await window.sendMessage(to, subject || null, body);
+      }
+    });
+  }
+  
+  // Automatischer Sync beim Portal-Öffnen
+  // Prüfe ob Sync angefordert wurde (vom Offline-Forum)
+  const syncRequested = localStorage.getItem('messages.sync_requested');
+  if (syncRequested === 'true' && typeof window.syncMessages === 'function') {
+    localStorage.removeItem('messages.sync_requested');
+    window.syncMessages().catch(() => {});
+  }
+  
+  // Automatischer Sync nach Verifizierung
+  if (typeof window.syncMessages === 'function') {
+    setTimeout(() => {
+      window.syncMessages().catch(() => {});
+    }, 3000);
+  }
+  
+  // Setup WebSocket für Live-Push
+  setTimeout(() => {
+    if (typeof window.setupMessageWebSocket === 'function') {
+      window.setupMessageWebSocket();
+    }
+  }, 2000);
+})();
 </script>
 <script src="./ambient-media.js"></script>
 <script type="module" src="./autofix-client.js"></script>
+<script src="./balanced-exchange-portal.js"></script>
+<script src="./messages-portal.js"></script>
+<script src="./event-calendar-manager.js"></script>
+<script src="./calendar-integration-manager.js"></script>
+<script src="./invoice-generator.js"></script>
+<script src="./e2e-encryption-manager.js"></script>
+<script src="./webrtc-voice-video.js"></script>
+<script src="./auto-translate-integration.js"></script>
+<script src="./push-notifications-manager.js"></script>
+<script src="./offline-queue-manager.js"></script>
 </body>
 </html>
 

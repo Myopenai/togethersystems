@@ -97,3 +97,4 @@ const redirects = {
 
 Die 404-Fehler für Telbank und OneNetwork sollten jetzt behoben sein!
 
+

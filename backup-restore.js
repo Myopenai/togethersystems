@@ -43,23 +43,54 @@
     });
   }
 
-  // Create a backup
+  // Create a backup - ERWEITERT für Datenverlust-Schutz
   window.createTSBackup = function(manual = false) {
     try {
       const timestamp = new Date().toISOString();
       const backupId = `${BACKUP_PREFIX}${Date.now()}`;
       
+      // ERWEITERT: Sammle ALLE relevanten Daten (nicht nur localStorage)
+      const allData = getAllLocalStorageData();
+      
+      // Füge zusätzliche User-Daten hinzu (falls vorhanden)
+      try {
+        // Manifest Forum Daten
+        const manifestDB = localStorage.getItem('manifest.db');
+        if (manifestDB) {
+          allData['manifest.db'] = JSON.parse(manifestDB);
+        }
+        
+        // Messages DB
+        const messagesDB = localStorage.getItem('messages.db');
+        if (messagesDB) {
+          allData['messages.db'] = JSON.parse(messagesDB);
+        }
+        
+        // Settings
+        const settings = localStorage.getItem('ts.settings');
+        if (settings) {
+          allData['ts.settings'] = JSON.parse(settings);
+        }
+      } catch (e) {
+        console.warn('Could not include additional data in backup:', e);
+      }
+      
       const backup = {
         id: backupId,
         timestamp,
         manual,
-        version: '1.0.0',
-        data: getAllLocalStorageData(),
+        version: '2.0.0', // Erhöht für erweiterte Backup-Version
+        system: 'togethersystems-manifest',
+        data: allData,
         metadata: {
           userAgent: navigator.userAgent,
           url: window.location.href,
           screenSize: `${window.screen.width}x${window.screen.height}`,
+          postsCount: allData['manifest.db']?.posts?.length || 0,
+          messagesCount: allData['messages.db'] ? 
+            ((allData['messages.db'].inbox?.length || 0) + (allData['messages.db'].outbox?.length || 0)) : 0,
         },
+        warning: 'WICHTIG: Dieses Backup enthält alle Ihre produzierten Daten. Bitte sicher aufbewahren!',
       };
 
       // Save backup to localStorage
@@ -81,6 +112,9 @@
 
       localStorage.setItem(backupId, JSON.stringify(backup));
       localStorage.setItem(BACKUP_KEY_PREFIX + 'list', JSON.stringify(backupsList));
+      
+      // Markiere letztes Backup-Datum
+      localStorage.setItem('ts.backup.lastBackupAt', timestamp);
 
       // Also create downloadable backup file
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });

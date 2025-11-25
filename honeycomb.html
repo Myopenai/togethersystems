@@ -491,7 +491,7 @@
       try{
         const raw = localStorage.getItem(STORAGE_KEY);
         if(!raw) return null;
-        return JSON.parse(raw);
+        return (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })();
       }catch(e){
         console.warn('Konnte Wabenmodell nicht lesen', e);
         return null;

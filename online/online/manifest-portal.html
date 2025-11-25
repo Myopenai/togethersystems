@@ -235,7 +235,7 @@ jsonFile.addEventListener('change', async ()=>{
 	const f = jsonFile.files?.[0]; if(!f) return;
 	const text = await f.text();
 	try{
-		const data = JSON.parse(text);
+		const data = (function() { try { return JSON.parse(text); } catch(e) { console.error('JSON parse error:', e); return null; } })();
 		if(!data || !Array.isArray(data.posts)) throw new Error('Ungültiges Format');
 		renderFeed(data);
 		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);

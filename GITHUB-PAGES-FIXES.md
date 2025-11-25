@@ -85,3 +85,4 @@ FALLBACK_IMAGES: [
 3. ⏭ Browser-Cache leeren (Strg+Shift+R)
 4. ⏭ Testen auf GitHub Pages
 
+

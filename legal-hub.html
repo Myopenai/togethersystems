@@ -366,7 +366,7 @@
       try{
         const raw = localStorage.getItem(STORAGE_KEY);
         if(!raw) return [];
-        const arr = JSON.parse(raw);
+        const arr = (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })();
         return Array.isArray(arr) ? arr : [];
       }catch{
         return [];

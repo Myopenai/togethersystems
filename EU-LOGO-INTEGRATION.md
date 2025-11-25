@@ -38,3 +38,4 @@ Das Logo kann jetzt verwendet werden:
 
 **Status**: ✅ **EU-Logo erstellt und verfügbar**
 
+

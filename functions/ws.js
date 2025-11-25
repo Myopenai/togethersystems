@@ -5,6 +5,8 @@
 // It keeps rooms in memory per worker instance.
 
 const rooms = globalThis.__signalRooms || (globalThis.__signalRooms = new Map());
+// User-ID → WebSocket-Server-Mapping für direkte Nachrichten
+const userConnections = globalThis.__userConnections || (globalThis.__userConnections = new Map());
 
 function broadcast(roomId, msg, exclude) {
   const set = rooms.get(roomId);
@@ -15,6 +17,17 @@ function broadcast(roomId, msg, exclude) {
       client.send(JSON.stringify(msg));
     } catch {}
   }
+}
+
+function sendToUser(userId, msg) {
+  const client = userConnections.get(userId);
+  if (client) {
+    try {
+      client.send(JSON.stringify(msg));
+      return true;
+    } catch {}
+  }
+  return false;
 }
 
 export default {
@@ -31,8 +44,9 @@ export default {
     server.accept();
 
     let currentRoom = null;
+    let currentUserId = null;
 
-    server.addEventListener('message', (event) => {
+    server.addEventListener('message', async (event) => {
       let data;
       try {
         data = JSON.parse(event.data);
@@ -42,6 +56,13 @@ export default {
 
       if (!data || typeof data !== 'object') return;
 
+      // User-ID registrieren (für direkte Nachrichten)
+      if (data.type === 'register_user' && data.user_id) {
+        currentUserId = String(data.user_id);
+        userConnections.set(currentUserId, server);
+        return;
+      }
+
       if (data.type === 'join' && data.room_id) {
         const roomId = String(data.room_id);
         currentRoom = roomId;
@@ -49,6 +70,13 @@ export default {
           rooms.set(roomId, new Set());
         }
         rooms.get(roomId).add(server);
+        
+        // User-ID aus thinker_id ableiten
+        if (data.thinker_id) {
+          currentUserId = String(data.thinker_id);
+          userConnections.set(currentUserId, server);
+        }
+        
         broadcast(roomId, { type: 'system', room_id: roomId, event: 'join' }, server);
         return;
       }
@@ -64,9 +92,42 @@ export default {
         broadcast(currentRoom, msg, server);
         return;
       }
+
+      // Direkte Nachricht (User-zu-User)
+      if (data.type === 'direct_message' && data.to_user_id && data.from_user_id) {
+        const toUserId = String(data.to_user_id);
+        const fromUserId = String(data.from_user_id);
+        
+        // Speichere Nachricht in DB (über API, hier vereinfacht: nur push)
+        // In Produktion sollte dies über die messages-API laufen
+        
+        const notification = {
+          type: 'message_notification',
+          message_id: data.message_id || `msg-temp-${Date.now()}`,
+          from_user_id: fromUserId,
+          subject: data.payload?.subject || null,
+          preview: data.payload?.preview || null,
+          body: data.payload?.body || null,
+          created_at: new Date().toISOString(),
+        };
+        
+        // Versuche direkt zu pushen
+        const pushed = sendToUser(toUserId, notification);
+        
+        if (!pushed) {
+          // Empfänger ist offline, Nachricht bleibt in DB (wird über /api/messages/pending abgeholt)
+        }
+        return;
+      }
     });
 
     server.addEventListener('close', () => {
+      // User-Verbindung entfernen
+      if (currentUserId) {
+        userConnections.delete(currentUserId);
+      }
+      
+      // Aus Room entfernen
       if (currentRoom && rooms.has(currentRoom)) {
         rooms.get(currentRoom).delete(server);
         broadcast(

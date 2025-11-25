@@ -97,5 +97,58 @@ test.describe('Manifest-Portal – neue Architektur (Smoke & Multi-User)', () =>
 
     await Promise.all([ctx1.close(), ctx2.close(), ctx3.close()]);
   });
+
+  test('⚖️ Gleichgewichts-Börse Tab ist vorhanden', async ({ page }) => {
+    await page.goto(PORTAL_URL, { waitUntil: 'load' });
+    await page.waitForLoadState('networkidle').catch(() => {});
+
+    const boerseTab = page.locator('#navBalancedExchange');
+    await expect(boerseTab).toBeVisible();
+    await expect(boerseTab).toContainText('Börse');
+  });
+
+  test('Gleichgewichts-Börse Panel öffnet sich', async ({ page }) => {
+    await page.goto(PORTAL_URL, { waitUntil: 'load' });
+    await page.waitForLoadState('networkidle').catch(() => {});
+
+    await page.click('#navBalancedExchange');
+    await page.waitForTimeout(500);
+
+    const panel = page.locator('#balanced-exchange-panel');
+    await expect(panel).toBeVisible();
+  });
+
+  test('💬 Nachrichten Tab ist vorhanden', async ({ page }) => {
+    await page.goto(PORTAL_URL, { waitUntil: 'load' });
+    await page.waitForLoadState('networkidle').catch(() => {});
+
+    const messagesTab = page.locator('#navMessages');
+    await expect(messagesTab).toBeVisible();
+    await expect(messagesTab).toContainText('Nachrichten');
+  });
+
+  test('Nachrichten Panel öffnet sich', async ({ page }) => {
+    await page.goto(PORTAL_URL, { waitUntil: 'load' });
+    await page.waitForLoadState('networkidle').catch(() => {});
+
+    await page.click('#navMessages');
+    await page.waitForTimeout(500);
+
+    const panel = page.locator('#messages-panel');
+    await expect(panel).toBeVisible();
+  });
+
+  test('Nachrichten-System Features sind vorhanden', async ({ page }) => {
+    await page.goto(PORTAL_URL, { waitUntil: 'load' });
+    await page.waitForLoadState('networkidle').catch(() => {});
+
+    await page.click('#navMessages');
+    await page.waitForTimeout(500);
+
+    await expect(page.locator('#btnMessagesInbox')).toBeVisible();
+    await expect(page.locator('#btnMessagesOutbox')).toBeVisible();
+    await expect(page.locator('#btnMessagesCompose')).toBeVisible();
+    await expect(page.locator('#btnSyncMessages')).toBeVisible();
+  });
 });
 

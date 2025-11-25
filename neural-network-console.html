@@ -250,7 +250,12 @@
             : (typeof input === 'string' ? { content: input, text: input }[currentOperation === 'translate' || currentOperation === 'summarize' ? 'text' : 'content'] : input),
         };
 
-        const res = await fetch(API_BASE, {
+                try {
+          const res = await fetch(API_BASE, {
+        } catch (err) {
+          console.error('API error:', err);
+          return null;
+        }
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -258,7 +263,7 @@
           body: JSON.stringify(requestBody),
         });
 
-        const data = await res.json();
+        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
         if(data.ok){
           resultDiv.style.display = 'block';
           resultDiv.textContent = JSON.stringify(data.result, null, 2);

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TogetherSystems Ultra - Social Media Plattform für Business & Alltag">
+  <title>TogetherSystems Ultra</title>
+  <link rel="stylesheet" href="ui/styles.css">
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <!-- App Shell -->
+  <div id="app" class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo">
+          <h1>TogetherSystems</h1>
+          <p class="tagline">Deine Kommunikations-Schaltzentrale für Business & Alltag</p>
+        </div>
+        <nav class="main-nav">
+          <button class="nav-btn active" data-route="home">Home</button>
+          <button class="nav-btn" data-route="chats">Chats</button>
+          <button class="nav-btn" data-route="networks">Netzwerke</button>
+          <button class="nav-btn" data-route="rooms">Räume</button>
+          <button class="nav-btn" data-route="profile">Profil</button>
+          <button class="nav-btn icon" data-route="more" title="Mehr">⚙️</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Identity Setup Dialog (wird bei Bedarf angezeigt) -->
+      <div id="identitySetup" class="modal" style="display: none;">
+        <div class="modal-content">
+          <h2>Willkommen bei TogetherSystems</h2>
+          <p>Bist du Privatperson, Unternehmer oder Unternehmen?</p>
+          <form id="identityForm">
+            <div class="form-group">
+              <label>Typ:</label>
+              <select id="identityType" required>
+                <option value="person_private">Privatperson</option>
+                <option value="person_business">Unternehmer</option>
+                <option value="company">Unternehmen</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Anzeigename:</label>
+              <input type="text" id="displayName" required>
+            </div>
+            <div class="form-group" id="companyFields" style="display: none;">
+              <label>Firmenname:</label>
+              <input type="text" id="companyName">
+            </div>
+            <div class="form-group" id="registerFields" style="display: none;">
+              <label>Register-/USt-ID:</label>
+              <input type="text" id="registerId">
+            </div>
+            <button type="submit" class="btn-primary">Weiter</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Home / Feed View -->
+      <div id="homeView" class="view active">
+        <!-- Job-Angebot Banner -->
+        <div class="job-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <h2 style="margin-bottom: 0.5rem;">🚀 Entwickler & Mitarbeiter gesucht!</h2>
+          <p style="margin-bottom: 1rem; opacity: 0.9;">Grenzenlose Teilnahme • Alle Niveaus • Langfristige Perspektive</p>
+          <a href="/ultra/jobs/developer-opportunity.html" class="btn-primary" style="background: white; color: #667eea; text-decoration: none; display: inline-block;">Jetzt bewerben →</a>
+          <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">"Wer nicht will, macht nicht mit. {T,. - Punkt. - T,,.}"</p>
+        </div>
+        
+        <!-- Composer -->
+        <div class="composer">
+          <div class="composer-header">
+            <h3>Was möchtest du tun?</h3>
+          </div>
+          <div class="composer-actions">
+            <button class="action-card" data-action="message">
+              <span class="icon">💬</span>
+              <span>Nachricht senden</span>
+            </button>
+            <button class="action-card" data-action="call">
+              <span class="icon">📞</span>
+              <span>Call starten</span>
+            </button>
+            <button class="action-card" data-action="file">
+              <span class="icon">📎</span>
+              <span>Datei/Vertrag senden</span>
+            </button>
+            <button class="action-card" data-action="event">
+              <span class="icon">📅</span>
+              <span>Termin/Voucher anbieten</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Feed -->
+        <div id="feed" class="feed">
+          <div class="feed-loading">Lade Feed...</div>
+        </div>
+      </div>
+
+      <!-- Chats View -->
+      <div id="chatsView" class="view">
+        <div class="chats-container">
+          <div class="chats-list">
+            <h2>Chats</h2>
+            <button class="btn-primary" id="newChatBtn">Neuer Chat</button>
+            <div id="chatsList"></div>
+          </div>
+          <div class="chat-view">
+            <div id="chatMessages"></div>
+            <div class="chat-input-container">
+              <input type="text" id="chatInput" placeholder="Nachricht eingeben...">
+              <button id="sendChatBtn" class="btn-primary">Senden</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Networks View -->
+      <div id="networksView" class="view">
+        <h2>Netzwerke</h2>
+        <button class="btn-primary" id="createNetworkBtn">Neues Netzwerk erstellen</button>
+        <div id="networksList"></div>
+      </div>
+
+      <!-- Rooms View -->
+      <div id="roomsView" class="view">
+        <h2>Räume</h2>
+        <button class="btn-primary" id="createRoomBtn">Neuen Raum erstellen</button>
+        <div id="roomsList"></div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="profileView" class="view">
+        <h2>Profil</h2>
+        <div id="profileContent"></div>
+      </div>
+
+      <!-- Stories View -->
+      <div id="storiesView" class="view">
+        <h2>Stories</h2>
+        <button class="btn-primary" id="createStoryBtn">Neue Story</button>
+        <div id="storiesList" class="stories-container"></div>
+      </div>
+
+      <!-- More / Admin View -->
+      <div id="moreView" class="view">
+        <h2>Mehr</h2>
+        <div class="admin-links">
+          <h3>Erweiterungen</h3>
+          <div id="extensionsList"></div>
+          <h3>Tools</h3>
+          <a href="/legal-hub.html" class="link">Legal Hub</a>
+          <a href="/manifest-forum.html" class="link">Manifest Forum</a>
+          <a href="/honeycomb.html" class="link">Wabenräume</a>
+          <a href="/ultra/ui/developer-portal.html" class="link">🚀 Developer Portal</a>
+          <a href="/ultra/jobs/developer-opportunity.html" class="link">💼 Job-Angebot: Entwickler gesucht</a>
+          <a href="/ultra/admin/unimplemented-actions-dashboard.html" class="link">📊 Admin Dashboard</a>
+          <h3>Daten</h3>
+          <button id="exportDataBtn" class="btn-secondary">Daten exportieren</button>
+          <button id="importDataBtn" class="btn-secondary">Daten importieren</button>
+          <button id="exportManifestBtn" class="btn-secondary">Manifest exportieren</button>
+          <button id="importManifestBtn" class="btn-secondary">Manifest importieren</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="core/event-bus.js"></script>
+  <script src="core/storage.js"></script>
+  <script src="core/identity.js"></script>
+  <script src="core/network.js"></script>
+  <script src="core/posts.js"></script>
+  <script src="core/chat.js"></script>
+  <script src="core/rooms.js"></script>
+  <script src="core/stories.js"></script>
+  <script src="core/manifest-bridge.js"></script>
+  <script src="core/action-tracker.js"></script>
+  <script src="core/developer-onboarding.js"></script>
+  <script src="core/beta-portal.js"></script>
+  <script src="core/error-handler.js"></script>
+  <script src="extensions/registry.js"></script>
+  <script src="extensions/builtin/realestate.js"></script>
+  <script src="extensions/builtin/mourning.js"></script>
+  <script src="extensions/builtin/birth.js"></script>
+  <script src="core/wrapper-unlimited.js"></script>
+  <script src="app.js"></script>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/ultra/sw.js')
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+          })
+          .catch((registrationError) => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
+

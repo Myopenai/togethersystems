@@ -166,7 +166,7 @@
 		$('#saveNotes').addEventListener('click', saveNotes);
 
 		function getItems(){
-			try{ return JSON.parse(localStorage.getItem('portal.items')||'[]') }catch{ return [] }
+			try{ return (function() { try { return JSON.parse(localStorage.getItem('portal.items'); } catch(e) { console.error('JSON parse error:', e); return null; } })()||'[]') }catch{ return [] }
 		}
 		function setItems(arr){
 			localStorage.setItem('portal.items', JSON.stringify(arr));
@@ -209,7 +209,7 @@
 			const reader = new FileReader();
 			reader.onload = ()=>{
 				try{
-					const json = JSON.parse(String(reader.result||'{}'));
+					const json = (function() { try { return JSON.parse(String(reader.result||'{}'); } catch(e) { console.error('JSON parse error:', e); return null; } })());
 					const data = Array.isArray(json)? json : (json.data||[]);
 					if(!Array.isArray(data)) throw new Error('Ungültiges Backup');
 					setItems(data);

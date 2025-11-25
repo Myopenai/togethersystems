@@ -87,3 +87,4 @@ wrangler pages deploy . --project-name ts-portal
 
 **Alles ist bereit für Cloudflare Pages!** 🚀
 
+
