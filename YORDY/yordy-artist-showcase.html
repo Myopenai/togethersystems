@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YORDY - Artist Showcase | MicroLED Quality</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --microled-primary: #00ffff;
+      --microled-secondary: #ff00ff;
+      --microled-accent: #ffff00;
+      --bg-dark: #000000;
+      --bg-gradient: linear-gradient(135deg, #000428 0%, #004e92 50%, #000428 100%);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: #ffffff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* MicroLED Grid Background */
+    .microled-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.1;
+      background-image: 
+        linear-gradient(var(--microled-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--microled-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Main Container */
+    .showcase-container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: var(--bg-gradient);
+    }
+
+    /* Artist Header */
+    .artist-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    .artist-name {
+      font-size: clamp(3rem, 8vw, 8rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--microled-primary), var(--microled-secondary), var(--microled-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      animation: textGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes textGlow {
+      0%, 100% { 
+        filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
+      }
+      50% { 
+        filter: drop-shadow(0 0 40px rgba(0, 255, 255, 0.8));
+      }
+    }
+
+    .artist-subtitle {
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: var(--microled-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1400px;
+      width: 100%;
+      margin: 2rem 0;
+    }
+
+    /* Image Card */
+    .image-card {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      background: rgba(0, 255, 255, 0.1);
+      border: 2px solid transparent;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: cardFloat 3s ease-in-out infinite;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .image-card:nth-child(1) { animation-delay: 0s; }
+    .image-card:nth-child(2) { animation-delay: 0.5s; }
+    .image-card:nth-child(3) { animation-delay: 1s; }
+
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    .image-card:hover {
+      transform: translateY(-15px) scale(1.05) rotate(2deg);
+      border-color: var(--microled-primary);
+      box-shadow: 
+        0 20px 60px rgba(0, 255, 255, 0.4),
+        0 0 30px rgba(0, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: brightness(0.9) contrast(1.1);
+    }
+
+    .image-card:hover img {
+      transform: scale(1.1);
+      filter: brightness(1.2) contrast(1.2);
+    }
+
+    /* MicroLED Overlay Effect */
+    .microled-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(255, 0, 255, 0.3) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .image-card:hover .microled-overlay {
+      opacity: 1;
+      animation: microledScan 2s linear infinite;
+    }
+
+    @keyframes microledScan {
+      0% { 
+        background-position: 0% 0%, 100% 100%;
+      }
+      100% { 
+        background-position: 100% 100%, 0% 0%;
+      }
+    }
+
+    /* Pixel Grid Effect */
+    .pixel-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .image-card:hover .pixel-grid {
+      opacity: 1;
+      animation: pixelFlicker 0.1s linear infinite;
+    }
+
+    @keyframes pixelFlicker {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Social Link */
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+      border: 2px solid var(--microled-primary);
+      border-radius: 50px;
+      color: var(--microled-primary);
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 2s ease-out;
+    }
+
+    .social-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .social-link:hover::before {
+      left: 100%;
+    }
+
+    .social-link:hover {
+      transform: scale(1.05);
+      box-shadow: 
+        0 0 30px rgba(0, 255, 255, 0.6),
+        0 0 60px rgba(255, 0, 255, 0.4);
+      border-color: var(--microled-secondary);
+    }
+
+    .social-link svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    /* Floating Particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--microled-primary);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: particleFloat 10s linear infinite;
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+        opacity: 0;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .artist-name {
+        font-size: 3rem;
+      }
+
+      .showcase-container {
+        padding: 1rem;
+      }
+    }
+
+    /* Light Beam Effect */
+    .light-beam {
+      position: absolute;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, 
+        transparent,
+        var(--microled-primary),
+        transparent
+      );
+      opacity: 0;
+      animation: lightBeam 3s ease-in-out infinite;
+    }
+
+    @keyframes lightBeam {
+      0%, 100% {
+        opacity: 0;
+        transform: translateX(-100px);
+      }
+      50% {
+        opacity: 0.8;
+        transform: translateX(calc(100vw + 100px));
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- MicroLED Grid Background -->
+  <div class="microled-grid"></div>
+
+  <!-- Floating Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Light Beam Effect -->
+  <div class="light-beam" style="left: 20%; animation-delay: 0s;"></div>
+  <div class="light-beam" style="left: 50%; animation-delay: 1s;"></div>
+  <div class="light-beam" style="left: 80%; animation-delay: 2s;"></div>
+
+  <!-- Main Showcase Container -->
+  <div class="showcase-container">
+    <!-- Artist Header -->
+    <div class="artist-header">
+      <h1 class="artist-name">YORDY</h1>
+      <p class="artist-subtitle">Artist Showcase</p>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid">
+      <!-- Image 1 -->
+      <div class="image-card">
+        <img src="586570724_33456496463949433_5989595034627163865_n.jpg" 
+             alt="YORDY Artwork 1" 
+             loading="lazy">
+        <div class="microled-overlay"></div>
+        <div class="pixel-grid"></div>
+      </div>
+
+      <!-- Image 2 -->
+      <div class="image-card">
+        <img src="587311299_33418853397713740_2912041276018949230_n.jpg" 
+             alt="YORDY Artwork 2" 
+             loading="lazy">
+        <div class="microled-overlay"></div>
+        <div class="pixel-grid"></div>
+      </div>
+
+      <!-- Image 3 -->
+      <div class="image-card">
+        <img src="589004660_33471790269086719_4363333161132047288_n.jpg" 
+             alt="YORDY Artwork 3" 
+             loading="lazy">
+        <div class="microled-overlay"></div>
+        <div class="pixel-grid"></div>
+      </div>
+    </div>
+
+    <!-- Social Link -->
+    <a href="https://www.facebook.com/yordy.loermans" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="social-link">
+      <svg viewBox="0 0 24 24">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+      </svg>
+      <span>Facebook Profile</span>
+    </a>
+  </div>
+
+  <script>
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 50;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        
+        // Random color from MicroLED palette
+        const colors = ['#00ffff', '#ff00ff', '#ffff00'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Image card click handler for fullscreen
+    document.querySelectorAll('.image-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const img = this.querySelector('img');
+        if (img) {
+          // Create fullscreen overlay
+          const overlay = document.createElement('div');
+          overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            animation: fadeIn 0.3s;
+          `;
+          
+          const fullscreenImg = document.createElement('img');
+          fullscreenImg.src = img.src;
+          fullscreenImg.style.cssText = `
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
+          `;
+          
+          overlay.appendChild(fullscreenImg);
+          document.body.appendChild(overlay);
+          
+          overlay.addEventListener('click', () => {
+            overlay.remove();
+          });
+        }
+      });
+    });
+
+    // Initialize particles on load
+    window.addEventListener('load', createParticles);
+
+    // Parallax effect on scroll
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const parallax = document.querySelector('.microled-grid');
+      if (parallax) {
+        parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+      }
+    });
+  </script>
+</body>
+</html>
+
