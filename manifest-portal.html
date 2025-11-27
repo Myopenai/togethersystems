@@ -1286,7 +1286,7 @@ function startMatchLoop(identity){
 			}
 			updateConnectStatus(`Warte auf zweiten Thinker mit Stichwort „${pair_code}“…`);
 			const safeFetch = window.safeFetchJson || safeFetchJson;
-			const res = await safeFetch(`${PRESENCE_API_BASE}/match`, {
+			const result = await safeFetch(`${PRESENCE_API_BASE}/match`, {
 				method:'POST',
 				headers:{'Content-Type':'application/json'},
 				body: JSON.stringify({
@@ -1375,7 +1375,7 @@ async function autoConnectFromToken(){
 			setTimeout(async ()=>{
 				if(PRESENCE_API_BASE){
 					const safeFetch = window.safeFetchJson || safeFetchJson;
-					const res = await safeFetch(`${PRESENCE_API_BASE}/match`, {
+					const result = await safeFetch(`${PRESENCE_API_BASE}/match`, {
 						method:'POST',
 						headers:{'Content-Type':'application/json'},
 						body: JSON.stringify({
@@ -2203,31 +2203,21 @@ async function issueVoucherTemplate(templateKey){
 			alert('Voucher‑API ist nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität.');
 			return;
 		}
-				try {
-		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/issue`, {
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
+		const safeFetch = window.safeFetchJson || safeFetchJson;
+		const result = await safeFetch(`${VOUCHER_API_BASE}/voucher/issue`, {
 			method:'POST',
 			headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
 			body: JSON.stringify(body)
 		});
-		if (!res.ok) {
-			const errorText = await res.text().catch(() => res.statusText);
-			let errorMsg = `HTTP ${res.status}: ${errorText}`;
-			try {
-				const errorData = JSON.parse(errorText);
-				if (errorData.error) errorMsg = errorData.error;
-			} catch {}
-			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + errorMsg);
+		if (!result.ok) {
+			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + result.error);
 			// Fehler an Autofix melden
 			if (window.enqueueError) {
-				window.enqueueError(new Error(errorMsg), { type: 'voucher_issue_error', templateKey });
+				window.enqueueError(new Error(result.error), { type: 'voucher_issue_error', templateKey });
 			}
 			return;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+		const data = result.data;
 		if(!data || !data.ok){
 			const errorMsg = data?.error || 'Unbekannter Fehler';
 			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + errorMsg);
@@ -2321,14 +2311,10 @@ async function loadEventsMembershipsOverview(){
 	let text = '';
 	try{
 		const url = `${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`;
-				try {
-		  const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
-		const items = data.items || [];
+		const safeFetch = window.safeFetchJson || safeFetchJson;
+		const result = await safeFetch(url, { headers:{ 'Accept':'application/json' } });
+		const data = result.ok ? result.data : null;
+		const items = data?.items || [];
 		const relevantTypes = ['consulting.session','therapy.session','membership.access'];
 		const relevant = items.filter(v => relevantTypes.includes(v.serviceType));
 		if(!relevant.length){
@@ -2402,14 +2388,10 @@ async function loadVerticalConsoles(){
 	const { uid } = getUserContext();
 	try{
 		const url = `${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`;
-				try {
-		  const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
-		const items = data.items || [];
+		const safeFetch = window.safeFetchJson || safeFetchJson;
+		const result = await safeFetch(url, { headers:{ 'Accept':'application/json' } });
+		const data = result.ok ? result.data : null;
+		const items = data?.items || [];
 
 		const machines = items.filter(v => v.serviceType === 'machine.timeslot');
 		const eventTypes = ['consulting.session','therapy.session','realestate.viewing'];
