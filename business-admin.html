@@ -233,11 +233,7 @@
 
     async function loadHolderBookings(){
       try {
-          const res = await fetch('/api/voucher/bookings?holderUid='+encodeURIComponent(uid), {
-        } catch (err) {
-          console.error('API error:', err);
-          return null;
-        }
+        const res = await fetch('/api/voucher/bookings?holderUid='+encodeURIComponent(uid), {
           headers:{'Accept':'application/json'}
         });
         const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
@@ -304,6 +300,7 @@
   })();
   </script>
   <script type="module" src="./autofix-client.js"></script>
+  <script src="./console-monitor.js"></script>
 </body>
 </html>
 

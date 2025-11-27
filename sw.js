@@ -91,15 +91,26 @@ self.addEventListener('fetch', event => {
       caches.match(req).then(cached => {
         if (cached) return cached;
         
+        // Filter unsupported schemes (chrome-extension, etc.)
+        const url = new URL(req.url);
+        if (url.protocol === 'chrome-extension:' || url.protocol === 'chrome:' || url.protocol === 'moz-extension:') {
+          return fetch(req).catch(() => new Response('Unsupported scheme', { status: 400 }));
+        }
+        
         return fetch(req).then(response => {
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
           
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(req, responseToCache);
-          });
+          // Only cache http/https URLs
+          if (url.protocol === 'http:' || url.protocol === 'https:') {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(req, responseToCache).catch(err => {
+                console.warn('Cache put failed:', err);
+              });
+            });
+          }
           
           return response;
         }).catch(() => {
