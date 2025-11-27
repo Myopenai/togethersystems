@@ -42,22 +42,40 @@ class OSTOSStorybook {
 
   loadSponsors() {
     // Lade Sponsoren von API oder localStorage
-    fetch('/api/sponsors/list')
-      .then(r => r.json())
-      .then(data => {
-        if (data.ok && data.sponsors) {
-          this.sponsors = data.sponsors;
-          this.integrateSponsors();
-        }
-      })
-      .catch(() => {
-        // Fallback: localStorage
-        const stored = localStorage.getItem('ostos-sponsors');
-        if (stored) {
-          this.sponsors = JSON.parse(stored);
-          this.integrateSponsors();
-        }
-      });
+    // Prüfe ob nicht file:// Protokoll (CORS-Schutz)
+    if (location.protocol !== 'file:') {
+      fetch('/api/sponsors/list')
+        .then(r => {
+          if (!r.ok) throw new Error('API not available');
+          return r.json();
+        })
+        .then(data => {
+          if (data.ok && data.sponsors) {
+            this.sponsors = data.sponsors;
+            this.integrateSponsors();
+          }
+        })
+        .catch(() => {
+          // Fallback: localStorage
+          this.loadSponsorsFromStorage();
+        });
+    } else {
+      // Direkt localStorage bei file://
+      this.loadSponsorsFromStorage();
+    }
+  }
+
+  loadSponsorsFromStorage() {
+    try {
+      const stored = localStorage.getItem('ostos-sponsors');
+      if (stored) {
+        this.sponsors = JSON.parse(stored);
+        this.integrateSponsors();
+      }
+    } catch (e) {
+      console.error('Error loading sponsors from storage:', e);
+      this.sponsors = [];
+    }
   }
 
   setupEventListeners() {

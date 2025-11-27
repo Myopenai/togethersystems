@@ -766,7 +766,7 @@
       root.style.setProperty("--anim-speed-multiplier", animSpeed.value);
       root.style.setProperty("--logo-scale", logoScale.value);
     })();
-    let sponsors = (function() { try { return JSON.parse(localStorage.getItem('ostos-sponsors'); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '[]');
+    let sponsors = (function() { try { return JSON.parse(localStorage.getItem('ostos-sponsors') || '[]'); } catch(e) { console.error('JSON parse error:', e); return []; } })();
     function loadSponsors() {
       const container = document.getElementById('sponsorLogos');
       container.innerHTML = '';
@@ -808,9 +808,13 @@
       loadSponsors();
       document.getElementById('sponsorName').value = '';
       fileInput.value = '';
-      try {
-        await fetch('/api/sponsors/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sponsor) });
-      } catch (e) { console.log('Server registration optional:', e); }
+      // Server-Registrierung nur wenn nicht file:// Protokoll
+      if (location.protocol !== 'file:') {
+        try {
+          const res = await fetch('/api/sponsors/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sponsor) });
+          if (!res.ok) console.log('Server registration failed:', res.status);
+        } catch (e) { console.log('Server registration:', e); }
+      }
       alert(`Danke ${name}! Sie sind jetzt als Sponsor registriert.`);
     }
     loadSponsors();
