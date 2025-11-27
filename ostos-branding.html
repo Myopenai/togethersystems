@@ -766,7 +766,7 @@
       root.style.setProperty("--anim-speed-multiplier", animSpeed.value);
       root.style.setProperty("--logo-scale", logoScale.value);
     })();
-    let sponsors = JSON.parse(localStorage.getItem('ostos-sponsors') || '[]');
+    let sponsors = (function() { try { return JSON.parse(localStorage.getItem('ostos-sponsors'); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '[]');
     function loadSponsors() {
       const container = document.getElementById('sponsorLogos');
       container.innerHTML = '';

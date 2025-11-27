@@ -842,7 +842,7 @@
     // Export settings
     function exportSettings() {
       const settings = {
-        verification: JSON.parse(localStorage.getItem('settings-verification') || '{}'),
+        verification: (function() { try { return JSON.parse(localStorage.getItem('settings-verification'); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '{}'),
         timestamp: new Date().toISOString(),
         version: '1.0.0'
       };
@@ -861,7 +861,7 @@
       loadStatistics();
       const saved = localStorage.getItem('settings-verification');
       if (saved) {
-        const verifications = JSON.parse(saved);
+        const verifications = (function() { try { return JSON.parse(saved); } catch(e) { console.error('JSON parse error:', e); return null; } })();
         Object.keys(verifications).forEach(key => {
           const checkbox = document.getElementById(`verify-${key}`);
           if (checkbox) checkbox.checked = verifications[key];

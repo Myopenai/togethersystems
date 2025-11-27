@@ -267,6 +267,67 @@
 			}
 		</style>
 
+		<!-- TEST-INFO FÜR USER - Live-Statistiken -->
+		<section id="test-info-banner" class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2)); border: 3px solid #10b981; border-radius: 16px; padding: 1.5rem; margin: 2rem auto; max-width: 1200px; position: relative; overflow: hidden;">
+			<div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #10b981, #3b82f6, #10b981); animation: shimmer 3s infinite;"></div>
+			
+			<div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+				<div style="flex: 1; min-width: 200px;">
+					<h3 style="font-size: 1.5rem; color: #10b981; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+						<span id="test-status-icon">⚙️</span>
+						<span id="test-status-text">System wird getestet...</span>
+					</h3>
+					<p id="test-info-message" style="color: #a5b4fc; font-size: 0.95rem; margin: 0;">
+						Es wird kontinuierlich an der App gearbeitet
+					</p>
+				</div>
+				<div style="text-align: right;">
+					<div id="test-progress-bar" style="width: 200px; height: 8px; background: rgba(16, 185, 129, 0.2); border-radius: 999px; overflow: hidden; margin-bottom: 0.5rem;">
+						<div id="test-progress-fill" style="height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); width: 0%; transition: width 0.5s;"></div>
+					</div>
+					<div id="test-progress-text" style="color: #10b981; font-size: 0.85rem; font-weight: 600;">0%</div>
+				</div>
+			</div>
+			
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem;">
+				<div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 0.75rem; text-align: center;">
+					<div style="font-size: 1.5rem; font-weight: 700; color: #10b981;" id="test-stat-apps">0</div>
+					<div style="font-size: 0.8rem; color: #a5b4fc; margin-top: 0.25rem;">Applikationen</div>
+				</div>
+				<div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 0.75rem; text-align: center;">
+					<div style="font-size: 1.5rem; font-weight: 700; color: #10b981;" id="test-stat-passed">0</div>
+					<div style="font-size: 0.8rem; color: #a5b4fc; margin-top: 0.25rem;">Tests bestanden</div>
+				</div>
+				<div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 0.75rem; text-align: center;">
+					<div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;" id="test-stat-errors">0</div>
+					<div style="font-size: 0.8rem; color: #a5b4fc; margin-top: 0.25rem;">Fehler</div>
+				</div>
+				<div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 0.75rem; text-align: center;">
+					<div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;" id="test-stat-fixed">0</div>
+					<div style="font-size: 0.8rem; color: #a5b4fc; margin-top: 0.25rem;">Behoben</div>
+				</div>
+			</div>
+			
+			<div style="margin-top: 1rem; padding: 0.75rem; background: rgba(0, 0, 0, 0.4); border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.2);">
+				<div style="font-size: 0.85rem; color: #a5b4fc;">
+					<strong style="color: #10b981;">Letzte Testergebnisse:</strong>
+					<div id="test-last-results" style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+						<!-- Wird dynamisch gefüllt -->
+					</div>
+				</div>
+				<div style="margin-top: 0.75rem; font-size: 0.75rem; color: #9fb3c8;" id="test-timestamp">
+					Letzte Aktualisierung: Wird geladen...
+				</div>
+			</div>
+			
+			<style>
+				@keyframes shimmer {
+					0% { transform: translateX(-100%); }
+					100% { transform: translateX(100%); }
+				}
+			</style>
+		</section>
+
 		<!-- NEUE FEATURES - Prominente Präsentation aller erstellten Anwendungen -->
 		<section class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(245, 158, 11, 0.15)); border: 3px solid #10b981; margin-bottom: 2rem;">
 			<h2 style="font-size: 2rem; background: linear-gradient(135deg, #10b981, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; text-align: center;">
@@ -820,6 +881,108 @@
 				headers:{ 'content-type':'application/json' },
 				body: JSON.stringify(obj)
 			}).catch(()=>{/* ignore network errors; local copy persists */});
+		}
+	})();
+
+	// Portal Test-Info Live-Updates
+	(function() {
+		const TEST_INFO_PATH = './portal-test-info.json';
+		const UPDATE_INTERVAL = 10000; // 10 Sekunden
+		
+		let lastUpdate = null;
+		
+		async function loadTestInfo() {
+			try {
+				const res = await fetch(TEST_INFO_PATH + '?t=' + Date.now());
+				if (!res.ok) return;
+				
+				const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+				
+				// Update UI
+				updateTestInfo(data);
+				lastUpdate = data.timestamp;
+			} catch (err) {
+				console.warn('Test-Info konnte nicht geladen werden:', err);
+			}
+		}
+		
+		function updateTestInfo(data) {
+			// Status
+			const statusIcon = document.getElementById('test-status-icon');
+			const statusText = document.getElementById('test-status-text');
+			const infoMessage = document.getElementById('test-info-message');
+			
+			if (statusIcon && statusText && infoMessage) {
+				if (data.status === 'success') {
+					statusIcon.textContent = '✅';
+					statusText.textContent = 'Alle Tests bestanden';
+					statusText.style.color = '#10b981';
+				} else if (data.status === 'warning') {
+					statusIcon.textContent = '⚠️';
+					statusText.textContent = 'Wenige Fehler gefunden';
+					statusText.style.color = '#f59e0b';
+				} else {
+					statusIcon.textContent = '🔧';
+					statusText.textContent = 'Fehler werden behoben';
+					statusText.style.color = '#ef4444';
+				}
+				
+				infoMessage.textContent = data.message || 'Es wird kontinuierlich an der App gearbeitet';
+			}
+			
+			// Statistiken
+			const statApps = document.getElementById('test-stat-apps');
+			const statPassed = document.getElementById('test-stat-passed');
+			const statErrors = document.getElementById('test-stat-errors');
+			const statFixed = document.getElementById('test-stat-fixed');
+			
+			if (statApps) statApps.textContent = data.statistics?.totalApplications || 0;
+			if (statPassed) statPassed.textContent = data.statistics?.testsPassed || 0;
+			if (statErrors) statErrors.textContent = data.statistics?.totalErrors || 0;
+			if (statFixed) statFixed.textContent = data.statistics?.totalFixed || 0;
+			
+			// Progress
+			const progress = data.progress?.percentage || 0;
+			const progressFill = document.getElementById('test-progress-fill');
+			const progressText = document.getElementById('test-progress-text');
+			
+			if (progressFill) progressFill.style.width = progress + '%';
+			if (progressText) progressText.textContent = progress + '%';
+			
+			// Letzte Ergebnisse
+			const lastResultsDiv = document.getElementById('test-last-results');
+			if (lastResultsDiv && data.lastResults) {
+				lastResultsDiv.innerHTML = Object.entries(data.lastResults).map(([key, result]) => {
+					const icon = result.status === 'success' ? '✅' : 
+					           result.status === 'error' ? '❌' : 
+					           result.status === 'skipped' ? '⏭️' : '⏳';
+					const color = result.status === 'success' ? '#10b981' : 
+					             result.status === 'error' ? '#ef4444' : '#9fb3c8';
+					const label = key.replace(/([A-Z])/g, ' $1').trim().replace(/^\w/, c => c.toUpperCase());
+					return `<span style="padding: 0.25rem 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid ${color}; border-radius: 6px; font-size: 0.75rem; color: ${color};">
+						${icon} ${label}
+					</span>`;
+				}).join('');
+			}
+			
+			// Timestamp
+			const timestampDiv = document.getElementById('test-timestamp');
+			if (timestampDiv && data.timestamp) {
+				const date = new Date(data.timestamp);
+				timestampDiv.textContent = 
+					'Letzte Aktualisierung: ' + date.toLocaleString('de-DE', { 
+						day: '2-digit', month: '2-digit', year: 'numeric',
+						hour: '2-digit', minute: '2-digit', second: '2-digit'
+					});
+			}
+		}
+		
+		// Initial Load
+		if (document.getElementById('test-info-banner')) {
+			loadTestInfo();
+			
+			// Auto-Update
+			setInterval(loadTestInfo, UPDATE_INTERVAL);
 		}
 	})();
 	</script>

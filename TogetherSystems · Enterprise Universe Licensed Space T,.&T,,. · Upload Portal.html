@@ -704,7 +704,7 @@
             const uploadedFiles = document.getElementById("uploadedFiles");
             
             // Uploaded files storage
-            let uploadedFilesList = JSON.parse(localStorage.getItem('ts_uploaded_files') || '[]');
+            let uploadedFilesList = (function() { try { return JSON.parse(localStorage.getItem('ts_uploaded_files'); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '[]');
 
             const hotspotConfig = {
                 portal: {
