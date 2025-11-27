@@ -1294,8 +1294,8 @@ function startMatchLoop(identity){
 					pair_code
 				})
 			});
-			if(!res.ok) return;
-			const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+			if(!result.ok) return;
+			const data = result.data;
 			if(data && data.room_id){
 				if(currentRoomId === data.room_id) return;
 				currentRoomId = data.room_id;
@@ -1383,8 +1383,8 @@ async function autoConnectFromToken(){
 							pair_code: roomParam
 						})
 					});
-						if(res.ok){
-							const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+						if(result.ok){
+							const data = result.data;
 							if(data && data.room_id){
 								currentRoomId = data.room_id;
 								updateConnectStatus(`Verbunden mit Raum „${data.room_id}“. Signaling-Server verbunden.`);
@@ -2131,8 +2131,8 @@ async function bookSlot(voucher, slot){
 			holderUid: uid
 		})
 	});
-	if(!result.ok || !result.data || !result.data.ok){
-			alert('Buchung fehlgeschlagen: ' + (data.error || res.statusText));
+		if(!result.ok || !result.data || !result.data.ok){
+			alert('Buchung fehlgeschlagen: ' + (result.data?.error || result.error));
 			return;
 		}
 		alert('Termin gebucht.\n\nDatum: ' + new Date(slot.start).toLocaleString());
