@@ -178,15 +178,11 @@
     // Autofix-Status laden
     async function loadAutofixStatus(){
       try {
-          const res = await fetch('/api/autofix/status', {
-        } catch (err) {
-          console.error('API error:', err);
-          return null;
-        }
-          headers:{'Accept':'application/json'}
+        const res = await fetch('/api/autofix/status', {
+          headers: {'Accept': 'application/json'}
         });
         if(!res.ok) return;
-        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
         if(data.ok && data.stats){
           // Autofix-Statistiken anzeigen (optional, falls Element vorhanden)
           const autofixInfo = document.getElementById('autofix-stats');
@@ -211,15 +207,10 @@
     async function loadEvents(){
       try{
         eventsStatus.textContent = 'Lade Ereignisse …';
-                try {
-          const res = await fetch('/api/admin/events?limit=50', {
-        } catch (err) {
-          console.error('API error:', err);
-          return null;
-        }
-          headers:{'Accept':'application/json'}
+        const res = await fetch('/api/admin/events?limit=50', {
+          headers: {'Accept': 'application/json'}
         });
-        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
         if(!data.ok){
           eventsStatus.textContent = 'Fehler: '+(data.error || 'Unbekannter Fehler');
           return;
