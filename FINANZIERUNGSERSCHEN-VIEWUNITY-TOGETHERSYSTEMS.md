@@ -138,6 +138,44 @@ Für Rückfragen oder weiterführende Gespräche stehe ich jederzeit zur Verfüg
 
 ---
 
+## Doku-Bericht: Wie fange ich mein Leben an?
+
+Im 21. Jahrhundert ein Leben zu beginnen, heißt nicht bei Null anzufangen.
+
+Hinter uns liegen Geschichten, die unsere Eltern und Großeltern erlebt haben. Sie erzählen von Systemen, Grenzen – und von einer Wand, die einmal stand und fiel.
+
+Wer nicht weiß, von welcher Wand die Rede ist, fragt am besten seine Eltern:
+
+**Welche Wand meint ihr, wenn ihr von „damals" erzählt?**
+
+Doch Mauern sind nicht nur Beton in der Geschichte.
+
+In unserem eigenen Leben spielen Wände vor allem dort eine Rolle, wo wir uns tatsächlich aufhalten: in unseren Wohnungen, unseren Städten, unseren Köpfen.
+
+Wir fühlen uns dort am sichersten und anerkannt, wo wir die „Wände" gut kennen – die Regeln, die unausgesprochenen Grenzen, die Erwartungen anderer.
+
+Gleichzeitig läuft beim Lesen, Hören und Denken immer noch etwas im Hintergrund:
+
+Gedanken, die wir nicht laut aussprechen. Namen, Begriffe, Bilder, die auftauchen, aber unausgesprochen bleiben.
+
+Genau dort liegt oft der Schlüssel, der uns fehlt.
+
+**Lies diesen Text noch einmal.**
+
+**Sprich – leise oder laut – jedes Wort einzeln nach.**
+
+**Achte darauf, welche Bilder und Gedanken dabei in dir entstehen, ohne dass du sie sofort bewertest oder erklärst.**
+
+Vielleicht merkst du dann:
+
+Hinter den Worten dreht sich ein Gedanke, der nur dir gehört.
+
+Und genau dort fängt dein Leben an – nicht bei der Wand, die andere dir beschrieben haben,
+
+sondern bei den Wänden, die du in dir selbst erkennst und Schritt für Schritt verstehst.
+
+---
+
 ## Überzeugung
 
 Wenn man über Erfolg im Verkauf spricht, taucht oft ein Begriff auf, der ausdrückt:
@@ -151,6 +189,8 @@ Und genau dieser Begriff beginnt mit **"Es…"**
 **Es überzeugt.**  
 **Es verbindet.**  
 **Es schafft Zukunft.**
+
+**Es beginnt bei den Wänden, die du in dir selbst erkennst.**
 
 ---
 
