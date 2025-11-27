@@ -431,8 +431,18 @@ const DB_KEY = 'mot_forum_v1';
 const MOT_ACCESS_TOKEN = 'mot-shared-token-v1';
 function motNow(){ return Date.now(); }
 function loadDB(){
-	try{ return (function() { try { return JSON.parse(localStorage.getItem(DB_KEY); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '{"posts":[]}'); }
-	catch(e){ return {posts:[]}; }
+	try{ 
+		const raw = localStorage.getItem(DB_KEY);
+		if(!raw) return {posts:[]};
+		try { 
+			return JSON.parse(raw); 
+		} catch(e) { 
+			console.error('JSON parse error:', e); 
+			return {posts:[]}; 
+		}
+	} catch(e){ 
+		return {posts:[]}; 
+	}
 }
 function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
 
