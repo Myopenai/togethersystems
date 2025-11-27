@@ -1302,7 +1302,7 @@ function startMatchLoop(identity){
 				})
 			});
 			if(!res.ok) return;
-			const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+			const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 			if(data && data.room_id){
 				if(currentRoomId === data.room_id) return;
 				currentRoomId = data.room_id;
@@ -1395,7 +1395,7 @@ async function autoConnectFromToken(){
 							})
 						});
 						if(res.ok){
-							const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+							const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 							if(data && data.room_id){
 								currentRoomId = data.room_id;
 								updateConnectStatus(`Verbunden mit Raum „${data.room_id}“. Signaling-Server verbunden.`);
@@ -1784,7 +1784,7 @@ document.getElementById('fetchBtn').addEventListener('click', async ()=>{
 		  console.error('API error:', err);
 		  return null;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		renderFeed(data);
 		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
 	}catch(err){ alert('API Fehler: '+err.message); }
@@ -2036,7 +2036,7 @@ async function loadVouchers(){
 			voucherListEl.innerHTML = `<div class="muted">Fehler beim Laden: ${res.status} ${res.statusText}</div>`;
 			return;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		const items = data.items || [];
 		if(!items.length){
 			voucherListEl.innerHTML = '<div class="muted">Keine Vouchers gefunden.</div>';
@@ -2095,7 +2095,7 @@ async function loadSlotsForVoucher(voucher){
 			slotListEl.innerHTML = `<div class="muted">Fehler beim Laden der Slots: ${res.status} ${res.statusText}</div>`;
 			return;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		const items = data.items || [];
 		if(!items.length){
 			slotListEl.innerHTML = '<div class="muted">Keine freien Slots verfügbar.</div>';
@@ -2154,7 +2154,7 @@ async function bookSlot(voucher, slot){
 				holderUid: uid
 			})
 		});
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		if(!res.ok || !data.ok){
 			alert('Buchung fehlgeschlagen: ' + (data.error || res.statusText));
 			return;
@@ -2251,7 +2251,7 @@ async function issueVoucherTemplate(templateKey){
 			}
 			return;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		if(!data || !data.ok){
 			const errorMsg = data?.error || 'Unbekannter Fehler';
 			alert('Voucher‑Vorlage konnte nicht ausgestellt werden: ' + errorMsg);
@@ -2288,7 +2288,7 @@ async function ensureDefaultVouchersForIssuer(){
 		}
 			headers:{ 'Accept':'application/json' }
 		});
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		const items = data.items || [];
 		if(items.length > 0) return; // Es gibt schon Vouchers, nichts tun
 
@@ -2355,7 +2355,7 @@ async function loadEventsMembershipsOverview(){
 		  console.error('API error:', err);
 		  return null;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		const items = data.items || [];
 		const relevantTypes = ['consulting.session','therapy.session','membership.access'];
 		const relevant = items.filter(v => relevantTypes.includes(v.serviceType));
@@ -2395,7 +2395,7 @@ async function loadMyBookings(){
 		}
 			headers:{ 'Accept':'application/json' }
 		});
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		const items = data.items || [];
 		if(!items.length){
 			myBookingsList.innerHTML = '<div class="muted">Keine Buchungen gefunden.</div>';
@@ -2440,7 +2440,7 @@ async function loadVerticalConsoles(){
 		  console.error('API error:', err);
 		  return null;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		const items = data.items || [];
 
 		const machines = items.filter(v => v.serviceType === 'machine.timeslot');
@@ -2522,7 +2522,7 @@ async function loadMortgageApplications(){
 			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
 			return;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Laden der Anfragen: ' + (err?.message || String(err));
@@ -2551,7 +2551,7 @@ async function loadMortgageOffers(){
 			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
 			return;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Laden der Angebote: ' + (err?.message || String(err));
@@ -2595,7 +2595,7 @@ async function createExampleMortgageApplication(){
 			mortgageOutput.textContent = `Fehler beim Erstellen: ${res.status} ${res.statusText}`;
 			return;
 		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;;
+		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Erzeugen der Beispiel-Anfrage: ' + (err?.message || String(err));
