@@ -1,0 +1,83 @@
+{
+  "id": "settings://policy/route/generative",
+  "type": "policy.route",
+  "version": "2.1.0",
+  "scope": ["global"],
+  "tags": ["ai-routing", "text-generation"],
+  "meta": {
+    "owner": "team-ai",
+    "createdAt": "2025-11-20T22:04:00Z",
+    "checksum": "sha256:example",
+    "description": "Routing policy for generative text tasks"
+  },
+  "dimensions": {
+    "latency": {
+      "value": 150,
+      "unit": "ms",
+      "constraints": {
+        "max": 200
+      }
+    },
+    "cost": {
+      "value": 0.25,
+      "unit": "EUR/hour",
+      "constraints": {
+        "max": 0.5
+      }
+    },
+    "energy": {
+      "value": 500,
+      "unit": "W",
+      "constraints": {
+        "max": 1000
+      }
+    }
+  },
+  "dependencies": [
+    {
+      "target": "settings://nn/model/llm-A",
+      "edge": "routes-to"
+    },
+    {
+      "target": "settings://nn/model/llm-B",
+      "edge": "routes-to"
+    }
+  ],
+  "semantics": [
+    "select candidate with min(latency) under costCeiling",
+    "prefer onprem unless sla.risk > threshold"
+  ],
+  "data": {
+    "task": "text-generation",
+    "selectors": {
+      "maxLatency": {
+        "value": 150,
+        "unit": "ms"
+      },
+      "costCeiling": {
+        "value": 0.25,
+        "unit": "EUR/hour"
+      },
+      "energyCeiling": {
+        "value": 500,
+        "unit": "W"
+      }
+    },
+    "preferences": ["onprem-first", "fpga-preferred", "wasm-fallback"],
+    "candidates": [
+      {
+        "target": "settings://nn/model/llm-A",
+        "score": 0.82
+      },
+      {
+        "target": "settings://nn/model/llm-B",
+        "score": 0.76
+      }
+    ],
+    "semantics": [
+      "select candidate with min(latency) under costCeiling",
+      "prefer onprem unless sla.risk > threshold"
+    ]
+  }
+}
+

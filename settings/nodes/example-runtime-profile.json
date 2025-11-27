@@ -1,0 +1,62 @@
+{
+  "id": "settings://project/ai-lab/runtime",
+  "type": "runtime.profile",
+  "version": "1.3.0",
+  "scope": ["env:prod", "project:ai-lab"],
+  "tags": ["latency-critical", "gpu-preferred"],
+  "meta": {
+    "owner": "team-ml",
+    "createdAt": "2025-11-20T22:04:00Z",
+    "checksum": "sha256:example",
+    "description": "Runtime profile for AI Lab production environment"
+  },
+  "dimensions": {
+    "latency": {
+      "value": 12,
+      "unit": "ms",
+      "constraints": {
+        "max": 20
+      }
+    },
+    "cost": {
+      "value": 0.18,
+      "unit": "EUR/hour"
+    },
+    "energy": {
+      "value": 220,
+      "unit": "W"
+    },
+    "throughput": {
+      "value": 800,
+      "unit": "req/s"
+    }
+  },
+  "dependencies": [
+    {
+      "target": "settings://hardware/gpu/rtx-6000",
+      "edge": "requires",
+      "constraints": {
+        "memory": {
+          "value": 24,
+          "unit": "GB"
+        }
+      }
+    },
+    {
+      "target": "settings://api/ai/gateway",
+      "edge": "routes-to"
+    }
+  ],
+  "semantics": [
+    "latency <= constraints.max",
+    "throughput * latency <= 1e6 ms/s ceiling",
+    "gpu.memory >= model.memory.requirement"
+  ],
+  "data": {
+    "profile": "ai-lab",
+    "riskLevel": "medium",
+    "energyProfile": "high",
+    "dataSensitivity": "internal"
+  }
+}
+

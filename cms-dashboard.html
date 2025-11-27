@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Dashboard - Together Systems</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --fg: #e6eef3;
+      --muted: #9fb3c8;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --card: #151b23;
+      --border: #223040;
+      --focus: #3b82f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .brand h1 {
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #10b981, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    nav {
+      display: flex;
+      gap: 1rem;
+    }
+    nav a {
+      color: var(--fg);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    nav a:hover {
+      background: var(--accent);
+      color: #00100a;
+      border-color: var(--accent);
+    }
+    main {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card h2 {
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    .btn {
+      background: var(--accent);
+      color: #00100a;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: #34d399;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--card);
+      border-color: var(--accent);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .stat {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    tr:hover td {
+      background: rgba(16, 185, 129, 0.05);
+    }
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .status-draft { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+    .status-published { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .alert {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--warn);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .alert strong {
+      color: var(--warn);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>📝 CMS Dashboard</h1>
+      <span style="color: var(--muted);">Together Systems</span>
+    </div>
+    <nav>
+      <a href="./index.html">← Portal</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./SETTINGS-MASTER-DASHBOARD.html">Settings</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="alert">
+      <strong>⚠️ WICHTIG:</strong> CMS-Backend existiert vollständig, aber D1 Schema muss deployed werden!<br>
+      <code>wrangler d1 execute &lt;db-name&gt; --file=./d1-schema-cms.sql</code>
+    </div>
+
+    <div class="card">
+      <h2>📊 CMS-Status</h2>
+      <div class="grid">
+        <div class="stat">
+          <div class="stat-value" id="sitesCount">-</div>
+          <div class="stat-label">Sites</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="pagesCount">-</div>
+          <div class="stat-label">Pages</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="blocksCount">-</div>
+          <div class="stat-label">Blocks</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="collectionsCount">-</div>
+          <div class="stat-label">Collections</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🌐 Sites</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <p style="color: var(--muted);">Verwalte deine Websites</p>
+        <button class="btn" onclick="createSite()">+ Neue Site</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Status</th>
+            <th>Erstellt</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="sitesTable">
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">
+              Lade Sites...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>📄 Pages</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <p style="color: var(--muted);">Verwalte deine Seiten</p>
+        <button class="btn btn-secondary" onclick="loadPages()">Aktualisieren</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Path</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Erstellt</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="pagesTable">
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">
+              Wähle eine Site, um Pages anzuzeigen
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>🧱 Block Types</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <p style="color: var(--muted);">Verfügbare Block-Typen</p>
+        <button class="btn btn-secondary" onclick="loadBlockTypes()">Aktualisieren</button>
+      </div>
+      <div id="blockTypesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+        <div style="text-align: center; color: var(--muted); padding: 2rem;">
+          Lade Block Types...
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📚 Collections</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <p style="color: var(--muted);">Verwalte Collections (Blog, Produkte, etc.)</p>
+        <button class="btn" onclick="createCollection()">+ Neue Collection</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Site</th>
+            <th>Erstellt</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody id="collectionsTable">
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">
+              Lade Collections...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>🔗 API-Endpoints</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+          <strong style="color: var(--accent);">GET /api/cms/sites</strong>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Liste aller Sites</p>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+          <strong style="color: var(--accent);">POST /api/cms/sites</strong>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Neue Site erstellen</p>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+          <strong style="color: var(--accent);">GET /api/cms/pages/[pageId]</strong>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Page laden</p>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+          <strong style="color: var(--accent);">GET /api/cms/blocks/types</strong>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Block Types</p>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+          <strong style="color: var(--accent);">GET /api/cms/collections</strong>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Collections</p>
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+          <strong style="color: var(--accent);">POST /api/cms/media/upload</strong>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem;">Media Upload</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📖 Dokumentation</h2>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <a href="./CMS-IMPLEMENTIERUNGS-PLAN.md" class="btn btn-secondary" style="text-align: left;">
+          📋 CMS-Implementierungs-Plan
+        </a>
+        <a href="./VOLLSTÄNDIGE-CMS-APIS-IMPLEMENTIERUNG.md" class="btn btn-secondary" style="text-align: left;">
+          ✅ CMS-APIs Implementierung
+        </a>
+        <a href="./CMS-SYSTEM-JOUWWEB.md" class="btn btn-secondary" style="text-align: left;">
+          🌐 CMS-System & JouwWeb
+        </a>
+        <a href="./MIKRO-SITES-KONZEPT.md" class="btn btn-secondary" style="text-align: left;">
+          🔗 Mikro-Sites Konzept
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = '/api/cms';
+    const API_KEY = localStorage.getItem('ts_api_key') || '';
+
+    async function apiCall(endpoint, options = {}) {
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(API_KEY && { 'X-TS-APIKEY': API_KEY }),
+        ...(options.headers || {})
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}${endpoint}`, {
+          ...options,
+          headers
+        });
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.error('API Error:', err);
+        return { ok: false, error: String(err) };
+      }
+    }
+
+    async function loadSites() {
+      const data = await apiCall('/sites');
+      if (data.ok && data.data.sites) {
+        const sites = data.data.sites;
+        document.getElementById('sitesCount').textContent = sites.length;
+        
+        const tbody = document.getElementById('sitesTable');
+        if (sites.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">Keine Sites gefunden. Erstelle eine neue Site!</td></tr>';
+        } else {
+          tbody.innerHTML = sites.map(site => `
+            <tr>
+              <td><strong>${site.name || 'Unbenannt'}</strong></td>
+              <td><code>${site.slug || '-'}</code></td>
+              <td><span class="status status-${site.status || 'draft'}">${site.status || 'draft'}</span></td>
+              <td>${new Date(site.created_at).toLocaleDateString('de-DE')}</td>
+              <td>
+                <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="editSite('${site.id}')">Bearbeiten</button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } else {
+        document.getElementById('sitesTable').innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--warn); padding: 2rem;">
+              ⚠️ Fehler beim Laden: ${data.error || 'Unbekannter Fehler'}<br>
+              <small style="color: var(--muted);">Stelle sicher, dass D1 Schema deployed ist!</small>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    async function loadPages() {
+      const data = await apiCall('/sites');
+      if (data.ok && data.data.sites && data.data.sites.length > 0) {
+        const siteId = data.data.sites[0].id;
+        const pagesData = await apiCall(`/sites/${siteId}/pages`);
+        if (pagesData.ok && pagesData.data.pages) {
+          const pages = pagesData.data.pages;
+          document.getElementById('pagesCount').textContent = pages.length;
+          
+          const tbody = document.getElementById('pagesTable');
+          if (pages.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">Keine Pages gefunden.</td></tr>';
+          } else {
+            tbody.innerHTML = pages.map(page => `
+              <tr>
+                <td><code>${page.path || '/'}</code></td>
+                <td>${page.type || 'standard'}</td>
+                <td><span class="status status-${page.status || 'draft'}">${page.status || 'draft'}</span></td>
+                <td>${new Date(page.created_at).toLocaleDateString('de-DE')}</td>
+                <td>
+                  <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="editPage('${page.id}')">Bearbeiten</button>
+                </td>
+              </tr>
+            `).join('');
+          }
+        }
+      }
+    }
+
+    async function loadBlockTypes() {
+      const data = await apiCall('/blocks/types');
+      if (data.ok && data.data.block_types) {
+        const types = data.data.block_types;
+        document.getElementById('blocksCount').textContent = types.length;
+        
+        const container = document.getElementById('blockTypesList');
+        if (types.length === 0) {
+          container.innerHTML = '<div style="text-align: center; color: var(--muted); padding: 2rem;">Keine Block Types gefunden.</div>';
+        } else {
+          container.innerHTML = types.map(type => `
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+              <strong style="color: var(--accent);">${type.name}</strong>
+              <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem;">${type.category || 'basic'}</p>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    async function loadCollections() {
+      const data = await apiCall('/sites');
+      if (data.ok && data.data.sites && data.data.sites.length > 0) {
+        const siteId = data.data.sites[0].id;
+        const collData = await apiCall(`/collections?site_id=${siteId}`);
+        if (collData.ok && collData.data.collections) {
+          const collections = collData.data.collections;
+          document.getElementById('collectionsCount').textContent = collections.length;
+          
+          const tbody = document.getElementById('collectionsTable');
+          if (collections.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">Keine Collections gefunden.</td></tr>';
+          } else {
+            tbody.innerHTML = collections.map(coll => `
+              <tr>
+                <td><strong>${coll.name || 'Unbenannt'}</strong></td>
+                <td><code>${coll.slug || '-'}</code></td>
+                <td>${coll.site_id || '-'}</td>
+                <td>${new Date(coll.created_at).toLocaleDateString('de-DE')}</td>
+                <td>
+                  <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="editCollection('${coll.id}')">Bearbeiten</button>
+                </td>
+              </tr>
+            `).join('');
+          }
+        }
+      }
+    }
+
+    function createSite() {
+      const name = prompt('Site Name:');
+      const slug = prompt('Site Slug:');
+      if (name && slug) {
+        apiCall('/sites', {
+          method: 'POST',
+          body: JSON.stringify({ name, slug })
+        }).then(data => {
+          if (data.ok) {
+            alert('Site erstellt!');
+            loadSites();
+          } else {
+            alert('Fehler: ' + (data.error || 'Unbekannt'));
+          }
+        });
+      }
+    }
+
+    function createCollection() {
+      const name = prompt('Collection Name:');
+      const slug = prompt('Collection Slug:');
+      if (name && slug) {
+        apiCall('/sites').then(sitesData => {
+          if (sitesData.ok && sitesData.data.sites && sitesData.data.sites.length > 0) {
+            const siteId = sitesData.data.sites[0].id;
+            apiCall('/collections', {
+              method: 'POST',
+              body: JSON.stringify({
+                site_id: siteId,
+                name,
+                slug,
+                schema: {}
+              })
+            }).then(data => {
+              if (data.ok) {
+                alert('Collection erstellt!');
+                loadCollections();
+              } else {
+                alert('Fehler: ' + (data.error || 'Unbekannt'));
+              }
+            });
+          }
+        });
+      }
+    }
+
+    function editSite(id) {
+      alert('Site bearbeiten: ' + id + '\n(Editor wird implementiert)');
+    }
+
+    function editPage(id) {
+      alert('Page bearbeiten: ' + id + '\n(Editor wird implementiert)');
+    }
+
+    function editCollection(id) {
+      alert('Collection bearbeiten: ' + id + '\n(Editor wird implementiert)');
+    }
+
+    // Initial load
+    loadSites();
+    loadPages();
+    loadBlockTypes();
+    loadCollections();
+  </script>
+</body>
+</html>
+

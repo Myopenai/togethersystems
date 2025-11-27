@@ -1,0 +1,65 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "mode": "client-side",
+  "patterns": [
+    {
+      "id": "ERR_CONNECTION_REFUSED",
+      "pattern": "ERR_CONNECTION_REFUSED",
+      "type": "api_connection",
+      "fix": "disable_api_calls",
+      "message": "API-Verbindung fehlgeschlagen. API-Aufrufe werden deaktiviert.",
+      "severity": "high"
+    },
+    {
+      "id": "404",
+      "pattern": "404",
+      "type": "not_found",
+      "fix": "fallback_content",
+      "message": "Ressource nicht gefunden. Fallback-Inhalt wird angezeigt.",
+      "severity": "medium"
+    },
+    {
+      "id": "405",
+      "pattern": "405",
+      "type": "method_not_allowed",
+      "fix": "disable_api_calls",
+      "message": "API-Methode nicht erlaubt. API-Aufrufe werden deaktiviert.",
+      "severity": "high"
+    },
+    {
+      "id": "500",
+      "pattern": "500",
+      "type": "server_error",
+      "fix": "retry_with_backoff",
+      "message": "Server-Fehler erkannt. Wiederholung mit Backoff.",
+      "severity": "high",
+      "retries": 3,
+      "backoff": 1000
+    },
+    {
+      "id": "CORS",
+      "pattern": "CORS",
+      "type": "cors_error",
+      "fix": "disable_api_calls",
+      "message": "CORS-Fehler erkannt. API-Aufrufe werden deaktiviert.",
+      "severity": "high"
+    }
+  ],
+  "notifications": {
+    "enabled": true,
+    "type": "toast",
+    "duration": 5000
+  },
+  "logging": {
+    "enabled": true,
+    "level": "warn",
+    "file": "autofix.log"
+  },
+  "backoff": {
+    "initial": 1000,
+    "max": 10000,
+    "multiplier": 2
+  }
+}
+

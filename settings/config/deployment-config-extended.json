@@ -1,0 +1,90 @@
+{
+  "version": "2.0.0",
+  "type": "deploy.target",
+  "enabled": true,
+  "description": "Deployment Targets mit Constraints",
+  "targets": [
+    {
+      "id": "settings://deploy/edge/eu-west",
+      "type": "deploy.target",
+      "version": "1.0.0",
+      "scope": ["env:prod"],
+      "dimensions": {
+        "latency": {
+          "value": 8,
+          "unit": "ms"
+        },
+        "cost": {
+          "value": 0.15,
+          "unit": "EUR/hour"
+        },
+        "energy": {
+          "value": 800,
+          "unit": "W"
+        }
+      },
+      "data": {
+        "region": "eu-west",
+        "constraints": {
+          "dataLocality": "EU",
+          "energy": {
+            "value": 800,
+            "unit": "W"
+          }
+        },
+        "reliability": {
+          "sla": "99.95%",
+          "score": 0.91
+        }
+      }
+    },
+    {
+      "id": "settings://deploy/cloudflare/pages",
+      "type": "deploy.target",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "latency": {
+          "value": 50,
+          "unit": "ms"
+        },
+        "cost": {
+          "value": 0.0,
+          "unit": "EUR/hour"
+        },
+        "energy": {
+          "value": 200,
+          "unit": "W"
+        }
+      },
+      "data": {
+        "region": "global",
+        "constraints": {
+          "dataLocality": "global"
+        },
+        "reliability": {
+          "sla": "99.99%",
+          "score": 0.95
+        }
+      }
+    }
+  ],
+  "constraints": {
+    "costBudget": {
+      "value": 50,
+      "unit": "EUR/month"
+    },
+    "energyProfile": "low",
+    "latencyConstraints": {
+      "max": {
+        "value": 200,
+        "unit": "ms"
+      }
+    }
+  },
+  "aiIntegration": {
+    "enabled": true,
+    "description": "AI Gateway kann sagen: 'Wenn du eine neue Funktion vorschlägst, darf sie pro Monat nicht mehr als 50 € Deployment-Ressourcen ziehen.'"
+  }
+}
+

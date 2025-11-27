@@ -1,6 +1,11 @@
 // Cloudflare Pages Function: POST /api/ai/gateway
 // AI Gateway – Orchestrierungs-Layer für KI-Operationen
 // Unterstützt: Manifest-Assistent, Moderation, Business-Intelligenz, Übersetzung, Tagging
+// INTEGRIERT: Settings-OS für Model Routing & Settings Queries
+
+import { SettingsAPI } from '../../../Settings/api/settings-api';
+import { ModelRegistry } from '../../../Settings/core/model-registry';
+import { SettingsGraphLoader } from '../../../Settings/core/graph-loader';
 
 function json(status, body) {
   return new Response(JSON.stringify(body), {
@@ -132,6 +137,19 @@ export async function onRequestPost(context) {
         result = await handleTagGenerate(input, options);
         break;
 
+      // Settings-OS Integration
+      case 'settings.query':
+        result = await handleSettingsQuery(input, options, env);
+        break;
+
+      case 'settings.model-for-task':
+        result = await handleSettingsModelForTask(input, options, env);
+        break;
+
+      case 'settings.propose':
+        result = await handleSettingsPropose(input, options, env);
+        break;
+
       default:
         return json(400, { ok: false, error: `unknown operation: ${operation}` });
     }
@@ -147,6 +165,45 @@ export async function onRequestPost(context) {
     );
 
     return json(200, { ok: true, result });
+  } catch (error) {
+    console.error('AI Gateway error:', error);
+    return json(500, { ok: false, error: error.message });
+  }
+}
+
+// Settings-OS Integration Handlers
+
+async function handleSettingsQuery(input, options, env) {
+  const { SettingsAPI } = await import('../../../Settings/api/settings-api');
+  const api = new SettingsAPI('./Settings');
+  
+  const result = await api.querySettings(input);
+  return result;
+}
+
+async function handleSettingsModelForTask(input, options, env) {
+  const { SettingsAPI } = await import('../../../Settings/api/settings-api');
+  const api = new SettingsAPI('./Settings');
+  
+  const { task, constraints } = input;
+  const result = await api.getModelForTask(task, constraints);
+  return result;
+}
+
+async function handleSettingsPropose(input, options, env) {
+  try {
+    const { SettingsAPI } = await import('../../../Settings/api/settings-api');
+    const api = new SettingsAPI('./Settings');
+    
+    const { nodeId, changes, rationale, proposedBy, llmModel } = input;
+    const result = await api.proposeChange({
+      nodeId,
+      changes,
+      rationale,
+      proposedBy: proposedBy || 'ai-gateway',
+      llmModel: llmModel || 'gpt-4'
+    });
+    return result;
   } catch (err) {
     return json(500, { ok: false, error: String(err) });
   }

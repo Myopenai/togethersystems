@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>OSTOS ∞ Branding Universe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-gradient-1: #040816;
+      --bg-gradient-2: #12052b;
+      --bg-gradient-3: #001f3f;
+      --accent-main: #00d1ff;
+      --accent-secondary: #ff4b9f;
+      --accent-highlight: #ffd86f;
+      --logo-glow-strength: 1;
+      --anim-speed-multiplier: 1;
+      --star-opacity: 1;
+      --logo-scale: 1;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #f7f7ff;
+      background: radial-gradient(circle at 0% 0%, #17043b, #02030a);
+      overflow: hidden;
+    }
+    .universe {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(260px, 0.9fr);
+      gap: 1.75rem;
+      padding: 1.75rem;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .universe {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        height: auto;
+        min-height: 100vh;
+      }
+    }
+    .nebula-bg {
+      position: fixed;
+      inset: -30vh -30vw;
+      background: radial-gradient(circle at 20% 0%, #512cda33 0, transparent 45%),
+        radial-gradient(circle at 80% 10%, #00d1ff22 0, transparent 40%),
+        radial-gradient(circle at 10% 80%, #ff4b9f22 0, transparent 40%),
+        linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
+      filter: blur(1px) saturate(1.2);
+      animation: bg-shift calc(50s / var(--anim-speed-multiplier)) linear infinite alternate;
+      z-index: -3;
+    }
+    @keyframes bg-shift {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(-3%, -4%, 0) scale(1.03); }
+      100% { transform: translate3d(4%, 3%, 0) scale(1.06); }
+    }
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      opacity: var(--star-opacity);
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    main {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-orbit-wrapper {
+      position: relative;
+      width: min(720px, 100%);
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 32px;
+      backdrop-filter: blur(26px);
+      background: radial-gradient(circle at 10% 0%, #ffffff11, transparent 60%),
+        radial-gradient(circle at 90% 100%, #00d1ff08, transparent 60%),
+        linear-gradient(135deg, #050719aa, #05040fbb);
+      box-shadow: 0 0 0 1px #ffffff0d, 0 20px 60px #000000cc, 0 0 160px #00e5ff33;
+      overflow: hidden;
+    }
+    .logo-orbit-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #ostos-logo {
+      width: 100%;
+      height: 100%;
+      transform-origin: center;
+      transform: scale(var(--logo-scale));
+      transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    .logo-orbit-wrapper:hover #ostos-logo {
+      transform: scale(calc(var(--logo-scale) * 1.03));
+    }
+    .logo-caption {
+      position: absolute;
+      inset-inline: 1.75rem;
+      bottom: 1.25rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      color: #b9ccff;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+    .logo-caption span {
+      white-space: nowrap;
+    }
+    @media (max-width: 600px) {
+      .logo-caption {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 0.7rem;
+      }
+    }
+    .control-panel {
+      align-self: stretch;
+      border-radius: 24px;
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(145deg, #050616e6 0%, #040111f2 60%, #120024f2 100%);
+      box-shadow: 0 0 0 1px #ffffff0b, 0 14px 38px #000000d5;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      overflow-y: auto;
+    }
+    .cp-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+    .cp-title {
+      font-size: 0.96rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #e6ecff;
+      opacity: 0.96;
+    }
+    .cp-subtitle {
+      font-size: 0.8rem;
+      color: #c2cff5;
+      opacity: 0.85;
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.4rem;
+    }
+    .chip {
+      font-size: 0.7rem;
+      padding: 0.18rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid #ffffff22;
+      background: #08091fcc;
+      color: #e2e6ff;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .chip strong {
+      color: #ffd86f;
+      font-weight: 600;
+    }
+    .cp-section {
+      border-radius: 16px;
+      padding: 0.9rem 0.95rem;
+      background: radial-gradient(circle at 0% 0%, #ffffff06 0, transparent 55%);
+      border: 1px solid #ffffff1a;
+    }
+    .cp-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      color: #9fb2ff;
+      margin-bottom: 0.65rem;
+    }
+    .cp-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-bottom: 0.6rem;
+    }
+    label {
+      font-size: 0.75rem;
+      color: #e4e8ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    label span.hint {
+      font-size: 0.7rem;
+      color: #98a2cf;
+      opacity: 0.9;
+      margin-left: 0.5rem;
+    }
+    select, input[type="range"], input[type="file"], input[type="text"] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #050616;
+      border-radius: 999px;
+      border: 1px solid #ffffff33;
+      padding: 0.28rem 0.6rem;
+      font-size: 0.8rem;
+      color: #f4f5ff;
+      outline: none;
+    }
+    input[type="file"] {
+      padding: 0.5rem;
+      border-radius: 8px;
+    }
+    select:focus, input[type="range"]:focus, input[type="text"]:focus {
+      box-shadow: 0 0 0 1px #00d1ff66;
+      border-color: #00d1ff88;
+    }
+    input[type="range"] {
+      height: 2px;
+      padding: 0.9rem 0;
+      background: linear-gradient(90deg, #00d1ff, #ff4b9f);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px #00d1ff88, 0 0 16px #00d1ffbb;
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: none;
+      box-shadow: 0 0 0 3px #00d1ff88, 0 0 16px #00d1ffbb;
+      cursor: pointer;
+    }
+    .cp-toggle-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+      margin-top: 0.4rem;
+    }
+    .cp-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.28rem;
+      font-size: 0.76rem;
+      color: #dde3ff;
+      cursor: pointer;
+      user-select: none;
+    }
+    .cp-toggle input {
+      width: 14px;
+      height: 14px;
+      accent-color: #00d1ff;
+      cursor: pointer;
+    }
+    .cp-meta {
+      margin-top: 0.35rem;
+      font-size: 0.7rem;
+      color: #8a9ee8;
+      line-height: 1.35;
+    }
+    .cp-meta strong {
+      color: #ffd86f;
+      font-weight: 500;
+    }
+    .cp-footer {
+      margin-top: auto;
+      font-size: 0.76rem;
+      color: #a9b7ff;
+      line-height: 1.4;
+    }
+    .cp-footer a {
+      color: #ffd86f;
+      text-decoration: none;
+    }
+    .cp-footer a:hover {
+      text-decoration: underline;
+    }
+    .btn {
+      background: linear-gradient(135deg, #00d1ff, #ff4b9f);
+      color: #00110b;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 209, 255, 0.5);
+    }
+    .sponsor-logos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .sponsor-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      border: 1px solid #ffffff33;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      animation: sponsor-float 3s ease-in-out infinite;
+    }
+    .sponsor-logo:nth-child(2n) {
+      animation-delay: 0.5s;
+    }
+    .sponsor-logo:nth-child(3n) {
+      animation-delay: 1s;
+    }
+    @keyframes sponsor-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .sponsor-logo img, .sponsor-logo svg {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    .ring-orbit {
+      fill: none;
+      stroke: url(#ringGradient);
+      stroke-width: 1.2;
+      stroke-dasharray: 2 12;
+      stroke-linecap: round;
+      opacity: 0.85;
+      filter: url(#ringGlow);
+      animation: ring-orbit-rotate calc(22s / var(--anim-speed-multiplier)) linear infinite,
+        ring-orbit-dash calc(34s / var(--anim-speed-multiplier)) linear infinite;
+    }
+    @keyframes ring-orbit-rotate {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes ring-orbit-dash {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -280; }
+    }
+    .core-sphere {
+      fill: url(#coreGradient);
+      filter: url(#coreGlow);
+      transform-origin: center;
+      animation: core-pulse calc(9s / var(--anim-speed-multiplier)) ease-in-out infinite alternate;
+    }
+    @keyframes core-pulse {
+      0% { transform: scale(0.97); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1.02); }
+    }
+    .orbit-trace {
+      fill: none;
+      stroke: url(#orbitGradient);
+      stroke-width: 1.3;
+      stroke-linecap: round;
+      stroke-dasharray: 6 18;
+      opacity: 0.8;
+      filter: url(#orbitGlow);
+      animation: orbit-trace-move calc(18s / var(--anim-speed-multiplier)) linear infinite;
+    }
+    @keyframes orbit-trace-move {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: -420; }
+    }
+    .particle {
+      fill: url(#particleGradient);
+      filter: url(#particleGlow);
+      transform-origin: center;
+      animation: particle-orbit calc(12s / var(--anim-speed-multiplier)) linear infinite;
+    }
+    .particle:nth-of-type(2) {
+      animation-duration: calc(16s / var(--anim-speed-multiplier));
+      animation-direction: reverse;
+    }
+    .particle:nth-of-type(3) {
+      animation-duration: calc(21s / var(--anim-speed-multiplier));
+      animation-delay: -3s;
+    }
+    @keyframes particle-orbit {
+      0% { transform: rotate(0deg) translateX(32px) scale(0.9); }
+      50% { transform: rotate(180deg) translateX(40px) scale(1.05); }
+      100% { transform: rotate(360deg) translateX(32px) scale(0.9); }
+    }
+    .brand-main {
+      fill: url(#brandGradient);
+      filter: url(#brandGlow);
+      letter-spacing: 0.15em;
+    }
+    .brand-sub {
+      fill: #b9c8ff;
+      opacity: 0.92;
+      letter-spacing: 0.27em;
+    }
+    .formula {
+      fill: #9fe6ff;
+      opacity: 0.9;
+      font-style: italic;
+    }
+    .logo-glow-ring {
+      fill: none;
+      stroke: #00d1ff;
+      stroke-width: 0.8;
+      opacity: calc(0.25 * var(--logo-glow-strength));
+      filter: url(#coreGlow);
+      transform-origin: center;
+      animation: glow-ring calc(14s / var(--anim-speed-multiplier)) ease-in-out infinite alternate;
+    }
+    @keyframes glow-ring {
+      0% { transform: scale(0.96); opacity: calc(0.08 * var(--logo-glow-strength)); }
+      50% { transform: scale(1.06); opacity: calc(0.23 * var(--logo-glow-strength)); }
+      100% { transform: scale(1.02); opacity: calc(0.18 * var(--logo-glow-strength)); }
+    }
+    .logo-pulse-once {
+      animation: pulse-once 0.9s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    @keyframes pulse-once {
+      0% { transform: scale(1); filter: drop-shadow(0 0 0px #00f2ff00); }
+      40% { transform: scale(1.08); filter: drop-shadow(0 0 34px #00f2ffb3); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 6px #00f2ff40); }
+    }
+    .hubble-window {
+      fill: url(#hubbleTexture);
+      opacity: 0.95;
+      mask: url(#hubbleMask);
+      transform-origin: center;
+      animation: hubble-float calc(26s / var(--anim-speed-multiplier)) ease-in-out infinite alternate;
+    }
+    @keyframes hubble-float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-3px, 2px) scale(1.03); }
+      100% { transform: translate(3px, -1px) scale(1.02); }
+    }
+    @keyframes formula-infinity {
+      0% { stroke-dashoffset: 0; opacity: 0.6; }
+      50% { stroke-dashoffset: -400; opacity: 1; }
+      100% { stroke-dashoffset: -800; opacity: 0.6; }
+    }
+    #formula-animation-overlay {
+      background: linear-gradient(180deg, rgba(4, 8, 22, 0.9) 0%, transparent 100%);
+      backdrop-filter: blur(10px);
+    }
+    #formula-path-elaboral {
+      stroke-dasharray: 20 10;
+    }
+  </style>
+</head>
+<body>
+  <!-- Formula Animation Overlay - Über Header -->
+  <div id="formula-animation-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 120px; z-index: 10000; pointer-events: none; overflow: hidden;">
+    <svg id="formula-svg" style="width: 100%; height: 100%;">
+      <defs>
+        <linearGradient id="formulaGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#00d1ff" />
+          <stop offset="50%" stop-color="#ff4b9f" />
+          <stop offset="100%" stop-color="#ffd86f" />
+        </linearGradient>
+        <filter id="formulaGlow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+      <path id="formula-path-elaboral" 
+            d="M 0,60 Q 200,20 400,60 T 800,60" 
+            fill="none" 
+            stroke="url(#formulaGradient)" 
+            stroke-width="2" 
+            filter="url(#formulaGlow)"
+            style="animation: formula-infinity 10s linear infinite;" />
+      <text x="50" y="50" fill="url(#formulaGradient)" font-size="14" font-weight="700" filter="url(#formulaGlow)">
+        E(O) = ∫[∞] (E(t) + O(t) + U(t) + I(t)) dt
+      </text>
+      <text x="50" y="80" fill="#b9ccff" font-size="10" opacity="0.8">
+        ELABORAL ORNANIEREN UEBERGEBEN UNENDLICHKEIT
+      </text>
+    </svg>
+  </div>
+
+  <div class="nebula-bg"></div>
+  <canvas id="starfield"></canvas>
+  <div class="universe">
+    <main>
+      <div class="logo-orbit-wrapper" id="logoWrapper">
+        <div class="logo-orbit-inner">
+          <svg id="ostos-logo" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="coreGradient" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="35%" stop-color="#ffe6b3" />
+                <stop offset="70%" stop-color="#00d1ff" />
+                <stop offset="100%" stop-color="#001325" />
+              </radialGradient>
+              <radialGradient id="brandGradient" cx="0%" cy="0%" r="140%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="40%" stop-color="#00d1ff" />
+                <stop offset="75%" stop-color="#ff4b9f" />
+                <stop offset="100%" stop-color="#ffd86f" />
+              </radialGradient>
+              <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#00d1ff" />
+                <stop offset="50%" stop-color="#ff4b9f" />
+                <stop offset="100%" stop-color="#ffd86f" />
+              </linearGradient>
+              <linearGradient id="orbitGradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#5c7cff" />
+                <stop offset="50%" stop-color="#00f2ff" />
+                <stop offset="100%" stop-color="#ffffff" />
+              </linearGradient>
+              <radialGradient id="particleGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="40%" stop-color="#00f2ff" />
+                <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+              </radialGradient>
+              <radialGradient id="hubbleTexture" cx="30%" cy="30%" r="80%">
+                <stop offset="0%" stop-color="#ffe6ff" />
+                <stop offset="25%" stop-color="#ffc4ff" />
+                <stop offset="55%" stop-color="#5316a8" />
+                <stop offset="100%" stop-color="#020414" />
+              </radialGradient>
+              <mask id="hubbleMask">
+                <rect x="0" y="0" width="320" height="180" fill="black" />
+                <circle cx="112" cy="78" r="22" fill="white" />
+              </mask>
+              <filter id="coreGlow">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.0 0 0 0 0 0.85 0 0 0 0 1 0 0 0 0.9 0" />
+              </filter>
+              <filter id="ringGlow">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.1 0 0 0 0 0.8 0 0 0 0 1 0 0 0 0.6 0" />
+              </filter>
+              <filter id="brandGlow">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0" />
+              </filter>
+              <filter id="orbitGlow">
+                <feGaussianBlur stdDeviation="1.4" result="blur" />
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.3 0 0 0 0 0.8 0 0 0 0 1 0 0 0 0.9 0" />
+              </filter>
+              <filter id="particleGlow">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.7 0 0 0 0 0.9 0 0 0 0 1 0 0 0 1 0" />
+              </filter>
+            </defs>
+            <g transform="translate(160 90)">
+              <ellipse class="ring-orbit" rx="105" ry="55" transform="rotate(-18)" />
+              <ellipse class="logo-glow-ring" rx="80" ry="42" transform="rotate(10)" />
+              <path class="orbit-trace" d="M -88 0 C -50 -60, 50 -60, 88 0 C 50 60, -50 60, -88 0 Z" />
+              <circle class="particle" r="5" />
+              <circle class="particle" r="4" />
+              <circle class="particle" r="3" />
+              <circle class="core-sphere" r="32" />
+              <circle class="hubble-window" cx="-20" cy="-12" r="20" />
+            </g>
+            <g transform="translate(22 104)">
+              <text class="brand-main" x="0" y="0" font-size="18" font-weight="700">OS-TOS · OSTOS∞8∞</text>
+              <text class="brand-sub" x="0" y="16" font-size="8.5" font-weight="500">SUPEROS · DOS · SUPERCODE · UNIVERSAL PLATFORM</text>
+            </g>
+            <g transform="translate(22 138)">
+              <text class="formula" x="0" y="0" font-size="9">
+                a∞ := lim
+                <tspan dy="-4" font-size="6">n→∞</tspan>
+                <tspan dy="4" dx="2"> aₙ </tspan>
+                <tspan dx="10">≈ ⁺∞</tspan>
+              </text>
+            </g>
+            <g transform="translate(22 156)">
+              <text x="0" y="0" font-size="7" fill="#a0b0ff">TEL1.NL · WHATSAPP · +31 6 1380 3782 · (C)(R)</text>
+            </g>
+          </svg>
+          <div class="logo-caption">
+            <span>OS · TOS · OSTOS · DOS · SUPERCODE</span>
+            <span>Harmonie des Universums · Hubble-inspirierte Vision</span>
+            <span>TEL1.NL · WA: +31 6 1380 3782</span>
+          </div>
+        </div>
+      </div>
+    </main>
+    <aside class="control-panel">
+      <div class="cp-header">
+        <div class="cp-title">OSTOS∞ BRANDING LAB</div>
+        <div class="cp-subtitle">Spiele live mit Farben, Tempo &amp; Effekten – wie ein Studio-Operator.</div>
+        <div class="chip-row">
+          <div class="chip">OS · OSTOS · DOS · SUPERCODE</div>
+          <div class="chip"><strong>Studio</strong> · Game · Office · User</div>
+          <div class="chip">Universe Harmony Engine</div>
+        </div>
+      </div>
+      <section class="cp-section">
+        <div class="cp-section-title">Sponsor &amp; Investor Integration</div>
+        <div class="cp-field">
+          <label for="sponsorName">Unternehmensname</label>
+          <input type="text" id="sponsorName" placeholder="Ihr Unternehmen" />
+        </div>
+        <div class="cp-field">
+          <label for="sponsorLogo">Logo Upload (SVG bevorzugt)</label>
+          <input type="file" id="sponsorLogo" accept="image/svg+xml,image/png,image/jpeg" />
+        </div>
+        <button class="btn" onclick="registerSponsor()">Als Sponsor registrieren</button>
+        <div class="sponsor-logos" id="sponsorLogos"></div>
+        <div class="cp-meta" style="margin-top: 1rem;">
+          <strong>Vorteile:</strong> Unternehmen präsentieren, erwirtschaftet Kunden, Umsatz, Arbeit, Lohn, Kosten bezahlen, Gewinn zum Teilen. Finanzielle Mittel gehen nicht aus.
+        </div>
+      </section>
+      <section class="cp-section">
+        <div class="cp-section-title">Farbraum &amp; Stimmung</div>
+        <div class="cp-field">
+          <label for="colorTheme">Theme <span class="hint">Wechsle Look &amp; Energie</span></label>
+          <select id="colorTheme">
+            <option value="aurora">Aurora Quantum</option>
+            <option value="cosmic">Cosmic Blue</option>
+            <option value="solar">Solar Gold</option>
+            <option value="neon">Neon Magenta</option>
+            <option value="mono">Deep Space Mono</option>
+          </select>
+        </div>
+      </section>
+      <section class="cp-section">
+        <div class="cp-section-title">Tempo &amp; Dynamik</div>
+        <div class="cp-field">
+          <label for="animSpeed">Animations-Speed <span class="hint"><span id="animSpeedLabel">1.0x</span> · von ruhig bis hyper</span></label>
+          <input id="animSpeed" type="range" min="0.4" max="2" step="0.1" value="1" />
+        </div>
+        <div class="cp-field">
+          <label for="logoScale">Logo-Skalierung <span class="hint">Zoom im Frame</span></label>
+          <input id="logoScale" type="range" min="0.8" max="1.25" step="0.05" value="1" />
+        </div>
+        <div class="cp-toggle-group">
+          <label class="cp-toggle" title="Starfield ein/aus"><input id="toggleStars" type="checkbox" checked /> Starfield</label>
+          <label class="cp-toggle" title="Glow des Logos justieren"><input id="toggleGlow" type="checkbox" checked /> Max Glow</label>
+          <label class="cp-toggle" title="Leichte Hubble-Bewegung"><input id="toggleHubble" type="checkbox" checked /> Hubble-Fenster</label>
+          <label class="cp-toggle" title="Logo-Pulse bei Klick"><input id="togglePulseOnClick" type="checkbox" checked /> Pulse bei Klick</label>
+        </div>
+        <div class="cp-meta">Tipp: Klick auf das Logo-Feld, um einen <strong>Hollywood-Pulse</strong> zu triggern.</div>
+      </section>
+      <div class="cp-footer">
+        Branding-Seed: <strong>OS-TOS · OSTOS∞8∞+++a∞:=limₙ→∞ aₙ≈⁺∞</strong><br />
+        URL: <a href="https://tel1.nl" target="_blank" rel="noreferrer">TEL1.NL</a> · WhatsApp: +31 6 1380 3782 · (C)(R)<br />
+        <a href="https://www.gofundme.com/f/magnitudo" target="_blank" rel="noreferrer" style="color: #ffd86f; text-decoration: underline;">GoFundMe: Magnitudo</a> · Verifiziert, notariell beglaubigt
+      </div>
+    </aside>
+  </div>
+  <script>
+    (function () {
+      const canvas = document.getElementById("starfield");
+      const ctx = canvas.getContext("2d");
+      let width = 0, height = 0, stars = [], enabled = true;
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        createStars();
+      }
+      function createStars() {
+        const count = Math.floor((width * height) / 9000);
+        stars = [];
+        for (let i = 0; i < count; i++) {
+          stars.push({ x: Math.random() * width, y: Math.random() * height, r: Math.random() * 1.1 + 0.2, speed: Math.random() * 0.2 + 0.02, twinkle: Math.random() * Math.PI * 2 });
+        }
+      }
+      function render() {
+        if (enabled) {
+          ctx.clearRect(0, 0, width, height);
+          const time = Date.now() * 0.001;
+          for (const star of stars) {
+            star.y += star.speed * (0.3 + parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--anim-speed-multiplier")) * 0.7);
+            if (star.y > height) star.y = 0;
+            const tw = (Math.sin(time * 2 + star.twinkle) + 1) / 2;
+            ctx.beginPath();
+            ctx.globalAlpha = 0.2 + 0.7 * tw;
+            ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+        }
+        requestAnimationFrame(render);
+      }
+      window.addEventListener("resize", resize);
+      resize();
+      render();
+      window.__toggleStarfield = function (on) {
+        enabled = on;
+        document.documentElement.style.setProperty("--star-opacity", on ? "1" : "0");
+      };
+    })();
+    (function () {
+      const root = document.documentElement;
+      const colorTheme = document.getElementById("colorTheme");
+      const animSpeed = document.getElementById("animSpeed");
+      const animSpeedLabel = document.getElementById("animSpeedLabel");
+      const logoScale = document.getElementById("logoScale");
+      const toggleStars = document.getElementById("toggleStars");
+      const toggleGlow = document.getElementById("toggleGlow");
+      const toggleHubble = document.getElementById("toggleHubble");
+      const togglePulseOnClick = document.getElementById("togglePulseOnClick");
+      const logoWrapper = document.getElementById("logoWrapper");
+      const logoSvg = document.getElementById("ostos-logo");
+      function applyTheme(name) {
+        const themes = {
+          aurora: { bg1: "#050415", bg2: "#111a3a", bg3: "#04344d", main: "#00d1ff", sec: "#ff4b9f", high: "#ffd86f" },
+          cosmic: { bg1: "#020617", bg2: "#020826", bg3: "#03183b", main: "#5ac8ff", sec: "#709bff", high: "#a7f3ff" },
+          solar: { bg1: "#0b0604", bg2: "#2b0b03", bg3: "#3a2003", main: "#ffb545", sec: "#ff6b35", high: "#ffe69c" },
+          neon: { bg1: "#050012", bg2: "#220020", bg3: "#00112f", main: "#ff4bdf", sec: "#00f2ff", high: "#ffffff" },
+          mono: { bg1: "#020409", bg2: "#050914", bg3: "#050810", main: "#cbd5f5", sec: "#9ca3c7", high: "#f9fafb" }
+        };
+        const t = themes[name] || themes.aurora;
+        root.style.setProperty("--bg-gradient-1", t.bg1);
+        root.style.setProperty("--bg-gradient-2", t.bg2);
+        root.style.setProperty("--bg-gradient-3", t.bg3);
+        root.style.setProperty("--accent-main", t.main);
+        root.style.setProperty("--accent-secondary", t.sec);
+        root.style.setProperty("--accent-highlight", t.high);
+      }
+      colorTheme.addEventListener("change", () => applyTheme(colorTheme.value));
+      animSpeed.addEventListener("input", () => {
+        const val = parseFloat(animSpeed.value).toFixed(1);
+        animSpeedLabel.textContent = val + "x";
+        root.style.setProperty("--anim-speed-multiplier", val);
+      });
+      logoScale.addEventListener("input", () => root.style.setProperty("--logo-scale", logoScale.value));
+      toggleStars.addEventListener("change", () => { if (typeof window.__toggleStarfield === "function") window.__toggleStarfield(toggleStars.checked); });
+      toggleGlow.addEventListener("change", () => root.style.setProperty("--logo-glow-strength", toggleGlow.checked ? "1" : "0.2"));
+      toggleHubble.addEventListener("change", () => { const h = logoSvg.querySelector(".hubble-window"); if (h) h.style.opacity = toggleHubble.checked ? "0.95" : "0"; });
+      logoWrapper.addEventListener("click", () => {
+        if (!togglePulseOnClick.checked) return;
+        logoSvg.classList.remove("logo-pulse-once");
+        void logoSvg.offsetWidth;
+        logoSvg.classList.add("logo-pulse-once");
+      });
+      applyTheme(colorTheme.value);
+      root.style.setProperty("--anim-speed-multiplier", animSpeed.value);
+      root.style.setProperty("--logo-scale", logoScale.value);
+    })();
+    let sponsors = JSON.parse(localStorage.getItem('ostos-sponsors') || '[]');
+    function loadSponsors() {
+      const container = document.getElementById('sponsorLogos');
+      container.innerHTML = '';
+      sponsors.forEach((sp, i) => {
+        const div = document.createElement('div');
+        div.className = 'sponsor-logo';
+        div.style.animationDelay = (i * 0.2) + 's';
+        if (sp.logoData) {
+          if (sp.logoData.startsWith('<svg') || sp.logoData.startsWith('data:image/svg')) {
+            div.innerHTML = sp.logoData;
+          } else {
+            const img = document.createElement('img');
+            img.src = sp.logoData;
+            div.appendChild(img);
+          }
+        } else {
+          div.textContent = sp.name.substring(0, 2).toUpperCase();
+        }
+        container.appendChild(div);
+      });
+    }
+    async function registerSponsor() {
+      const name = document.getElementById('sponsorName').value.trim();
+      const fileInput = document.getElementById('sponsorLogo');
+      if (!name) { alert('Bitte geben Sie einen Unternehmensnamen ein.'); return; }
+      let logoData = null;
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        if (file.type === 'image/svg+xml') {
+          logoData = await file.text();
+        } else {
+          const reader = new FileReader();
+          logoData = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(file); });
+        }
+      }
+      const sponsor = { id: Date.now(), name, logoData, registered: new Date().toISOString() };
+      sponsors.push(sponsor);
+      localStorage.setItem('ostos-sponsors', JSON.stringify(sponsors));
+      loadSponsors();
+      document.getElementById('sponsorName').value = '';
+      fileInput.value = '';
+      try {
+        await fetch('/api/sponsors/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sponsor) });
+      } catch (e) { console.log('Server registration optional:', e); }
+      alert(`Danke ${name}! Sie sind jetzt als Sponsor registriert.`);
+    }
+    loadSponsors();
+  </script>
+  <script src="ostos-branding-storybook.js"></script>
+</body>
+</html>
+

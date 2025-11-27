@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "servers": [
+    {
+      "name": "cursor-ide-browser",
+      "type": "mcp",
+      "enabled": true,
+      "capabilities": [
+        "browser_navigate",
+        "browser_snapshot",
+        "browser_click",
+        "browser_type",
+        "browser_hover",
+        "browser_select_option",
+        "browser_press_key",
+        "browser_wait_for",
+        "browser_navigate_back",
+        "browser_resize",
+        "browser_console_messages",
+        "browser_network_requests",
+        "browser_take_screenshot"
+      ]
+    }
+  ],
+  "timeout": 30000,
+  "retries": 3,
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "file": "mcp.log"
+  },
+  "playwright": {
+    "enabled": true,
+    "config": {
+      "timeout": 30000,
+      "retries": 1,
+      "baseURL": "http://localhost:9323/",
+      "headless": true,
+      "actionTimeout": 10000,
+      "navigationTimeout": 15000
+    },
+    "projects": [
+      {
+        "name": "Chromium",
+        "browserName": "chromium"
+      },
+      {
+        "name": "Firefox",
+        "browserName": "firefox"
+      },
+      {
+        "name": "WebKit",
+        "browserName": "webkit"
+      }
+    ],
+    "reporter": [
+      ["list"],
+      ["html", { "outputFolder": "playwright-report" }]
+    ]
+  },
+  "features": {
+    "autoTest": true,
+    "screenshot": true,
+    "video": false,
+    "trace": false,
+    "network": true,
+    "console": true
+  }
+}
+

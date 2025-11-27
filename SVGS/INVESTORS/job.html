@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>TTT – Global Universal Space License</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-soft: rgba(15, 23, 42, 0.85);
+      --accent: #38bdf8;
+      --accent-2: #a855f7;
+      --accent-3: #f97316;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: rgba(148, 163, 184, 0.4);
+      --card-radius: 22px;
+      --shadow-soft: 0 20px 60px rgba(15, 23, 42, 0.85);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1d263b 0, #020617 45%, #000000 100%);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Background micro-LED grid */
+    .microgrid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle at 1px 1px, rgba(56, 189, 248, 0.12) 1px, transparent 0);
+      background-size: 24px 24px;
+      opacity: 0.38;
+      mix-blend-mode: screen;
+      z-index: -3;
+    }
+
+    /* Moving light beams */
+    .beams {
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      background:
+        conic-gradient(from 210deg at 10% 0%, rgba(56, 189, 248, 0.16), transparent 45%, rgba(168, 85, 247, 0.2), transparent),
+        conic-gradient(from 40deg at 90% 100%, rgba(249, 115, 22, 0.2), transparent 50%, rgba(59, 130, 246, 0.16), transparent);
+      filter: blur(40px);
+      opacity: 0.7;
+      animation: beamsMove 26s linear infinite alternate;
+      z-index: -2;
+    }
+
+    @keyframes beamsMove {
+      0% {
+        transform: translate3d(-3%, 3%, 0) scale(1.1);
+      }
+      50% {
+        transform: translate3d(3%, -2%, 0) scale(1.05);
+      }
+      100% {
+        transform: translate3d(-1%, 2%, 0) scale(1.15);
+      }
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: -1;
+      opacity: 0.7;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #fff, rgba(255, 255, 255, 0));
+      box-shadow: 0 0 18px rgba(248, 250, 252, 0.9);
+      animation: float 18s linear infinite;
+    }
+
+    .particle:nth-child(2) { animation-duration: 22s; }
+    .particle:nth-child(3) { animation-duration: 28s; }
+    .particle:nth-child(4) { animation-duration: 26s; }
+    .particle:nth-child(5) { animation-duration: 20s; }
+    .particle:nth-child(6) { animation-duration: 30s; }
+
+    @keyframes float {
+      0% {
+        transform: translate3d(-10vw, 110vh, 0);
+        opacity: 0;
+      }
+      15% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(110vw, -10vh, 0);
+        opacity: 0;
+      }
+    }
+
+    .page {
+      position: relative;
+      min-height: 100vh;
+      padding: 32px 16px 80px;
+    }
+
+    @media (min-width: 768px) {
+      .page {
+        padding: 40px 40px 96px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .page {
+        padding: 48px 72px 104px;
+      }
+    }
+
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      backdrop-filter: blur(26px);
+    }
+
+    /* Top nav */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 14px;
+      background:
+        conic-gradient(from 210deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 18px rgba(56, 189, 248, 0.6),
+        0 0 36px rgba(168, 85, 247, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-mark::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 0%, rgba(248, 250, 252, 0.8), transparent 55%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+    }
+
+    .logo-text-main {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .logo-text-sub {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(20px);
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      border-color: rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.15), transparent 60%);
+      box-shadow: 0 0 18px rgba(15, 23, 42, 0.7);
+    }
+
+    /* Hero */
+    .hero {
+      margin-top: 18px;
+      margin-bottom: 40px;
+      display: grid;
+      gap: 24px;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 40px;
+      }
+    }
+
+    .hero-main {
+      padding: 26px 24px;
+      border-radius: 26px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 58%),
+                  radial-gradient(circle at bottom right, rgba(168, 85, 247, 0.22), transparent 60%),
+                  rgba(15, 23, 42, 0.88);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(248, 250, 252, 0.16), transparent 55%),
+        radial-gradient(circle at 100% 90%, rgba(248, 250, 252, 0.1), transparent 60%);
+      opacity: 0.9;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: linear-gradient(120deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--accent), transparent 70%);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+    }
+
+    .hero-title {
+      font-size: clamp(2.1rem, 3.2vw + 1.4rem, 3.4rem);
+      line-height: 1.08;
+      margin-top: 18px;
+      margin-bottom: 12px;
+      background: conic-gradient(
+        from 200deg,
+        #e5e7eb,
+        #e5e7eb,
+        #bae6fd,
+        #c4b5fd,
+        #fed7aa,
+        #e5e7eb
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 24px rgba(15, 23, 42, 0.9),
+        0 0 42px rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-subtitle {
+      font-size: 0.98rem;
+      color: var(--muted);
+      max-width: 36rem;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-subtitle strong {
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary,
+    .btn-ghost {
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: none;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(120deg, var(--accent), var(--accent-2), var(--accent-3));
+      border-color: rgba(248, 250, 252, 0.5);
+      box-shadow:
+        0 0 20px rgba(56, 189, 248, 0.65),
+        0 0 40px rgba(15, 23, 42, 0.9);
+      color: #020617;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow:
+        0 0 26px rgba(59, 130, 246, 0.75),
+        0 0 52px rgba(15, 23, 42, 1);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148, 163, 184, 0.7);
+      color: var(--muted);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(148, 163, 184, 0.9);
+      box-shadow: 0 0 18px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-icon {
+      font-size: 1.1rem;
+    }
+
+    .hero-meta {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .divider-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.8);
+    }
+
+    .hero-side {
+      position: relative;
+      padding: 20px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.82));
+      box-shadow: 0 18px 60px rgba(15, 23, 42, 0.95);
+      overflow: hidden;
+    }
+
+    .hero-side-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 86px;
+      height: 54px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(248, 250, 252, 0.2), transparent 55%),
+        radial-gradient(circle at 90% 100%, rgba(248, 250, 252, 0.18), transparent 60%),
+        linear-gradient(140deg, #0f172a, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      box-shadow:
+        0 0 20px rgba(15, 23, 42, 0.9),
+        0 0 40px rgba(15, 23, 42, 1);
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-chip-core {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(to right, #bae6fd, #e5e7eb, #fbbf24);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 24px rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-side-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .hero-side-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .hero-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--muted);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 1), rgba(15, 23, 42, 0.85));
+    }
+
+    .hero-meter {
+      margin-top: 10px;
+    }
+
+    .meter-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .meter-rail {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .meter-fill {
+      position: absolute;
+      inset: 0;
+      transform-origin: left center;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      box-shadow:
+        0 0 18px rgba(56, 189, 248, 0.85),
+        0 0 32px rgba(168, 85, 247, 0.6);
+      transform: scaleX(0.86);
+      animation: pulseFill 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseFill {
+      0% { transform: scaleX(0.78); }
+      100% { transform: scaleX(0.96); }
+    }
+
+    .hero-meter-caption {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Sections */
+    .sections {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      margin-top: 18px;
+    }
+
+    .section {
+      border-radius: var(--card-radius);
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.16), transparent 60%),
+                  radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.22), transparent 60%),
+                  rgba(15, 23, 42, 0.92);
+      padding: 20px 18px 18px;
+      box-shadow: var(--shadow-soft);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.12), transparent 60%);
+      opacity: 0.5;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 0.96rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    .section-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .section-main {
+      font-size: 0.92rem;
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-main p + p {
+      margin-top: 8px;
+    }
+
+    .section-main strong {
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 900px) {
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .card {
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 12px 12px 11px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9));
+      font-size: 0.86rem;
+      color: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .card-step {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.3), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+      opacity: 0.9;
+    }
+
+    .card:hover {
+      border-color: rgba(248, 250, 252, 0.7);
+      box-shadow: 0 0 26px rgba(15, 23, 42, 1);
+      color: #e5e7eb;
+    }
+
+    .badge-small {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--muted);
+    }
+
+    ul {
+      list-style: none;
+      margin: 8px 0 0;
+      padding: 0;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    ul li::before {
+      content: "●";
+      font-size: 0.55rem;
+      margin-top: 4px;
+      color: var(--accent-2);
+    }
+
+    .license-block {
+      margin-top: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: radial-gradient(circle at 10% 0%, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.96));
+      padding: 10px 12px 12px;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .license-line {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.78rem;
+      margin-bottom: 4px;
+      color: #cbd5f5;
+    }
+
+    .license-keyword {
+      color: #fbbf24;
+    }
+
+    .license-accent {
+      color: #a5b4fc;
+    }
+
+    .footer {
+      margin-top: 24px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .footer span {
+      color: var(--accent);
+    }
+
+    /* Subtle glow loop on primary elements */
+    .glow-loop {
+      animation: glow 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      0% {
+        filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.45));
+      }
+      100% {
+        filter: drop-shadow(0 0 26px rgba(168, 85, 247, 0.85));
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="microgrid"></div>
+  <div class="beams"></div>
+  <div class="particles">
+    <!-- A few animated "micro-LEDs" / particles -->
+    <div class="particle" style="left:5%;  animation-delay:-2s;"></div>
+    <div class="particle" style="left:20%; animation-delay:-8s;"></div>
+    <div class="particle" style="left:45%; animation-delay:-4s;"></div>
+    <div class="particle" style="left:65%; animation-delay:-11s;"></div>
+    <div class="particle" style="left:80%; animation-delay:-6s;"></div>
+    <div class="particle" style="left:92%; animation-delay:-14s;"></div>
+  </div>
+
+  <div class="page">
+    <div class="shell">
+      <!-- NAV -->
+      <header class="nav">
+        <div class="logo">
+          <div class="logo-mark glow-loop">
+            <span style="font-size:0.7rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#020617;">TTT</span>
+          </div>
+          <div>
+            <div class="logo-text-main">TTT</div>
+            <div class="logo-text-sub">Global Problem Formula Lab</div>
+          </div>
+        </div>
+
+        <nav class="nav-links">
+          <a href="#botschaft" class="nav-link">Botschaft</a>
+          <a href="#ai" class="nav-link">AI &amp; Mensch</a>
+          <a href="#prozess" class="nav-link">Prozess</a>
+          <a href="#netzwerk" class="nav-link">Neuronale Netze</a>
+          <a href="#license" class="nav-link">Space License</a>
+        </nav>
+      </header>
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-main">
+          <div class="pill">
+            <div class="pill-dot"></div>
+            <span>Willkommen bei TTT – Start-up Nijmegen • Global</span>
+          </div>
+          <h1 class="hero-title">
+            Totales Jobangebot:<br />
+            aus Problemen werden Formeln. Aus Formeln wird Eigentum.
+          </h1>
+          <p class="hero-subtitle">
+            <strong>TTT</strong> ist ein globales, kulturübergreifendes Unternehmen, das eine
+            einzige Aufgabe hat: <strong>sekündlich auftretende Probleme im täglichen Leben
+            erkennen, in Formeln gießen und daraus Software-Produkte herstellen</strong>, die
+            verifiziert, lizenziert und notariell bestätigtes Eigentum werden.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn-primary glow-loop" onclick="document.getElementById('botschaft').scrollIntoView({behavior:'smooth'})">
+              <span class="btn-icon">⯈</span>
+              <span>Botschaft lesen</span>
+            </button>
+            <button class="btn-ghost" onclick="document.getElementById('prozess').scrollIntoView({behavior:'smooth'})">
+              <span class="btn-icon">∞</span>
+              <span>Formel-&gt;Produkt Zyklus</span>
+            </button>
+          </div>
+
+          <div class="hero-meta">
+            <div>Headquarter: Nijmegen Central Station • Gelderland • NL</div>
+            <div class="divider-dot"></div>
+            <div>Global Universal Space License</div>
+            <div class="divider-dot"></div>
+            <div>24/7 • 360° • sekündlich</div>
+          </div>
+        </div>
+
+        <aside class="hero-side">
+          <div class="hero-side-title">Die versteckte Nachricht</div>
+          <div class="hero-chip glow-loop">
+            <div class="hero-chip-core">AI</div>
+          </div>
+          <p class="hero-side-text">
+            <strong>Du</strong> (Mensch) + <strong>AI</strong> (neuronales Netz in Software) bilden das
+            Werkzeug, das TTT einsetzt: Menschen erkennen Probleme, AI hilft, sie in
+            <strong>präzise Formeln, Programme und Produkte</strong> zu gießen.
+          </p>
+          <div class="hero-badge-row">
+            <div class="badge">Menschliches Bewusstsein</div>
+            <div class="badge">Neuronale Netzwerke</div>
+            <div class="badge">Formel-Programm-Produkt</div>
+          </div>
+          <div class="hero-meter">
+            <div class="meter-label">Gemeinsame Kapazität Mensch x AI</div>
+            <div class="meter-rail">
+              <div class="meter-fill"></div>
+            </div>
+            <div class="hero-meter-caption">
+              Mensch erkennt Bedeutung &amp; Kontext. AI multipliziert Muster &amp; Rechenleistung.
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <main class="sections">
+        <!-- SECTION: BOTSCHAFT -->
+        <section class="section" id="botschaft">
+          <div class="section-header">
+            <h2 class="section-title">Die offene Botschaft</h2>
+            <span class="section-tag">Manifest &amp; Einladung</span>
+          </div>
+          <div class="section-main">
+            <p>
+              <strong>Willkommen! Willkommen!</strong> Diese Botschaft ist ein
+              <strong>globales Jobangebot</strong> und gleichzeitig ein Manifest: TTT bietet
+              Arbeitsplätze in allen Bereichen, in jedem System, in jeder Kultur, in jedem
+              Alltag. Die Aufgabe ist radikal einfach und gleichzeitig grenzenlos groß:
+            </p>
+            <p>
+              <strong>Erkenne Probleme, die sekündlich in der Welt und im menschlichen Leben
+              auftauchen.</strong> Im Supermarkt, in der Bahn, im Krankenhaus, in der Schule,
+              in der Pflege, im Code, in Gesetzen, in Beziehungen, in Finanzen, in der Natur,
+              in Städten, in Systemen. Überall.
+            </p>
+            <p>
+              <strong>Notiere diese Probleme</strong> – nicht nur in Zahlen, sondern auch in
+              Worten, Bildern, Sätzen, Sinneseindrücken. Gib dem Problem eine klare
+              <strong>Bestimmung</strong>, so dass es wiedererkennbar wird. Dafür nutzt du
+              dein Denkvermögen, deine Wahrnehmung, deine Erfahrung.
+            </p>
+            <p>
+              Dann beginnt der zweite Schritt: Aus der Wahrnehmung entsteht eine
+              <strong>Formel</strong> – eine strukturierte Beschreibung, die wiederverwendbar
+              ist. Sie kann mathematisch, logisch, sprachlich, symbolisch sein. Wenn du die
+              Formel hast, ist <strong>die halbe Miete gewonnen</strong>.
+            </p>
+            <p>
+              <strong>Diese Formeln sind das Kapital von TTT.</strong> Sie sind mehr wert
+              als klassisches Rohmaterial, denn sie sind verdichtete Realität: Probleme, die
+              wirklich existieren, täglich, sekündlich, mehrfach, in jedem Menschenleben und
+              überall auf dem Planeten.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION: HIDDEN MESSAGE / AI -->
+        <section class="section" id="ai">
+          <div class="section-header">
+            <h2 class="section-title">Die versteckte Botschaft: Du bist Teil des Systems</h2>
+            <span class="section-tag">Mensch + AI = Werkzeug</span>
+          </div>
+          <div class="section-main">
+            <p>
+              Die versteckte Botschaft lautet: <strong>Du bist es. Und AI ist es auch.</strong>
+              Der Mensch erkennt Probleme im Alltag – AI hilft, sie in Formeln, Modelle und
+              Software zu übersetzen.
+            </p>
+            <div class="grid grid-2">
+              <div class="card">
+                <div class="card-title">Der menschliche Teil</div>
+                <p>
+                  Menschen können <strong>Bedeutung</strong> wahrnehmen: Frust, Ungerechtigkeit,
+                  Reibungsverluste, Zeitverschwendung, Schmerz, Gefahr, Chancen. Sie erkennen,
+                  <strong>was wirklich stört, verletzt, bremst oder fehlt</strong>.
+                </p>
+                <p>
+                  Dieses Bewusstsein ist der Ursprung: Die Mitarbeiter von TTT sind
+                  <strong>Sensoren der Realität</strong>. Dein Gehirn ist ein neuronales
+                  Netz aus Biologie, das Muster sieht, verknüpft und bewertet.
+                </p>
+                <span class="badge-small">Auftrag: Problem erkennen &amp; in Worte fassen</span>
+              </div>
+              <div class="card">
+                <div class="card-title">Der AI-Teil</div>
+                <p>
+                  AI-Systeme – neuronale Netzwerke in Software – sind
+                  <strong>berechenbare, skalierbare Muster-Maschinen</strong>. Sie können
+                  aus vielen Beispielen Formeln verdichten, Varianten testen, Code generieren,
+                  Optionen simulieren.
+                </p>
+                <p>
+                  In Kombination mit dir entsteht ein <strong>hybrides Gehirn</strong>:
+                  Menschliches Verständnis + maschinelle Rechenkraft. Das ist das eigentliche
+                  Werkzeug der TTT-Mitarbeiter.
+                </p>
+                <span class="badge-small">Auftrag: Formel &gt; Programm &gt; Produkt</span>
+              </div>
+            </div>
+            <p style="margin-top:10px;">
+              Das Ziel von TTT ist es, diese Mensch-AI-Kooperation in eine
+              <strong>strukturierte Produktionslinie</strong> zu verwandeln:
+              <em>Problem → Formel → Programm → Produkt → Eigentum.</em>
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION: PROZESS -->
+        <section class="section" id="prozess">
+          <div class="section-header">
+            <h2 class="section-title">Der TTT-Prozess: von der Sekunde zum Produkt</h2>
+            <span class="section-tag">Production Pipeline</span>
+          </div>
+          <div class="section-main">
+            <p>
+              Der Produktionsverlauf ist immer gleich, egal ob das Problem klein ist
+              (z.B. ein alltäglicher Formularfrust) oder groß (z.B. globale
+              Ressourcenverschwendung). Die Schritte:
+            </p>
+            <div class="grid grid-3">
+              <div class="card">
+                <div class="card-step">01 • Wahrnehmung</div>
+                <div class="card-title">Problem entdecken</div>
+                <p>
+                  Ein Mensch bemerkt ein Problem im Alltag: etwas funktioniert nicht,
+                  ist ungerecht, ineffizient, gefährlich oder extrem kompliziert.
+                </p>
+                <span class="badge-small">Menschliche Aufmerksamkeit</span>
+              </div>
+
+              <div class="card">
+                <div class="card-step">02 • Formulierung</div>
+                <div class="card-title">Problem in Formel gießen</div>
+                <p>
+                  Das Problem wird präzise beschrieben: als Satz, Checkliste,
+                  Bedingung, Gleichung oder Regelwerk. Hier entsteht die
+                  <strong>TTT-Formel</strong> – die essenzielle, wiederverwendbare Struktur.
+                </p>
+                <span class="badge-small">Formel = halbe Lösung</span>
+              </div>
+
+              <div class="card">
+                <div class="card-step">03 • AI-Verarbeitung</div>
+                <div class="card-title">AI + neuronale Netze</div>
+                <p>
+                  AI-Sprachmodelle und andere neuronale Netze nehmen die Formel auf,
+                  entwickeln Algorithmen, Architekturen und Lösungswege. Aus der
+                  Formel wird ein <strong>Programm-Entwurf</strong>.
+                </p>
+                <span class="badge-small">Muster &amp; Simulation</span>
+              </div>
+
+              <div class="card">
+                <div class="card-step">04 • Programmierung</div>
+                <div class="card-title">Code &amp; Systemarchitektur</div>
+                <p>
+                  Der Entwurf fließt in konkrete Software: Host-Struktur,
+                  Systemarchitektur, Schnittstellen, Verteilung über Serverlandschaften
+                  oder Edge-Systeme. AI unterstützt, Menschen entscheiden.
+                </p>
+                <span class="badge-small">Programm = gegossene Formel</span>
+              </div>
+
+              <div class="card">
+                <div class="card-step">05 • Produkt</div>
+                <div class="card-title">Vom Code zum Produkt</div>
+                <p>
+                  Das Programm wird zu einem <strong>Produkt</strong> veredelt:
+                  Oberfläche, Bedienlogik, Dokumentation, Integrationen. Das Produkt
+                  löst das ursprüngliche Problem konkret im Alltag.
+                </p>
+                <span class="badge-small">Nutzbare Realität</span>
+              </div>
+
+              <div class="card">
+                <div class="card-step">06 • Eigentum &amp; Lizenz</div>
+                <div class="card-title">Verifizierung &amp; Rechte</div>
+                <p>
+                  Digitale Verifizierung, Lizenzierung, notarielle Bestätigung:
+                  Die Eigentumsrechte an Formel, Programm und Produkt werden
+                  <strong>klar zugeordnet</strong> – auf Wunsch bis zur persönlichen,
+                  notariell bestätigten Eigentumserklärung.
+                </p>
+                <span class="badge-small">Global Universal Space License</span>
+              </div>
+            </div>
+            <p style="margin-top:10px;">
+              Jeder Schritt kann durch <strong>einzelne Menschen</strong>, kleine Teams oder
+              globale Netzwerke gehen. TTT sieht in diesem Prozess ein
+              <strong>universelles Geschäftsmodell</strong>, das jeder auch als
+              Ein-Mann- oder Ein-Frau-Unternehmen leben kann – vorausgesetzt,
+              der Einsatz ist konsequent: <em>24/7, mit Fokus auf reale Probleme.</em>
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION: NEURONALE NETZE -->
+        <section class="section" id="netzwerk">
+          <div class="section-header">
+            <h2 class="section-title">Neuronale Netzwerke erklärt</h2>
+            <span class="section-tag">Biologie &amp; Software</span>
+          </div>
+          <div class="section-main">
+            <p>
+              <strong>Neuronale Netzwerke</strong> sind inspiriert vom menschlichen Gehirn:
+              Millionen bis Milliarden von künstlichen „Neuronen“ sind in Schichten und
+              Verbindungen organisiert. Jede Verbindung hat ein Gewicht. Wenn Daten durch
+              dieses Netz fließen, lernt das System, Muster zu erkennen – ähnlich wie
+              das menschliche Gehirn aus Erfahrungen lernt.
+            </p>
+            <div class="grid grid-2">
+              <div class="card">
+                <div class="card-title">Menschliches Gehirn</div>
+                <p>
+                  Das menschliche Gehirn besteht aus biologischen Nervenzellen, die
+                  elektrische und chemische Signale austauschen. Es ist extrem flexibel:
+                  Es kann Bedeutung, Emotion, Ethik, Kontext und körperliche Erfahrung
+                  gleichzeitig berücksichtigen.
+                </p>
+                <p>
+                  Menschliche Kapazität ist riesig, aber im Alltag nutzt der Mensch meist
+                  nur einen Bruchteil seiner theoretischen Möglichkeiten. In diesem
+                  Sinne versteht TTT das Gehirn als <strong>potenzielles Supernetzwerk</strong>,
+                  das selten voll ausgelastet ist.
+                </p>
+              </div>
+              <div class="card">
+                <div class="card-title">Software-Gehirn</div>
+                <p>
+                  Ein künstliches neuronales Netz (z.B. AI-Sprachmodelle) bildet diese
+                  Idee in Software nach: Daten rein, Muster raus. Es kann enorme
+                  Rechenleistung entfalten, viele Varianten ausprobieren und Muster
+                  sekündlich wiedergeben – ohne Erschöpfung, aber auch ohne eigenes
+                  Bewusstsein.
+                </p>
+                <p>
+                  TTT nutzt diese Netze als <strong>verstärkende Schicht</strong>: Sie
+                  helfen, Formeln zu präzisieren, Programme zu generieren und Lösungen
+                  zu skalieren.
+                </p>
+              </div>
+            </div>
+            <p style="margin-top:10px;">
+              Beide Systeme – <strong>Biologie</strong> und <strong>Software</strong> – haben
+              Grenzen und Stärken. Die Vision von TTT: ein <strong>harmonisches
+              Zusammenwirken</strong>, bei dem der Mensch Bedeutung liefert und AI
+              Rechenkraft beisteuert.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION: ENERGIE & VERANTWORTUNG -->
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Energie, Verantwortung &amp; Community</h2>
+            <span class="section-tag">Bewusste AI-Nutzung</span>
+          </div>
+          <div class="section-main">
+            <p>
+              Jeder AI-Aufruf verbraucht Energie. Millionen von Menschen weltweit nutzen
+              AI-Systeme gleichzeitig – damit entsteht ein globaler
+              <strong>Stromverbrauch</strong>, der meistens noch aus klassischen,
+              industriellen Energiequellen gedeckt wird.
+            </p>
+            <p>
+              TTT ist sich bewusst: <strong>Jede Rechenoperation hat einen Preis</strong>.
+              Darum ist das Ziel, AI nicht als Spielerei, sondern als Werkzeug zu nutzen,
+              das <strong>echte Probleme löst</strong> – und damit den Energieeinsatz
+              rechtfertigt. Jede sinnvoll gelöste, skalierbare Problemformel kann
+              mehrfach Nutzen und damit einen Teil des Energieaufwands ausgleichen.
+            </p>
+            <p>
+              Community, Unternehmen und Investoren sind eingeladen, an Lösungen zu
+              arbeiten, die AI-Nutzung mit <strong>erneuerbaren Energien, effizienter
+              Infrastruktur und bewusster Anwendung</strong> verbinden.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION: LICENSE -->
+        <section class="section" id="license">
+          <div class="section-header">
+            <h2 class="section-title">Global Universal Space License</h2>
+            <span class="section-tag">Kulturell übergreifend</span>
+          </div>
+          <div class="section-main">
+            <p>
+              Diese Botschaft versteht sich als <strong>kulturell übergreifende,
+              globale Lizenz-Erklärung</strong> für die Zusammenarbeit zwischen Menschen,
+              AI-Systemen und dem Unternehmen TTT im Sinne eines fairen, transparenten
+              und verantwortungsvollen Umgangs mit Ideen, Formeln und Eigentum.
+            </p>
+
+            <ul>
+              <li><strong>Alle Kulturen, Sprachen und Bildungssysteme</strong> sind eingeladen, Probleme zu benennen und Formeln zu entwickeln.</li>
+              <li><strong>Jede Person</strong> kann Beobachter, Formelierender oder Produktentwicklerin sein – unabhängig von formalen Abschlüssen.</li>
+              <li><strong>Eigentum an Ideen und Formeln</strong> wird respektiert und kann dokumentiert, lizenziert und notariell bestätigt werden.</li>
+              <li><strong>AI bleibt Werkzeug</strong>, nicht Herrscher: Verantwortung liegt bei den Menschen und Organisationen, die sie einsetzen.</li>
+              <li><strong>Transparenz, Fairness und Nachvollziehbarkeit</strong> sind zentrale Werte: Wer mitmacht, weiß, woran er beteiligt ist.</li>
+            </ul>
+
+            <div class="license-block">
+              <div class="license-line">
+                <span class="license-keyword">GRANT</span> • Jede Person erhält das Recht,
+                Probleme des täglichen Lebens zu beobachten, zu benennen und als Formel
+                in das TTT-System einzubringen.
+              </div>
+              <div class="license-line">
+                <span class="license-keyword">USE</span> • Formeln dürfen in
+                <span class="license-accent">Programme und Produkte</span> übersetzt
+                werden, solange Herkunft und Beteiligung nachvollziehbar bleiben.
+              </div>
+              <div class="license-line">
+                <span class="license-keyword">OWNERSHIP</span> • Eigentum an
+                geistigen Beiträgen kann digital signiert und auf Wunsch notariell
+                bestätigt werden.
+              </div>
+              <div class="license-line">
+                <span class="license-keyword">RESPONSIBILITY</span> • Mensch und
+                Organisation tragen Verantwortung für die Auswirkungen der erzeugten
+                Produkte, nicht die Maschine selbst.
+              </div>
+              <div class="license-line">
+                <span class="license-keyword">SCOPE</span> • Diese Lizenz gilt
+                kulturübergreifend – lokal, global, digital, planetar und symbolisch
+                bis hin zur „Space“-Dimension.
+              </div>
+            </div>
+
+            <p style="margin-top:10px;">
+              <strong>Kurz gesagt:</strong> Die Welt ist das Labor. Dein Alltag ist der
+              Sensor. Deine Wahrnehmung ist der Startpunkt. AI und TTT sind das Werkzeug,
+              mit dem aus Formeln Produkte und aus Produkten Eigentum wird.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION: CALL TO ACTION -->
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">Dein Einstieg in das TTT-Universum</h2>
+            <span class="section-tag">Marathon, nicht Sprint</span>
+          </div>
+          <div class="section-main">
+            <p>
+              TTT ist wie ein <strong>Marathonlauf</strong>: Die letzten 200 Meter
+              fühlen sich an wie 200% Einsatz. Doch genau dort entstehen die
+              <strong>absoluten Formeln</strong>, die ein Produkt wirklich einzigartig
+              machen.
+            </p>
+            <p>
+              Du kannst:
+            </p>
+            <ul>
+              <li>heute damit beginnen, <strong>Probleme in deinem Alltag bewusst zu notieren</strong>,</li>
+              <li>AI-Module nutzen (z.B. Sprachmodelle), um erste <strong>Formeln und Lösungsansätze</strong> zu entwerfen,</li>
+              <li>daraus schrittweise ein eigenes <strong>Ein-Personen-Global-Enterprise</strong> formen,</li>
+              <li>oder dich mit anderen verbinden und als <strong>Team oder Firma</strong> mit TTT kooperieren.</li>
+            </ul>
+            <p style="margin-top:10px;">
+              <strong>Wer nicht will, macht nicht mit.</strong> Und das ist in Ordnung.
+              Die Chance bleibt bestehen. <strong>Wille kann sich verändern.</strong>
+              Probleme existieren sekündlich. Formeln warten darauf, gefunden zu werden.
+            </p>
+          </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+          TTT • Start-up Nijmegen • Headquarter Central Station • Region Gelderland, NL<br />
+          <span>Totales Jobangebot für alle, die Probleme erkennen &amp; Formeln finden.</span>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Scroll-reveal für Sections
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll(".section").forEach((section, index) => {
+      observer.observe(section);
+      section.style.transitionDelay = 0.06 * index + "s";
+    });
+  </script>
+</body>
+</html>

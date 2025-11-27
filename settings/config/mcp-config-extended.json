@@ -1,0 +1,76 @@
+{
+  "version": "2.0.0",
+  "type": "mcp.tool",
+  "enabled": true,
+  "description": "MCP Tool/Service Registry mit Dimensions",
+  "tools": [
+    {
+      "id": "settings://mcp/tool/playwright",
+      "type": "mcp.tool",
+      "service": "playwright",
+      "version": "1.45.0",
+      "scope": ["global"],
+      "dimensions": {
+        "latency": {
+          "value": 300,
+          "unit": "ms"
+        },
+        "cost": {
+          "value": 0.05,
+          "unit": "EUR/hour"
+        },
+        "throughput": {
+          "value": 10,
+          "unit": "req/s"
+        }
+      },
+      "capabilities": ["browser", "trace", "screenshot", "video"],
+      "reliability": {
+        "score": 0.93
+      },
+      "aiEligible": true,
+      "description": "Playwright browser automation tool"
+    },
+    {
+      "id": "settings://mcp/tool/cursor-browser",
+      "type": "mcp.tool",
+      "service": "cursor-ide-browser",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "latency": {
+          "value": 200,
+          "unit": "ms"
+        },
+        "cost": {
+          "value": 0.02,
+          "unit": "EUR/hour"
+        }
+      },
+      "capabilities": [
+        "browser_navigate",
+        "browser_snapshot",
+        "browser_click",
+        "browser_type",
+        "browser_screenshot"
+      ],
+      "reliability": {
+        "score": 0.95
+      },
+      "aiEligible": true,
+      "description": "Cursor IDE Browser MCP tool"
+    }
+  ],
+  "routing": {
+    "policies": [
+      {
+        "task": "browser-automation",
+        "preferred": ["settings://mcp/tool/playwright"],
+        "fallback": ["settings://mcp/tool/cursor-browser"]
+      }
+    ],
+    "autoRouting": true,
+    "costOptimization": true
+  }
+}
+

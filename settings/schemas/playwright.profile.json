@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Playwright Profile Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "playwright.profile" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "properties": {
+        "timeout": { "$ref": "#/definitions/dimensionalValue" },
+        "network": {
+          "type": "object",
+          "properties": {
+            "bandwidth": { "$ref": "#/definitions/dimensionalValue" },
+            "latency": { "$ref": "#/definitions/dimensionalValue" }
+          }
+        },
+        "assertions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"]
+    },
+    "dimensionalValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string" }
+      }
+    }
+  }
+}
+

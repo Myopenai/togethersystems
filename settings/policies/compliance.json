@@ -1,0 +1,60 @@
+{
+  "version": "1.0.0",
+  "description": "Compliance Policies für Settings-OS",
+  "environment": {
+    "prod": {
+      "dataLocality": "EU",
+      "encryptionRequired": true,
+      "notaryRequired": true,
+      "auditRequired": true,
+      "restrictions": {
+        "sourceCodeAccess": false,
+        "modifications": true,
+        "extensions": true
+      }
+    },
+    "staging": {
+      "dataLocality": "EU",
+      "encryptionRequired": true,
+      "notaryRequired": false,
+      "auditRequired": true
+    },
+    "dev": {
+      "dataLocality": "global",
+      "encryptionRequired": false,
+      "notaryRequired": false,
+      "auditRequired": false
+    }
+  },
+  "enterpriseSafety": {
+    "productionCritical": {
+      "notaryRequired": true,
+      "approvalRequired": true,
+      "rollbackEnabled": true
+    },
+    "dataSensitivity": {
+      "confidential": {
+        "encryptionRequired": true,
+        "accessLogging": true
+      },
+      "restricted": {
+        "encryptionRequired": true,
+        "notaryRequired": true,
+        "accessLogging": true,
+        "approvalRequired": true
+      }
+    }
+  },
+  "regulatory": {
+    "GDPR": {
+      "dataLocality": "EU",
+      "rightToDeletion": true,
+      "dataMinimization": true
+    },
+    "CEPT": {
+      "encryptionStandards": "AES-256-GCM",
+      "keyRotation": true
+    }
+  }
+}
+

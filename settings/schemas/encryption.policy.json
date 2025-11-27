@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Encryption Policy Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "encryption.policy" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "required": ["alg"],
+      "properties": {
+        "alg": { "type": "string" },
+        "keyRouting": { "type": "array", "items": { "type": "string" } },
+        "rotation": {
+          "type": "object",
+          "properties": {
+            "interval": { "$ref": "#/definitions/dimensionalValue" },
+            "grace": { "$ref": "#/definitions/dimensionalValue" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"]
+    },
+    "dimensionalValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string" }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,140 @@
+{
+  "version": "2.0.0",
+  "type": "playwright.profile",
+  "enabled": true,
+  "description": "Playwright Test Profiles mit dimensionalen Parametern",
+  "profiles": [
+    {
+      "id": "settings://tests/ui/smoke",
+      "type": "playwright.profile",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "timeout": {
+          "value": 30,
+          "unit": "s"
+        },
+        "latency": {
+          "value": 100,
+          "unit": "ms"
+        },
+        "cost": {
+          "value": 0.01,
+          "unit": "EUR/hour"
+        }
+      },
+      "data": {
+        "timeout": {
+          "value": 30,
+          "unit": "s"
+        },
+        "network": {
+          "bandwidth": {
+            "value": 10,
+            "unit": "MB/s"
+          },
+          "latency": {
+            "value": 50,
+            "unit": "ms"
+          }
+        },
+        "assertions": [
+          "p95 < 120ms",
+          "error-rate < 0.5%"
+        ]
+      }
+    },
+    {
+      "id": "settings://tests/ui/latency-critical",
+      "type": "playwright.profile",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "timeout": {
+          "value": 10,
+          "unit": "s"
+        },
+        "latency": {
+          "value": 50,
+          "unit": "ms",
+          "constraints": {
+            "max": 100
+          }
+        },
+        "cost": {
+          "value": 0.05,
+          "unit": "EUR/hour"
+        }
+      },
+      "data": {
+        "timeout": {
+          "value": 10,
+          "unit": "s"
+        },
+        "network": {
+          "bandwidth": {
+            "value": 10,
+            "unit": "MB/s"
+          },
+          "latency": {
+            "value": 50,
+            "unit": "ms"
+          }
+        },
+        "assertions": [
+          "p95 < 120ms",
+          "error-rate < 0.5%"
+        ]
+      }
+    },
+    {
+      "id": "settings://tests/ui/energy-saving",
+      "type": "playwright.profile",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "timeout": {
+          "value": 60,
+          "unit": "s"
+        },
+        "energy": {
+          "value": 50,
+          "unit": "W",
+          "constraints": {
+            "max": 100
+          }
+        },
+        "cost": {
+          "value": 0.02,
+          "unit": "EUR/hour"
+        }
+      },
+      "data": {
+        "timeout": {
+          "value": 60,
+          "unit": "s"
+        },
+        "network": {
+          "bandwidth": {
+            "value": 5,
+            "unit": "MB/s"
+          },
+          "latency": {
+            "value": 100,
+            "unit": "ms"
+          }
+        },
+        "assertions": [
+          "energy < 100W",
+          "error-rate < 1%"
+        ]
+      }
+    }
+  ],
+  "aiIntegration": {
+    "enabled": true,
+    "llmPrompt": "Erzeuge mir ein Profil für Low-Latency-CI auf GitHub Actions",
+    "autoGenerate": true
+  }
+}
+
