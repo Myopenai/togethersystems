@@ -114,10 +114,12 @@ self.addEventListener('fetch', event => {
           
           return response;
         }).catch(() => {
-          // Fallback
-          if (req.destination === 'document') {
-            return caches.match('./index.html');
+          // Fallback: Bei 404 für Navigation-Requests → index.html oder 404.html
+          if (req.destination === 'document' || req.mode === 'navigate') {
+            return caches.match('./index.html') || caches.match('./404.html');
           }
+          // Für andere Requests: 404.html
+          return caches.match('./404.html') || new Response('Resource not found', { status: 404 });
         });
       })
     );
