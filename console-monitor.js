@@ -11,7 +11,10 @@
   'use strict';
   
   const CONSOLE_MONITOR_VERSION = '1.0.0-XXXL';
-  const SETTINGS_PATH = './Settings/';
+  // Pfad-Anpassung für GitHub Pages (relativ zum Root)
+  const SETTINGS_PATH = window.location.pathname.includes('/') 
+    ? window.location.pathname.split('/').slice(0, -1).join('/') + '/Settings/'
+    : './Settings/';
   const STORAGE_KEY = 'console_monitor_logs';
   const MAX_LOG_ENTRIES = 1000;
   
@@ -20,12 +23,40 @@
   
   async function loadConsoleConfig() {
     try {
-      const response = await fetch(SETTINGS_PATH + 'CONSOLE-MONITORING-SYSTEM.json');
-      if (response.ok) {
-        consoleConfig = await response.json();
+      // Versuche verschiedene Pfade
+      const paths = [
+        SETTINGS_PATH + 'CONSOLE-MONITORING-SYSTEM.json',
+        './Settings/CONSOLE-MONITORING-SYSTEM.json',
+        'Settings/CONSOLE-MONITORING-SYSTEM.json',
+        '/Settings/CONSOLE-MONITORING-SYSTEM.json'
+      ];
+      
+      for (const path of paths) {
+        try {
+          const response = await fetch(path);
+          if (response.ok) {
+            consoleConfig = await response.json();
+            console.log('[Console Monitor] Config geladen von:', path);
+            return;
+          }
+        } catch (e) {
+          // Weiter zum nächsten Pfad
+        }
       }
+      
+      // Fallback: Standard-Konfiguration
+      consoleConfig = {
+        consoleMonitoringSystemVersion: "1.0.0-XXXL",
+        monitoring: { enabled: true, mode: "continuous" },
+        errorTypes: {
+          syntax: { priority: "high", action: "instant-fix" },
+          type: { priority: "high", action: "instant-fix" },
+          network: { priority: "medium", action: "retry-with-fallback" }
+        }
+      };
+      console.warn('[Console Monitor] Standard-Konfiguration verwendet');
     } catch (e) {
-      console.warn('Console config nicht geladen, verwende Standard-Konfiguration');
+      console.warn('[Console Monitor] Fehler beim Laden der Konfiguration:', e);
     }
   }
   

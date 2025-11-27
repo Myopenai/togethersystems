@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Simpele Uitleg – Microsoft-account op je Android-telefoon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #0b1020;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.18);
+      --accent-strong: rgba(129, 140, 248, 0.7);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+      --radius-xl: 18px;
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.85);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 52%, #000 100%);
+      color: var(--text);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(18px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.22), transparent 60%),
+                  radial-gradient(circle at 100% 0, rgba(129,140,248,0.28), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+      padding: 18px 16px 20px;
+    }
+
+    @media (min-width: 640px) {
+      .card-inner {
+        padding: 24px 22px 26px;
+      }
+    }
+
+    .header {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(148,163,184,0.26), rgba(15,23,42,0.9));
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.8);
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      margin: 0 0 4px;
+      line-height: 1.3;
+    }
+
+    @media (min-width: 640px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+
+    .subtitle {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .logo-strip {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.55);
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      color: var(--muted);
+      backdrop-filter: blur(12px);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.2), rgba(15,23,42,0.9));
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 768px) {
+      .layout {
+        grid-template-columns: 1.15fr 1fr;
+      }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.85), rgba(15,23,42,0.98));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 12px 12px 12px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.7);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 65%);
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .panel-title span.icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      background: radial-gradient(circle at 30% 30%, #a5b4fc, #4f46e5);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 18px rgba(129, 140, 248, 0.85);
+      font-size: 11px;
+    }
+
+    .panel-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0 0 8px;
+    }
+
+    .steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 7px;
+      font-size: 0.86rem;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: flex-start;
+      gap: 6px 10px;
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, rgba(248,250,252,0.9), rgba(129,140,248,0.22));
+      border: 1px solid rgba(148,163,184,0.75);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      box-shadow: 0 10px 18px rgba(15,23,42,0.8);
+    }
+
+    .step-body {
+      min-width: 0;
+    }
+
+    .step-title {
+      font-weight: 500;
+      margin-bottom: 1px;
+    }
+
+    .step-text {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tip {
+      margin-top: 8px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px dashed rgba(148,163,184,0.55);
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: radial-gradient(circle at 0 0, rgba(15,23,42,0.6), rgba(15,23,42,0.95));
+    }
+
+    .tip strong {
+      color: #e5e7eb;
+    }
+
+    .upload-area {
+      border-radius: var(--radius-xl);
+      border: 1px dashed rgba(148,163,184,0.7);
+      background: radial-gradient(circle at top, rgba(30,64,175,0.45), rgba(15,23,42,0.95));
+      padding: 10px 10px 11px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: conic-gradient(from 120deg, rgba(129,140,248,0.3), transparent, rgba(56,189,248,0.3), transparent, rgba(129,140,248,0.3));
+      opacity: 0;
+      transition: opacity 0.35s ease-out;
+      pointer-events: none;
+    }
+
+    .upload-area.glow::before {
+      opacity: 0.6;
+    }
+
+    .upload-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0,1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    @media (min-width: 480px) {
+      .upload-inner {
+        grid-template-columns: 1.1fr 1.1fr;
+      }
+    }
+
+    .upload-copy {
+      font-size: 0.85rem;
+    }
+
+    .upload-copy h3 {
+      margin: 0 0 4px;
+      font-size: 0.92rem;
+    }
+
+    .upload-copy p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .file-input-wrap {
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15,23,42,0.85);
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.65);
+    }
+
+    .file-input-wrap label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(129,140,248,0.95), rgba(56,189,248,0.85));
+      color: #020617;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .file-input-wrap span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #logo-input {
+      display: none;
+    }
+
+    .status-chip {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+      background: rgba(15,23,42,0.9);
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.7);
+    }
+
+    .status-chip.ok .status-dot {
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.9);
+    }
+
+    .status-chip.error .status-dot {
+      background: var(--danger);
+      box-shadow: 0 0 10px rgba(248,113,113,0.9);
+    }
+
+    .status-chip.ok {
+      border-color: rgba(74,222,128,0.7);
+      color: #bbf7d0;
+    }
+
+    .status-chip.error {
+      border-color: rgba(248,113,113,0.7);
+      color: #fecaca;
+    }
+
+    .preview-shell {
+      border-radius: 14px;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      border: 1px solid rgba(30,64,175,0.7);
+      padding: 8px 8px 10px;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-shell::before {
+      content: "Studio-grade SVG";
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(148,163,184,0.8);
+      background: rgba(15,23,42,0.85);
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+
+    .preview-placeholder {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .preview-placeholder span.icon {
+      display: inline-flex;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      background: radial-gradient(circle at 30% 20%, rgba(129,140,248,0.8), rgba(56,189,248,0.3));
+      box-shadow: 0 0 24px rgba(129,140,248,0.8);
+      font-size: 18px;
+    }
+
+    .preview-logo-wrapper {
+      max-width: 100%;
+      max-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-logo-wrapper img {
+      max-width: 100%;
+      max-height: 160px;
+      height: auto;
+      filter: drop-shadow(0 14px 26px rgba(15,23,42,0.9));
+    }
+
+    .footnote {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .footnote strong {
+      color: #e5e7eb;
+    }
+
+    .share-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      margin-top: 6px;
+      color: var(--muted);
+    }
+
+    .share-hint span.icon {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .mt-small {
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <main class="card" aria-label="Super simpele uitleg Microsoft-account op Android">
+      <div class="card-inner">
+        <div class="badge"><span class="badge-dot"></span> Ultra-simpele handleiding · Android &amp; Microsoft</div>
+
+        <header class="header">
+          <div>
+            <h1>Microsoft-account maken op je Android-telefoon</h1>
+            <p class="subtitle">In gewone mensentaal, helemaal klaar voor jou. Upload je logo voor een Hollywood-waardige presentatie.</p>
+
+            <div class="logo-strip">
+              <div class="pill"><span class="pill-dot"></span> Android-telefoon</div>
+              <div class="pill"><span class="pill-dot"></span> Google-account (Gmail)</div>
+              <div class="pill"><span class="pill-dot"></span> Gratis Microsoft-account</div>
+            </div>
+          </div>
+        </header>
+
+        <section class="layout" aria-label="Uitleg en logo-uploader">
+          <article class="panel" aria-label="Stap voor stap uitleg">
+            <div class="panel-inner">
+              <h2 class="panel-title"><span class="icon">①</span> Stap-voor-stap uitleg (alleen mobiel)</h2>
+              <p class="panel-sub">Volg rustig deze stappen op je Android-telefoon. Geen moeilijke computertaal nodig.</p>
+
+              <ol class="steps">
+                <li class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Zet je telefoon aan en zorg voor internet</div>
+                    <p class="step-text">Ontgrendel je Android-telefoon. Controleer of je wifi of mobiele data aan staat (icoontjes bovenin het scherm).</p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Open de internet-app (browser)</div>
+                    <p class="step-text">Tik op <strong>Chrome</strong>, <strong>Internet</strong> of een andere browser. Bovenin zie je een balk waar je tekst kunt typen.</p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Ga naar de Microsoft-pagina</div>
+                    <p class="step-text">Tik in de balk bovenin en typ <code>signup.live.com</code>. Tik daarna op de toets <strong>Ga</strong> of <strong>Enter</strong>.</p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <div class="step-title">Kies "Gratis account maken"</div>
+                    <p class="step-text">Zoek de <strong>blauwe knop</strong> met tekst als "Gratis account maken". Tik <strong>één keer kort</strong> met je vinger op die knop.</p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-num">5</div>
+                  <div class="step-body">
+                    <div class="step-title">Gebruik je Google-adres</div>
+                    <p class="step-text">In het veld voor e-mail typ je jouw <strong>Gmail-adres</strong> (bijvoorbeeld <code>jouwnaam@gmail.com</code>) en tik je op <strong>Volgende</strong>.</p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-num">6</div>
+                  <div class="step-body">
+                    <div class="step-title">Kies een Microsoft-wachtwoord</div>
+                    <p class="step-text">Tik in het veld <strong>Wachtwoord</strong>, typ een wachtwoord dat je kunt onthouden en tik weer op <strong>Volgende</strong>. Schrijf het desnoods op papier.</p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-num">7</div>
+                  <div class="step-body">
+                    <div class="step-title">Vul de beveiligingscode in</div>
+                    <p class="step-text">Je krijgt een code via e-mail of sms. Lees de code, tik hem precies over in het veld, en kies <strong>Volgende</strong>.</p>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-num">8</div>
+                  <div class="step-body">
+                    <div class="step-title">Klaar – Google en Microsoft samen</div>
+                    <p class="step-text">Je hebt nu een <strong>gratis Microsoft-account</strong> met je Google-adres. Google en Microsoft blijven aparte diensten, maar jij gebruikt één bekend adres.</p>
+                  </div>
+                </li>
+              </ol>
+
+              <div class="tip" aria-label="Visuele tip voor vingerpositie">
+                <strong>Visueel tipje:</strong> waar je normaal een <strong>rode cirkel</strong> of <strong>pijl</strong> zou tekenen op een screenshot, leg je je vinger neer en tik je één keer kort. Niet ingedrukt houden.
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel" aria-label="Logo upload en voorbeeld">
+            <div class="panel-inner">
+              <h2 class="panel-title"><span class="icon">②</span> Upload je SVG-logo – Hollywood-aanzicht</h2>
+              <p class="panel-sub">Hier kun je één SVG-logo kiezen. De weergave blijft haarscherp, in maximale kwaliteit.</p>
+
+              <div class="upload-area" id="upload-area">
+                <div class="upload-inner">
+                  <div class="upload-copy">
+                    <h3>1. Kies je logo-bestand</h3>
+                    <p>
+                      Tik op de knop hieronder en selecteer een <strong>.svg</strong>-bestand.
+                      Het logo wordt direct <strong>zonder kwaliteitsverlies</strong> getoond.
+                    </p>
+                    <div class="file-input-wrap">
+                      <label for="logo-input">SVG uploaden</label>
+                      <span id="file-name">Nog geen bestand gekozen</span>
+                      <input id="logo-input" type="file" accept="image/svg+xml,.svg" />
+                    </div>
+                    <div class="status-chip" id="status-chip" aria-live="polite">
+                      <span class="status-dot"></span>
+                      <span id="status-text">Wacht op SVG-logo…</span>
+                    </div>
+                  </div>
+
+                  <div class="preview-shell" aria-label="Voorbeeld van je logo">
+                    <div id="logo-preview" class="preview-placeholder">
+                      <span class="icon">★</span>
+                      <div>
+                        Upload een SVG-logo<br />
+                        Je ziet hier direct het resultaat in studiokwaliteit.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="footnote">
+                <strong>Automatische uitleg-verificatie:</strong> zodra het logo is geüpload en zichtbaar, weet je dat het bestand
+                correct is en in de hoogste resolutie wordt weergegeven. Geen korrelige pixels – puur vector.
+              </p>
+
+              <div class="share-hint" aria-label="Deellink uitleg">
+                <span class="icon">🔗</span>
+                <span>Deel deze pagina met de betreffende persoon via een normale deellink (bijv. in WhatsApp of e-mail).</span>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="footnote mt-small" aria-label="Extra informatie">
+          <p>
+            <strong>Let op:</strong> deze pagina draait volledig in de browser op het mobieltje. Er wordt geen logo weggeschreven naar een server.
+            Om te delen stuur je simpelweg de link naar deze HTML-pagina naar het andere toestel.
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const fileInput = document.getElementById("logo-input");
+      const fileNameEl = document.getElementById("file-name");
+      const statusChip = document.getElementById("status-chip");
+      const statusText = document.getElementById("status-text");
+      const uploadArea = document.getElementById("upload-area");
+      const preview = document.getElementById("logo-preview");
+
+      function setStatus(type, message) {
+        statusChip.classList.remove("ok", "error");
+        if (type === "ok") statusChip.classList.add("ok");
+        if (type === "error") statusChip.classList.add("error");
+        statusText.textContent = message;
+      }
+
+      fileInput.addEventListener("change", function (event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        fileNameEl.textContent = file.name;
+
+        if (!/\.svg$/i.test(file.name) && file.type !== "image/svg+xml") {
+          setStatus("error", "Alleen SVG-bestanden worden ondersteund.");
+          preview.innerHTML = '<div class="preview-placeholder"><span class="icon">!</span><div>Dit is geen SVG-bestand. Kies een bestand dat eindigt op .svg.</div></div>';
+          uploadArea.classList.remove("glow");
+          return;
+        }
+
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = function () {
+          URL.revokeObjectURL(url);
+        };
+        img.src = url;
+        img.alt = "Geüpload SVG-logo";
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "preview-logo-wrapper";
+        wrapper.appendChild(img);
+        preview.innerHTML = "";
+        preview.appendChild(wrapper);
+
+        uploadArea.classList.add("glow");
+        setStatus("ok", "Logo geladen in studiokwaliteit.");
+
+        setTimeout(function () {
+          uploadArea.classList.remove("glow");
+        }, 900);
+      });
+    })();
+  </script>
+</body>
+</html>
+
