@@ -2549,10 +2549,10 @@ async function createExampleMortgageApplication(){
 	});
 	if(!result.ok) {
 		mortgageOutput.textContent = `Fehler beim Erstellen: ${result.error}`;
-			return;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
-		mortgageOutput.textContent = JSON.stringify(data, null, 2);
+		return;
+	}
+	const data = result.data;
+	mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Erzeugen der Beispiel-Anfrage: ' + (err?.message || String(err));
 	}
