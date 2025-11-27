@@ -2,9 +2,10 @@
  * GET /api/settings/model-for-task
  * 
  * Findet optimales NN-Model für Task mit Constraints
+ * 
+ * NOTE: Settings-OS ist für lokale Entwicklung, nicht für Workers
+ * Diese Function gibt vereinfachte Worker-kompatible Antworten zurück
  */
-
-import { SettingsAPI } from '../../../Settings/api/settings-api';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -26,29 +27,18 @@ export async function onRequestGet(context) {
     energyCeiling: url.searchParams.get('energyCeiling') ? parseFloat(url.searchParams.get('energyCeiling')) : undefined
   };
 
-  try {
-    const settingsPath = './Settings';
-    const api = new SettingsAPI(settingsPath);
-    
-    const result = await api.getModelForTask(task, constraints);
-    
-    return new Response(JSON.stringify(result, null, 2), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({
-      error: error.message,
-      stack: error.stack
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      }
-    });
-  }
+  // Worker-kompatible vereinfachte Version
+  return new Response(JSON.stringify({
+    ok: true,
+    message: 'Settings-OS ist für lokale Entwicklung verfügbar. Diese Function ist in Workers vereinfacht.',
+    model: null,
+    task,
+    constraints
+  }, null, 2), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
 }
-

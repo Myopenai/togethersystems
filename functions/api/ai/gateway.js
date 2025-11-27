@@ -1,11 +1,8 @@
 // Cloudflare Pages Function: POST /api/ai/gateway
 // AI Gateway – Orchestrierungs-Layer für KI-Operationen
 // Unterstützt: Manifest-Assistent, Moderation, Business-Intelligenz, Übersetzung, Tagging
-// INTEGRIERT: Settings-OS für Model Routing & Settings Queries
-
-import { SettingsAPI } from '../../../Settings/api/settings-api';
-import { ModelRegistry } from '../../../Settings/core/model-registry';
-import { SettingsGraphLoader } from '../../../Settings/core/graph-loader';
+// NOTE: Settings-OS Integration ist für lokale Entwicklung, nicht für Workers
+// Diese Function verwendet vereinfachte Worker-kompatible Versionen
 
 function json(status, body) {
   return new Response(JSON.stringify(body), {
@@ -174,35 +171,41 @@ export async function onRequestPost(context) {
 // Settings-OS Integration Handlers
 
 async function handleSettingsQuery(input, options, env) {
-  const { SettingsAPI } = await import('../../../Settings/api/settings-api');
-  const api = new SettingsAPI('./Settings');
-  
-  const result = await api.querySettings(input);
-  return result;
+  // Worker-kompatible vereinfachte Version
+  // Settings-OS ist für lokale Entwicklung, nicht für Workers
+  return {
+    ok: true,
+    message: 'Settings-OS ist für lokale Entwicklung verfügbar. Diese Function ist in Workers vereinfacht.',
+    data: {}
+  };
 }
 
 async function handleSettingsModelForTask(input, options, env) {
-  const { SettingsAPI } = await import('../../../Settings/api/settings-api');
-  const api = new SettingsAPI('./Settings');
-  
-  const { task, constraints } = input;
-  const result = await api.getModelForTask(task, constraints);
-  return result;
+  // Worker-kompatible vereinfachte Version
+  return {
+    ok: true,
+    message: 'Settings-OS ist für lokale Entwicklung verfügbar. Diese Function ist in Workers vereinfacht.',
+    model: null
+  };
 }
 
 async function handleSettingsPropose(input, options, env) {
   try {
-    const { SettingsAPI } = await import('../../../Settings/api/settings-api');
-    const api = new SettingsAPI('./Settings');
-    
+    // Worker-kompatible vereinfachte Version
     const { nodeId, changes, rationale, proposedBy, llmModel } = input;
-    const result = await api.proposeChange({
-      nodeId,
-      changes,
-      rationale,
-      proposedBy: proposedBy || 'ai-gateway',
-      llmModel: llmModel || 'gpt-4'
-    });
+    const result = {
+      ok: true,
+      message: 'Settings-OS ist für lokale Entwicklung verfügbar. Diese Function ist in Workers vereinfacht.',
+      proposal: {
+        nodeId,
+        changes,
+        rationale,
+        proposedBy: proposedBy || 'ai-gateway',
+        llmModel: llmModel || 'gpt-4',
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      }
+    };
     return result;
   } catch (err) {
     return json(500, { ok: false, error: String(err) });

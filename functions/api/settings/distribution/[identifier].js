@@ -5,7 +5,7 @@
  * Portal-Host versioniert, notariell verifiziert
  */
 
-import { UserDistributionManager } from '../../../../Settings/core/user-distribution';
+// NOTE: Settings-Ordner ist für lokale Entwicklung, nicht für Workers
 
 export async function onRequestGet(context) {
   const { request, env, params } = context;
@@ -26,19 +26,16 @@ export async function onRequestGet(context) {
 
   try {
     const portalHost = new URL(request.url).origin;
-    const distributionManager = new UserDistributionManager(
-      './Settings',
-      portalHost,
-      env.DB
-    );
-
-    // Validiere Key (User muss Key angeben)
-    // In Produktion: User gibt Key, wir validieren Hash
     
-    // Lade Distribution
-    // Note: User muss Key haben, um Distribution zu laden
-    // Wir können hier nur Metadaten zurückgeben
+    // Worker-kompatible Version (ohne Settings-Ordner)
+    // Validiere Key mit Web Crypto API
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(keyHash + identifier);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', keyData);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const keyHashValid = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     
+    // Lade Distribution (vereinfacht für Workers)
     const distribution = {
       identifier,
       version,

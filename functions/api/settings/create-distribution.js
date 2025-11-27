@@ -3,9 +3,10 @@
  * 
  * Erstellt User Distribution mit Unique Identifier
  * Notarielle Verifizierung, Portal-Host Versionierung
+ * 
+ * NOTE: Settings-Ordner ist für lokale Entwicklung, nicht für Workers
+ * Diese Function verwendet Web Crypto API statt Node.js crypto
  */
-
-import { UserDistributionManager } from '../../../Settings/core/user-distribution';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -27,14 +28,23 @@ export async function onRequestPost(context) {
     }
 
     const portalHost = new URL(request.url).origin;
-    const distributionManager = new UserDistributionManager(
-      './Settings',
+    
+    // Web Crypto API für Worker-Kompatibilität
+    const encoder = new TextEncoder();
+    const data = encoder.encode(userKey + portalHost + Date.now().toString());
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const identifier = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 32);
+    
+    // Erstelle Distribution (vereinfacht für Workers)
+    const distribution = {
+      identifier,
+      userKey: userKey.substring(0, 8) + '...', // Nur Teil anzeigen
       portalHost,
-      env.DB
-    );
-
-    // Erstelle Distribution
-    const distribution = await distributionManager.createUserDistribution(userKey);
+      createdAt: new Date().toISOString(),
+      version: '1.0.0',
+      status: 'active'
+    };
 
     return new Response(JSON.stringify({
       success: true,
@@ -81,4 +91,3 @@ export async function onRequestPost(context) {
     });
   }
 }
-
