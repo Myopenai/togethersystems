@@ -1007,6 +1007,11 @@ body.public-view{ --cursor: not-allowed }
 		</section>
 	</div>
 
+<script type="module">
+// Import safeFetchJson für alle API-Calls
+import { safeFetchJson } from './js/portal-api.js';
+window.safeFetchJson = safeFetchJson; // Global verfügbar machen
+</script>
 <script>
 // Eingebetteter Minimal-Core, damit das Portal auch als heruntergeladene Datei (file://) funktioniert.
 const MOT_STORAGE_KEYS = {
@@ -1130,8 +1135,8 @@ let MORTGAGE_API_BASE = null; // Wird dynamisch erkannt
 		if (VOUCHER_API_BASE === null) {
 			// Versuche, /api zu erreichen (Health-Check) - NUR wenn nicht GitHub Pages
 			try {
-				const testRes = await fetch('/api/voucher/list?holderUid=test', { method: 'GET' });
-				if (testRes.ok || testRes.status === 400) { // 400 ist OK, bedeutet dass API existiert
+				const testResult = await (window.safeFetchJson || safeFetchJson)('/api/voucher/list?holderUid=test', { method: 'GET' });
+				if (testResult.ok || testResult.status === 400) { // 400 ist OK, bedeutet dass API existiert
 					VOUCHER_API_BASE = '/api';
 					MORTGAGE_API_BASE = '/api'; // Mortgage API auf derselben Base
 				} else {
@@ -1199,20 +1204,14 @@ function readManifestToken(){
 async function verifyTokenWithBackend(tokenObj){
 	if(!tokenObj || !tokenObj.token) return null;
 	if(!PRESENCE_API_BASE) return null; // API nicht verfügbar
-	try {
-		const res = await fetch(`${PRESENCE_API_BASE}/verify`, {
-			method:'POST',
-			headers:{'Content-Type':'application/json'},
-			body: JSON.stringify(tokenObj)
-		});
-		if(!res.ok) return null;
-		const data = await res.json().catch(e => { console.error('JSON parse error:', e); return null; });
-		if(!data || !data.thinker_id) return null;
-		return data; // { thinker_id, pair_code? }
-	}catch(err){
-		console.error('API error:', err);
-		return null;
-	}
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(`${PRESENCE_API_BASE}/verify`, {
+		method:'POST',
+		headers:{'Content-Type':'application/json'},
+		body: JSON.stringify(tokenObj)
+	});
+	if(!result.ok || !result.data || !result.data.thinker_id) return null;
+	return result.data; // { thinker_id, pair_code? }
 }
 
 let currentIdentity = null;
@@ -1236,17 +1235,17 @@ function startPresenceHeartbeat(identity){
 
 	const send = async (status='online')=>{
 		if(!PRESENCE_API_BASE) return; // API nicht verfügbar
-		try{
-			const pair_code = getEffectivePairCode(identity);
-			await fetch(`${PRESENCE_API_BASE}/heartbeat`, {
-				method:'POST',
-				headers:{'Content-Type':'application/json'},
-				body: JSON.stringify({
-					thinker_id: identity.thinker_id,
-					pair_code,
-					status
-				})
-			});
+		const pair_code = getEffectivePairCode(identity);
+		const safeFetch = window.safeFetchJson || safeFetchJson;
+		await safeFetch(`${PRESENCE_API_BASE}/heartbeat`, {
+			method:'POST',
+			headers:{'Content-Type':'application/json'},
+			body: JSON.stringify({
+				thinker_id: identity.thinker_id,
+				pair_code,
+				status
+			})
+		});
 		}catch{/* offline oder Backend noch nicht aktiv */}
 	};
 
@@ -1286,12 +1285,8 @@ function startMatchLoop(identity){
 				return;
 			}
 			updateConnectStatus(`Warte auf zweiten Thinker mit Stichwort „${pair_code}“…`);
-						try {
-			  const res = await fetch(`${PRESENCE_API_BASE}/match`, {
-			} catch (err) {
-			  console.error('API error:', err);
-			  return null;
-			}
+			const safeFetch = window.safeFetchJson || safeFetchJson;
+			const res = await safeFetch(`${PRESENCE_API_BASE}/match`, {
 				method:'POST',
 				headers:{'Content-Type':'application/json'},
 				body: JSON.stringify({
@@ -1379,19 +1374,15 @@ async function autoConnectFromToken(){
 			// Warte kurz, dann prüfe Match
 			setTimeout(async ()=>{
 				if(PRESENCE_API_BASE){
-					try {
-						  const res = await fetch(`${PRESENCE_API_BASE}/match`, {
-						} catch (err) {
-						  console.error('API error:', err);
-						  return null;
-						}
-							method:'POST',
-							headers:{'Content-Type':'application/json'},
-							body: JSON.stringify({
-								thinker_id: identity.thinker_id,
-								pair_code: roomParam
-							})
-						});
+					const safeFetch = window.safeFetchJson || safeFetchJson;
+					const res = await safeFetch(`${PRESENCE_API_BASE}/match`, {
+						method:'POST',
+						headers:{'Content-Type':'application/json'},
+						body: JSON.stringify({
+							thinker_id: identity.thinker_id,
+							pair_code: roomParam
+						})
+					});
 						if(res.ok){
 							const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
 							if(data && data.room_id){
@@ -1707,7 +1698,8 @@ async function flushTelemetry(){
 		telemetryTimer = null;
 	}
 	try{
-		await fetch(TELEMETRY_ENDPOINT, {
+		const safeFetch = window.safeFetchJson || safeFetchJson;
+		await safeFetch(TELEMETRY_ENDPOINT, {
 			method:'POST',
 			headers:{'Content-Type':'application/json'},
 			body: JSON.stringify(batch)
@@ -1776,16 +1768,15 @@ jsonFile.addEventListener('change', async ()=>{
 document.getElementById('fetchBtn').addEventListener('click', async ()=>{
 	const url = document.getElementById('apiUrl').value.trim();
 	if(!url) return alert('API URL angeben.');
-	try {
-		  const res = await fetch(url, {headers:{'Accept':'application/json'}});
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
-		renderFeed(data);
-		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
-	}catch(err){ alert('API Fehler: '+err.message); }
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(url, {headers:{'Accept':'application/json'}});
+	if(!result.ok) {
+		alert('API Fehler: ' + result.error);
+		return;
+	}
+	const data = result.data;
+	renderFeed(data);
+	payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
 });
 document.getElementById('clearBtn').addEventListener('click', ()=>{
 	renderFeed({posts:[]}); payloadBox.hidden=true; payloadBox.textContent='';
@@ -2024,17 +2015,13 @@ async function loadVouchers(){
 	voucherListEl.innerHTML = '<div class="muted">Lade Vouchers …</div>';
 	slotListEl && (slotListEl.innerHTML = '');
 	selectedVoucher = null;
-	try {
-		  const res = await fetch(url);
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-		if(!res.ok) {
-			voucherListEl.innerHTML = `<div class="muted">Fehler beim Laden: ${res.status} ${res.statusText}</div>`;
-			return;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(url);
+	if(!result.ok) {
+		voucherListEl.innerHTML = `<div class="muted">Fehler beim Laden: ${result.error}</div>`;
+		return;
+	}
+	const data = result.data;
 		const items = data.items || [];
 		if(!items.length){
 			voucherListEl.innerHTML = '<div class="muted">Keine Vouchers gefunden.</div>';
@@ -2083,17 +2070,13 @@ async function loadSlotsForVoucher(voucher){
 	}
 	slotListEl.innerHTML = '<div class="muted">Lade verfügbare Slots …</div>';
 	if(slotCalendarEl) slotCalendarEl.innerHTML = '';
-	try {
-		  const res = await fetch(`${VOUCHER_API_BASE}/slots/available?voucherId=${encodeURIComponent(voucher.voucherId)}`);
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-		if(!res.ok) {
-			slotListEl.innerHTML = `<div class="muted">Fehler beim Laden der Slots: ${res.status} ${res.statusText}</div>`;
-			return;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(`${VOUCHER_API_BASE}/slots/available?voucherId=${encodeURIComponent(voucher.voucherId)}`);
+	if(!result.ok) {
+		slotListEl.innerHTML = `<div class="muted">Fehler beim Laden der Slots: ${result.error}</div>`;
+		return;
+	}
+	const data = result.data;
 		const items = data.items || [];
 		if(!items.length){
 			slotListEl.innerHTML = '<div class="muted">Keine freien Slots verfügbar.</div>';
@@ -2138,22 +2121,17 @@ async function bookSlot(voucher, slot){
 	}
 	if(!confirm('Diesen Termin wirklich buchen?')) return;
 	const { uid } = getUserContext();
-	try {
-		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/book`, {
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-			method:'POST',
-			headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
-			body: JSON.stringify({
-				voucherId: voucher.voucherId,
-				slotId: slot.slotId,
-				holderUid: uid
-			})
-		});
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
-		if(!res.ok || !data.ok){
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(`${VOUCHER_API_BASE}/voucher/book`, {
+		method:'POST',
+		headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+		body: JSON.stringify({
+			voucherId: voucher.voucherId,
+			slotId: slot.slotId,
+			holderUid: uid
+		})
+	});
+	if(!result.ok || !result.data || !result.data.ok){
 			alert('Buchung fehlgeschlagen: ' + (data.error || res.statusText));
 			return;
 		}
@@ -2278,15 +2256,11 @@ async function ensureDefaultVouchersForIssuer(){
 		if(!VOUCHER_API_BASE) return;
 		if(localStorage.getItem('mot_default_vouchers_issued_v1')) return;
 		const { uid } = getUserContext();
-				try {
-		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`, {
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
+		const safeFetch = window.safeFetchJson || safeFetchJson;
+		const result = await safeFetch(`${VOUCHER_API_BASE}/voucher/list?issuerUid=${encodeURIComponent(uid)}`, {
 			headers:{ 'Accept':'application/json' }
 		});
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+		const data = result.ok ? result.data : null;
 		const items = data.items || [];
 		if(items.length > 0) return; // Es gibt schon Vouchers, nichts tun
 
@@ -2385,15 +2359,11 @@ async function loadMyBookings(){
 	if(!myBookingsList || !VOUCHER_API_BASE) return;
 	const { uid } = getUserContext();
 	myBookingsList.innerHTML = '<div class="muted">Lade deine Buchungen …</div>';
-	try {
-		  const res = await fetch(`${VOUCHER_API_BASE}/voucher/bookings?holderUid=${encodeURIComponent(uid)}`, {
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-			headers:{ 'Accept':'application/json' }
-		});
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(`${VOUCHER_API_BASE}/voucher/bookings?holderUid=${encodeURIComponent(uid)}`, {
+		headers:{ 'Accept':'application/json' }
+	});
+	const data = result.ok ? result.data : null;
 		const items = data.items || [];
 		if(!items.length){
 			myBookingsList.innerHTML = '<div class="muted">Keine Buchungen gefunden.</div>';
@@ -2505,22 +2475,18 @@ async function loadMortgageApplications(){
 		return;
 	}
 	const { uid } = getUserContext();
-	try {
-		  const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application-list?role=borrower`, {
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(`${MORTGAGE_API_BASE}/mortgage/application-list?role=borrower`, {
+		headers: {
+			'Accept':'application/json',
+			'X-MOT-User': uid
 		}
-			headers: {
-				'Accept':'application/json',
-				'X-MOT-User': uid
-			}
-		});
-		if(!res.ok) {
-			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
-			return;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+	});
+	if(!result.ok) {
+		mortgageOutput.textContent = `Fehler beim Laden: ${result.error}`;
+		return;
+	}
+	const data = result.data;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Laden der Anfragen: ' + (err?.message || String(err));
@@ -2534,22 +2500,18 @@ async function loadMortgageOffers(){
 		return;
 	}
 	const { uid } = getUserContext();
-	try {
-		  const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/offer-list?role=borrower`, {
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(`${MORTGAGE_API_BASE}/mortgage/offer-list?role=borrower`, {
+		headers: {
+			'Accept':'application/json',
+			'X-MOT-User': uid
 		}
-			headers: {
-				'Accept':'application/json',
-				'X-MOT-User': uid
-			}
-		});
-		if(!res.ok) {
-			mortgageOutput.textContent = `Fehler beim Laden: ${res.status} ${res.statusText}`;
-			return;
-		}
-		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+	});
+	if(!result.ok) {
+		mortgageOutput.textContent = `Fehler beim Laden: ${result.error}`;
+		return;
+	}
+	const data = result.data;
 		mortgageOutput.textContent = JSON.stringify(data, null, 2);
 	}catch(err){
 		mortgageOutput.textContent = 'Fehler beim Laden der Angebote: ' + (err?.message || String(err));
@@ -2575,22 +2537,18 @@ async function createExampleMortgageApplication(){
 			otherLoans: []
 		}
 	};
-	try {
-		  const res = await fetch(`${MORTGAGE_API_BASE}/mortgage/application`, {
-		} catch (err) {
-		  console.error('API error:', err);
-		  return null;
-		}
-			method:'POST',
-			headers: {
-				'Content-Type':'application/json',
-				'Accept':'application/json',
-				'X-MOT-User': uid
-			},
-			body: JSON.stringify(example)
-		});
-		if(!res.ok) {
-			mortgageOutput.textContent = `Fehler beim Erstellen: ${res.status} ${res.statusText}`;
+	const safeFetch = window.safeFetchJson || safeFetchJson;
+	const result = await safeFetch(`${MORTGAGE_API_BASE}/mortgage/application`, {
+		method:'POST',
+		headers: {
+			'Content-Type':'application/json',
+			'Accept':'application/json',
+			'X-MOT-User': uid
+		},
+		body: JSON.stringify(example)
+	});
+	if(!result.ok) {
+		mortgageOutput.textContent = `Fehler beim Erstellen: ${result.error}`;
 			return;
 		}
 		const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
