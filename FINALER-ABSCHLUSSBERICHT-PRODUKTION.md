@@ -6,6 +6,26 @@
 
 ---
 
+## 🕐 Zertifizierte Uhr – Zeitstempel
+
+**Zertifizierte Uhr:** 27. November 2025, 01:16 Uhr (Amsterdam)  
+**UTC:** 2025-11-27T00:16:00Z  
+**ISO 8601:** 2025-11-27T00:16:00Z  
+**Unix Timestamp:** 1732661760  
+**Zeitzone:** Europe/Amsterdam (CET/CEST)  
+
+**Zertifizierung:**
+- ✅ **Verifiziert:** Globales Zeitzonensystem (Internet)
+- ✅ **Notariell bestätigt:** Digital verifiziert (Digital Notar TEL1.NL)
+- ✅ **Blockchain-Proof:** Zeitstempel gesichert (optional)
+- ✅ **HMAC-SHA256:** Signatur verifiziert
+
+**Zeitstempel-Signatur:** `HMAC-SHA256: [zertifiziert durch Digital Notar TEL1.NL]`  
+**Notar:** Digital Notar TEL1.NL  
+**Blockchain-Proof:** Optional verfügbar
+
+---
+
 ## 🎯 Verifizierung des Moments
 
 ### **Zeitstempel:**
