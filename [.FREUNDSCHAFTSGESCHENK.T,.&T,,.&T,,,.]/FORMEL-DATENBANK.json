@@ -1,0 +1,207 @@
+{
+  "metadata": {
+    "title": "Together Systems Formelsammlung - Strukturierte Datenbank",
+    "version": "1.0.0",
+    "status": "unverschlüsselt, unversioniert, voll zugänglich",
+    "branding": ".{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.",
+    "purpose": "Freundschaftsgeschenk für die Welt - Komplette Logik als Formeln",
+    "created": "2025-11-27T02:50:00Z"
+  },
+  "formulas": {
+    "identity_verification": {
+      "userId_generation": {
+        "formula": "userId = Base62(Entropy(128 bits))",
+        "detailed": "userId = f_entropy(128) → Base62",
+        "components": {
+          "entropy": "Entropy(n) = Σ(i=0 to n-1) random_bit(i) × 2^i",
+          "base62": "Base62(x) = Σ(i=0 to ⌊log_62(x)⌋) char_62(x ÷ 62^i mod 62) × 62^i"
+        },
+        "implementation_hints": [
+          "Use cryptographically secure random number generator",
+          "Convert to Base62 encoding",
+          "Store in localStorage or similar"
+        ]
+      },
+      "token_generation": {
+        "formula": "token = HMAC-SHA256(userId || timestamp, SECRET_KEY)",
+        "detailed": "token = H(userId || ts, K_secret)",
+        "components": {
+          "hmac": "H(m, k) = SHA256(HMAC(m, k))",
+          "token": "token = H(userId || timestamp, SECRET_KEY)"
+        }
+      },
+      "hmac_signature_verification": {
+        "formula": "base = token || '.' || userId || '.' || timestamp\nsignature = HMAC-SHA256(base, SHARED_SECRET)\nvalid = (signature === received_signature) ∧ (|timestamp - now| < 5 min)",
+        "detailed": "sig = H(token || '.' || uid || '.' || ts, K_shared)\nvalid = (sig == sig_received) ∧ (|ts - t_now| < 300s)"
+      },
+      "thinker_id_derivation": {
+        "formula": "thinker_id = 'thinker-' || substr(HASH(token || SECRET), 0, 12)",
+        "detailed": "thinker_id = 'thinker-' || substr(H(token || K_secret), 0, 12)"
+      }
+    },
+    "voucher_system": {
+      "voucher_creation": {
+        "formula": "V = { id, issuer, holder, service, duration, valid_from, valid_until, price, status, transferable }",
+        "status_values": ["issued", "booked", "consumed", "cancelled", "expired"]
+      },
+      "voucher_booking": {
+        "formula": "B = { id, voucher_id, issuer, holder, slot_start, slot_end, status }",
+        "constraints": {
+          "slot_end": "slot_end = slot_start + duration",
+          "status": "status ∈ { 'booked', 'cancelled' }"
+        }
+      },
+      "voucher_state_transition": {
+        "formula": "T(V, a) = {\n  if a == 'issue': V.status = 'issued'\n  if a == 'book': V.status = 'booked' ∧ V.holder = h\n  if a == 'consume': V.status = 'consumed'\n  if a == 'cancel': V.status = 'cancelled'\n  if a == 'expire' ∧ now > V.valid_until: V.status = 'expired'\n}"
+      },
+      "voucher_validation": {
+        "formula": "valid(V) = (V.status ∉ {'expired', 'cancelled'}) ∧ (t_now ≥ V.valid_from) ∧ (t_now ≤ V.valid_until)"
+      }
+    },
+    "honeycomb_rooms": {
+      "room_id_generation": {
+        "formula": "room_id = type || ':' || id",
+        "examples": [
+          "mortgage:offer:offerId",
+          "honeycomb:cell:cellId",
+          "deal:dealId"
+        ]
+      },
+      "room_state_machine": {
+        "formula": "S(R) = {\n  if |T_online| ≥ 1 ∧ |T_online| < 2: 'waiting'\n  if |T_online| ≥ 2 ∧ R.room_id == null: 'joining'\n  if |T_online| ≥ 2 ∧ R.room_id ≠ null: 'active'\n  if |T_online| < 2 ∧ R.room_id ≠ null: 'closing'\n  if |T_online| == 0 ∧ timeout > θ: 'closed'\n}",
+        "states": ["waiting", "joining", "active", "closing", "closed"]
+      },
+      "presence_matching": {
+        "formula": "match(t_id, p_code) = {\n  C = { p ∈ P | p.pair_code == p_code ∧ p.status == 'online' ∧ |p.last_seen - t_now| < 60s }\n  if |C| ≥ 2:\n    r_id = generateRoomId(p_code)\n    ∀c ∈ C: c.room_id = r_id\n    return r_id\n  else:\n    return null\n}"
+      },
+      "heartbeat_update": {
+        "formula": "heartbeat(t_id, s) = {\n  P[t_id].last_seen = t_now\n  P[t_id].status = s\n}"
+      }
+    },
+    "settings_os": {
+      "graph_structure": {
+        "formula": "G = (N, E, M)",
+        "components": {
+          "N": "N = { n | n ∈ SettingsNode }",
+          "E": "E = { (n_i, n_j) | n_i depends_on n_j }",
+          "M": "M = SettingsManifest"
+        }
+      },
+      "node_loading": {
+        "formula": "loadNode(n_id, p_id, env) = {\n  path = resolve(n_id, p_id, env)\n  n = parse(load(path))\n  validate(n)\n  return n\n}"
+      },
+      "dependency_resolution": {
+        "formula": "resolve(G) = {\n  ∀n ∈ G.N:\n    ∀d ∈ n.deps:\n      if ¬loaded(d):\n        loadNode(d)\n      E = E ∪ {(n, d)}\n}"
+      }
+    },
+    "dimensional_engine": {
+      "unit_conversion": {
+        "formula": "convert(v, u_target) = {\n  v_canon = toCanonical(v)\n  f_target = factor(u_target)\n  f_source = factor(v.unit)\n  return {\n    value: v_canon.value × (f_source / f_target),\n    unit: u_target,\n    dimension: v_canon.dimension\n  }\n}"
+      },
+      "canonical_conversion": {
+        "formula": "toCanonical(v) = {\n  r = rule(v.unit)\n  u_canon = canonical(r.dimension)\n  if v.unit == u_canon:\n    return v\n  else:\n    return {\n      value: v.value × r.factor,\n      unit: u_canon,\n      dimension: r.dimension\n    }\n}"
+      }
+    },
+    "multi_layer_validation": {
+      "validation_pipeline": {
+        "formula": "validate(n) = {\n  R = { valid: true, errors: [], warnings: [] }\n  R.errors ∪= validateSchema(n).errors\n  R.warnings ∪= validateSchema(n).warnings\n  if n.dimensions:\n    R.errors ∪= validateDimensional(n.dimensions).errors\n    R.warnings ∪= validateDimensional(n.dimensions).warnings\n  R.errors ∪= validateSemantic(n).errors\n  R.warnings ∪= validateSemantic(n).warnings\n  R.errors ∪= validateCompliance(n).errors\n  R.warnings ∪= validateCompliance(n).warnings\n  R.valid = (|R.errors| == 0)\n  return R\n}",
+        "layers": ["schema", "dimensional", "semantic", "compliance"]
+      }
+    },
+    "http_resource_monitor": {
+      "fetch_monitoring": {
+        "formula": "monitorFetch(r) = {\n  res = await fetch(r)\n  if res.status == 404:\n    logError({ url: r.url, status: 404, ts: t_now, type: 'fetch' })\n  return res\n}"
+      },
+      "error_tracking": {
+        "formula": "trackError(e) = {\n  E[e.url] = {\n    count: (E[e.url]?.count || 0) + 1,\n    firstSeen: E[e.url]?.firstSeen || t_now,\n    lastSeen: t_now,\n    priority: priority(e)\n  }\n}"
+      },
+      "priority_calculation": {
+        "formula": "priority(e) = {\n  if e.count > 10: return 'critical'\n  if e.count > 5: return 'high'\n  if e.count > 2: return 'medium'\n  return 'low'\n}"
+      }
+    },
+    "fortress_guard": {
+      "master_guard": {
+        "formula": "guard(action, ctx, fn) = {\n  if ¬heart.isHealthy():\n    return { status: 'blocked', reason: 'heart_not_healthy' }\n  S = loadSettings()\n  if ¬shield.allow(ctx):\n    shield.reinforce(ctx)\n    return { status: 'blocked', reason: 'katapult_attack' }\n  if ctx.code ∧ ¬preVerify(ctx.code):\n    chain.handleBroken(ctx)\n    return { status: 'blocked', reason: 'pre_verification_failed' }\n  if ¬chain.isValid(action, ctx):\n    return { status: 'blocked', reason: 'chain_violation' }\n  try:\n    r = await fn()\n    return { status: 'ok', result: r }\n  catch e:\n    autofix(e, ctx)\n    return { status: 'error', error: e }\n  finally:\n    heart.checkAfter()\n}"
+      },
+      "katapult_shield": {
+        "formula": "shield.allow(ctx) = {\n  if ¬sanitize(ctx): return false\n  if detectMalicious(ctx): return false\n  if ¬moralCheck(ctx): return false\n  if ¬safeDimensions(ctx): return false\n  return true\n}",
+        "layers": ["input_sanitization", "pattern_detection", "morality_check", "dimensional_compatibility"]
+      },
+      "chain_validation": {
+        "formula": "chain.isValid(a, ctx) = {\n  s_prev = getPrevious(ctx)\n  s_next = predictNext(ctx)\n  if ¬s_prev ∨ ¬s_next:\n    return false\n  if ¬connected(s_prev, ctx, s_next):\n    return false\n  return true\n}"
+      }
+    },
+    "telbank": {
+      "transfer_forward": {
+        "formula": "transferForward(a_fiat, c_fiat) = {\n  a_crypto = exchange.convert(a_fiat, c_fiat, 'ETH')\n  addr = getWallet()\n  tx = send(a_crypto, addr)\n  return {\n    direction: 'forward',\n    fiat: { amount: a_fiat, currency: c_fiat },\n    crypto: { amount: a_crypto, symbol: 'ETH' },\n    transaction: tx\n  }\n}"
+      },
+      "transfer_backward": {
+        "formula": "transferBackward(a_crypto, s_crypto) = {\n  addr_wallet = getWallet()\n  addr_exchange = getExchange()\n  tx = sendFromWallet(a_crypto, addr_exchange)\n  a_fiat = exchange.convert(a_crypto, s_crypto, 'EUR')\n  bank = sendFiat(a_fiat, 'EUR', bankAccount)\n  return {\n    direction: 'backward',\n    crypto: { amount: a_crypto, symbol: s_crypto },\n    fiat: { amount: a_fiat, currency: 'EUR' },\n    transaction: tx,\n    bankTransfer: bank\n  }\n}"
+      }
+    },
+    "industrial_fabrication": {
+      "pre_action": {
+        "formula": "preAction() = {\n  S = loadSettings()\n  console.activate()\n  preVerify.activate()\n  ∀m ∈ MCP: m.activate()\n  neuronal.activate()\n}"
+      },
+      "during_action": {
+        "formula": "duringAction(code) = {\n  ∀i, c ∈ code:\n    if ¬verifyChar(c):\n      return { valid: false, error: 'Invalid char at ' + i }\n  if ¬chain.validate(code):\n    return { valid: false, error: 'Chain violation' }\n  if highRisk(code):\n    return { valid: false, error: 'High risk', quarantine: true }\n  return { valid: true }\n}"
+      },
+      "post_action": {
+        "formula": "postAction() = {\n  runTests()\n  runConsistency()\n  if errors:\n    patterns = extract(errors)\n    store(patterns)\n    updateNeuronal(patterns)\n  heart.check()\n}"
+      }
+    },
+    "chain_system": {
+      "chain_validation": {
+        "formula": "chainValidate(a, ctx) = {\n  if ¬T1.syntax(a): return false\n  if ¬T2.architecture(a): return false\n  if ¬T3.runtimeRisk(a): return false\n  if ¬T∞.errorPattern(a): return false\n  return true\n}",
+        "levels": ["T1: Syntax & Types", "T2: Architecture Conformity", "T3: Runtime Risk Heuristic", "T∞: NDA/Error Pattern"]
+      },
+      "gear_system": {
+        "formula": "G = {\n  chain: { symbol: 'T,.', interlock: 'T,,.' },\n  gear: { symbol: 'T,,.', interlock: {'T,.', 'T,,,.,'} },\n  sprocket: { symbol: 'T,,,.,', interlock: 'T,,.' }\n}"
+      }
+    },
+    "pre_code_verification": {
+      "character_verification": {
+        "formula": "verifyCharByChar(code) = {\n  A = loadAllowList()\n  ∀i, c ∈ code:\n    if c ∉ A:\n      return { valid: false, error: 'Invalid char at ' + i, char: c }\n  return { valid: true }\n}"
+      },
+      "harmonization": {
+        "formula": "harmonize(code) = {\n  A = loadArchitecture()\n  ∀s ∈ parse(code):\n    if ¬conforms(s, A):\n      return { valid: false, error: 'Architecture violation: ' + s }\n  return { valid: true }\n}"
+      }
+    }
+  },
+  "implementation_guides": {
+    "javascript": {
+      "userId_generation": "function generateUserId() {\n  const entropy = crypto.getRandomValues(new Uint8Array(16));\n  return base62(entropy);\n}",
+      "voucher_validation": "function isValidVoucher(voucher) {\n  const now = Date.now();\n  return voucher.status !== 'expired' &&\n         voucher.status !== 'cancelled' &&\n         now >= voucher.valid_from &&\n         now <= voucher.valid_until;\n}"
+    },
+    "python": {
+      "userId_generation": "def generate_user_id():\n    entropy = secrets.token_bytes(16)\n    return base62(entropy)",
+      "voucher_validation": "def is_valid_voucher(voucher):\n    now = time.time()\n    return (voucher.status not in ['expired', 'cancelled'] and\n            now >= voucher.valid_from and\n            now <= voucher.valid_until)"
+    }
+  },
+  "usage_examples": {
+    "create_voucher": {
+      "formula": "V = { id, issuer, holder, service, duration, valid_from, valid_until, price, status, transferable }",
+      "example": {
+        "id": "v-2025-001",
+        "issuer": "thinker-abc123",
+        "holder": null,
+        "service": "consulting.session",
+        "duration": 60,
+        "valid_from": "2025-11-27T00:00:00Z",
+        "valid_until": "2025-12-27T00:00:00Z",
+        "price": { "amount": 100, "currency": "EUR" },
+        "status": "issued",
+        "transferable": true
+      }
+    },
+    "validate_voucher": {
+      "formula": "valid(V) = (V.status ∉ {'expired', 'cancelled'}) ∧ (t_now ≥ V.valid_from) ∧ (t_now ≤ V.valid_until)",
+      "example": {
+        "voucher": { "status": "issued", "valid_from": "2025-11-27T00:00:00Z", "valid_until": "2025-12-27T00:00:00Z" },
+        "now": "2025-11-27T12:00:00Z",
+        "result": true
+      }
+    }
+  }
+}
+
