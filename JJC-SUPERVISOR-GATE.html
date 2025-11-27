@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>JJC ▸ TOGETHERSYSTEMS – Ultra Simpel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root {
+      --bg: #0f1419;
+      --fg: #e6eef3;
+      --muted: #9fb3c8;
+      --accent: #10b981;
+      --accent-soft: rgba(16, 185, 129, 0.2);
+      --accent-2: #38bdf8;
+      --card: #151b23;
+      --border: #223040;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --radius: 20px;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      background: 
+        radial-gradient(circle at top, #0f172a 0, #020617 55%),
+        radial-gradient(circle at bottom, #1e3a8a 0, #020617 60%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 12px;
+    }
+    .frame {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(21,27,35,0.96), rgba(15,23,42,0.9));
+      box-shadow: 0 18px 50px rgba(0,0,0,0.7);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .ts-brand-banner {
+      background: linear-gradient(90deg, #020617, #0f172a 50%, #111827);
+      color: #e5e7eb;
+      padding: 4px 12px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      border-bottom: 1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong {
+      font-weight: 600;
+    }
+    .ts-brand-sub {
+      opacity: .78;
+      display: block;
+    }
+    .topbar {
+      padding: 10px 14px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: linear-gradient(90deg, rgba(15,23,42,0.9), rgba(30,64,175,0.7));
+      border-bottom: 1px solid rgba(148,163,184,0.4);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e, #15803d);
+      box-shadow: 0 0 10px rgba(34,197,94,0.95);
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .brand-text span:first-child {
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--accent);
+    }
+    .brand-text span:last-child {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+    .badge-mini {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: rgba(15,23,42,0.9);
+      font-size: 10px;
+      color: var(--accent);
+    }
+    .screen-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at center, rgba(16,185,129,0.12), transparent 55%);
+    }
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 18px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(30px) scale(0.98);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+    }
+    .emoji {
+      font-size: 4.2rem;
+      margin-bottom: 18px;
+      text-shadow: 0 0 26px rgba(15,23,42,0.9);
+    }
+    .line {
+      font-size: 1.15rem;
+      font-weight: 600;
+      max-width: 15rem;
+      color: var(--text-main);
+    }
+    .line span {
+      color: var(--accent);
+    }
+    .step-indicator {
+      position: absolute;
+      bottom: 14px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.6);
+    }
+    .dot.active {
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(16,185,129,0.9);
+      width: 18px;
+    }
+    .navbar {
+      padding: 8px 12px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(15,23,42,0.98);
+      border-top: 1px solid rgba(148,163,184,0.35);
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top left, var(--accent-soft), rgba(15,23,42,0.98));
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover {
+      background: radial-gradient(circle at top left, rgba(16,185,129,0.3), rgba(15,23,42,0.98));
+      border-color: var(--accent);
+    }
+    .nav-btn.secondary {
+      flex: 0 0 auto;
+      width: 40px;
+      padding: 8px 0;
+      border-radius: 999px;
+      font-size: 1rem;
+      background: rgba(15,23,42,0.96);
+    }
+    .nav-btn:active {
+      transform: scale(0.97);
+    }
+    .logo-panel {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      display: flex;
+      justify-content: flex-end;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .logo-card {
+      pointer-events: auto;
+      background: rgba(15,23,42,0.92);
+      border-radius: 999px;
+      padding: 5px 9px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #f97316;
+      box-shadow: 0 0 10px rgba(249,115,22,0.9);
+    }
+    .logo-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+    .logo-file-label {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148,163,184,0.7);
+      cursor: pointer;
+      background: rgba(15,23,42,0.95);
+      transition: all 0.2s ease;
+    }
+    .logo-file-label:hover {
+      border-color: var(--accent);
+      background: rgba(16,185,129,0.1);
+    }
+    .logo-file-label span {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+    .logo-file-input {
+      display: none;
+    }
+    .logo-status-text {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+    .logo-preview-pop {
+      position: absolute;
+      inset-inline: 10px;
+      bottom: 60px;
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(15,23,42,0.96);
+      border: 1px solid rgba(16,185,129,0.5);
+      display: none;
+      gap: 8px;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .logo-preview-pop.active {
+      display: flex;
+    }
+    .logo-preview-pop img {
+      max-width: 130px;
+      max-height: 52px;
+      border-radius: 8px;
+      background: #020617;
+      padding: 4px;
+    }
+    .logo-preview-text {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    @media (max-width: 480px) {
+      .frame {
+        max-width: 100%;
+        border-radius: 0;
+      }
+      .line {
+        font-size: 1rem;
+      }
+      .emoji {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="ts-brand-banner">
+      <div>
+        <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT</strong>
+        <span class="ts-brand-sub">(+31) - ( 613 803 782.) | JJC Supervisor Gate</span>
+      </div>
+    </div>
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <div class="brand-text">
+          <span>JJC SUPERVISOR GATE</span>
+          <span>EERST JJC-AANMELDING · DAN TOGETHERSYSTEMS CHRONOFECTERING</span>
+        </div>
+      </div>
+      <div class="badge-mini">Ultra simpel · 4 stappen</div>
+    </div>
+    <div class="screen-wrap" id="screenWrap">
+      <div class="logo-panel">
+        <div class="logo-card">
+          <div class="logo-dot" id="logoDot"></div>
+          <div>
+            <div class="logo-label">SVG LOGO</div>
+            <div class="logo-status-text" id="logoStatus">Nog geen logo · standaard aanzicht</div>
+          </div>
+          <label class="logo-file-label">
+            <span>⬆️ SVG</span>
+            <input class="logo-file-input" id="logoFile" type="file" accept=".svg,image/svg+xml" />
+          </label>
+        </div>
+      </div>
+      <div class="screen active" data-step="0">
+        <div class="emoji">📱</div>
+        <div class="line">Open de <span>JJC-aanmeldpagina</span> op je Android-telefoon.</div>
+      </div>
+      <div class="screen" data-step="1">
+        <div class="emoji">✉️</div>
+        <div class="line">Vul je gegevens in en bevestig je <span>JJC-aanmelding</span>.</div>
+      </div>
+      <div class="screen" data-step="2">
+        <div class="emoji">🔐</div>
+        <div class="line">Je <span>JJC-account</span> wordt veilig opgeslagen voor TOGETHERSYSTEMS.</div>
+      </div>
+      <div class="screen" data-step="3">
+        <div class="emoji">✅</div>
+        <div class="line">Je JJC-aanmelding wordt <span>gechronofecteerd</span> naar het TOGETHERSYSTEMS-systeem.</div>
+      </div>
+      <div class="step-indicator" aria-hidden="true">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="logo-preview-pop" id="logoPreview">
+        <img id="logoImg" alt="Logo preview" />
+        <div class="logo-preview-text" id="logoPreviewText">
+          Logo geladen. Verificatie door visueel aanzicht: geslaagd ✅
+        </div>
+      </div>
+    </div>
+    <div class="navbar">
+      <button class="nav-btn secondary" id="prevBtn" aria-label="Vorige stap">◀</button>
+      <button class="nav-btn" id="nextBtn">
+        <span id="nextLabel">Volgende stap</span> ▸
+      </button>
+    </div>
+  </div>
+  <script>
+    (function() {
+      const screens = Array.from(document.querySelectorAll('.screen'));
+      const dots = Array.from(document.querySelectorAll('.dot'));
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const nextLabel = document.getElementById('nextLabel');
+      const wrap = document.getElementById('screenWrap');
+      let current = 0;
+
+      function update() {
+        screens.forEach((s, i) => {
+          if (i === current) s.classList.add('active');
+          else s.classList.remove('active');
+        });
+
+        dots.forEach((d, i) => {
+          if (i === current) d.classList.add('active');
+          else d.classList.remove('active');
+        });
+
+        if (current === 3) {
+          nextLabel.textContent = 'Klaar';
+        } else {
+          nextLabel.textContent = 'Volgende stap';
+        }
+      }
+
+      prevBtn.addEventListener('click', function() {
+        current = Math.max(0, current - 1);
+        update();
+      });
+
+      nextBtn.addEventListener('click', function() {
+        if (current < 3) {
+          current++;
+          update();
+        }
+      });
+
+      // swipe-achtig gedrag (simpel)
+      let startX = null;
+      wrap.addEventListener('touchstart', function(e) {
+        const t = e.touches[0];
+        startX = t.clientX;
+      }, { passive: true });
+
+      wrap.addEventListener('touchend', function(e) {
+        if (startX === null) return;
+        const t = e.changedTouches[0];
+        const dx = t.clientX - startX;
+        if (dx > 40) {
+          // swipe rechts -> vorige
+          current = Math.max(0, current - 1);
+          update();
+        } else if (dx < -40) {
+          // swipe links -> volgende
+          if (current < 3) {
+            current++;
+            update();
+          }
+        }
+        startX = null;
+      });
+
+      // SVG logo upload + visuele verificatie
+      const logoFile = document.getElementById('logoFile');
+      const logoDot = document.getElementById('logoDot');
+      const logoStatus = document.getElementById('logoStatus');
+      const logoPreview = document.getElementById('logoPreview');
+      const logoImg = document.getElementById('logoImg');
+      const logoPreviewText = document.getElementById('logoPreviewText');
+
+      if (logoFile) {
+        logoFile.addEventListener('change', function(e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            logoImg.src = ev.target.result;
+            logoPreview.classList.add('active');
+            logoDot.style.background = '#22c55e';
+            logoDot.style.boxShadow = '0 0 12px rgba(34,197,94,0.9)';
+            logoStatus.textContent = 'Logo geladen · JJC / TOGETHERSYSTEMS verificatie zichtbaar';
+            logoPreviewText.textContent = 'Logo geladen. Visuele verificatie voor de gebruiker: helder en scherp aanzicht.';
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      update();
+    })();
+  </script>
+</body>
+</html>
+
