@@ -656,6 +656,38 @@
         statusText.textContent = message;
       }
 
+      // Lade gespeichertes Logo beim Start
+      function loadSavedLogo() {
+        try {
+          const saved = localStorage.getItem('microsoft-account-logo');
+          if (saved) {
+            const data = JSON.parse(saved);
+            if (data.url && data.fileName) {
+              fileNameEl.textContent = data.fileName;
+              const img = new Image();
+              img.onload = function () {
+                const wrapper = document.createElement("div");
+                wrapper.className = "preview-logo-wrapper";
+                wrapper.appendChild(img);
+                preview.innerHTML = "";
+                preview.appendChild(wrapper);
+                setStatus("ok", "Logo geladen uit opslag.");
+              };
+              img.onerror = function () {
+                localStorage.removeItem('microsoft-account-logo');
+              };
+              img.src = data.url;
+              img.alt = "Opgeslagen SVG-logo";
+            }
+          }
+        } catch (e) {
+          console.warn('Kon opgeslagen logo niet laden:', e);
+        }
+      }
+
+      // Logo beim Start laden
+      loadSavedLogo();
+
       fileInput.addEventListener("change", function (event) {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
@@ -669,26 +701,37 @@
           return;
         }
 
-        const url = URL.createObjectURL(file);
-        const img = new Image();
-        img.onload = function () {
-          URL.revokeObjectURL(url);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const svgContent = e.target.result;
+          // Sla SVG-Content in localStorage (als Data URL)
+          try {
+            localStorage.setItem('microsoft-account-logo', JSON.stringify({
+              url: svgContent,
+              fileName: file.name,
+              timestamp: Date.now()
+            }));
+          } catch (err) {
+            console.warn('Kon logo niet opslaan:', err);
+          }
+
+          const img = new Image();
+          img.onload = function () {
+            const wrapper = document.createElement("div");
+            wrapper.className = "preview-logo-wrapper";
+            wrapper.appendChild(img);
+            preview.innerHTML = "";
+            preview.appendChild(wrapper);
+            uploadArea.classList.add("glow");
+            setStatus("ok", "Logo geladen en opgeslagen.");
+            setTimeout(function () {
+              uploadArea.classList.remove("glow");
+            }, 900);
+          };
+          img.src = svgContent;
+          img.alt = "Geüpload SVG-logo";
         };
-        img.src = url;
-        img.alt = "Geüpload SVG-logo";
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "preview-logo-wrapper";
-        wrapper.appendChild(img);
-        preview.innerHTML = "";
-        preview.appendChild(wrapper);
-
-        uploadArea.classList.add("glow");
-        setStatus("ok", "Logo geladen in studiokwaliteit.");
-
-        setTimeout(function () {
-          uploadArea.classList.remove("glow");
-        }, 900);
+        reader.readAsDataURL(file);
       });
     })();
   </script>

@@ -12,7 +12,7 @@ function isCloudflarePages() {
 
 // Prüfe ob wir auf GitHub Pages sind (keine Serverless Functions)
 function isGitHubPages() {
-  return location.hostname.includes('github.io');
+  return location.hostname.includes('github.io') || location.hostname.includes('github.com');
 }
 
 export const AUTOFIX_CONFIG = {
@@ -145,18 +145,26 @@ function enqueueError(error, context = {}) {
   if (pattern) {
     applyClientSideFix(pattern, error, context);
     
-    // Zeige Benachrichtigung
-    showAutofixNotification({
-      detected: true,
-      pattern: pattern.pattern,
-      fix: {
-        action: pattern.fix,
-        message: pattern.message,
-      },
-      notification: {
-        timestamp: new Date().toISOString(),
-      },
-    });
+    // STUMM auf GitHub Pages: Keine Pop-ups für 404/405
+    if (isGitHubPages() && (pattern.pattern === '404' || pattern.pattern === '405')) {
+      // Keine Benachrichtigung auf GitHub Pages
+      return;
+    }
+    
+    // Zeige Benachrichtigung nur wenn nicht GitHub Pages
+    if (!isGitHubPages()) {
+      showAutofixNotification({
+        detected: true,
+        pattern: pattern.pattern,
+        fix: {
+          action: pattern.fix,
+          message: pattern.message,
+        },
+        notification: {
+          timestamp: new Date().toISOString(),
+        },
+      });
+    }
   }
   
   // Für Backend-Logging (optional, nur wenn Backend verfügbar)

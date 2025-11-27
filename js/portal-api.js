@@ -8,28 +8,64 @@
  */
 
 /**
- * Safe Fetch JSON - Fehlerbehandlung für alle Fetch-Calls
+ * ENV-Switch: Automatische Erkennung der Umgebung
  */
-export async function safeFetchJson(url, { signal } = {}) {
+export function detectEnvironment() {
+  // GitHub Pages Erkennung
+  if (typeof location !== 'undefined') {
+    if (location.hostname.includes('github.io') || location.hostname.includes('github.com')) {
+      return 'github-pages';
+    }
+    if (location.hostname.includes('pages.dev') || location.hostname.includes('cloudflare')) {
+      return 'cloudflare-pages';
+    }
+    if (location.protocol === 'file:') {
+      return 'local';
+    }
+  }
+  return 'unknown';
+}
+
+// ENV sofort setzen und exportieren
+export const ENV = detectEnvironment();
+
+/**
+ * Safe Fetch JSON - Fehlerbehandlung für alle Fetch-Calls
+ * TODSICHER: Kein 404 / JSON-Fehler killt die App mehr
+ * Unterstützt GET und POST Requests
+ */
+export async function safeFetchJson(url, options = {}) {
   try {
-    const res = await fetch(url, { signal });
+    const res = await fetch(url, {
+      cache: 'no-store',
+      ...options,
+    });
 
     if (!res.ok) {
-      return {
-        ok: false,
-        error: `HTTP ${res.status} beim Laden von ${url}`,
-        data: null,
-      };
+      // STUMM: Keine Console-Warnungen für 404/405 auf GitHub Pages
+      if (ENV === 'github-pages' && (res.status === 404 || res.status === 405)) {
+        return { ok: false, error: null, data: null, status: res.status, silent: true };
+      }
+      return { ok: false, error: `HTTP ${res.status}`, data: null, status: res.status };
     }
 
-    const data = await res.json();
-    return { ok: true, error: null, data };
+    // Für leere Responses (z.B. 204 No Content)
+    if (res.status === 204 || res.headers.get('content-length') === '0') {
+      return { ok: true, error: null, data: null, status: res.status };
+    }
+
+    const data = await res.json().catch(async () => {
+      // Fallback: Versuche Text zu lesen
+      const text = await res.text();
+      return { message: text };
+    });
+    return { ok: true, error: null, data, status: res.status };
   } catch (err) {
-    return {
-      ok: false,
-      error: `Fetch-Fehler für ${url}: ${err.message}`,
-      data: null,
-    };
+    // STUMM: Keine Console-Errors für GitHub Pages
+    if (ENV === 'github-pages') {
+      return { ok: false, error: null, data: null, status: 0, silent: true };
+    }
+    return { ok: false, error: err.message, data: null, status: 0 };
   }
 }
 
