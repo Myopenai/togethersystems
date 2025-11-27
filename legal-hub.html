@@ -306,9 +306,9 @@
   <section class="card" style="max-width:960px;margin:0 auto 40px;border-radius:18px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.96);padding:14px 16px;">
     <h2>Verträge hochladen &amp; mit Vouchern/Räumen verknüpfen</h2>
     <p>
-      Hier kannst du zu Demonstrationszwecken einen Vertrags‑ oder Angebots‑Scan auswählen und ihn lokal mit einem
-      Voucher und einem Kommunikationsraum verknüpfen. Die Dateien selbst werden nicht auf einen Server hochgeladen,
-      sondern nur als Eintrag im Browser gemerkt.
+      Hier kannst du einen Vertrags‑ oder Angebots‑Scan auswählen und ihn mit einem
+      Voucher und einem Kommunikationsraum verknüpfen. Die Dateien werden online gespeichert
+      und sind sofort verfügbar.
     </p>
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:.83rem;color:var(--muted);">
       <div style="flex:1 1 220px;min-width:220px;">
@@ -392,8 +392,8 @@
           + '</tr>';
       }).join('');
 
-      // Optional: Online-Contracts aus D1/R2 ergänzen (nur wenn API verfügbar)
-      if(!location.hostname.includes('github.io') && !location.hostname.includes('github.com')){
+      // Online-Contracts aus D1/R2 laden
+      if(location.protocol !== 'file:'){
         fetch('/api/contracts/list')
           .then(r=>r.ok?r.json():null)
           .then(data=>{
