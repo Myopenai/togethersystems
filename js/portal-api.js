@@ -34,37 +34,69 @@ export async function safeFetchJson(url, { signal } = {}) {
 }
 
 /**
+ * URL-Mapper: Mappt Online-APIs auf Demo-Daten für GitHub Pages
+ */
+export function getVoucherSourceUrl() {
+  if (ENV === 'github-pages' || ENV === 'local') {
+    return './demo-data/vouchers.json';
+  }
+  return '/api/voucher/list';
+}
+
+export function getProvidersSourceUrl() {
+  if (ENV === 'github-pages' || ENV === 'local') {
+    return './config/providers.json';
+  }
+  return '/api/providers';
+}
+
+export function getInstrumentsSourceUrl() {
+  if (ENV === 'github-pages' || ENV === 'local') {
+    return './demo-data/instruments.json';
+  }
+  return '/api/instruments';
+}
+
+export function getMessagesSourceUrl() {
+  if (ENV === 'github-pages' || ENV === 'local') {
+    return './demo-data/messages.json';
+  }
+  return '/api/messages';
+}
+
+/**
  * Demo-Loader: Nutzt statische JSON-Dateien statt echter /api/*-Routen
  */
-
 export async function loadProviders() {
-  // Demo-Datei unter ./config/providers.json
-  return safeFetchJson('./config/providers.json');
+  const url = getProvidersSourceUrl();
+  return safeFetchJson(url);
 }
 
 export async function loadVouchers() {
-  // Demo-Datei unter ./demo-data/vouchers.json
-  return safeFetchJson('./demo-data/vouchers.json');
+  const url = getVoucherSourceUrl();
+  return safeFetchJson(url);
 }
 
 export async function loadInstruments() {
-  // Demo-Datei unter ./demo-data/instruments.json
-  return safeFetchJson('./demo-data/instruments.json');
+  const url = getInstrumentsSourceUrl();
+  return safeFetchJson(url);
 }
 
 export async function loadMessages() {
-  // Demo-Datei unter ./demo-data/messages.json
-  return safeFetchJson('./demo-data/messages.json');
+  const url = getMessagesSourceUrl();
+  return safeFetchJson(url);
 }
 
 /**
  * Safe API Call - Versucht API, fällt auf JSON zurück
  */
 export async function safeApiCall(apiUrl, jsonFallback) {
-  // Versuche zuerst API
-  const apiResult = await safeFetchJson(apiUrl);
-  if (apiResult.ok) {
-    return apiResult;
+  // Versuche zuerst API (nur wenn nicht GitHub Pages)
+  if (ENV !== 'github-pages' && ENV !== 'local') {
+    const apiResult = await safeFetchJson(apiUrl);
+    if (apiResult.ok) {
+      return apiResult;
+    }
   }
   
   // Fallback auf JSON
