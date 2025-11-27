@@ -46,6 +46,38 @@
         height: auto;
         min-height: 100vh;
       }
+      .control-panel {
+        max-height: none;
+        overflow-y: visible;
+      }
+    }
+    @media (max-width: 600px) {
+      .control-panel {
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .btn {
+        font-size: 0.75rem;
+        padding: 0.6rem 0.8rem;
+      }
+    }
+    @media (max-width: 400px) {
+      .btn {
+        font-size: 0.7rem;
+        padding: 0.5rem 0.6rem;
+      }
+    }
+    /* Zoom-Kompatibilität - Buttons bleiben sichtbar */
+    @media (min-resolution: 1.5dppx) {
+      .control-panel {
+        min-height: fit-content;
+      }
+    }
+    /* Sicherstellen, dass Buttons bei Zoom 50-200% sichtbar bleiben */
+    @supports (zoom: 0.5) {
+      .control-panel {
+        min-height: min-content;
+      }
     }
     .nebula-bg {
       position: fixed;
@@ -145,6 +177,9 @@
       flex-direction: column;
       gap: 1.2rem;
       overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 100vh;
+      position: relative;
     }
     .cp-header {
       display: flex;
@@ -312,8 +347,16 @@
       border-radius: 8px;
       font-weight: 700;
       cursor: pointer;
-      font-size: 0.8rem;
+      font-size: clamp(0.7rem, 2vw, 0.9rem);
       margin-top: 0.5rem;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 10;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .btn:hover {
       transform: scale(1.05);
