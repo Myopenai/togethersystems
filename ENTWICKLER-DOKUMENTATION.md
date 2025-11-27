@@ -1,636 +1,369 @@
 # TogetherSystems – Entwickler-Dokumentation
+## Vollständige Anleitung für Entwickler
 
-> Vollständige Architektur, Verdrahtungen und Code-Beispiele für die Weiterentwicklung
+**Version:** 1.0.0  
+**Stand:** 27. November 2025  
+**Branding:** T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)  
+**Kontakt:** (+31) - ( 613 803 782.) | https://tel1.nl | https://orcid.org/0009-0003-1328-2430
 
 ---
 
-## 📋 Inhaltsverzeichnis
+## 📚 Inhaltsverzeichnis
 
-1. [System-Architektur](#system-architektur)
-2. [Backend-Struktur (Cloudflare Pages Functions)](#backend-struktur)
-3. [Frontend-Struktur](#frontend-struktur)
-4. [Datenfluss & API-Verdrahtungen](#datenfluss--api-verdrahtungen)
-5. [Datenbank-Schema (D1)](#datenbank-schema-d1)
-6. [Wichtige Code-Beispiele](#wichtige-code-beispiele)
-7. [Deployment](#deployment)
+1. [Überblick](#überblick)
+2. [System-Architektur](#system-architektur)
+3. [Hauptanwendungen](#hauptanwendungen)
+4. [Entwicklungsumgebung](#entwicklungsumgebung)
+5. [API & Backend](#api--backend)
+6. [Deployment](#deployment)
+7. [Testing](#testing)
+8. [Beitrag zum Projekt](#beitrag-zum-projekt)
+
+---
+
+## 🎯 Überblick
+
+TogetherSystems ist ein **Meta-Transaktionsportal** für vollautomatisierte Geschäftsprozesse ohne klassische Registrierung. Das System basiert auf:
+
+- **Accountless Identity**: Automatische Identifizierung pro Browser/Manifest
+- **Offline-First**: Lokale Datenhaltung mit optionaler Server-Synchronisation
+- **Wabenräume**: Visuelle und logische Räume für Transaktionen
+- **Voucher-System**: Universelle JSON-Strukturen für Geschäftstransaktionen
+- **Social Media UI/UX**: Vereinfachte Bedienung wie LinkedIn, WhatsApp
 
 ---
 
 ## 🏗️ System-Architektur
 
-### Übersicht
+### Frontend-Komponenten
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     FRONTEND (GitHub Pages)                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │manifest-forum│  │manifest-portal│  │admin-dashboard│     │
-│  │   (Offline)  │  │   (Online)   │  │  (Monitoring) │      │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
-│         │                  │                  │              │
-│         │  localStorage    │  fetch/WebSocket │  fetch       │
-│         │  (lokale DB)     │  (API-Calls)     │  (API-Calls) │
-└─────────┼──────────────────┼──────────────────┼──────────────┘
-          │                  │                  │
-          └──────────────────┼──────────────────┘
-                             │
-          ┌──────────────────┴──────────────────┐
-          │                                      │
-┌─────────▼──────────┐              ┌───────────▼──────────┐
-│  CLOUDFLARE PAGES  │              │   CLOUDFLARE D1      │
-│     Functions      │◄─────────────┤    (SQLite DB)       │
-│                    │              │                      │
-│  /api/voucher/*    │              │  - vouchers          │
-│  /api/telbank/*    │              │  - voucher_bookings  │
-│  /api/presence/*   │              │  - transfers         │
-│  /api/ai/gateway   │              │  - events            │
-│  /ws (WebSocket)   │              │  - telemetry_events  │
-└────────────────────┘              └──────────────────────┘
-```
+#### **1. Portal-Start (`index.html`)**
+- **Zweck**: Haupt-Einstiegspunkt des Systems
+- **Features**:
+  - Dashboard-Übersicht
+  - Daten-Verwaltung
+  - Berichte & Export
+  - Manifest-Forum Download
+  - Offline-Funktionalität
+- **Technologie**: HTML5, CSS3, JavaScript (Vanilla)
+- **Datenhaltung**: localStorage
 
-### Hauptkomponenten
+#### **2. Manifest-Forum (`manifest-forum.html`)**
+- **Zweck**: Offline-Forum für Beiträge, Verträge, Definitionsobjekte
+- **Features**:
+  - Beitrag erstellen & bearbeiten
+  - Hyperkommunikation (Text/Audio/Video/Code/Formel/Daten)
+  - Daten Export/Import (JSON/CSV)
+  - Statische Webseite erzeugen
+  - API-Veröffentlichung & Warteschlange
+  - Mesh-Networking (P2P-Sync)
+- **Datenhaltung**: localStorage
+- **Verifizierung**: Hash-basierte Token-Verifikation
 
-**Frontend:**
-- `manifest-forum.html` - Offline-Editor (LocalStorage)
-- `manifest-portal.html` - Online-Portal (API-Calls)
-- `admin.html` - Lokale Verwaltung
-- `production-dashboard.html` - System-Monitoring
-- `neural-network-console.html` - AI-Test-Interface
+#### **3. Online-Portal (`manifest-portal.html`)**
+- **Zweck**: Online-Ansicht mit Live-Funktionen
+- **Features**:
+  - Feed-Ansicht (Lesen)
+  - Token-Verifikation (Hash-Parameter)
+  - Auto-Connect (Presence-API, Match-Loop)
+  - Live-Room (WebSocket-Signaling)
+  - Voucher & Termine (inkl. Branch-Templates + Kalender)
+  - Immobilien & Hypotheken
+  - Events & Memberships
+- **APIs**: REST-APIs, WebSocket-Signaling
 
-**Backend:**
-- Cloudflare Pages Functions (Serverless)
-- D1 Database (SQLite)
-- WebSocket-Server für Live-Chat
+#### **4. Wabenräume (`honeycomb.html`)**
+- **Zweck**: Visuelle Raumlogik für Transaktionen
+- **Features**:
+  - Raum-IDs (A-1, B-2, etc.)
+  - Raum-Verknüpfung mit Vouchers/Events
+  - Bildkarussell für Räume
+  - Raum-Status & Verwaltung
+- **Technologie**: SVG-basierte Visualisierung
+
+#### **5. Legal-Hub (`legal-hub.html`)**
+- **Zweck**: Rechtlicher Hub für Verträge & Verifikationen
+- **Features**:
+  - Verträge hochladen & verwalten
+  - Verträge mit Vouchers/Räumen verknüpfen
+  - Signaturen & Archivierung
+  - Standardvertrags-Templates
+- **Datenhaltung**: Lokal + optional Server-Sync
+
+#### **6. TELBANK (`TELBANK/index.html`)**
+- **Zweck**: MetaMask Liquidity Console
+- **Features**:
+  - MetaMask-Integration
+  - Transfer-Logging
+  - In/Out-Flows
+  - TPGA Wallet Layer
+- **Technologie**: Web3.js, MetaMask API
+
+#### **7. Business-Admin (`business-admin.html`)**
+- **Zweck**: Vouchers & Buchungen verwalten
+- **Features**:
+  - Voucher-Erstellung & -Verwaltung
+  - Buchungsübersicht
+  - Export/Import
+- **Datenhaltung**: localStorage + API
+
+#### **8. Admin-Monitoring (`admin-monitoring.html`)**
+- **Zweck**: Monitoring & Events
+- **Features**:
+  - Event-Logging
+  - System-Status
+  - Telemetrie
+- **APIs**: Event-API, Monitoring-API
+
+#### **9. Production Dashboard (`production-dashboard.html`)**
+- **Zweck**: Vollständige System-Übersicht
+- **Features**:
+  - System-Status
+  - Performance-Metriken
+  - Fehler-Logging
+  - Deployment-Status
+
+#### **10. Neural Network Console (`neural-network-console.html`)**
+- **Zweck**: KI-Orchestrierung
+- **Features**:
+  - Model-Management
+  - Routing-Policies
+  - Performance-Monitoring
+- **APIs**: AI Gateway API
+
+#### **11. CMS Dashboard (`cms-dashboard.html`)**
+- **Zweck**: Content Management System
+- **Features**:
+  - Multi-Tenant-Support
+  - Block-basierte Seiten
+  - E-Commerce-Integration
+  - Media-Verwaltung
+- **Datenbank**: D1 (Cloudflare)
+
+#### **12. Investoren-Portal (`ostos-branding.html`)**
+- **Zweck**: OSTOS Branding Universe für Investoren & Sponsoren
+- **Features**:
+  - Logo-Upload (SVG bevorzugt)
+  - Sponsor-Integration
+  - Animierte Visualisierung
+  - Branding-Lab mit Live-Kontrolle
+- **Technologie**: SVG, Canvas, CSS-Animationen
+
+#### **13. Settings-Graph-Explorer (`settings-graph-explorer.html`)**
+- **Zweck**: Neural Network Config + Provider + Deployment + OS/Hardware-Dimensionen
+- **Features**:
+  - Provider-Wahl (AWS, GCP, TEL1 Cloud)
+  - Dimensionale Analyse (Latenz, Kosten, CPU, Kernel, BIOS, RAM, Storage)
+  - AI-Planungslogik mit Hard/Soft Constraints
+  - Live-Konsole/Fixbox
+- **Technologie**: JavaScript (ES6 Modules)
+
+#### **14. YORDY Artist Showcase (`YORDY/yordy-artist-showcase.html`)**
+- **Zweck**: MicroLED Quality Showcase mit Animationen
+- **Features**:
+  - High-Quality Visualisierung
+  - Animierte Effekte
+  - Artist-Informationen
+- **Technologie**: SVG, CSS-Animationen
+
+#### **15. Developer Portal (`ultra/ui/developer-portal.html`)**
+- **Zweck**: Entwickler-Onboarding & Community
+- **Features**:
+  - Onboarding-Flow
+  - Community-Zugang
+  - Entwickler-Ressourcen
+- **APIs**: Developer-API
+
+#### **16. Beta Portal (`ultra/beta/index.html`)**
+- **Zweck**: Beta-Testing & Entwicklung
+- **Features**:
+  - Beta-Features testen
+  - Feedback-System
+  - Experimentelle Funktionen
 
 ---
 
-## 🔧 Backend-Struktur
+## 🔧 Entwicklungsumgebung
 
-### Verzeichnisstruktur
+### Voraussetzungen
 
-```
-functions/
-├── api/
-│   ├── admin/
-│   │   ├── dashboard.js      # GET /api/admin/dashboard
-│   │   └── events.js         # GET /api/admin/events
-│   ├── ai/
-│   │   ├── gateway.js        # POST /api/ai/gateway
-│   │   └── gateway-enhanced.js
-│   ├── presence/
-│   │   ├── verify.js         # POST /api/presence/verify
-│   │   ├── heartbeat.js      # POST /api/presence/heartbeat
-│   │   ├── match.js          # POST /api/presence/match
-│   │   └── catalog/
-│   │       └── apis.js       # GET /api/presence/catalog/apis
-│   ├── voucher/
-│   │   ├── issue.js          # POST /api/voucher/issue
-│   │   ├── book.js           # POST /api/voucher/book
-│   │   ├── bookings.js       # GET /api/voucher/bookings
-│   │   └── cancel.js         # POST /api/voucher/cancel
-│   ├── telbank/
-│   │   └── transfers.js      # GET/POST /api/telbank/transfers
-│   └── telemetry.js          # POST /api/telemetry
-├── ws.js                     # WebSocket-Server für /ws
-└── 404.js                    # Fallback
+- **Node.js**: >= 18.0.0
+- **Git**: Für Versionierung
+- **Browser**: Chrome/Edge (für Playwright-Tests)
+- **Python**: Für lokalen HTTP-Server (optional)
+
+### Lokale Entwicklung
+
+```bash
+# 1. Repository klonen
+git clone https://github.com/Myopenai/togethersystems.git
+cd togethersystems
+
+# 2. Lokalen Server starten
+python -m http.server 9323
+
+# 3. Browser öffnen
+# http://localhost:9323/index.html
 ```
 
-### Standard-Funktions-Template
+### Projekt-Struktur
 
-Jede Function folgt diesem Muster:
-
-```javascript
-// Cloudflare Pages Function: [METHOD] /api/[route]
-function json(status, body) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8' },
-  });
-}
-
-async function checkApiKey(request, env) {
-  const required = env.TS_API_KEY;
-  if (!required) return null;
-  const provided = request.headers.get('X-TS-APIKEY');
-  if (!provided || provided !== required) {
-    return json(401, { ok: false, error: 'invalid api key' });
-  }
-  return null;
-}
-
-async function checkRateLimit(env, key, limit = 60, windowMs = 60_000) {
-  // Rate-Limiting-Logik (siehe Code-Beispiele)
-}
-
-export async function onRequestPost(context) {
-  const { request, env } = context;
-  
-  // 1. API-Key prüfen
-  const apiKeyError = await checkApiKey(request, env);
-  if (apiKeyError) return apiKeyError;
-  
-  // 2. Rate-Limiting prüfen
-  const allowed = await checkRateLimit(env, `route|${ip}`);
-  if (!allowed) return json(429, { ok: false, error: 'rate limit exceeded' });
-  
-  // 3. Request-Body parsen
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return json(400, { ok: false, error: 'invalid JSON body' });
-  }
-  
-  // 4. Business-Logik
-  // ...
-  
-  // 5. Event loggen
-  await insertEvent(env, 'event.type', actorId, 'subject', subjectId, meta);
-  
-  // 6. Response
-  return json(200, { ok: true, data: result });
-}
 ```
-
----
-
-## 💻 Frontend-Struktur
-
-### API-Base-URL-Erkennung
-
-Frontend erkennt automatisch verfügbare APIs:
-
-```javascript
-// manifest-portal.html
-function detectVoucherApiBase() {
-  if (location.hostname.includes('github.io')) {
-    return null; // Keine API auf GitHub Pages
-  }
-  // Test ob API verfügbar
-  return '/api'; // Relative URL für Cloudflare Pages
-}
-
-let VOUCHER_API_BASE = detectVoucherApiBase();
-let PRESENCE_API_BASE = (location.hostname.includes('github.io')) 
-  ? null 
-  : '/api/presence';
-```
-
-### LocalStorage-Datenstruktur
-
-```javascript
-// manifest-forum.html
-function loadDB() {
-  const raw = localStorage.getItem('manifest.db');
-  return raw ? JSON.parse(raw) : { posts: [] };
-}
-
-function saveDB(db) {
-  localStorage.setItem('manifest.db', JSON.stringify(db));
-  localStorage.setItem('manifest.db.updated', new Date().toISOString());
-}
-
-// Struktur:
-{
-  posts: [
-    {
-      id: "uuid",
-      title: "Titel",
-      content: "Inhalt",
-      tags: ["tag1", "tag2"],
-      logoUrl: "data:image/...", // Base64 oder URL
-      reactions: { like: 5 },
-      comments: [],
-      createdAt: 1234567890
-    }
-  ]
-}
-```
-
-### Offline → Online Flow
-
-```javascript
-// manifest-forum.html: Portal öffnen (verifiziert)
-const openPortalBtn = document.getElementById('openPortalBtn');
-openPortalBtn.addEventListener('click', () => {
-  const token = localStorage.getItem('MOT_ACCESS_TOKEN') || 'default-token';
-  const ts = Date.now();
-  const base = `${token}.${ts}`;
-  
-  // HMAC-Signatur generieren
-  crypto.subtle.importKey('raw', new TextEncoder().encode(token), 
-    { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
-    .then(key => crypto.subtle.sign('HMAC', key, new TextEncoder().encode(base)))
-    .then(sig => {
-      const sigHex = [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('');
-      const url = `manifest-portal.html#mot=${token}&ts=${ts}&sig=${sigHex}`;
-      window.open(url, '_blank');
-    });
-});
+togethersystems/
+├── index.html                    # Portal-Start
+├── manifest-forum.html          # Offline-Forum
+├── manifest-portal.html         # Online-Portal
+├── honeycomb.html               # Wabenräume
+├── legal-hub.html               # Legal-Hub
+├── ostos-branding.html          # Investoren-Portal
+├── settings-graph-explorer.html # Settings-Explorer
+├── TELBANK/                     # TELBANK-Konsole
+├── YORDY/                       # YORDY Artist
+├── ultra/                       # Developer & Beta Portals
+├── functions/                   # Cloudflare Pages Functions
+├── businessconnecthub-playwright-tests-full/  # E2E-Tests
+└── assets/                      # Statische Assets
 ```
 
 ---
 
-## 🔌 Datenfluss & API-Verdrahtungen
+## 🌐 API & Backend
 
-### 1. Voucher erstellen
+### Cloudflare Pages Functions
 
-```
-Frontend (business-admin.html)
-  ↓ POST /api/voucher/issue
-  {
-    issuerUid: "user-123",
-    serviceType: "consulting.session",
-    title: "Beratung",
-    durationMinutes: 60,
-    validFrom: "2024-01-01T00:00:00Z",
-    validUntil: "2024-12-31T23:59:59Z",
-    price: { amount: 100, currency: "EUR" }
-  }
-  ↓
-Backend (functions/api/voucher/issue.js)
-  ↓ INSERT INTO vouchers
-  ↓ INSERT INTO events (type: 'voucher.issue')
-  ↓
-D1 Database
-  ↓
-Response: { ok: true, voucher: {...} }
-```
+**Basis-Pfad**: `/api/`
 
-### 2. Voucher buchen
+#### **Presence-API**
+- `POST /api/presence/verify` - Token-Verifikation
+- `POST /api/presence/heartbeat` - Präsenz-Update
+- `POST /api/presence/match` - Match-Finding
+- `GET /api/presence/catalog/apis` - API-Katalog
 
-```
-Frontend (manifest-portal.html)
-  ↓ POST /api/voucher/book
-  {
-    voucherId: "v-abc123",
-    slotId: "slot-2024-01-15T10:00:00Z",
-    holderUid: "user-456"
-  }
-  ↓
-Backend (functions/api/voucher/book.js)
-  ↓ SELECT vouchers WHERE id = ?
-  ↓ Prüfe Status & Verfügbarkeit
-  ↓ INSERT INTO voucher_bookings
-  ↓ UPDATE vouchers SET status = 'booked'
-  ↓ INSERT INTO events
-  ↓
-Response: { ok: true, booking: {...} }
-```
+#### **TELBANK-API**
+- `POST /api/telbank/transfers` - Transfer-Verarbeitung
+- `GET /api/telbank/transfers` - Transfer-Historie
 
-### 3. Presence & Matching
+#### **Voucher-API**
+- `GET /api/vouchers` - Voucher-Liste
+- `POST /api/vouchers` - Voucher erstellen
+- `GET /api/vouchers/:id` - Voucher-Details
 
-```
-Frontend (manifest-portal.html)
-  ↓ POST /api/presence/verify
-  { token: "mot-token", ts: 1234567890, sig: "abc..." }
-  ↓
-Backend (functions/api/presence/verify.js)
-  ↓ HMAC-Signatur prüfen
-  ↓ thinker_id ableiten (HMAC-SHA256)
-  ↓ In-Memory Store aktualisieren
-  ↓
-Response: { thinker_id: "thinker-abc123", pair_code: "projekt_alpha" }
+#### **WebSocket-Signaling**
+- `wss://your-domain.com/ws` - Live-Room-Signaling
 
-  ↓ POST /api/presence/heartbeat (alle 25s)
-  { thinker_id: "thinker-abc123", pair_code: "projekt_alpha", status: "online" }
-  ↓
-Backend (functions/api/presence/heartbeat.js)
-  ↓ In-Memory Store aktualisieren (last_seen)
+### Datenbank (Cloudflare D1)
 
-  ↓ POST /api/presence/match
-  { thinker_id: "thinker-abc123", pair_code: "projekt_alpha" }
-  ↓
-Backend (functions/api/presence/match.js)
-  ↓ Suche alle online Thinker mit gleichem pair_code
-  ↓ Wenn ≥ 2 gefunden → room_id zuweisen
-  ↓
-Response: { room_id: "room-projekt_alpha-xyz" }
-```
+**Schema**: `d1-schema.sql`
 
-### 4. WebSocket Live-Chat
-
-```
-Frontend (manifest-portal.html)
-  ↓ new WebSocket('wss://domain.com/ws')
-  ↓ ws.send({ type: 'join', room_id: 'room-123' })
-  ↓
-Backend (functions/ws.js)
-  ↓ globalThis.__signalRooms Map
-  ↓ Room-Verwaltung (join/leave)
-  ↓ Broadcast an alle im Room
-  ↓
-Frontend: ws.onmessage → Nachricht anzeigen
-```
-
-### 5. AI Gateway
-
-```
-Frontend (neural-network-console.html)
-  ↓ POST /api/ai/gateway
-  {
-    operation: "manifest.assist",
-    input: { content: "Text..." },
-    options: {}
-  }
-  ↓
-Backend (functions/api/ai/gateway.js)
-  ↓ switch (operation)
-  ↓ handleManifestAssist() → OpenAI GPT-4 oder Fallback
-  ↓ INSERT INTO events
-  ↓
-Response: { ok: true, result: { suggestedTitle: "...", tags: [...] } }
-```
-
----
-
-## 🗄️ Datenbank-Schema (D1)
-
-### Tabellen
-
-```sql
--- Vouchers
-CREATE TABLE vouchers (
-  id TEXT PRIMARY KEY,
-  issuer_uid TEXT NOT NULL,
-  holder_uid TEXT,
-  service_type TEXT NOT NULL,
-  title TEXT,
-  description TEXT,
-  duration_minutes INTEGER NOT NULL,
-  valid_from TEXT NOT NULL,
-  valid_until TEXT NOT NULL,
-  price_amount REAL,
-  price_currency TEXT,
-  status TEXT NOT NULL,
-  transferable INTEGER NOT NULL,
-  terms TEXT, -- JSON
-  created_at TEXT NOT NULL
-);
-
--- Buchungen
-CREATE TABLE voucher_bookings (
-  id TEXT PRIMARY KEY,
-  voucher_id TEXT NOT NULL,
-  issuer_uid TEXT NOT NULL,
-  holder_uid TEXT NOT NULL,
-  slot_id TEXT NOT NULL,
-  slot_start TEXT NOT NULL,
-  slot_end TEXT NOT NULL,
-  status TEXT NOT NULL,
-  cancel_reason TEXT,
-  created_at TEXT NOT NULL,
-  cancelled_at TEXT
-);
-
--- Events (Audit-Log)
-CREATE TABLE events (
-  id TEXT PRIMARY KEY,
-  type TEXT NOT NULL,
-  actor_id TEXT,
-  subject_type TEXT,
-  subject_id TEXT,
-  meta TEXT, -- JSON
-  created_at TEXT NOT NULL
-);
-
--- Rate Limiting
-CREATE TABLE rate_limits (
-  key TEXT PRIMARY KEY,
-  window_start TEXT NOT NULL,
-  count INTEGER NOT NULL
-);
-
--- Telbank Transfers
-CREATE TABLE transfers (
-  id TEXT PRIMARY KEY,
-  direction TEXT NOT NULL,
-  label TEXT,
-  wallet_address TEXT,
-  network TEXT,
-  crypto_amount REAL NOT NULL,
-  crypto_symbol TEXT NOT NULL,
-  fiat_amount REAL NOT NULL,
-  fiat_currency TEXT NOT NULL,
-  status TEXT NOT NULL,
-  created_at TEXT NOT NULL
-);
-```
-
----
-
-## 💡 Wichtige Code-Beispiele
-
-### Rate Limiting (Backend)
-
-```javascript
-async function checkRateLimit(env, key, limit = 60, windowMs = 60_000) {
-  const now = Date.now();
-  const windowStartCutoff = new Date(now - windowMs).toISOString();
-
-  const row = await env.DB.prepare(
-    'SELECT key, window_start, count FROM rate_limits WHERE key = ?'
-  ).bind(key).first();
-
-  if (row && row.window_start >= windowStartCutoff && row.count >= limit) {
-    return false; // Limit überschritten
-  }
-
-  const newWindowStart = row && row.window_start >= windowStartCutoff
-    ? row.window_start
-    : new Date(now).toISOString();
-  const newCount = row && row.window_start >= windowStartCutoff 
-    ? row.count + 1 
-    : 1;
-
-  await env.DB.prepare(
-    `INSERT INTO rate_limits (key, window_start, count)
-     VALUES (?, ?, ?)
-     ON CONFLICT(key) DO UPDATE SET window_start = excluded.window_start, count = excluded.count`
-  ).bind(key, newWindowStart, newCount).run();
-
-  return true;
-}
-```
-
-### Event-Logging (Backend)
-
-```javascript
-async function insertEvent(env, type, actorId, subjectType, subjectId, meta) {
-  const id = `ev-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-  const createdAt = new Date().toISOString();
-  await env.DB.prepare(
-    `INSERT INTO events (id, type, actor_id, subject_type, subject_id, meta, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  ).bind(
-    id, 
-    type, 
-    actorId || null, 
-    subjectType || null, 
-    subjectId || null, 
-    JSON.stringify(meta || {}), 
-    createdAt
-  ).run();
-}
-```
-
-### Voucher erstellen (Frontend)
-
-```javascript
-async function createVoucher(data) {
-  if (!VOUCHER_API_BASE) {
-    console.warn('API nicht verfügbar');
-    return null;
-  }
-  
-  const response = await fetch(`${VOUCHER_API_BASE}/voucher/issue`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-TS-APIKEY': API_KEY // Falls erforderlich
-    },
-    body: JSON.stringify({
-      issuerUid: getUserId(),
-      serviceType: data.serviceType,
-      title: data.title,
-      durationMinutes: data.durationMinutes,
-      validFrom: data.validFrom,
-      validUntil: data.validUntil,
-      price: data.price
-    })
-  });
-  
-  const result = await response.json();
-  return result.ok ? result.voucher : null;
-}
-```
-
-### Presence Heartbeat (Frontend)
-
-```javascript
-function startPresenceHeartbeat(thinkerId, pairCode) {
-  if (!PRESENCE_API_BASE) return;
-  
-  const interval = setInterval(async () => {
-    try {
-      await fetch(`${PRESENCE_API_BASE}/heartbeat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          thinker_id: thinkerId,
-          pair_code: pairCode,
-          status: 'online'
-        })
-      });
-    } catch (err) {
-      console.error('Heartbeat failed:', err);
-    }
-  }, 25000); // Alle 25 Sekunden
-  
-  return () => clearInterval(interval);
-}
-```
-
-### WebSocket Live-Chat (Frontend)
-
-```javascript
-function connectToRoom(roomId, thinkerId) {
-  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const ws = new WebSocket(`${protocol}//${location.host}/ws`);
-  
-  ws.addEventListener('open', () => {
-    ws.send(JSON.stringify({
-      type: 'join',
-      room_id: roomId,
-      thinker_id: thinkerId
-    }));
-  });
-  
-  ws.addEventListener('message', (event) => {
-    const msg = JSON.parse(event.data);
-    if (msg.type === 'message') {
-      appendMessage(msg.payload.text, msg.from);
-    }
-  });
-  
-  function sendMessage(text) {
-    ws.send(JSON.stringify({
-      type: 'message',
-      room_id: roomId,
-      thinker_id: thinkerId,
-      payload: { text }
-    }));
-  }
-  
-  return { ws, sendMessage };
-}
-```
+**Tabellen**:
+- `transfers` - TELBANK-Transfers
+- `vouchers` - Voucher-Daten
+- `events` - Event-Logging
+- `users` - User-Daten (optional)
 
 ---
 
 ## 🚀 Deployment
 
+### GitHub Pages
+
+1. Repository auf GitHub erstellen
+2. Dateien ins Root-Verzeichnis kopieren
+3. Commit & Push
+4. Repository Settings → Pages aktivieren
+5. Branch: `main` / `/ (root)`
+
+**URL-Format**: `https://USERNAME.github.io/togethersystems/`
+
 ### Cloudflare Pages
 
-1. **Repository verbinden:**
-   ```bash
-   # GitHub Repository → Cloudflare Pages
-   # Automatisches Deploy bei Push
-   ```
+1. Cloudflare-Account erstellen
+2. Pages-Projekt erstellen
+3. GitHub-Repository verbinden
+4. Build-Command: (kein Build nötig, statische Dateien)
+5. Deploy
 
-2. **D1 Database erstellen:**
-   ```bash
-   wrangler d1 create togethersystems-db
-   ```
+**URL-Format**: `https://your-project.pages.dev`
 
-3. **Schema initialisieren:**
-   ```bash
-   wrangler d1 execute togethersystems-db --file=d1-schema.sql
-   ```
+---
 
-4. **Environment Variables (wrangler.toml):**
-   ```toml
-   [env.production]
-   name = "ts-portal"
-   compatibility_date = "2024-01-01"
-   
-   [[env.production.d1_databases]]
-   binding = "DB"
-   database_name = "togethersystems-db"
-   database_id = "your-db-id"
-   
-   [env.production.vars]
-   TS_API_KEY = "your-api-key"
-   ```
+## 🧪 Testing
 
-5. **Deploy:**
-   ```bash
-   wrangler pages deploy . --project-name=ts-portal
-   ```
+### Playwright-Tests
 
-### GitHub Pages (Frontend-only)
+**Pfad**: `businessconnecthub-playwright-tests-full/`
 
 ```bash
-# Einfach Push zu main branch
-git push origin main
-
-# GitHub Pages wird automatisch aktualisiert
-# URL: https://myopenai.github.io/togethersystems/
+# Tests ausführen
+cd businessconnecthub-playwright-tests-full
+npm install
+npx playwright install --with-deps chromium
+npx playwright test --project=Chromium
 ```
 
+**Getestete Bereiche**:
+- Portal-Start (`index.html`)
+- Manifest-Forum (`manifest-forum.html`)
+- Online-Portal (`manifest-portal.html`)
+- Wabenräume (`honeycomb.html`)
+- Legal-Hub (`legal-hub.html`)
+- TELBANK (`TELBANK/index.html`)
+- Business-Admin (`business-admin.html`)
+- Admin-Monitoring (`admin-monitoring.html`)
+
 ---
 
-## 📚 Weiterführende Dokumentation
+## 🤝 Beitrag zum Projekt
 
-- `api-specification.yaml` - OpenAPI 3.0.3 Spezifikation
-- `d1-schema.sql` - Vollständiges Datenbank-Schema
-- `COMMUNICATION-HUB-ARCHITECTURE.md` - Presence & Matching Details
-- `DEVELOPMENT-GUIDE-TEL-PORTAL.md` - Telbank-Implementierung
+### Entwickler-Onboarding
+
+1. **Developer Portal öffnen**: `ultra/ui/developer-portal.html`
+2. **Job-Angebot lesen**: `JOB-ANGEBOT-ENTWICKLER.html`
+3. **Beta Portal testen**: `ultra/beta/index.html`
+
+### Entwicklungsprozess
+
+1. **Feature-Entwicklung**:
+   - Feature-Branch erstellen
+   - Code schreiben
+   - Tests schreiben
+   - Pull Request erstellen
+
+2. **Code-Standards**:
+   - Vanilla JavaScript (keine Frameworks)
+   - localStorage für Offline-Daten
+   - REST-APIs für Online-Funktionen
+   - WebSocket für Live-Features
+
+3. **Testing**:
+   - Playwright-Tests für E2E
+   - Manuelle Tests in verschiedenen Browsern
+   - Offline/Online-Szenarien testen
 
 ---
 
-**Motto:** "Wir bewegen die Welt. Die Welt bewegt uns. Ihnen kostet das Geld. Uns ist das egal."
+## 📖 Weitere Ressourcen
 
-**Branding:** MYOPENAi(C)R {MOAi(C)T,.&T,,.&T,,,.(C)INTERNATIONAL TTT,.}
+- **Businessplan**: https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf
+- **Forum**: https://tel1.boards.net/
+- **GoFundMe**: https://www.gofundme.com/f/magnitudo
+- **ORCID**: https://orcid.org/0009-0003-1328-2430
 
+---
 
+## 🎯 Vision
+
+**TogetherSystems** ist das erste vollautomatisierte Meta-Transaktionsportal ohne klassische Registrierung. Das System ermöglicht:
+
+- **Grenzenlose Teilnahme**: Jeder kann mitmachen
+- **Vollautomatisierung**: Keine manuellen Schritte nötig
+- **Offline-First**: Funktioniert auch ohne Internet
+- **Social Media UX**: Einfache Bedienung wie WhatsApp, LinkedIn
+
+**Unternehmensmotto**: `{T,. - Punkt. - T,,.}`
+
+---
+
+**Version:** 1.0.0  
+**Letzte Aktualisierung:** 27. November 2025  
+**Status:** 🟢 Produktionsreif
