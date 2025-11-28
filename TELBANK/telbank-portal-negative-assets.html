@@ -413,6 +413,7 @@
     </div>
   </div>
 
+  <script src="../js/telbank-api-real.js"></script>
   <script type="module">
     // Tab-Switching
     document.querySelectorAll('.tab').forEach(tab => {
@@ -427,109 +428,146 @@
     });
 
     async function loadTabData(tab) {
-      const env = window.location.hostname.includes('pages.dev') ? 'cloudflare' : 'github';
-      const apiBase = env === 'cloudflare' ? '/api' : null;
-
       switch(tab) {
         case 'assets':
-          await loadNegativeAssets(apiBase);
+          await loadNegativeAssets();
           break;
         case 'transformations':
-          await loadTransformations(apiBase);
+          await loadTransformations();
           break;
         case 'banks':
-          await loadBanks(apiBase);
+          await loadBanks();
           break;
         case 'ledger':
-          await loadLedger(apiBase);
+          await loadLedger();
           break;
         case 'import':
-          await loadImports(apiBase);
+          await loadImports();
           break;
       }
     }
 
     async function loadNegativeAssets(apiBase) {
       const tbody = document.getElementById('assetsTableBody');
-      if (!apiBase) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px;">API nicht verfügbar auf GitHub Pages. Bitte Cloudflare Pages verwenden.</td></tr>';
-        return;
-      }
+      const api = new TelbankRealAPI();
+      
       try {
-        const res = await fetch(`${apiBase}/telbank/negative-assets`);
-        const data = await res.json();
-        if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px;">Lade echte Daten...</td></tr>';
+        
+        const data = await api.getRealNegativeAssets();
+        const assets = Array.isArray(data) ? data : (data.results || []);
+        
+        if (assets.length === 0) {
           tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px;">Keine Negative Assets gefunden.</td></tr>';
           return;
         }
-        tbody.innerHTML = data.map(asset => `
+        
+        tbody.innerHTML = assets.map(asset => `
           <tr>
-            <td><code>${asset.neg_asset_id.slice(0, 8)}...</code></td>
+            <td><code>${asset.neg_asset_id ? asset.neg_asset_id.slice(0, 8) + '...' : 'N/A'}</code></td>
             <td>${asset.bank_name || 'N/A'}</td>
             <td>${asset.asset_class || 'N/A'}</td>
-            <td>${asset.currency_code}</td>
-            <td class="amount-negative">${formatCurrency(asset.nominal_amount, asset.currency_code)}</td>
-            <td><span class="status-badge status-${asset.status}">${asset.status}</span></td>
+            <td>${asset.currency_code || 'N/A'}</td>
+            <td class="amount-negative">${api.formatCurrency(asset.nominal_amount || 0, asset.currency_code || 'EUR')}</td>
+            <td><span class="status-badge status-${asset.status || 'reported'}">${asset.status || 'reported'}</span></td>
             <td>${asset.nullpoint_status || 'N/A'}</td>
-            <td>${new Date(asset.event_date).toLocaleDateString('de-DE')}</td>
+            <td>${asset.event_date ? api.formatDate(asset.event_date) : 'N/A'}</td>
           </tr>
         `).join('');
-        updateStats(data);
+        updateStats(assets);
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--danger);padding:32px;">Fehler: ${err.message}</td></tr>`;
+        console.error('Failed to load negative assets:', err);
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--danger);padding:32px;">Fehler beim Laden: ${err.message}</td></tr>`;
       }
     }
 
     async function loadTransformations(apiBase) {
       const tbody = document.getElementById('transformationsTableBody');
-      if (!apiBase) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">API nicht verfügbar auf GitHub Pages.</td></tr>';
-        return;
+      const api = new TelbankRealAPI();
+      
+      try {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Lade echte Daten...</td></tr>';
+        const data = await api.getRealTransformations();
+        const transformations = Array.isArray(data) ? data : [];
+        
+        if (transformations.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Keine Transformationen gefunden.</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = transformations.map(t => `
+          <tr>
+            <td><code>${t.transform_id ? t.transform_id.slice(0, 8) + '...' : 'N/A'}</code></td>
+            <td><code>${t.neg_asset_id ? t.neg_asset_id.slice(0, 8) + '...' : 'N/A'}</code></td>
+            <td>${t.action_type || 'N/A'}</td>
+            <td>${t.effect_amount ? api.formatCurrency(t.effect_amount, t.currency_code || 'EUR') : 'N/A'}</td>
+            <td><span class="status-badge status-${t.result_state || 'planned'}">${t.result_state || 'planned'}</span></td>
+            <td>${t.executed_at ? api.formatDate(t.executed_at) : 'N/A'}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error('Failed to load transformations:', err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:32px;">Fehler: ${err.message}</td></tr>`;
       }
-      // TODO: Implement
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Noch nicht implementiert.</td></tr>';
     }
 
     async function loadBanks(apiBase) {
       const tbody = document.getElementById('banksTableBody');
-      if (!apiBase) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">API nicht verfügbar auf GitHub Pages.</td></tr>';
-        return;
+      const api = new TelbankRealAPI();
+      
+      try {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Lade echte Daten...</td></tr>';
+        const data = await api.getRealBanks({ is_active: true });
+        const banks = Array.isArray(data) ? data : [];
+        
+        if (banks.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Keine Banken gefunden.</td></tr>';
+          return;
+        }
+        
+        tbody.innerHTML = banks.map(b => `
+          <tr>
+            <td><code>${b.bank_id ? b.bank_id.slice(0, 8) + '...' : 'N/A'}</code></td>
+            <td>${b.legal_name || 'N/A'}</td>
+            <td>${b.country_code || 'N/A'}</td>
+            <td>${b.bic_swift || 'N/A'}</td>
+            <td>${b.contact_email || 'N/A'}</td>
+            <td><span class="status-badge status-${b.onboarding_status || 'pending'}">${b.onboarding_status || 'pending'}</span></td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error('Failed to load banks:', err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:32px;">Fehler: ${err.message}</td></tr>`;
       }
-      // TODO: Implement
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Noch nicht implementiert.</td></tr>';
     }
 
     async function loadLedger(apiBase) {
       const tbody = document.getElementById('ledgerTableBody');
-      if (!apiBase) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">API nicht verfügbar auf GitHub Pages.</td></tr>';
-        return;
-      }
-      // TODO: Implement
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Noch nicht implementiert.</td></tr>';
+      // Ledger API would need to be implemented
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px;">Ledger API wird implementiert...</td></tr>';
     }
 
     async function loadImports(apiBase) {
       const tbody = document.getElementById('importTableBody');
-      if (!apiBase) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px;">API nicht verfügbar auf GitHub Pages.</td></tr>';
-        return;
-      }
-      // TODO: Implement
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px;">Noch nicht implementiert.</td></tr>';
-    }
-
-    function formatCurrency(amount, currency) {
-      return new Intl.NumberFormat('de-DE', { style: 'currency', currency: currency || 'EUR' }).format(amount);
+      // Import API would need to be implemented
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px;">Import API wird implementiert...</td></tr>';
     }
 
     function updateStats(assets) {
+      const api = new TelbankRealAPI();
       document.getElementById('statTotalAssets').textContent = assets.length;
       const total = assets.reduce((sum, a) => sum + (a.nominal_amount || 0), 0);
-      document.getElementById('statTotalExposure').textContent = formatCurrency(total, 'EUR');
+      document.getElementById('statTotalExposure').textContent = api.formatCurrency(total, 'EUR');
       document.getElementById('statInTransformation').textContent = assets.filter(a => a.status === 'in_transformation').length;
       document.getElementById('statBeyondNullpoint').textContent = assets.filter(a => a.nullpoint_status === 'beyond_nullpoint').length;
+      
+      // Load real banks count
+      api.getRealBanks({ is_active: true }).then(banks => {
+        const bankCount = Array.isArray(banks) ? banks.length : 0;
+        document.getElementById('statBanks').textContent = bankCount;
+      }).catch(err => {
+        console.error('Failed to load banks count:', err);
+      });
     }
 
     // Initial load

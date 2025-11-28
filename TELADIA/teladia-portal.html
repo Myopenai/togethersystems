@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TELADIA – Asset Exchange Sphere | Deutsche Bank Integration</title>
   <meta name="ts-branding" content="T,.&T,,.&T,,,.TELADIA(C)(R) | Deutsche Bank Integration">
-  <link rel="stylesheet" href="./teladia-cinema-style.css" />
+  <link rel="stylesheet" href="./teladia-db-original-style.css" />
   <style>
     /* Additional TELADIA-specific styles */
     .teladia-asset-grid {
@@ -423,7 +423,10 @@
     </div>
   </footer>
 
+  <script src="../js/teladia-api-real.js"></script>
   <script type="module">
+    const api = new TeladiaRealAPI();
+
     // Tab-Switching
     document.querySelectorAll('.teladia-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -432,54 +435,213 @@
         tab.classList.add('active');
         const tabId = 'tab' + tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1);
         document.getElementById(tabId)?.classList.add('active');
+        loadTabData(tab.dataset.tab);
       });
     });
 
-    // Exchange Form Logic
+    // Exchange Form Logic - REAL API
     const exchangeForm = document.querySelector('.teladia-exchange-form');
     if (exchangeForm) {
       const fromInput = exchangeForm.querySelector('input[type="number"]');
       const toInput = exchangeForm.querySelectorAll('input[type="number"]')[1];
       const fromSelect = exchangeForm.querySelector('select');
       const toSelect = exchangeForm.querySelectorAll('select')[1];
+      const executeBtn = document.querySelector('.teladia-btn-primary');
       
-      function calculateExchange() {
-        const amount = parseFloat(fromInput.value) || 0;
-        // Simplified exchange rate (would come from API)
-        const rate = 1.0; // Placeholder
-        toInput.value = (amount * rate).toFixed(2);
+      async function calculateRealExchange() {
+        const amount = parseFloat(fromInput.value);
+        if (!amount || amount <= 0) {
+          toInput.value = '';
+          return;
+        }
+
+        const from = fromSelect.value.split(' - ')[0];
+        const to = toSelect.value.split(' - ')[0];
+
+        try {
+          const rateData = await api.getRealExchangeRate(from, to);
+          if (rateData && rateData.rate) {
+            const result = amount * rateData.rate;
+            toInput.value = api.formatNumber(result, 2);
+          } else {
+            throw new Error('No exchange rate available');
+          }
+        } catch (error) {
+          console.error('Exchange rate calculation failed:', error);
+          toInput.value = '';
+          alert('Wechselkurs konnte nicht geladen werden. Bitte versuchen Sie es später erneut.');
+        }
       }
       
-      fromInput.addEventListener('input', calculateExchange);
-      fromSelect.addEventListener('change', calculateExchange);
-      toSelect.addEventListener('change', calculateExchange);
+      async function executeRealExchange() {
+        const amount = parseFloat(fromInput.value);
+        if (!amount || amount <= 0) {
+          alert('Bitte geben Sie einen gültigen Betrag ein.');
+          return;
+        }
+
+        const from = fromSelect.value.split(' - ')[0];
+        const to = toSelect.value.split(' - ')[0];
+        const toAmount = parseFloat(toInput.value);
+
+        try {
+          const rateData = await api.getRealExchangeRate(from, to);
+          const transaction = {
+            bank_id: 'TELADIA-BANK-001',
+            from_currency: from,
+            from_amount: amount,
+            to_currency: to,
+            to_amount: toAmount,
+            exchange_rate: rateData.rate
+          };
+
+          const result = await api.executeRealExchange(transaction);
+          if (result && result.transaction_id) {
+            alert(`Exchange erfolgreich! Transaction ID: ${result.transaction_id}`);
+            loadAssetStats(); // Reload stats
+            fromInput.value = '';
+            toInput.value = '';
+          }
+        } catch (error) {
+          console.error('Exchange execution failed:', error);
+          alert('Exchange konnte nicht ausgeführt werden. Bitte versuchen Sie es später erneut.');
+        }
+      }
+      
+      fromInput.addEventListener('input', calculateRealExchange);
+      fromSelect.addEventListener('change', calculateRealExchange);
+      toSelect.addEventListener('change', calculateRealExchange);
+      if (executeBtn) {
+        executeBtn.addEventListener('click', executeRealExchange);
+      }
     }
 
-    // Load Asset Stats (would come from API)
+    // Load REAL Asset Stats
     async function loadAssetStats() {
-      const env = window.location.hostname.includes('pages.dev') ? 'cloudflare' : 'github';
-      const apiBase = env === 'cloudflare' ? '/api' : null;
-      
-      if (!apiBase) {
-        // Demo data for GitHub Pages
-        document.getElementById('statFiat').textContent = '€15,730.50';
-        document.getElementById('statCrypto').textContent = '₿0.125';
-        document.getElementById('statDigital').textContent = '$5,000';
-        document.getElementById('statRealEstate').textContent = '€2,450,000';
-        return;
-      }
-      
       try {
-        // TODO: Implement API calls
-        const res = await fetch(`${apiBase}/teladia/assets`);
-        const data = await res.json();
-        // Update stats
-      } catch (err) {
-        console.error('Failed to load asset stats:', err);
+        const portfolio = await api.getRealPortfolio();
+        
+        if (portfolio && portfolio.assets) {
+          let fiatTotal = 0;
+          let cryptoTotal = 0;
+          let digitalTotal = 0;
+          let realEstateTotal = 0;
+
+          portfolio.assets.forEach(asset => {
+            const value = Math.abs(asset.total_value || 0);
+            if (asset.asset_class === 'DIGITAL_CURRENCY' || asset.asset_class === 'LOAN') {
+              fiatTotal += value;
+            } else if (asset.asset_class === 'DIGITAL_CURRENCY') {
+              cryptoTotal += value;
+            } else if (asset.asset_class === 'REAL_ESTATE') {
+              realEstateTotal += value;
+            }
+          });
+
+          if (portfolio.real_estate) {
+            portfolio.real_estate.forEach(property => {
+              realEstateTotal += property.valuation_amount || 0;
+            });
+          }
+
+          document.getElementById('statFiat').textContent = api.formatCurrency(fiatTotal, 'EUR');
+          document.getElementById('statCrypto').textContent = `₿${api.formatNumber(cryptoTotal, 8)}`;
+          document.getElementById('statDigital').textContent = `$${api.formatNumber(digitalTotal, 2)}`;
+          document.getElementById('statRealEstate').textContent = api.formatCurrency(realEstateTotal, 'EUR');
+        }
+      } catch (error) {
+        console.error('Failed to load real asset stats:', error);
+        // Show error state
+        document.getElementById('statFiat').textContent = 'Fehler';
+        document.getElementById('statCrypto').textContent = 'Fehler';
+        document.getElementById('statDigital').textContent = 'Fehler';
+        document.getElementById('statRealEstate').textContent = 'Fehler';
       }
     }
+
+    // Load Tab Data - REAL
+    async function loadTabData(tab) {
+      try {
+        if (tab === 'fiat') {
+          const assets = await api.getRealAssets('fiat');
+          renderAssets(assets, 'tabFiat');
+        } else if (tab === 'crypto') {
+          const assets = await api.getRealAssets('crypto');
+          renderAssets(assets, 'tabCrypto');
+        } else if (tab === 'digital') {
+          const assets = await api.getRealAssets('digital');
+          renderAssets(assets, 'tabDigital');
+        } else if (tab === 'real-estate') {
+          const realEstate = await api.getRealRealEstate();
+          renderRealEstate(realEstate, 'tabRealEstate');
+        } else if (tab === 'all') {
+          const portfolio = await api.getRealPortfolio();
+          renderAllAssets(portfolio, 'tabAll');
+        }
+      } catch (error) {
+        console.error(`Failed to load ${tab} data:`, error);
+      }
+    }
+
+    function renderAssets(assets, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container || !assets || !assets.assets) return;
+
+      const grid = container.querySelector('.teladia-asset-grid') || container;
+      grid.innerHTML = assets.assets.map(asset => `
+        <div class="teladia-asset-card">
+          <div class="teladia-asset-type">${asset.asset_class}</div>
+          <div class="teladia-asset-amount">${api.formatCurrency(Math.abs(asset.total_value || 0), asset.currency_code)}</div>
+          <div class="teladia-asset-currency">${asset.currency_code}</div>
+          <div class="teladia-asset-status">
+            <span class="teladia-status-dot"></span>
+            <span>${asset.asset_count || 0} Assets</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRealEstate(properties, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container || !properties || properties.length === 0) {
+        container.innerHTML = '<p>Keine Immobilien gefunden.</p>';
+        return;
+      }
+
+      const grid = container.querySelector('.teladia-asset-grid') || container;
+      grid.innerHTML = properties.map(property => `
+        <div class="teladia-asset-card">
+          <div class="teladia-asset-type">${property.property_type || 'Immobilie'}</div>
+          <div class="teladia-asset-amount">${api.formatCurrency(property.valuation_amount || 0, property.valuation_currency || 'EUR')}</div>
+          <div class="teladia-asset-currency">${property.address || 'N/A'}, ${property.city || 'N/A'}</div>
+          <div class="teladia-asset-status">
+            <span class="teladia-status-dot"></span>
+            <span>${property.status || 'active'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAllAssets(portfolio, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container || !portfolio) return;
+
+      const allAssets = [
+        ...(portfolio.assets || []),
+        ...(portfolio.real_estate || []).map(re => ({
+          asset_class: 'REAL_ESTATE',
+          currency_code: re.valuation_currency || 'EUR',
+          total_value: re.valuation_amount || 0,
+          asset_count: 1
+        }))
+      ];
+
+      renderAssets({ assets: allAssets }, containerId);
+    }
     
+    // Initial load
     loadAssetStats();
+    loadTabData('all');
   </script>
 </body>
 </html>
