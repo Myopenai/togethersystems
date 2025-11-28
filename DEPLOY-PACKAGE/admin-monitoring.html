@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Portal – Monitoring &amp; Events</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root{
+      --bg:#020617;
+      --fg:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#22c55e;
+      --border:#1f2937;
+      --card:#020617;
+      --font: system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;
+    }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:var(--font);
+      background:radial-gradient(circle at top,#0f172a 0,#020617 60%,#000 100%);
+      color:var(--fg);
+    }
+    .ts-brand-banner{
+      background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+      color:#e5e7eb;
+      padding:4px 12px;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong{font-weight:600;}
+    .ts-brand-sub{opacity:.78; display:block;}
+    .ts-brand-links a{
+      color:#a5b4fc;
+      text-decoration:none;
+      font-size:11px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+    .ts-brand-links a:hover{text-decoration:underline;}
+    main{
+      max-width:1000px;
+      margin:16px auto 40px;
+      padding:0 16px 40px;
+    }
+    h1{margin:0 0 4px;font-size:1.4rem;}
+    p{margin:0 0 4px;}
+    .muted{color:var(--muted);font-size:.85rem;}
+    .grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width:860px){
+      .grid{grid-template-columns:1fr;}
+    }
+    .card{
+      background:rgba(15,23,42,.96);
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,.35);
+      padding:14px 14px 16px;
+      box-shadow:0 18px 40px rgba(15,23,42,.8);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.6);
+      font-size:.75rem;
+    }
+    .pill.ok{border-color:#22c55e;color:#bbf7d0;}
+    .pill.warn{border-color:#eab308;color:#facc15;}
+    table{width:100%;border-collapse:collapse;font-size:.75rem;margin-top:8px;}
+    th,td{border-bottom:1px solid var(--border);padding:4px 6px;text-align:left;}
+    code{
+      font-size:.8rem;
+      background:rgba(15,23,42,.9);
+      padding:1px 4px;
+      border-radius:4px;
+      border:1px solid rgba(55,65,81,.9);
+    }
+    .badge{
+      display:inline-block;
+      padding:2px 6px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.6);
+      font-size:.7rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./honeycomb.html">Wabenräume</a>
+      <a href="./legal-hub.html">Legal-Hub</a>
+      <a href="TELBANK/index.html">💰 Telbank</a>
+      <a href="./business-admin.html">📊 Business-Admin</a>
+      <a href="./admin.html">Admin</a>
+      <a href="./admin-monitoring.html">Monitoring</a>
+    </div>
+  </div>
+  <main>
+    <header>
+      <h1>Monitoring</h1>
+      <p class="muted">
+        Übersicht der letzten Ereignisse aus dem Backend (Presence, Voucher, Mortgage, Telbank, Contracts, Telemetrie).
+        Diese Ansicht ist als technische Admin‑Konsole gedacht, nicht für Endnutzer:innen.
+      </p>
+    </header>
+    <section class="grid">
+      <article class="card">
+        <h2 style="margin:0 0 6px;font-size:1.05rem;">Ereignis-Stream (letzte 50)</h2>
+        <p class="muted">Quelle: <code>/api/admin/events</code> · Tabelle <code>events</code> in D1.</p>
+        <div id="eventsStatus" class="muted" style="margin-top:6px;">Lade Ereignisse …</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Zeit</th>
+              <th>Typ</th>
+              <th>Subjekt</th>
+            </tr>
+          </thead>
+          <tbody id="eventsTableBody">
+            <tr><td colspan="3" style="color:var(--muted);">Noch keine Daten.</td></tr>
+          </tbody>
+        </table>
+      </article>
+      <aside class="card">
+        <h2 style="margin:0 0 6px;font-size:1.05rem;">Kurzstatistik</h2>
+        <p class="muted">Einfache Aggregation der letzten Ereignisse nach Typ.</p>
+        <div id="summaryRow" style="margin-top:8px;">
+          <span class="pill ok">Gesamt: <span id="sumTotal">0</span></span>
+          <span class="pill">Voucher: <span id="sumVoucher">0</span></span>
+          <span class="pill">Hypotheken: <span id="sumMortgage">0</span></span>
+          <span class="pill">Transfers: <span id="sumTransfers">0</span></span>
+          <span class="pill warn">Telemetrie: <span id="sumTelemetry">0</span></span>
+        </div>
+        <ul class="muted" style="font-size:.8rem;margin-top:10px;padding-left:18px;">
+          <li><strong>Voucher</strong>: <code>voucher.issue</code>, <code>voucher.book</code>, <code>voucher.cancel</code></li>
+          <li><strong>Mortgage</strong>: <code>mortgage.application</code>, <code>mortgage.offer</code></li>
+          <li><strong>Transfers</strong>: <code>transfer.logged</code></li>
+          <li><strong>Telemetrie</strong>: <code>telemetry.event</code> (z.&nbsp;B. Rage‑Clicks)</li>
+        </ul>
+        <p class="muted" style="font-size:.75rem;margin-top:8px;">
+          Für detaillierte Auswertungen können dieselben Tabellen in Tools wie Supabase, Metabase oder Grafana verwendet werden.
+        </p>
+        <div id="autofix-stats" style="margin-top:12px;"></div>
+      </aside>
+    </section>
+  </main>
+  <script>
+  (function(){
+    const eventsStatus = document.getElementById('eventsStatus');
+    const eventsTableBody = document.getElementById('eventsTableBody');
+    const sumTotal = document.getElementById('sumTotal');
+    const sumVoucher = document.getElementById('sumVoucher');
+    const sumMortgage = document.getElementById('sumMortgage');
+    const sumTransfers = document.getElementById('sumTransfers');
+    const sumTelemetry = document.getElementById('sumTelemetry');
+
+    function e(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+    // Autofix-Status laden
+    async function loadAutofixStatus(){
+      try{
+        const res = await fetch('/api/autofix/status', {
+          headers:{'Accept':'application/json'}
+        });
+        if(!res.ok) return;
+        const data = await res.json();
+        if(data.ok && data.stats){
+          // Autofix-Statistiken anzeigen (optional, falls Element vorhanden)
+          const autofixInfo = document.getElementById('autofix-stats');
+          if(autofixInfo){
+            autofixInfo.innerHTML = `
+              <div style="margin-top:12px;padding:10px;background:#1f2937;border-radius:8px;border:1px solid #22c55e;">
+                <strong style="color:#22c55e;">🔧 Autofix-Status (24h)</strong>
+                <div style="margin-top:6px;font-size:12px;color:#9ca3af;">
+                  Gesamt: ${data.stats.total} | 
+                  Typen: ${Object.keys(data.stats.byType).length} | 
+                  Letzte: ${data.stats.recent.length}
+                </div>
+              </div>
+            `;
+          }
+        }
+      }catch(err){
+        console.warn('Autofix-Status konnte nicht geladen werden', err);
+      }
+    }
+
+    async function loadEvents(){
+      try{
+        eventsStatus.textContent = 'Lade Ereignisse …';
+        const res = await fetch('/api/admin/events?limit=50', {
+          headers:{'Accept':'application/json'}
+        });
+        const data = await res.json();
+        if(!data.ok){
+          eventsStatus.textContent = 'Fehler: '+(data.error || 'Unbekannter Fehler');
+          return;
+        }
+        const items = data.items || [];
+        eventsStatus.textContent = items.length
+          ? 'Letzte '+items.length+' Ereignisse'
+          : 'Keine Ereignisse gefunden.';
+
+        if(!items.length){
+          eventsTableBody.innerHTML = '<tr><td colspan="3" style="color:var(--muted);">Keine Daten.</td></tr>';
+        }else{
+          eventsTableBody.innerHTML = items.map(ev=>{
+            const t = ev.createdAt ? new Date(ev.createdAt).toLocaleString() : '';
+            const subj = (ev.subjectType || '—') + (ev.subjectId ? ' · '+ev.subjectId : '');
+            return '<tr>'
+              + '<td>'+e(t)+'</td>'
+              + '<td><span class="badge">'+e(ev.type || '—')+'</span></td>'
+              + '<td>'+e(subj)+'</td>'
+              + '</tr>';
+          }).join('');
+        }
+
+        // Summaries
+        const total = items.length;
+        const byType = {};
+        for(const ev of items){
+          const t = ev.type || 'unknown';
+          byType[t] = (byType[t] || 0) + 1;
+        }
+        sumTotal.textContent = String(total);
+        sumVoucher.textContent = String(
+          (byType['voucher.issue']||0) + (byType['voucher.book']||0) + (byType['voucher.cancel']||0)
+        );
+        sumMortgage.textContent = String(
+          (byType['mortgage.application']||0) + (byType['mortgage.offer']||0)
+        );
+        sumTransfers.textContent = String(byType['transfer.logged']||0);
+        sumTelemetry.textContent = String(byType['telemetry.event']||0);
+      }catch(err){
+        eventsStatus.textContent = 'Fehler beim Laden: '+(err?.message||String(err));
+      }
+    }
+
+    loadEvents();
+    loadAutofixStatus();
+    // Optional: alle 30 Sekunden aktualisieren
+    setInterval(loadEvents, 30000);
+    setInterval(loadAutofixStatus, 30000);
+  })();
+  </script>
+  <script type="module" src="./autofix-client.js"></script>
+</body>
+</html>
+
+

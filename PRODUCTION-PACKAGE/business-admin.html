@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Business-Admin – TogetherSystems Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root{
+      --bg:#020617;
+      --fg:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#22c55e;
+      --accent2:#38bdf8;
+      --border:#1f2937;
+      --card:#020617;
+      --font: system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;
+    }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:var(--font);
+      background:radial-gradient(circle at top,#0f172a 0,#020617 60%,#000 100%);
+      color:var(--fg);
+    }
+    .ts-brand-banner{
+      background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+      color:#e5e7eb;
+      padding:4px 12px;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong{font-weight:600;}
+    .ts-brand-sub{opacity:.78; display:block;}
+    .ts-brand-links a{
+      color:#a5b4fc;
+      text-decoration:none;
+      font-size:11px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+    .ts-brand-links a:hover{text-decoration:underline;}
+    main{
+      max-width:1100px;
+      margin:16px auto 40px;
+      padding:0 16px 40px;
+    }
+    h1{margin:0 0 4px;font-size:1.4rem;}
+    p{margin:0 0 4px;}
+    .muted{color:var(--muted);font-size:.85rem;}
+    .grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.5fr) minmax(0,1.1fr);
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr;}
+    }
+    .card{
+      background:rgba(15,23,42,.96);
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,.35);
+      padding:14px 14px 16px;
+      box-shadow:0 18px 40px rgba(15,23,42,.8);
+    }
+    .card h2{
+      margin:0 0 6px;
+      font-size:1.05rem;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.6);
+      font-size:.7rem;
+      background:rgba(15,23,42,.95);
+      color:var(--muted);
+    }
+    .pill-dot{
+      width:6px;
+      height:6px;
+      border-radius:999px;
+      background:#22c55e;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:.75rem;
+      margin-top:6px;
+    }
+    th,td{
+      border-bottom:1px solid var(--border);
+      padding:4px 6px;
+      text-align:left;
+    }
+    code{
+      font-size:.8rem;
+      background:rgba(15,23,42,.9);
+      padding:1px 4px;
+      border-radius:4px;
+      border:1px solid rgba(55,65,81,.9);
+    }
+    .badge{
+      display:inline-block;
+      padding:1px 5px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.6);
+      font-size:.7rem;
+    }
+    .badge.booked{border-color:#22c55e;color:#bbf7d0;}
+    .badge.cancelled{border-color:#f97373;color:#fee2e2;}
+    .badge.issued{border-color:#38bdf8;color:#bae6fd;}
+  </style>
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./honeycomb.html">Wabenräume</a>
+      <a href="./legal-hub.html">Legal-Hub</a>
+      <a href="TELBANK/index.html">💰 Telbank</a>
+      <a href="./business-admin.html">Business-Admin</a>
+      <a href="./admin-monitoring.html">Monitoring</a>
+    </div>
+  </div>
+  <main>
+    <header>
+      <h1>Business-Admin</h1>
+      <p class="muted">
+        Diese Ansicht zeigt dir, was dein Portal wirklich bereits leistet:
+        <strong>ausgestellte Vouchers</strong> (als Anbieter) und <strong>gebuchte Termine</strong> (als Kunde).
+        Alle Daten kommen direkt aus der D1-Datenbank.
+      </p>
+    </header>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Meine gebuchten Termine (als Kunde)</h2>
+        <p class="muted">
+          Übersicht aller Buchungen, bei denen du der <strong>Holder</strong> bist.
+          Die Daten stammen aus <code>voucher_bookings</code>.
+        </p>
+        <div id="holderInfo" class="muted" style="margin-top:4px;">Lade Holder-Info …</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Zeit</th>
+              <th>Service</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="holderBookingsBody">
+            <tr><td colspan="3" style="color:var(--muted);">Lade Daten …</td></tr>
+          </tbody>
+        </table>
+      </article>
+      <aside class="card">
+        <h2>Meine Vouchers &amp; Buchungen (als Anbieter)</h2>
+        <p class="muted">
+          Hier siehst du, welche Vouchers du ausgestellt hast und ob sie gebucht wurden.
+          Grundlage: <code>vouchers</code> + <code>voucher_bookings</code>.
+        </p>
+        <div id="issuerInfo" class="muted" style="margin-top:4px;">Lade Issuer-Info …</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Zeitraum</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="issuerVouchersBody">
+            <tr><td colspan="3" style="color:var(--muted);">Lade Daten …</td></tr>
+          </tbody>
+        </table>
+      </aside>
+    </section>
+  </main>
+  <script type="module">
+  import { getUserContext } from './mot-core.js';
+
+  (function(){
+    const { uid } = getUserContext();
+    const holderInfo = document.getElementById('holderInfo');
+    const issuerInfo = document.getElementById('issuerInfo');
+    const holderBody = document.getElementById('holderBookingsBody');
+    const issuerBody = document.getElementById('issuerVouchersBody');
+
+    holderInfo.textContent = 'Deine Browser-ID (HolderUid): ' + uid;
+    issuerInfo.textContent = 'Deine Browser-ID (IssuerUid): ' + uid;
+
+    function e(s){
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+      }[m]));
+    }
+
+    async function loadHolderBookings(){
+      try{
+        const res = await fetch('/api/voucher/bookings?holderUid='+encodeURIComponent(uid), {
+          headers:{'Accept':'application/json'}
+        });
+        const data = await res.json();
+        const items = (data && Array.isArray(data.items)) ? data.items : [];
+        if(!items.length){
+          holderBody.innerHTML = '<tr><td colspan=\"3\" style=\"color:var(--muted);\">Keine Buchungen gefunden.</td></tr>';
+          return;
+        }
+        holderBody.innerHTML = items.map(b=>{
+          const from = b.slotStart ? new Date(b.slotStart) : null;
+          const to = b.slotEnd ? new Date(b.slotEnd) : null;
+          const range = from && to
+            ? from.toLocaleDateString() + ' ' + from.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) +
+              ' – ' + to.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+            : '—';
+          const status = String(b.status||'').toLowerCase();
+          const badgeClass = status === 'booked' ? 'booked' : (status === 'cancelled' ? 'cancelled':'');
+          return '<tr>'
+            + '<td>'+e(range)+'</td>'
+            + '<td><code>'+e(b.voucherId||'—')+'</code></td>'
+            + '<td><span class=\"badge '+badgeClass+'\">'+e(b.status||'—')+'</span></td>'
+            + '</tr>';
+        }).join('');
+      }catch(err){
+        holderBody.innerHTML = '<tr><td colspan=\"3\" style=\"color:var(--muted);\">Fehler beim Laden: '+e(err?.message||String(err))+'</td></tr>';
+      }
+    }
+
+    async function loadIssuerVouchers(){
+      try{
+        const res = await fetch('/api/voucher/list?issuerUid='+encodeURIComponent(uid), {
+          headers:{'Accept':'application/json'}
+        });
+        const data = await res.json();
+        const items = (data && Array.isArray(data.items)) ? data.items : [];
+        if(!items.length){
+          issuerBody.innerHTML = '<tr><td colspan=\"3\" style=\"color:var(--muted);\">Keine Vouchers gefunden.</td></tr>';
+          return;
+        }
+        issuerBody.innerHTML = items.map(v=>{
+          const period = (v.validFrom||'').slice(0,10)+' – '+((v.validUntil||'').slice(0,10) || 'offen');
+          const status = String(v.status||'').toLowerCase();
+          const badgeClass =
+            status === 'booked' ? 'booked' :
+            status === 'issued' ? 'issued' :
+            status === 'cancelled' ? 'cancelled' : '';
+          return '<tr>'
+            + '<td>'+e(v.title||v.serviceType||v.voucherId||'—')+'</td>'
+            + '<td>'+e(period)+'</td>'
+            + '<td><span class=\"badge '+badgeClass+'\">'+e(v.status||'—')+'</span></td>'
+            + '</tr>';
+        }).join('');
+      }catch(err){
+        issuerBody.innerHTML = '<tr><td colspan=\"3\" style=\"color:var(--muted);\">Fehler beim Laden: '+e(err?.message||String(err))+'</td></tr>';
+      }
+    }
+
+    loadHolderBookings();
+    loadIssuerVouchers();
+  })();
+  </script>
+  <script type="module" src="./autofix-client.js"></script>
+</body>
+</html>
+
+
