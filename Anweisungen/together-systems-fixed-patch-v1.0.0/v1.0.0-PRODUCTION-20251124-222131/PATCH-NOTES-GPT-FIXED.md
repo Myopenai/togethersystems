@@ -139,15 +139,46 @@ Die konkrete notarielle / rechtliche Ausgestaltung hängt von der jeweiligen
 nationalen Gesetzgebung ab und muss **außerhalb** dieses Codes mit Fachjuristen
 und Notaren abgestimmt werden.
 
-## 5. Status
+## 5. TELADIA Integration (NEU - 2025-11-28)
+
+**Quelle:** `TELADIA-FIXED-PATCH-COMPLETE.md`, `FIXED-PATCH-BUNDLE-v1.0.0-COMPLETE.md`
+
+**Zusätzliche Fixes in dieser zweiten Lieferung:**
+
+* ✅ **ORCID URL aktiv und klickbar:**
+  * URL: [https://orcid.org/0009-0003-1328-2430](https://orcid.org/0009-0003-1328-2430)
+  * Aktiviert in allen HTML-Dateien mit korrektem Link-Format.
+
+* ✅ **TELADIA Bank sichtbar gemacht:**
+  * Link: `TELADIA/teladia-portal-redesign.html`
+  * Hinzugefügt in allen Navigationsmenüs (index.html, manifest-portal.html, manifest-forum.html, honeycomb.html, legal-hub.html).
+  * Styling: DB-Blau Gradient, 2px Border, Font-Weight 700.
+
+* ✅ **T,. Symbol vor jedem Menüpunkt:**
+  * CSS-Regel: `.ts-brand-links a::before { content: "T,."; }`
+  * Integriert in allen Seiten mit `.ts-brand-links`.
+
+* ✅ **Teladia Design System:**
+  * Erstellt: `css/teladia-unified-design-system.css`
+  * Enthält: Branding-Leiste, Design-Variablen, Panel-System.
+
+**Status:** ✅ TELADIA Integration vollständig implementiert und getestet.
+
+---
+
+## 6. Status
 
 Auf Basis der bereitgestellten Dokumentation gilt dieser Stand als:
 
 - **Deployment‑ready**
 - Alle bekannten Fehler laut `ALLE-FEHLER-BEHOBEN.md` und
   `ALLE-404-405-FEHLER-BEHOBEN.md` sind berücksichtigt.
+- ✅ **TELADIA Integration vollständig** (ORCID aktiv, TELADIA sichtbar, T,. Symbol integriert).
+- ✅ **Design System konsolidiert** (`css/teladia-unified-design-system.css`).
 - Geeignet als Referenz‑Snapshot für weitere Open‑Source‑Beiträge
   (Teladia / TogetherSystems / Manifest‑Projekt).
 
 Dieses `PATCH-NOTES-GPT-FIXED.md` dient als zusätzliche, zusammenfassende
 Beschreibung des vollständigen Fixed Patch Bundles für diese Produktionsversion.
+
+**Zweite Lieferung (2025-11-28):** Erweitert um TELADIA Integration und konsolidierte Dokumentation.
