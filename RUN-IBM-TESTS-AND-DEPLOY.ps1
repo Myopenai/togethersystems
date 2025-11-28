@@ -60,7 +60,7 @@ if (Get-Command wrangler -ErrorAction SilentlyContinue) {
 # Step 4: Deploy to Cloudflare Pages
 Write-Host "`nStep 4: Deploying to Cloudflare Pages..." -ForegroundColor Yellow
 if (Get-Command wrangler -ErrorAction SilentlyContinue) {
-    wrangler pages deploy . --project-name=togethersystems --compatibility-date=2024-01-01
+    wrangler pages deploy . --project-name=togethersystems
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✓ Cloudflare Pages deployment successful" -ForegroundColor Green
     } else {
