@@ -1035,15 +1035,27 @@
 
 
 <div id="thunderbit-crx-side-bar" style="display:block;opacity:1;pointer-events:all;top:0;right:0;z-index:9007199254740991;position:fixed;pointer-events:none;user-select:none;"><template shadowrootmode="open"><div id="#react-app-root"><div id="#react-app-slot" style="display:flex"></div></div></template></div><button id="open-side-panel" style="width:0;height:0;opacity:0;user-select:none;pointer-events:all;position:absolute;bottom:0;right:0;padding:0;border:0;outline:none;"></button></body></html>
+<script src="./js/error-guard.js"></script>
 <script type="module" src="./autofix-client.js"></script>
 <script>
 (function() {
-  if (!('serviceWorker' in navigator)) return;
+  // Environment Detection
+  const protocol = window.location.protocol;
+  const isFileProtocol = protocol === 'file:';
+  
+  // Only register Service Worker if not file:// protocol
+  if (!('serviceWorker' in navigator) || isFileProtocol) {
+    if (isFileProtocol) {
+      console.warn('[IBM] Service Worker skipped on file:// protocol');
+    }
+    return;
+  }
+  
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js').then(function(reg) {
-      console.log('Service Worker registriert:', reg.scope);
+      console.log('[IBM] Service Worker registriert:', reg.scope);
     }).catch(function(err) {
-      console.error('Service Worker Registrierung fehlgeschlagen:', err);
+      console.warn('[IBM] Service Worker Registrierung fehlgeschlagen:', err.message);
     });
   });
   })();
@@ -1051,4 +1063,3 @@
 <script src="./console-monitor.js"></script>
 <script src="./console-404-detector.js"></script>
 <script src="./http-resource-monitor-browser.js"></script>
-<script type="module" src="./js/error-guard.js"></script>
