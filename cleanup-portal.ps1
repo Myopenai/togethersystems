@@ -13,7 +13,6 @@ Write-Host ""
 $protectedFolders = @(
     "Settings",
     "backup",
-    "[.FREUNDSCHAFTSGESCHENK.T,.T,,.T,,,.]",
     "css",
     "js",
     "assets",
@@ -30,6 +29,8 @@ $protectedFolders = @(
     "startupsystems-kernel",
     "verification"
 )
+# Spezieller Ordner mit Sonderzeichen
+$protectedFoldersSpecial = "[.FREUNDSCHAFTSGESCHENK.T,.T,,.T,,,.]"
 
 # Dokumentationsdateien archivieren
 Write-Host "Archiviere Dokumentationsdateien..." -ForegroundColor Yellow
