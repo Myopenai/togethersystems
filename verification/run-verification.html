@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master Verification System - IBM XXXL</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #0f1419;
+      color: #e6eef3;
+    }
+    .header {
+      background: linear-gradient(135deg, #0018a8, #00a3e0);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .status.running {
+      background: #3b82f6;
+    }
+    .status.success {
+      background: #10b981;
+    }
+    .status.error {
+      background: #ef4444;
+    }
+    .results {
+      background: #151b23;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    pre {
+      background: #0a0e14;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    button {
+      background: #0018a8;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #0033cc;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🔍 Master Verification System</h1>
+    <p>IBM XXXL Standard - Comprehensive Localhost vs Online Verification</p>
+  </div>
+
+  <div>
+    <button onclick="runVerification()">Run Full Verification</button>
+    <button onclick="applyFixes()">Apply Fixes</button>
+    <button onclick="exportReport()">Export Report</button>
+  </div>
+
+  <div id="status" class="status" style="display:none;"></div>
+
+  <div class="results">
+    <h2>Verification Results</h2>
+    <pre id="verification-results">Click "Run Full Verification" to start...</pre>
+  </div>
+
+  <script type="module">
+    import { MasterVerificationSystem } from './master-verification-system.js';
+    import { LocalhostOnlineVerifier } from './localhost-vs-online-verifier.js';
+    import { ComprehensiveErrorFixer } from './comprehensive-error-fixer.js';
+    import { RealDataConnector } from './real-data-connector.js';
+
+    window.verificationSystem = new MasterVerificationSystem();
+
+    window.runVerification = async function() {
+      const statusEl = document.getElementById('status');
+      const resultsEl = document.getElementById('verification-results');
+      
+      statusEl.style.display = 'block';
+      statusEl.className = 'status running';
+      statusEl.textContent = '🔄 Running verification...';
+      resultsEl.textContent = 'Verification in progress...';
+
+      try {
+        const report = await window.verificationSystem.runFullVerification();
+        resultsEl.textContent = JSON.stringify(report, null, 2);
+        
+        statusEl.className = 'status success';
+        statusEl.textContent = '✅ Verification complete!';
+      } catch (error) {
+        statusEl.className = 'status error';
+        statusEl.textContent = `❌ Error: ${error.message}`;
+        resultsEl.textContent = `Error: ${error.message}\n\n${error.stack}`;
+      }
+    };
+
+    window.applyFixes = async function() {
+      const statusEl = document.getElementById('status');
+      statusEl.style.display = 'block';
+      statusEl.className = 'status running';
+      statusEl.textContent = '🔧 Applying fixes...';
+
+      try {
+        const fixes = await window.verificationSystem.applyFixes();
+        statusEl.className = 'status success';
+        statusEl.textContent = `✅ Applied ${fixes.length} fixes`;
+      } catch (error) {
+        statusEl.className = 'status error';
+        statusEl.textContent = `❌ Error: ${error.message}`;
+      }
+    };
+
+    window.exportReport = function() {
+      const report = window.verificationSystem.generateReport();
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `verification-report-${new Date().toISOString()}.json`;
+      a.click();
+    };
+  </script>
+</body>
+</html>
+
