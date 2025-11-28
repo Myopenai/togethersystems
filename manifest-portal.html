@@ -2647,6 +2647,34 @@ document.getElementById('navDocuments')?.addEventListener('click', ()=> {
 document.getElementById('navFinance')?.addEventListener('click', ()=> {
 	window.location.href = './TELBANK/index.html';
 });
+document.getElementById('navMessages')?.addEventListener('click', ()=> {
+	const messagesPanel = document.getElementById('messages-panel');
+	if (messagesPanel) {
+		// Alle Panels verstecken
+		document.querySelectorAll('.panel').forEach(p => {
+			if (p.id !== 'messages-panel') {
+				p.style.display = 'none';
+			}
+		});
+		// Nachrichten-Panel zeigen
+		messagesPanel.style.display = 'block';
+		// Scroll zu Panel
+		messagesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		// Button-Status aktualisieren
+		document.querySelectorAll('[id^="nav"]').forEach(btn => {
+			btn.classList.remove('btn');
+			btn.classList.add('btn', 'alt');
+		});
+		document.getElementById('navMessages')?.classList.remove('alt');
+		document.getElementById('navMessages')?.classList.add('btn');
+		// Lade Inbox
+		if (typeof window.loadMessagesInbox === 'function') {
+			window.loadMessagesInbox();
+		}
+	} else {
+		alert('Nachrichten-Bereich wird später implementiert');
+	}
+});
 
 // Kommunikations-Cockpit Buttons
 document.getElementById('actionMessage')?.addEventListener('click', ()=> {
