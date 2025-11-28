@@ -172,7 +172,7 @@
           <span class="teladia-badge">Fusion Ready</span>
         </div>
         <div class="teladia-hero-actions">
-          <button class="teladia-btn-primary">Live Demo starten</button>
+          <button class="teladia-btn-primary">Portal öffnen</button>
           <button class="teladia-btn-secondary">DB Integration anzeigen</button>
         </div>
       </div>
@@ -249,76 +249,26 @@
       </div>
 
       <div id="tabFiat" class="teladia-tab-content">
-        <div class="teladia-asset-grid">
-          <div class="teladia-asset-card">
-            <div class="teladia-asset-type">Sparkonto</div>
-            <div class="teladia-asset-amount">€12,450.00</div>
-            <div class="teladia-asset-currency">EUR</div>
-            <div class="teladia-asset-status">
-              <span class="teladia-status-dot"></span>
-              <span>Deutsche Bank</span>
-            </div>
-          </div>
-          <div class="teladia-asset-card">
-            <div class="teladia-asset-type">Girokonto</div>
-            <div class="teladia-asset-amount">€3,280.50</div>
-            <div class="teladia-asset-currency">EUR</div>
-            <div class="teladia-asset-status">
-              <span class="teladia-status-dot"></span>
-              <span>Deutsche Bank</span>
-            </div>
-          </div>
+        <div class="teladia-asset-grid" id="fiatAssetsGrid">
+          <div style="text-align:center;padding:32px;color:var(--text-muted);">Lade echte Fiat-Assets...</div>
         </div>
       </div>
 
       <div id="tabCrypto" class="teladia-tab-content">
-        <div class="teladia-asset-grid">
-          <div class="teladia-asset-card">
-            <div class="teladia-asset-type">Bitcoin</div>
-            <div class="teladia-asset-amount">₿0.125</div>
-            <div class="teladia-asset-currency">BTC</div>
-            <div class="teladia-asset-status">
-              <span class="teladia-status-dot"></span>
-              <span>Wallet</span>
-            </div>
-          </div>
-          <div class="teladia-asset-card">
-            <div class="teladia-asset-type">Ethereum</div>
-            <div class="teladia-asset-amount">Ξ2.45</div>
-            <div class="teladia-asset-currency">ETH</div>
-            <div class="teladia-asset-status">
-              <span class="teladia-status-dot"></span>
-              <span>Wallet</span>
-            </div>
-          </div>
+        <div class="teladia-asset-grid" id="cryptoAssetsGrid">
+          <div style="text-align:center;padding:32px;color:var(--text-muted);">Lade echte Crypto-Assets...</div>
         </div>
       </div>
 
       <div id="tabDigital" class="teladia-tab-content">
-        <div class="teladia-asset-grid">
-          <div class="teladia-asset-card">
-            <div class="teladia-asset-type">Stablecoins</div>
-            <div class="teladia-asset-amount">$5,000</div>
-            <div class="teladia-asset-currency">USDT</div>
-            <div class="teladia-asset-status">
-              <span class="teladia-status-dot"></span>
-              <span>Exchange</span>
-            </div>
-          </div>
+        <div class="teladia-asset-grid" id="digitalAssetsGrid">
+          <div style="text-align:center;padding:32px;color:var(--text-muted);">Lade echte Digital-Assets...</div>
         </div>
       </div>
 
       <div id="tabRealEstate" class="teladia-tab-content">
-        <div class="teladia-asset-grid">
-          <div class="teladia-asset-card">
-            <div class="teladia-asset-type">Real Estate Portfolio</div>
-            <div class="teladia-asset-amount">€2,450,000</div>
-            <div class="teladia-asset-currency">PROPERTY</div>
-            <div class="teladia-asset-status">
-              <span class="teladia-status-dot"></span>
-              <span>DB Partnership</span>
-            </div>
-          </div>
+        <div class="teladia-asset-grid" id="realEstateAssetsGrid">
+          <div style="text-align:center;padding:32px;color:var(--text-muted);">Lade echte Real-Estate-Assets...</div>
         </div>
       </div>
     </section>
@@ -342,7 +292,7 @@
               <option>ETH - Ethereum</option>
               <option>USDT - Tether</option>
             </select>
-            <input type="number" class="teladia-input" style="margin-top:12px;" placeholder="Betrag" />
+            <input type="number" class="teladia-input" style="margin-top:12px;" placeholder="Betrag eingeben" />
           </div>
           <div class="teladia-exchange-arrow">⇄</div>
           <div>
@@ -354,7 +304,7 @@
               <option>ETH - Ethereum</option>
               <option>USDT - Tether</option>
             </select>
-            <input type="number" class="teladia-input" style="margin-top:12px;" placeholder="Ergebnis" readonly />
+            <input type="number" class="teladia-input" style="margin-top:12px;" placeholder="Wird berechnet..." readonly />
           </div>
         </div>
         <div style="margin-top:24px;display:flex;gap:12px;">
@@ -580,6 +530,14 @@
         }
       } catch (error) {
         console.error(`Failed to load ${tab} data:`, error);
+        const containerId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
+        const container = document.getElementById(containerId);
+        if (container) {
+          const grid = container.querySelector('.teladia-asset-grid');
+          if (grid) {
+            grid.innerHTML = `<div style="text-align:center;padding:32px;color:var(--danger);">Fehler beim Laden: ${error.message}</div>`;
+          }
+        }
       }
     }
 
@@ -602,13 +560,14 @@
     }
 
     function renderRealEstate(properties, containerId) {
-      const container = document.getElementById(containerId);
-      if (!container || !properties || properties.length === 0) {
-        container.innerHTML = '<p>Keine Immobilien gefunden.</p>';
+      const grid = document.getElementById('realEstateAssetsGrid');
+      if (!grid) return;
+      
+      if (!properties || properties.length === 0) {
+        grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);">Keine Immobilien gefunden.</div>';
         return;
       }
 
-      const grid = container.querySelector('.teladia-asset-grid') || container;
       grid.innerHTML = properties.map(property => `
         <div class="teladia-asset-card">
           <div class="teladia-asset-type">${property.property_type || 'Immobilie'}</div>
@@ -624,7 +583,15 @@
 
     function renderAllAssets(portfolio, containerId) {
       const container = document.getElementById(containerId);
-      if (!container || !portfolio) return;
+      if (!container) return;
+
+      if (!portfolio) {
+        const grid = container.querySelector('.teladia-asset-grid');
+        if (grid) {
+          grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);">Keine Portfolio-Daten verfügbar.</div>';
+        }
+        return;
+      }
 
       const allAssets = [
         ...(portfolio.assets || []),
