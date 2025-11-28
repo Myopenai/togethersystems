@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<!-- saved from url=(0068)file:///D:/SPORWEGENNL/togethersystems-enterprise-upload-portal.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>TogetherSystems · Enterprise Universe Licensed Space T,.&amp;T,,. · Upload Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --ts-bg: #050816;
+            --ts-bg-soft: #0c1020;
+            --ts-accent: #4fd1c5;
+            --ts-accent-soft: rgba(79, 209, 197, 0.15);
+            --ts-border: rgba(255, 255, 255, 0.08);
+            --ts-text-main: #f9fafb;
+            --ts-text-sub: #9ca3af;
+            --ts-danger: #f97373;
+            --ts-success: #10b981;
+            --ts-warning: #f59e0b;
+            --ts-radius-lg: 18px;
+            --ts-radius-md: 12px;
+            --ts-shadow-xl: 0 22px 45px rgba(0, 0, 0, 0.6);
+            --ts-blur: 18px;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top, #1e293b 0, #020617 55%, #000 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+            color: var(--ts-text-main);
+        }
+        .ts-hover-wrapper {
+            position: relative;
+            width: min(1100px, 100vw - 32px);
+            aspect-ratio: 16 / 9;
+            border-radius: 24px;
+            overflow: hidden;
+            background: radial-gradient(circle at 10% 0, #22d3ee 0, #0b1120 45%, #020617 100%);
+            box-shadow: var(--ts-shadow-xl);
+        }
+        .ts-svg-shell {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .ts-svg-bg {
+            filter: saturate(1.1) contrast(1.05);
+        }
+        .ts-hotspot-rect {
+            fill: rgba(15, 23, 42, 0.18);
+            stroke: rgba(148, 163, 184, 0.7);
+            stroke-width: 1.5;
+            stroke-dasharray: 4 3;
+            cursor: pointer;
+            transition: all 180ms ease-out;
+        }
+        .ts-hotspot-rect:hover {
+            fill: rgba(15, 23, 42, 0.45);
+            stroke: var(--ts-accent);
+            stroke-width: 2;
+            stroke-dasharray: 0;
+        }
+        .ts-hotspot-label {
+            font-size: 12px;
+            font-family: system-ui, sans-serif;
+            fill: #e5e7eb;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+        .ts-info-frame {
+            position: absolute;
+            inset: 10% 2% 10% auto;
+            width: min(420px, 40%);
+            backdrop-filter: blur(var(--ts-blur));
+            background: rgba(3, 7, 18, 0.88);
+            border-radius: 26px;
+            border: 1px solid var(--ts-border);
+            box-shadow: var(--ts-shadow-xl);
+            padding: 18px 18px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            transform: translateX(16px) translateY(8px);
+            pointer-events: none;
+            transition: opacity 160ms ease-out, transform 160ms ease-out;
+            color: var(--ts-text-main);
+            z-index: 10;
+        }
+        .ts-info-frame.ts-visible {
+            opacity: 1;
+            transform: translateX(0) translateY(0);
+            pointer-events: auto;
+        }
+        .ts-info-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+        }
+        .ts-info-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: conic-gradient(from 120deg, #22d3ee, #6366f1, #a855f7, #22d3ee);
+            padding: 1px;
+            flex-shrink: 0;
+        }
+        .ts-info-logo-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 0, #0ea5e9 0, #020617 60%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e5e7eb;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+        .ts-info-title-block {
+            flex: 1;
+            min-width: 0;
+        }
+        .ts-info-title {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ts-info-subtitle {
+            font-size: 11px;
+            color: var(--ts-text-sub);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ts-badge-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .ts-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: var(--ts-text-sub);
+        }
+        .ts-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+        }
+        .ts-badge-pill {
+            border-color: var(--ts-accent);
+            background: var(--ts-accent-soft);
+            color: #e0f2f1;
+        }
+        .ts-tab-strip {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            padding: 4px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+        }
+        .ts-tab-btn {
+            flex: 1;
+            padding: 5px 8px;
+            border-radius: 999px;
+            border: none;
+            background: transparent;
+            color: var(--ts-text-sub);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: background 140ms ease-out, color 140ms ease-out;
+            white-space: nowrap;
+        }
+        .ts-tab-btn.ts-active {
+            background: var(--ts-accent-soft);
+            color: #e0f2f1;
+        }
+        .ts-tab-btn[data-tab="upload"].ts-active {
+            background: linear-gradient(to right, #f97316, #22c55e);
+            color: #0f172a;
+            font-weight: 600;
+        }
+        .ts-info-body {
+            margin-top: 4px;
+            padding-top: 4px;
+            font-size: 13px;
+            color: var(--ts-text-sub);
+            line-height: 1.5;
+            max-height: 260px;
+            overflow: auto;
+        }
+        .ts-tab-panel {
+            display: none;
+            animation: tsFadeIn 160ms ease-out;
+        }
+        .ts-tab-panel.ts-active {
+            display: block;
+        }
+        @keyframes tsFadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ts-paragraph {
+            margin: 0 0 8px;
+        }
+        .ts-paragraph strong {
+            color: var(--ts-text-main);
+        }
+        .ts-list {
+            margin: 0 0 8px 16px;
+            padding: 0;
+        }
+        .ts-list li {
+            margin-bottom: 4px;
+        }
+        .ts-pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 4px 0 10px;
+        }
+        .ts-pill {
+            font-size: 11px;
+            border-radius: 999px;
+            padding: 3px 8px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            background: rgba(15, 23, 42, 0.85);
+            color: var(--ts-text-main);
+            white-space: nowrap;
+        }
+        .ts-pill-primary {
+            border-color: var(--ts-accent);
+            background: var(--ts-accent-soft);
+        }
+        .ts-footer {
+            margin-top: 4px;
+            padding-top: 6px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.45);
+            font-size: 10px;
+            color: var(--ts-text-sub);
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .ts-footer-main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ts-contact-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .ts-contact-name {
+            font-weight: 600;
+            color: var(--ts-text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 10px;
+        }
+        .ts-contact-line {
+            display: flex;
+            gap: 6px;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+        .ts-contact-label {
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        a.ts-contact-link {
+            color: var(--ts-accent);
+            text-decoration: none;
+        }
+        a.ts-contact-link:hover {
+            text-decoration: underline;
+        }
+        .ts-legal {
+            opacity: 0.7;
+        }
+        /* --- UPLOAD-FLOAT-GALERIE --- */
+        .ts-upload-floats {
+            overflow: auto;
+            margin-top: 6px;
+        }
+        .ts-float-left,
+        .ts-float-right {
+            width: 45%;
+            max-width: 220px;
+            float: left;
+            margin: 0 10px 10px 0;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            padding: 6px;
+            text-align: center;
+        }
+        .ts-float-right {
+            float: right;
+            margin: 0 0 10px 10px;
+        }
+        .ts-float-left img,
+        .ts-float-right img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .ts-float-caption {
+            font-size: 11px;
+            color: var(--ts-text-sub, #9ca3af);
+            margin-top: 4px;
+        }
+        /* --- UPLOAD-FUNKTIONALITÄT --- */
+        .ts-upload-zone {
+            margin-top: 12px;
+            padding: 16px;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px dashed rgba(148, 163, 184, 0.4);
+            transition: all 200ms ease-out;
+            cursor: pointer;
+        }
+        .ts-upload-zone:hover {
+            border-color: var(--ts-accent);
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .ts-upload-zone.dragover {
+            border-color: var(--ts-success);
+            background: rgba(16, 185, 129, 0.1);
+            border-style: solid;
+        }
+        .ts-upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .ts-upload-text {
+            font-size: 12px;
+            color: var(--ts-text-sub);
+            text-align: center;
+        }
+        .ts-upload-text strong {
+            color: var(--ts-accent);
+        }
+        .ts-file-input {
+            display: none;
+        }
+        .ts-uploaded-files {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ts-file-item {
+            padding: 10px;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .ts-file-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .ts-file-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .ts-file-name {
+            font-weight: 600;
+            color: var(--ts-text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ts-file-meta {
+            font-size: 10px;
+            color: var(--ts-text-sub);
+            margin-top: 2px;
+        }
+        .ts-file-code {
+            font-family: 'Courier New', monospace;
+            font-size: 9px;
+            color: var(--ts-accent);
+            background: rgba(79, 209, 197, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+        .ts-file-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .ts-btn-icon {
+            background: transparent;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: var(--ts-text-sub);
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 140ms ease-out;
+        }
+        .ts-btn-icon:hover {
+            border-color: var(--ts-danger);
+            color: var(--ts-danger);
+        }
+        .ts-upload-progress {
+            margin-top: 8px;
+            height: 4px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .ts-upload-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--ts-accent), var(--ts-success));
+            transition: width 200ms ease-out;
+        }
+        @media (max-width: 900px) {
+            .ts-hover-wrapper {
+                aspect-ratio: 9 / 16;
+            }
+            .ts-info-frame {
+                inset: auto 4% 4% 4%;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ts-hover-wrapper">
+        <!-- Hintergrund / SVG mit Hotspots -->
+        <svg class="ts-svg-shell" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <lineargradient id="ts-bg-grad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#0f172a"></stop>
+                    <stop offset="50%" stop-color="#020617"></stop>
+                    <stop offset="100%" stop-color="#000000"></stop>
+                </lineargradient>
+                <lineargradient id="ts-upload-grad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#f97316"></stop>
+                    <stop offset="100%" stop-color="#22c55e"></stop>
+                </lineargradient>
+            </defs>
+            <!-- Basisfläche -->
+            <rect x="0" y="0" width="1600" height="900" fill="url(#ts-bg-grad)" class="ts-svg-bg"></rect>
+            <!-- Dekorative Kreise / Netzwerk -->
+            <circle cx="250" cy="220" r="90" fill="rgba(56,189,248,0.16)"></circle>
+            <circle cx="480" cy="360" r="140" fill="rgba(59,130,246,0.18)"></circle>
+            <circle cx="780" cy="260" r="110" fill="rgba(129,140,248,0.15)"></circle>
+            <circle cx="1150" cy="360" r="150" fill="rgba(56,189,248,0.14)"></circle>
+            <circle cx="1330" cy="190" r="80" fill="rgba(45,212,191,0.18)"></circle>
+            <!-- Hotspot: Verifizierungsportal -->
+            <rect x="190" y="150" width="230" height="130" rx="12" class="ts-hotspot-rect" data-key="portal"></rect>
+            <text x="205" y="185" class="ts-hotspot-label">VERIFIZIERUNGSPORTAL</text>
+            <!-- Hotspot: Karriereportal -->
+            <rect x="450" y="330" width="260" height="150" rx="12" class="ts-hotspot-rect" data-key="karriere"></rect>
+            <text x="465" y="365" class="ts-hotspot-label">KARRIERE &amp; KANDIDATEN</text>
+            <!-- Hotspot: Streaming -->
+            <rect x="1020" y="330" width="280" height="160" rx="12" class="ts-hotspot-rect" data-key="streaming"></rect>
+            <text x="1035" y="365" class="ts-hotspot-label">STREAMING &amp; MEDIA HUB</text>
+            <!-- Hotspot: Upload / TTT Assets -->
+            <rect x="760" y="620" width="260" height="150" rx="12" class="ts-hotspot-rect" data-key="upload"></rect>
+            <text x="775" y="655" class="ts-hotspot-label">UPLOAD · TTT ASSETS</text>
+        </svg>
+
+        <!-- Info Frame -->
+        <div class="ts-info-frame ts-visible" id="tsInfoFrame">
+            <div class="ts-info-header">
+                <div class="ts-info-logo">
+                    <div class="ts-info-logo-inner">TS</div>
+                </div>
+                <div class="ts-info-title-block">
+                    <div class="ts-info-title" id="tsInfoTitle">TogetherSystems · TTT Upload &amp; Assets</div>
+                    <div class="ts-info-subtitle" id="tsInfoSubtitle">TTT-Emblem &amp; Produktbild · Enterprise Universe Licensed Space T,.&amp;T,,.</div>
+                    <div class="ts-badge-row">
+                        <div class="ts-badge">
+                            <span class="ts-badge-dot"></span> Live Portal
+                        </div>
+                        <div class="ts-badge ts-badge-pill">T,.&amp;T,,. · INTERNATIONAL</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ts-tab-strip">
+                <button class="ts-tab-btn" data-tab="portal">Portal</button>
+                <button class="ts-tab-btn" data-tab="karriere">Karriere</button>
+                <button class="ts-tab-btn" data-tab="streaming">Streaming</button>
+                <button class="ts-tab-btn ts-active" data-tab="upload">Upload</button>
+            </div>
+            <div class="ts-info-body">
+                <!-- TAB: PORTAL -->
+                <section class="ts-tab-panel" data-tab-content="portal">
+                    <p class="ts-paragraph">
+                        <strong>Verifizierungsportal = Maschinencode-Branding.</strong><br>
+                        Jeder Eintrag erhält einen eindeutigen Code, einen optionalen notariellen Zeitstempel und kann so als Nachweis für Eigentums- und Urheberrechte dienen (C).
+                    </p>
+                    <p class="ts-paragraph">
+                        Der Zugang erfolgt über das TogetherSystems-Portal:<br>
+                        <code>https://myopenai.github.io/togethersystems/</code>
+                    </p>
+                    <ul class="ts-list">
+                        <li>Offline-fähig, ohne externe URLs nutzbar</li>
+                        <li>Maschinencode als Branding-Layer für Projekte, Profile und Dokumente</li>
+                        <li>Optionale notarielle Bestätigung mit Zeitstempel</li>
+                        <li>Ausbau für Börsenführung, Monitoring &amp; Neural Networks vorbereitet</li>
+                    </ul>
+                    <p class="ts-paragraph">
+                        Branding-Signatur:<br>
+                        <code>T,.&amp;T,,.&amp;T,,,.TOGETHERSYSTEMS. INTERNATIONAL T,.&amp;T,,.T,,,.(C)</code>
+                    </p>
+                </section>
+
+                <!-- TAB: KARRIERE -->
+                <section class="ts-tab-panel" data-tab-content="karriere">
+                    <p class="ts-paragraph">
+                        <strong>Firmen-Leitspruch für Kandidaten:</strong><br>
+                        <em>„Wer nicht will, macht nicht mit."</em><br>
+                        TogetherSystems richtet sich an Menschen, die wirklich wollen – qualifiziert oder noch nicht qualifiziert.
+                    </p>
+                    <p class="ts-paragraph">
+                        Wir öffnen das Portal bewusst auch für Kandidatinnen und Kandidaten, die <strong>noch nicht alle klassischen Anforderungen</strong> erfüllen, aber:
+                    </p>
+                    <ul class="ts-list">
+                        <li>bereit sind, Verantwortung zu übernehmen,</li>
+                        <li>Lernwille und Neugier mitbringen,</li>
+                        <li>in klaren, nachvollziehbaren Strukturen arbeiten möchten.</li>
+                    </ul>
+                    <p class="ts-paragraph">
+                        Das Verifizierungsportal dokumentiert deinen Werdegang, Skills und Projekte – maschinenlesbar, revisionssicher und jederzeit exportierbar.
+                    </p>
+                    <div class="ts-pill-row">
+                        <span class="ts-pill ts-pill-primary">Kandidaten-Branding</span>
+                        <span class="ts-pill">Skill-Verifizierung</span>
+                        <span class="ts-pill">Offene Einstiegs-Chancen</span>
+                        <span class="ts-pill">Offline &amp; Online nutzbar</span>
+                    </div>
+                </section>
+
+                <!-- TAB: STREAMING -->
+                <section class="ts-tab-panel" data-tab-content="streaming">
+                    <p class="ts-paragraph">
+                        <strong>Streaming &amp; Media Hub.</strong><br>
+                        Alle relevanten Streaming-Dienste können als Informations-, Lern- oder Branding-Kanäle an das Portal angehängt werden.
+                    </p>
+                    <p class="ts-paragraph">
+                        Beispiele für angebundene Dienste (frei konfigurierbar):
+                    </p>
+                    <div class="ts-pill-row">
+                        <span class="ts-pill">Netflix</span>
+                        <span class="ts-pill">Amazon Prime Video</span>
+                        <span class="ts-pill">Disney+</span>
+                        <span class="ts-pill">Apple TV+</span>
+                        <span class="ts-pill">Paramount+</span>
+                        <span class="ts-pill">Hulu</span>
+                        <span class="ts-pill">HBO Max / Max</span>
+                        <span class="ts-pill">YouTube</span>
+                        <span class="ts-pill">Spotify</span>
+                        <span class="ts-pill">Deezer</span>
+                        <span class="ts-pill">Tidal</span>
+                    </div>
+                    <p class="ts-paragraph">
+                        Nutzungsszenarien:
+                    </p>
+                    <ul class="ts-list">
+                        <li>Schulungs-Playlists für neue Kandidaten</li>
+                        <li>Branding-Kanäle für Unternehmens-Content</li>
+                        <li>Dokumentationen &amp; Fachinhalte für Weiterbildung</li>
+                        <li>Verlinkung von öffentlichen Profilen und Auftritten</li>
+                    </ul>
+                    <p class="ts-paragraph">
+                        Die konkrete technische Anbindung erfolgt <strong>modular</strong>: Links, Embeds, API-Integrationen oder rein interne Referenzen – je nach Sicherheits- und Datenschutzanforderung.
+                    </p>
+                </section>
+
+                <!-- TAB: UPLOAD -->
+                <section class="ts-tab-panel ts-active" data-tab-content="upload">
+                    <p class="ts-paragraph">
+                        <strong>TTT · Upload &amp; Branding-Galerie.</strong><br>
+                        Hier werden die visuellen Kern-Assets des Systems eingebunden: das <strong>TTT-Emblem</strong> und das Produktbild aus deinem Test-/Erfahrungsbericht (YoFood / Mahlzeitenersatz).
+                    </p>
+                    <div class="ts-upload-floats">
+                        <!-- Linke Float-Box: TTT-Logo -->
+                        <figure class="ts-float-left">
+                            <!-- Bild 1: SVG-Logo -->
+                            <img src="./TogetherSystems · Enterprise Universe Licensed Space T,.&amp;T,,. · Upload Portal_files/TTT_final.svg" alt="TTT Emblem · Maschinencode-Siegel" onerror="this.style.display=&#39;none&#39; this.nextElementSibling.style.display=&#39;block&#39;">
+                            <div style="display:none; padding:20px; color:var(--ts-text-sub); font-size:11px;">
+                                TTT Emblem<br>[SVG nicht gefunden]
+                            </div>
+                            <figcaption class="ts-float-caption">
+                                TTT · Maschinencode-Emblem<br>
+                                【 SFORMEMBER.T,.AG.CO.AG.T,,. 】
+                            </figcaption>
+                        </figure>
+                        <!-- Rechte Float-Box: Produktfoto -->
+                        <figure class="ts-float-right">
+                            <!-- Bild 2: Produktfoto aus deinem Ordner -->
+                            <img src="./TogetherSystems · Enterprise Universe Licensed Space T,.&amp;T,,. · Upload Portal_files/A_photograph_captures_a_meal_replacement_beverage_.svg" alt="Produktfoto · Mahlzeitenersatz / YoFood" onerror="this.style.display=&#39;none&#39; this.nextElementSibling.style.display=&#39;block&#39;">
+                            <div style="display:none; padding:20px; color:var(--ts-text-sub); font-size:11px;">
+                                Produktbild<br>[SVG nicht gefunden]
+                            </div>
+                            <figcaption class="ts-float-caption">
+                                Produktbild · Mahlzeitenersatz<br>
+                                Test- &amp; Eigenerfahrungsbericht (DR.TEL)
+                            </figcaption>
+                        </figure>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <p class="ts-paragraph">
+                        Beide Bilder sind fester Bestandteil des Upload- / Branding-Prozesses: Das <strong>TTT-Emblem</strong> steht für das <em>ABSOLUTES SYSTEM – TTT Enterprise Universe</em>, das Produktfoto visualisiert den realen Anwendungsfall im TogetherSystems-Portal.
+                    </p>
+                    
+                    <!-- UPLOAD-FUNKTIONALITÄT -->
+                    <div class="ts-upload-zone" id="uploadZone" onclick="document.getElementById(&#39;fileInput&#39;).click()">
+                        <div class="ts-upload-icon">📤</div>
+                        <div class="ts-upload-text">
+                            <strong>Drag &amp; Drop</strong> Dateien hier oder <strong>klicken zum Auswählen</strong>
+                        </div>
+                        <input type="file" id="fileInput" class="ts-file-input" multiple="" accept="image/*,application/pdf,.svg,.png,.jpg,.jpeg,.gif,.webp">
+                    </div>
+                    
+                    <div class="ts-uploaded-files" id="uploadedFiles"></div>
+                </section>
+            </div>
+
+            <!-- Footer / Kontakt & Info zum Schluss -->
+            <footer class="ts-footer">
+                <div class="ts-footer-main">
+                    <div class="ts-contact-block">
+                        <div class="ts-contact-name">RAYMOND DEMITRO</div>
+                        <div class="ts-contact-line">
+                            <span class="ts-contact-label">Tel:</span>
+                            <a class="ts-contact-link" href="tel:+31613803782">(+31) 6 138 03 782</a>
+                        </div>
+                        <div class="ts-contact-line">
+                            <span class="ts-contact-label">ORCID:</span>
+                            <a class="ts-contact-link" href="https://orcid.org/0009-0003-1328-2430" target="_blank" rel="noreferrer">0009-0003-1328-2430</a>
+                        </div>
+                    </div>
+                    <div class="ts-contact-block">
+                        <div class="ts-contact-line">
+                            <span class="ts-contact-label">Portal:</span>
+                            <a class="ts-contact-link" href="https://myopenai.github.io/togethersystems/index.html" target="_blank" rel="noreferrer">TogetherSystems · Online-Portal</a>
+                        </div>
+                        <div class="ts-contact-line">
+                            <span class="ts-contact-label">Leitfaden:</span>
+                            <span>„Wer nicht will, macht nicht mit."</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ts-legal">
+                    (C) TogetherSystems International · Maschinencode-Branding mit optionalem notariellem Zeitstempel. Keine Rechtsberatung – Nutzung auf eigenes Risiko.
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const frame = document.getElementById("tsInfoFrame");
+            const titleEl = document.getElementById("tsInfoTitle");
+            const subtitleEl = document.getElementById("tsInfoSubtitle");
+            const hotspots = document.querySelectorAll(".ts-hotspot-rect");
+            const tabButtons = document.querySelectorAll(".ts-tab-btn");
+            const panels = document.querySelectorAll(".ts-tab-panel");
+            const uploadZone = document.getElementById("uploadZone");
+            const fileInput = document.getElementById("fileInput");
+            const uploadedFiles = document.getElementById("uploadedFiles");
+            
+            // Uploaded files storage
+            let uploadedFilesList = (function() { try { return JSON.parse(localStorage.getItem('ts_uploaded_files'); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '[]');
+
+            const hotspotConfig = {
+                portal: {
+                    title: "TogetherSystems · Verifizierungsportal",
+                    subtitle: "Maschinencode-Branding (C) · Notarielle Zeitstempel · Eigentumsrecht",
+                    tab: "portal",
+                },
+                karriere: {
+                    title: "TogetherSystems · Karriere & Kandidaten",
+                    subtitle: "Wer nicht will, macht nicht mit · Chancen auch ohne Abschluss",
+                    tab: "karriere",
+                },
+                streaming: {
+                    title: "TogetherSystems · Streaming & Media Hub",
+                    subtitle: "Anbindung von Lern- & Branding-Kanälen an das Portal",
+                    tab: "streaming",
+                },
+                upload: {
+                    title: "TogetherSystems · TTT Upload & Assets",
+                    subtitle: "TTT-Emblem & Produktbild · Enterprise Universe Licensed Space T,.&T,,.",
+                    tab: "upload",
+                },
+            };
+
+            function activateTab(name) {
+                tabButtons.forEach((btn) => {
+                    btn.classList.toggle("ts-active", btn.dataset.tab === name);
+                });
+                panels.forEach((panel) => {
+                    panel.classList.toggle("ts-active", panel.dataset.tabContent === name);
+                });
+            }
+
+            tabButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    activateTab(btn.dataset.tab);
+                });
+            });
+
+            hotspots.forEach((hs) => {
+                const key = hs.dataset.key;
+                hs.addEventListener("mouseenter", () => {
+                    const cfg = hotspotConfig[key];
+                    if (!cfg) return;
+                    titleEl.textContent = cfg.title;
+                    subtitleEl.textContent = cfg.subtitle;
+                    activateTab(cfg.tab);
+                    frame.classList.add("ts-visible");
+                });
+            });
+
+            // Standard: Portal-Tab aktiv, Frame sichtbar
+            activateTab("portal");
+            frame.classList.add("ts-visible");
+
+            // ==================== UPLOAD-FUNKTIONALITÄT ====================
+            
+            // Generate TTT Machine Code
+            function generateTTTCode(fileName, fileSize, timestamp) {
+                const hash = btoa(fileName + fileSize + timestamp).substring(0, 8).replace(/[^A-Z0-9]/g, '');
+                const country = 'INT'; // International
+                const notarId = 'TEL1';
+                return `SFM-${country}-${notarId}-${hash}-T,.&T,,.`;
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+            }
+
+            // Get file icon
+            function getFileIcon(fileName) {
+                const ext = fileName.split('.').pop().toLowerCase();
+                const icons = {
+                    'svg': '🎨', 'png': '🖼️', 'jpg': '🖼️', 'jpeg': '🖼️', 'gif': '🖼️', 'webp': '🖼️',
+                    'pdf': '📄', 'doc': '📝', 'docx': '📝', 'txt': '📄',
+                    'zip': '📦', 'rar': '📦', '7z': '📦',
+                    'mp3': '🎵', 'mp4': '🎬', 'avi': '🎬', 'mov': '🎬'
+                };
+                return icons[ext] || '📎';
+            }
+
+            // Display uploaded file
+            function displayFile(fileData) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'ts-file-item';
+                fileItem.dataset.fileId = fileData.id;
+                
+                const timestamp = new Date(fileData.timestamp);
+                const fileIcon = getFileIcon(fileData.name);
+                
+                fileItem.innerHTML = `
+                    <div class="ts-file-icon">${fileIcon}</div>
+                    <div class="ts-file-info">
+                        <div class="ts-file-name">${fileData.name}</div>
+                        <div class="ts-file-meta">
+                            ${formatFileSize(fileData.size)} · ${timestamp.toLocaleString('de-DE')}
+                        </div>
+                        <div class="ts-file-code" title="TTT Maschinencode">${fileData.tttCode}</div>
+                    </div>
+                    <div class="ts-file-actions">
+                        <button class="ts-btn-icon" onclick="downloadFile('${fileData.id}')" title="Download">⬇️</button>
+                        <button class="ts-btn-icon" onclick="deleteFile('${fileData.id}')" title="Löschen">🗑️</button>
+                    </div>
+                `;
+                
+                uploadedFiles.appendChild(fileItem);
+            }
+
+            // Process file upload
+            function processFile(file) {
+                const timestamp = Date.now();
+                const tttCode = generateTTTCode(file.name, file.size, timestamp);
+                
+                const fileData = {
+                    id: 'file_' + timestamp + '_' + Math.random().toString(36).substr(2, 9),
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    timestamp: timestamp,
+                    tttCode: tttCode,
+                    dataUrl: null // Will be set after reading
+                };
+
+                // Read file as data URL for preview/storage
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileData.dataUrl = e.target.result;
+                    uploadedFilesList.push(fileData);
+                    localStorage.setItem('ts_uploaded_files', JSON.stringify(uploadedFilesList));
+                    displayFile(fileData);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Drag & Drop handlers
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files);
+                files.forEach(processFile);
+            });
+
+            // File input handler
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                files.forEach(processFile);
+                fileInput.value = ''; // Reset input
+            });
+
+            // Download file
+            window.downloadFile = function(fileId) {
+                const fileData = uploadedFilesList.find(f => f.id === fileId);
+                if (!fileData || !fileData.dataUrl) {
+                    alert('Datei nicht gefunden');
+                    return;
+                }
+                
+                const link = document.createElement('a');
+                link.href = fileData.dataUrl;
+                link.download = fileData.name;
+                link.click();
+            };
+
+            // Delete file
+            window.deleteFile = function(fileId) {
+                if (!confirm('Datei wirklich löschen?')) return;
+                
+                uploadedFilesList = uploadedFilesList.filter(f => f.id !== fileId);
+                localStorage.setItem('ts_uploaded_files', JSON.stringify(uploadedFilesList));
+                
+                const fileItem = document.querySelector(`[data-file-id="${fileId}"]`);
+                if (fileItem) fileItem.remove();
+            };
+
+            // Load existing files on page load
+            uploadedFilesList.forEach(displayFile);
+        })();
+    </script>
+
+
+
+</body></html>
