@@ -61,18 +61,33 @@ class TpgaTelbankApp {
   }
 
   async connectWallet() {
-    if (!window.ethereum) {
+    // Verwende MetaMask Detector falls verfügbar
+    const metaMaskDetector = window.MetaMaskDetector;
+    let ethereumProvider = null;
+    
+    if (metaMaskDetector && metaMaskDetector.isAvailable()) {
+      ethereumProvider = metaMaskDetector.getProvider();
+      console.log('[TELBANK] MetaMask erkannt via Detector');
+    } else if (window.ethereum) {
+      ethereumProvider = window.ethereum;
+      console.log('[TELBANK] MetaMask erkannt via window.ethereum');
+    } else {
       alert(
         "MetaMask (oder eine kompatible Wallet) wurde nicht gefunden. Bitte installiere MetaMask in deinem Browser."
       );
       return;
     }
+    
+    if (!ethereumProvider) {
+      alert("Ethereum Provider nicht verfügbar.");
+      return;
+    }
     try {
       this.$connectButton.disabled = true;
-      const accounts = await window.ethereum.request({
+      const accounts = await ethereumProvider.request({
         method: "eth_requestAccounts",
       });
-      const chainId = await window.ethereum.request({ method: "eth_chainId" });
+      const chainId = await ethereumProvider.request({ method: "eth_chainId" });
       this.address = accounts && accounts[0] ? accounts[0] : null;
       this.chainId = chainId;
       this.updateWalletUi();
