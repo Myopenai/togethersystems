@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TPGA Telbank – T,.&T,,.&T,,,.(C)TEL1.NL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+    /* TogetherSystems Branding-Leiste */
+    .ts-brand-banner{
+      background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+      color:#e5e7eb;
+      padding:4px 12px;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong{font-weight:600;}
+    .ts-brand-sub{opacity:.78; display:block;}
+    .ts-brand-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+    }
+    .ts-brand-links a{
+      color:#a5b4fc;
+      text-decoration:none;
+      font-size:11px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+
+/* T,. Symbol vor jedem Menüpunkt */
+.ts-brand-links a::before {
+  content: "T,.";
+  display: inline-block;
+  margin-right: 4px;
+  font-weight: 700;
+  color: var(--accent, #10b981);
+  font-size: 0.9em;
+}
+
+    .ts-brand-links a:hover{text-decoration:underline;}
+      :root {
+        color-scheme: dark;
+        --bg: #050810;
+        --panel: #0f172a;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.12);
+        --border: #1e293b;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --danger: #f97373;
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.9);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: radial-gradient(circle at top, #0b1120 0, #020617 55%, #000 100%);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+      }
+
+      .shell {
+        width: 100%;
+        max-width: 1200px;
+        padding: 24px 16px 40px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .logo-block {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .logo-mark {
+        font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        font-size: 14px;
+        color: var(--accent);
+      }
+
+      .title {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .wallet-status {
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #020617 0, #0b1120 60%, #111827 100%);
+        box-shadow: var(--shadow-soft);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--danger);
+      }
+
+      .dot.connected {
+        background: var(--accent);
+      }
+
+      .wallet-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .wallet-line {
+        font-size: 12px;
+      }
+
+      .wallet-line span {
+        color: var(--muted);
+      }
+
+      button.primary {
+        border-radius: 999px;
+        border: none;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        background: radial-gradient(circle at top left, #4ade80 0, #22c55e 40%, #16a34a 100%);
+        color: #020617;
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25),
+          0 20px 35px rgba(34, 197, 94, 0.28);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      button.primary:disabled {
+        opacity: 0.6;
+        cursor: default;
+        box-shadow: none;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      @media (max-width: 860px) {
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .panel {
+        background: radial-gradient(circle at top left, #020617 0, #030712 60%, #020617 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        padding: 18px 18px 16px;
+        box-shadow: var(--shadow-soft);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at top right,
+          rgba(34, 197, 94, 0.18),
+          transparent 55%
+        );
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .panel-title {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .pill {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        border: 1px solid rgba(34, 197, 94, 0.5);
+      }
+
+      .panel-body {
+        position: relative;
+        z-index: 1;
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .field-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      label {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      input,
+      select {
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: rgba(15, 23, 42, 0.95);
+        color: var(--text);
+        padding: 6px 9px;
+        font-size: 12px;
+        outline: none;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+      }
+
+      .inline-fields {
+        display: flex;
+        gap: 8px;
+      }
+
+      .inline-fields > div {
+        flex: 1;
+      }
+
+      .hint {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .hint strong {
+        color: var(--accent);
+      }
+
+      .rate-line {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .rate-line span {
+        color: var(--accent);
+        font-weight: 500;
+      }
+
+      .flows {
+        margin-top: 18px;
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: radial-gradient(circle at top left, #020617 0, #020617 55%, #000 100%);
+        padding: 12px 14px;
+        font-size: 11px;
+      }
+
+      .flows-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+
+      .flows-header span {
+        color: var(--muted);
+      }
+
+      .flow-list {
+        max-height: 160px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .flow-item {
+        padding: 4px 0;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .flow-item:last-child {
+        border-bottom: none;
+      }
+
+      .flow-main {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+
+      .flow-label {
+        color: var(--text);
+      }
+
+      .flow-meta {
+        color: var(--muted);
+      }
+
+      .flow-dir {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .flow-dir.in {
+        color: var(--accent);
+      }
+
+      .flow-dir.out {
+        color: var(--danger);
+      }
+
+      .small-button {
+        font-size: 11px;
+        border-radius: 999px;
+        padding: 3px 9px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .small-button:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .footnote {
+        margin-top: 12px;
+        font-size: 10px;
+        color: var(--muted);
+        max-width: 700px;
+      }
+      </style>
+  </head>
+  <body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) <a href="https://orcid.org/0009-0003-1328-2430" target="_blank" rel="noopener noreferrer" style="color:#a5b4fc;text-decoration:underline;">https://orcid.org/0009-0003-1328-2430</a></span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="../index.html">← Portal</a>
+      <a href="../help-portal.html">Portal-Hilfe</a>
+      <a href="../manifest-forum.html">Manifest</a>
+      <a href="../manifest-portal.html">Online-Portal</a>
+      <a href="../honeycomb.html">Wabenräume</a>
+      <a href="../legal-hub.html">Legal-Hub</a>
+      <a href="index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 Telbank</a>
+      <a href="../TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
+    </div>
+  </div>
+    <div class="shell">
+      <header class="header">
+        <div class="logo-block">
+          <div class="logo-mark">T,.&T,,.&T,,,.(C)TEL1.NL</div>
+          <div class="title">TPGA Telbank – MetaMask Liquidity Console</div>
+          <div class="subtitle">
+            One sovereign wallet. Regulated exchanges. Bank / Skrill. Money as global
+            communication system.
+          </div>
+        </div>
+        <div class="wallet-status" id="walletStatus">
+          <div class="dot" id="walletDot"></div>
+          <div class="wallet-info">
+            <div class="wallet-line" id="walletAccount">
+              <span>Wallet:</span> Not connected
+            </div>
+            <div class="wallet-line" id="walletNetwork">
+              <span>Network:</span> –
+            </div>
+          </div>
+          <button class="primary" id="connectButton">Connect MetaMask</button>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Fiat → Crypto (Inflow to TPGA Wallet)</div>
+            <span class="pill">IN • Bank / Skrill → MetaMask</span>
+          </div>
+          <div class="panel-body">
+            <div class="field-row">
+              <label for="inLabel">Flow label</label>
+              <input
+                id="inLabel"
+                type="text"
+                placeholder="e.g. Salary March via Bank → ETH"
+              />
+            </div>
+            <div class="inline-fields">
+              <div>
+                <label for="inFiatAmount">Fiat amount</label>
+                <input id="inFiatAmount" type="number" step="0.01" placeholder="1000" />
+              </div>
+              <div>
+                <label for="inFiatCurrency">Currency</label>
+                <select id="inFiatCurrency">
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+            </div>
+            <div class="inline-fields">
+              <div>
+                <label for="inCryptoAmount">Crypto amount (received)</label>
+                <input id="inCryptoAmount" type="number" step="0.00000001" />
+              </div>
+              <div>
+                <label for="inCryptoSymbol">Crypto</label>
+                <select id="inCryptoSymbol">
+                  <option value="ETH">ETH</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <label for="inExternalAccount">External account / provider reference (Bank IBAN, Skrill, ...)</label>
+              <input
+                id="inExternalAccount"
+                type="text"
+                placeholder="e.g. Bank IBAN, Skrill email or reference ID (optional)"
+              />
+            </div>
+            <div class="rate-line" id="rateInfoIn">
+              Current ETH price: <span>–</span>
+            </div>
+            <div class="hint">
+              <strong>Protocol:</strong> Bank / Skrill → Regulated exchange (Fiat →
+              ETH) → Withdraw to your MetaMask address (TPGA Wallet).
+            </div>
+            <button class="primary" id="addInflowButton">Record inflow</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Crypto → Fiat (Outflow from TPGA Wallet)</div>
+            <span class="pill">OUT • MetaMask → Bank / Skrill</span>
+          </div>
+          <div class="panel-body">
+            <div class="field-row">
+              <label for="outLabel">Flow label</label>
+              <input
+                id="outLabel"
+                type="text"
+                placeholder="e.g. ETH → EUR withdrawal to Bank"
+              />
+            </div>
+            <div class="inline-fields">
+              <div>
+                <label for="outCryptoAmount">Crypto amount</label>
+                <input id="outCryptoAmount" type="number" step="0.00000001" />
+              </div>
+              <div>
+                <label for="outCryptoSymbol">Crypto</label>
+                <select id="outCryptoSymbol">
+                  <option value="ETH">ETH</option>
+                </select>
+              </div>
+            </div>
+            <div class="inline-fields">
+              <div>
+                <label for="outFiatAmount">Fiat amount (received)</label>
+                <input id="outFiatAmount" type="number" step="0.01" />
+              </div>
+              <div>
+                <label for="outFiatCurrency">Currency</label>
+                <select id="outFiatCurrency">
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <label for="outExternalAccount">External account / provider reference (Bank IBAN, Skrill, ...)</label>
+              <input
+                id="outExternalAccount"
+                type="text"
+                placeholder="e.g. Bank IBAN, Skrill email or reference ID (optional)"
+              />
+            </div>
+            <div class="rate-line" id="rateInfoOut">
+              Current ETH price: <span>–</span>
+            </div>
+            <div class="hint">
+              <strong>Protocol:</strong> Send ETH from MetaMask to exchange → sell to
+              Fiat → withdraw to Bank / Skrill / provider of your choice.
+            </div>
+            <button class="primary" id="addOutflowButton">Record outflow</button>
+          </div>
+        </section>
+      </main>
+
+      <section class="flows">
+        <div class="flows-header">
+          <div>
+            <strong>TPGA Telbank Ledger</strong>
+            <span id="flowCount">(0 flows)</span>
+          </div>
+          <button class="small-button" id="clearFlowsButton">Clear local log</button>
+        </div>
+        <div class="flow-list" id="flowList"></div>
+      </section>
+
+      <p class="footnote">
+        This Telbank console does not move Fiat itself. It connects to MetaMask,
+        helps you structure flows between your TPGA Wallet and regulated providers,
+        and keeps a local audit log in your browser. For real Fiat operations, your
+        bank / Skrill / exchanges and local regulation apply.
+        <br /><br />
+        If this infrastructure helps you to keep your flows clean and auditable,
+        you can voluntarily support the TogetherSystems pillar that hosts it:
+        <a
+          href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget"
+          target="_blank"
+          rel="noopener"
+          >💠 Contribution 5–33.000&nbsp;€ (Gofundme „magnitudo“)</a
+        >
+        &nbsp;·&nbsp;
+        <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener"
+          >🏛️ Enterprise / Foundation channel</a
+        >.
+      </p>
+    </div>
+
+    <script src="telbank-app.js"></script>
+    <script type="module" src="../autofix-client.js"></script>
+  </body>
+</html>
+
+

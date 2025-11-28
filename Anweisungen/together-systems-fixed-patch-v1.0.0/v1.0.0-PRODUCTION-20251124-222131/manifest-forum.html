@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manifest of Thinkers – Offline Forum</title>
+<style>
+/* Minimal, LinkedIn-adjacent UI cues without copying; all custom */
+:root{
+	--bg:#f4f2ee;
+	--card:#ffffff;
+	--ink:#1f1f1f;
+	--muted:#6b7280;
+	--primary:#0a66c2;
+	--border:#e5e7eb;
+	--ok:#0f9f6f;
+	--warn:#e06a1a;
+	--bad:#cb112d;
+	--radius:12px;
+}
+*{box-sizing:border-box;}
+body{
+	margin:0;
+	font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,Oxygen,Cantarell,"Helvetica Neue",Arial,sans-serif;
+	background:var(--bg);
+	color:var(--ink);
+}
+.wr{
+	max-width:1060px;
+	margin:0 auto;
+	padding:16px;
+}
+header{
+	display:flex;
+	align-items:center;
+	gap:12px;
+	padding:16px;
+	background:var(--card);
+	border:1px solid var(--border);
+	border-radius:var(--radius);
+	position:sticky;top:0;z-index:10;
+}
+.logo{
+	width:40px;height:40px;border-radius:50%;
+	display:grid;place-items:center;
+	color:#fff;background:var(--primary);
+	font-weight:700;
+}
+h1{font-size:20px;margin:0;}
+.subtitle{color:var(--muted);font-size:13px;}
+.grid{
+	display:grid;gap:16px;grid-template-columns:1fr 320px;
+	margin-top:16px;
+}
+.card{
+	background:var(--card);
+	border:1px solid var(--border);
+	border-radius:var(--radius);
+}
+.pad{padding:16px;}
+label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px;}
+input[type="text"], textarea, input[type="url"]{
+	width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--ink);
+}
+textarea{min-height:120px;resize:vertical;}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{
+	background:var(--primary);color:#fff;border:none;border-radius:999px;padding:10px 14px;cursor:pointer;font-weight:600;
+}
+.btn.secondary{background:#eef2ff;color:#1e3a8a;border:1px solid #c7d2fe;}
+.btn.gray{background:#f3f4f6;color:#111827;border:1px solid var(--border);}
+.btn.ghost{background:transparent;color:var(--primary);border:1px solid var(--primary);}
+.btn.warn{background:var(--warn);}
+.btn.ok{background:var(--ok);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.hint{font-size:12px;color:var(--muted);}
+.chip{
+	display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#fafafa;
+	font-size:12px;color:#374151;cursor:pointer;
+}
+.chip.active{border-color:var(--primary);box-shadow:0 0 0 2px #0a66c214}
+.post{
+	padding:16px;border-top:1px solid var(--border);
+}
+.post:first-child{border-top:none}
+.post h3{margin:0 0 6px 0;font-size:18px}
+.meta{font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:center}
+.reactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.reaction{
+	border:1px solid var(--border);border-radius:999px;padding:6px 10px;background:#fff;font-size:12px;cursor:pointer;
+}
+.reaction.active{border-color:var(--primary);color:var(--primary);background:#f0f7ff}
+.comment-box{margin-top:12px}
+.comment{
+	margin-top:8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fafafa;font-size:14px;
+}
+.sec-title{font-size:14px;color:#374151;margin:0 0 8px;}
+.list-empty{padding:24px;text-align:center;color:var(--muted)}
+.kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;background:#f3f4f6;border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;padding:2px 6px;font-size:12px;}
+.notice{background:#fef3c7;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:10px 12px;font-size:13px}
+footer{margin:24px 0;color:var(--muted);font-size:12px;text-align:center}
+
+/* TogetherSystems Branding-Leiste */
+.ts-brand-banner{
+  background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+  color:#e5e7eb;
+  padding:4px 12px;
+  font-size:11px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  border-bottom:1px solid rgba(148,163,184,.45);
+}
+.ts-brand-banner strong{font-weight:600;}
+.ts-brand-sub{opacity:.78; display:block;}
+.ts-brand-links a{
+  color:#a5b4fc;
+  text-decoration:none;
+  font-size:11px;
+  margin-left:8px;
+  white-space:nowrap;
+}
+
+/* T,. Symbol vor jedem Menüpunkt */
+.ts-brand-links a::before {
+  content: "T,.";
+  display: inline-block;
+  margin-right: 4px;
+  font-weight: 700;
+  color: var(--accent, #10b981);
+  font-size: 0.9em;
+}
+
+.ts-brand-links a:hover{text-decoration:underline;}
+
+</style>
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) <a href="https://orcid.org/0009-0003-1328-2430" target="_blank" rel="noopener noreferrer" style="color:#a5b4fc;text-decoration:underline;">https://orcid.org/0009-0003-1328-2430</a></span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./help-portal.html">Portal-Hilfe</a>
+      <a href="./manifest-forum.html">Manifest</a>
+      <a href="./help-manifest.html">Manifest-Hilfe</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./help-online-portal.html">Online-Portal-Hilfe</a>
+      <a href="./honeycomb.html">Wabenräume</a>
+      <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
+      <a href="./legal-hub.html">Legal-Hub</a>
+      <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="TELBANK/index.html" title="TPGA Telbank – MetaMask Liquidity Console">💰 Telbank</a>
+      <a href="business-admin.html" title="Business-Admin – Vouchers & Buchungen">📊 Business-Admin</a>
+      <a href="admin-monitoring.html" title="Monitoring & Events">📈 Monitoring</a>
+      <a href="TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
+      <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener" title="Teilnahme an der Einsammlung (5–33.000&nbsp;€)">💠 Unterstützen</a>
+      <a href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener" title="Großunternehmen &amp; Stiftungen">🏛️ Big&nbsp;Support</a>
+    </div>
+  </div>
+
+	<div class="wr">
+		<header class="card">
+			<div class="logo" aria-hidden="true">MoT</div>
+			<div>
+				<h1>Manifest of Thinkers – Offline Forum</h1>
+				<div class="subtitle">Thinking about everything · Offline ausfüllen, später zentral veröffentlichen</div>
+			</div>
+		</header>
+
+		<div class="grid">
+			<main class="card">
+				<div class="pad">
+					<h2 style="margin:0 0 8px;">Beitrag erstellen</h2>
+					<div class="notice" id="seedNotice" hidden>
+						Einleitungs-Text aus LinkedIn wurde als Vorlage erkannt. Du kannst ihn unten übernehmen oder anpassen.
+					</div>
+					<label for="title">Titel</label>
+					<input id="title" type="text" placeholder="Manifest of Thinkers – Thema">
+
+					<label for="content">Inhalt</label>
+					<textarea id="content" placeholder="Schreibe deine Gedanken, Analysen oder Berichte ..."></textarea>
+
+					<label for="tags">Tags (kommagetrennt)</label>
+					<input id="tags" type="text" placeholder="chaos, ordnung, universum">
+
+					<div class="row" style="margin-top:8px">
+						<div style="flex:1;min-width:200px">
+							<label for="initials">Deine Initialen</label>
+							<input id="initials" type="text" maxlength="4" placeholder="z. B. RDT">
+						</div>
+						<div style="flex:1;min-width:200px">
+							<label for="identity">Optionale Info/Logo-URL (Data-URL oder http...)</label>
+							<input id="identity" type="url" placeholder="data:image/png;base64,... oder https://.../logo.png">
+						</div>
+					</div>
+					<div class="row" style="margin-top:12px">
+						<button class="btn" id="addPostBtn">Beitrag speichern</button>
+						<button class="btn gray" id="clearComposerBtn">Eingabe leeren</button>
+					</div>
+				</div>
+
+				<div class="post-list" id="postList"></div>
+				<div class="list-empty" id="emptyList">Noch keine Beiträge gespeichert.</div>
+			</main>
+
+			<aside class="card">
+				<div class="pad">
+					<h3 class="sec-title">Reaktionen (Auswahl)</h3>
+					<div class="row" id="reactionsPalette">
+						<span class="chip" data-reaction="like">Gefällt mir</span>
+						<span class="chip" data-reaction="celebrate">Gefeliciteerd</span>
+						<span class="chip" data-reaction="support">Stützen</span>
+						<span class="chip" data-reaction="love">Gewaltig</span>
+						<span class="chip" data-reaction="insightful">Verheldernd</span>
+						<span class="chip" data-reaction="curious">Interessant</span>
+						<span class="chip" data-reaction="entertainment">Rappig</span>
+					</div>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="sec-title">Daten</h3>
+					<div class="row">
+						<button class="btn ok" id="exportJsonBtn">Export JSON</button>
+						<label class="btn gray" for="importJsonInput" style="cursor:pointer">Import JSON</label>
+						<input id="importJsonInput" type="file" accept="application/json" style="display:none">
+					</div>
+					<p class="hint">Exportiere/Importiere deine lokale Forum-Datenbank.</p>
+					<div class="row" style="margin-top:8px">
+						<button class="btn gray" id="downloadSelfBtn" type="button">Offline-Kopie speichern</button>
+					</div>
+					<p class="hint">Speichert diese Offline-Datei selbst als Kopie (z.&nbsp;B. zur Weitergabe oder eigenes Backup).</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="sec-title">Statische Webseite erzeugen</h3>
+					<div class="row">
+						<button class="btn" id="exportSiteBtn">Download HTML</button>
+					</div>
+					<p class="hint">Erstellt eine fertige, lesbare HTML-Seite („manifest-site.html“) mit allen Einträgen – bereit für Upload auf deine zentrale Webseite.</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="sec-title">Veröffentlichen (API)</h3>
+					<label for="apiUrl">API-Endpoint (POST)</label>
+					<input id="apiUrl" type="url" placeholder="https://deine-seite.tld/api/manifest/submit">
+					<label for="apiKey">API-Schlüssel (optional)</label>
+					<input id="apiKey" type="text" placeholder="Bearer ... oder leer lassen">
+					<div class="row" style="margin-top:8px">
+						<button class="btn" id="publishBtn">Beiträge senden</button>
+						<button class="btn ghost" id="testPayloadBtn" title="Zeigt die JSON-Nutzlast an">Payload anzeigen</button>
+					</div>
+					<p class="hint">Dies sendet deine lokal gespeicherten Beiträge gesammelt an den angegebenen Endpoint. Es erfolgt keine automatische Veröffentlichung ohne deine Aktion.</p>
+					<pre class="kbd" id="publishStatus" style="margin-top:8px;white-space:pre-wrap;max-height:180px;overflow:auto"></pre>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="sec-title">Hyperkommunikation – Audio/Video/Code/Formula/Daten</h3>
+					<p class="hint">
+						Dieses Offline‑Forum ist der Text‑Anker innerhalb eines größeren Hyperkommunikations‑Systems:
+						Audio‑/Video‑Räume, geteilte Code‑ und Formel‑Snippets sowie strukturierte Daten können
+						später an dieselben Beiträge andocken. Die Offline‑Datei bleibt dabei immer die
+						ursprüngliche Referenz.
+					</p>
+					<div class="row" style="margin-top:6px;font-size:12px;">
+						<label class="chip">
+							<input id="chAudio" type="checkbox" style="margin-right:4px;"> Audio‑Kanäle aktivieren
+						</label>
+						<label class="chip">
+							<input id="chVideo" type="checkbox" style="margin-right:4px;"> Video‑Kanäle aktivieren
+						</label>
+						<label class="chip">
+							<input id="chCode" type="checkbox" style="margin-right:4px;"> Code/Formula‑Ansicht
+						</label>
+					</div>
+					<p class="hint" style="margin-top:4px;">
+						Diese Schalter sind Vorbereitung für spätere Audio‑/Video‑/Code‑Module und können bereits
+						im Offline‑Modus ausprobiert werden.
+					</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="sec-title">Mesh-Networking &amp; P2P-Sync</h3>
+					<p class="hint">
+						Im Vollausbau können mehrere Manifest‑Dateien über ein Mesh‑Netzwerk miteinander synchronisiert
+						werden (P2P‑Sync). Diese Version zeigt bereits die Steuerungs‑Elemente, die später an einen
+						signierenden Sync‑Dienst angebunden werden können.
+					</p>
+					<div class="row" style="margin-top:6px">
+						<button class="btn gray" id="meshPeersBtn" type="button">Peers suchen</button>
+						<button class="btn gray" id="meshSyncBtn" type="button">P2P-Sync anstoßen</button>
+					</div>
+					<p class="hint" id="meshStatus" style="margin-top:4px;">Noch kein Mesh aktiv – lokale Einzelansicht.</p>
+				</div>
+				<div class="pad" style="border-top:1px solid var(--border)">
+					<h3 class="sec-title">Unterstütze Manifest of Thinkers</h3>
+					<p class="hint">
+						Diese Offline‑Datei ist nicht „von selbst“ entstanden – hinter ihr stehen viel Zeit, Wissen und Emotion.
+						Wenn du dauerhaft mitdenkst und mitschreibst, kannst du freiwillig einen Beitrag leisten:
+						ab <strong>5&nbsp;€</strong> bis zu einem Kampagnen‑Ziel von <strong>33.000&nbsp;€</strong>.
+					</p>
+					<div class="row" style="margin-top:6px">
+						<a class="btn" href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener">
+							💠 Beitrag 5–33.000&nbsp;€
+						</a>
+						<a class="btn gray" href="https://www.tinyurl.com/bugcompany" target="_blank" rel="noopener">
+							🏛️ Großunternehmer / MKB
+						</a>
+					</div>
+					<p class="hint" style="margin-top:6px">
+						Die Kommunikation bleibt frei, ohne Login und ohne Pflicht. Deine Beteiligung hilft, die Plattform zu erhalten
+						und weitere „Pfeiler“ für die Gesellschaft aufzubauen.
+					</p>
+				</div>
+			</aside>
+		</div>
+
+		<footer>
+			Manifest of Thinkers – Offline Forum · Raymond Demitrio Tel · <a href="https://www.linkedin.com/posts/raymond-demitrio-tel-b5393a67_je-gedachten-zouden-als-volgt-kunnen-worden-activity-7392911153858879488-MJp_?utm_source=share&utm_medium=member_desktop&rcm=ACoAAA4y2O8BPiJ7FgkzixlP6EUYGlnKzpAK6vs" target="_blank" rel="noopener">LinkedIn-Quelle</a>
+		</footer>
+	</div>
+
+<script>
+// Eingebetteter Minimal-Core für Single-File-Betrieb (kein externes mot-core.js nötig)
+const MOT_STORAGE_KEYS = {
+	USER_ID: 'mot_user_id_v1'
+};
+function generateRandomId(length = 22){
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	const array = new Uint32Array(length);
+	if (window.crypto && window.crypto.getRandomValues) {
+		window.crypto.getRandomValues(array);
+		for (let i = 0; i < length; i++) {
+			result += chars[array[i] % chars.length];
+		}
+	} else {
+		for (let i = 0; i < length; i++) {
+			result += chars[Math.floor(Math.random() * chars.length)];
+		}
+	}
+	return result;
+}
+function getOrCreateUserId(){
+	try{
+		let uid = localStorage.getItem(MOT_STORAGE_KEYS.USER_ID);
+		if(!uid){
+			uid = generateRandomId();
+			localStorage.setItem(MOT_STORAGE_KEYS.USER_ID, uid);
+		}
+		return uid;
+	}catch{
+		// Fallback falls localStorage nicht verfügbar ist
+		return generateRandomId();
+	}
+}
+
+/* Storage */
+const DB_KEY = 'mot_forum_v1';
+// Shared access token: included in distributed offline file; same for all official copies.
+const MOT_ACCESS_TOKEN = 'mot-shared-token-v1';
+function motNow(){ return Date.now(); }
+function loadDB(){
+	try{ return (function() { try { return (function() { try { return JSON.parse(localStorage.getItem(DB_KEY); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })() || '{"posts":[]}'); }
+	catch(e){ return {posts:[]}; }
+}
+function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+/* Elements */
+const postList = document.getElementById('postList');
+const emptyList = document.getElementById('emptyList');
+const seedNotice = document.getElementById('seedNotice');
+const titleEl = document.getElementById('title');
+const contentEl = document.getElementById('content');
+const tagsEl = document.getElementById('tags');
+const initialsEl = document.getElementById('initials');
+const identityEl = document.getElementById('identity');
+const addPostBtn = document.getElementById('addPostBtn');
+const clearComposerBtn = document.getElementById('clearComposerBtn');
+const reactionsPalette = document.getElementById('reactionsPalette');
+const exportJsonBtn = document.getElementById('exportJsonBtn');
+const importJsonInput = document.getElementById('importJsonInput');
+const downloadSelfBtn = document.getElementById('downloadSelfBtn');
+const exportSiteBtn = document.getElementById('exportSiteBtn');
+const apiUrlEl = document.getElementById('apiUrl');
+const apiKeyEl = document.getElementById('apiKey');
+const publishBtn = document.getElementById('publishBtn');
+const testPayloadBtn = document.getElementById('testPayloadBtn');
+const publishStatus = document.getElementById('publishStatus');
+// Add portal open button in aside (dynamic inject to avoid layout churn)
+(function injectPortalOpen(){
+	const aside = document.querySelector('aside.card .pad');
+	if(!aside) return;
+	const row = document.createElement('div');
+	row.style.borderTop = '1px solid var(--border)';
+	row.className = 'pad';
+	row.innerHTML = `
+		<h3 class="sec-title">Portal</h3>
+		<div class="row">
+			<button class="btn" id="openPortalBtn">Portal öffnen (verifiziert)</button>
+		</div>
+		<p class="hint">Öffnet die Online-Seite und übergibt einen zeitgebundenen Nachweis deiner offiziellen Offline-Datei.</p>
+	`;
+	aside.parentElement.appendChild(row);
+})();
+
+/* Reactions master list mapped to requested labels */
+const REACTIONS = [
+	{key:'like', label:'Gefällt mir'},
+	{key:'celebrate', label:'Gefeliciteerd'},
+	{key:'support', label:'Stützen'},
+	{key:'love', label:'Gewaltig'},
+	{key:'insightful', label:'Verheldernd'},
+	{key:'curious', label:'Interessant'},
+	{key:'entertainment', label:'Rappig'}
+];
+
+/* Seed from LinkedIn text if empty content */
+const LINKEDIN_SEED = `Je gedachten zouden als volgt kunnen worden samengevat: Voordat het universum ontstond, was er geen "nichts", maar pure chaos – energie, wanorde, potentieel... (Aus LinkedIn Post zusammengefasst)`;
+function trySeedComposer(){
+	if(!contentEl.value.trim()){
+		contentEl.value = LINKEDIN_SEED;
+		seedNotice.hidden = false;
+	}
+}
+
+/* Render */
+function render(){
+	const db = loadDB();
+	postList.innerHTML = '';
+	if(!db.posts.length){
+		emptyList.style.display = 'block';
+		return;
+	}
+	emptyList.style.display = 'none';
+	db.posts.forEach((p, idx)=>{
+		const el = document.createElement('div');
+		el.className = 'post';
+		el.innerHTML = `
+			<h3>${escapeHtml(p.title || 'Ohne Titel')}</h3>
+			<div class="meta">
+				<span>${new Date(p.createdAt).toLocaleString()}</span>
+				${p.initials ? `<span>· ${escapeHtml(p.initials)}</span>`:''}
+				${p.tags?.length ? `<span>· Tags: ${p.tags.map(escapeHtml).join(', ')}</span>`:''}
+			</div>
+			<div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(p.content)}</div>
+			<div class="reactions" data-idx="${idx}">
+				${REACTIONS.map(r=>{
+					const count = p.reactions?.[r.key]||0;
+					return `<button class="reaction ${count>0?'active':''}" data-reaction="${r.key}" title="${r.label}">${r.label}${count?` (${count})`:''}</button>`;
+				}).join('')}
+			</div>
+			<div class="comment-box">
+				<div class="row">
+					<input type="text" placeholder="Kommentar hinzufügen ..." data-comment-input="${idx}">
+					<button class="btn gray" data-add-comment="${idx}">Kommentieren</button>
+					<button class="btn ghost" data-delete-post="${idx}" title="Beitrag löschen">Löschen</button>
+				</div>
+				<div class="comments" style="margin-top:8px">
+					${(p.comments||[]).map(c=>`<div class="comment"><strong>${escapeHtml(c.by||'Anon')}</strong>: ${escapeHtml(c.text)} <span class="meta" style="display:inline-block;margin-left:8px">${new Date(c.at).toLocaleString()}</span></div>`).join('')}
+				</div>
+			</div>
+		`;
+		postList.appendChild(el);
+	});
+}
+
+/* Helpers */
+function escapeHtml(s){
+	return String(s).replace(/[&<>"']/g, m=>({
+		'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+	}[m]));
+}
+function parseTags(s){
+	return s.split(',').map(x=>x.trim()).filter(Boolean);
+}
+function download(filename, text){
+	const a = document.createElement('a');
+	a.href = URL.createObjectURL(new Blob([text], {type:'text/plain;charset=utf-8'}));
+	a.download = filename;
+	document.body.appendChild(a); a.click(); a.remove();
+	setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+/* Events: composer */
+addPostBtn.addEventListener('click', ()=>{
+	const title = titleEl.value.trim();
+	const content = contentEl.value.trim();
+	if(!content){ alert('Bitte Inhalt eingeben.'); return; }
+	const tags = parseTags(tagsEl.value||'');
+	const initials = initialsEl.value.trim();
+	const identity = identityEl.value.trim();
+	const db = loadDB();
+	db.posts.unshift({
+		id: crypto.randomUUID(),
+		title, content, tags, initials, identity,
+		reactions: {},
+		comments: [],
+		createdAt: Date.now()
+	});
+	saveDB(db);
+	render();
+});
+clearComposerBtn.addEventListener('click', ()=>{
+	titleEl.value='';contentEl.value='';tagsEl.value='';initialsEl.value='';
+});
+
+/* Events: reactions and comments via delegation */
+postList.addEventListener('click', (e)=>{
+	const t = e.target;
+	if(t.matches('.reaction')){
+		const container = t.closest('.reactions');
+		const idx = Number(container?.dataset?.idx);
+		const reaction = t.dataset.reaction;
+		const db = loadDB();
+		const p = db.posts[idx]; if(!p) return;
+		p.reactions[reaction] = (p.reactions[reaction]||0) + 1;
+		saveDB(db); render();
+	}
+	if(t.matches('[data-add-comment]')){
+		const idx = Number(t.dataset.addComment);
+		const input = postList.querySelector(`input[data-comment-input="${idx}"]`);
+		const text = (input?.value||'').trim();
+		if(!text) return;
+		const db = loadDB();
+		const p = db.posts[idx]; if(!p) return;
+		p.comments.push({text, by: (initialsEl.value||'Anon').trim(), at: Date.now()});
+		saveDB(db); render();
+	}
+	if(t.matches('[data-delete-post]')){
+		if(!confirm('Beitrag wirklich löschen?')) return;
+		const idx = Number(t.dataset.deletePost);
+		const db = loadDB();
+		db.posts.splice(idx,1);
+		saveDB(db); render();
+	}
+});
+
+/* Reactions palette info (purely visual helper) */
+reactionsPalette.addEventListener('click', (e)=>{
+	const t = e.target.closest('.chip'); if(!t) return;
+	document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+	t.classList.add('active');
+});
+
+/* Import/Export JSON */
+exportJsonBtn.addEventListener('click', ()=>{
+	download('manifest-forum.json', JSON.stringify(loadDB(), null, 2));
+});
+importJsonInput.addEventListener('change', async ()=>{
+	const f = importJsonInput.files?.[0]; if(!f) return;
+	const text = await f.text();
+	try{
+		const data = (function() { try { return (function() { try { return JSON.parse(text); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })();
+		if(!data || typeof data !== 'object' || !Array.isArray(data.posts)) throw new Error('Ungültiges Format');
+		saveDB(data); render(); alert('Import erfolgreich.');
+	}catch(err){ alert('Import fehlgeschlagen: '+err.message); }
+	importJsonInput.value = '';
+});
+
+/* Export static site */
+exportSiteBtn.addEventListener('click', ()=>{
+	const db = loadDB();
+	const html = renderStaticSite(db);
+	download('manifest-site.html', html);
+});
+// Offline-Kopie dieser Datei speichern (für Weitergabe/Archiv)
+if(downloadSelfBtn){
+	downloadSelfBtn.addEventListener('click', ()=>{
+		try{
+			const html = document.documentElement.outerHTML;
+			download('manifest-forum-offline.html', html);
+		}catch(err){
+			alert('Offline-Kopie konnte nicht erstellt werden: '+(err?.message||String(err)));
+		}
+	});
+}
+function renderStaticSite(db){
+	const items = db.posts.map(p=>`
+		<article style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px">
+			<h3 style="margin:0 0 6px;font:600 18px system-ui">${escapeHtml(p.title||'Ohne Titel')}</h3>
+			<div style="color:#6b7280;font:12px system-ui">${new Date(p.createdAt).toLocaleString()} ${p.initials? '· '+escapeHtml(p.initials):''} ${p.tags?.length? '· Tags: '+p.tags.map(escapeHtml).join(', '):''}</div>
+			<div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(p.content)}</div>
+			<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+				${REACTIONS.map(r=>{
+					const count = p.reactions?.[r.key]||0;
+					return count? `<span style="border:1px solid #e5e7eb;border-radius:999px;padding:4px 8px;font:12px system-ui">${r.label} (${count})</span>`:'';
+				}).join('')}
+			</div>
+			${p.comments?.length? `<div style="margin-top:10px">${p.comments.map(c=>`<div style="border:1px solid #e5e7eb;background:#fafafa;border-radius:10px;padding:8px 10px;margin-top:6px"><strong>${escapeHtml(c.by||'Anon')}</strong>: ${escapeHtml(c.text)} <span style="color:#6b7280;font:12px system-ui;margin-left:6px">${new Date(c.at).toLocaleString()}</span></div>`).join('')}</div>`:''}
+		</article>
+	`).join('\n');
+	return `<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manifest of Thinkers – Beiträge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+	body{margin:0;background:#f4f2ee;color:#1f1f1f;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,Oxygen,Cantarell,"Helvetica Neue",Arial,sans-serif}
+	.w{max-width:960px;margin:0 auto;padding:16px}
+	.h{position:sticky;top:0;z-index:1;backdrop-filter:saturate(1.2) blur(6px);background:#f4f2eecc;border-bottom:1px solid #e5e7eb}
+	.h>.w{display:flex;align-items:center;gap:12px;padding:10px 16px}
+	.badge{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;background:#0a66c2;font-weight:700}
+	h1{font-size:18px;margin:0}
+	.grid{display:grid;gap:16px;margin-top:16px}
+</style>
+<div class="h"><div class="w"><div class="badge">MoT</div><h1>Manifest of Thinkers – Beiträge</h1></div></div>
+<div class="w">
+	<div class="grid">
+		${items || '<div style="color:#6b7280">Keine Einträge vorhanden.</div>'}
+	</div>
+	<footer style="color:#6b7280;font:12px system-ui;margin:24px 0;text-align:center">Aus Offline-App exportiert · Manifest of Thinkers</footer>
+</div>`;
+}
+
+/* Publish to API (manual trigger only) */
+testPayloadBtn.addEventListener('click', ()=>{
+	const payload = buildPayload();
+	publishStatus.textContent = JSON.stringify(payload, null, 2);
+});
+publishBtn.addEventListener('click', async ()=>{
+	const url = apiUrlEl.value.trim();
+	if(!url){ alert('Bitte API-Endpoint angeben.'); return; }
+	const key = apiKeyEl.value.trim();
+	const payload = buildPayload();
+	publishStatus.textContent = 'Sende ...';
+	try{
+		const res = await fetch(url, {
+			method:'POST',
+			headers: {
+				'Content-Type':'application/json',
+				...(key? {'Authorization': key}: {})
+			},
+			body: JSON.stringify(payload)
+		});
+		const text = await res.text();
+		publishStatus.textContent = 'Status: '+res.status+' '+res.statusText+'\n\n'+text;
+	}catch(err){
+		publishStatus.textContent = 'Fehler: '+err.message;
+	}
+});
+function buildPayload(){
+	const db = loadDB();
+	return {
+		source: 'manifest-of-thinkers-offline',
+		version: 1,
+		sentAt: new Date().toISOString(),
+		posts: db.posts
+	};
+}
+
+/* Init */
+/* Portal öffnen mit Token (ohne HMAC, offline-/Single-File-freundlich).
+   - Wenn Datei online unter ts-portal/pages.dev läuft → relative URL.
+   - Wenn Datei lokal (file://) geöffnet wird → feste Online-URL verwenden. */
+document.addEventListener('click', async (e)=>{
+	const t = e.target;
+	if(t && t.id === 'openPortalBtn'){
+		const uid = getOrCreateUserId();
+		const ts = String(motNow());
+		let baseUrl = './manifest-portal.html';
+		if(location.protocol === 'file:'){
+			// Lokale Kopie → direkt die Online-Portal-URL öffnen
+			baseUrl = 'https://ts-portal.pages.dev/manifest-portal.html';
+		}
+		const url = `${baseUrl}#mot=${encodeURIComponent(MOT_ACCESS_TOKEN)}&uid=${encodeURIComponent(uid)}&ts=${encodeURIComponent(ts)}`;
+		window.open(url, '_blank');
+	}
+});
+// Einfache Mesh-/P2P-Demo-Events (lokal, ohne echtes Netzwerk)
+const meshStatusEl = document.getElementById('meshStatus');
+const meshPeersBtnEl = document.getElementById('meshPeersBtn');
+const meshSyncBtnEl = document.getElementById('meshSyncBtn');
+if(meshPeersBtnEl && meshStatusEl){
+	meshPeersBtnEl.addEventListener('click', ()=>{
+		meshStatusEl.textContent = 'Suche nach Peers im lokalen Netz (Demo-Status, Backend optional).';
+	});
+}
+if(meshSyncBtnEl && meshStatusEl){
+	meshSyncBtnEl.addEventListener('click', ()=>{
+		meshStatusEl.textContent = 'P2P-Sync vorbereitet – sobald ein echter Sync-Dienst vorhanden ist, werden Beiträge übertragen.';
+	});
+}
+trySeedComposer();
+render();
+</script>
+<script type="module" src="./autofix-client.js"></script>
+</body>
+</html>

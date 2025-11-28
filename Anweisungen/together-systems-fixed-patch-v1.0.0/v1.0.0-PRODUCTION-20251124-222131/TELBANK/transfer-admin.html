@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TPGA Telbank – Transfer Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #020617;
+        --card: #0b1120;
+        --border: #1f2937;
+        --fg: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.15);
+        --danger: #f97373;
+        --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: var(--font);
+        background: radial-gradient(circle at top, #020617 0, #020617 55%, #000 100%);
+        color: var(--fg);
+      }
+      header {
+        padding: 14px 16px 8px;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+      .sub {
+        margin: 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      main {
+        max-width: 980px;
+        margin: 16px auto 32px;
+        padding: 0 16px 32px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        padding: 14px 14px 16px;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+        margin-bottom: 14px;
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 14px;
+      }
+      label {
+        font-size: 11px;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 2px;
+      }
+      input,
+      select {
+        font: inherit;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #020617;
+        color: var(--fg);
+        padding: 6px 8px;
+        font-size: 12px;
+        width: 100%;
+        outline: none;
+      }
+      input:focus,
+      select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .row > div {
+        flex: 1;
+        min-width: 180px;
+      }
+      button {
+        border-radius: 999px;
+        border: none;
+        padding: 7px 14px;
+        font-size: 12px;
+        cursor: pointer;
+        background: radial-gradient(circle at top left, #4ade80 0, #22c55e 40%, #16a34a 100%);
+        color: #020617;
+        font-weight: 500;
+      }
+      button.secondary {
+        background: #020617;
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+        padding: 6px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        font-size: 10px;
+      }
+      .tag.in {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
+      .tag.out {
+        border-color: var(--danger);
+        color: var(--danger);
+        background: rgba(248, 113, 113, 0.12);
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .status {
+        font-size: 11px;
+      }
+      .status.logged {
+        color: var(--muted);
+      }
+      .status.executed {
+        color: var(--accent);
+      }
+      .status.failed {
+        color: var(--danger);
+      }
+      .hint {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .small {
+        font-size: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>TPGA Telbank – Transfer Ledger Admin</h1>
+      <p class="sub">
+        Read-only view for logged inflow/outflow transfers from the Telbank console. <br />
+        Real-money execution must happen in regulated backends and banks.
+      </p>
+    </header>
+    <main>
+      <section class="card">
+        <h2>Filter</h2>
+        <div class="row">
+          <div>
+            <label for="walletFilter">Wallet address (optional)</label>
+            <input
+              id="walletFilter"
+              type="text"
+              placeholder="0x... (leave empty to see all)"
+            />
+          </div>
+          <div>
+            <label for="directionFilter">Direction</label>
+            <select id="directionFilter">
+              <option value="">All</option>
+              <option value="in">Inflow</option>
+              <option value="out">Outflow</option>
+            </select>
+          </div>
+          <div style="flex:0 0 auto;min-width:120px;display:flex;gap:6px;align-items:flex-end;">
+            <button id="refreshBtn">Refresh</button>
+          </div>
+        </div>
+        <p class="hint">
+          API base: <span id="apiBaseLabel" class="small"></span> • You can override this by
+          setting <code>window.TELBANK_TRANSFER_API_BASE</code> before loading this page.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Transfers</h2>
+        <div id="tableWrapper" class="muted">No data loaded yet.</div>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const base =
+          window.TELBANK_TRANSFER_API_BASE ||
+          '/api/telbank';
+
+        const walletFilter = document.getElementById('walletFilter');
+        const directionFilter = document.getElementById('directionFilter');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const tableWrapper = document.getElementById('tableWrapper');
+        const apiBaseLabel = document.getElementById('apiBaseLabel');
+
+        apiBaseLabel.textContent = base;
+
+        refreshBtn.addEventListener('click', loadTransfers);
+
+        async function loadTransfers() {
+          const params = new URLSearchParams();
+          const w = walletFilter.value.trim();
+          const d = directionFilter.value;
+          if (w) params.set('walletAddress', w);
+          if (d) params.set('direction', d);
+          let url = base + '/transfers';
+          if (params.toString()) url += '?' + params.toString();
+
+          tableWrapper.textContent = 'Loading ...';
+          refreshBtn.disabled = true;
+          try {
+            const res = await fetch(url, { headers: { Accept: 'application/json' } });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            renderTable(data.items || []);
+          } catch (err) {
+            tableWrapper.innerHTML =
+              '<div class="muted">Failed to load transfers: ' +
+              String(err.message || err) +
+              '</div>';
+          } finally {
+            refreshBtn.disabled = false;
+          }
+        }
+
+        function renderTable(items) {
+          if (!items.length) {
+            tableWrapper.innerHTML =
+              '<div class="muted">No transfers found for the current filter.</div>';
+            return;
+          }
+          let html = '<table><thead><tr>';
+          html +=
+            '<th>ID</th><th>Dir</th><th>Wallet</th><th>Network</th><th>Crypto</th><th>Fiat</th><th>External</th><th>Status</th><th>Created</th>';
+          html += '</tr></thead><tbody>';
+          for (const tr of items) {
+            const dirClass = tr.direction === 'in' ? 'in' : 'out';
+            const wShort =
+              tr.walletAddress && tr.walletAddress.length > 12
+                ? tr.walletAddress.slice(0, 6) +
+                  '…' +
+                  tr.walletAddress.slice(tr.walletAddress.length - 4)
+                : tr.walletAddress || '—';
+            const created = tr.createdAt
+              ? new Date(tr.createdAt).toLocaleString()
+              : '—';
+            html += '<tr>';
+            html +=
+              '<td>' +
+              escapeHtml(tr.id || '') +
+              '</td><td><span class="tag ' +
+              dirClass +
+              '">' +
+              (tr.direction === 'in' ? 'INFLOW' : 'OUTFLOW') +
+              '</span></td>';
+            html += '<td>' + escapeHtml(wShort) + '</td>';
+            html += '<td>' + escapeHtml(tr.network || '—') + '</td>';
+            html +=
+              '<td>' +
+              escapeHtml(String(tr.cryptoAmount || '0')) +
+              ' ' +
+              escapeHtml(tr.cryptoSymbol || '') +
+              '</td>';
+            html +=
+              '<td>' +
+              escapeHtml(String(tr.fiatAmount || '0')) +
+              ' ' +
+              escapeHtml(tr.fiatCurrency || '') +
+              '</td>';
+            html +=
+              '<td>' + escapeHtml(tr.externalAccount || '—') + '</td>';
+            html +=
+              '<td class="status ' +
+              escapeHtml(tr.status || 'logged') +
+              '">' +
+              escapeHtml(tr.status || 'logged') +
+              '</td>';
+            html += '<td>' + escapeHtml(created) + '</td>';
+            html += '</tr>';
+          }
+          html += '</tbody></table>';
+          tableWrapper.innerHTML = html;
+        }
+
+        function escapeHtml(s) {
+          return String(s).replace(/[&<>"']/g, function (m) {
+            return {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;',
+            }[m];
+          });
+        }
+
+        // initial load
+        loadTransfers();
+      })();
+    </script>
+    <script type="module" src="../autofix-client.js"></script>
+  </body>
+  </html>
+
+
