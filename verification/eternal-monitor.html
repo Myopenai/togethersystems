@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eternal Sync & Error Prevention Monitor - IBM XXXXXXL+</title>
+  <link rel="stylesheet" href="../css/db-original-global.css">
+  <style>
+    body {
+      background: #0f1419;
+      color: #e6eef3;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #0018a8, #00a3e0);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .status-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .status-card {
+      background: #151b23;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #223040;
+    }
+    .status-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #9fb3c8;
+    }
+    .status-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #10b981;
+    }
+    .status-value.warning {
+      color: #f59e0b;
+    }
+    .status-value.error {
+      color: #ef4444;
+    }
+    .log-panel {
+      background: #151b23;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      padding: 8px;
+      border-bottom: 1px solid #223040;
+      font-size: 12px;
+      font-family: monospace;
+    }
+    .log-entry.error {
+      color: #ef4444;
+    }
+    .log-entry.warning {
+      color: #f59e0b;
+    }
+    .log-entry.success {
+      color: #10b981;
+    }
+    button {
+      background: #0018a8;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #0033cc;
+    }
+    button.stop {
+      background: #ef4444;
+    }
+    button.stop:hover {
+      background: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🌐 Eternal Sync & Error Prevention Monitor</h1>
+    <p>IBM XXXXXXL+ Standard - Permanent 1:1 Synchronization & Error Prevention</p>
+  </div>
+
+  <div>
+    <button onclick="startSystems()">Start Eternal Systems</button>
+    <button onclick="stopSystems()" class="stop">Stop Systems</button>
+    <button onclick="exportReport()">Export Report</button>
+  </div>
+
+  <div class="status-panel">
+    <div class="status-card">
+      <h3>Error Quotient</h3>
+      <div class="status-value" id="errorQuotient">0</div>
+      <div style="font-size: 12px; color: #9fb3c8; margin-top: 5px;">Target: 0</div>
+    </div>
+    <div class="status-card">
+      <h3>Sync Status</h3>
+      <div class="status-value" id="syncStatus">Inactive</div>
+      <div style="font-size: 12px; color: #9fb3c8; margin-top: 5px;" id="lastSync">Never</div>
+    </div>
+    <div class="status-card">
+      <h3>Errors Prevented</h3>
+      <div class="status-value success" id="errorsPrevented">0</div>
+      <div style="font-size: 12px; color: #9fb3c8; margin-top: 5px;">Total prevented</div>
+    </div>
+    <div class="status-card">
+      <h3>Fixes Applied</h3>
+      <div class="status-value success" id="fixesApplied">0</div>
+      <div style="font-size: 12px; color: #9fb3c8; margin-top: 5px;">Total fixes</div>
+    </div>
+  </div>
+
+  <div class="log-panel">
+    <h3>Activity Log</h3>
+    <div id="logEntries"></div>
+  </div>
+
+  <script type="module">
+    import { EternalSyncSystem } from './eternal-sync-system.js';
+    import { ErrorQuotientFixboxBot } from './error-quotient-fixbox-bot.js';
+
+    let syncSystem = null;
+    let fixboxBot = null;
+
+    window.startSystems = function() {
+      // Start Eternal Sync System
+      syncSystem = new EternalSyncSystem();
+      syncSystem.start();
+
+      // Start Error Quotient Fixbox Bot
+      fixboxBot = new ErrorQuotientFixboxBot();
+      fixboxBot.start();
+
+      // Listen to events
+      window.addEventListener('eternal-sync', (event) => {
+        updateSyncStatus(event.detail);
+      });
+
+      window.addEventListener('fixbox-check', (event) => {
+        updateFixboxStatus(event.detail);
+      });
+
+      addLog('✅ Eternal systems started', 'success');
+    };
+
+    window.stopSystems = function() {
+      if (syncSystem) {
+        syncSystem.stop();
+        syncSystem = null;
+      }
+      if (fixboxBot) {
+        fixboxBot.stop();
+        fixboxBot = null;
+      }
+      addLog('⏸️ Eternal systems stopped', 'warning');
+    };
+
+    function updateSyncStatus(results) {
+      document.getElementById('syncStatus').textContent = 'Active';
+      document.getElementById('lastSync').textContent = new Date(results.timestamp).toLocaleString();
+      document.getElementById('fixesApplied').textContent = syncSystem?.syncState.fixesApplied || 0;
+      
+      if (results.errors && results.errors.length > 0) {
+        addLog(`⚠️ Sync detected ${results.errors.length} errors`, 'warning');
+      }
+      if (results.fixes && results.fixes.length > 0) {
+        addLog(`✅ Applied ${results.fixes.length} fixes`, 'success');
+      }
+    }
+
+    function updateFixboxStatus(results) {
+      const quotient = results.quotientAfter || 0;
+      const quotientEl = document.getElementById('errorQuotient');
+      quotientEl.textContent = quotient.toFixed(1);
+      
+      if (quotient === 0) {
+        quotientEl.className = 'status-value success';
+      } else if (quotient < 50) {
+        quotientEl.className = 'status-value warning';
+      } else {
+        quotientEl.className = 'status-value error';
+      }
+
+      document.getElementById('errorsPrevented').textContent = 
+        fixboxBot?.syncState?.preventionCount || 0;
+
+      if (results.errorsPrevented && results.errorsPrevented.length > 0) {
+        addLog(`🛡️ Prevented ${results.errorsPrevented.length} errors`, 'success');
+      }
+    }
+
+    function addLog(message, type = 'info') {
+      const logEntries = document.getElementById('logEntries');
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logEntries.insertBefore(entry, logEntries.firstChild);
+      
+      // Keep only last 100 entries
+      while (logEntries.children.length > 100) {
+        logEntries.removeChild(logEntries.lastChild);
+      }
+    }
+
+    window.exportReport = function() {
+      const report = {
+        timestamp: new Date().toISOString(),
+        syncSystem: syncSystem?.getStatus(),
+        fixboxBot: fixboxBot?.getStatus()
+      };
+      
+      const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `eternal-sync-report-${new Date().toISOString()}.json`;
+      a.click();
+    };
+
+    // Auto-start on load
+    window.addEventListener('load', () => {
+      addLog('🌐 Eternal Monitor loaded', 'info');
+    });
+  </script>
+</body>
+</html>
+
