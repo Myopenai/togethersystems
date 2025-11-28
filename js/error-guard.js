@@ -1,81 +1,102 @@
 /**
- * error-guard.js
- * 
- * Globale Fehler-Handler für Browser
- * Letzte Sicherheitslinie: Kein Promise-Crash killt die App
- * 
- * Branding: .{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.
+ * Error Guard - Global Error Handling
+ * Version: 1.0.0-IBM-ETERNAL
  */
 
-/**
- * Globale Error-Handler
- */
-window.addEventListener('error', (event) => {
-  console.error('[Error-Guard] Globaler Fehler:', event.error || event.message, {
-    filename: event.filename,
-    lineno: event.lineno,
-    colno: event.colno,
-  });
-  
-  // Optional: Zeige dezente Fehlermeldung in einem Status-Banner
-  showErrorBanner(event.error?.message || event.message || 'Ein unerwarteter Fehler ist aufgetreten.');
-});
+(function() {
+  'use strict';
 
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('[Error-Guard] Unhandled Promise Rejection:', event.reason);
-  
-  // Optional: Zeige dezente Fehlermeldung
-  showErrorBanner(event.reason?.message || 'Ein unerwarteter Fehler ist aufgetreten.');
-  
-  // Verhindere, dass der Fehler in der Console als "unhandled" erscheint
-  event.preventDefault();
-});
+  // Environment Detection
+  const ENV = {
+    protocol: window.location.protocol,
+    isFileProtocol: window.location.protocol === 'file:',
+    isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+    isProduction: window.location.hostname.includes('pages.dev') || window.location.hostname.includes('github.io')
+  };
 
-/**
- * Zeige dezente Fehlermeldung in einem Status-Banner
- */
-function showErrorBanner(message) {
-  // Prüfe, ob bereits ein Banner existiert
-  let banner = document.getElementById('error-guard-banner');
-  
-  if (!banner) {
-    banner = document.createElement('div');
-    banner.id = 'error-guard-banner';
-    banner.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(239, 68, 68, 0.9);
-      color: white;
-      padding: 12px 16px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      z-index: 10000;
-      max-width: 400px;
-      font-size: 14px;
-      line-height: 1.4;
-    `;
-    document.body.appendChild(banner);
-  }
-  
-  banner.textContent = `⚠️ ${message}`;
-  
-  // Auto-Close nach 5 Sekunden
-  setTimeout(() => {
-    if (banner && banner.parentNode) {
-      banner.style.opacity = '0';
-      banner.style.transition = 'opacity 0.3s';
-      setTimeout(() => {
-        if (banner && banner.parentNode) {
-          banner.parentNode.removeChild(banner);
-        }
-      }, 300);
+  // Safe Fetch with Fallback
+  window.safeFetchJson = async function(url, options = {}) {
+    // If file:// protocol, return demo data
+    if (ENV.isFileProtocol) {
+      console.warn(`[Error Guard] file:// protocol detected - using fallback for ${url}`);
+      return getDemoData(url);
     }
-  }, 5000);
-}
 
-/**
- * Export für andere Module
- */
-export { showErrorBanner };
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.warn(`[Error Guard] Fetch failed for ${url}: ${error.message} - using fallback`);
+      return getDemoData(url);
+    }
+  };
+
+  // Get Demo Data based on URL
+  function getDemoData(url) {
+    // Return appropriate demo data based on URL pattern
+    if (url.includes('/api/teladia/assets')) {
+      return Promise.resolve({
+        success: true,
+        data: {
+          fiat: [],
+          crypto: [],
+          digital: []
+        }
+      });
+    }
+    if (url.includes('/api/telbank/negative-assets')) {
+      return Promise.resolve({
+        success: true,
+        data: []
+      });
+    }
+    if (url.includes('/Settings/')) {
+      return Promise.resolve({});
+    }
+    return Promise.resolve({});
+  }
+
+  // Global Error Handler
+  window.addEventListener('error', function(event) {
+    console.error('[Error Guard] Global Error:', event.error);
+    // Prevent error from propagating
+    event.preventDefault();
+  });
+
+  // Unhandled Promise Rejection Handler
+  window.addEventListener('unhandledrejection', function(event) {
+    console.error('[Error Guard] Unhandled Promise Rejection:', event.reason);
+    // Prevent error from propagating
+    event.preventDefault();
+  });
+
+  // Service Worker Registration with Environment Check
+  if ('serviceWorker' in navigator && !ENV.isFileProtocol) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./sw.js')
+        .then(function(reg) {
+          console.log('[Error Guard] Service Worker registered:', reg.scope);
+        })
+        .catch(function(err) {
+          console.warn('[Error Guard] Service Worker registration failed:', err.message);
+        });
+    });
+  } else if (ENV.isFileProtocol) {
+    console.warn('[Error Guard] Service Worker cannot be registered on file:// protocol');
+  }
+
+  console.log('✅ Error Guard initialized', ENV);
+})();
