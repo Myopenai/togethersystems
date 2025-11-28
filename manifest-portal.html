@@ -2926,33 +2926,7 @@ renderSuppliers().catch(() => {});
     });
   }
   
-  // navBalancedExchange Event-Listener sicherstellen
-  const navBalancedExchange = document.getElementById('navBalancedExchange');
-  if (navBalancedExchange && balancedExchangePanel) {
-    navBalancedExchange.addEventListener('click', () => {
-      // Alle Panels verstecken
-      document.querySelectorAll('.panel').forEach(p => {
-        if (p.id !== 'balanced-exchange-panel') {
-          p.style.display = 'none';
-        }
-      });
-      // Gleichgewichts-Börse-Panel zeigen
-      balancedExchangePanel.style.display = 'block';
-      // Scroll zu Panel
-      balancedExchangePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Button-Status aktualisieren
-      document.querySelectorAll('[id^="nav"]').forEach(btn => {
-        btn.classList.remove('btn');
-        btn.classList.add('btn', 'alt');
-      });
-      navBalancedExchange.classList.remove('alt');
-      navBalancedExchange.classList.add('btn');
-      // Lade Instrumente
-      if (typeof window.loadInstruments === 'function') {
-        window.loadInstruments();
-      }
-    });
-  }
+  // navBalancedExchange Event-Listener ist bereits in setupNavigation() definiert (Zeile 2860)
   
   const btnRefreshExchange = document.getElementById('btnRefreshExchange');
   if (btnRefreshExchange) {
