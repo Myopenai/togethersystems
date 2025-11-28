@@ -295,7 +295,7 @@ body.public-view{ --cursor: not-allowed }
       <a href="./cms-dashboard.html" title="CMS Dashboard – Content Management System" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(245, 158, 11, 0.2)); border: 1px solid #10b981; color: #10b981; font-weight: 600;">📝 CMS</a>
       <a href="./ultra/ui/developer-portal.html" title="Developer Portal – Entwickler-Onboarding">👨‍💻 Developer</a>
       <a href="./ultra/beta/index.html" title="Beta Portal – Beta-Testing">🧪 Beta</a>
-      <a href="./OS-GERAETE-UND-PLATTFORMEN.md" title="OS-Geräte-Dokumentation – Unterstützte Plattformen">💻 OS-Geräte</a>
+      <a href="./OS-GERAETE-UND-PLATTFORMEN.html" title="OS-Geräte-Dokumentation – Unterstützte Plattformen">💻 OS-Geräte</a>
       <a href="./JOB-ANGEBOT-ENTWICKLER.html" title="Job-Angebot – Entwickler gesucht">💼 Jobs</a>
       <a href="./JJC-SUPERVISOR-GATE.html" title="JJC Supervisor Gate – Joint Justification Chain" style="background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2)); border: 1px solid #00ffff; color: #00ffff; font-weight: 600;">🔗 JJC</a>
       <a href="./bank-contact-universe.html" title="Bank Contact Universe – Enterprise-Grade Contact Index" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(99, 102, 241, 0.2)); border: 1px solid #38bdf8; color: #38bdf8; font-weight: 600;">🏦 Bank Contacts</a>
@@ -331,11 +331,11 @@ body.public-view{ --cursor: not-allowed }
 				🌐 INTERNATIONAL TTT GLOBAL FREE INTERNET 🌐<br>
 				WAS DU WILLST | WO DU WILLST | WIE DU WILLST
 			</p>
-			<div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
-				<a href="OSTOSOS-ANKUENDIGUNG.html" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #10b981, #f59e0b); color: #00110b; text-decoration: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem; box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);">
+			<div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; position: relative; z-index: 10;">
+				<a href="OSTOSOS-ANKUENDIGUNG.html" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #10b981, #f59e0b); color: #00110b; text-decoration: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem; box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3); position: relative; z-index: 11; min-width: 200px; text-align: center;">
 					📥 DOWNLOAD OSTOSOS TTT T,.&T,,.&T,,,.
 				</a>
-				<a href="OSTOSOS-ANKUENDIGUNG.html" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #f59e0b, #10b981); color: #00110b; text-decoration: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem; box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3);">
+				<a href="OSTOSOS-ANKUENDIGUNG.html" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #f59e0b, #10b981); color: #00110b; text-decoration: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem; box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3); position: relative; z-index: 11; min-width: 200px; text-align: center;">
 					🚀 JETZT DOWNLOADEN
 				</a>
 			</div>
@@ -501,7 +501,7 @@ body.public-view{ --cursor: not-allowed }
 						<a href="./cms-dashboard.html" class="btn" style="width: 100%; background: linear-gradient(135deg, #10b981, #f59e0b); border: none; color: #000; font-weight: 600; text-align: center; font-size: 0.9rem;">
 							📝 CMS
 						</a>
-						<a href="./OS-GERAETE-UND-PLATTFORMEN.md" class="btn" style="width: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; color: #fff; font-weight: 600; text-align: center; font-size: 0.9rem;">
+						<a href="./OS-GERAETE-UND-PLATTFORMEN.html" class="btn" style="width: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); border: none; color: #fff; font-weight: 600; text-align: center; font-size: 0.9rem;">
 							💻 OS-Geräte
 						</a>
 						<a href="./JOB-ANGEBOT-ENTWICKLER.html" class="btn" style="width: 100%; background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; color: #fff; font-weight: 600; text-align: center; font-size: 0.9rem;">
@@ -2887,10 +2887,38 @@ renderSuppliers().catch(() => {});
     });
   }
   
-  // Gleichgewichts-Börse Buttons
+	// Gleichgewichts-Börse Buttons
   const btnLoadInstruments = document.getElementById('btnLoadInstruments');
   if (btnLoadInstruments) {
     btnLoadInstruments.addEventListener('click', () => {
+      if (typeof window.loadInstruments === 'function') {
+        window.loadInstruments();
+      }
+    });
+  }
+  
+  // navBalancedExchange Event-Listener sicherstellen
+  const navBalancedExchange = document.getElementById('navBalancedExchange');
+  if (navBalancedExchange && balancedExchangePanel) {
+    navBalancedExchange.addEventListener('click', () => {
+      // Alle Panels verstecken
+      document.querySelectorAll('.panel').forEach(p => {
+        if (p.id !== 'balanced-exchange-panel') {
+          p.style.display = 'none';
+        }
+      });
+      // Gleichgewichts-Börse-Panel zeigen
+      balancedExchangePanel.style.display = 'block';
+      // Scroll zu Panel
+      balancedExchangePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Button-Status aktualisieren
+      document.querySelectorAll('[id^="nav"]').forEach(btn => {
+        btn.classList.remove('btn');
+        btn.classList.add('btn', 'alt');
+      });
+      navBalancedExchange.classList.remove('alt');
+      navBalancedExchange.classList.add('btn');
+      // Lade Instrumente
       if (typeof window.loadInstruments === 'function') {
         window.loadInstruments();
       }

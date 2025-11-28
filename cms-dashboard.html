@@ -333,18 +333,10 @@
     <div class="card">
       <h2>📖 Dokumentation</h2>
       <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-        <a href="./CMS-IMPLEMENTIERUNGS-PLAN.md" class="btn btn-secondary" style="text-align: left;">
-          📋 CMS-Implementierungs-Plan
-        </a>
-        <a href="./VOLLSTÄNDIGE-CMS-APIS-IMPLEMENTIERUNG.md" class="btn btn-secondary" style="text-align: left;">
-          ✅ CMS-APIs Implementierung
-        </a>
-        <a href="./CMS-SYSTEM-JOUWWEB.md" class="btn btn-secondary" style="text-align: left;">
-          🌐 CMS-System & JouwWeb
-        </a>
-        <a href="./MIKRO-SITES-KONZEPT.md" class="btn btn-secondary" style="text-align: left;">
-          🔗 Mikro-Sites Konzept
-        </a>
+        <div style="color: var(--muted); padding: 1rem;">
+          📋 CMS-Dokumentation ist im Repository verfügbar.<br>
+          <small>Hinweis: Für volle Funktionalität muss das D1-Schema deployed sein.</small>
+        </div>
       </div>
     </div>
   </main>
@@ -365,17 +357,31 @@
           ...options,
           headers
         });
-        const data = await res.json();
-        return data;
+        
+        if (!res.ok) {
+          // Stumme Behandlung von 404/405 auf GitHub Pages
+          if (res.status === 404 || res.status === 405) {
+            return { ok: false, error: 'API nicht verfügbar. Stelle sicher, dass D1-Schema deployed ist.', status: res.status };
+          }
+          return { ok: false, error: `HTTP ${res.status}`, status: res.status };
+        }
+        
+        const data = await res.json().catch(() => ({ ok: false, error: 'Ungültige JSON-Antwort' }));
+        return { ok: true, data, status: res.status };
       } catch (err) {
+        // Stumme Behandlung von Netzwerk-Fehlern auf GitHub Pages
+        if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+          return { ok: false, error: 'Backend nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages.', status: 0 };
+        }
         console.error('API Error:', err);
-        return { ok: false, error: String(err) };
+        return { ok: false, error: String(err), status: 0 };
       }
     }
 
     async function loadSites() {
-      const data = await apiCall('/sites');
-      if (data.ok && data.data.sites) {
+      const result = await apiCall('/sites');
+      if (result.ok && result.data && result.data.sites) {
+        const data = result;
         const sites = data.data.sites;
         document.getElementById('sitesCount').textContent = sites.length;
         
@@ -396,24 +402,28 @@
           `).join('');
         }
       } else {
-        document.getElementById('sitesTable').innerHTML = `
-          <tr>
-            <td colspan="5" style="text-align: center; color: var(--warn); padding: 2rem;">
-              ⚠️ Fehler beim Laden: ${data.error || 'Unbekannter Fehler'}<br>
-              <small style="color: var(--muted);">Stelle sicher, dass D1 Schema deployed ist!</small>
-            </td>
-          </tr>
-        `;
+        const tbody = document.getElementById('sitesTable');
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--warn); padding: 2rem;">
+                ⚠️ Fehler beim Laden: ${result.error || 'Unbekannter Fehler'}<br>
+                <small style="color: var(--muted);">Stelle sicher, dass D1 Schema deployed ist!<br>
+                Für lokale Tests: Backend-Server muss laufen.</small>
+              </td>
+            </tr>
+          `;
+        }
       }
     }
 
     async function loadPages() {
-      const data = await apiCall('/sites');
-      if (data.ok && data.data.sites && data.data.sites.length > 0) {
-        const siteId = data.data.sites[0].id;
-        const pagesData = await apiCall(`/sites/${siteId}/pages`);
-        if (pagesData.ok && pagesData.data.pages) {
-          const pages = pagesData.data.pages;
+      const result = await apiCall('/sites');
+      if (result.ok && result.data && result.data.sites && result.data.sites.length > 0) {
+        const siteId = result.data.sites[0].id;
+        const pagesResult = await apiCall(`/sites/${siteId}/pages`);
+        if (pagesResult.ok && pagesResult.data && pagesResult.data.pages) {
+          const pages = pagesResult.data.pages;
           document.getElementById('pagesCount').textContent = pages.length;
           
           const tbody = document.getElementById('pagesTable');
@@ -437,9 +447,9 @@
     }
 
     async function loadBlockTypes() {
-      const data = await apiCall('/blocks/types');
-      if (data.ok && data.data.block_types) {
-        const types = data.data.block_types;
+      const result = await apiCall('/blocks/types');
+      if (result.ok && result.data && result.data.block_types) {
+        const types = result.data.block_types;
         document.getElementById('blocksCount').textContent = types.length;
         
         const container = document.getElementById('blockTypesList');
@@ -457,12 +467,12 @@
     }
 
     async function loadCollections() {
-      const data = await apiCall('/sites');
-      if (data.ok && data.data.sites && data.data.sites.length > 0) {
-        const siteId = data.data.sites[0].id;
-        const collData = await apiCall(`/collections?site_id=${siteId}`);
-        if (collData.ok && collData.data.collections) {
-          const collections = collData.data.collections;
+      const result = await apiCall('/sites');
+      if (result.ok && result.data && result.data.sites && result.data.sites.length > 0) {
+        const siteId = result.data.sites[0].id;
+        const collResult = await apiCall(`/collections?site_id=${siteId}`);
+        if (collResult.ok && collResult.data && collResult.data.collections) {
+          const collections = collResult.data.collections;
           document.getElementById('collectionsCount').textContent = collections.length;
           
           const tbody = document.getElementById('collectionsTable');
@@ -492,12 +502,12 @@
         apiCall('/sites', {
           method: 'POST',
           body: JSON.stringify({ name, slug })
-        }).then(data => {
-          if (data.ok) {
+        }).then(result => {
+          if (result.ok) {
             alert('Site erstellt!');
             loadSites();
           } else {
-            alert('Fehler: ' + (data.error || 'Unbekannt'));
+            alert('Fehler: ' + (result.error || 'Unbekannt'));
           }
         });
       }
@@ -507,9 +517,9 @@
       const name = prompt('Collection Name:');
       const slug = prompt('Collection Slug:');
       if (name && slug) {
-        apiCall('/sites').then(sitesData => {
-          if (sitesData.ok && sitesData.data.sites && sitesData.data.sites.length > 0) {
-            const siteId = sitesData.data.sites[0].id;
+        apiCall('/sites').then(sitesResult => {
+          if (sitesResult.ok && sitesResult.data && sitesResult.data.sites && sitesResult.data.sites.length > 0) {
+            const siteId = sitesResult.data.sites[0].id;
             apiCall('/collections', {
               method: 'POST',
               body: JSON.stringify({
@@ -518,14 +528,16 @@
                 slug,
                 schema: {}
               })
-            }).then(data => {
-              if (data.ok) {
+            }).then(collResult => {
+              if (collResult.ok) {
                 alert('Collection erstellt!');
                 loadCollections();
               } else {
-                alert('Fehler: ' + (data.error || 'Unbekannt'));
+                alert('Fehler: ' + (collResult.error || 'Unbekannt'));
               }
             });
+          } else {
+            alert('Fehler: Keine Sites gefunden. Erstelle zuerst eine Site!');
           }
         });
       }

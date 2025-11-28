@@ -264,13 +264,19 @@
 
     async function loadIssuerVouchers(){
       try {
-          const res = await fetch('/api/voucher/list?issuerUid='+encodeURIComponent(uid), {
-        } catch (err) {
-          console.error('API error:', err);
-          return null;
-        }
+        const res = await fetch('/api/voucher/list?issuerUid='+encodeURIComponent(uid), {
           headers:{'Accept':'application/json'}
         });
+        
+        if (!res.ok) {
+          // Stumme Behandlung von 404/405
+          if (res.status === 404 || res.status === 405) {
+            issuerBody.innerHTML = '<tr><td colspan=\"3\" style=\"color:var(--muted);\">Backend nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages.</td></tr>';
+            return;
+          }
+          throw new Error(`HTTP ${res.status}`);
+        }
+        
         const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
         const items = (data && Array.isArray(data.items)) ? data.items : [];
         if(!items.length){

@@ -70,72 +70,102 @@ export async function safeFetchJson(url, options = {}) {
 }
 
 /**
- * URL-Mapper: Mappt Online-APIs auf Demo-Daten für GitHub Pages
+ * ECHTE API-URLs - KEINE DEMO-DATEN MEHR
+ * Alle Funktionen verwenden echte Backend-APIs
+ * Wenn APIs nicht verfügbar sind, wird eine klare Fehlermeldung angezeigt
  */
 export function getVoucherSourceUrl() {
-  if (ENV === 'github-pages' || ENV === 'local') {
-    return './demo-data/vouchers.json';
-  }
   return '/api/voucher/list';
 }
 
 export function getProvidersSourceUrl() {
-  if (ENV === 'github-pages' || ENV === 'local') {
-    return './config/providers.json';
-  }
   return '/api/providers';
 }
 
 export function getInstrumentsSourceUrl() {
-  if (ENV === 'github-pages' || ENV === 'local') {
-    return './demo-data/instruments.json';
-  }
   return '/api/instruments';
 }
 
 export function getMessagesSourceUrl() {
-  if (ENV === 'github-pages' || ENV === 'local') {
-    return './demo-data/messages.json';
-  }
   return '/api/messages';
 }
 
 /**
- * Demo-Loader: Nutzt statische JSON-Dateien statt echter /api/*-Routen
+ * ECHTE API-Loader - KEINE DEMO-DATEN
  */
 export async function loadProviders() {
   const url = getProvidersSourceUrl();
-  return safeFetchJson(url);
+  const result = await safeFetchJson(url);
+  if (!result.ok && (result.status === 404 || result.status === 405)) {
+    // Klare Fehlermeldung statt Demo-Daten
+    return { 
+      ok: false, 
+      error: 'Backend-API nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages mit aktiviertem Backend.', 
+      data: null, 
+      status: result.status 
+    };
+  }
+  return result;
 }
 
 export async function loadVouchers() {
   const url = getVoucherSourceUrl();
-  return safeFetchJson(url);
+  const result = await safeFetchJson(url);
+  if (!result.ok && (result.status === 404 || result.status === 405)) {
+    return { 
+      ok: false, 
+      error: 'Backend-API nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages mit aktiviertem Backend.', 
+      data: null, 
+      status: result.status 
+    };
+  }
+  return result;
 }
 
 export async function loadInstruments() {
   const url = getInstrumentsSourceUrl();
-  return safeFetchJson(url);
+  const result = await safeFetchJson(url);
+  if (!result.ok && (result.status === 404 || result.status === 405)) {
+    return { 
+      ok: false, 
+      error: 'Backend-API nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages mit aktiviertem Backend.', 
+      data: null, 
+      status: result.status 
+    };
+  }
+  return result;
 }
 
 export async function loadMessages() {
   const url = getMessagesSourceUrl();
-  return safeFetchJson(url);
+  const result = await safeFetchJson(url);
+  if (!result.ok && (result.status === 404 || result.status === 405)) {
+    return { 
+      ok: false, 
+      error: 'Backend-API nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages mit aktiviertem Backend.', 
+      data: null, 
+      status: result.status 
+    };
+  }
+  return result;
 }
 
 /**
- * Safe API Call - Versucht API, fällt auf JSON zurück
+ * Safe API Call - Versucht API, KEIN Fallback auf Demo-Daten
  */
 export async function safeApiCall(apiUrl, jsonFallback) {
-  // Versuche zuerst API (nur wenn nicht GitHub Pages)
-  if (ENV !== 'github-pages' && ENV !== 'local') {
-    const apiResult = await safeFetchJson(apiUrl);
-    if (apiResult.ok) {
-      return apiResult;
-    }
+  // IMMER echte API verwenden
+  const apiResult = await safeFetchJson(apiUrl);
+  if (apiResult.ok) {
+    return apiResult;
   }
   
-  // Fallback auf JSON
-  return safeFetchJson(jsonFallback);
+  // KEIN Fallback auf Demo-Daten - klare Fehlermeldung
+  return { 
+    ok: false, 
+    error: 'Backend-API nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages mit aktiviertem Backend.', 
+    data: null, 
+    status: apiResult.status || 0 
+  };
 }
 
