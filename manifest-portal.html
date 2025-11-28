@@ -2911,7 +2911,7 @@ async function renderSuppliers() {
 	if (!container) return;
 	container.textContent = 'Lade Provider-Profile …';
 	try {
-		const providers = await loadProviders();
+		const providers = await (window.loadProviders || (async () => []))();
 		if (!providers.length) {
 			container.textContent = 'Keine Provider-Profile konfiguriert.';
 			return;
