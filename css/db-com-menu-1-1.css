@@ -1,0 +1,253 @@
+/**
+ * Deutsche Bank db.com Menu EXACT 1:1
+ * Pixel-perfekte Nachbildung des DB.com Menüs
+ * Version: 1.0.0-EXACT-MENU
+ */
+
+/* === DB.COM MENU STRUCTURE === */
+.db-menu {
+  background: var(--db-white);
+  border-bottom: 1px solid var(--db-gray-200);
+  box-shadow: var(--db-shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.db-menu__container {
+  max-width: var(--db-container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--db-container-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px; /* Exakt DB.com Höhe */
+}
+
+/* === DB.COM LOGO === */
+.db-menu__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--db-spacing-3);
+  text-decoration: none;
+  color: var(--db-gray-900);
+}
+
+.db-menu__logo img {
+  height: 32px;
+  width: auto;
+}
+
+.db-menu__logo-text {
+  font-size: var(--db-font-size-lg);
+  font-weight: var(--db-font-weight-bold);
+  color: var(--db-gray-900);
+}
+
+/* === DB.COM NAVIGATION === */
+.db-menu__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--db-spacing-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.db-menu__nav-item {
+  position: relative;
+}
+
+.db-menu__nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--db-spacing-2);
+  padding: var(--db-spacing-3) var(--db-spacing-4);
+  color: var(--db-gray-700);
+  text-decoration: none;
+  font-size: var(--db-font-size-sm);
+  font-weight: var(--db-font-weight-medium);
+  border-radius: var(--db-radius-md);
+  transition: all var(--db-transition-fast);
+  white-space: nowrap;
+}
+
+.db-menu__nav-link:hover {
+  color: var(--db-blue);
+  background: var(--db-gray-100);
+}
+
+.db-menu__nav-link--active {
+  color: var(--db-blue);
+  font-weight: var(--db-font-weight-semibold);
+  background: rgba(0, 24, 168, 0.05);
+}
+
+/* === DB.COM DROPDOWN === */
+.db-menu__dropdown {
+  position: relative;
+}
+
+.db-menu__dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--db-spacing-1);
+  padding: var(--db-spacing-3) var(--db-spacing-4);
+  color: var(--db-gray-700);
+  text-decoration: none;
+  font-size: var(--db-font-size-sm);
+  font-weight: var(--db-font-weight-medium);
+  border-radius: var(--db-radius-md);
+  transition: all var(--db-transition-fast);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.db-menu__dropdown-toggle:hover {
+  color: var(--db-blue);
+  background: var(--db-gray-100);
+}
+
+.db-menu__dropdown-toggle::after {
+  content: "▼";
+  font-size: 10px;
+  margin-left: var(--db-spacing-1);
+  transition: transform var(--db-transition-fast);
+}
+
+.db-menu__dropdown-toggle[aria-expanded="true"]::after {
+  transform: rotate(180deg);
+}
+
+.db-menu__dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  background: var(--db-white);
+  border: 1px solid var(--db-gray-200);
+  border-radius: var(--db-radius-lg);
+  box-shadow: var(--db-shadow-lg);
+  padding: var(--db-spacing-2);
+  margin-top: var(--db-spacing-2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--db-transition-base);
+  z-index: 1001;
+}
+
+.db-menu__dropdown[aria-expanded="true"] .db-menu__dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.db-menu__dropdown-item {
+  display: block;
+  padding: var(--db-spacing-3) var(--db-spacing-4);
+  color: var(--db-gray-700);
+  text-decoration: none;
+  font-size: var(--db-font-size-sm);
+  border-radius: var(--db-radius-md);
+  transition: all var(--db-transition-fast);
+}
+
+.db-menu__dropdown-item:hover {
+  background: var(--db-gray-100);
+  color: var(--db-blue);
+}
+
+/* === DB.COM MOBILE MENU === */
+.db-menu__mobile-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--db-gray-700);
+  cursor: pointer;
+  border-radius: var(--db-radius-md);
+  transition: all var(--db-transition-fast);
+}
+
+.db-menu__mobile-toggle:hover {
+  background: var(--db-gray-100);
+  color: var(--db-blue);
+}
+
+.db-menu__mobile-toggle-icon {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* === T,. SYMBOLICA ICONS === */
+.db-menu__symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-weight: var(--db-font-weight-bold);
+  color: var(--db-blue);
+  margin-right: var(--db-spacing-1);
+}
+
+.db-menu__symbol--t {
+  font-size: var(--db-font-size-lg);
+}
+
+.db-menu__symbol--comma {
+  font-size: var(--db-font-size-base);
+  margin: 0 2px;
+}
+
+.db-menu__symbol--point {
+  font-size: var(--db-font-size-base);
+  margin-left: 2px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+  .db-menu__nav {
+    gap: 0;
+  }
+  
+  .db-menu__nav-link {
+    padding: var(--db-spacing-2) var(--db-spacing-3);
+    font-size: var(--db-font-size-xs);
+  }
+}
+
+@media (max-width: 768px) {
+  .db-menu__container {
+    height: 64px;
+  }
+  
+  .db-menu__nav {
+    display: none;
+  }
+  
+  .db-menu__mobile-toggle {
+    display: flex;
+  }
+  
+  .db-menu__nav--mobile-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--db-white);
+    border-bottom: 1px solid var(--db-gray-200);
+    box-shadow: var(--db-shadow-lg);
+    padding: var(--db-spacing-4);
+    gap: var(--db-spacing-2);
+  }
+}
+
