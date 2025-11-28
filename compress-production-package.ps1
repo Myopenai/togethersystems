@@ -22,7 +22,7 @@ Compress-Archive -Path "PRODUCTION-PACKAGE\*" -DestinationPath $prodZip -Compres
 $prodZipSize = (Get-Item $prodZip).Length
 $prodZipSizeMB = [math]::Round($prodZipSize / 1MB, 2)
 
-Write-Host "  ✓ $prodZip ($prodZipSizeMB MB)" -ForegroundColor Green
+Write-Host "  [OK] $prodZip ($prodZipSizeMB MB)" -ForegroundColor Green
 
 # Komprimiere Deploy Package
 if (Test-Path "DEPLOY-PACKAGE") {
@@ -33,7 +33,7 @@ if (Test-Path "DEPLOY-PACKAGE") {
     $deployZipSize = (Get-Item $deployZip).Length
     $deployZipSizeMB = [math]::Round($deployZipSize / 1MB, 2)
     
-    Write-Host "  ✓ $deployZip ($deployZipSizeMB MB)" -ForegroundColor Green
+    Write-Host "  [OK] $deployZip ($deployZipSizeMB MB)" -ForegroundColor Green
 }
 
 Write-Host ""
