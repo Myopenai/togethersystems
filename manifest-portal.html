@@ -879,14 +879,13 @@ body.public-view{ --cursor: not-allowed }
 				<p class="muted">
 					YFood bietet vollständige Mahlzeiten und Getränke für unterwegs. Perfekt für alle, die sich ausgewogen ernähren möchten, ohne Zeit zu verlieren.
 				</p>
-				<div style="margin-top:12px;position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;border:1px solid var(--border);">
+				<div class="db-video-container" style="margin-top:12px;">
 					<iframe 
-						style="position:absolute;top:0;left:0;width:100%;height:100%;" 
 						src="https://www.youtube.com/embed/ZYOQiBDsZo0" 
 						title="YFood Werbung" 
-						frameborder="0" 
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-						allowfullscreen>
+						allowfullscreen
+						loading="lazy">
 					</iframe>
 				</div>
 				<p class="muted" style="margin-top:8px;font-size:11px;">
@@ -1014,10 +1013,66 @@ body.public-view{ --cursor: not-allowed }
 		</section>
 	</div>
 
-<script type="module">
-// Import safeFetchJson für alle API-Calls
-import { safeFetchJson } from './js/portal-api.js';
-window.safeFetchJson = safeFetchJson; // Global verfügbar machen
+<script>
+// safeFetchJson Fallback - funktioniert auch ohne portal-api.js
+if (typeof window.safeFetchJson === 'undefined') {
+  window.safeFetchJson = async function(url, options = {}) {
+    // Environment Detection
+    const protocol = window.location.protocol;
+    const isFileProtocol = protocol === 'file:';
+    
+    if (isFileProtocol) {
+      console.warn('[IBM] file:// protocol detected - using fallback for', url);
+      return getDemoData(url);
+    }
+    
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: AbortSignal.timeout(5000)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.warn('[IBM] Fetch failed for', url, '- using fallback');
+      return getDemoData(url);
+    }
+  };
+  
+  function getDemoData(url) {
+    if (url.includes('/api/instruments')) {
+      return Promise.resolve({ success: true, data: [] });
+    }
+    if (url.includes('/api/messages')) {
+      return Promise.resolve({ success: true, data: [] });
+    }
+    return Promise.resolve({ success: true, data: {} });
+  }
+}
+
+// Versuche portal-api.js zu laden (optional)
+(async function() {
+  try {
+    if (window.location.protocol !== 'file:') {
+      const module = await import('./js/portal-api.js');
+      if (module && module.safeFetchJson) {
+        window.safeFetchJson = module.safeFetchJson;
+      }
+    }
+  } catch (error) {
+    // Fallback bereits oben definiert
+    console.warn('[IBM] portal-api.js not available, using fallback');
+  }
+})();
 </script>
 <script>
 // Eingebetteter Minimal-Core, damit das Portal auch als heruntergeladene Datei (file://) funktioniert.
@@ -2826,10 +2881,32 @@ window.submitFeedback = function(){
 	installBasicTelemetry();
 })();
 </script>
-<script type="module">
-import { loadProviders } from './router.js';
+<script>
+// router.js Fallback - funktioniert auch ohne router.js
+if (typeof window.loadProviders === 'undefined') {
+  window.loadProviders = async function() {
+    console.warn('[IBM] router.js not available, using fallback');
+    return [];
+  };
+}
+
+// Versuche router.js zu laden (optional)
+(async function() {
+  try {
+    if (window.location.protocol !== 'file:') {
+      const module = await import('./router.js');
+      if (module && module.loadProviders) {
+        window.loadProviders = module.loadProviders;
+      }
+    }
+  } catch (error) {
+    // Fallback bereits oben definiert
+    console.warn('[IBM] router.js not available, using fallback');
+  }
+})();
 
 async function renderSuppliers() {
+  const loadProvidersFn = window.loadProviders || (async () => []);
 	const container = document.getElementById('suppliersList');
 	if (!container) return;
 	container.textContent = 'Lade Provider-Profile …';
