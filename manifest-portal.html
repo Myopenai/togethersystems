@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Manifest of Thinkers – Portal</title>
+<link rel="stylesheet" href="./css/db-com-exact-1-1.css">
 <link rel="stylesheet" href="./css/teladia-banking-design-system.css">
 <link rel="stylesheet" href="./css/portal-teladia-theme.css">
 <style>
@@ -3013,6 +3014,8 @@ renderSuppliers().catch(() => {});
   }, 2000);
 })();
 </script>
+<!-- Error Guard muss ZUERST geladen werden -->
+<script src="./js/error-guard.js"></script>
 <script src="./ambient-media.js"></script>
 <script type="module" src="./autofix-client.js"></script>
 <script src="./balanced-exchange-portal.js"></script>
@@ -3028,8 +3031,27 @@ renderSuppliers().catch(() => {});
 <script src="./console-monitor.js"></script>
 <script src="./console-404-detector.js"></script>
 <script src="./http-resource-monitor-browser.js"></script>
-<script type="module" src="./js/error-guard.js"></script>
-<script type="module" src="./js/portal-ui.js"></script>
+<script>
+// Fallback für portal-ui.js wenn nicht verfügbar
+if (typeof window.portalUI === 'undefined') {
+  window.portalUI = {
+    bind: function() { console.warn('[IBM] portal-ui.js not loaded, using fallback'); },
+    update: function() { console.warn('[IBM] portal-ui.js not loaded, using fallback'); }
+  };
+}
+</script>
+<script type="module">
+// Dynamisch portal-ui.js laden mit Fallback
+try {
+  const module = await import('./js/portal-ui.js');
+  if (module && module.default) {
+    window.portalUI = module.default;
+  }
+} catch (error) {
+  console.warn('[IBM] portal-ui.js failed to load:', error.message);
+  // Fallback bereits oben definiert
+}
+</script>
 </body>
 </html>
 
