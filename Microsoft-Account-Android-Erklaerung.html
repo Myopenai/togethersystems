@@ -656,7 +656,48 @@
         statusText.textContent = message;
       }
 
+      // Lade gespeichertes Logo beim Start (PERSISTENT - bleibt erhalten)
+      function loadSavedLogo() {
+        try {
+          const saved = localStorage.getItem('microsoft-account-logo');
+          if (saved) {
+            const logoData = JSON.parse(saved);
+            if (logoData && logoData.url) {
+              const img = new Image();
+              img.onload = function() {
+                const wrapper = document.createElement("div");
+                wrapper.className = "preview-logo-wrapper";
+                wrapper.innerHTML = `<img src="${logoData.url}" alt="Gespeichertes Logo" style="max-width: 100%; height: auto;" />`;
+                wrapper.innerHTML += `<button id="remove-logo-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" title="Logo entfernen (nur User/Admin)">×</button>`;
+                preview.innerHTML = "";
+                preview.appendChild(wrapper);
+                uploadArea.classList.add("glow");
+                setStatus("ok", "Gespeichertes Logo geladen.");
+                
+                // Remove-Button Event
+                const removeBtn = document.getElementById("remove-logo-btn");
+                if (removeBtn) {
+                  removeBtn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    if (confirm("Möchten Sie das Logo wirklich entfernen? (Nur User/Admin kann dies tun)")) {
+                      localStorage.removeItem('microsoft-account-logo');
+                      preview.innerHTML = '<span class="icon">★</span><div>Upload een SVG-logo<br />Je ziet hier direct het resultaat in studiokwaliteit.</div>';
+                      uploadArea.classList.remove("glow");
+                      setStatus("ok", "Logo entfernt.");
+                    }
+                  });
+                }
+              };
+              img.src = logoData.url;
+            }
+          }
+        } catch (err) {
+          console.warn('Kon gespeichertes Logo niet laden:', err);
+        }
+      }
+      
       // Lade gespeichertes Logo beim Start
+      loadSavedLogo();
       function loadSavedLogo() {
         try {
           const saved = localStorage.getItem('microsoft-account-logo');
@@ -719,17 +760,31 @@
           img.onload = function () {
             const wrapper = document.createElement("div");
             wrapper.className = "preview-logo-wrapper";
-            wrapper.appendChild(img);
+            wrapper.innerHTML = `<img src="${svgContent}" alt="Geüpload SVG-logo" style="max-width: 100%; height: auto;" />`;
+            wrapper.innerHTML += `<button id="remove-logo-btn" style="position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" title="Logo entfernen (nur User/Admin)">×</button>`;
             preview.innerHTML = "";
             preview.appendChild(wrapper);
             uploadArea.classList.add("glow");
-            setStatus("ok", "Logo geladen en opgeslagen.");
+            setStatus("ok", "Logo geladen en opgeslagen. (PERSISTENT - bleibt erhalten)");
             setTimeout(function () {
               uploadArea.classList.remove("glow");
             }, 900);
+            
+            // Remove-Button Event
+            const removeBtn = document.getElementById("remove-logo-btn");
+            if (removeBtn) {
+              removeBtn.addEventListener("click", function(e) {
+                e.stopPropagation();
+                if (confirm("Möchten Sie das Logo wirklich entfernen? (Nur User/Admin kann dies tun)")) {
+                  localStorage.removeItem('microsoft-account-logo');
+                  preview.innerHTML = '<span class="icon">★</span><div>Upload een SVG-logo<br />Je ziet hier direct het resultaat in studiokwaliteit.</div>';
+                  uploadArea.classList.remove("glow");
+                  setStatus("ok", "Logo entfernt.");
+                }
+              });
+            }
           };
           img.src = svgContent;
-          img.alt = "Geüpload SVG-logo";
         };
         reader.readAsDataURL(file);
       });

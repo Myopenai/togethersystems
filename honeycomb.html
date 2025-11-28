@@ -477,11 +477,71 @@
     </div>
   </main>
 
-  <script type="module" src="./autofix-client.js"></script>
-  <script type="module" src="./room-image-carousel.js"></script>
+  <!-- Error Guard muss ZUERST geladen werden -->
+  <script src="./js/error-guard.js"></script>
+  <script>
+  // Fallbacks für alle Scripts
+  if (typeof window.getOrCreateUserId === 'undefined') {
+    window.getOrCreateUserId = function() {
+      let uid = localStorage.getItem('mot_user_id');
+      if (!uid) {
+        uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('mot_user_id', uid);
+      }
+      return uid;
+    };
+  }
+  
+  if (typeof window.parseHashParams === 'undefined') {
+    window.parseHashParams = function() {
+      const h = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+      const q = new URLSearchParams(h);
+      return {
+        token: q.get('mot') || q.get('token') || '',
+        sig: q.get('sig') || '',
+        ts: q.get('ts') || ''
+      };
+    };
+  }
+  
+  if (typeof window.initRoomImageCarousel === 'undefined') {
+    window.initRoomImageCarousel = function(selector) {
+      console.warn('[IBM] room-image-carousel.js not loaded, using fallback');
+      const container = document.querySelector(selector);
+      if (container) {
+        container.innerHTML = '<p style="color: var(--muted); padding: 1rem;">Bildkarussell wird geladen...</p>';
+      }
+    };
+  }
+  </script>
   <script type="module">
-  import { getOrCreateUserId, parseHashParams } from './mot-core.js';
-  import { initRoomImageCarousel } from './room-image-carousel.js';
+  // Versuche Scripts zu laden (optional)
+  (async function() {
+    try {
+      if (window.location.protocol !== 'file:') {
+        const motCore = await import('./mot-core.js');
+        if (motCore && motCore.getOrCreateUserId) {
+          window.getOrCreateUserId = motCore.getOrCreateUserId;
+        }
+        if (motCore && motCore.parseHashParams) {
+          window.parseHashParams = motCore.parseHashParams;
+        }
+        
+        const roomCarousel = await import('./room-image-carousel.js');
+        if (roomCarousel && roomCarousel.initRoomImageCarousel) {
+          window.initRoomImageCarousel = roomCarousel.initRoomImageCarousel;
+        }
+      }
+    } catch (error) {
+      console.warn('[IBM] Scripts not available, using fallbacks:', error.message);
+    }
+  })();
+  </script>
+  <script>
+  // Verwende Fallbacks oder geladene Module
+  const getOrCreateUserId = window.getOrCreateUserId;
+  const parseHashParams = window.parseHashParams;
+  const initRoomImageCarousel = window.initRoomImageCarousel;
 
   (function(){
     const STORAGE_KEY = 'honeycomb_v1';

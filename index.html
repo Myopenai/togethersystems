@@ -1045,8 +1045,29 @@
 
 
 <div id="thunderbit-crx-side-bar" style="display:block;opacity:1;pointer-events:all;top:0;right:0;z-index:9007199254740991;position:fixed;pointer-events:none;user-select:none;"><template shadowrootmode="open"><div id="#react-app-root"><div id="#react-app-slot" style="display:flex"></div></div></template></div><button id="open-side-panel" style="width:0;height:0;opacity:0;user-select:none;pointer-events:all;position:absolute;bottom:0;right:0;padding:0;border:0;outline:none;"></button></body></html>
+<!-- Error Guard muss ZUERST geladen werden -->
 <script src="./js/error-guard.js"></script>
-<script type="module" src="./autofix-client.js"></script>
+<script>
+// Fallback für autofix-client.js wenn nicht verfügbar
+if (typeof window.autofixClient === 'undefined') {
+  window.autofixClient = {
+    init: function() { console.warn('[IBM] autofix-client.js not loaded, using fallback'); },
+    fix: function() { console.warn('[IBM] autofix-client.js not loaded, using fallback'); }
+  };
+}
+</script>
+<script type="module">
+// Dynamisch autofix-client.js laden mit Fallback
+try {
+  const module = await import('./autofix-client.js');
+  if (module && module.default) {
+    window.autofixClient = module.default;
+  }
+} catch (error) {
+  console.warn('[IBM] autofix-client.js failed to load:', error.message);
+  // Fallback bereits oben definiert
+}
+</script>
 <script>
 (function() {
   // Environment Detection
