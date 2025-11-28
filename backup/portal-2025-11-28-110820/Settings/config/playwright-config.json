@@ -1,0 +1,45 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "baseURL": "http://localhost:9323/",
+  "timeout": 30000,
+  "retries": 1,
+  "headless": true,
+  "actionTimeout": 10000,
+  "navigationTimeout": 15000,
+  "projects": [
+    {
+      "name": "Chromium",
+      "browserName": "chromium",
+      "enabled": true
+    },
+    {
+      "name": "Firefox",
+      "browserName": "firefox",
+      "enabled": false
+    },
+    {
+      "name": "WebKit",
+      "browserName": "webkit",
+      "enabled": false
+    }
+  ],
+  "reporter": [
+    ["list"],
+    ["html", { "outputFolder": "playwright-report" }]
+  ],
+  "testMatch": "**/*.spec.{ts,js}",
+  "testIgnore": ["**/node_modules/**", "**/dist/**"],
+  "use": {
+    "screenshot": "only-on-failure",
+    "video": "off",
+    "trace": "off"
+  },
+  "webServer": {
+    "command": "python -m http.server 9323",
+    "port": 9323,
+    "timeout": 120000,
+    "reuseExistingServer": true
+  }
+}
+

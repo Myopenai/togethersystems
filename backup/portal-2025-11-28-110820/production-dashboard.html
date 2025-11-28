@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Production Dashboard – TogetherSystems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root{
+      --bg:#020617;
+      --fg:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#22c55e;
+      --accent2:#38bdf8;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --border:#1f2937;
+      --card:rgba(15,23,42,.96);
+      --font: system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,sans-serif;
+    }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:var(--font);
+      background:radial-gradient(circle at top,#0f172a 0,#020617 60%,#000 100%);
+      color:var(--fg);
+    }
+    .ts-brand-banner{
+      background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+      color:#e5e7eb;
+      padding:4px 12px;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong{font-weight:600;}
+    .ts-brand-sub{opacity:.78; display:block;}
+    .ts-brand-links a{
+      color:#a5b4fc;
+      text-decoration:none;
+      font-size:11px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+    .ts-brand-links a:hover{text-decoration:underline;}
+    main{
+      max-width:1400px;
+      margin:16px auto 40px;
+      padding:0 16px 40px;
+    }
+    h1{margin:0 0 4px;font-size:1.6rem;}
+    h2{margin:0 0 8px;font-size:1.15rem;}
+    p{margin:0 0 4px;}
+    .muted{color:var(--muted);font-size:.85rem;}
+    .grid{
+      display:grid;
+      gap:16px;
+      margin-top:16px;
+    }
+    .grid.cols-2{grid-template-columns:repeat(2, 1fr);}
+    .grid.cols-3{grid-template-columns:repeat(3, 1fr);}
+    .grid.cols-4{grid-template-columns:repeat(4, 1fr);}
+    @media (max-width:1200px){
+      .grid.cols-4{grid-template-columns:repeat(2, 1fr);}
+      .grid.cols-3{grid-template-columns:repeat(2, 1fr);}
+    }
+    @media (max-width:768px){
+      .grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}
+    }
+    .card{
+      background:var(--card);
+      border-radius:16px;
+      border:1px solid rgba(148,163,184,.35);
+      padding:16px;
+      box-shadow:0 18px 40px rgba(15,23,42,.8);
+    }
+    .kpi{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .kpi-label{
+      font-size:.75rem;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+    .kpi-value{
+      font-size:2rem;
+      font-weight:700;
+      line-height:1;
+    }
+    .kpi-sub{
+      font-size:.85rem;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .gauge{
+      width:120px;
+      height:120px;
+      position:relative;
+      margin:0 auto;
+    }
+    .gauge svg{
+      transform:rotate(-90deg);
+      width:100%;
+      height:100%;
+    }
+    .gauge-percent{
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      font-size:1.5rem;
+      font-weight:700;
+    }
+    .status-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.75rem;
+      font-weight:500;
+    }
+    .status-badge.ok{background:rgba(34,197,94,.2);border:1px solid #22c55e;color:#bbf7d0;}
+    .status-badge.warn{background:rgba(234,179,8,.2);border:1px solid #eab308;color:#facc15;}
+    .status-badge.error{background:rgba(239,68,68,.2);border:1px solid #ef4444;color:#fee2e2;}
+    .chart-container{
+      height:200px;
+      margin-top:12px;
+      position:relative;
+    }
+    .chart-bar{
+      display:flex;
+      align-items:flex-end;
+      gap:4px;
+      height:100%;
+    }
+    .bar{
+      flex:1;
+      background:linear-gradient(to top, var(--accent), var(--accent2));
+      border-radius:4px 4px 0 0;
+      min-height:4px;
+      position:relative;
+    }
+    .bar:hover{
+      opacity:.8;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:.8rem;
+      margin-top:8px;
+    }
+    th,td{
+      border-bottom:1px solid var(--border);
+      padding:8px;
+      text-align:left;
+    }
+    th{
+      font-weight:600;
+      color:var(--muted);
+      font-size:.75rem;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+    .loading{
+      text-align:center;
+      padding:20px;
+      color:var(--muted);
+    }
+    .refresh-btn{
+      background:var(--accent);
+      color:#000;
+      border:none;
+      padding:8px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:500;
+      margin-bottom:16px;
+    }
+    .refresh-btn:hover{opacity:.9;}
+    .backup-section{
+      background:rgba(34,197,94,.1);
+      border:1px solid rgba(34,197,94,.3);
+      border-radius:12px;
+      padding:12px;
+      margin-top:16px;
+    }
+  </style>
+  <style>
+    /* Skip to content - Accessibility */
+    .skip-to-content {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--accent, #10b981);
+      color: #00100a;
+      padding: 8px 16px;
+      text-decoration: none;
+      border-radius: 0 0 8px 0;
+      z-index: 1000;
+      font-weight: 600;
+    }
+    .skip-to-content:focus {
+      top: 0;
+    }
+  </style>
+</head>
+<body>
+	<a href="#main-content" class="skip-to-content">Overslaan en naar inhoud</a>
+  <div class="ts-brand-banner">
+    <div>
+      <strong title="Initiator der neuen Börsenführung | Erster im Markt">T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430 | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf" target="_blank" rel="noopener noreferrer" style="color:#a5b4fc;text-decoration:underline;">Businessplan</a> | T,.0031613803782.T,,.(C)R.D.TEL-DR.TEL | <span style="font-weight:500;color:#10b981;">Initiator der neuen Börsenführung – Erster im Markt</span></span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./admin-monitoring.html">Monitoring</a>
+      <a href="./business-admin.html">Business-Admin</a>
+      <a href="./admin.html">Admin</a>
+      <a href="./production-dashboard.html">📊 Production Dashboard</a>
+    </div>
+  </div>
+  <main id="main-content">
+    <header>
+      <h1>📊 Production Dashboard</h1>
+      <p class="muted">
+        Vollständige Übersicht aller System-Metriken: Produktionsreife, Fehlerrate, Qualität, Auslastung, Backups
+      </p>
+      <button class="refresh-btn" onclick="loadAllData()">🔄 Aktualisieren</button>
+    </header>
+
+    <!-- Global KPIs -->
+    <section class="grid cols-4">
+      <div class="card kpi">
+        <div class="kpi-label">Produktionsreife</div>
+        <div class="gauge" id="gaugeReadiness">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" stroke="var(--border)" stroke-width="8" fill="none"/>
+            <circle cx="50" cy="50" r="40" stroke="var(--accent)" stroke-width="8" fill="none"
+                    stroke-dasharray="251" stroke-dashoffset="251" id="readinessArc"/>
+          </svg>
+          <div class="gauge-percent" id="readinessPercent">0%</div>
+        </div>
+        <div class="kpi-sub" id="readinessStatus">Lade...</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-label">Fehlerfreiheit</div>
+        <div class="kpi-value" id="qualityScore">0%</div>
+        <div class="kpi-sub" id="qualityStatus">Lade...</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-label">System-Stabilität</div>
+        <div class="kpi-value" id="stability">0%</div>
+        <div class="kpi-sub" id="stabilityStatus">Lade...</div>
+      </div>
+      <div class="card kpi">
+        <div class="kpi-label">Nutzungsintensität</div>
+        <div class="kpi-value" id="activityCount">0</div>
+        <div class="kpi-sub" id="activityStatus">Events/24h</div>
+      </div>
+    </section>
+
+    <!-- Production Overview -->
+    <section class="card">
+      <h2>Produktionsverlauf (letzte 7 Tage)</h2>
+      <div class="chart-container" id="productionChart">
+        <div class="loading">Lade Produktionsdaten...</div>
+      </div>
+    </section>
+
+    <!-- Error Analysis -->
+    <section class="grid cols-2">
+      <div class="card">
+        <h2>Fehlerverhalten</h2>
+        <div id="errorAnalysis" class="loading">Lade Fehlerdaten...</div>
+      </div>
+      <div class="card">
+        <h2>Fehlerkorrektur</h2>
+        <div id="fixAnalysis" class="loading">Lade Korrektur-Daten...</div>
+      </div>
+    </section>
+
+    <!-- Feature Maturity -->
+    <section class="card">
+      <h2>Feature-Reifegrad</h2>
+      <table id="maturityTable">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Events (30d)</th>
+            <th>Fehlerrate</th>
+            <th>Reifegrad</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="5" class="loading">Lade Feature-Daten...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Backup Health -->
+    <section class="card backup-section">
+      <h2>🔒 Backup-Status</h2>
+      <div id="backupHealth" class="loading">Lade Backup-Status...</div>
+      <div style="margin-top:12px;">
+        <button class="refresh-btn" onclick="createBackup()">💾 Backup erstellen</button>
+        <button class="refresh-btn" onclick="restoreBackup()" style="background:var(--warn);">↩️ Backup wiederherstellen</button>
+      </div>
+    </section>
+
+    <!-- Event Stream -->
+    <section class="card">
+      <h2>Letzte Ereignisse (Live)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Zeit</th>
+            <th>Typ</th>
+            <th>Subjekt</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="eventsStream">
+          <tr><td colspan="4" class="loading">Lade Ereignisse...</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+  (function(){
+    const API_BASE = '/api';
+    let dashboardData = null;
+
+    function e(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+    async function loadDashboardData(){
+      try {
+          const res = await fetch(`${API_BASE}/admin/dashboard`);
+        } catch (err) {
+          console.error('API error:', err);
+          return null;
+        }
+        if(!res.ok) throw new Error(`API-Fehler: ${res.status}`);
+        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+        if(!data.ok) throw new Error(data.error || 'Unbekannter Fehler');
+        dashboardData = data;
+        return data;
+      }catch(err){
+        console.error('Dashboard-Daten konnten nicht geladen werden:', err);
+        return null;
+      }
+    }
+
+    function calculateMaturity(events, errorRate){
+      if(events < 100) return {level:1,label:'Prototyp'};
+      if(events < 500){
+        if(errorRate < 10) return {level:2,label:'Beta'};
+        return {level:1,label:'Prototyp'};
+      }
+      if(errorRate < 5) return {level:3,label:'Stable'};
+      if(errorRate < 10) return {level:2,label:'Beta'};
+      return {level:1,label:'Prototyp'};
+    }
+
+    function updateGauge(elementId, percent, color){
+      const arc = document.getElementById(elementId);
+      if(!arc) return;
+      const circumference = 2 * Math.PI * 40;
+      const offset = circumference - (percent / 100) * circumference;
+      arc.style.strokeDashoffset = offset;
+      arc.setAttribute('stroke', color);
+    }
+
+    function renderProductionChart(data){
+      const container = document.getElementById('productionChart');
+      if(!container || !data || !data.productionTimeline) return;
+      
+      const timeline = data.productionTimeline;
+      const max = Math.max(...timeline.map(d=>d.count), 1);
+      
+      container.innerHTML = '<div class="chart-bar"></div>';
+      const barContainer = container.querySelector('.chart-bar');
+      
+      timeline.forEach((day, i)=>{
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = `${(day.count / max) * 100}%`;
+        bar.title = `${day.date}: ${day.count} Events`;
+        barContainer.appendChild(bar);
+      });
+    }
+
+    async function loadAllData(){
+      const data = await loadDashboardData();
+      if(!data) return;
+
+      // Global KPIs
+      const readiness = data.productionReadiness || 0;
+      updateGauge('readinessArc', readiness, readiness >= 80 ? 'var(--accent)' : readiness >= 50 ? 'var(--warn)' : 'var(--danger)');
+      document.getElementById('readinessPercent').textContent = readiness + '%';
+      document.getElementById('readinessStatus').textContent = readiness >= 80 ? '✅ Produktionsreif' : readiness >= 50 ? '⚠️ In Entwicklung' : '🔴 Prototyp';
+
+      const quality = data.qualityScore || 0;
+      document.getElementById('qualityScore').textContent = quality.toFixed(1) + '%';
+      document.getElementById('qualityStatus').textContent = quality >= 95 ? '✅ Exzellent' : quality >= 80 ? '⚠️ Gut' : '🔴 Verbesserung nötig';
+
+      const stability = data.systemStability || 0;
+      document.getElementById('stability').textContent = stability.toFixed(1) + '%';
+      document.getElementById('stabilityStatus').textContent = stability >= 99 ? '✅ Stabil' : stability >= 95 ? '⚠️ Akzeptabel' : '🔴 Instabil';
+
+      document.getElementById('activityCount').textContent = String(data.activityCount || 0);
+      document.getElementById('activityStatus').textContent = 'Events/24h';
+
+      // Production Chart
+      renderProductionChart(data);
+
+      // Error Analysis
+      const errorAnalysis = document.getElementById('errorAnalysis');
+      if(data.errorStats){
+        const errorRate = data.errorStats.rate || 0;
+        const errorCount = data.errorStats.count || 0;
+        errorAnalysis.innerHTML = `
+          <div class="kpi-value" style="color:${errorRate > 5 ? 'var(--danger)' : errorRate > 2 ? 'var(--warn)' : 'var(--accent)'}">
+            ${errorRate.toFixed(2)}%
+          </div>
+          <div class="kpi-sub">${errorCount} Fehler / ${data.errorStats.total || 0} Events</div>
+          <div style="margin-top:12px;font-size:.85rem;">
+            <div><strong>Top Fehlerquellen:</strong></div>
+            <ul style="margin:8px 0 0 20px;color:var(--muted);">
+              ${(data.errorStats.topErrors || []).slice(0,5).map(e=>`<li>${e.type}: ${e.count}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      // Fix Analysis
+      const fixAnalysis = document.getElementById('fixAnalysis');
+      if(data.fixStats){
+        const fixRate = data.fixStats.rate || 0;
+        fixAnalysis.innerHTML = `
+          <div class="kpi-value" style="color:${fixRate >= 80 ? 'var(--accent)' : fixRate >= 50 ? 'var(--warn)' : 'var(--danger)'}">
+            ${fixRate.toFixed(1)}%
+          </div>
+          <div class="kpi-sub">Fix-Rate (behobene / gemeldete)</div>
+          <div style="margin-top:12px;font-size:.85rem;">
+            <div>Fixes/Woche: <strong>${data.fixStats.fixesPerWeek || 0}</strong></div>
+            <div>Offene Fehler: <strong>${data.fixStats.openErrors || 0}</strong></div>
+          </div>
+        `;
+      }
+
+      // Feature Maturity
+      const maturityTable = document.getElementById('maturityTable').querySelector('tbody');
+      if(data.featureMaturity){
+        maturityTable.innerHTML = data.featureMaturity.map(feature=>{
+          const maturity = calculateMaturity(feature.events, feature.errorRate);
+          const statusBadge = maturity.level >= 3 ? 'ok' : maturity.level >= 2 ? 'warn' : 'error';
+          return `
+            <tr>
+              <td><strong>${e(feature.name)}</strong></td>
+              <td>${feature.events}</td>
+              <td>${feature.errorRate.toFixed(2)}%</td>
+              <td>${maturity.label} (${maturity.level}/4)</td>
+              <td><span class="status-badge ${statusBadge}">${maturity.level === 4 ? '✅' : maturity.level === 3 ? '✓' : '⚠'}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Events Stream
+      const eventsStream = document.getElementById('eventsStream');
+      if(data.recentEvents){
+        eventsStream.innerHTML = data.recentEvents.slice(0,10).map(ev=>{
+          const date = ev.createdAt ? new Date(ev.createdAt).toLocaleString() : '';
+          const status = ev.type?.includes('error') || ev.type?.includes('fail') ? 'error' : 'ok';
+          return `
+            <tr>
+              <td>${e(date)}</td>
+              <td><code>${e(ev.type)}</code></td>
+              <td>${e(ev.subjectType || '—')} · ${e(ev.subjectId || '—')}</td>
+              <td><span class="status-badge ${status}">${status === 'error' ? '🔴' : '✅'}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Backup Health
+      const backupHealth = document.getElementById('backupHealth');
+      if(data.backupHealth){
+        const health = data.backupHealth;
+        backupHealth.innerHTML = `
+          <div class="kpi-value" style="color:${health.status === 'ok' ? 'var(--accent)' : 'var(--warn)'}">
+            ${health.status === 'ok' ? '✅' : '⚠️'} ${health.status === 'ok' ? 'Gesund' : 'Überprüfen'}
+          </div>
+          <div class="kpi-sub">
+            Letztes Backup: ${health.lastBackup || 'Nie'}<br>
+            Backup-Frequenz: ${health.backupFrequency || 0}% der Installationen (letzte 7 Tage)
+          </div>
+        `;
+      }
+    }
+
+    async function createBackup(){
+      if(!confirm('Backup jetzt erstellen?')) return;
+      try {
+          const res = await fetch(`${API_BASE}/admin/backup/create`, {method:'POST'});
+        } catch (err) {
+          console.error('API error:', err);
+          return null;
+        }
+        const data = res.ok ? await res.json().catch(e => { console.error('JSON parse error:', e); return null; }) : null;
+        if(data.ok){
+          alert('✅ Backup erfolgreich erstellt!');
+          loadAllData();
+        }else{
+          alert('Fehler: ' + (data.error || 'Unbekannt'));
+        }
+      }catch(err){
+        alert('Fehler beim Erstellen des Backups: ' + err.message);
+      }
+    }
+
+    async function restoreBackup(){
+      alert('Backup-Wiederherstellung: Bitte wähle eine Backup-Datei aus dem lokalen Verzeichnis "Produktionsordner/" aus.\n\nDie Wiederherstellung erfolgt manuell über admin.html → Backup laden.');
+    }
+
+    // Initial load
+    loadAllData();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadAllData, 30000);
+  })();
+  </script>
+  <script type="module" src="./autofix-client.js"></script>
+</body>
+</html>
+

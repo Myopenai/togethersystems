@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Employee Role Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "employee.role" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "required": ["permissions"],
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "aiAccess": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"]
+    }
+  }
+}
+

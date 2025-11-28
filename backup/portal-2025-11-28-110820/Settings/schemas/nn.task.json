@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "NN Task Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "nn.task" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "properties": {
+        "policies": { "type": "array", "items": { "type": "string" } },
+        "models": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"]
+    }
+  }
+}
+

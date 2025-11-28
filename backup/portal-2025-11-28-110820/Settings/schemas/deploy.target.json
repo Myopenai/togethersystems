@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Deploy Target Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "deploy.target" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "required": ["region"],
+      "properties": {
+        "region": { "type": "string" },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "dataLocality": { "type": "string" },
+            "energy": { "$ref": "#/definitions/dimensionalValue" }
+          }
+        },
+        "reliability": {
+          "type": "object",
+          "properties": {
+            "sla": { "type": "string" },
+            "score": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"]
+    },
+    "dimensionalValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string" }
+      }
+    }
+  }
+}
+

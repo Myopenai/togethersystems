@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Build Target Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "build.target" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "required": ["hardware"],
+      "properties": {
+        "hardware": {
+          "type": "object",
+          "required": ["class"],
+          "properties": {
+            "class": { "type": "string", "enum": ["CPU", "GPU", "WASM", "FPGA", "ASIC"] },
+            "vendor": { "type": "string" },
+            "device": { "type": "string" }
+          }
+        },
+        "isa": { "type": "array", "items": { "type": "string" } },
+        "memory": { "$ref": "#/definitions/dimensionalValue" },
+        "toolchain": { "type": "array", "items": { "type": "string" } },
+        "artifacts": {
+          "type": "object",
+          "properties": {
+            "format": { "type": "string" },
+            "profile": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"],
+      "properties": {
+        "owner": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "checksum": { "type": "string" }
+      }
+    },
+    "dimensionalValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string" }
+      }
+    }
+  }
+}
+

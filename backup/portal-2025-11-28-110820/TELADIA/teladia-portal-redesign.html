@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TELADIA - Asset Exchange Sphere</title>
+  <link rel="stylesheet" href="../css/teladia-banking-design-system.css">
+  <style>
+    /* TELADIA-spezifische Anpassungen */
+    .hero {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      color: white;
+      padding: var(--spacing-20) var(--spacing-6);
+      text-align: center;
+      border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+      margin-bottom: var(--spacing-12);
+    }
+    
+    .hero__title {
+      font-size: var(--font-size-4xl);
+      margin-bottom: var(--spacing-4);
+      color: white;
+    }
+    
+    .hero__subtitle {
+      font-size: var(--font-size-xl);
+      opacity: 0.9;
+      margin-bottom: var(--spacing-8);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-6);
+      margin-bottom: var(--spacing-12);
+    }
+    
+    .stat-card {
+      background: var(--color-surface);
+      padding: var(--spacing-6);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+    
+    .stat-card__value {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      margin-bottom: var(--spacing-2);
+    }
+    
+    .stat-card__label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .asset-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-6);
+      box-shadow: var(--shadow-soft);
+      transition: all var(--transition-base);
+      border: 1px solid var(--color-border-light);
+    }
+    
+    .asset-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--color-primary);
+    }
+    
+    .asset-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-4);
+    }
+    
+    .asset-card__type {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+    }
+    
+    .asset-card__value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text);
+      margin-bottom: var(--spacing-2);
+    }
+    
+    .asset-card__change {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+    }
+    
+    .asset-card__change--positive {
+      color: var(--color-success);
+    }
+    
+    .asset-card__change--negative {
+      color: var(--color-error);
+    }
+    
+    .exchange-form {
+      background: var(--color-surface);
+      padding: var(--spacing-8);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-soft);
+      margin-bottom: var(--spacing-12);
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-6);
+      margin-bottom: var(--spacing-6);
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="layout">
+  <header class="layout__header">
+    <div class="container">
+      <nav class="nav">
+        <a href="../index.html" class="nav__link">Portal</a>
+        <a href="#" class="nav__link nav__link--active">TELADIA</a>
+        <a href="../TELBANK/telbank-portal-negative-assets.html" class="nav__link">TELBANK</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout__main">
+    <section class="hero">
+      <h1 class="hero__title">TELADIA</h1>
+      <p class="hero__subtitle">Asset Exchange Sphere - Fiat ↔ Crypto ↔ Digital</p>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card__value" id="totalAssets">€0</div>
+        <div class="stat-card__label">Gesamt Assets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__value" id="activeExchanges">0</div>
+        <div class="stat-card__label">Aktive Exchanges</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__value" id="exchangeVolume">€0</div>
+        <div class="stat-card__label">Exchange Volumen</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__value" id="supportedAssets">0</div>
+        <div class="stat-card__label">Unterstützte Assets</div>
+      </div>
+    </section>
+
+    <section class="exchange-form">
+      <h2 class="card__title">Asset Exchange</h2>
+      <form id="exchangeForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="fromAsset">Von</label>
+            <select class="form-input" id="fromAsset" required>
+              <option value="">Asset wählen...</option>
+              <option value="EUR">EUR (Euro)</option>
+              <option value="USD">USD (US Dollar)</option>
+              <option value="BTC">BTC (Bitcoin)</option>
+              <option value="ETH">ETH (Ethereum)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="toAsset">Zu</label>
+            <select class="form-input" id="toAsset" required>
+              <option value="">Asset wählen...</option>
+              <option value="EUR">EUR (Euro)</option>
+              <option value="USD">USD (US Dollar)</option>
+              <option value="BTC">BTC (Bitcoin)</option>
+              <option value="ETH">ETH (Ethereum)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="amount">Betrag</label>
+          <input type="number" class="form-input" id="amount" step="0.01" min="0" required>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn--primary btn--large">Exchange durchführen</button>
+        </div>
+      </form>
+    </section>
+
+    <section>
+      <h2 class="card__title mb-6">Verfügbare Assets</h2>
+      <div class="grid grid--3" id="assetsGrid">
+        <!-- Wird dynamisch gefüllt -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="layout__footer">
+    <div class="container">
+      <p class="text-center text-muted">TELADIA Asset Exchange Sphere - T,.&T,,.&T,,,.(C)(R)</p>
+    </div>
+  </footer>
+
+  <!-- Error Guard muss ZUERST geladen werden -->
+  <script src="../js/error-guard.js"></script>
+  <script>
+    // TELADIA API Fallback - Funktioniert auch ohne API-Server
+    class TeladiaAPI {
+      constructor() {
+        this.exchangeRates = {
+          'EUR-USD': 1.08,
+          'EUR-BTC': 0.000022,
+          'EUR-ETH': 0.00035,
+          'USD-EUR': 0.93,
+          'USD-BTC': 0.000020,
+          'USD-ETH': 0.00032,
+          'BTC-EUR': 45454.55,
+          'BTC-USD': 50000.00,
+          'BTC-ETH': 16.0,
+          'ETH-EUR': 2857.14,
+          'ETH-USD': 3125.00,
+          'ETH-BTC': 0.0625
+        };
+      }
+
+      async getRealAssets() {
+        // Fallback: Demo-Daten wenn API nicht verfügbar
+        return {
+          success: true,
+          data: {
+            fiat: [
+              { symbol: 'EUR', type: 'Fiat', value: '€1.00', change: 0.0 },
+              { symbol: 'USD', type: 'Fiat', value: '$1.08', change: 0.1 }
+            ],
+            crypto: [
+              { symbol: 'BTC', type: 'Crypto', value: '€45,454.55', change: 2.3 },
+              { symbol: 'ETH', type: 'Crypto', value: '€2,857.14', change: -1.2 }
+            ],
+            digital: []
+          }
+        };
+      }
+
+      async getRealExchangeRate(fromAsset, toAsset) {
+        const key = `${fromAsset}-${toAsset}`;
+        const rate = this.exchangeRates[key];
+        if (rate) {
+          return { success: true, rate: rate };
+        }
+        // Fallback: 1:1 wenn kein Rate gefunden
+        return { success: true, rate: 1.0 };
+      }
+
+      async executeRealExchange(fromAsset, toAsset, amount) {
+        const rateData = await this.getRealExchangeRate(fromAsset, toAsset);
+        const rate = rateData.rate;
+        const convertedAmount = amount * rate;
+        
+        return {
+          success: true,
+          from: fromAsset,
+          to: toAsset,
+          amount: convertedAmount,
+          rate: rate,
+          originalAmount: amount
+        };
+      }
+    }
+
+    // API Integration mit Fallback
+    let api;
+    try {
+      // Versuche echte API zu laden
+      if (typeof TeladiaRealAPI !== 'undefined') {
+        api = new TeladiaRealAPI();
+      } else {
+        // Fallback zu lokaler Implementierung
+        api = new TeladiaAPI();
+      }
+    } catch (error) {
+      console.warn('[TELADIA] Using fallback API:', error);
+      api = new TeladiaAPI();
+    }
+    
+    // Load assets
+    async function loadAssets() {
+      try {
+        const assets = await api.getRealAssets();
+        const grid = document.getElementById('assetsGrid');
+        
+        if (assets && assets.data) {
+          const allAssets = [
+            ...(assets.data.fiat || []),
+            ...(assets.data.crypto || []),
+            ...(assets.data.digital || [])
+          ];
+          
+          grid.innerHTML = allAssets.map(asset => `
+            <div class="asset-card">
+              <div class="asset-card__header">
+                <span class="asset-card__type">${asset.type || 'Asset'}</span>
+                <span class="badge badge--primary">${asset.symbol || ''}</span>
+              </div>
+              <div class="asset-card__value">${asset.value || '0'}</div>
+              <div class="asset-card__change ${asset.change >= 0 ? 'asset-card__change--positive' : 'asset-card__change--negative'}">
+                ${asset.change >= 0 ? '+' : ''}${asset.change || 0}%
+              </div>
+            </div>
+          `).join('');
+        } else {
+          // Fallback demo data
+          grid.innerHTML = `
+            <div class="asset-card">
+              <div class="asset-card__header">
+                <span class="asset-card__type">Fiat</span>
+                <span class="badge badge--primary">EUR</span>
+              </div>
+              <div class="asset-card__value">€1.00</div>
+              <div class="asset-card__change asset-card__change--positive">+0.0%</div>
+            </div>
+            <div class="asset-card">
+              <div class="asset-card__header">
+                <span class="asset-card__type">Crypto</span>
+                <span class="badge badge--accent">BTC</span>
+              </div>
+              <div class="asset-card__value">€45,234.56</div>
+              <div class="asset-card__change asset-card__change--positive">+2.3%</div>
+            </div>
+            <div class="asset-card">
+              <div class="asset-card__header">
+                <span class="asset-card__type">Crypto</span>
+                <span class="badge badge--accent">ETH</span>
+              </div>
+              <div class="asset-card__value">€2,789.12</div>
+              <div class="asset-card__change asset-card__change--negative">-1.2%</div>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Failed to load assets:', error);
+      }
+    }
+    
+    // Exchange form handler mit vollständiger Umrechnung
+    document.getElementById('exchangeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fromAsset = document.getElementById('fromAsset').value;
+      const toAsset = document.getElementById('toAsset').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+      
+      if (!fromAsset || !toAsset || !amount || amount <= 0) {
+        alert('Bitte alle Felder korrekt ausfüllen');
+        return;
+      }
+      
+      if (fromAsset === toAsset) {
+        alert('Bitte unterschiedliche Assets wählen');
+        return;
+      }
+      
+      try {
+        // Hole Wechselkurs
+        const rateData = await api.getRealExchangeRate(fromAsset, toAsset);
+        const rate = rateData.rate || rateData;
+        
+        // Berechne umgerechneten Betrag
+        const convertedAmount = amount * rate;
+        
+        // Formatiere Beträge
+        const formatAmount = (val, asset) => {
+          if (asset === 'EUR') return `€${val.toFixed(2)}`;
+          if (asset === 'USD') return `$${val.toFixed(2)}`;
+          if (asset === 'BTC') return `₿${val.toFixed(8)}`;
+          if (asset === 'ETH') return `Ξ${val.toFixed(6)}`;
+          return `${val.toFixed(2)} ${asset}`;
+        };
+        
+        // Zeige Ergebnis
+        const message = `Exchange erfolgreich!\n\n` +
+          `${formatAmount(amount, fromAsset)} = ${formatAmount(convertedAmount, toAsset)}\n` +
+          `Wechselkurs: 1 ${fromAsset} = ${rate.toFixed(6)} ${toAsset}`;
+        
+        alert(message);
+        document.getElementById('exchangeForm').reset();
+        
+        // Aktualisiere Assets nach Exchange
+        loadAssets();
+      } catch (error) {
+        console.error('Exchange failed:', error);
+        alert('Exchange fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'));
+      }
+    });
+    
+    // Live Wechselkurs-Anzeige
+    const fromAssetEl = document.getElementById('fromAsset');
+    const toAssetEl = document.getElementById('toAsset');
+    const amountEl = document.getElementById('amount');
+    const rateDisplay = document.createElement('div');
+    rateDisplay.className = 'form-help';
+    rateDisplay.id = 'rateDisplay';
+    amountEl.parentElement.appendChild(rateDisplay);
+    
+    async function updateRateDisplay() {
+      const from = fromAssetEl.value;
+      const to = toAssetEl.value;
+      const amount = parseFloat(amountEl.value) || 0;
+      
+      if (from && to && from !== to) {
+        try {
+          const rateData = await api.getRealExchangeRate(from, to);
+          const rate = rateData.rate || rateData;
+          const converted = amount * rate;
+          
+          const formatAmount = (val, asset) => {
+            if (asset === 'EUR') return `€${val.toFixed(2)}`;
+            if (asset === 'USD') return `$${val.toFixed(2)}`;
+            if (asset === 'BTC') return `₿${val.toFixed(8)}`;
+            if (asset === 'ETH') return `Ξ${val.toFixed(6)}`;
+            return `${val.toFixed(2)} ${asset}`;
+          };
+          
+          rateDisplay.textContent = amount > 0 
+            ? `≈ ${formatAmount(converted, to)} (Kurs: 1 ${from} = ${rate.toFixed(6)} ${to})`
+            : `Kurs: 1 ${from} = ${rate.toFixed(6)} ${to}`;
+          rateDisplay.style.color = 'var(--color-primary)';
+        } catch (error) {
+          rateDisplay.textContent = '';
+        }
+      } else {
+        rateDisplay.textContent = '';
+      }
+    }
+    
+    fromAssetEl.addEventListener('change', updateRateDisplay);
+    toAssetEl.addEventListener('change', updateRateDisplay);
+    amountEl.addEventListener('input', updateRateDisplay);
+    
+    // Load on page load
+    loadAssets();
+  </script>
+</body>
+</html>
+

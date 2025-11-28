@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Policy Route Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "policy.route" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "required": ["task", "candidates"],
+      "properties": {
+        "task": { "type": "string" },
+        "selectors": {
+          "type": "object",
+          "properties": {
+            "maxLatency": { "$ref": "#/definitions/dimensionalValue" },
+            "costCeiling": { "$ref": "#/definitions/dimensionalValue" },
+            "energyCeiling": { "$ref": "#/definitions/dimensionalValue" }
+          }
+        },
+        "preferences": { "type": "array", "items": { "type": "string" } },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["target", "score"],
+            "properties": {
+              "target": { "type": "string" },
+              "score": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"]
+    },
+    "dimensionalValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string" }
+      }
+    }
+  }
+}
+

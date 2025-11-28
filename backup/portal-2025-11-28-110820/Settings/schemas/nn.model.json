@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "NN Model Node",
+  "required": ["id", "type", "version", "scope", "meta", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^settings://" },
+    "type": { "type": "string", "const": "nn.model" },
+    "version": { "type": "string" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "meta": { "$ref": "#/definitions/meta" },
+    "data": {
+      "type": "object",
+      "required": ["vendor", "tasks"],
+      "properties": {
+        "vendor": { "type": "string" },
+        "tasks": { "type": "array", "items": { "type": "string" } },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "memory": { "$ref": "#/definitions/dimensionalValue" },
+            "gpu": {
+              "type": "object",
+              "properties": {
+                "compute": { "type": "string" },
+                "vram": { "$ref": "#/definitions/dimensionalValue" }
+              }
+            },
+            "disk": { "$ref": "#/definitions/dimensionalValue" }
+          }
+        },
+        "performance": {
+          "type": "object",
+          "properties": {
+            "latency": {
+              "type": "object",
+              "properties": {
+                "p50": { "$ref": "#/definitions/dimensionalValue" },
+                "p95": { "$ref": "#/definitions/dimensionalValue" }
+              }
+            },
+            "throughput": { "$ref": "#/definitions/dimensionalValue" }
+          }
+        },
+        "integrations": { "type": "array", "items": { "type": "string" } },
+        "compliance": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "definitions": {
+    "meta": {
+      "type": "object",
+      "required": ["owner", "createdAt", "checksum"]
+    },
+    "dimensionalValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string" }
+      }
+    }
+  }
+}
+

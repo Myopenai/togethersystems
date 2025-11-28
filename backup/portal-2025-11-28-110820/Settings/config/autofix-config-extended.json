@@ -1,0 +1,81 @@
+{
+  "version": "2.0.0",
+  "type": "autofix.pattern",
+  "enabled": true,
+  "description": "AutoFix Error Patterns mit AI Integration",
+  "patterns": [
+    {
+      "id": "settings://autofix/pattern/units-mismatch",
+      "type": "autofix.pattern",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "latency": {
+          "value": 0,
+          "unit": "ms"
+        }
+      },
+      "data": {
+        "detect": "dimension.conflict",
+        "propose": "normalize.units",
+        "llmPrompt": "Explain why mixing bytes and seconds is invalid and propose conversions.",
+        "policies": ["human-in-the-loop"]
+      }
+    },
+    {
+      "id": "settings://autofix/pattern/latency-exceeded",
+      "type": "autofix.pattern",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "latency": {
+          "value": 200,
+          "unit": "ms",
+          "constraints": {
+            "max": 150
+          }
+        }
+      },
+      "data": {
+        "detect": "latency > constraints.max",
+        "propose": "adjust.configuration",
+        "llmPrompt": "Latency exceeds maximum. Suggest configuration changes to reduce latency.",
+        "policies": ["auto-apply", "verify-before-prod"]
+      }
+    },
+    {
+      "id": "settings://autofix/pattern/cost-budget-exceeded",
+      "type": "autofix.pattern",
+      "version": "1.0.0",
+      "scope": ["global"],
+      "dimensions": {
+        "cost": {
+          "value": 1.0,
+          "unit": "EUR/hour",
+          "constraints": {
+            "max": 0.5
+          }
+        }
+      },
+      "data": {
+        "detect": "cost > constraints.max",
+        "propose": "optimize.resources",
+        "llmPrompt": "Cost exceeds budget. Suggest resource optimization or provider switch.",
+        "policies": ["human-in-the-loop", "cost-review"]
+      }
+    }
+  ],
+  "aiIntegration": {
+    "enabled": true,
+    "gateway": "/api/ai/gateway",
+    "operation": "autofix.suggest",
+    "autoCluster": true,
+    "description": "AI kann neue Patterns vorschlagen oder bestehende clustern"
+  },
+  "verification": {
+    "enabled": true,
+    "pipeline": ["test", "staged", "prod"],
+    "description": "Fixes werden immer zuerst getestet/staged, bevor sie in prod gehen"
+  }
+}
+

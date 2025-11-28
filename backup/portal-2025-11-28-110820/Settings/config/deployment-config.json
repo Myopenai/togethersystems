@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "providers": [
+    "cloudflare-pages",
+    "github-pages",
+    "netlify",
+    "vercel"
+  ],
+  "defaultProvider": "cloudflare-pages",
+  "environments": [
+    {
+      "name": "production",
+      "provider": "cloudflare-pages",
+      "projectName": "ts-portal",
+      "autoDeploy": true
+    },
+    {
+      "name": "staging",
+      "provider": "cloudflare-pages",
+      "projectName": "ts-portal-staging",
+      "autoDeploy": false
+    }
+  ],
+  "cloudflare": {
+    "apiToken": "${CLOUDFLARE_API_TOKEN}",
+    "accountId": "${CLOUDFLARE_ACCOUNT_ID}",
+    "projectName": "ts-portal"
+  },
+  "github": {
+    "repository": "Myopenai/togethersystems",
+    "branch": "main",
+    "workflow": ".github/workflows/github-pages.yml"
+  },
+  "preDeploy": [
+    "npm run build",
+    "npm run test"
+  ],
+  "postDeploy": [
+    "npm run test:e2e"
+  ]
+}
+

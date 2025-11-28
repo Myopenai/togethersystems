@@ -1,0 +1,141 @@
+{
+  "id": "IBM-ERROR-PREVENTION-MACHINECODE",
+  "version": "1.0.0-ETERNAL-HARDCODED",
+  "status": "ACTIVE",
+  "type": "MACHINECODE",
+  "description": "Fest in Maschinencode festgelegt für Settings-Ordner",
+
+  "preCodeVerification": {
+    "enabled": true,
+    "mandatory": true,
+    "execution": "BEFORE_EVERY_CODE_ACTION",
+    "checks": {
+      "syntax": {
+        "enabled": true,
+        "tools": ["ESLint", "TypeScript", "Bracket Matching"],
+        "action": "BLOCK_IF_FAILED"
+      },
+      "fileExistence": {
+        "enabled": true,
+        "action": "BLOCK_IF_FAILED"
+      },
+      "environment": {
+        "enabled": true,
+        "action": "WARN_IF_ISSUES"
+      },
+      "apiHealth": {
+        "enabled": true,
+        "action": "FALLBACK_IF_FAILED"
+      },
+      "corsPolicy": {
+        "enabled": true,
+        "action": "WARN_IF_ISSUES"
+      },
+      "serviceWorker": {
+        "enabled": true,
+        "action": "SKIP_IF_FILE_PROTOCOL"
+      }
+    }
+  },
+
+  "environmentDetection": {
+    "enabled": true,
+    "mandatory": true,
+    "detection": {
+      "protocol": "window.location.protocol",
+      "isFileProtocol": "protocol === 'file:'",
+      "isLocalhost": "hostname === 'localhost' || hostname === '127.0.0.1'",
+      "isProduction": "hostname.includes('pages.dev') || hostname.includes('github.io')"
+    },
+    "actions": {
+      "fileProtocol": {
+        "fetch": "USE_FALLBACK",
+        "serviceWorker": "SKIP_REGISTRATION",
+        "cors": "WARN_USER"
+      },
+      "localhost": {
+        "api": "CHECK_HEALTH",
+        "fallback": "USE_DEMO_DATA"
+      },
+      "production": {
+        "api": "USE_PRODUCTION_ENDPOINTS",
+        "fallback": "USE_DEMO_DATA"
+      }
+    }
+  },
+
+  "apiFallbackSystem": {
+    "enabled": true,
+    "mandatory": true,
+    "strategy": {
+      "healthCheck": {
+        "enabled": true,
+        "timeout": 2000,
+        "endpoint": "/health"
+      },
+      "fallback": {
+        "enabled": true,
+        "data": "DEMO_DATA",
+        "notification": "SHOW_USER_WARNING"
+      },
+      "retry": {
+        "enabled": true,
+        "maxRetries": 3,
+        "backoff": "EXPONENTIAL"
+      }
+    }
+  },
+
+  "errorHandling": {
+    "enabled": true,
+    "mandatory": true,
+    "handlers": {
+      "globalError": {
+        "enabled": true,
+        "action": "LOG_AND_PREVENT_PROPAGATION"
+      },
+      "unhandledRejection": {
+        "enabled": true,
+        "action": "LOG_AND_PREVENT_PROPAGATION"
+      },
+      "corsError": {
+        "enabled": true,
+        "action": "USE_FALLBACK"
+      },
+      "apiError": {
+        "enabled": true,
+        "action": "USE_FALLBACK"
+      }
+    }
+  },
+
+  "trainingRules": {
+    "languageModel": {
+      "enabled": true,
+      "mandatory": true,
+      "rules": [
+        "ALWAYS run Pre-Code-Verification BEFORE any code action",
+        "ALWAYS check file existence for all referenced files",
+        "ALWAYS detect environment before fetch/API calls",
+        "ALWAYS implement fallbacks for API calls",
+        "ALWAYS check CORS policy before fetch",
+        "ALWAYS skip Service Worker registration on file:// protocol",
+        "ALWAYS use safeFetchJson instead of fetch",
+        "ALWAYS handle errors gracefully with fallbacks",
+        "NEVER throw errors without fallback",
+        "NEVER use fetch without error handling",
+        "NEVER register Service Worker on file:// protocol",
+        "NEVER reference files without existence check"
+      ]
+    }
+  },
+
+  "ttt": {
+    "sealed": true,
+    "permanent": true,
+    "hardCoded": true,
+    "eternal": true,
+    "branding": "T,.&T,,.&T,,,.IBM-ERROR-PREVENTION(C)(R)"
+  }
+}
+
