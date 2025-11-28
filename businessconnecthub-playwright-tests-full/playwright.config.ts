@@ -5,7 +5,7 @@ export default defineConfig({
   retries: 1,
   use: {
     // TELCOMPETIOION Root-Projekt auf lokalem Server
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:9323/',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || process.env.BASE_URL || 'http://localhost:8787/',
     headless: true,
     // Wartezeiten erhöhen für langsame Tests
     actionTimeout: 10_000,
