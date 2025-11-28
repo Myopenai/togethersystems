@@ -1239,15 +1239,16 @@ function startPresenceHeartbeat(identity){
 		if(!PRESENCE_API_BASE) return; // API nicht verfügbar
 		const pair_code = getEffectivePairCode(identity);
 		const safeFetch = window.safeFetchJson || safeFetchJson;
-		await safeFetch(`${PRESENCE_API_BASE}/heartbeat`, {
-			method:'POST',
-			headers:{'Content-Type':'application/json'},
-			body: JSON.stringify({
-				thinker_id: identity.thinker_id,
-				pair_code,
-				status
-			})
-		});
+		try {
+			await safeFetch(`${PRESENCE_API_BASE}/heartbeat`, {
+				method:'POST',
+				headers:{'Content-Type':'application/json'},
+				body: JSON.stringify({
+					thinker_id: identity.thinker_id,
+					pair_code,
+					status
+				})
+			});
 		}catch{/* offline oder Backend noch nicht aktiv */}
 	};
 
