@@ -91,3 +91,10 @@ console.log(`   - ${auditSystem.getAllLogs().length} Audit-Logs`);
 console.log(`   - ${allLicenses.length} Lizenzen erstellt`);
 console.log(`   - ${notaryVerificationSystem.getAllVerifications().length} Notar-Verifizierungen`);
 
+
+
+
+
+
+
+

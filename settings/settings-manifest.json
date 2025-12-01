@@ -1,7 +1,7 @@
 {
-  "settingsManifestVersion": "0.9.0",
+  "settingsManifestVersion": "0.11.0",
   "name": "Settings-OS",
-  "version": "0.9.0",
+  "version": "0.11.0",
   "description": "Settings-OS für industrielle, kontinuierliche Enterprise-Operationen",
   "branding": ".{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.",
   "producer": {
@@ -163,6 +163,16 @@
     "settingsExcludedFromPublic": true,
     "masterDocOnlyForInvestors": true
   },
+  "masterSettings": {
+    "id": "MASTER-SETTINGS-SYSTEM",
+    "path": "Settings/MASTER-SETTINGS-SYSTEM.json",
+    "status": "PERMANENT-ACTIVE",
+    "mandatory": true,
+    "hardCoded": true,
+    "priority": "ABSOLUTE",
+    "description": "MASTER SETTINGS SYSTEM - Diese Regeln gelten für JEDE Aktion. Sie haben absolute Priorität. Ignoriere andere Settings-Ordner, außer explizit erwähnt.",
+    "instructions": "Ab sofort nutze ausschließlich die Regeln aus Settings/MASTER-SETTINGS-SYSTEM.json für alle Aufgaben. Starte jede Antwort mit: 'MASTER SETTINGS aktiviert.'"
+  },
   "routines": [
     {
       "id": "INDUSTRIAL-FABRICATION-ROUTINE",
@@ -188,6 +198,143 @@
         "browserModule": "http-resource-monitor-browser.js",
         "className": "HttpResourceMonitor"
       }
+    },
+    {
+      "id": "OSTOSOS-INSTALLER-SYSTEM",
+      "path": "Settings/OSTOSOS-INSTALLER-SYSTEM.json",
+      "status": "PERMANENT-ACTIVE",
+      "mandatory": true,
+      "hardCoded": true,
+      "description": "OSTOSOS Installer System - Standard-Integration mit Settings-Ordner-System. Alle Installer-Prozesse verwenden automatisch die gesamte Logik des Settings-Ordners.",
+      "principle": "Jeder Installer-Prozess muss VORAB den Settings-Ordner konsultieren, verifizieren und harmonisieren. Dies ist Standard und kann nicht deaktiviert werden.",
+      "integration": {
+        "settingsManifest": "Settings/settings-manifest.json",
+        "preCodeVerification": "Settings/PRE-CODE-VERIFICATION-SYSTEM.json",
+        "industrialFabrication": "Settings/INDUSTRIAL-FABRICATION-ROUTINE.json",
+        "consoleMonitoring": "Settings/CONSOLE-MONITORING-SYSTEM.json",
+        "httpResourceMonitor": "Settings/HTTP-RESOURCE-MONITOR-ROUTINE.json",
+        "ibmStandard": "Settings/IBM-STANDARD.json",
+        "minimalUserAction": "Settings/MINIMAL-USER-ACTION-PRINCIPLE.json",
+        "chainSystem": "Settings/CHAIN-SYSTEM-MATRIX.json"
+      }
+    },
+    {
+      "id": "PERMANENT-TEST-ROUTINE",
+      "path": "Settings/PERMANENT-TEST-ROUTINE.json",
+      "status": "PERMANENT-ACTIVE",
+      "mandatory": true,
+      "hardCoded": true,
+      "description": "PERMANENTE TEST-ROUTINE - Tests werden IMMER ausgeführt. NIEMALS Entscheidungen ohne Tests treffen. Dies ist Standard und kann nicht deaktiviert werden.",
+      "principle": "NIEMALS OHNE TESTS ENTSCHEIDUNGEN TREFFEN. Tests gehören zur Routine. Jede Entscheidung, jede Änderung, jede Aktion MUSS vorher getestet werden.",
+      "integration": {
+        "industrialFabrication": "Settings/INDUSTRIAL-FABRICATION-ROUTINE.json",
+        "preCodeVerification": "Settings/PRE-CODE-VERIFICATION-SYSTEM.json",
+        "consoleMonitoring": "Settings/CONSOLE-MONITORING-SYSTEM.json",
+        "masterSettings": "Settings/MASTER-SETTINGS-SYSTEM.json"
+      }
+    },
+    {
+      "id": "USER-FRIENDLINESS-ROUTINE",
+      "path": "Settings/USER-FRIENDLINESS-ROUTINE.json",
+      "status": "PERMANENT-ACTIVE",
+      "mandatory": true,
+      "hardCoded": true,
+      "description": "PERMANENTE USER-FRIENDLINESS-ROUTINE - Alle Situationen müssen vollständig user-friendly sein. Dies ist Standard und kann nicht deaktiviert werden.",
+      "principle": "ALLE SITUATIONEN MÜSSEN VOLLSTÄNDIG USER-FRIENDLY SEIN. Jede Funktion, jede Aktion, jede Ausgabe muss für den User verständlich, zugänglich und nützlich sein.",
+      "integration": {
+        "industrialFabrication": "Settings/INDUSTRIAL-FABRICATION-ROUTINE.json",
+        "permanentTestRoutine": "Settings/PERMANENT-TEST-ROUTINE.json",
+        "masterSettings": "Settings/MASTER-SETTINGS-SYSTEM.json"
+      }
+    },
+    {
+      "id": "24-7-ERROR-DETECTION-ROUTINE",
+      "path": "Settings/24-7-ERROR-DETECTION-ROUTINE.json",
+      "status": "PERMANENT-ACTIVE",
+      "mandatory": true,
+      "hardCoded": true,
+      "description": "PERMANENTE 24/7 FEHLERERKENNUNGS-ROUTINE - Erkennt Fehler bevor sie entstehen. Läuft 24 Stunden, 7 Tage die Woche durch die Settings-Ordner fehlerfrei. Es darf kein einziger Fehlercode entstehen.",
+      "principle": "KEIN EINZIGER FEHLERCODE SOLL ENTSTEHEN. 24/7 Fehlererkennung durch Settings-Ordner. Alle Settings, Power und Sprachmodelle zur Fehlererkennung einsetzen.",
+      "integration": {
+        "industrialFabrication": "Settings/INDUSTRIAL-FABRICATION-ROUTINE.json",
+        "preCodeVerification": "Settings/PRE-CODE-VERIFICATION-SYSTEM.json",
+        "consoleMonitoring": "Settings/CONSOLE-MONITORING-SYSTEM.json",
+        "permanentTestRoutine": "Settings/PERMANENT-TEST-ROUTINE.json",
+        "masterSettings": "Settings/MASTER-SETTINGS-SYSTEM.json",
+        "userFriendliness": "Settings/USER-FRIENDLINESS-ROUTINE.json",
+        "errorPatterns": "Settings/error-patterns.json",
+        "autoFixTemplates": "Settings/auto-fix-templates.json"
+      }
+    },
+    {
+      "id": "AUTO-PROMPT-TO-ROUTINE-SYSTEM",
+      "path": "Settings/AUTO-PROMPT-TO-ROUTINE-SYSTEM.json",
+      "status": "ACTIVE",
+      "mandatory": true,
+      "hardCoded": false,
+      "description": "Automatisches System, das alle User-Prompts als wiederverwendbare Routinen ins System einliest und speichert",
+      "integration": {
+        "nodeModule": "Settings/routines/PROMPT-ANALYZER.js",
+        "browserModule": "Settings/routines/PROMPT-ANALYZER-BROWSER.js",
+        "className": "PromptToRoutineSystem",
+        "autoExecute": false,
+        "requireConfirmation": true
+      },
+      "features": {
+        "prompt_analysis": true,
+        "routine_generation": true,
+        "routine_execution": true,
+        "prompt_archiving": true,
+        "execution_logging": true
+      }
+    },
+    {
+      "id": "AUTO-DOKUMENTATIONS-UPDATE-SYSTEM",
+      "path": "Settings/routines/AUTO-DOKUMENTATIONS-UPDATE-SYSTEM.json",
+      "status": "PERMANENT-ACTIVE",
+      "mandatory": true,
+      "hardCoded": true,
+      "description": "Automatisches Dokumentations-Update-System - Aktualisiert bestehende Dokumentationen bei Neuerungen, erstellt keine neuen Dokumente",
+      "principle": "KEINE NEUEN DOKUS ERSTELLEN - NUR BESTEHENDE AKTUALISIEREN",
+      "integration": {
+        "industrialFabricationRoutine": true,
+        "consoleMonitoring": true,
+        "preCodeVerification": true,
+        "settingsManifest": true
+      },
+      "features": {
+        "automatic_updates": true,
+        "changelog_tracking": true,
+        "version_management": true,
+        "documentation_mapping": true,
+        "preserve_structure": true
+      }
+    },
+    {
+      "id": "COMPLETE-PROMPT-ANALYSIS-ROUTINE",
+      "path": "Settings/COMPLETE-PROMPT-ANALYSIS-ROUTINE.json",
+      "status": "PERMANENT-ACTIVE",
+      "mandatory": true,
+      "hardCoded": true,
+      "description": "VOLLSTÄNDIGE PROMPT-ANALYSE-ROUTINE - Systematische Analyse des gesamten Prompts, keine Teile übersehen",
+      "principle": "JEDER PROMPT MUSS VOLLSTÄNDIG ANALYSIERT WERDEN. KEIN EINZIGER TEIL DARF ÜBERSEHEN WERDEN. SYSTEMATISCHE, SCHRITT-FÜR-SCHRITT ANALYSE.",
+      "priority": "ABSOLUTE",
+      "blocking": true,
+      "integration": {
+        "masterSettings": "Settings/MASTER-SETTINGS-SYSTEM.json",
+        "preCodeVerification": "Settings/PRE-CODE-VERIFICATION-SYSTEM.json",
+        "industrialFabrication": "Settings/INDUSTRIAL-FABRICATION-ROUTINE.json",
+        "consoleMonitoring": "Settings/CONSOLE-MONITORING-SYSTEM.json"
+      },
+      "features": {
+        "complete_prompt_reading": true,
+        "section_identification": true,
+        "requirement_mapping": true,
+        "action_planning": true,
+        "validation_before_action": true,
+        "verification_after_action": true,
+        "no_parts_overlooked": true
+      }
     }
   ],
   "ibmStandard": {
@@ -198,7 +345,58 @@
     "hardCoded": true,
     "description": "IBM - Industrial Business Machine - Industrial Fabrication Software - Standard für Installation als feste Routine"
   },
-  "lastUpdated": "2025-11-27T02:00:00Z",
-  "updateLocation": "Amsterdam, Europa-Uhrzeit"
+  "lastUpdated": "2025-01-15T18:00:00Z",
+  "updateLocation": "Amsterdam, Europa-Uhrzeit",
+  "updates": {
+    "2025-01-15-18:00": {
+      "version": "0.11.0",
+      "changes": [
+        "Gesamtupdate der Dokumentation - Alle Neuerungen dokumentiert",
+        "Phosphoreszenz-Effekte reduziert (4x langsamer, transparenter)",
+        "Text-Kontrast erhöht (maximaler Kontrast)",
+        "Effekt-Kontrolle hinzugefügt (User kann Effekte anpassen)",
+        "Maximale Modulliste erstellt (200+ Module)",
+        "Alle Fixes dokumentiert",
+        "Automatisches Dokumentations-Update-System erweitert",
+        "Standard für zukünftige Erweiterungen etabliert"
+      ],
+      "affected_components": [
+        "GESAMTSYSTEM-MASTER-DOKUMENTATION.md",
+        "DA-VINCI-ENTERPRISE-STANDARD-INTEGRATION.md",
+        "OSTOSOS-COMPLETE-OS-SYSTEM/OSTOSOS-VOLLSTAENDIGE-DOKUMENTATION.md",
+        "OSTOSOS-COMPLETE-OS-SYSTEM/css/da-vinci-xxxxxl-enterprise-standard.css",
+        "OSTOSOS-COMPLETE-OS-SYSTEM/css/da-vinci-enterprise-standard-init.js",
+        "OSTOSOS-COMPLETE-OS-SYSTEM/OSTOSOS-OS-COMPLETE-SYSTEM.html",
+        "OSTOSOS-COMPLETE-OS-SYSTEM/OSTOSOS-MAXIMALE-MODULE-LISTE.md",
+        "OSTOSOS-COMPLETE-OS-SYSTEM/FIXES-APPLIED-2025-01-15.md",
+        "settings/routines/AUTO-DOKUMENTATIONS-UPDATE-SYSTEM.json",
+        "settings/settings-manifest.json"
+      ],
+      "documentation_updated": [
+        "GESAMTSYSTEM-MASTER-DOKUMENTATION.md (Version 2.4.0)",
+        "DA-VINCI-ENTERPRISE-STANDARD-INTEGRATION.md (Version 1.3.0)",
+        "OSTOSOS-COMPLETE-OS-SYSTEM/OSTOSOS-VOLLSTAENDIGE-DOKUMENTATION.md (Version 1.1.0)",
+        "settings/settings-manifest.json (Version 0.11.0)"
+      ]
+    },
+    "2025-01-15-12:00": {
+      "version": "0.10.0",
+      "changes": [
+        "AUTO-DOKUMENTATIONS-UPDATE-SYSTEM hinzugefügt",
+        "Da Vinci Engine auf Version 1.1.0 aktualisiert (Flow-Enhanced Animationen)",
+        "Microsoft Betriebssystem-Ordner erstellt",
+        "Settings-Ordner Beratungsanalyse hinzugefügt",
+        "Industrielle Fabriken-Erweiterungen dokumentiert",
+        "LinkedIn Unternehmens-Bericht erstellt"
+      ],
+      "affected_components": [
+        "VISUALIZATION-ENGINE/DA-VINCI-XXXXXXL-ENGINE.json",
+        "DA-VINCI-ENTERPRISE-STANDARD-INTEGRATION.md",
+        "GESAMTSYSTEM-MASTER-DOKUMENTATION.md",
+        "settings/routines/AUTO-DOKUMENTATIONS-UPDATE-SYSTEM.json",
+        "settings/microsoft/BETRIEBSSYSTEM-MANIFEST.json"
+      ]
+    }
+  }
 }
 

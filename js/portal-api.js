@@ -29,6 +29,21 @@ export function detectEnvironment() {
 // ENV sofort setzen und exportieren
 export const ENV = detectEnvironment();
 
+// ENV_SAFE für Browser - verhindert "ENV is not defined" Fehler
+if (typeof window !== 'undefined') {
+  window.ENV_SAFE = {
+    MODE: ENV,
+    AUTO_FIX_ENABLED: ENV !== 'github-pages',
+    API_BASE_URL: ENV === 'github-pages' ? null : '/api',
+    IS_GITHUB_PAGES: ENV === 'github-pages',
+    IS_CLOUDFLARE_PAGES: ENV === 'cloudflare-pages',
+    IS_LOCAL: ENV === 'local'
+  };
+  
+  // Legacy Support: ENV als String auch verfügbar machen
+  window.ENV = ENV;
+}
+
 /**
  * Safe Fetch JSON - Fehlerbehandlung für alle Fetch-Calls
  * TODSICHER: Kein 404 / JSON-Fehler killt die App mehr

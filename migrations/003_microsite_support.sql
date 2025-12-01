@@ -25,3 +25,10 @@ CREATE INDEX IF NOT EXISTS idx_microsite_url_rotations_user ON microsite_url_rot
 CREATE INDEX IF NOT EXISTS idx_microsite_url_rotations_site ON microsite_url_rotations(site_id);
 
 
+
+
+
+
+
+
+

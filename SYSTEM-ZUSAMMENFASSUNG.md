@@ -59,3 +59,10 @@ npm run autotest   # Manuelle Tests
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

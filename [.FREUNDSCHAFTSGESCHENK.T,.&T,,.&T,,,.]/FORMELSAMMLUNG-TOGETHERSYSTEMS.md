@@ -1289,3 +1289,10 @@ Diese Formelsammlung bildet die komplette Logik von Together Systems als mathema
 
 **Status:** Unverschlüsselt, unversioniert, voll zugänglich - Freundschaftsgeschenk für die Welt
 
+
+
+
+
+
+
+

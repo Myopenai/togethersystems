@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSTOSOS Operating System – Hauptsystem</title>
+  <link rel="manifest" href="./manifest.webmanifest" crossorigin="use-credentials" onerror="this.onerror=null; console.warn('Manifest nicht verfügbar (file:// Protokoll)');">
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css" onerror="this.onerror=null; console.warn('CSS nicht gefunden - verwende Fallback');">
+  <style>
+    /* Da Vinci Standard wird von CSS geladen - hier nur OS-spezifische Overrides */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    .os-container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      background: var(--davinci-card, #1a1f3a);
+      padding: 20px;
+      border-right: 2px solid var(--davinci-accent-primary, #10b981);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .logo {
+      font-size: 2em;
+      color: var(--davinci-accent-primary, #10b981);
+      font-weight: 900;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .logo a {
+      color: var(--davinci-accent-primary, #10b981);
+      text-decoration: none;
+      transition: all var(--davinci-transition-normal, 0.3s);
+    }
+    .logo a:hover {
+      color: var(--davinci-accent-secondary, #3b82f6);
+      text-shadow: 0 0 10px var(--davinci-accent-primary, #10b981);
+    }
+    .nav-item {
+      padding: 15px;
+      margin: 10px 0;
+      background: var(--davinci-bg, #0f172a);
+      border-radius: var(--davinci-radius-md, 8px);
+      cursor: pointer;
+      transition: all var(--davinci-transition-normal, 0.3s);
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover {
+      background: var(--davinci-card, #2d3748);
+      border-left-color: var(--davinci-accent-primary, #10b981);
+    }
+    .nav-item.active {
+      background: var(--davinci-card, #2d3748);
+      border-left-color: var(--davinci-accent-primary, #10b981);
+    }
+    .main-content {
+      padding: 40px;
+      overflow-y: auto;
+      position: relative;
+    }
+    .main-header-logo {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 2.5em;
+      color: var(--davinci-accent-primary, #10b981);
+      font-weight: 900;
+      z-index: 100;
+      text-align: right;
+    }
+    .main-header-logo a {
+      color: var(--davinci-accent-primary, #10b981);
+      text-decoration: none;
+      transition: all var(--davinci-transition-normal, 0.3s);
+      display: inline-block;
+    }
+    .main-header-logo a:hover {
+      color: var(--davinci-accent-secondary, #3b82f6);
+      text-shadow: 0 0 15px var(--davinci-accent-primary, #10b981);
+      transform: scale(1.1);
+    }
+    .welcome-card {
+      background: linear-gradient(135deg, var(--davinci-card, #1a1f3a), var(--davinci-bg, #0f172a));
+      padding: 40px;
+      border-radius: var(--davinci-radius-lg, 20px);
+      border: 2px solid var(--davinci-accent-primary, #10b981);
+      margin-bottom: 30px;
+    }
+    .welcome-card h1 {
+      font-size: 2.5em;
+      color: var(--davinci-accent-primary, #10b981);
+      margin-bottom: 10px;
+    }
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .system-card {
+      background: var(--davinci-card, #1a1f3a);
+      padding: 25px;
+      border-radius: var(--davinci-radius-md, 12px);
+      border: 1px solid var(--davinci-border, #2d3748);
+      cursor: pointer;
+      transition: all var(--davinci-transition-normal, 0.3s);
+    }
+    .system-card:hover {
+      border-color: var(--davinci-accent-primary, #10b981);
+      transform: translateY(-5px);
+      box-shadow: var(--davinci-shadow-medium, 0 10px 30px rgba(16, 185, 129, 0.2));
+    }
+    .system-card h3 {
+      color: var(--davinci-accent-primary, #10b981);
+      margin-bottom: 10px;
+    }
+    .system-card p {
+      color: var(--davinci-muted, #9ca3af);
+      font-size: 0.9em;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      margin-top: 10px;
+    }
+    .status-active {
+      background: #10b981;
+      color: white;
+    }
+    .status-info {
+      background: #3b82f6;
+      color: white;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="os-container">
+    <div class="sidebar">
+      <div class="logo"><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" title="TEL & Gentlyoverdone - Servicesoftware">T,.&T,,.&T,,,.</a></div>
+      <div class="nav-item active" onclick="showSection('dashboard', this)">🏠 Dashboard</div>
+      <div class="nav-item" onclick="showSection('portal', this)">🌐 Portal</div>
+      <div class="nav-item" onclick="showSection('telbank', this)">💰 Telbank</div>
+      <div class="nav-item" onclick="showSection('oso', this)">📊 OSO System</div>
+      <div class="nav-item" onclick="showSection('honeycomb', this)">🍯 Honeycomb</div>
+      <div class="nav-item" onclick="showSection('legal', this)">⚖️ Legal Hub</div>
+      <div class="nav-item" onclick="window.location.href='./cloud-hub.html'">☁️ Cloud Hub</div>
+      <div class="nav-item" onclick="window.location.href='./mail-hub.html'">✉️ Mail Hub</div>
+      <div class="nav-item" onclick="window.location.href='./media-hub.html'">🎵 Media Hub</div>
+      <div class="nav-item" onclick="window.location.href='./matrix-games.html'">🎮 Matrix Games</div>
+      <div class="nav-item" onclick="window.location.href='./dev-tools-system.html'">🔧 Dev Tools</div>
+      <div class="nav-item" onclick="window.location.href='./developer-studio.html'">💻 Developer Studio</div>
+      <div class="nav-item" onclick="window.location.href='./error-ai-helper.html'">🤖 Error AI Helper</div>
+      <div class="nav-item" onclick="window.location.href='./playwright-fixsystem.html'">🔍 Fixsystem</div>
+      <div class="nav-item" onclick="window.location.href='./extensions-manager.html'">📦 Erweiterungen</div>
+      <div class="nav-item" onclick="window.location.href='./ai-chat-system.html'">🤖 AI Chat</div>
+      <div class="nav-item" onclick="window.location.href='./complete-help-system.html'">🔍 Superintelligente Suche</div>
+      <div class="nav-item" onclick="window.location.href='./user-friendability-settings.html'">💚 User-Friendability</div>
+      <div class="nav-item" onclick="window.location.href='./gentlyoverdone-documentation.html'">🧪 Studienprojekt</div>
+      <div class="nav-item" onclick="window.location.href='./documentation-portal.html'">📚 Dokumentationsportal</div>
+      <div class="nav-item" onclick="window.location.href='./help/help-index.html'">📚 Hilfe & Dokumentation</div>
+      <div class="nav-item" onclick="showSection('settings', this)">⚙️ Settings</div>
+      <div class="nav-item" onclick="UI_THEME_SWITCHER.createThemeSwitcher(); document.getElementById('themeSwitcher').style.display='block'">🎨 UI/UX Theme</div>
+      
+      <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--davinci-border, #223040);">
+        <div style="padding: 10px; font-size: 0.85em; color: var(--davinci-muted, #9ca3af); margin-bottom: 10px;">
+          🎨 Effekt-Kontrolle
+        </div>
+        <select id="effectsLevel" class="nav-item" style="width: 100%; padding: 10px; background: var(--davinci-bg, #0f172a); color: var(--davinci-text, #ffffff); border: 1px solid var(--davinci-border, #223040); border-radius: 6px; cursor: pointer;">
+          <option value="reduced">Reduziert (Standard)</option>
+          <option value="normal">Normal</option>
+          <option value="disabled">Aus</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="main-header-logo">
+        <a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" title="TEL & Gentlyoverdone - Servicesoftware">T,.&T,,.&T,,,.</a>
+      </div>
+      <div id="dashboard" class="section active">
+        <div class="welcome-card davinci-card" data-davinci-phosphor-complete>
+          <h1 class="davinci-heading-1">OSTOSOS Operating System</h1>
+          <p style="font-size: 1.2em; color: #9ca3af; margin-top: 10px;">
+            Willkommen im Together Systems Operating System
+          </p>
+          <p style="color: #10b981; margin-top: 20px;">
+            ✅ System erfolgreich installiert und gestartet
+          </p>
+          <div class="status-info" id="updateStatus" style="display: none;">
+            <strong>🔄 Update-System:</strong> <span id="updateStatusText">Aktiv</span>
+          </div>
+          <div class="status-info" id="syncStatus" style="display: none;">
+            <strong>🌐 Sync-System:</strong> <span id="syncStatusText">Aktiv</span>
+          </div>
+        </div>
+
+        <div class="system-grid">
+          <div class="system-card davinci-card" onclick="window.location.href='./index.html'" data-davinci-expressive>
+            <h3 class="davinci-heading-3">🌐 Together Systems Portal</h3>
+            <p>Hauptportal für Offline- und Online-Arbeit</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+
+          <div class="system-card" onclick="window.location.href='./manifest-portal.html'">
+            <h3>📝 Manifest Portal</h3>
+            <p>Online-Portal für Manifest-Verwaltung</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+
+          <div class="system-card" onclick="window.location.href='./manifest-forum.html'">
+            <h3>💬 Manifest Forum</h3>
+            <p>Offline-Forum für Thinkers</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+
+          <div class="system-card" onclick="window.location.href='./TELBANK/index.html'">
+            <h3>💰 TPGA Telbank</h3>
+            <p>MetaMask Liquidity Console</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+
+          <div class="system-card" onclick="window.location.href='./OSO-PRODUKTIONS-SYSTEM-COMPLETE-EXTENDED.html'">
+            <h3>📊 OSO Produktionssystem</h3>
+            <p>Vollständiges Produktionssystem mit Chip-Integration</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+
+          <div class="system-card" onclick="window.location.href='./honeycomb.html'">
+            <h3>🍯 Honeycomb Hub</h3>
+            <p>Communication Hub mit Rooms</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+
+          <div class="system-card" onclick="window.location.href='./legal-hub.html'">
+            <h3>⚖️ Legal Hub</h3>
+            <p>Rechts- und Vertragshub</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+
+            <div class="system-card davinci-card" onclick="showSection('settings', null)">
+            <h3>⚙️ System Settings</h3>
+            <p>Update- und Sync-Einstellungen</p>
+            <span class="status-badge status-active">Aktiv</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="portal" class="section" style="display: none;">
+        <div class="welcome-card davinci-card" data-davinci-phosphor-complete>
+          <h1 class="davinci-heading-1">🌐 Together Systems Portal</h1>
+          <p style="font-size: 1.2em; color: #9ca3af; margin-top: 10px;">
+            Hauptportal für Offline- und Online-Arbeit
+          </p>
+          <div style="margin-top: 30px;">
+            <button class="davinci-btn" onclick="window.location.href='./index.html'">Portal öffnen</button>
+            <button class="davinci-btn" onclick="window.location.href='./manifest-portal.html'" style="margin-left: 10px;">Manifest Portal</button>
+            <button class="davinci-btn" onclick="window.location.href='./manifest-forum.html'" style="margin-left: 10px;">Manifest Forum</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="telbank" class="section" style="display: none;">
+        <div class="welcome-card davinci-card" data-davinci-phosphor-complete>
+          <h1 class="davinci-heading-1">💰 TPGA Telbank</h1>
+          <p style="font-size: 1.2em; color: #9ca3af; margin-top: 10px;">
+            MetaMask Liquidity Console
+          </p>
+          <div style="margin-top: 30px;">
+            <button class="davinci-btn" onclick="window.location.href='./TELBANK/index.html'">Telbank öffnen</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="oso" class="section" style="display: none;">
+        <div class="welcome-card davinci-card" data-davinci-phosphor-complete>
+          <h1 class="davinci-heading-1">📊 OSO Produktionssystem</h1>
+          <p style="font-size: 1.2em; color: #9ca3af; margin-top: 10px;">
+            Vollständiges Produktionssystem mit Chip-Integration
+          </p>
+          <div style="margin-top: 30px;">
+            <button class="davinci-btn" onclick="window.location.href='./OSO-PRODUKTIONS-SYSTEM-COMPLETE-EXTENDED.html'">OSO System öffnen</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="honeycomb" class="section" style="display: none;">
+        <div class="welcome-card davinci-card" data-davinci-phosphor-complete>
+          <h1 class="davinci-heading-1">🍯 Honeycomb Hub</h1>
+          <p style="font-size: 1.2em; color: #9ca3af; margin-top: 10px;">
+            Communication Hub mit Rooms
+          </p>
+          <div style="margin-top: 30px;">
+            <button class="davinci-btn" onclick="window.location.href='./honeycomb.html'">Honeycomb öffnen</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="legal" class="section" style="display: none;">
+        <div class="welcome-card davinci-card" data-davinci-phosphor-complete>
+          <h1 class="davinci-heading-1">⚖️ Legal Hub</h1>
+          <p style="font-size: 1.2em; color: #9ca3af; margin-top: 10px;">
+            Rechts- und Vertragshub
+          </p>
+          <div style="margin-top: 30px;">
+            <button class="davinci-btn" onclick="window.location.href='./legal-hub.html'">Legal Hub öffnen</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="settings" class="section" style="display: none;">
+        <div class="welcome-card">
+          <h1>⚙️ System Settings</h1>
+          <div id="settingsContent">
+            <div style="margin-top: 20px;">
+              <h3 style="color: #10b981; margin-bottom: 15px;">🔄 Automatic Updates</h3>
+              <label style="display: flex; align-items: center; margin: 10px 0;">
+                <input type="checkbox" id="updatesEnabled" checked style="margin-right: 10px;">
+                <span>Automatic Updates aktiviert</span>
+              </label>
+              <label style="display: flex; align-items: center; margin: 10px 0;">
+                <input type="checkbox" id="updatesSilent" checked style="margin-right: 10px;">
+                <span>Silent Mode (keine Benachrichtigungen)</span>
+              </label>
+              <p style="color: #9ca3af; margin-top: 10px; font-size: 0.9em;">
+                Aktuelle Version: <span id="currentVersion">1.0.0</span>
+              </p>
+            </div>
+
+            <div style="margin-top: 30px;">
+              <h3 style="color: #10b981; margin-bottom: 15px;">🌐 Cross-Device Sync</h3>
+              <label style="display: flex; align-items: center; margin: 10px 0;">
+                <input type="checkbox" id="syncEnabled" checked style="margin-right: 10px;">
+                <span>Cross-Device Sync aktiviert</span>
+              </label>
+              <label style="display: flex; align-items: center; margin: 10px 0;">
+                <input type="checkbox" id="p2pEnabled" checked style="margin-right: 10px;">
+                <span>P2P Mesh Network aktiviert</span>
+              </label>
+              <p style="color: #9ca3af; margin-top: 10px; font-size: 0.9em;">
+                Device ID: <span id="deviceId">-</span>
+              </p>
+            </div>
+
+            <div style="margin-top: 30px;">
+              <h3 style="color: #10b981; margin-bottom: 15px;">📋 Alle Erweiterungen</h3>
+              <div id="allExtensions" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                <!-- Wird dynamisch geladen -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Environment Detection
+    function detectEnvironment() {
+      if (typeof location !== 'undefined') {
+        if (location.protocol === 'file:') {
+          return 'file';
+        }
+        if (location.hostname.includes('github.io') || location.hostname.includes('github.com')) {
+          return 'github-pages';
+        }
+        if (location.hostname.includes('pages.dev') || location.hostname.includes('cloudflare')) {
+          return 'cloudflare-pages';
+        }
+        if (location.protocol === 'http:' || location.protocol === 'https:') {
+          return 'web';
+        }
+      }
+      return 'unknown';
+    }
+    
+    const ENV = detectEnvironment();
+    window.ENV = ENV;
+    
+    // Conditional Script Loading
+    if (ENV !== 'file') {
+      const updateScript = document.createElement('script');
+      updateScript.src = './OSTOSOS-AUTO-UPDATE-SYSTEM.js';
+      updateScript.onerror = () => console.warn('Update-System nicht geladen');
+      document.head.appendChild(updateScript);
+      
+      const syncScript = document.createElement('script');
+      syncScript.src = './OSTOSOS-CROSS-DEVICE-SYNC.js';
+      syncScript.onerror = () => console.warn('Sync-System nicht geladen');
+      document.head.appendChild(syncScript);
+    } else {
+      console.log('[OSTOSOS] File-Protokoll erkannt - Update/Sync-System deaktiviert');
+    }
+  </script>
+  <script>
+    function showSection(sectionId, element) {
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+      });
+      
+      // Show selected section
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.style.display = 'block';
+      }
+
+      // Update navigation
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      if (element) {
+        element.classList.add('active');
+      }
+    }
+
+    // Initialize
+    window.addEventListener('load', () => {
+      const installed = localStorage.getItem('ostosos.installed');
+      if (installed !== 'true') {
+        window.location.href = './OSTOSOS-INSTALLER.html';
+        return;
+      }
+
+      // Load settings
+      const updatesEnabled = localStorage.getItem('ostosos.updates.enabled') !== 'false';
+      const updatesSilent = localStorage.getItem('ostosos.updates.silent') !== 'false';
+      const syncEnabled = localStorage.getItem('ostosos.sync.enabled') !== 'false';
+      const p2pEnabled = localStorage.getItem('ostosos.sync.p2p') !== 'false';
+      const currentVersion = localStorage.getItem('ostosos.version') || '1.0.0';
+      const deviceId = localStorage.getItem('ostosos.deviceId') || '-';
+
+      if (document.getElementById('updatesEnabled')) {
+        document.getElementById('updatesEnabled').checked = updatesEnabled;
+        document.getElementById('updatesSilent').checked = updatesSilent;
+        document.getElementById('syncEnabled').checked = syncEnabled;
+        document.getElementById('p2pEnabled').checked = p2pEnabled;
+        document.getElementById('currentVersion').textContent = currentVersion;
+        document.getElementById('deviceId').textContent = deviceId;
+      }
+
+      // Update status
+      const updateStatusEl = document.getElementById('updateStatus');
+      const updateStatusTextEl = document.getElementById('updateStatusText');
+      const syncStatusEl = document.getElementById('syncStatus');
+      const syncStatusTextEl = document.getElementById('syncStatusText');
+      
+      if (ENV !== 'file') {
+        if (window.OSTOSOSUpdateSystem && updateStatusEl && updateStatusTextEl) {
+          updateStatusEl.style.display = 'block';
+          updateStatusTextEl.textContent = 'Aktiv - Version ' + currentVersion;
+        }
+
+        if (window.OSTOSOSSyncSystem && syncStatusEl && syncStatusTextEl) {
+          syncStatusEl.style.display = 'block';
+          syncStatusTextEl.textContent = 'Aktiv - Device: ' + deviceId.substring(0, 8) + '...';
+        }
+      } else {
+        // File-Protokoll: Zeige Info
+        if (updateStatusEl && updateStatusTextEl) {
+          updateStatusEl.style.display = 'block';
+          updateStatusTextEl.textContent = 'Lokale Datei - Updates deaktiviert';
+        }
+        if (syncStatusEl && syncStatusTextEl) {
+          syncStatusEl.style.display = 'block';
+          syncStatusTextEl.textContent = 'Lokale Datei - Sync deaktiviert';
+        }
+      }
+
+      // Settings handlers
+      document.getElementById('updatesEnabled').addEventListener('change', (e) => {
+        localStorage.setItem('ostosos.updates.enabled', e.target.checked);
+        if (window.OSTOSOSUpdateSystem) {
+          window.OSTOSOSUpdateSystem.updateEnabled = e.target.checked;
+        }
+      });
+
+      document.getElementById('updatesSilent').addEventListener('change', (e) => {
+        localStorage.setItem('ostosos.updates.silent', e.target.checked);
+        if (window.OSTOSOSUpdateSystem) {
+          window.OSTOSOSUpdateSystem.silentMode = e.target.checked;
+        }
+      });
+
+      document.getElementById('syncEnabled').addEventListener('change', (e) => {
+        localStorage.setItem('ostosos.sync.enabled', e.target.checked);
+        if (window.OSTOSOSSyncSystem) {
+          window.OSTOSOSSyncSystem.syncEnabled = e.target.checked;
+        }
+      });
+
+      document.getElementById('p2pEnabled').addEventListener('change', (e) => {
+        localStorage.setItem('ostosos.sync.p2p', e.target.checked);
+        if (window.OSTOSOSSyncSystem) {
+          window.OSTOSOSSyncSystem.p2pEnabled = e.target.checked;
+        }
+      });
+
+      // Effekt-Kontrolle
+      const effectsLevel = document.getElementById('effectsLevel');
+      if (effectsLevel) {
+        const savedLevel = localStorage.getItem('ostosos.effects.level') || 'reduced';
+        effectsLevel.value = savedLevel;
+        
+        // Warte auf Da Vinci Init
+        function initEffectsControl() {
+          if (window.DaVinciStandard && window.DaVinciStandard.updateEffectsLevel) {
+            window.DaVinciStandard.updateEffectsLevel(savedLevel);
+          } else {
+            // Retry nach 100ms
+            setTimeout(initEffectsControl, 100);
+          }
+        }
+        
+        effectsLevel.addEventListener('change', (e) => {
+          const level = e.target.value;
+          localStorage.setItem('ostosos.effects.level', level);
+          localStorage.setItem('ostosos.effects.enabled', level !== 'disabled');
+          
+          if (window.DaVinciStandard && window.DaVinciStandard.updateEffectsLevel) {
+            window.DaVinciStandard.updateEffectsLevel(level);
+          } else {
+            // Fallback: Reload
+            location.reload();
+          }
+        });
+        
+        // Initialisiere Effekte
+        setTimeout(initEffectsControl, 500);
+      }
+
+      // Lade alle Erweiterungen für Settings
+      loadAllExtensions();
+    });
+
+    function loadAllExtensions() {
+      const extensions = [
+        { name: 'Industrial Fabrication Routine', status: 'Aktiv', category: 'Core' },
+        { name: 'Pre-Code Verification System', status: 'Aktiv', category: 'Core' },
+        { name: 'Console Monitoring System', status: 'Aktiv', category: 'Core' },
+        { name: 'HTTP Resource Monitor', status: 'Aktiv', category: 'Core' },
+        { name: 'IBM Standard', status: 'Aktiv', category: 'Core' },
+        { name: 'Minimal User Action Principle', status: 'Aktiv', category: 'Core' },
+        { name: 'OSTOSOS Installer System', status: 'Aktiv', category: 'Core' },
+        { name: 'Permanent Test Routine', status: 'Aktiv', category: 'Core' },
+        { name: '24/7 Error Detection Routine', status: 'Aktiv', category: 'Core' },
+        { name: 'User-Friendliness Routine', status: 'Aktiv', category: 'Core' },
+        { name: 'Da Vinci Design System', status: 'Aktiv', category: 'Design' },
+        { name: 'Phosphorescence Effects', status: 'Aktiv', category: 'Design' },
+        { name: 'Flow Animations', status: 'Aktiv', category: 'Design' },
+        { name: 'Auto Update System', status: ENV !== 'file' ? 'Aktiv' : 'Deaktiviert', category: 'System' },
+        { name: 'Cross-Device Sync', status: ENV !== 'file' ? 'Aktiv' : 'Deaktiviert', category: 'System' },
+        { name: 'P2P Mesh Network', status: ENV !== 'file' ? 'Aktiv' : 'Deaktiviert', category: 'Network' },
+        { name: 'MetaMask Integration', status: 'Verfügbar', category: 'Finance' },
+        { name: 'TPGA Telbank', status: 'Aktiv', category: 'Finance' },
+        { name: 'OSO Production System', status: 'Aktiv', category: 'Production' },
+        { name: 'Honeycomb Hub', status: 'Aktiv', category: 'Communication' },
+        { name: 'Legal Hub', status: 'Aktiv', category: 'Legal' },
+        { name: 'Mail Hub', status: 'Aktiv', category: 'Communication' },
+        { name: 'Cloud Hub', status: 'Aktiv', category: 'Storage' },
+        { name: 'Media Hub', status: 'Aktiv', category: 'Media' },
+        { name: 'Matrix Games', status: 'Aktiv', category: 'Entertainment' },
+        { name: 'Manifest Portal', status: 'Aktiv', category: 'Portal' },
+        { name: 'Manifest Forum', status: 'Aktiv', category: 'Forum' },
+        { name: 'USB Boot Creator', status: 'Aktiv', category: 'Deployment' },
+        { name: 'Multi-Boot USB System', status: 'Aktiv', category: 'Deployment' },
+        { name: 'Test System', status: 'Aktiv', category: 'Testing' },
+        { name: 'Error Pattern Matching', status: 'Aktiv', category: 'Quality' },
+        { name: 'Auto-Fix System', status: 'Aktiv', category: 'Quality' },
+        { name: 'Cross-Platform Builds', status: 'Aktiv', category: 'Build' },
+        { name: 'Settings Master System', status: 'Aktiv', category: 'Core' }
+      ];
+
+      const extensionsEl = document.getElementById('allExtensions');
+      if (extensionsEl) {
+        extensionsEl.innerHTML = extensions.map(ext => `
+          <div class="system-card" style="padding: 15px;">
+            <h4 style="color: #10b981; margin-bottom: 5px;">${ext.name}</h4>
+            <p style="font-size: 0.85em; color: #9ca3af; margin-bottom: 5px;">${ext.category}</p>
+            <span class="status-badge ${ext.status === 'Aktiv' ? 'status-active' : ''}">${ext.status}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    console.log('T,. OSTOSOS Operating System geladen');
+    console.log('[OSTOSOS] Environment:', ENV);
+  </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js" onload="if(window.DaVinciStandard){window.DaVinciStandard.init();const level=localStorage.getItem('ostosos.effects.level')||'reduced';if(window.DaVinciStandard.updateEffectsLevel){window.DaVinciStandard.updateEffectsLevel(level);}}"></script>
+  <script src="./help-system-core.js"></script>
+  <script src="./settings-extension-registry-core.js"></script>
+  <script src="./ui-theme-switcher-core.js"></script>
+  <script src="./deep-psychological-analyzer-core.js"></script>
+  <script src="./user-friendability-modes-core.js"></script>
+  <script src="./pre-build-test-system.js"></script>
+  <script src="./OSTOSOS-AUTO-TEST-ROUTINE.js"></script>
+  <!-- T,. THYNK Integration -->
+  <script src="../THYNK/thynk-labor-prototyp-core.js"></script>
+  <script src="./thynk-os-integration-core.js"></script>
+  <script src="../THYNK/thynk-external-interfaces.js"></script>
+  <script>
+    // Test-System für User verfügbar machen
+    window.OSTOSOSTestSystem = {
+      runTests: async () => {
+        if (window.PRE_BUILD_TESTS) {
+          return await window.PRE_BUILD_TESTS.runAllTests();
+        }
+        return { passed: 0, failed: 0, errors: ['Test-System nicht verfügbar'] };
+      },
+      openTestPage: () => {
+        window.open('./OSTOSOS-ERWEITERTE-TESTS.html', '_blank');
+      },
+      openFixSystem: () => {
+        window.open('./playwright-fixsystem.html', '_blank');
+      }
+    };
+  </script>
+  <!-- T,. Root-Apps Integration -->
+  <script src="../ROOT-APPS-INTEGRATION.js"></script>
+  <!-- T,. Donation Integration -->
+  <script src="../DONATION-INTEGRATION.js"></script>
+</body>
+</html>
+

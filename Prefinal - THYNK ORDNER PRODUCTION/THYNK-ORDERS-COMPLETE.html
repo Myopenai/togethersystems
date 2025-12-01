@@ -1,0 +1,670 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THYNK ORDERS - Complete Local System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
+        .info-box {
+            background: #1a3a1a;
+            border: 1px solid #4CAF50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .section {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn-secondary {
+            background: #555;
+        }
+        .btn-secondary:hover {
+            background: #666;
+        }
+        .btn-danger {
+            background: #f44336;
+        }
+        .btn-danger:hover {
+            background: #da190b;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .order-item {
+            background: #222;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .order-number {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .status-pending { background: #ff9800; color: #000; }
+        .status-paid { background: #4CAF50; color: #fff; }
+        .status-shipped { background: #2196F3; color: #fff; }
+        .status-cancelled { background: #f44336; color: #fff; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background: #1a1a1a;
+            color: #4CAF50;
+        }
+        .amount {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: #888;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        .tab.active {
+            color: #4CAF50;
+            border-bottom-color: #4CAF50;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛒 THYNK ORDERS</h1>
+            <p class="subtitle">Complete Local System - Click & Run - No Server Required!</p>
+            <p style="color: #4CAF50; margin-top: 10px; font-size: 0.9em;">
+                ✅ Vollständig lokal | ✅ Kein Server nötig | ✅ Einfach öffnen und loslegen
+            </p>
+        </header>
+
+        <div class="info-box">
+            <strong>ℹ️ Wichtig:</strong> Dies ist eine <strong>komplette lokale Version</strong> - alles läuft direkt in Ihrem Browser. 
+            Keine Server, keine Installation nötig! Alle Daten werden lokal gespeichert (localStorage).
+            <br><br>
+            <strong>📁 Datei-Speicherort:</strong> Diese Datei speichert alle Daten in Ihrem Browser (localStorage).
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('orders')">📋 Bestellungen</button>
+            <button class="tab" onclick="showTab('create')">➕ Neue Bestellung</button>
+            <button class="tab" onclick="showTab('statistics')">📊 Statistiken</button>
+            <button class="tab" onclick="showTab('settings')">⚙️ Einstellungen</button>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="orders-tab" class="tab-content active section">
+            <h2>📋 Meine Bestellungen</h2>
+            <button class="btn btn-secondary" onclick="loadOrders()">🔄 Aktualisieren</button>
+            <button class="btn btn-secondary" onclick="exportData()">💾 Daten exportieren</button>
+            <button class="btn btn-secondary" onclick="importData()">📥 Daten importieren</button>
+            <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alle Daten löschen</button>
+            <div id="ordersList" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Create Order Tab -->
+        <div id="create-tab" class="tab-content section">
+            <h2>➕ Neue Bestellung erstellen</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Produkt hinzufügen</h3>
+                    <input type="text" id="productName" placeholder="Produktname" value="Beispiel-Produkt">
+                    <input type="number" id="productPrice" placeholder="Preis" value="29.99" step="0.01">
+                    <input type="number" id="productQuantity" placeholder="Menge" value="1" min="1">
+                    <button class="btn" onclick="addProductToCart()">➕ Zum Warenkorb</button>
+                </div>
+                <div class="card">
+                    <h3>Kundendaten</h3>
+                    <input type="text" id="customerName" placeholder="Name" value="Max Mustermann">
+                    <input type="email" id="customerEmail" placeholder="E-Mail" value="max@example.com">
+                    <input type="text" id="customerAddress" placeholder="Adresse" value="Musterstraße 123">
+                    <input type="text" id="customerPhone" placeholder="Telefon (optional)">
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <h3>Warenkorb:</h3>
+                <div id="cartItems"></div>
+                <div style="margin-top: 15px;">
+                    <strong>Gesamt: <span id="cartTotal" class="amount">€0.00</span></strong>
+                </div>
+                <button class="btn" onclick="createOrder()" style="margin-top: 15px;">✅ Bestellung erstellen</button>
+            </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="statistics-tab" class="tab-content section">
+            <h2>📊 Statistiken</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Gesamt Bestellungen</h3>
+                    <div class="amount" id="statsTotal" style="font-size: 2em;">0</div>
+                </div>
+                <div class="card">
+                    <h3>Gesamtumsatz</h3>
+                    <div class="amount" id="statsRevenue" style="font-size: 2em;">€0.00</div>
+                </div>
+                <div class="card">
+                    <h3>Ausstehend</h3>
+                    <div class="amount" id="statsPending" style="font-size: 2em;">0</div>
+                </div>
+                <div class="card">
+                    <h3>Bezahlt</h3>
+                    <div class="amount" id="statsPaid" style="font-size: 2em;">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content section">
+            <h2>⚙️ Einstellungen</h2>
+            <div class="card">
+                <h3>Währung</h3>
+                <select id="currency">
+                    <option value="EUR">EUR (€)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="GBP">GBP (£)</option>
+                </select>
+                <button class="btn" onclick="saveSettings()" style="margin-top: 10px;">💾 Einstellungen speichern</button>
+            </div>
+            <div class="card" style="margin-top: 20px;">
+                <h3>Daten-Management</h3>
+                <button class="btn" onclick="exportData()">💾 Backup erstellen</button>
+                <button class="btn" onclick="importData()">📥 Backup wiederherstellen</button>
+                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Alle Daten löschen</button>
+            </div>
+            <div class="card" style="margin-top: 20px;">
+                <h3>System-Informationen</h3>
+                <p>Version: 1.0.0</p>
+                <p>Speicherort: Browser LocalStorage</p>
+                <p>Daten: <span id="dataCount">0</span> Bestellungen gespeichert</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== GLOBALE VARIABLEN ==========
+        const STORAGE_KEY = 'thynk_orders';
+        const SETTINGS_KEY = 'thynk_settings';
+        let cart = [];
+        let settings = {
+            currency: 'EUR',
+            currencySymbol: '€'
+        };
+
+        // ========== INITIALISIERUNG ==========
+        window.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            loadOrders();
+            updateCartDisplay();
+        });
+
+        // ========== TAB NAVIGATION ==========
+        function showTab(tabName) {
+            // Alle Tabs verstecken
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Gewählten Tab anzeigen
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ========== WARENKORB ==========
+        function addProductToCart() {
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+
+            if (!name || !price || !quantity) {
+                alert('Bitte alle Felder ausfüllen!');
+                return;
+            }
+
+            cart.push({
+                id: Date.now().toString(),
+                name: name,
+                price: price,
+                quantity: quantity,
+                total: price * quantity
+            });
+
+            updateCartDisplay();
+            
+            // Felder zurücksetzen
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productQuantity').value = '1';
+        }
+
+        function updateCartDisplay() {
+            const container = document.getElementById('cartItems');
+            const totalEl = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="color: #888;">Warenkorb ist leer</p>';
+                totalEl.textContent = settings.currencySymbol + '0.00';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.total;
+                html += `
+                    <div class="order-item">
+                        <strong>${item.name}</strong> - 
+                        ${item.quantity}x ${settings.currencySymbol}${item.price.toFixed(2)} = 
+                        <span class="amount">${settings.currencySymbol}${item.total.toFixed(2)}</span>
+                        <button class="btn btn-danger" onclick="removeFromCart(${index})" style="float: right; padding: 5px 10px; font-size: 12px;">🗑️</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            totalEl.textContent = settings.currencySymbol + total.toFixed(2);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        // ========== BESTELLUNGEN ==========
+        function createOrder() {
+            const customerName = document.getElementById('customerName').value;
+            const customerEmail = document.getElementById('customerEmail').value;
+            const customerAddress = document.getElementById('customerAddress').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+
+            if (!customerName || !customerEmail) {
+                alert('Bitte Name und E-Mail ausfüllen!');
+                return;
+            }
+
+            if (cart.length === 0) {
+                alert('Warenkorb ist leer!');
+                return;
+            }
+
+            const order = {
+                id: 'order-' + Date.now(),
+                order_number: 'ORD-' + new Date().getFullYear() + 
+                              String(new Date().getMonth() + 1).padStart(2, '0') + 
+                              String(new Date().getDate()).padStart(2, '0') + '-' +
+                              Math.random().toString(36).substring(2, 8).toUpperCase(),
+                status: 'pending',
+                payment_status: 'pending',
+                customer: {
+                    name: customerName,
+                    email: customerEmail,
+                    address: customerAddress,
+                    phone: customerPhone
+                },
+                items: [...cart],
+                total_amount: cart.reduce((sum, item) => sum + item.total, 0),
+                currency: settings.currency,
+                created_at: new Date().toISOString()
+            };
+
+            const orders = getOrders();
+            orders.push(order);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+
+            cart = [];
+            updateCartDisplay();
+
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerEmail').value = '';
+            document.getElementById('customerAddress').value = '';
+            document.getElementById('customerPhone').value = '';
+
+            alert('✅ Bestellung erfolgreich erstellt: ' + order.order_number);
+            loadOrders();
+        }
+
+        function getOrders() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function loadOrders() {
+            const orders = getOrders();
+            const container = document.getElementById('ordersList');
+
+            if (orders.length === 0) {
+                container.innerHTML = '<p style="color: #888;">Noch keine Bestellungen vorhanden.</p>';
+                updateStats();
+                updateDataCount();
+                return;
+            }
+
+            orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            let html = '<table><thead><tr><th>Bestellnummer</th><th>Kunde</th><th>Betrag</th><th>Status</th><th>Datum</th><th>Aktionen</th></tr></thead><tbody>';
+
+            orders.forEach(order => {
+                const date = new Date(order.created_at).toLocaleString('de-DE');
+                html += `
+                    <tr>
+                        <td class="order-number">${order.order_number}</td>
+                        <td>${order.customer.name}<br><small>${order.customer.email}</small></td>
+                        <td class="amount">${settings.currencySymbol}${order.total_amount.toFixed(2)}</td>
+                        <td><span class="status status-${order.status}">${order.status}</span></td>
+                        <td><small>${date}</small></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewOrder('${order.id}')" style="padding: 5px 10px; font-size: 12px;">👁️</button>
+                            <button class="btn btn-secondary" onclick="updateOrderStatus('${order.id}')" style="padding: 5px 10px; font-size: 12px;">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteOrder('${order.id}')" style="padding: 5px 10px; font-size: 12px;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            updateStats();
+            updateDataCount();
+        }
+
+        function viewOrder(orderId) {
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) return;
+
+            let itemsHtml = '';
+            order.items.forEach(item => {
+                itemsHtml += `
+                    <div class="order-item">
+                        <strong>${item.name}</strong><br>
+                        ${item.quantity}x ${settings.currencySymbol}${item.price.toFixed(2)} = ${settings.currencySymbol}${item.total.toFixed(2)}
+                    </div>
+                `;
+            });
+
+            const details = `
+Bestellnummer: ${order.order_number}
+Status: ${order.status}
+Zahlungsstatus: ${order.payment_status}
+Kunde: ${order.customer.name}
+E-Mail: ${order.customer.email}
+Adresse: ${order.customer.address || 'N/A'}
+Telefon: ${order.customer.phone || 'N/A'}
+Gesamtbetrag: ${settings.currencySymbol}${order.total_amount.toFixed(2)}
+Datum: ${new Date(order.created_at).toLocaleString('de-DE')}
+
+Items:
+${order.items.map(item => `- ${item.name}: ${item.quantity}x ${settings.currencySymbol}${item.price.toFixed(2)}`).join('\n')}
+            `;
+
+            alert(details);
+        }
+
+        function updateOrderStatus(orderId) {
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) return;
+
+            const newStatus = prompt('Neuer Status:\n1 = pending\n2 = paid\n3 = shipped\n4 = cancelled', 
+                order.status === 'pending' ? '1' : 
+                order.status === 'paid' ? '2' : 
+                order.status === 'shipped' ? '3' : '4');
+
+            if (!newStatus) return;
+
+            const statusMap = { '1': 'pending', '2': 'paid', '3': 'shipped', '4': 'cancelled' };
+            order.status = statusMap[newStatus] || order.status;
+            
+            if (order.status === 'paid' && !order.paid_at) {
+                order.paid_at = new Date().toISOString();
+            }
+            if (order.status === 'shipped' && !order.shipped_at) {
+                order.shipped_at = new Date().toISOString();
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+            loadOrders();
+        }
+
+        function deleteOrder(orderId) {
+            if (!confirm('Bestellung wirklich löschen?')) return;
+
+            const orders = getOrders().filter(o => o.id !== orderId);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+            loadOrders();
+        }
+
+        // ========== STATISTIKEN ==========
+        function updateStats() {
+            const orders = getOrders();
+            
+            document.getElementById('statsTotal').textContent = orders.length;
+            
+            const revenue = orders
+                .filter(o => o.status !== 'cancelled')
+                .reduce((sum, o) => sum + o.total_amount, 0);
+            document.getElementById('statsRevenue').textContent = settings.currencySymbol + revenue.toFixed(2);
+            
+            const pending = orders.filter(o => o.status === 'pending').length;
+            document.getElementById('statsPending').textContent = pending;
+            
+            const paid = orders.filter(o => o.status === 'paid').length;
+            document.getElementById('statsPaid').textContent = paid;
+        }
+
+        function updateDataCount() {
+            const orders = getOrders();
+            document.getElementById('dataCount').textContent = orders.length;
+        }
+
+        // ========== EXPORT/IMPORT ==========
+        function exportData() {
+            const orders = getOrders();
+            const dataStr = JSON.stringify({
+                version: '1.0.0',
+                export_date: new Date().toISOString(),
+                orders: orders,
+                settings: settings
+            }, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'thynk-orders-backup-' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            alert('✅ Daten exportiert!');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (imported.orders && Array.isArray(imported.orders)) {
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(imported.orders));
+                            if (imported.settings) {
+                                localStorage.setItem(SETTINGS_KEY, JSON.stringify(imported.settings));
+                                loadSettings();
+                            }
+                            alert('✅ Daten importiert: ' + imported.orders.length + ' Bestellungen');
+                            loadOrders();
+                        } else {
+                            alert('❌ Ungültiges Format!');
+                        }
+                    } catch (err) {
+                        alert('❌ Fehler beim Importieren: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠️ WIRKLICH alle Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden!')) return;
+            if (!confirm('⚠️ LETZTE WARNUNG: Alle Bestellungen werden gelöscht!')) return;
+            
+            localStorage.removeItem(STORAGE_KEY);
+            cart = [];
+            updateCartDisplay();
+            loadOrders();
+            alert('✅ Alle Daten gelöscht!');
+        }
+
+        // ========== EINSTELLUNGEN ==========
+        function loadSettings() {
+            const stored = localStorage.getItem(SETTINGS_KEY);
+            if (stored) {
+                settings = JSON.parse(stored);
+                document.getElementById('currency').value = settings.currency;
+                updateCurrencySymbol();
+            }
+        }
+
+        function saveSettings() {
+            settings.currency = document.getElementById('currency').value;
+            updateCurrencySymbol();
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+            alert('✅ Einstellungen gespeichert!');
+            updateCartDisplay();
+            loadOrders();
+        }
+
+        function updateCurrencySymbol() {
+            const symbols = { 'EUR': '€', 'USD': '$', 'GBP': '£' };
+            settings.currencySymbol = symbols[settings.currency] || '€';
+        }
+    </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>
+

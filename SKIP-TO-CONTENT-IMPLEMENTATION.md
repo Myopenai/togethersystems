@@ -98,3 +98,10 @@ Der "Skip to Content" Link wurde in allen Hauptseiten implementiert, um die Barr
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

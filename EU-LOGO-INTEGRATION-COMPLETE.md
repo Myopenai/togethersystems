@@ -189,3 +189,10 @@ const EU_LOGO_LINK_URL = '/info/eu-logo'; // Statt './assets/eu-logo.svg'
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

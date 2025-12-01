@@ -1,0 +1,35 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-01T00:00:00Z",
+  "templates": [
+    {
+      "id": "silent-error-handling-fix",
+      "errorId": "silent-error-handling",
+      "oldCode": "if err != nil {\n    return\n}",
+      "newCode": "if err != nil {\n    fmt.Printf(\"Fehler: %v\\n\", err)\n    fmt.Println(\"Drücke Enter zum Beenden...\")\n    fmt.Scanln()\n    os.Exit(1)\n}",
+      "description": "Ersetzt silent return mit Fehlermeldung und User-Feedback"
+    },
+    {
+      "id": "settings-not-found-fix",
+      "errorId": "settings-not-found",
+      "oldCode": "masterSettings, err := loadMasterSettings()\nif err != nil {\n    return\n}",
+      "newCode": "masterSettings, err := loadMasterSettings()\nif err != nil {\n    fmt.Println(\"Hinweis: Settings nicht gefunden - Installation wird fortgesetzt\")\n    masterSettings = &MasterSettings{\n        ID:          \"OSTOSOS\",\n        Version:     \"1.0.0\",\n        Status:      \"ACTIVE\",\n        Description: \"OSTOSOS Operating System\",\n    }\n}",
+      "description": "Ersetzt return mit Fallback-Settings"
+    },
+    {
+      "id": "ostosos-source-not-found-fix",
+      "errorId": "ostosos-source-not-found",
+      "oldCode": "sourcePath := findOSTOSOSSource()\nif sourcePath == \"\" {\n    return fmt.Errorf(\"ostosos source not found\")\n}",
+      "newCode": "sourcePath := findOSTOSOSSource()\nif sourcePath == \"\" {\n    fmt.Println(\"Hinweis: OSTOSOS-Quell-Verzeichnis nicht gefunden\")\n    fmt.Println(\"Erstelle minimale Installation...\")\n    // Create minimal installation\n    mainFile := filepath.Join(destPath, \"OSTOSOS-OS-COMPLETE-SYSTEM.html\")\n    os.MkdirAll(filepath.Dir(mainFile), 0755)\n    // ... create minimal HTML\n    return ioutil.WriteFile(mainFile, []byte(htmlContent), 0644)\n}",
+      "description": "Ersetzt return mit minimaler Installation"
+    },
+    {
+      "id": "no-user-feedback-fix",
+      "errorId": "no-user-feedback",
+      "oldCode": "fmt.Println(\"Installation erfolgreich abgeschlossen!\")\n}",
+      "newCode": "fmt.Println(\"Installation erfolgreich abgeschlossen!\")\nfmt.Println(\"Drücke Enter zum Beenden...\")\nfmt.Scanln()\n}",
+      "description": "Fügt Pause für User-Feedback hinzu"
+    }
+  ]
+}
+

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)file:///D:/Psychiater/emotie/index.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Singular: Alles in einer Datei</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --fg:#e7edf3; --muted:#93a1b1; --acc:#79ffe1; --acc2:#ffd580; --line:#1b2530;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+    header{padding:24px 20px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;justify-content:space-between}
+    header h1{font-size:20px;margin:0;letter-spacing:.4px}
+    header .sub{color:var(--muted);font-size:12px}
+    main{display:grid;grid-template-columns:320px 1fr;min-height:calc(100% - 74px)}
+    aside{border-right:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px}
+    section.canvas-wrap{position:relative}
+    canvas{display:block;width:100%;height:100%;background:radial-gradient(1200px 600px at 70% 30%,#0e151d,#0b0f14 55%)}
+    .panel{display:flex;flex-direction:column;gap:8px}
+    label{font-size:12px;color:var(--muted)}
+    input[type="range"]{width:100%}
+    .row{display:flex;gap:8px;align-items:center}
+    .value{width:44px;text-align:right;color:var(--acc2);font-variant-numeric:tabular-nums}
+    .btn{appearance:none;border:1px solid var(--line);background:#0e141b;color:var(--fg);padding:10px 12px;border-radius:12px;cursor:pointer}
+    .btn:hover{border-color:#2a3645}
+    .badge{font-size:11px;color:#111;background:var(--acc);border-radius:999px;padding:2px 8px}
+    .poem{position:absolute;left:24px;bottom:16px;color:var(--muted);max-width:520px;pointer-events:none;white-space:pre-line}
+    .door{position:absolute;right:40px;top:40px;width:160px;height:240px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+    .leaf{position:absolute;inset:0;background:linear-gradient(180deg,#121923,#0b0f14);transform-origin:left center}
+    .hinge{position:absolute;left:-6px;top:0;bottom:0;width:6px;background:#0a131c}
+    footer{border-top:1px solid var(--line);padding:10px 16px;color:var(--muted);display:flex;justify-content:space-between}
+    code.small{font-size:12px;color:var(--acc2)}
+      /* Themen: Tag (hell) / Nacht (dunkel) */
+    body[data-theme="light"]{--bg:#f8fbff;--fg:#0b0f14;--muted:#4b5563;--acc:#06b6d4;--acc2:#b45309;--line:#dbe3ef}
+    body[data-theme="light"] canvas{background:radial-gradient(1200px 600px at 70% 30%,#eef5ff,#f8fbff 65%)}
+
+    /* UI‑Stile */
+    body[data-ui="minimal"] .btn{border-radius:8px;padding:8px 10px}
+    body[data-ui="minimal"] header{padding:16px 14px}
+    body[data-ui="minimal"] aside{padding:12px}
+
+    body[data-ui="komfort"] .btn{border-radius:16px;padding:12px 14px}
+    body[data-ui="komfort"] header{padding:28px 22px}
+    body[data-ui="komfort"] aside{padding:22px}
+
+    body[data-ui="kontrast"]{--acc:#22c55e;--acc2:#ef4444}
+    body[data-ui="kontrast"] .btn{border-color:var(--fg)}
+    body[data-ui="kontrast"] .value{color:var(--fg)}
+  </style>
+</head>
+<body data-theme="dark" data-ui="komfort">
+  <!-- Alle Funktionen, keine externen Abhängigkeiten. Eine Datei. -->
+  <header>
+    <div>
+      <h1>Singular</h1>
+      <div class="sub">Kompression als Idee: Gravitation, Zeit, Zuversicht – in einer einzigen Datei.</div>
+    </div>
+    <div class="badge">Single‑File</div>
+  </header>
+  <main>
+    <aside>
+      <div class="panel">
+        <label>Gravitation (m/s²)</label>
+        <div class="row">
+          <input id="g" type="range" min="-20" max="30" value="9.81" step="0.01">
+          <div class="value" id="gV">-9.19</div>
+        </div>
+      </div>
+      <div class="panel">
+        <label>Zuversicht (Elastizität)</label>
+        <div class="row">
+          <input id="conf" type="range" min="0" max="1" value="0.82" step="0.01">
+          <div class="value" id="cV">0.82</div>
+        </div>
+      </div>
+      <div class="panel">
+        <label>Nähe/Abstand (Skala)</label>
+        <div class="row">
+          <input id="prox" type="range" min="0.5" max="2.0" value="1.0" step="0.01">
+          <div class="value" id="pV">1.00</div>
+        </div>
+      </div>
+      <div class="panel">
+        <label>Zeit – eine Zukunft (Δt Limit)</label>
+        <div class="row">
+          <input id="dt" type="range" min="0.002" max="0.050" value="0.016" step="0.001">
+          <div class="value" id="dV">0.016</div>
+        </div>
+      </div>
+      <div class="panel">
+        <button class="btn" id="reset">Neu starten</button>
+        <button class="btn" id="toggleDoor">Tür auf/zu</button>
+        <button class="btn" id="pause">Pause</button>
+      </div>
+      <div class="panel">
+        <label>Ausdrucksatz</label>
+        <code class="small">Keine Intention ohne Gedanken.</code>
+      </div>
+
+      <div class="panel">
+        <label>Darstellung</label>
+        <div class="row">
+          <select id="theme" class="btn" aria-label="Thema">
+            <option value="dark">Nacht</option>
+            <option value="light">Tag</option>
+          </select>
+          <select id="uistyle" class="btn" aria-label="UI‑Stil">
+            <option value="komfort" selected="">Komfort</option>
+            <option value="minimal">Minimal</option>
+            <option value="kontrast">Kontrast</option>
+          </select>
+        </div>
+      </div>
+    </aside>
+    <section class="canvas-wrap">
+      <canvas id="view" width="1491" height="792"></canvas>
+      <div class="poem" id="poem">Das ist mein Ausdrucksatz,
+was übrig bleibt, wenn nichts geschlossen ist,
+und die Tür wieder auf und zu springt.
+Nach dem Aufsteigen aus der Höhe,
+bis zum Grund gefallen und wieder auferstanden,
+spürst du den Grund in der auffluchtsfliegenden Kraft — Gravitation.
+
+Zeit: 79.80 s · Δt ≤ 0.016 s
+Zuversicht: e = 0.82 · Nähe × Abstand: 1.00
+Keine Intention ohne Gedanken.</div>
+      <div class="door" aria-label="Tür">
+        <div class="hinge"></div>
+        <div class="leaf" id="leaf" data-open="1.0000" style="transform: perspective(600px) rotateY(-85deg);"></div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div>
+      <strong>Producer:</strong> Dr. Tel, Demitrio Raymond Tel<br>
+      📧 <a href="mailto:gentlyoverdone@outlook.com">gentlyoverdone@outlook.com</a><br>
+      📱 <a href="tel:+31613803782">+31 6 1380 3782</a><br>
+      🌐 urltext: <a href="https://tel1.jouwweb.nl/-2" target="_blank" rel="noopener">www.tel1.nl</a> &nbsp; urlziel: <a href="https://tel1.jouwweb.nl/-2" target="_blank" rel="noopener">https://tel1.jouwweb.nl/-2</a><br>
+      🏦 Rabobank<br>
+      IBAN: <code class="small">NL66 RABO 1020 3955 08</code><br>
+      BIC: <code class="small">RABONL2U</code><br>
+      Accountant: R.D.TEL
+      <br><br>
+      💝 Unterstützen Sie <em>Magnitudo Musica Mundo</em><br>
+      url: <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener">https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget</a><br>
+      Mindestspende: 5 € · anonym oder personalisiert möglich · steuerlich absetzbar (zu prüfen)
+      <div style="margin-top:6px">
+        <a class="btn" href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener">Jetzt spenden via GoFundMe</a>
+      </div>
+    </div>
+    <div>© 2025 TEL &amp; Gentlyoverdone · Alle Rechte vorbehalten</div>
+  </footer>
+
+  <script>
+  // --- Geometrie & Physik ohne Abhängigkeiten ---
+  const $ = sel => document.querySelector(sel);
+  const canvas = $('#view');
+  const ctx = canvas.getContext('2d');
+  const poem = $('#poem');
+  const leaf = $('#leaf');
+
+  const ui = {
+    g: $('#g'), gV: $('#gV'),
+    conf: $('#conf'), cV: $('#cV'),
+    prox: $('#prox'), pV: $('#pV'),
+    dt: $('#dt'), dV: $('#dV'),
+    reset: $('#reset'), toggleDoor: $('#toggleDoor'), pause: $('#pause'),
+    theme: $('#theme'), uistyle: $('#uistyle')
+  };
+
+  function fit(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', fit, {passive:true});
+  fit();
+
+  // Zustand
+  let world = {
+    g: 9.81,
+    conf: .82, // Elastizität (Zuversicht)
+    prox: 1.0, // Skala (Nähe/Abstand)
+    dtCap: 0.016, // Zeit-Schritt (Zukunft)
+    t: 0,
+    paused: false,
+    doorOpen: false
+  };
+
+  let ball;
+  function reset(){
+    ball = {x: 120, y: 40, vx: 1.2, vy: 0, r: 16, hue: 200};
+    world.t = 0;
+  }
+  reset();
+
+  // UI Bindings
+  function bindRange(input, label, key){
+    const update = ()=>{ world[key] = parseFloat(input.value); label.textContent = (+input.value).toFixed( key==='dtCap'?3:(key==='prox'?2:2) ); };
+    input.addEventListener('input', update);
+    update();
+  }
+  bindRange(ui.g, ui.gV, 'g');
+  bindRange(ui.conf, ui.cV, 'conf');
+  bindRange(ui.prox, ui.pV, 'prox');
+  bindRange(ui.dt, ui.dV, 'dtCap');
+
+  ui.reset.onclick = reset;
+  ui.pause.onclick = ()=>{ world.paused = !world.paused; ui.pause.textContent = world.paused? 'Weiter' : 'Pause'; };
+  ui.toggleDoor.onclick = ()=>{ world.doorOpen = !world.doorOpen; };
+  // Themen & UI‑Stil
+  function applyTheme(){ document.body.setAttribute('data-theme', ui.theme.value); }
+  function applyUI(){ document.body.setAttribute('data-ui', ui.uistyle.value); }
+  ui.theme.addEventListener('change', applyTheme);
+  ui.uistyle.addEventListener('change', applyUI);
+  applyTheme();
+  applyUI();
+
+  // Tür-Animation
+  function renderDoor(dt){
+    const target = world.doorOpen? 0 : 1; // 0 = auf, 1 = zu
+    const current = parseFloat(leaf.dataset.open || '1');
+    const next = current + (target - current) * Math.min(1, dt*5);
+    leaf.dataset.open = next.toFixed(4);
+    const angle = next * 85; // Grad
+    leaf.style.transform = `perspective(600px) rotateY(${-angle}deg)`;
+  }
+
+  // Poesie-Generator
+  function updatePoem(){
+    const lines = [
+      'Das ist mein Ausdrucksatz,\nwas übrig bleibt, wenn nichts geschlossen ist,',
+      'und die Tür wieder auf und zu springt.',
+      `Nach dem Aufsteigen aus der Höhe,`,
+      'bis zum Grund gefallen und wieder auferstanden,',
+      'spürst du den Grund in der auffluchtsfliegenden Kraft — Gravitation.',
+      '',
+      `Zeit: ${world.t.toFixed(2)} s · Δt ≤ ${world.dtCap.toFixed(3)} s`,
+      `Zuversicht: e = ${world.conf.toFixed(2)} · Nähe × Abstand: ${world.prox.toFixed(2)}`,
+      'Keine Intention ohne Gedanken.'
+    ];
+    poem.textContent = lines.join('\n');
+  }
+
+  // Physik-Update (semi-implizit Euler, Boden + Wand-Kollisionen)
+  function step(dt){
+    // Skala beeinflusst den verfügbaren Raum (Nähe/Abstand)
+    const W = canvas.clientWidth / world.prox;
+    const H = canvas.clientHeight / world.prox;
+
+    // einfache Projektion ins Sichtfenster
+    ball.vy += world.g * dt;
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // Kollisionen mit Boden/Decke
+    const ground = H - ball.r; const ceiling = ball.r;
+    if(ball.y > ground){
+      ball.y = ground; ball.vy *= -world.conf; jitter(ball); }
+    if(ball.y < ceiling){
+      ball.y = ceiling; ball.vy *= -world.conf; jitter(ball); }
+
+    // Kollisionen mit Wänden
+    const left = ball.r, right = W - ball.r;
+    if(ball.x < left){ ball.x = left; ball.vx *= -world.conf; jitter(ball); }
+    if(ball.x > right){ ball.x = right; ball.vx *= -world.conf; jitter(ball); }
+
+    // Farbe schwingt mit der Zeit
+    ball.hue = (ball.hue + 60*dt) % 360;
+  }
+
+  function jitter(b){ b.vx += (Math.random()-.5)*.3; }
+
+  // Zeichnen
+  function draw(){
+    const W = canvas.clientWidth / world.prox;
+    const H = canvas.clientHeight / world.prox;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.save();
+    ctx.scale(1/world.prox, 1/world.prox);
+
+    // Bodenlinie
+    ctx.strokeStyle = 'rgba(255,255,255,.08)';
+    ctx.beginPath(); ctx.moveTo(0,H-0.5); ctx.lineTo(W,H-0.5); ctx.stroke();
+
+    // Ball
+    const g = ctx.createRadialGradient(ball.x-6,ball.y-6,4, ball.x,ball.y, ball.r+8);
+    g.addColorStop(0, `hsl(${ball.hue},90%,72%)`);
+    g.addColorStop(1, `hsla(${ball.hue},90%,50%,.1)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2); ctx.fill();
+
+    ctx.restore();
+  }
+
+  // Hauptschleife mit Δt‑Deckel ("gib der Zeit eine Zukunft")
+  let last = performance.now();
+  function frame(now){
+    const raw = (now - last)/1000;
+    last = now;
+    const dt = Math.min(raw, world.dtCap);
+    if(!world.paused){
+      // mehrere kleine Schritte, damit Kollisionen sauber sind
+      let t = 0; const sub = Math.min(world.dtCap, 1/240);
+      while(t < dt){ const h = Math.min(sub, dt - t); step(h); world.t += h; t += h; }
+    }
+    draw();
+    updatePoem();
+    renderDoor(dt);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // Klick auf die Tür kippt den Zustand
+  document.querySelector('.door').addEventListener('click',()=>{
+    world.doorOpen = !world.doorOpen;
+  });
+
+  // Tastaturkürzel
+  window.addEventListener('keydown',e=>{
+    if(e.key===' '){ ui.pause.click(); e.preventDefault(); }
+    if(e.key==='r'){ reset(); }
+    if(e.key==='g'){ world.g *= -1; ui.g.value = world.g.toFixed(2); ui.g.dispatchEvent(new Event('input')); }
+  });
+  </script>
+
+
+</body></html>

@@ -1,0 +1,110 @@
+{
+  "fileExistenceCheckRoutineVersion": "1.0.0-PERMANENT-HARD-CODED",
+  "branding": ".{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.",
+  "seal": "TTT-HORIZONTAL-BAR-INFINITY",
+  "symbol": "⌘∞Ω",
+  "status": "🔴 PERMANENT AKTIV - NIEMALS DEAKTIVIEREN - HARD CODED IN SPRACHMODELL",
+  "description": "File-Existence-Check-Routine - IMMER ZUERST PRÜFEN OB ORDNER/DATEI EXISTIERT VOR JEDER HANDLUNG",
+  "principle": "VOR JEDER HANDLUNG ZUM CODE, VOR JEDER DATEI-ERSTELLUNG, VOR JEDEM ORDNER-ERSTELLEN: IMMER ZUERST EXISTENZ PRÜFEN",
+  "workflow": {
+    "step1": {
+      "action": "EXISTENZ-PRÜFUNG",
+      "description": "Immer zuerst prüfen ob Ordner/Datei bereits existiert",
+      "tools": [
+        "list_dir - für Ordner-Existenz",
+        "glob_file_search - für Datei-Existenz",
+        "read_file - für Datei-Existenz (mit Fehlerbehandlung)"
+      ],
+      "timing": "VORAB JEDER HANDLUNG"
+    },
+    "step2": {
+      "action": "ENTSCHEIDUNG",
+      "description": "Basierend auf Existenz-Ergebnis entscheiden",
+      "options": {
+        "exists": "Verwende bestehenden Ordner/Datei",
+        "not_exists": "Erstelle neuen Ordner/Datei nur wenn nötig"
+      }
+    },
+    "step3": {
+      "action": "HANDLUNG",
+      "description": "Führe gewünschte Handlung aus",
+      "note": "Nur nach erfolgreicher Existenz-Prüfung"
+    }
+  },
+  "rules": {
+    "rule1": {
+      "title": "NIEMALS ORDNER ERSTELLEN OHNE PRÜFUNG",
+      "description": "Vor mkdir/Ordner-Erstellung IMMER list_dir oder glob_file_search verwenden",
+      "enforced": true
+    },
+    "rule2": {
+      "title": "NIEMALS DATEIEN ÜBERSCHREIBEN OHNE PRÜFUNG",
+      "description": "Vor write/Datei-Erstellung IMMER read_file oder glob_file_search verwenden",
+      "enforced": true
+    },
+    "rule3": {
+      "title": "FEHLERBEHANDLUNG BEI EXISTENZ-PRÜFUNG",
+      "description": "Wenn Existenz-Prüfung fehlschlägt, Fehler behandeln und nicht fortfahren",
+      "enforced": true
+    },
+    "rule4": {
+      "title": "ROOT-ORDNER IMMER ZUERST PRÜFEN",
+      "description": "Bei Root-Operationen IMMER zuerst Root-Struktur prüfen",
+      "enforced": true
+    }
+  },
+  "examples": {
+    "example1": {
+      "scenario": "Ordner erstellen",
+      "wrong": "run_terminal_cmd: mkdir ordner",
+      "correct": [
+        "1. list_dir('.') - prüfe ob Ordner existiert",
+        "2. Wenn nicht existiert: mkdir ordner",
+        "3. Wenn existiert: verwende bestehenden Ordner"
+      ]
+    },
+    "example2": {
+      "scenario": "Datei erstellen",
+      "wrong": "write('path/file.md', content)",
+      "correct": [
+        "1. glob_file_search('**/file.md') - prüfe ob Datei existiert",
+        "2. Wenn existiert: read_file prüfen ob überschreiben",
+        "3. Wenn nicht existiert: write erstellen"
+      ]
+    },
+    "example3": {
+      "scenario": "Root-Ordner prüfen",
+      "wrong": "Direkt Operation ausführen",
+      "correct": [
+        "1. list_dir('.') - prüfe Root-Struktur",
+        "2. Prüfe ob Ziel-Ordner/Datei existiert",
+        "3. Führe Operation aus"
+      ]
+    }
+  },
+  "integration": {
+    "preCodeVerification": {
+      "enabled": true,
+      "description": "Integriert mit Pre-Code-Verification-System",
+      "order": "1. File-Existence-Check, 2. Pre-Code-Verification, 3. Code-Handlung"
+    },
+    "industrialFabrication": {
+      "enabled": true,
+      "description": "Integriert mit Industrial-Fabrication-Routine",
+      "order": "VORAB jeder Handlung: File-Existence-Check"
+    }
+  },
+  "guardRules": {
+    "permanent": true,
+    "cannotDisable": true,
+    "hardCoded": true,
+    "description": "Diese Routine ist PERMANENT und NIEMALS zu deaktivieren. HARD CODED IN SPRACHMODELL-SYSTEM."
+  },
+  "chainSystem": {
+    "description": "T,.&T,,.&T,,,. - File-Existence-Check greift immer vor anderen Routinen",
+    "principle": "Keine Handlung ohne vorherige Existenz-Prüfung"
+  }
+}
+
+
+

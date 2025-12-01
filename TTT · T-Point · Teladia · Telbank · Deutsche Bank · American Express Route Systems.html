@@ -1,0 +1,691 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/Gebruiker/Downloads/ttt-tpoint-db-amex.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>TTT · T-Point · Teladia · Telbank · Deutsche Bank · American Express Route Systems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-dark: #050814;
+      --bg-top: #050817;
+      --bg-bottom: #02030b;
+      --accent-gold: #f4c978;
+      --accent-blue: #8fd6ff;
+      --accent-pink: #ff8ad8;
+      --accent-green: #86f3c3;
+      --accent-rail: #ffd18a;
+      --accent-amex: #4fd1ff;
+      --accent-red: #ff7f7f;
+      --text-main: #f9fbff;
+      --text-muted: #a8b0c9;
+      --card-bg: rgba(5, 9, 25, 0.94);
+      --border-soft: rgba(255, 255, 255, 0.09);
+      --radius-xl: 28px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, #343f80 0, transparent 55%),
+        radial-gradient(circle at 100% 0%, #622a6d 0, transparent 55%),
+        radial-gradient(circle at 0% 100%, #215970 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, #1b3d54 0, transparent 55%),
+        linear-gradient(to bottom, var(--bg-top), var(--bg-bottom));
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1260px;
+      border-radius: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.09), transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(109, 234, 255, 0.15), transparent 60%),
+        rgba(6, 10, 25, 0.95);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 36px 110px rgba(0, 0, 0, 0.95),
+        0 0 120px rgba(146, 226, 255, 0.35);
+      position: relative;
+      overflow: hidden;
+      padding: 26px 26px 22px 26px;
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        padding: 20px 14px 18px 14px;
+      }
+    }
+
+    .shell::before,
+    .shell::after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .shell::before {
+      top: -260px;
+      left: -220px;
+      background: conic-gradient(from 160deg,
+        rgba(255, 255, 255, 0.8),
+        rgba(144, 220, 255, 0.95),
+        rgba(255, 166, 122, 0.95),
+        rgba(255, 237, 190, 0.9));
+      animation: orbitOuter 36s linear infinite;
+    }
+
+    .shell::after {
+      bottom: -260px;
+      right: -220px;
+      background: conic-gradient(from 330deg,
+        rgba(134, 243, 195, 0.9),
+        rgba(127, 205, 255, 0.8),
+        rgba(255, 152, 210, 0.88),
+        rgba(134, 243, 195, 0.9));
+      animation: orbitInner 42s linear infinite;
+    }
+
+    @keyframes orbitOuter {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitInner {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .ring-overlay {
+      position: absolute;
+      inset: 10px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(111, 243, 255, 0.12), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero {
+      padding-right: 10px;
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        padding-right: 0;
+      }
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(4, 9, 24, 0.96);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.75);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .hero-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffffff, #ffa657);
+      box-shadow:
+        0 0 10px rgba(255, 198, 120, 0.9),
+        0 0 20px rgba(255, 198, 120, 0.9);
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 4.2vw, 3.1rem);
+      line-height: 1.06;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-title-main {
+      font-size: 0.7em;
+      letter-spacing: 0.7em;
+    }
+
+    .hero-title-mid {
+      font-size: 0.96em;
+      letter-spacing: 0.22em;
+      margin-top: 2px;
+    }
+
+    .hero-title-circle {
+      font-size: 0.62em;
+      letter-spacing: 0.55em;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .hero-emblem {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.16), transparent 60%),
+                  rgba(5, 10, 30, 0.96);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    .hero-emblem span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffffff, #8fd6ff);
+      box-shadow: 0 0 14px rgba(151, 220, 255, 0.95);
+    }
+
+    .hero-subtitle {
+      margin-top: 16px;
+      font-size: 0.94rem;
+      color: var(--text-muted);
+      max-width: 36rem;
+    }
+
+    .hero-subtitle strong {
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 620px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-pill {
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(3, 8, 24, 0.95);
+      padding: 9px 10px;
+      display: grid;
+      gap: 2px;
+    }
+
+    .hero-pill-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      color: var(--accent-blue);
+    }
+
+    .hero-pill-body {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hero-footer {
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .hero-footer span {
+      color: var(--accent-blue);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 14px;
+    }
+
+    .card {
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-soft);
+      background: var(--card-bg);
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.9),
+        0 0 52px rgba(141, 217, 255, 0.18);
+      backdrop-filter: blur(22px);
+      padding: 14px 16px 13px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.13), transparent 60%);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .card-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-blue);
+    }
+
+    .card-chip {
+      font-size: 0.7rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(3, 6, 16, 0.98);
+      color: var(--text-muted);
+    }
+
+    .pill-row {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.78rem;
+    }
+
+    @media (max-width: 620px) {
+      .pill-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .pill {
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 65%),
+                  rgba(4, 9, 28, 0.98);
+      padding: 7px 8px 6px 8px;
+      display: grid;
+      gap: 1px;
+    }
+
+    .pill-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-gold);
+    }
+
+    .pill-text {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .list {
+      position: relative;
+      z-index: 1;
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: grid;
+      gap: 3px;
+      padding-left: 1px;
+    }
+
+    .list li {
+      list-style: none;
+    }
+
+    .list strong {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 6px;
+      padding-left: 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: grid;
+      gap: 6px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: linear-gradient(to bottom,
+        rgba(143, 214, 255, 0.8),
+        rgba(244, 201, 120, 0.4));
+      opacity: 0.9;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 9px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      background: radial-gradient(circle, #ffffff, #f4c978);
+      box-shadow:
+        0 0 10px rgba(244, 201, 120, 0.95),
+        0 0 18px rgba(143, 214, 255, 0.7);
+    }
+
+    .timeline-item strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .equation {
+      position: relative;
+      z-index: 1;
+      margin-top: 8px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.22);
+      padding: 7px 8px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.1), transparent 65%);
+    }
+
+    .equation strong {
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .section-spacer {
+      margin-top: 18px;
+    }
+
+    .rail-map {
+      position: relative;
+      margin-top: 8px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 9px 10px;
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.18), transparent 65%),
+        rgba(6, 11, 32, 0.96);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .rail-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+      font-size: 0.78rem;
+    }
+
+    .rail-node {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.18), transparent 60%),
+                  rgba(3, 8, 24, 0.96);
+      font-size: 0.76rem;
+      color: var(--text-main);
+    }
+
+    .rail-node.amex { border-color: var(--accent-amex); }
+    .rail-node.metamask { border-color: #f6a73c; }
+    .rail-node.google { border-color: #9ad0ff; }
+    .rail-node.db { border-color: #00a1ff; }
+    .rail-node.ttt { border-color: var(--accent-gold); }
+    .rail-node.startup { border-color: var(--accent-pink); }
+    .rail-node.network { border-color: var(--accent-green); }
+
+    .rail-separator {
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(to right, var(--accent-rail), var(--accent-amex));
+    }
+
+    .footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer span {
+      color: var(--accent-blue);
+    }
+
+    .footer-note {
+      max-width: 520px;
+    }
+
+    .footer-brand {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+  </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+  <main class="shell" aria-label="TTT · T-Point · Teladia · Telbank · Deutsche Bank · American Express Route Systems">
+    <div class="ring-overlay" aria-hidden="true"></div>
+
+    <!-- OBERER BLOCK -->
+    <section class="layout">
+      <!-- HERO -->
+      <header class="hero">
+        <div class="hero-label">
+          <span class="hero-dot"></span>
+          <span>TTT · T-Point · Together Systems · Startup Systems</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="hero-title-main">DEUTSCHE BANK · TELADIA · TELBANK</span>
+          <span class="hero-title-mid">Minus zu Plus · Assets · Crypto First</span>
+          <span class="hero-title-circle">American&nbsp;Express&nbsp;Route&nbsp;Systems · T-Point Rails</span>
+        </h1>
+
+        <div class="hero-emblem" aria-label="Autarkes Netzwerk Emblem">
+          <span class="dot"></span>
+          <span>total system control · dsc american express</span>
+        </div>
+
+        <p class="hero-subtitle">
+          Diese Seite bündelt die Spezial-Version des Projekts: <strong>TTT</strong>, <strong>T-Point</strong>,
+          <strong>Teladia</strong>, <strong>Telbank</strong> und die <strong>Deutsche Bank</strong> werden in ein gemeinsames,
+          moralisch ausgerichtetes Finanz- und Kommunikationsnetz eingewebt. Die <strong>Minus-zu-Plus-Engine</strong> startet
+          mit Crypto-Assets und wird über ein <strong>Schienensystem aus American Express Route Systems</strong>,
+          <strong>MetaMask</strong>, <strong>Google Network Services</strong> und <strong>Startup Systems</strong> mit der
+          realen und virtuellen Wirtschaft verbunden. Alles vorkonfektioniert: Netzwerkarchitektur, Finanzmodell,
+          Prompt-Sprachmodelle und Industrial-Business-APK.
+        </p>
+
+        <div class="hero-grid" aria-label="Kurzüberblick">
+          <div class="hero-pill">
+            <div class="hero-pill-title">Deutsche Bank Version</div>
+            <div class="hero-pill-body">
+              Eine Produktions- und Präsentationsversion, die der Deutschen Bank ermöglicht, als erste Bank weltweit
+              ein Minus-zu-Plus-Asset-Modell für Crypto zu testen, zu betreiben und später auf alle Asset-Klassen
+              auszuweiten. APIs und Keys bleiben vollständig unter Bankkontrolle.
+            </div>
+          </div>
+          <div class="hero-pill">
+            <div class="hero-pill-title">American Express Schienen</div>
+            <div class="hero-pill-body">
+              American Express Route Systems legen symbolische und technische Schienen quer durch Länder und Netzwerke:
+              Transferwege, Clearingpfade, Kommunikationskanäle. MetaMask, Google Systems und Startup Systems docken
+              daran an, damit Start-ups und Full-Stack-Developer die Infrastruktur an einem Wochenende funktionsfähig
+              machen können.
+            </div>
+          </div>
+        </div>
+
+        <p class="hero-footer">
+          <span>T-Point:</span> Transfer-Services, Network-Services, Kommunikations-Schienen — alle tragen das T
+          wie ein Knotenpunkt im globalen Zirkel der CEOs. Kooperationen, Ko-Publikationen, Kommunikationen, Konkurrenzen,
+          Ko-O-Lationen: alles ist diskutierbar in einer frei justierbaren, gesamtgesellschaftlichen Welt.
+        </p>
+      </header>
+
+      <!-- RECHTE SPALTE: SIMPLER BLOCK (PLATZHALTER) -->
+      <section class="grid" aria-label="Teladia · Telbank · Deutsche Bank">
+        <article class="card">
+          <div class="card-header">
+            <h2 class="card-title">Teladia · Telbank · Deutsche Bank</h2>
+            <span class="card-chip">Minus zu Plus · Crypto · Assets</span>
+          </div>
+          <ul class="list">
+            <li><strong>Ziel:</strong> Deutsche Bank als Pionierbank für ein Minus-zu-Plus-Modell,
+              das mit Crypto startet und später auf weitere Assets erweitert wird.</li>
+            <li><strong>Ressourcen:</strong> Bankinterne Spezialisten und Full-Stack-Developer
+              integrieren ein vorkonfektioniertes Paket in ein Wochenende.</li>
+            <li><strong>Kontrolle:</strong> Alle API-Keys bleiben bei der Bank; externe Systeme
+              liefern Architektur, nicht Schlüssel.</li>
+          </ul>
+
+          <div class="equation">
+            <strong>Minus-zu-Plus (vereinfacht):</strong><br>
+            <code>
+            Netto_Pos_i = Assets_i(Crypto) − Liabilities_i + Transform_Puffer_i
+            </code>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <h2 class="card-title">American Express Rails · T-Point</h2>
+            <span class="card-chip">Transfer- &amp; Network-Services</span>
+          </div>
+
+          <div class="rail-map" aria-label="Schienensystem">
+            <div class="rail-line">
+              <span class="rail-node amex">American Express Route Systems</span>
+              <span class="rail-separator"></span>
+              <span class="rail-node db">Deutsche Bank</span>
+              <span class="rail-separator"></span>
+              <span class="rail-node ttt">T-Point · TTT</span>
+            </div>
+            <div class="rail-line">
+              <span class="rail-node metamask">MetaMask</span>
+              <span class="rail-separator"></span>
+              <span class="rail-node network">Transfer-Services · T</span>
+              <span class="rail-separator"></span>
+              <span class="rail-node google">Google Network Services</span>
+            </div>
+            <div class="rail-line">
+              <span class="rail-node startup">Startup Systems</span>
+              <span class="rail-separator"></span>
+              <span class="rail-node network">Network-Administratoren</span>
+              <span class="rail-separator"></span>
+              <span class="rail-node ttt">Full-Stack-Developer</span>
+            </div>
+          </div>
+
+          <ul class="list">
+            <li>Schienen mit Köpfen und Nägeln: Verankerung der Infrastruktur, unendlicher Code auf stabilen Pfaden.</li>
+            <li>T-Point als Zentrum für Transfer, Netzwerk und Kommunikation.</li>
+            <li>DSC American Express: Total System Control im Sinne von Stabilität und Sicherheit.</li>
+          </ul>
+        </article>
+      </section>
+    </section>
+
+    <footer class="footer">
+      <p class="footer-note">
+        Diese Spezialversion integriert TTT, T-Point, Teladia, Telbank, Deutsche Bank und American Express Route Systems
+        in eine gemeinsame, moralisch ausgerichtete Finanz- und Kommunikationsarchitektur. Alles ist diskussionsfähig,
+        aber auf einer stabilen Schienenbasis gelegt.
+      </p>
+      <p class="footer-brand">
+        <span>TTT&nbsp;·&nbsp;T-Point</span> · Teladia · Telbank · Deutsche&nbsp;Bank · American&nbsp;Express
+      </p>
+    </footer>
+  </main>
+
+
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body></html>

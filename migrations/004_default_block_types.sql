@@ -68,3 +68,10 @@ INSERT OR IGNORE INTO cms_block_types (id, name, category, schema_json, componen
 );
 
 
+
+
+
+
+
+
+

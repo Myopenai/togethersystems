@@ -1,0 +1,1388 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0051)https://campangnen2025vs2035.pages.dev/#statistiken -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEL1.NL Parteiprogramm - Interaktive Datenbank</title>
+    <link rel="stylesheet" href="./TEL1.NL Parteiprogramm - Interaktive Datenbank_files/styles.css">
+    <link rel="stylesheet" href="./TEL1.NL Parteiprogramm - Interaktive Datenbank_files/all.min.css">
+    <script>
+// Professioneller i18n-Fixpatch für TEL1.NL Parteiprogramm
+const RES = {
+  de: { translation: {
+    title: "TEL1.NL Parteiprogramm",
+    subtitle: "Interaktive Datenbank - Demokratisierte Partizipation",
+    nav_dashboard: "Dashboard",
+    nav_search: "Suche",
+    nav_ratings: "Bewertungen",
+    nav_documentation: "Dokumentation",
+    nav_statistics: "Statistiken",
+    dashboard_title: "Dashboard",
+    stats_elements: "Parteiprogramm-Elemente",
+    stats_ratings: "User-Bewertungen",
+    stats_people: "Betroffene Personen",
+    stats_comments: "Kommentare & Vorschläge",
+    last_activities: "Letzte Aktivitäten",
+    system_initialized: "System initialisiert",
+    just_now: "Gerade eben",
+    top_ratings: "Top Bewertungen",
+    no_ratings_yet: "Noch keine Bewertungen vorhanden. Seien Sie der Erste!",
+    rating_title: "Bewertungen & Feedback",
+    all_ratings: "Alle Bewertungen",
+    rate_element: "Element bewerten",
+    select_element: "Element auswählen:",
+    choose_element: "Element wählen…",
+    rating_score: "Bewertung:",
+    comment: "Kommentar:",
+    comment_placeholder: "Ihre Meinung zu diesem Element...",
+    documentation: "Dokumentation:",
+    doc_placeholder: "Links zu relevanten Dokumenten...",
+    suggestion: "Verbesserungsvorschlag:",
+    suggestion_placeholder: "Ihre Verbesserungsvorschläge...",
+    emotion: "Emotion:",
+    emotion_none: "–",
+    emotion_positive: "Positiv",
+    emotion_neutral: "Neutral",
+    emotion_negative: "Negativ",
+    emotion_excited: "Begeistert",
+    emotion_concerned: "Besorgt",
+    emotion_hopeful: "Hoffnungsvoll",
+    submit_rating: "Bewertung abgeben",
+    rating_saved: "Bewertung gespeichert! (lokal)",
+    rating_saved_server: "Danke! Ihre Bewertung wurde gespeichert.",
+    loading_ratings: "Lade Bewertungen...",
+    element_income: "Wohlstandsdividende (Einkommen)",
+    element_wealth: "Vermögenssteuer ab 2 Mio€ (Vermögen)",
+    element_education: "Bildungsförderung (Bildung)",
+    element_housing: "Bezahlbarer Wohnungsbau (Wohnen)",
+    element_energy: "Energieunabhängigkeit (Energie)",
+    error_choose_element: "Bitte Element wählen.",
+    error_rating_range: "Bewertung 1–5.",
+    rating_emotion_label: "Emotion:",
+    rating_suggestion_label: "Vorschlag:",
+    rating_docs_label: "Dokumentation:"
+  }},
+  en: { translation: {
+    title: "TEL1.NL Party Programme",
+    subtitle: "Interactive Database - Democratized Participation",
+    nav_dashboard: "Dashboard",
+    nav_search: "Search",
+    nav_ratings: "Ratings",
+    nav_documentation: "Documentation",
+    nav_statistics: "Statistics",
+    dashboard_title: "Dashboard",
+    stats_elements: "Party Program Elements",
+    stats_ratings: "User Ratings",
+    stats_people: "Affected People",
+    stats_comments: "Comments & Suggestions",
+    last_activities: "Last Activities",
+    system_initialized: "System initialized",
+    just_now: "Just now",
+    top_ratings: "Top Ratings",
+    no_ratings_yet: "No ratings yet. Be the first!",
+    rating_title: "Ratings & Feedback",
+    all_ratings: "All Ratings",
+    rate_element: "Rate Element",
+    select_element: "Select Element:",
+    choose_element: "Choose element…",
+    rating_score: "Rating:",
+    comment: "Comment:",
+    comment_placeholder: "Your opinion on this element...",
+    documentation: "Documentation:",
+    doc_placeholder: "Links to relevant documents...",
+    suggestion: "Improvement Suggestion:",
+    suggestion_placeholder: "Your improvement suggestions...",
+    emotion: "Emotion:",
+    emotion_none: "–",
+    emotion_positive: "Positive",
+    emotion_neutral: "Neutral",
+    emotion_negative: "Negative",
+    emotion_excited: "Excited",
+    emotion_concerned: "Concerned",
+    emotion_hopeful: "Hopeful",
+    submit_rating: "Submit Rating",
+    rating_saved: "Rating saved! (local)",
+    rating_saved_server: "Thank you! Your rating has been saved.",
+    loading_ratings: "Loading ratings...",
+    element_income: "Prosperity Dividend (Income)",
+    element_wealth: "Wealth Tax from 2M€ (Wealth)",
+    element_education: "Education Funding (Education)",
+    element_housing: "Affordable Housing (Housing)",
+    element_energy: "Energy Independence (Energy)",
+    error_choose_element: "Please choose an element.",
+    error_rating_range: "Rating 1–5.",
+    rating_emotion_label: "Emotion:",
+    rating_suggestion_label: "Suggestion:",
+    rating_docs_label: "Documentation:"
+  }},
+  nl: { translation: {
+    title: "TEL1.NL Partijprogramma",
+    subtitle: "Interactieve Database - Gedemocratiseerde Participatie",
+    nav_dashboard: "Dashboard",
+    nav_search: "Zoeken",
+    nav_ratings: "Beoordelingen",
+    nav_documentation: "Documentatie",
+    nav_statistics: "Statistieken",
+    dashboard_title: "Dashboard",
+    stats_elements: "Partijprogramma Elementen",
+    stats_ratings: "Gebruikersbeoordelingen",
+    stats_people: "Getroffen Personen",
+    stats_comments: "Opmerkingen & Suggesties",
+    last_activities: "Laatste Activiteiten",
+    system_initialized: "Systeem geïnitialiseerd",
+    just_now: "Zojuist",
+    top_ratings: "Top Beoordelingen",
+    no_ratings_yet: "Nog geen beoordelingen. Wees de eerste!",
+    rating_title: "Beoordelingen & Feedback",
+    all_ratings: "Alle Beoordelingen",
+    rate_element: "Element Beoordelen",
+    select_element: "Element Selecteren:",
+    choose_element: "Kies element…",
+    rating_score: "Beoordeling:",
+    comment: "Opmerking:",
+    comment_placeholder: "Uw mening over dit element...",
+    documentation: "Documentatie:",
+    doc_placeholder: "Links naar relevante documenten...",
+    suggestion: "Verbeteringsvoorstel:",
+    suggestion_placeholder: "Uw verbeteringsvoorstellen...",
+    emotion: "Emotie:",
+    emotion_none: "–",
+    emotion_positive: "Positief",
+    emotion_neutral: "Neutraal",
+    emotion_negative: "Negatief",
+    emotion_excited: "Opgewonden",
+    emotion_concerned: "Bezorgd",
+    emotion_hopeful: "Hoopvol",
+    submit_rating: "Beoordeling Indienen",
+    rating_saved: "Beoordeling opgeslagen! (lokaal)",
+    rating_saved_server: "Bedankt! Uw beoordeling is opgeslagen.",
+    loading_ratings: "Beoordelingen laden...",
+    element_income: "Welvaartsdividend (Inkomen)",
+    element_wealth: "Vermogensbelasting vanaf 2M€ (Vermogen)",
+    element_education: "Onderwijsfinanciering (Onderwijs)",
+    element_housing: "Betaalbare Woningbouw (Wonen)",
+    element_energy: "Energieonafhankelijkheid (Energie)",
+    error_choose_element: "Kies een element.",
+    error_rating_range: "Beoordeling 1–5.",
+    rating_emotion_label: "Emotie:",
+    rating_suggestion_label: "Voorstel:",
+    rating_docs_label: "Documentatie:"
+  }},
+  fr: { translation: {
+    title: "Programme de parti TEL1.NL",
+    subtitle: "Base de données interactive - Participation démocratisée",
+    nav_dashboard: "Tableau de bord",
+    nav_search: "Recherche",
+    nav_ratings: "Évaluations",
+    nav_documentation: "Documentation",
+    nav_statistics: "Statistiques",
+    dashboard_title: "Tableau de bord",
+    stats_elements: "Éléments du programme",
+    stats_ratings: "Évaluations utilisateur",
+    stats_people: "Personnes concernées",
+    stats_comments: "Commentaires et suggestions",
+    last_activities: "Dernières activités",
+    system_initialized: "Système initialisé",
+    just_now: "À l'instant",
+    top_ratings: "Meilleures évaluations",
+    no_ratings_yet: "Pas encore d'avis. Soyez le premier !",
+    rating_title: "Avis & retours",
+    all_ratings: "Toutes les évaluations",
+    rate_element: "Évaluer l'élément",
+    select_element: "Sélectionner l'élément:",
+    choose_element: "Choisir un élément…",
+    rating_score: "Évaluation:",
+    comment: "Commentaire:",
+    comment_placeholder: "Votre opinion sur cet élément...",
+    documentation: "Documentation:",
+    doc_placeholder: "Liens vers des documents pertinents...",
+    suggestion: "Suggestion d'amélioration:",
+    suggestion_placeholder: "Vos suggestions d'amélioration...",
+    emotion: "Émotion:",
+    emotion_none: "–",
+    emotion_positive: "Positif",
+    emotion_neutral: "Neutre",
+    emotion_negative: "Négatif",
+    emotion_excited: "Enthousiaste",
+    emotion_concerned: "Préoccupé",
+    emotion_hopeful: "Optimiste",
+    submit_rating: "Envoyer l'avis",
+    rating_saved: "Évaluation sauvegardée! (local)",
+    rating_saved_server: "Merci! Votre évaluation a été sauvegardée.",
+    loading_ratings: "Chargement des évaluations...",
+    element_income: "Dividende de prospérité (Revenus)",
+    element_wealth: "Impôt sur la fortune à partir de 2M€ (Fortune)",
+    element_education: "Financement de l'éducation (Éducation)",
+    element_housing: "Logement abordable (Logement)",
+    element_energy: "Indépendance énergétique (Énergie)",
+    error_choose_element: "Veuillez choisir un élément.",
+    error_rating_range: "Évaluation 1–5.",
+    rating_emotion_label: "Émotion:",
+    rating_suggestion_label: "Suggestion:",
+    rating_docs_label: "Documentation:"
+  }}
+};
+
+let currentLang = new URL(location.href).searchParams.get("lang")
+  || localStorage.getItem("lang") || (navigator.language||"en").slice(0,2);
+
+function t(key, args){ // sehr kleines T
+  const path = key.split(".");
+  let node = RES[currentLang]?.translation;
+  for(const p of path) node = node?.[p];
+  if (typeof node !== "string") return key;
+  return node.replace(/\{\{(\w+)\}\}/g,(_,k)=> args?.[k] ?? "");
+}
+
+function applyI18n(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    const argsAttr = el.getAttribute("data-i18n-args");
+    const args = argsAttr ? JSON.parse(argsAttr) : null;
+    el.textContent = t(key, args);
+  });
+}
+
+document.getElementById("langSwitcher")?.addEventListener("change", (e)=>{
+  currentLang = e.target.value; localStorage.setItem("lang", currentLang);
+  const url = new URL(location.href); url.searchParams.set("lang", currentLang);
+  history.replaceState(null, "", url.toString());
+  applyI18n();
+  // dynamische Inhalte (Bewertungen) in gewählter Sprache neu laden:
+  loadRatings({ lang: currentLang }).catch(()=>{});
+});
+
+// Initialisierung:
+document.addEventListener("DOMContentLoaded", ()=>{
+  const sel = document.getElementById("langSwitcher");
+  if (sel) sel.value = currentLang;
+  applyI18n();
+});
+    </script>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1><i class="fas fa-database"></i> <span data-i18n="title">TEL1.NL Partijprogramma</span></h1>
+                    <p data-i18n="subtitle">Interactieve Database - Gedemocratiseerde Participatie</p>
+                </div>
+                <div class="language-selector">
+                    <select id="languageSelect" onchange="window.languageManager.setLanguage(this.value)" fdprocessedid="9fgmg8">
+                        <option value="de">🇩🇪 Deutsch</option>
+                        <option value="en">🇬🇧 English</option>
+                        <option value="fr">🇫🇷 Français</option>
+                        <option value="es">🇪🇸 Español</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="https://campangnen2025vs2035.pages.dev/#dashboard" class="nav-link active"><i class="fas fa-tachometer-alt"></i> <span data-i18n="nav_dashboard">Dashboard</span></a></li>
+                <li><a href="https://campangnen2025vs2035.pages.dev/#suche" class="nav-link"><i class="fas fa-search"></i> <span data-i18n="nav_search">Zoeken</span></a></li>
+                <li><a href="https://campangnen2025vs2035.pages.dev/#bewertungen" class="nav-link"><i class="fas fa-star"></i> <span data-i18n="nav_ratings">Beoordelingen</span></a></li>
+                <li><a href="https://campangnen2025vs2035.pages.dev/#dokumentation" class="nav-link"><i class="fas fa-file-alt"></i> <span data-i18n="nav_documentation">Documentatie</span></a></li>
+                <li><a href="https://campangnen2025vs2035.pages.dev/#statistiken" class="nav-link"><i class="fas fa-chart-bar"></i> <span data-i18n="nav_statistics">Statistieken</span></a></li>
+            </ul>
+            <div class="nav-language">
+                <select id="langSwitcher" aria-label="Language" fdprocessedid="vneolb">
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="nl">🇳🇱 Nederlands</option>
+                    <option value="fr">🇫🇷 Français</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <h2 id="dashboard"><i class="fas fa-tachometer-alt"></i> <span data-i18n="dashboard_title">Dashboard</span></h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>5</h3>
+                    <p data-i18n="stats_elements">Partijprogramma Elementen</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="ratingCount">0</h3>
+                    <p data-i18n="stats_ratings">Gebruikersbeoordelingen</p>
+                </div>
+                <div class="stat-card">
+                    <h3>28,3 Mio.</h3>
+                    <p data-i18n="stats_people">Getroffen Personen</p>
+                </div>
+                <div class="stat-card">
+                    <h3>0</h3>
+                    <p data-i18n="stats_comments">Opmerkingen &amp; Suggesties</p>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="dashboard-section">
+                    <h3><i class="fas fa-clock"></i> Letzte Aktivitäten</h3>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>System initialisiert</span>
+                            <small>Gerade eben</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3><i class="fas fa-trophy"></i> Top Bewertungen</h3>
+                    <div id="ratingList">
+                        <p><em>Noch keine Bewertungen vorhanden. Seien Sie der Erste!</em></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ratings Section -->
+        <section id="bewertungen" class="section">
+            <h2 id="bewertungen"><i class="fas fa-star"></i> <span data-i18n="rating_title">Beoordelingen &amp; Feedback</span></h2>
+            
+            <!-- Rating Form -->
+            <!-- Alle Bewertungen anzeigen -->
+            <div class="ratings-display">
+                <h3><i class="fas fa-list"></i> <span data-i18n="all_ratings">Alle Beoordelingen</span></h3>
+                <p><a href="https://campangnen2025vs2035.pages.dev/#bewertungen" style="color: #667eea; text-decoration: none; font-weight: bold;">📋 Alle Bewertungen anzeigen</a></p>
+                <div id="opinions">
+                    <p><em data-i18n="loading_ratings">Beoordelingen laden...</em></p>
+                </div>
+                <nav id="opinionsPager"></nav>
+            </div>
+
+            <div class="rating-form-container">
+                <h3 data-i18n="rate_element">Element Beoordelen</h3>
+                <form id="rateForm" class="rating-form" novalidate="">
+                    <div class="form-group">
+                        <label for="item_id" data-i18n="select_element">Element Selecteren:</label>
+                        <select name="item_id" id="item_id" required="">
+                            <option value="" disabled="" selected="" data-i18n="choose_element">Kies element…</option>
+                            <option value="ELM-00001" data-i18n="element_income">Welvaartsdividend (Inkomen)</option>
+                            <option value="ELM-00002" data-i18n="element_wealth">Vermogensbelasting vanaf 2M€ (Vermogen)</option>
+                            <option value="ELM-00003" data-i18n="element_education">Onderwijsfinanciering (Onderwijs)</option>
+                            <option value="ELM-00004" data-i18n="element_housing">Betaalbare Woningbouw (Wonen)</option>
+                            <option value="ELM-00005" data-i18n="element_energy">Energieonafhankelijkheid (Energie)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="score" data-i18n="rating_score">Beoordeling:</label>
+                        <input type="number" name="score" id="score" min="1" max="5" required="">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment" data-i18n="comment">Opmerking:</label>
+                        <textarea name="comment" id="comment" rows="3" data-i18n="comment_placeholder" placeholder="Ihre Meinung zu diesem Element...">Uw mening over dit element...</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doc_url" data-i18n="documentation">Documentatie:</label>
+                        <textarea name="doc_url" id="doc_url" rows="2" data-i18n="doc_placeholder" placeholder="Links zu relevanten Dokumenten...">Links naar relevante documenten...</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="suggestion" data-i18n="suggestion">Verbeteringsvoorstel:</label>
+                        <textarea name="suggestion" id="suggestion" rows="2" data-i18n="suggestion_placeholder" placeholder="Ihre Verbesserungsvorschläge...">Uw verbeteringsvoorstellen...</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emotion" data-i18n="emotion">Emotie:</label>
+                        <select name="emotion" id="emotion">
+                            <option value="" data-i18n="emotion_none">–</option>
+                            <option value="Positiv" data-i18n="emotion_positive">Positief</option>
+                            <option value="Neutral" data-i18n="emotion_neutral">Neutraal</option>
+                            <option value="Negativ" data-i18n="emotion_negative">Negatief</option>
+                            <option value="Begeistert" data-i18n="emotion_excited">Opgewonden</option>
+                            <option value="Besorgt" data-i18n="emotion_concerned">Bezorgd</option>
+                            <option value="Hoffnungsvoll" data-i18n="emotion_hopeful">Hoopvol</option>
+                        </select>
+                    </div>
+                    
+                    <button id="submitBtn" type="submit" class="btn btn-primary">
+                        <i class="fas fa-star"></i> <span data-i18n="submit_rating">Beoordeling Indienen</span>
+                    </button>
+                    <p id="rateMsg" role="status" aria-live="polite"></p>
+                </form>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section id="suche" class="section">
+            <h2><i class="fas fa-search"></i> Erweiterte Suche</h2>
+            
+            <div class="search-form">
+                <div class="form-group">
+                    <label for="search-keyword">Stichwort-Suche:</label>
+                    <input type="text" id="search-keyword" placeholder="Nach Begriffen suchen...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="search-id">ID-Suche:</label>
+                    <input type="text" id="search-id" placeholder="Element-ID eingeben...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="filter-category">Kategorie:</label>
+                    <select id="filter-category">
+                        <option value="">Alle Kategorien</option>
+                        <option value="Einkommen">Einkommen</option>
+                        <option value="Vermögen">Vermögen</option>
+                        <option value="Bildung">Bildung</option>
+                        <option value="Wohnen">Wohnen</option>
+                        <option value="Energie">Energie</option>
+                        <option value="Gesundheit">Gesundheit</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button onclick="performSearch()" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Suchen
+                    </button>
+                    <button onclick="resetSearch()" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i> Zurücksetzen
+                    </button>
+                    <button onclick="exportData()" class="btn btn-success">
+                        <i class="fas fa-download"></i> Exportieren
+                    </button>
+                </div>
+            </div>
+            
+            <div id="search-results" class="search-results">
+                <!-- Suchergebnisse werden hier angezeigt -->
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section id="dokumentation" class="section">
+            <h2 id="dokumentation"><i class="fas fa-file-alt"></i> Dokumentation &amp; Quellen</h2>
+            
+            <div class="documentation-upload">
+                <h3>Eigene Dokumentation hinzufügen</h3>
+                <form id="documentation-form" class="documentation-form">
+                    <div class="form-group">
+                        <label for="doc-element-id">Element:</label>
+                        <select id="doc-element-id" required="">
+                            <option value="">Element wählen...</option>
+                            <option value="ELM-00001">Wohlstandsdividende (Einkommen)</option>
+                            <option value="ELM-00002">Vermögenssteuer ab 2 Mio€ (Vermögen)</option>
+                            <option value="ELM-00003">Bildungsförderung (Bildung)</option>
+                            <option value="ELM-00004">Bezahlbarer Wohnungsbau (Wohnen)</option>
+                            <option value="ELM-00005">Energieunabhängigkeit (Energie)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doc-title">Titel:</label>
+                        <input type="text" id="doc-title" required="" placeholder="Titel Ihrer Dokumentation">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doc-type">Typ:</label>
+                        <select id="doc-type">
+                            <option value="Meinung">Meinung</option>
+                            <option value="Verbesserung">Verbesserung</option>
+                            <option value="Kritik">Kritik</option>
+                            <option value="Lob">Lob</option>
+                            <option value="Analyse">Analyse</option>
+                            <option value="Vorschlag">Vorschlag</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doc-content">Inhalt:</label>
+                        <textarea id="doc-content" rows="5" required="" placeholder="Detaillierte Dokumentation..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="doc-public" checked="">
+                            Öffentlich sichtbar
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Dokumentation speichern
+                    </button>
+                </form>
+            </div>
+            
+            <div id="docs" class="documentation-list">
+                <p><em>Lade Dokumente...</em></p>
+            </div>
+            <nav id="docsPager"></nav>
+            
+            <div id="documentation-list" class="documentation-list">
+                <p><em>Noch keine Dokumentationen vorhanden. Erstellen Sie die erste Dokumentation!</em></p>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="statistiken" class="section">
+            <h2 id="statistiken"><i class="fas fa-chart-bar"></i> Statistiken &amp; Auswertungen</h2>
+            
+            <div class="stats-charts">
+                <div class="chart-container">
+                    <h3>Bewertungsverteilung</h3>
+                    <canvas id="ratingChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Kosten-Nutzen-Verhältnis</h3>
+                    <canvas id="costBenefitChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Zielgruppen-Verteilung</h3>
+                    <canvas id="targetGroupChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>User-Aktivitäten</h3>
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="stats-table">
+                <h3>Parteiprogramm-Elemente</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Element</th>
+                            <th>Kategorie</th>
+                            <th>Betroffene Personen</th>
+                            <th>Kosten/Jahr</th>
+                            <th>Nutzen/Jahr</th>
+                            <th>ROI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Wohlstandsdividende</td>
+                            <td>Einkommen</td>
+                            <td>8,5 Mio.</td>
+                            <td>500 M€</td>
+                            <td>1.200 M€</td>
+                            <td>2,4:1</td>
+                        </tr>
+                        <tr>
+                            <td>Vermögenssteuer</td>
+                            <td>Vermögen</td>
+                            <td>400.000</td>
+                            <td>20 M€</td>
+                            <td>20.000 M€</td>
+                            <td>1000:1</td>
+                        </tr>
+                        <tr>
+                            <td>Bildungsförderung</td>
+                            <td>Bildung</td>
+                            <td>1,2 Mio.</td>
+                            <td>200 M€</td>
+                            <td>800 M€</td>
+                            <td>4,0:1</td>
+                        </tr>
+                        <tr>
+                            <td>Wohnungsbau</td>
+                            <td>Wohnen</td>
+                            <td>500.000</td>
+                            <td>200 M€</td>
+                            <td>600 M€</td>
+                            <td>3,0:1</td>
+                        </tr>
+                        <tr>
+                            <td>Energieunabhängigkeit</td>
+                            <td>Energie</td>
+                            <td>2 Mio.</td>
+                            <td>100 M€</td>
+                            <td>300 M€</td>
+                            <td>3,0:1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>TEL1.NL Parteiprogramm</h4>
+                    <p>Demokratisierte Partizipation für alle Bürger</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Kontakt</h4>
+                    <p>x@tel1.nl</p>
+                    <p>0031613803782</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://partijxtel1nl.pages.dev/">Parteiprogramm</a></li>
+                        <li><a href="https://campangnen2025vs2035.pages.dev/datenschutz.html">Datenschutz</a></li>
+                        <li><a href="https://campangnen2025vs2035.pages.dev/impressum.html">Impressum</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 TEL1.NL. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./TEL1.NL Parteiprogramm - Interaktive Datenbank_files/chart.js.downloaden"></script>
+    <script>
+const $ = s => document.querySelector(s);
+const form = $("#rateForm");
+const listEl = $("#ratingList");
+const allRatingsListEl = $("#allRatingsList");
+const countEl = $("#ratingCount");
+const btn = $("#submitBtn");
+const msg = $("#rateMsg");
+
+function render(list){
+  if (!countEl || !listEl) return;
+  countEl.textContent = list.length;
+  listEl.innerHTML = list.length
+    ? list.slice(0, 5).map(r=>`
+        <div class="rating-item">
+          <div class="rating-header">
+            <strong>${r.item_id}</strong>
+            <span class="rating-score">${r.score} ★</span>
+            <small class="rating-date">${new Date(r.created_at).toLocaleDateString(currentLang === 'de' ? 'de-DE' : currentLang === 'en' ? 'en-US' : currentLang === 'fr' ? 'fr-FR' : currentLang === 'nl' ? 'nl-NL' : 'de-DE')}</small>
+          </div>
+          <div class="rating-content">
+            ${r.comment ? `<p class="rating-comment">${r.comment}</p>` : ''}
+            ${r.emotion ? `<span class="rating-emotion">${t('rating_emotion_label')} ${r.emotion}</span>` : ''}
+            ${r.suggestion ? `<p class="rating-suggestion"><strong>${t('rating_suggestion_label')}</strong> ${r.suggestion}</p>` : ''}
+            ${r.doc_url ? `<p class="rating-docs"><strong>${t('rating_docs_label')}</strong> ${r.doc_url}</p>` : ''}
+          </div>
+        </div>
+      `).join("")
+    : `<p><em>${t('no_ratings_yet')}</em></p>`;
+}
+
+function renderAllRatings(list){
+  if (!allRatingsListEl) return;
+  allRatingsListEl.innerHTML = list.length
+    ? list.map(r=>`
+        <div class="rating-item">
+          <div class="rating-header">
+            <strong>${r.item_id}</strong>
+            <span class="rating-score">${r.score} ★</span>
+            <small class="rating-date">${new Date(r.created_at).toLocaleDateString(currentLang === 'de' ? 'de-DE' : currentLang === 'en' ? 'en-US' : currentLang === 'fr' ? 'fr-FR' : currentLang === 'nl' ? 'nl-NL' : 'de-DE')}</small>
+          </div>
+          <div class="rating-content">
+            ${r.comment ? `<p class="rating-comment">${r.comment}</p>` : ''}
+            ${r.emotion ? `<span class="rating-emotion">${t('rating_emotion_label')} ${r.emotion}</span>` : ''}
+            ${r.suggestion ? `<p class="rating-suggestion"><strong>${t('rating_suggestion_label')}</strong> ${r.suggestion}</p>` : ''}
+            ${r.doc_url ? `<p class="rating-docs"><strong>${t('rating_docs_label')}</strong> ${r.doc_url}</p>` : ''}
+          </div>
+        </div>
+      `).join("")
+    : `<p><em>${t('no_ratings_yet')}</em></p>`;
+}
+
+async function loadRatings(params = {}){
+  // sorge dafür, dass die Sprache mitgegeben wird
+  const lang = (new URL(location.href).searchParams.get("lang")
+               || localStorage.getItem("lang") || "de").slice(0,2);
+  const usp = new URLSearchParams({ ...params, lang });
+  
+  try {
+    const res = await fetch(`/api/ratings${usp.toString()?`?${usp}`:''}`);
+    if (!res.ok) {
+      // Fallback: Lokale Daten aus localStorage
+      const localData = JSON.parse(localStorage.getItem('tel1nl_ratings_fallback') || '[]');
+      render(localData);
+      renderAllRatings(localData);
+      return;
+    }
+    const data = await res.json();
+    // nutze comment_tr und suggestion_tr, wenn vorhanden:
+    const translatedRows = (data.rows||[]).map(r => ({
+      ...r, 
+      comment: r.comment_tr || r.comment,
+      suggestion: r.suggestion_tr || r.suggestion
+    }));
+    render(translatedRows);
+    renderAllRatings(translatedRows);
+    // Zählertext übersetzt:
+    const countEl = document.getElementById("ratingCount");
+    if (countEl) countEl.setAttribute("data-i18n-args", JSON.stringify({ n: data.count||0 }));
+    applyI18n();
+  } catch (error) {
+    console.warn("Backend nicht erreichbar:", error);
+    // Fallback: Lokale Daten aus localStorage
+    const localData = JSON.parse(localStorage.getItem('tel1nl_ratings_fallback') || '[]');
+    render(localData);
+    renderAllRatings(localData);
+  }
+}
+
+function validate(){
+  const item = document.querySelector("#item_id").value;
+  const score = Number(document.querySelector("#score").value);
+  if (!item) throw new Error(t('error_choose_element'));
+  if (!Number.isInteger(score) || score<1 || score>5) throw new Error(t('error_rating_range'));
+}
+
+function makeIdemKey(p){
+  const m = new Date(); m.setSeconds(0,0);
+  const c = (p.comment||"").slice(0,20);
+  return `${p.item_id}|${p.score}|${c}|${m.toISOString()}`;
+}
+
+form?.addEventListener("submit", async (e)=>{
+  e.preventDefault(); 
+  if (!msg) return;
+  msg.textContent = "";
+  
+  try{
+    validate(); 
+    if (btn) {
+      btn.disabled = true; 
+      btn.textContent = "Senden…";
+    }
+    
+    const fd = new FormData(form);
+    const payload = Object.fromEntries(fd.entries());
+    payload.score = Number(payload.score);
+    payload.idem_key = makeIdemKey(payload);
+
+    // 1. Sofort lokal speichern (damit nichts verloren geht)
+    const localData = JSON.parse(localStorage.getItem('tel1nl_ratings_fallback') || '[]');
+    localData.unshift({
+      ...payload,
+      created_at: new Date().toISOString()
+    });
+    localStorage.setItem('tel1nl_ratings_fallback', JSON.stringify(localData));
+    
+    // 2. Lokal anzeigen
+    render(localData);
+    renderAllRatings(localData);
+    form.reset();
+    msg.textContent = t('rating_saved');
+
+    // 3. Versuche API-Call (optional)
+    try {
+      const res = await fetch("/api/ratings", {
+        method:"POST", 
+        headers:{ "content-type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      
+      if(res.ok) {
+        msg.textContent = t('rating_saved_server');
+        // Nach erfolgreichem API-Call: Recovery & Visibility Patch - neue Listen laden
+        await loadOpinions();
+        await loadCounts();
+      } else {
+        console.warn("API-Fehler, aber lokal gespeichert");
+        // Auch bei API-Fehler: lokale Listen aktualisieren
+        await loadOpinions();
+        await loadCounts();
+      }
+    } catch (apiError) {
+      console.warn("API nicht erreichbar, aber lokal gespeichert:", apiError);
+      // Auch bei API-Fehler: lokale Listen aktualisieren
+      await loadOpinions();
+      await loadCounts();
+    }
+    
+  }catch(err){ 
+    msg.textContent = err.message||String(err); 
+  }
+  finally{ 
+    if (btn) {
+      btn.disabled=false; 
+      btn.innerHTML = `<i class="fas fa-star"></i> <span data-i18n="submit_rating">${t('submit_rating')}</span>`; 
+    }
+  }
+});
+
+// Navigation repariert - NUR Code, keine UI-Änderungen
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetId = link.getAttribute('href').substring(1);
+    if (targetId) {
+      window.location.hash = targetId;
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+});
+
+// Hash-Navigation beim Laden
+function jumpToHash() {
+  const id = location.hash.replace('#','');
+  if (id) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+  }
+}
+
+window.addEventListener('hashchange', jumpToHash);
+
+// Suche-Funktionalität
+function performSearch() {
+  const keyword = document.getElementById('search-keyword').value.toLowerCase();
+  const id = document.getElementById('search-id').value;
+  const category = document.getElementById('filter-category').value;
+  
+  const results = document.getElementById('search-results');
+  
+  // Einfache Suche (kann später durch API erweitert werden)
+  const elements = [
+    { id: "ELM-00001", title: "Wohlstandsdividende", category: "Einkommen", description: "Direkte Einkommensunterstützung für einkommensschwache Haushalte" },
+    { id: "ELM-00002", title: "Vermögenssteuer", category: "Vermögen", description: "Progressive Besteuerung von Vermögen ab 2 Millionen Euro" },
+    { id: "ELM-00003", title: "Bildungsförderung", category: "Bildung", description: "Ausbau der Bildungsinfrastruktur und Stipendienprogramme" },
+    { id: "ELM-00004", title: "Wohnungsbau", category: "Wohnen", description: "Förderung bezahlbaren Wohnraums und sozialer Wohnprojekte" },
+    { id: "ELM-00005", title: "Energieunabhängigkeit", category: "Energie", description: "Ausbau erneuerbarer Energien und Energiespeicher" }
+  ];
+  
+  let filtered = elements.filter(element => {
+    const matchesKeyword = !keyword || 
+      element.title.toLowerCase().includes(keyword) ||
+      element.description.toLowerCase().includes(keyword);
+    const matchesId = !id || element.id.toLowerCase().includes(id.toLowerCase());
+    const matchesCategory = !category || element.category === category;
+    
+    return matchesKeyword && matchesId && matchesCategory;
+  });
+  
+  results.innerHTML = filtered.length > 0
+    ? filtered.map(element => `
+        <div class="search-result-item">
+          <h4>${element.title} (${element.id})</h4>
+          <p class="result-category">${element.category}</p>
+          <p class="result-description">${element.description}</p>
+        </div>
+      `).join('')
+    : '<p>Keine Ergebnisse gefunden.</p>';
+}
+
+function resetSearch() {
+  document.getElementById('search-keyword').value = '';
+  document.getElementById('search-id').value = '';
+  document.getElementById('filter-category').value = '';
+  document.getElementById('search-results').innerHTML = '';
+}
+
+async function exportData() {
+  try {
+    const res = await fetch("/api/ratings");
+    const data = await res.json();
+    
+    // CSV-Export
+    const csvContent = [
+      ['ID', 'Element', 'Bewertung', 'Kommentar', 'Emotion', 'Datum'].join(','),
+      ...(data.rows || []).map(r => [
+        r.id,
+        `"${r.item_id}"`,
+        r.score,
+        `"${(r.comment || '').replace(/"/g, '""')}"`,
+        r.emotion || '',
+        r.created_at
+      ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tel1nl-bewertungen.csv';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    
+    if (msg) msg.textContent = "Export erfolgreich heruntergeladen!";
+  } catch (error) {
+    if (msg) msg.textContent = "Fehler beim Export: " + error.message;
+  }
+}
+
+// Dokumentation-Form-Handler (lokale Speicherung bis API implementiert)
+const docForm = document.getElementById('documentation-form');
+if (docForm) {
+  docForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(docForm);
+    const docData = Object.fromEntries(fd.entries());
+    
+    // Lokale Speicherung in localStorage bis API implementiert
+    const docs = JSON.parse(localStorage.getItem('tel1nl_docs') || '[]');
+    docs.unshift({
+      ...docData,
+      created_at: new Date().toISOString()
+    });
+    localStorage.setItem('tel1nl_docs', JSON.stringify(docs));
+    
+    docForm.reset();
+    if (msg) msg.textContent = "Dokumentation lokal gespeichert!";
+    loadDocumentations();
+  });
+}
+
+function loadDocumentations() {
+  const docs = JSON.parse(localStorage.getItem('tel1nl_docs') || '[]');
+  const docList = document.getElementById('documentation-list');
+  if (docList) {
+    docList.innerHTML = docs.length > 0
+      ? docs.map(doc => `
+          <div class="documentation-item">
+            <h4>${doc.title || 'Unbenannt'}</h4>
+            <p class="doc-type">${doc.type || 'Meinung'}</p>
+            <p class="doc-content">${doc.content || ''}</p>
+            <small>${new Date(doc.created_at).toLocaleDateString()}</small>
+          </div>
+        `).join('')
+      : '<p><em>Noch keine Dokumentationen vorhanden. Erstellen Sie die erste Dokumentation!</em></p>';
+  }
+}
+
+const $ = s => document.querySelector(s);
+const form = $("#rateForm");
+const listEl = $("#ratingList");
+const allRatingsListEl = $("#allRatingsList");
+const countEl = $("#ratingCount");
+const btn = $("#submitBtn");
+const msg = $("#rateMsg");
+
+function render(list){
+  if (!countEl || !listEl) return;
+  countEl.textContent = list.length;
+  listEl.innerHTML = list.length
+    ? list.slice(0, 5).map(r=>`
+        <div class="rating-item">
+          <div class="rating-header">
+            <strong>${r.item_id}</strong>
+            <span class="rating-score">${r.score} ★</span>
+            <small class="rating-date">${new Date(r.created_at).toLocaleDateString(currentLang === 'de' ? 'de-DE' : currentLang === 'en' ? 'en-US' : currentLang === 'fr' ? 'fr-FR' : currentLang === 'nl' ? 'nl-NL' : 'de-DE')}</small>
+          </div>
+          <div class="rating-content">
+            ${r.comment ? `<p class="rating-comment">${r.comment}</p>` : ''}
+            ${r.emotion ? `<span class="rating-emotion">${t('rating_emotion_label')} ${r.emotion}</span>` : ''}
+            ${r.suggestion ? `<p class="rating-suggestion"><strong>${t('rating_suggestion_label')}</strong> ${r.suggestion}</p>` : ''}
+            ${r.doc_url ? `<p class="rating-docs"><strong>${t('rating_docs_label')}</strong> ${r.doc_url}</p>` : ''}
+          </div>
+        </div>
+      `).join("")
+    : `<p><em>${t('no_ratings_yet')}</em></p>`;
+}
+
+function renderAllRatings(list){
+  if (!allRatingsListEl) return;
+  allRatingsListEl.innerHTML = list.length
+    ? list.map(r=>`
+        <div class="rating-item">
+          <div class="rating-header">
+            <strong>${r.item_id}</strong>
+            <span class="rating-score">${r.score} ★</span>
+            <small class="rating-date">${new Date(r.created_at).toLocaleDateString(currentLang === 'de' ? 'de-DE' : currentLang === 'en' ? 'en-US' : currentLang === 'fr' ? 'fr-FR' : currentLang === 'nl' ? 'nl-NL' : 'de-DE')}</small>
+          </div>
+          <div class="rating-content">
+            ${r.comment ? `<p class="rating-comment">${r.comment}</p>` : ''}
+            ${r.emotion ? `<span class="rating-emotion">${t('rating_emotion_label')} ${r.emotion}</span>` : ''}
+            ${r.suggestion ? `<p class="rating-suggestion"><strong>${t('rating_suggestion_label')}</strong> ${r.suggestion}</p>` : ''}
+            ${r.doc_url ? `<p class="rating-docs"><strong>${t('rating_docs_label')}</strong> ${r.doc_url}</p>` : ''}
+          </div>
+        </div>
+      `).join("")
+    : `<p><em>${t('no_ratings_yet')}</em></p>`;
+}
+
+async function loadRatings(params = {}){
+  // sorge dafür, dass die Sprache mitgegeben wird
+  const lang = (new URL(location.href).searchParams.get("lang")
+               || localStorage.getItem("lang") || "de").slice(0,2);
+  const usp = new URLSearchParams({ ...params, lang });
+  
+  try {
+    const res = await fetch(`/api/ratings${usp.toString()?`?${usp}`:''}`);
+    if (!res.ok) {
+      // Fallback: Lokale Daten aus localStorage
+      const localData = JSON.parse(localStorage.getItem('tel1nl_ratings_fallback') || '[]');
+      render(localData);
+      renderAllRatings(localData);
+      return;
+    }
+    const data = await res.json();
+    // nutze comment_tr und suggestion_tr, wenn vorhanden:
+    const translatedRows = (data.rows||[]).map(r => ({
+      ...r, 
+      comment: r.comment_tr || r.comment,
+      suggestion: r.suggestion_tr || r.suggestion
+    }));
+    render(translatedRows);
+    renderAllRatings(translatedRows);
+    // Zählertext übersetzt:
+    const countEl = document.getElementById("ratingCount");
+    if (countEl) countEl.setAttribute("data-i18n-args", JSON.stringify({ n: data.count||0 }));
+    applyI18n();
+  } catch (error) {
+    console.warn("Backend nicht erreichbar:", error);
+    // Fallback: Lokale Daten aus localStorage
+    const localData = JSON.parse(localStorage.getItem('tel1nl_ratings_fallback') || '[]');
+    render(localData);
+    renderAllRatings(localData);
+  }
+}
+
+function validate(){
+  const item = document.querySelector("#item_id").value;
+  const score = Number(document.querySelector("#score").value);
+  if (!item) throw new Error(t('error_choose_element'));
+  if (!Number.isInteger(score) || score<1 || score>5) throw new Error(t('error_rating_range'));
+}
+
+function makeIdemKey(p){
+  const m = new Date(); m.setSeconds(0,0);
+  const c = (p.comment||"").slice(0,20);
+  return `${p.item_id}|${p.score}|${c}|${m.toISOString()}`;
+}
+
+form?.addEventListener("submit", async (e)=>{
+  e.preventDefault(); 
+  if (!msg) return;
+  msg.textContent = "";
+  
+  try{
+    validate(); 
+    if (btn) {
+      btn.disabled = true; 
+      btn.textContent = "Senden…";
+    }
+    
+    const fd = new FormData(form);
+    const payload = Object.fromEntries(fd.entries());
+    payload.score = Number(payload.score);
+    payload.idem_key = makeIdemKey(payload);
+
+    // 1. Sofort lokal speichern (damit nichts verloren geht)
+    const localData = JSON.parse(localStorage.getItem('tel1nl_ratings_fallback') || '[]');
+    localData.unshift({
+      ...payload,
+      created_at: new Date().toISOString()
+    });
+    localStorage.setItem('tel1nl_ratings_fallback', JSON.stringify(localData));
+    
+    // 2. Lokal anzeigen
+    render(localData);
+    renderAllRatings(localData);
+    form.reset();
+    msg.textContent = t('rating_saved');
+
+    // 3. Versuche API-Call (optional)
+    try {
+      const res = await fetch("/api/ratings", {
+        method:"POST", 
+        headers:{ "content-type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      
+      if(res.ok) {
+        msg.textContent = t('rating_saved_server');
+        // Nach erfolgreichem API-Call: Server-Daten laden
+        await loadRatings({ item_id: payload.item_id });
+      } else {
+        console.warn("API-Fehler, aber lokal gespeichert");
+      }
+    } catch (apiError) {
+      console.warn("API nicht erreichbar, aber lokal gespeichert:", apiError);
+    }
+    
+  }catch(err){ 
+    msg.textContent = err.message||String(err); 
+  }
+  finally{ 
+    if (btn) {
+      btn.disabled=false; 
+      btn.innerHTML = `<i class="fas fa-star"></i> <span data-i18n="submit_rating">${t('submit_rating')}</span>`; 
+    }
+  }
+});
+
+// Navigation repariert - NUR Code, keine UI-Änderungen
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetId = link.getAttribute('href').substring(1);
+    if (targetId) {
+      window.location.hash = targetId;
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+});
+
+// Hash-Navigation beim Laden
+function jumpToHash() {
+  const id = location.hash.replace('#','');
+  if (id) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+  }
+}
+
+window.addEventListener('hashchange', jumpToHash);
+
+// Suche-Funktionalität
+function performSearch() {
+  const keyword = document.getElementById('search-keyword').value.toLowerCase();
+  const id = document.getElementById('search-id').value;
+  const category = document.getElementById('filter-category').value;
+  
+  const results = document.getElementById('search-results');
+  
+  // Einfache Suche (kann später durch API erweitert werden)
+  const elements = [
+    { id: "ELM-00001", title: "Wohlstandsdividende", category: "Einkommen", description: "Direkte Einkommensunterstützung für einkommensschwache Haushalte" },
+    { id: "ELM-00002", title: "Vermögenssteuer", category: "Vermögen", description: "Progressive Besteuerung von Vermögen ab 2 Millionen Euro" },
+    { id: "ELM-00003", title: "Bildungsförderung", category: "Bildung", description: "Ausbau der Bildungsinfrastruktur und Stipendienprogramme" },
+    { id: "ELM-00004", title: "Wohnungsbau", category: "Wohnen", description: "Förderung bezahlbaren Wohnraums und sozialer Wohnprojekte" },
+    { id: "ELM-00005", title: "Energieunabhängigkeit", category: "Energie", description: "Ausbau erneuerbarer Energien und Energiespeicher" }
+  ];
+  
+  let filtered = elements.filter(element => {
+    const matchesKeyword = !keyword || 
+      element.title.toLowerCase().includes(keyword) ||
+      element.description.toLowerCase().includes(keyword);
+    const matchesId = !id || element.id.toLowerCase().includes(id.toLowerCase());
+    const matchesCategory = !category || element.category === category;
+    
+    return matchesKeyword && matchesId && matchesCategory;
+  });
+  
+  results.innerHTML = filtered.length > 0
+    ? filtered.map(element => `
+        <div class="search-result-item">
+          <h4>${element.title} (${element.id})</h4>
+          <p class="result-category">${element.category}</p>
+          <p class="result-description">${element.description}</p>
+        </div>
+      `).join('')
+    : '<p>Keine Ergebnisse gefunden.</p>';
+}
+
+function resetSearch() {
+  document.getElementById('search-keyword').value = '';
+  document.getElementById('search-id').value = '';
+  document.getElementById('filter-category').value = '';
+  document.getElementById('search-results').innerHTML = '';
+}
+
+async function exportData() {
+  try {
+    const res = await fetch("/api/ratings");
+    const data = await res.json();
+    
+    // CSV-Export
+    const csvContent = [
+      ['ID', 'Element', 'Bewertung', 'Kommentar', 'Emotion', 'Datum'].join(','),
+      ...(data.rows || []).map(r => [
+        r.id,
+        `"${r.item_id}"`,
+        r.score,
+        `"${(r.comment || '').replace(/"/g, '""')}"`,
+        r.emotion || '',
+        r.created_at
+      ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tel1nl-bewertungen.csv';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    
+    if (msg) msg.textContent = "Export erfolgreich heruntergeladen!";
+  } catch (error) {
+    if (msg) msg.textContent = "Fehler beim Export: " + error.message;
+  }
+}
+
+// Dokumentation-Form-Handler (lokale Speicherung bis API implementiert)
+const docForm = document.getElementById('documentation-form');
+if (docForm) {
+  docForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(docForm);
+    const docData = Object.fromEntries(fd.entries());
+    
+    // Lokale Speicherung in localStorage bis API implementiert
+    const docs = JSON.parse(localStorage.getItem('tel1nl_docs') || '[]');
+    docs.unshift({
+      ...docData,
+      created_at: new Date().toISOString()
+    });
+    localStorage.setItem('tel1nl_docs', JSON.stringify(docs));
+    
+    docForm.reset();
+    if (msg) msg.textContent = "Dokumentation lokal gespeichert!";
+    loadDocumentations();
+  });
+}
+
+function loadDocumentations() {
+  const docs = JSON.parse(localStorage.getItem('tel1nl_docs') || '[]');
+  const docList = document.getElementById('documentation-list');
+  if (docList) {
+    docList.innerHTML = docs.length > 0
+      ? docs.map(doc => `
+          <div class="documentation-item">
+            <h4>${doc.title || 'Unbenannt'}</h4>
+            <p class="doc-type">${doc.type || 'Meinung'}</p>
+            <p class="doc-content">${doc.content || ''}</p>
+            <small>${new Date(doc.created_at).toLocaleDateString()}</small>
+          </div>
+        `).join('')
+      : '<p><em>Noch keine Dokumentationen vorhanden. Erstellen Sie die erste Dokumentation!</em></p>';
+  }
+}
+
+// SOFORT-FIX: Zusätzliches Skript für API-Daten (ohne bestehende Funktionen zu überschreiben)
+async function loadDocsFromAPI({page=1,page_size=20}={}) {
+  const r = await fetch(`/api/docs?page=${page}&page_size=${page_size}`);
+  if (!r.ok) { console.warn('docs API error'); return; }
+  const { items=[], total=0, page_size:ps=20 } = await r.json();
+  const box = document.getElementById('docs'); if (!box) return;
+  box.innerHTML = items.length
+    ? items.map(d => `
+      <article class="doc">
+        <h4><a href="/doc/${d.id}">${d.title || 'Unbenannt'}</a></h4>
+        <p><small>${d.kind||''} • ${new Date(d.created_at).toLocaleString()} • ${d.item_id}</small></p>
+        <p>${(d.excerpt||'').replace(/</g,'&lt;')} …</p>
+      </article>`).join('')
+    : `<em>Keine Dokumente vorhanden.</em>`;
+}
+
+async function loadOpinionsFromAPI({page=1,page_size=20,item_id=null}={}) {
+  const usp = new URLSearchParams({page,page_size}); if (item_id) usp.set('item_id', item_id);
+  const r = await fetch(`/api/opinions?${usp}`); if (!r.ok) return;
+  const { items=[] } = await r.json();
+  const box = document.getElementById('opinions'); if (!box) return;
+  box.innerHTML = items.length
+    ? items.map(o => `
+      <article class="op">
+        <header><strong>${o.item_id}</strong> <span>${'★'.repeat(o.score)}</span>
+        <time datetime="${o.created_at}">${new Date(o.created_at).toLocaleString()}</time></header>
+        <p>${(o.comment||o.suggestion||'').replace(/</g,'&lt;')}</p>
+        <a href="/opinion/${o.id}" class="btn">Details</a>
+      </article>`).join('')
+    : `<em>Keine Bewertungen vorhanden.</em>`;
+}
+
+async function bootstrapAPI() {
+  if (location.pathname.startsWith('/doc/')) {
+    const id = location.pathname.split('/').pop();
+    const r = await fetch(`/api/doc/${id}`); if (!r.ok) return;
+    const d = await r.json(); const box = document.getElementById('docs');
+    if (box) box.innerHTML = `
+      <article class="doc-detail">
+        <h3>${d.title || 'Unbenannt'}</h3>
+        <p><small>${d.kind||''} • ${new Date(d.created_at).toLocaleString()} • ${d.item_id}</small></p>
+        <div>${(d.content||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+        <p><a href="/" class="btn">Zurück</a></p>
+      </article>`;
+    return;
+  }
+  if (location.pathname.startsWith('/opinion/')) {
+    const id = location.pathname.split('/').pop();
+    const r = await fetch(`/api/opinion/${id}`); if (!r.ok) return;
+    const o = await r.json(); const box = document.getElementById('opinions');
+    if (box) box.innerHTML = `
+      <article class="op-detail">
+        <h3>${o.item_id} – ${'★'.repeat(o.score)}</h3>
+        <time datetime="${o.created_at}">${new Date(o.created_at).toLocaleString()}</time>
+        <p>${(o.comment||o.suggestion||'').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</p>
+        <p><a href="/" class="btn">Zurück</a></p>
+      </article>`;
+    return;
+  }
+  loadDocsFromAPI().catch(()=>{});
+  loadOpinionsFromAPI().catch(()=>{});
+}
+
+// Hash-Navigation (falls ein Anker in der URL ist)
+function jumpToHash() {
+  const id = location.hash.replace('#','');
+  if (id) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+  }
+}
+
+// Hash-Change Event Listener
+window.addEventListener('hashchange', jumpToHash);
+
+document.addEventListener("DOMContentLoaded", async ()=>{
+  // Test-Bewertung hinzufügen für Demo
+  const testRating = {
+    item_id: 'ELM-00001',
+    score: 5,
+    comment: 'Sehr gute Idee!',
+    emotion: 'Positiv',
+    suggestion: 'Sollte schnell umgesetzt werden',
+    doc_url: 'https://example.com',
+    created_at: new Date().toISOString()
+  };
+  
+  const existingRatings = JSON.parse(localStorage.getItem('tel1nl_ratings_fallback') || '[]');
+  if (existingRatings.length === 0) {
+    existingRatings.push(testRating);
+    localStorage.setItem('tel1nl_ratings_fallback', JSON.stringify(existingRatings));
+  }
+  
+  // Prefill aus URL (?item_id=…&score=…)
+  const u = new URL(location.href);
+  const iid = u.searchParams.get("item_id");
+  const sc = u.searchParams.get("score");
+  if (iid && document.querySelector(`#item_id option[value="${iid}"]`)) {
+    document.querySelector("#item_id").value = iid;
+  }
+  if (sc && /^[1-5]$/.test(sc)) {
+    document.querySelector("#score").value = sc;
+  }
+  
+  // Bestehende Funktionen laden
+  await loadRatings();
+  loadDocumentations();
+  
+  // API-Daten zusätzlich laden (falls verfügbar)
+  bootstrapAPI().catch(()=>{});
+  
+  // Hash-Navigation beim Laden
+  jumpToHash();
+});
+</script>
+
+<div id="thunderbit-crx-side-bar" style="display:block;opacity:1;pointer-events:all;top:0;right:0;z-index:9007199254740991;position:fixed;pointer-events:none;user-select:none;"><template shadowrootmode="open"><div id="#react-app-root"><div id="#react-app-slot" style="display:flex"></div></div></template></div><button id="open-side-panel" style="width:0;height:0;opacity:0;user-select:none;pointer-events:all;position:absolute;bottom:0;right:0;padding:0;border:0;outline:none;"></button>  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body></html>

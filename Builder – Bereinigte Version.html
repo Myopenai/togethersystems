@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<!-- saved from url=(0073)file:///D:/PreProductions/Builder%20%E2%80%93%20Bereinigte%20Version.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Builder – Bereinigte Version</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="file:///D:/PreProductions/Builder%20%E2%80%93%20Bereinigte%20Version_files/css2" rel="stylesheet">
+  <link rel="stylesheet" href="./Builder – Bereinigte Version_files/prism-tomorrow.min.css">
+  <script src="./Builder – Bereinigte Version_files/prism-core.min.js.downloaden"></script>
+  <script src="./Builder – Bereinigte Version_files/prism-markup.min.js.downloaden"></script>
+  <script src="./Builder – Bereinigte Version_files/prism-css.min.js.downloaden"></script>
+  <script src="./Builder – Bereinigte Version_files/prism-javascript.min.js.downloaden"></script>
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --secondary-color: #6366f1;
+      --bg-color: #0f172a;
+      --text-color: #e2e8f0;
+      --border-color: #374151;
+      --accent-color: #93c5fd;
+    }
+    
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg-color); color: var(--text-color); }
+    .app { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 56px 1fr; height: 100%; }
+    .topbar { grid-column: 1 / span 2; display:flex; align-items:center; gap:8px; padding: 8px 12px; border-bottom: 1px solid #243046; background: #111827; position: sticky; top: 0; z-index: 5; flex-wrap: nowrap; overflow-x: auto; }
+    .topbar button { background:#334155; border:1px solid #475569; color:#e2e8f0; padding:8px 12px; border-radius:8px; cursor:pointer; }
+    .topbar button.active { background:#4f46e5; border-color:#6366f1; }
+    .sidebar { padding:12px; border-right: 1px solid #243046; overflow:auto; }
+    h3 { margin: 12px 0; color:#93c5fd; }
+    .component-item { background:#1f2937; border:1px dashed #64748b; border-radius:10px; padding:12px; margin-bottom:10px; cursor:grab; user-select:none; }
+    .component-item:active { cursor:grabbing; }
+    .main { position: relative; overflow: auto; padding: 16px; }
+    .canvas-wrap { position: relative; width: 100%; height: auto; min-height: calc(100vh - 56px - 32px); background:#0b1220; border:2px dashed #4f46e5; border-radius: 14px; }
+    .canvas-wrap.drag-over { outline: 4px solid rgba(79,70,229,.35); }
+    .grid { position:absolute; inset:0; background-image: linear-gradient(rgba(99,102,241,.09) 1px, transparent 1px),linear-gradient(90deg, rgba(99,102,241,.09) 1px, transparent 1px); background-size:20px 20px; pointer-events:none; border-radius: 12px; }
+    .canvas-placeholder { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#94a3b8; }
+    .el { position:absolute; min-width:100px; min-height:40px; border:2px solid #6366f1; background:white; color:#111827; border-radius:10px; box-shadow: 0 6px 20px rgba(0,0,0,.25); overflow:hidden; z-index: 1; }
+    .el.selected { outline: 2px solid #ef4444; outline-offset: 2px; }
+    .el .hdr { 
+      background:#4f46e5; 
+      color:white; 
+      padding:6px 10px; 
+      border-radius:8px 8px 0 0; 
+      font-size:12px; 
+      cursor:move; 
+      user-select:none; 
+      display:flex; 
+      align-items:center; 
+      justify-content:space-between; 
+      gap:6px;
+      flex-wrap: wrap;          /* mehrere Zeilen zulassen */
+      overflow: hidden;         /* nichts herausragen lassen */
+    }
+    .el .cnt { padding:12px; }
+    .btn { background:#4f46e5; border:none; color:white; padding:8px 12px; border-radius:8px; cursor:pointer; }
+    .tabbar { display:flex; gap:6px; border-bottom:1px solid #243046; margin-bottom:12px; }
+    .tabbar .tab { background:transparent; border:none; color:#cbd5e1; padding:8px 10px; cursor:pointer; border-bottom:3px solid transparent; }
+    .tabbar .tab.active { color:white; border-bottom-color:#4f46e5; background:#182032; border-top-left-radius:8px; border-top-right-radius:8px; }
+    .tabcontent { display:none; }
+    .tabcontent.active { display:block; }
+    
+    /* Documentation Styles */
+    .doc-section { margin-bottom: 20px; padding: 16px; background: #1f2937; border-radius: 10px; border: 1px solid #374151; }
+    .doc-section h4 { margin: 0 0 12px 0; color: #93c5fd; font-size: 16px; }
+    .doc-section select { width: 100%; padding: 8px; background: #374151; border: 1px solid #4b5563; color: #e2e8f0; border-radius: 6px; margin-bottom: 8px; }
+    .step-guide { display: flex; flex-direction: column; gap: 12px; }
+    .step { display: flex; align-items: flex-start; gap: 12px; }
+    .step-number { background: #4f46e5; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; flex-shrink: 0; }
+    .step-content { color: #d1d5db; line-height: 1.5; }
+    .feature-list { list-style: none; padding: 0; margin: 0; }
+    .feature-list li { padding: 8px 0; border-bottom: 1px solid #374151; color: #d1d5db; }
+    .feature-list li:last-child { border-bottom: none; }
+    .contact-info { background: #111827; padding: 12px; border-radius: 8px; border: 1px solid #374151; }
+    .contact-info p { margin: 8px 0; color: #d1d5db; }
+    .contact-info a { color: #93c5fd; text-decoration: none; }
+    .contact-info a:hover { text-decoration: underline; }
+    
+    /* Producer Info Styles */
+    .producer-info { background: #111827; padding: 12px; border-radius: 8px; border: 1px solid #374151; }
+    .producer-info p { margin: 8px 0; color: #d1d5db; }
+    
+    /* Detailed Guide Styles */
+    .detailed-guide h5 { color: #93c5fd; margin: 16px 0 8px 0; font-size: 14px; }
+    .detailed-guide ol { padding-left: 20px; margin: 8px 0; }
+    .detailed-guide li { margin: 6px 0; color: #d1d5db; line-height: 1.5; }
+    .detailed-guide strong { color: #e2e8f0; }
+    
+    /* Typography Controls */
+    .typography-controls { margin-top: 12px; }
+    .typography-controls label { display: block; margin: 8px 0 4px 0; color: #d1d5db; font-size: 14px; }
+    .typography-controls input[type="range"] { width: 100%; margin: 4px 0; }
+    .typography-controls span { display: inline-block; margin-left: 8px; color: #93c5fd; font-size: 12px; }
+    
+    /* Rich Text Toolbar */
+    .rich-text-toolbar { 
+      background: #1f2937; 
+      border: 1px solid #374151; 
+      border-radius: 8px; 
+      padding: 8px; 
+      margin: 0 0 16px 0; 
+      width: 100%; 
+      position: static;
+      display: flex; 
+      gap: 8px; 
+      flex-wrap: wrap; 
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    
+    /* Inline-Toolbar im Komponenten-Header */
+    .inline-tools {
+      display: flex; 
+      gap: 6px; 
+      align-items: center;
+      flex: 1 1 auto;          /* NEU: darf schrumpfen */
+      min-width: 0;            /* NEU: verhindert Überbreite */
+    }
+    .inline-tools .tbtn {
+      background: #374151;
+      border: 1px solid #4b5563;
+      color: #e2e8f0;
+      padding: 4px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      min-width: 28px;
+      transition: all 0.2s;
+    }
+    .inline-tools .tbtn:hover,
+    .inline-tools .tbtn.active { 
+      background: var(--primary-color); 
+      border-color: var(--secondary-color); 
+      color: #fff; 
+    }
+    .hdr-title { 
+      font-weight: 700; 
+      margin-right: 8px; 
+    }
+    .hdr-grip { 
+      opacity: .8; 
+      font-size: 12px; 
+      margin-left: auto;        /* NEU: Griff bleibt rechts */
+    }
+    .toolbar-group { 
+      display: flex; 
+      gap: 2px; 
+      padding: 0 4px; 
+      border-right: 1px solid #374151; 
+    }
+    .toolbar-group:last-child { border-right: none; }
+    .toolbar-btn { 
+      background: #374151; 
+      border: 1px solid #4b5563; 
+      color: #e2e8f0; 
+      padding: 6px 10px; 
+      border-radius: 4px; 
+      cursor: pointer; 
+      font-size: 12px; 
+      min-width: 32px;
+      transition: all 0.2s;
+    }
+    
+    /* Inspector Styles */
+    .inspector{
+      background:#1f2937;border:1px solid #374151;border-radius:10px;
+      padding:10px;margin:0 0 12px 0
+    }
+    .inspector h4{margin:0 0 8px 0;color:#93c5fd;font-size:14px}
+    .inspector .row{display:flex;gap:8px;align-items:center;margin:6px 0}
+    .inspector label{font-size:12px;color:#cbd5e1;min-width:80px}
+    .inspector input[type="text"], .inspector input[type="number"], .inspector select, .inspector textarea{
+  flex:1;padding:6px;background:#374151;border:1px solid #4b5563;color:#e2e8f0;border-radius:6px
+}
+.inspector textarea{
+  font-family:inherit;resize:vertical;min-height:80px
+}
+    .inspector input[type="range"]{width:100%}
+    .inspector .btnline{display:flex;gap:6px;flex-wrap:wrap}
+    .inspector .mini{padding:6px 8px;font-size:12px;background:#374151;border:1px solid #4b5563;color:#e2e8f0;border-radius:6px;cursor:pointer}
+    .inspector .danger{background:#7f1d1d;border-color:#b91c1c}
+    
+    /* Producer Info Styles */
+    .producer-info p {
+      margin: 8px 0;
+      padding: 8px;
+      background: rgba(79, 70, 229, 0.1);
+      border-radius: 6px;
+      border-left: 3px solid #4f46e5;
+    }
+    
+    .producer-info a {
+      color: #4f46e5;
+      text-decoration: none;
+    }
+    
+    .producer-info a:hover {
+      text-decoration: underline;
+    }
+    .toolbar-btn:hover { 
+      background: #4f46e5; 
+      border-color: #6366f1; 
+      color: white; 
+    }
+    .toolbar-btn.active { 
+      background: #4f46e5; 
+      border-color: #6366f1; 
+      color: white; 
+    }
+    
+    /* RTL Support */
+    [dir="rtl"] .toolbar-group { border-right: none; border-left: 1px solid #374151; }
+    [dir="rtl"] .toolbar-group:last-child { border-left: none; }
+    
+    /* Enhanced Component Styles */
+    .el .cnt[contenteditable="true"] { 
+      outline: none; 
+      min-height: 20px; 
+      padding: 8px; 
+    }
+    .el .cnt[contenteditable="true"]:focus { 
+      background: rgba(79, 70, 229, 0.1); 
+      border-radius: 4px; 
+    }
+    
+    /* Table Styles */
+    .table-container { overflow-x: auto; }
+    .table-container table { 
+      border-collapse: collapse; 
+      width: 100%; 
+      margin: 8px 0; 
+    }
+    .table-container th, .table-container td { 
+      border: 1px solid #d1d5db; 
+      padding: 8px; 
+      text-align: left; 
+    }
+    .table-container th { 
+      background: #f3f4f6; 
+      font-weight: 600; 
+    }
+    
+    /* Code Block Styles */
+    .code-block { 
+      background: #1f2937; 
+      border: 1px solid #374151; 
+      border-radius: 6px; 
+      padding: 12px; 
+      font-family: 'JetBrains Mono', monospace; 
+      font-size: 14px; 
+      color: #e2e8f0; 
+      overflow-x: auto; 
+    }
+    
+    /* Quote Styles */
+    .quote-block { 
+      border-left: 4px solid #4f46e5; 
+      padding-left: 16px; 
+      margin: 16px 0; 
+      font-style: italic; 
+      color: #6b7280; 
+    }
+    
+    /* List Styles */
+    .list-container ul, .list-container ol { 
+      margin: 8px 0; 
+      padding-left: 24px; 
+    }
+    .list-container li { 
+      margin: 4px 0; 
+    }
+    
+    /* Design Panel Styles */
+    .color-palette, .spacing-controls, .shadow-controls, .advanced-controls { margin-top: 12px; }
+    .color-item, .spacing-controls label, .shadow-controls label { 
+      display: block; 
+      margin: 8px 0 4px 0; 
+      color: #d1d5db; 
+      font-size: 14px; 
+    }
+    .color-item { display: flex; align-items: center; gap: 8px; }
+    .color-item input[type="color"] { 
+      width: 40px; 
+      height: 30px; 
+      border: none; 
+      border-radius: 4px; 
+      cursor: pointer; 
+    }
+    .color-item span { color: #93c5fd; font-size: 12px; font-family: monospace; }
+    .spacing-controls input[type="range"], .shadow-controls input[type="range"] { 
+      width: 100%; 
+      margin: 4px 0; 
+    }
+    .spacing-controls span, .shadow-controls span { 
+      display: inline-block; 
+      margin-left: 8px; 
+      color: #93c5fd; 
+      font-size: 12px; 
+    }
+    .advanced-controls label { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      cursor: pointer; 
+      padding: 4px 0; 
+    }
+    .advanced-controls input[type="checkbox"] { 
+      width: 16px; 
+      height: 16px; 
+      accent-color: #4f46e5; 
+    }
+    
+    /* Finale CSS-Regeln - keine Duplikate */
+    .el { 
+      overflow: hidden !important; /* Tools bleiben im Element */
+    }
+    .el.selected { 
+      z-index: 999; /* Ausgewählte Elemente über anderen */
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <strong>Builder – Clean</strong>
+    
+
+    
+    <div style="flex:1"></div>
+    
+    <!-- Language & RTL Controls -->
+    <select id="topLanguageSelector" onchange="changeLanguage(this.value)" style="background:#334155; border:1px solid #475569; color:#e2e8f0; padding:4px 8px; border-radius:4px; margin-right:8px;">
+      <option value="de">🇩🇪 DE</option>
+      <option value="en">🇺🇸 EN</option>
+      <option value="fr">🇫🇷 FR</option>
+      <option value="es">🇪🇸 ES</option>
+      <option value="ar">🇸🇦 AR</option>
+    </select>
+    
+    <button id="rtlToggle" onclick="toggleRTL()" title="RTL/LTR umschalten">🔄 RTL</button>
+    
+    <button id="sizeDesktop" class="" aria-pressed="true">🖥️ Desktop</button>
+    <button id="sizeTablet">📱 Tablet</button>
+    <button id="sizeMobile">📱 Mobile</button>
+    <button id="sizeFull" class="active">🖥️ Vollbild</button>
+    <button id="btnPublish">⬆️ Publizieren</button>
+  </div>
+
+  <aside class="sidebar">
+    <div class="tabbar">
+      <button class="tab active" data-tab="components" onclick="showTab(&#39;components&#39;, this)">Komponenten</button>
+      <button class="tab" data-tab="templates" onclick="showTab(&#39;templates&#39;, this)">Vorlagen</button>
+      <button class="tab" data-tab="settings" onclick="showTab(&#39;settings&#39;, this)">Einstellungen</button>
+      <button class="tab" data-tab="documentation" onclick="showTab(&#39;documentation&#39;, this)">Dokumentation</button>
+    </div>
+
+    <div id="components-tab" class="tabcontent active">
+      <h3>🧰 Komponenten</h3>
+      
+      <!-- Rich Text Toolbar in Komponenten-Leiste -->
+      <div id="richTextToolbar" class="rich-text-toolbar" style="display: flex;">
+        <div class="toolbar-group">
+          <button class="toolbar-btn" data-command="bold" title="Fett (Ctrl+B)" aria-label="Fett (Ctrl+B)" role="button"><strong>B</strong></button>
+          <button class="toolbar-btn" data-command="italic" title="Kursiv (Ctrl+I)" aria-label="Kursiv (Ctrl+I)" role="button"><em>I</em></button>
+          <button class="toolbar-btn" data-command="underline" title="Unterstrichen (Ctrl+U)" aria-label="Unterstrichen (Ctrl+U)" role="button"><u>U</u></button>
+          <button class="toolbar-btn" data-command="strikethrough" title="Durchgestrichen" aria-label="Durchgestrichen" role="button"><s>S</s></button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button class="toolbar-btn" data-command="h1" title="Überschrift 1" aria-label="Überschrift 1" role="button">H1</button>
+          <button class="toolbar-btn" data-command="h2" title="Überschrift 2" aria-label="Überschrift 2" role="button">H2</button>
+          <button class="toolbar-btn" data-command="h3" title="Überschrift 3" aria-label="Überschrift 3" role="button">H3</button>
+          <button class="toolbar-btn" data-command="p" title="Absatz" aria-label="Absatz" role="button">P</button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button class="toolbar-btn" data-command="ul" title="Ungeordnete Liste" aria-label="Ungeordnete Liste" role="button">•</button>
+          <button class="toolbar-btn" data-command="ol" title="Geordnete Liste" aria-label="Geordnete Liste" role="button">1.</button>
+          <button class="toolbar-btn" data-command="blockquote" title="Zitat" aria-label="Zitat" role="button">"</button>
+          <button class="toolbar-btn" data-command="code" title="Code" aria-label="Code" role="button">&lt;/&gt;</button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button class="toolbar-btn" data-command="link" title="Link einfügen" aria-label="Link einfügen" role="button">🔗</button>
+          <button class="toolbar-btn" data-command="image" title="Bild einfügen" aria-label="Bild einfügen" role="button">🖼️</button>
+          <button class="toolbar-btn" data-command="table" title="Tabelle einfügen" aria-label="Tabelle einfügen" role="button">⊞</button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button class="toolbar-btn" data-command="undo" title="Rückgängig (Ctrl+Z)" aria-label="Rückgängig (Ctrl+Z)" role="button">↶</button>
+          <button class="toolbar-btn" data-command="redo" title="Wiederholen (Ctrl+Y)" aria-label="Wiederholen (Ctrl+Y)" role="button">↷</button>
+        </div>
+      </div>
+      
+      <!-- Kontext-Werkzeuge pro ausgewählter Komponente -->
+      <div id="componentInspector" class="inspector"><h4>⚙️ Werkzeuge</h4><div style="color:#94a3b8">Wähle eine Komponente auf dem Canvas aus.</div></div>
+      
+      <div class="component-item" draggable="true" data-type="heading" style="opacity: 1;">Überschrift</div>
+      <div class="component-item" draggable="true" data-type="paragraph" style="opacity: 1;">Absatz</div>
+      <div class="component-item" draggable="true" data-type="button">Button</div>
+      <div class="component-item" draggable="true" data-type="image">Bild</div>
+      <div class="component-item" draggable="true" data-type="container">Container</div>
+      <div class="component-item" draggable="true" data-type="form">Formular</div>
+      <div class="component-item" draggable="true" data-type="list">Liste</div>
+      <div class="component-item" draggable="true" data-type="quote">Zitat</div>
+      <div class="component-item" draggable="true" data-type="code">Code</div>
+      <div class="component-item" draggable="true" data-type="table">Tabelle</div>
+    </div>
+
+    <div id="templates-tab" class="tabcontent">
+      <h3>📋 Vorlagen</h3>
+      <p>Kleine Demo – hier könntest du Templates listen.</p>
+    </div>
+
+    <div id="settings-tab" class="tabcontent">
+      <h3>⚙️ Einstellungen &amp; Design</h3>
+      
+      <div class="doc-section">
+        <h4>🎨 Farbpalette &amp; Design-Tokens</h4>
+        
+        <label style="display:block;margin:8px 0 4px 0;color:#d1d5db">Projekt / Theme</label>
+        <select id="projectTheme" onchange="applyTheme(this.value)" style="width:100%;padding:8px;background:#374151;border:1px solid #4b5563;color:#e2e8f0;border-radius:6px;margin-bottom:12px">
+          <option value="default">Default</option>
+          <option value="projektA">Projekt A</option>
+          <option value="projektB">Projekt B</option>
+          <option value="projektC">Projekt C</option>
+        </select>
+        
+        <div class="color-palette">
+          <div class="color-item">
+            <label>Primärfarbe:</label>
+            <input type="color" id="primaryColor" value="#4f46e5" onchange="changePrimaryColor(this.value)">
+            <span>#4f46e5</span>
+          </div>
+          <div class="color-item">
+            <label>Sekundärfarbe:</label>
+            <input type="color" id="secondaryColor" value="#6366f1" onchange="changeSecondaryColor(this.value)">
+            <span>#6366f1</span>
+          </div>
+          <div class="color-item">
+            <label>Hintergrund:</label>
+            <input type="color" id="bgColor" value="#0f172a" onchange="changeBackgroundColor(this.value)">
+            <span>#0f172a</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="doc-section">
+        <h4>📏 Abstände &amp; Layout</h4>
+        <div class="spacing-controls">
+          <label>Element-Abstand:</label>
+          <input type="range" id="elementSpacing" min="8" max="32" value="16" onchange="changeElementSpacing(this.value)">
+          <span id="spacingValue">16px</span>
+          
+          <label>Rahmen-Stärke:</label>
+          <input type="range" id="borderWidth" min="1" max="8" value="2" onchange="changeBorderWidth(this.value)">
+          <span id="borderValue">2px</span>
+        </div>
+      </div>
+      
+      <div class="doc-section">
+        <h4>🌫️ Schatten &amp; Effekte</h4>
+        <div class="shadow-controls">
+          <label>Schatten-Stärke:</label>
+          <input type="range" id="shadowStrength" min="0" max="20" value="6" onchange="changeShadowStrength(this.value)">
+          <span id="shadowValue">6px</span>
+          
+          <label>Schatten-Farbe:</label>
+          <input type="color" id="shadowColor" value="#000000" onchange="changeShadowColor(this.value)">
+          <span>#000000</span>
+        </div>
+      </div>
+      
+      <div class="doc-section">
+        <h4>🔧 Erweiterte Einstellungen</h4>
+        <div class="advanced-controls">
+          <label>
+            <input type="checkbox" id="enableAnimations" onchange="toggleAnimations(this.checked)">
+            Animationen aktivieren
+          </label>
+          <label>
+            <input type="checkbox" id="enableGrid" checked="" onchange="toggleGrid(this.checked)">
+            Raster anzeigen
+          </label>
+          <label>
+            <input type="checkbox" id="enableSnapping" onchange="toggleSnapping(this.checked)">
+            Einrasten aktivieren
+          </label>
+        </div>
+        
+        <button id="btnInit" class="btn" style="margin-top:8px; width:100%" title="Canvas aktivieren">🎯 Canvas neu initialisieren</button>
+      </div>
+    </div>
+
+    <div id="documentation-tab" class="tabcontent">
+      <h3>📚 Dokumentation &amp; Hilfe</h3>
+      
+      <div class="doc-section">
+        <h4>👨‍💻 Produzent-Informationen</h4>
+        <div class="producer-info">
+          <p><strong>Name:</strong> Raymond Demitrio Tel</p>
+          <p><strong>E-Mail:</strong> gentlyoverdone@outlook.com</p>
+          <p><strong>Website:</strong> <a href="https://tel1.nl/" target="_blank">tel1.nl</a></p>
+          <p><strong>Spotify:</strong> <a href="https://open.spotify.com/playlist/7BXr0cyoKuJSH6NUdPkrQ4" target="_blank">TEL &amp; Gentlyoverdone</a></p>
+        </div>
+      </div>
+      
+      <div class="doc-section">
+        <h4>🌍 Sprache wählen</h4>
+        <select id="languageSelector" onchange="changeLanguage(this.value)">
+          <option value="de">Deutsch</option>
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
+
+      <div class="doc-section">
+        <h4>🎨 Schriftarten &amp; Typografie</h4>
+        <select id="fontSelector" onchange="changeFont(this.value)">
+          <option value="system">System Standard</option>
+          <option value="playfair">Playfair Display</option>
+          <option value="roboto">Roboto</option>
+          <option value="opensans">Open Sans</option>
+          <option value="montserrat">Montserrat</option>
+        </select>
+        
+        <div class="typography-controls">
+          <label>Schriftgröße:</label>
+          <input type="range" id="fontSizeSlider" min="12" max="48" value="16" onchange="changeFontSize(this.value)">
+          <span id="fontSizeValue">16px</span>
+          
+          <label>Zeilenabstand:</label>
+          <input type="range" id="lineHeightSlider" min="1" max="2.5" step="0.1" value="1.5" onchange="changeLineHeight(this.value)">
+          <span id="lineHeightValue">1.5</span>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h4>📖 Schritt-für-Schritt Anleitung</h4>
+        <div class="step-guide">
+          <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-content">
+              <strong>Komponente auswählen:</strong> Wähle eine Komponente aus der linken Seitenleiste (Überschrift, Absatz, Button, etc.)
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-content">
+              <strong>Ziehen &amp; Ablegen:</strong> Ziehe die Komponente mit der Maus auf den Canvas (rechter Bereich)
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-content">
+              <strong>Position anpassen:</strong> Klicke auf den blauen Balken oben und ziehe die Komponente an die gewünschte Position
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">4</span>
+            <div class="step-content">
+              <strong>Inhalt bearbeiten:</strong> Doppelklicke auf den Inhalt um ihn direkt zu ändern
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">5</span>
+            <div class="step-content">
+              <strong>Typografie anpassen:</strong> Wähle Schriftart, -größe und Zeilenabstand in der Dokumentation
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">6</span>
+            <div class="step-content">
+              <strong>Responsive testen:</strong> Teste deine Seite auf verschiedenen Bildschirmgrößen mit den Buttons oben
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h4>💡 Tipps für Anfänger</h4>
+        <ul class="feature-list">
+          <li><strong>Doppelklick zum Bearbeiten:</strong> Klicke doppelt auf Text um ihn zu ändern</li>
+          <li><strong>Blauer Balken zum Verschieben:</strong> Ziehe am oberen blauen Balken um Elemente zu verschieben</li>
+          <li><strong>Verschiedene Bildschirmgrößen:</strong> Teste deine Seite auf Desktop, Tablet und Mobile</li>
+          <li><strong>Schriftarten wechseln:</strong> Probiere verschiedene Google Fonts aus</li>
+          <li><strong>Komponenten stapeln:</strong> Lege mehrere Komponenten übereinander für komplexere Layouts</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h4>🔧 Erweiterte Funktionen</h4>
+        <ul class="feature-list">
+          <li><strong>Responsive Vorschau:</strong> Teste deine Seite auf verschiedenen Bildschirmgrößen</li>
+          <li><strong>Drag &amp; Drop:</strong> Einfaches Verschieben von Elementen</li>
+          <li><strong>Modulare Komponenten:</strong> Wiederverwendbare Bausteine für deine Website</li>
+          <li><strong>Live-Vorschau:</strong> Sieh Änderungen sofort auf dem Canvas</li>
+          <li><strong>Inline-Bearbeitung:</strong> Doppelklick zum direkten Bearbeiten von Text</li>
+          <li><strong>Professionelle Typografie:</strong> Google Fonts mit Größen- und Zeilenabstand-Kontrolle</li>
+          <li><strong>Mehrsprachige Unterstützung:</strong> UI in Deutsch, Englisch, Französisch und Spanisch</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h4>⌨️ Tastenkombinationen</h4>
+        <ul class="feature-list">
+          <li><strong>Doppelklick:</strong> Text bearbeiten</li>
+          <li><strong>Strg + Z:</strong> Rückgängig (in Entwicklung)</li>
+          <li><strong>Strg + S:</strong> Speichern (in Entwicklung)</li>
+          <li><strong>Entf:</strong> Element löschen (in Entwicklung)</li>
+          <li><strong>Pfeiltasten:</strong> Elemente präzise verschieben (in Entwicklung)</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h4>📞 Support &amp; Kontakt</h4>
+        <div class="contact-info">
+          <p><strong>Entwickler:</strong> Raymond Demitrio Tel</p>
+          <p><strong>E-Mail:</strong> <a href="mailto:gentlyoverdone@outlook.com">gentlyoverdone@outlook.com</a></p>
+          <p><strong>Website:</strong> <a href="https://tel1.jouwweb.nl/-1" target="_blank">tel1.nl</a></p>
+          <p><strong>Spotify:</strong> <a href="https://open.spotify.com/playlist/7BXr0cyoKuJSH6NUdPkrQ4" target="_blank">TEL &amp; Gentlyoverdone</a></p>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h4>🏢 Produzent &amp; Unternehmen</h4>
+        <div class="producer-info">
+          <p><strong>Medienunternehmen:</strong> TEL &amp; Gentlyoverdone</p>
+          <p><strong>Künstler:</strong> Raymond Demitrio Tel</p>
+          <p><strong>Genre:</strong> Futuristische Soundscapes, Experimentelle Musik</p>
+          <p><strong>Projekt:</strong> TEL1.NL - Die erste Stufe zur vollständigen Erreichbarkeit</p>
+          <p><strong>Philosophie:</strong> "Selbstexpression statt Erfolg - Wenn 'Erfolg' das Ziel ist, wird das Leben oft ein Wettbewerb. Wenn 'Selbstexpression' das Ziel ist, wird das Leben ein Kunstwerk."</p>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h4>📚 Detaillierte Bedienungsanleitung</h4>
+        <div class="detailed-guide">
+          <h5>🎯 Erste Schritte</h5>
+          <ol>
+            <li><strong>Sprache wählen:</strong> Verwende den Sprachauswahl-Button oben rechts</li>
+            <li><strong>Komponente auswählen:</strong> Wähle aus der linken Seitenleiste (Überschrift, Absatz, Button, etc.)</li>
+            <li><strong>Ziehen &amp; Ablegen:</strong> Ziehe die Komponente auf den Canvas (rechter Bereich)</li>
+            <li><strong>Position anpassen:</strong> Klicke auf den blauen Balken und ziehe die Komponente</li>
+          </ol>
+          
+          <h5>✏️ Text bearbeiten</h5>
+          <ol>
+            <li><strong>Text auswählen:</strong> Klicke auf den Text den du bearbeiten möchtest</li>
+            <li><strong>Formatierung:</strong> Verwende die Toolbar oben für Fett, Kursiv, etc.</li>
+            <li><strong>Überschriften:</strong> Wähle H1, H2, H3 für verschiedene Größen</li>
+            <li><strong>Listen erstellen:</strong> Verwende • für ungeordnete, 1. für geordnete Listen</li>
+          </ol>
+          
+          <h5>🎨 Design anpassen</h5>
+          <ol>
+            <li><strong>Farben ändern:</strong> Gehe zu "Einstellungen" → "Farbpalette"</li>
+            <li><strong>Schriftarten:</strong> Wähle in "Dokumentation" → "Schriftarten &amp; Typografie"</li>
+            <li><strong>Abstände:</strong> Passe Element-Abstände in den Einstellungen an</li>
+            <li><strong>Schatten:</strong> Konfiguriere Schatten-Stärke und -Farbe</li>
+          </ol>
+          
+          <h5>📱 Responsive Design</h5>
+          <ol>
+            <li><strong>Vorschau-Modi:</strong> Verwende Desktop, Tablet, Mobile Buttons oben</li>
+            <li><strong>Layout testen:</strong> Teste deine Seite auf verschiedenen Bildschirmgrößen</li>
+            <li><strong>Mobile-first:</strong> Beginne mit dem Mobile-Design und erweitere</li>
+          </ol>
+          
+          <h5>🔧 Erweiterte Funktionen</h5>
+          <ol>
+            <li><strong>Rückgängig/Wiederholen:</strong> Verwende Ctrl+Z und Ctrl+Y</li>
+            <li><strong>Elemente löschen:</strong> Wähle Element aus und drücke Entf</li>
+            <li><strong>RTL-Support:</strong> Aktiviere RTL für Arabisch und andere RTL-Sprachen</li>
+            <li><strong>Mehrsprachigkeit:</strong> Erstelle Inhalte in verschiedenen Sprachen</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h4>💡 Tipps für Anfänger</h4>
+        <ul class="feature-list">
+          <li><strong>Doppelklick zum Bearbeiten:</strong> Klicke doppelt auf Text um ihn zu ändern</li>
+          <li><strong>Blauer Balken zum Verschieben:</strong> Ziehe am oberen blauen Balken um Elemente zu verschieben</li>
+          <li><strong>Verschiedene Bildschirmgrößen:</strong> Teste deine Seite auf Desktop, Tablet und Mobile</li>
+          <li><strong>Schriftarten wechseln:</strong> Probiere verschiedene Google Fonts aus</li>
+          <li><strong>Komponenten stapeln:</strong> Lege mehrere Komponenten übereinander für komplexere Layouts</li>
+          <li><strong>Toolbar immer sichtbar:</strong> Die Formatierungs-Toolbar ist jetzt oben in der Topbar integriert</li>
+          <li><strong>Selektion beibehalten:</strong> Klicke auf ein Element um es auszuwählen (roter Outline)</li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div id="viewport" class="canvas-wrap" style="width: 100%; height: calc(-88px + 100vh);">
+      <div id="canvas" class="canvas" style="position: relative; width: 100%; height: 10888px; min-height: 100%;">
+        <div class="grid"></div>
+        
+      <div class="el" style="left: 44px; top: 38px; width: 260px;"><div class="hdr"><span class="hdr-grip">⇱⇲</span></div><div class="cnt" data-component-type="heading"><h2 contenteditable="true" data-content-id="c1" style="text-align: right;"><a href="http://tel1.nl/">Neue Überschrift</a></h2></div></div><div class="el" style="left: 168.4px; top: 342.4px; width: 260px;"><div class="hdr"><div class="inline-tools"><span class="hdr-title">Werkzeuge</span>
+    <button class="tbtn" data-cmd="bold" type="button"><strong>B</strong></button>
+    <button class="tbtn" data-cmd="italic" type="button"><em>I</em></button>
+    <button class="tbtn" data-cmd="underline" type="button"><u>U</u></button>
+    <button class="tbtn" data-cmd="h1" type="button">H1</button>
+    <button class="tbtn" data-cmd="h2" type="button">H2</button>
+    <button class="tbtn" data-cmd="h3" type="button">H3</button>
+    <button class="tbtn" data-cmd="ul" type="button">•</button>
+    <button class="tbtn" data-cmd="ol" type="button">1.</button>
+    <button class="tbtn" data-cmd="blockquote" type="button">"</button>
+    <button class="tbtn" data-cmd="code" type="button">&lt;/&gt;</button>
+    <button class="tbtn" data-cmd="link" type="button">🔗</button>
+    <button class="tbtn" data-cmd="image" type="button">🖼️</button>
+  </div><span class="hdr-grip">⇱⇲</span></div><div class="cnt" data-component-type="paragraph"><p contenteditable="true" data-content-id="c3">Dies ist ein Absatz.</p></div></div></div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ---------- Tabs ---------- */
+function showTab(tabName, el) {
+  console.log("showTab ->", tabName);
+  document.querySelectorAll('.tabcontent').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tabbar .tab').forEach(b => b.classList.remove('active'));
+  const content = document.getElementById(tabName + '-tab');
+  if (content) content.classList.add('active');
+  (el || document.querySelector(`[data-tab="${tabName}"]`))?.classList.add('active');
+}
+
+/* ---------- Helpers ---------- */
+function px(n){ return Number.parseInt(n, 10) || 0; }
+
+/* ---------- Component Factory ---------- */
+function createElementByType(type, x, y) {
+  const el = document.createElement('div');
+  el.className = 'el';
+  el.style.left = (x ?? 40) + 'px';
+  el.style.top  = (y ?? 40) + 'px';
+  el.style.width = '260px';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'hdr';
+  hdr.innerHTML = `<span>${type.toUpperCase()}</span><span class="hdr-grip">⇱⇲</span>`;
+  el.appendChild(hdr);
+
+  const cnt = document.createElement('div');
+  cnt.className = 'cnt';
+  if (type === 'heading') { 
+    cnt.innerHTML = `<h2 contenteditable="true">${translations[currentLanguage].newHeading}</h2>`;
+    cnt.setAttribute('data-component-type', 'heading');
+    const editable = cnt.querySelector('[contenteditable]');
+    if (editable) assignContentId(editable);
+  }
+  else if (type === 'paragraph') { 
+    cnt.innerHTML = `<p contenteditable="true">${translations[currentLanguage].newParagraph}</p>`;
+    cnt.setAttribute('data-component-type', 'paragraph');
+    const editable = cnt.querySelector('[contenteditable]');
+    if (editable) assignContentId(editable);
+  }
+  else if (type === 'button') { 
+    const b=document.createElement('button'); 
+    b.className='btn'; 
+    b.contentEditable = 'true';
+    b.textContent=translations[currentLanguage].clickMe; 
+    cnt.appendChild(b); 
+    cnt.setAttribute('data-component-type', 'button');
+    assignContentId(b);
+  }
+  else if (type === 'image') { 
+    const i=document.createElement('div'); 
+    i.style.height='120px'; 
+    i.style.background='#e2e8f0'; 
+    i.style.border='1px solid #cbd5e1'; 
+    i.style.borderRadius='8px'; 
+    i.style.display='grid'; 
+    i.style.placeItems='center'; 
+    i.textContent=translations[currentLanguage].imagePlaceholder; 
+    cnt.appendChild(i); 
+    cnt.setAttribute('data-component-type', 'image');
+  }
+  else if (type === 'container') { 
+    const box=document.createElement('div'); 
+    box.style.border='1px dashed #94a3b8'; 
+    box.style.padding='12px'; 
+    box.style.borderRadius='8px'; 
+    box.textContent=translations[currentLanguage].emptyContainer; 
+    cnt.appendChild(box); 
+    el.style.width='320px'; 
+    cnt.setAttribute('data-component-type', 'container');
+  }
+  else if (type === 'form') { 
+    cnt.innerHTML = `<label>${translations[currentLanguage].name}</label><br><input style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;margin:6px 0"><br><button class="btn">${translations[currentLanguage].submit}</button>`; 
+    cnt.setAttribute('data-component-type', 'form');
+  }
+  else if (type === 'list') {
+    cnt.innerHTML = `<div class="list-container"><ul contenteditable="true"><li>${translations[currentLanguage].newParagraph}</li><li>Zweiter Punkt</li></ul></div>`;
+    cnt.setAttribute('data-component-type', 'list');
+    const editable = cnt.querySelector('[contenteditable]');
+    if (editable) assignContentId(editable);
+  }
+  else if (type === 'quote') {
+    cnt.innerHTML = `<div class="quote-block" contenteditable="true">${translations[currentLanguage].newParagraph}</div>`;
+    cnt.setAttribute('data-component-type', 'quote');
+    const editable = cnt.querySelector('[contenteditable]');
+    if (editable) assignContentId(editable);
+  }
+  else if (type === 'code') {
+    cnt.innerHTML = `<div class="code-block" contenteditable="true">console.log('Hello World');</div>`;
+    cnt.setAttribute('data-component-type', 'code');
+    const editable = cnt.querySelector('[contenteditable]');
+    if (editable) assignContentId(editable);
+  }
+  else if (type === 'table') {
+    cnt.innerHTML = `<div class="table-container"><table><thead><tr><th>Spalte 1</th><th>Spalte 2</th></tr></thead><tbody><tr><td contenteditable="true">Daten 1</td><td contenteditable="true">Daten 2</td></tr></tbody></table></div>`;
+    cnt.setAttribute('data-component-type', 'table');
+    const editable = cnt.querySelector('[contenteditable]');
+    if (editable) assignContentId(editable);
+  }
+  else { 
+    cnt.textContent = translations[currentLanguage].unknownType; 
+    cnt.setAttribute('data-component-type', 'unknown');
+  }
+  el.appendChild(cnt);
+
+  // simple drag (move) with header
+  let startX=0, startY=0, originLeft=0, originTop=0;
+  hdr.addEventListener('mousedown', (e)=> {
+    // NEU: wenn Klick in die Inline-Toolbar ging -> kein Drag
+    if (e.target.closest('.inline-tools')) return;
+    e.preventDefault();
+    startX = e.clientX; startY = e.clientY;
+    originLeft = px(el.style.left); originTop = px(el.style.top);
+    const onMove = (ev)=> {
+      const canvas = document.getElementById('canvas');
+      let nx = originLeft + (ev.clientX - startX);
+      let ny = originTop + (ev.clientY - startY);
+      
+      // Nur links und oben begrenzen, nach unten wachsen lassen
+      nx = Math.max(0, nx);
+      ny = Math.max(0, ny);
+      
+      el.style.left = nx + 'px';
+      el.style.top  = ny + 'px';
+      
+      // NEU: bei Bedarf Canvas-Höhe erhöhen
+      const bottom = ny + el.offsetHeight;
+      const current = parseInt(getComputedStyle(canvas).height) || canvas.clientHeight;
+      if (bottom + 80 > current) canvas.style.height = (bottom + 80) + 'px';
+    };
+    const onUp = ()=> {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      fitCanvasToContent(); // Canvas nach Bewegung anpassen
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  });
+
+  // Enhanced inline editing with rich-text support
+  cnt.addEventListener('click', (e) => {
+    if (e.target.hasAttribute('contenteditable') || e.target.closest('[contenteditable]')) {
+      e.target.focus();
+      showRichTextToolbar();
+    }
+  });
+  
+  // Auswahl-Logik
+  el.addEventListener('mousedown', (e) => {
+    console.log('Element clicked:', el);
+    document.querySelectorAll('.el.selected').forEach(n => n.classList.remove('selected'));
+    el.classList.add('selected');
+    console.log('Calling updateInspector with:', el);
+    updateInspector(el); // Inspector aktualisieren
+    e.stopPropagation();
+  });
+  
+  // Make contenteditable elements work with the rich-text engine
+  cnt.addEventListener('input', (e) => {
+    if (e.target.hasAttribute('contenteditable')) {
+      // Save content to localization system if it has an ID
+      const contentId = e.target.dataset.contentId;
+      if (contentId) {
+        contentStore.setContent(contentId, currentLanguage, e.target.innerHTML);
+      }
+      
+      // Trigger plugin system
+      pluginSystem.emit('onRender', e.target);
+      
+      // Save to undo stack
+      saveToUndoStack();
+      
+      // NEU: Canvas-Höhe nach Text-Änderungen anpassen
+      fitCanvasToContent();
+    }
+  });
+  
+  // Handle paste events to clean HTML
+  cnt.addEventListener('paste', (e) => {
+    if (e.target.hasAttribute('contenteditable')) {
+      e.preventDefault();
+      const text = e.clipboardData.getData('text/plain').replace(/\n/g, '<br>');
+      document.execCommand('insertHTML', false, text);
+    }
+  });
+
+  // Element für Größenänderungen beobachten
+  observe(el);
+  
+  return el;
+}
+
+/* ---------- Drag & Drop from palette ---------- */
+let dndInitialized = false;
+function initializeDragAndDrop() {
+  if (dndInitialized) return;
+  dndInitialized = true;
+  
+  console.log('Initialisiere Drag & Drop …');
+  const items = document.querySelectorAll('.component-item');
+  const canvas = document.getElementById('canvas');
+  const placeholder = document.getElementById('placeholder');
+
+  items.forEach(item => {
+    item.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', item.dataset.type);
+      e.dataTransfer.effectAllowed = 'copy';
+      item.style.opacity = '0.6';
+      console.log('dragstart ->', item.dataset.type);
+    });
+    item.addEventListener('dragend', () => { item.style.opacity = '1'; });
+  });
+
+  canvas.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    canvas.classList.add('drag-over');
+  });
+  canvas.addEventListener('dragleave', () => { canvas.classList.remove('drag-over'); });
+  canvas.addEventListener('drop', (e) => {
+    e.preventDefault();
+    canvas.classList.remove('drag-over');
+    const type = e.dataTransfer.getData('text/plain');
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const el = createElementByType(type, x, y);
+    canvas.appendChild(el);
+    if (placeholder) placeholder.remove();
+    fitCanvasToContent(); // Canvas nach Drop anpassen
+    updateInspector(el); // sofort Werkzeuge zeigen
+    console.log('drop ->', type, x, y);
+  });
+}
+
+/* ---------- Viewport sizing ---------- */
+function setPreviewSize(size) {
+  const vp = document.getElementById('viewport');
+  const btns = { desktop: 'sizeDesktop', tablet: 'sizeTablet', mobile: 'sizeMobile', full: 'sizeFull' };
+  Object.values(btns).forEach(id => document.getElementById(id).classList.remove('active'));
+
+  if (size==='desktop') { vp.style.width='1200px'; vp.style.height='800px'; document.getElementById(btns.desktop).classList.add('active'); }
+  else if (size==='tablet') { vp.style.width='768px'; vp.style.height='1024px'; document.getElementById(btns.tablet).classList.add('active'); }
+  else if (size==='mobile') { vp.style.width='375px'; vp.style.height='667px'; document.getElementById(btns.mobile).classList.add('active'); }
+  else { vp.style.width='100%'; vp.style.height='calc(100vh - 56px - 32px)'; document.getElementById(btns.full).classList.add('active'); }
+}
+
+/* ---------- Multilingual Support ---------- */
+const translations = {
+  de: {
+    title: "Builder – Bereinigte Version",
+    components: "Komponenten",
+    templates: "Vorlagen", 
+    settings: "Einstellungen",
+    documentation: "Dokumentation",
+    heading: "Überschrift",
+    paragraph: "Absatz",
+    button: "Button",
+    image: "Bild",
+    container: "Container",
+    form: "Formular",
+    list: "Liste",
+    quote: "Zitat",
+    code: "Code",
+    table: "Tabelle",
+    dragHere: "Ziehe Komponenten hierher",
+    newHeading: "Neue Überschrift",
+    newParagraph: "Dies ist ein Absatz.",
+    clickMe: "Klick mich",
+    imagePlaceholder: "Bildplatzhalter",
+    emptyContainer: "Leerer Container",
+    unknownType: "Unbekannter Typ",
+    name: "Name",
+    submit: "Absenden",
+    desktop: "Desktop",
+    tablet: "Tablet", 
+    mobile: "Mobile",
+    fullscreen: "Vollbild",
+    activateCanvas: "Canvas aktivieren"
+  },
+  en: {
+    title: "Builder – Clean Version",
+    components: "Components",
+    templates: "Templates",
+    settings: "Settings", 
+    documentation: "Documentation",
+    heading: "Heading",
+    paragraph: "Paragraph",
+    button: "Button",
+    image: "Image",
+    container: "Container",
+    form: "Form",
+    list: "List",
+    quote: "Quote",
+    code: "Code",
+    table: "Table",
+    dragHere: "Drag components here",
+    newHeading: "New Heading",
+    newParagraph: "This is a paragraph.",
+    clickMe: "Click me",
+    imagePlaceholder: "Image placeholder",
+    emptyContainer: "Empty container",
+    unknownType: "Unknown type",
+    name: "Name",
+    submit: "Submit",
+    desktop: "Desktop",
+    tablet: "Tablet",
+    mobile: "Mobile", 
+    fullscreen: "Fullscreen",
+    activateCanvas: "Activate canvas"
+  },
+  fr: {
+    title: "Builder – Version Propre",
+    components: "Composants",
+    templates: "Modèles",
+    settings: "Paramètres",
+    documentation: "Documentation", 
+    heading: "Titre",
+    paragraph: "Paragraphe",
+    button: "Bouton",
+    image: "Image",
+    container: "Conteneur",
+    form: "Formulaire",
+    list: "Liste",
+    quote: "Citation",
+    code: "Code",
+    table: "Tableau",
+    dragHere: "Glissez les composants ici",
+    newHeading: "Nouveau titre",
+    newParagraph: "Ceci est un paragraphe.",
+    clickMe: "Cliquez-moi",
+    imagePlaceholder: "Espace réservé image",
+    emptyContainer: "Conteneur vide",
+    unknownType: "Type inconnu",
+    name: "Nom",
+    submit: "Soumettre",
+    desktop: "Bureau",
+    tablet: "Tablette",
+    mobile: "Mobile",
+    fullscreen: "Plein écran",
+    activateCanvas: "Activer le canvas"
+  },
+  es: {
+    title: "Builder – Versión Limpia",
+    components: "Componentes",
+    templates: "Plantillas",
+    settings: "Configuración",
+    documentation: "Documentación",
+    heading: "Encabezado", 
+    paragraph: "Párrafo",
+    button: "Botón",
+    image: "Imagen",
+    container: "Contenedor",
+    form: "Formulario",
+    list: "Lista",
+    quote: "Cita",
+    code: "Código",
+    table: "Tabla",
+    dragHere: "Arrastra componentes aquí",
+    newHeading: "Nuevo encabezado",
+    newParagraph: "Este es un párrafo.",
+    clickMe: "Haz clic en mí",
+    imagePlaceholder: "Marcador de imagen",
+    emptyContainer: "Contenedor vacío",
+    unknownType: "Tipo desconocido",
+    name: "Nombre",
+    submit: "Enviar",
+    desktop: "Escritorio",
+    tablet: "Tableta",
+    mobile: "Móvil",
+    fullscreen: "Pantalla completa",
+    activateCanvas: "Activar canvas"
+  },
+  ar: {
+    title: "Builder – النسخة النظيفة",
+    components: "المكونات",
+    templates: "القوالب",
+    settings: "الإعدادات",
+    documentation: "التوثيق",
+    heading: "العنوان",
+    paragraph: "فقرة",
+    button: "زر",
+    image: "صورة",
+    container: "حاوية",
+    form: "نموذج",
+    list: "قائمة",
+    quote: "اقتباس",
+    code: "كود",
+    table: "جدول",
+    dragHere: "اسحب المكونات هنا",
+    newHeading: "عنوان جديد",
+    newParagraph: "هذه فقرة.",
+    clickMe: "انقر علي",
+    imagePlaceholder: "نص بديل للصورة",
+    emptyContainer: "حاوية فارغة",
+    unknownType: "نوع غير معروف",
+    name: "اسم",
+    submit: "إرسال",
+    desktop: "سطح المكتب",
+    tablet: "جهاز لوحي",
+    mobile: "جوال",
+    fullscreen: "ملء الشاشة",
+    activateCanvas: "تفعيل اللوحة"
+  }
+};
+
+let currentLanguage = 'de';
+
+function changeLanguage(lang) {
+  currentLanguage = lang;
+  updateUILanguage();
+  contentStore.switchLanguage(lang); // Content-Lokalisierung aktualisieren
+  
+  // Automatisch RTL für Arabisch aktivieren
+  if (lang === 'ar' && !isRTL) {
+    toggleRTL();
+  } else if (lang !== 'ar' && isRTL) {
+    toggleRTL();
+  }
+  
+  console.log('Language changed to:', lang);
+}
+
+function updateUILanguage() {
+  const t = translations[currentLanguage];
+  document.title = t.title;
+  
+  // Update tab labels
+  document.querySelector('[data-tab="components"]').textContent = t.components;
+  document.querySelector('[data-tab="templates"]').textContent = t.templates;
+  document.querySelector('[data-tab="settings"]').textContent = t.settings;
+  document.querySelector('[data-tab="documentation"]').textContent = t.documentation;
+  
+  // Update component labels
+  document.querySelectorAll('.component-item').forEach((item, index) => {
+    const types = ['heading', 'paragraph', 'button', 'image', 'container', 'form', 'list', 'quote', 'code', 'table'];
+    if (types[index]) {
+      item.textContent = t[types[index]];
+    }
+  });
+  
+  // Update placeholder text
+  const placeholder = document.getElementById('placeholder');
+  if (placeholder) {
+    placeholder.innerHTML = `<div>${t.dragHere}</div>`;
+  }
+  
+  // Update button texts
+  const buttons = document.querySelectorAll('#sizeDesktop, #sizeTablet, #sizeMobile, #sizeFull');
+  buttons[0].textContent = `🖥️ ${t.desktop}`;
+  buttons[1].textContent = `📱 ${t.tablet}`;
+  buttons[2].textContent = `📱 ${t.mobile}`;
+  buttons[3].textContent = `🖥️ ${t.fullscreen}`;
+  
+  document.getElementById('btnInit').title = t.activateCanvas;
+  
+  // Sprach-Selects synchronisieren
+  const sideSel = document.getElementById('languageSelector');
+  if (sideSel) sideSel.value = currentLanguage;
+  const topSel = document.getElementById('topLanguageSelector');
+  if (topSel) topSel.value = currentLanguage;
+}
+
+/* ---------- Font Management ---------- */
+function changeFont(fontFamily) {
+  const canvas = document.getElementById('canvas');
+  if (canvas) {
+    switch(fontFamily) {
+      case 'playfair':
+        canvas.style.fontFamily = '"Playfair Display", serif';
+        break;
+      case 'roboto':
+        canvas.style.fontFamily = '"Roboto", sans-serif';
+        break;
+      case 'opensans':
+        canvas.style.fontFamily = '"Open Sans", sans-serif';
+        break;
+      case 'montserrat':
+        canvas.style.fontFamily = '"Montserrat", sans-serif';
+        break;
+      default:
+        canvas.style.fontFamily = 'system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
+    }
+  }
+  console.log('Font changed to:', fontFamily);
+}
+
+function changeFontSize(size) {
+  const canvas = document.getElementById('canvas');
+  if (canvas) {
+    canvas.style.fontSize = size + 'px';
+  }
+  document.getElementById('fontSizeValue').textContent = size + 'px';
+  console.log('Font size changed to:', size + 'px');
+}
+
+function changeLineHeight(height) {
+  const canvas = document.getElementById('canvas');
+  if (canvas) {
+    canvas.style.lineHeight = height;
+  }
+  document.getElementById('lineHeightValue').textContent = height;
+  console.log('Line height changed to:', height);
+}
+
+/* ---------- Rich Text Engine ---------- */
+let currentSelection = null;
+let undoStack = [];
+let redoStack = [];
+
+// Selektion-Management
+let lastEditable = null;
+let savedRange = null;
+
+// Range sichern
+document.addEventListener('selectionchange', () => {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && document.activeElement?.hasAttribute?.('contenteditable')) {
+    lastEditable = document.activeElement;
+    savedRange = sel.getRangeAt(0).cloneRange();
+  }
+  // Toolbar-Status bei jeder Selektion aktualisieren
+  updateToolbarState();
+});
+
+// Range wiederherstellen
+function restoreSelection() {
+  if (savedRange) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+  } else if (lastEditable) {
+    lastEditable.focus();
+  }
+}
+
+function showRichTextToolbar() {
+  const toolbar = document.getElementById('richTextToolbar');
+  if (toolbar) toolbar.style.display = 'flex';
+}
+
+function hideRichTextToolbar() {
+  const toolbar = document.getElementById('richTextToolbar');
+  if (toolbar) toolbar.style.display = 'none';
+}
+
+function executeCommand(command, value = null) {
+  // Selektion vor jedem Command wiederherstellen
+  restoreSelection();
+  
+  const map = {
+    bold: 'bold',
+    italic: 'italic',
+    underline: 'underline',
+    strikethrough: 'strikeThrough',
+    ul: 'insertUnorderedList',
+    ol: 'insertOrderedList',
+    h1: ['formatBlock','H1'],
+    h2: ['formatBlock','H2'],
+    h3: ['formatBlock','H3'],
+    p:  ['formatBlock','P'],
+    blockquote: ['formatBlock','BLOCKQUOTE'],
+  };
+
+  if (command === 'undo') { undo(); return; }
+  if (command === 'redo') { redo(); return; }
+  
+  if (command === 'link') {
+    const url = prompt('Link-URL:');
+    if (url) document.execCommand('createLink', false, url);
+    saveToUndoStack(); updateToolbarState(); return;
+  }
+  
+  if (command === 'image') {
+    const url = prompt('Bild-URL:');
+    if (url) document.execCommand('insertImage', false, url);
+    saveToUndoStack(); updateToolbarState(); return;
+  }
+  
+  if (command === 'table') {
+    const html = `<table border="1" style="border-collapse:collapse;width:100%"><tr><th>Head 1</th><th>Head 2</th></tr><tr><td>Cell</td><td>Cell</td></tr></table>`;
+    document.execCommand('insertHTML', false, html);
+    saveToUndoStack(); updateToolbarState(); return;
+  }
+  
+  if (command === 'code') {
+    document.execCommand('insertHTML', false, `<code class="code-inline">code</code>`);
+    saveToUndoStack(); updateToolbarState(); return;
+  }
+
+  const mapped = map[command];
+  if (Array.isArray(mapped)) {
+    document.execCommand(mapped[0], false, mapped[1]);
+  } else if (mapped) {
+    document.execCommand(mapped, false, value);
+  }
+  
+  saveToUndoStack();
+  updateToolbarState();
+}
+
+function saveToUndoStack() {
+  const canvas = document.getElementById('canvas');
+  if (canvas) {
+    undoStack.push(canvas.innerHTML);
+    if (undoStack.length > 50) undoStack.shift(); // Limit stack size
+    redoStack = []; // Clear redo stack
+  }
+}
+
+function undo() {
+  if (undoStack.length > 0) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) {
+      redoStack.push(canvas.innerHTML);
+      canvas.innerHTML = undoStack.pop();
+      // Alle Events neu binden nach Undo
+      dndInitialized = false;
+      initializeDragAndDrop();
+      setupRichTextToolbar();
+      setupAccessibility();
+      // Inspector zurücksetzen
+      updateInspector(null);
+    }
+  }
+}
+
+function redo() {
+  if (redoStack.length > 0) {
+    const canvas = document.getElementById('canvas');
+    if (canvas) {
+      undoStack.push(canvas.innerHTML);
+      canvas.innerHTML = redoStack.pop();
+      // Alle Events neu binden nach Redo
+      dndInitialized = false;
+      initializeDragAndDrop();
+      setupRichTextToolbar();
+      setupAccessibility();
+      // Inspector zurücksetzen
+      updateInspector(null);
+    }
+  }
+}
+
+function updateToolbarState() {
+  const commandMap = {
+    bold:'bold', italic:'italic', underline:'underline',
+    strikethrough:'strikeThrough',
+    ul:'insertUnorderedList', ol:'insertOrderedList',
+    h1:['formatBlock','H1'], h2:['formatBlock','H2'], h3:['formatBlock','H3'], p:['formatBlock','P'],
+    blockquote:['formatBlock','BLOCKQUOTE'],
+  };
+
+  function getStateName(cmd){
+    const m = commandMap[cmd];
+    return Array.isArray(m) ? m[0] : m;
+  }
+
+  document.querySelectorAll('.toolbar-btn[data-command]').forEach(btn => {
+    const cmd = btn.dataset.command;
+    if (['undo','redo','link','image','table','code'].includes(cmd)) return;
+    
+    const stateName = getStateName(cmd);
+    if (!stateName) return;
+    
+    try {
+      document.queryCommandState(stateName) ? btn.classList.add('active') : btn.classList.remove('active');
+    } catch(_) { 
+      btn.classList.remove('active'); 
+    }
+  });
+}
+
+/* ---------- RTL Support ---------- */
+let isRTL = false;
+
+function toggleRTL() {
+  isRTL = !isRTL;
+  const html = document.documentElement;
+  const body = document.body;
+  
+  if (isRTL) {
+    html.setAttribute('dir', 'rtl');
+    body.style.direction = 'rtl';
+    document.getElementById('rtlToggle').textContent = '🔄 LTR';
+    document.getElementById('rtlToggle').title = 'LTR/RTL umschalten';
+  } else {
+    html.removeAttribute('dir');
+    body.style.direction = 'ltr';
+    document.getElementById('rtlToggle').textContent = '🔄 RTL';
+    document.getElementById('rtlToggle').title = 'RTL/LTR umschalten';
+  }
+  
+  console.log('RTL toggled:', isRTL);
+}
+
+/* ---------- Design System Functions ---------- */
+
+// Theme-Presets für verschiedene Projekte
+const themes = {
+  default: {
+    primary: '#4f46e5',
+    secondary: '#6366f1',
+    bg: '#0f172a'
+  },
+  projektA: {
+    primary: '#0ea5e9',
+    secondary: '#38bdf8',
+    bg: '#0b1220'
+  },
+  projektB: {
+    primary: '#16a34a',
+    secondary: '#22c55e',
+    bg: '#0a0f14'
+  },
+  projektC: {
+    primary: '#dc2626',
+    secondary: '#ef4444',
+    bg: '#1a0a0a'
+  }
+};
+
+function applyTheme(name){
+  const t = themes[name] || themes.default;
+  changePrimaryColor(t.primary);
+  changeSecondaryColor(t.secondary);
+  changeBackgroundColor(t.bg);
+  
+  // Komponentenrahmen/Outline anpassen:
+  document.querySelectorAll('.el').forEach(el => {
+    el.style.borderColor = t.secondary;
+  });
+  
+  // Theme-Selector aktualisieren
+  const themeSelect = document.getElementById('projectTheme');
+  if (themeSelect) themeSelect.value = name;
+  
+  console.log('Theme applied:', name, t);
+}
+
+function changePrimaryColor(color) {
+  document.documentElement.style.setProperty('--primary-color', color);
+  document.querySelector('#primaryColor + span').textContent = color;
+  
+  // Update CSS variables
+  const style = document.createElement('style');
+  style.textContent = `
+    :root { --primary-color: ${color}; }
+    .el .hdr { background: ${color}; }
+    .btn { background: ${color}; }
+    .step-number { background: ${color}; }
+    .tabbar .tab.active { border-bottom-color: ${color}; }
+  `;
+  document.head.appendChild(style);
+}
+
+function changeSecondaryColor(color) {
+  document.documentElement.style.setProperty('--secondary-color', color);
+  document.querySelector('#secondaryColor + span').textContent = color;
+}
+
+function changeBackgroundColor(color) {
+  document.documentElement.style.setProperty('--bg-color', color);
+  document.querySelector('#bgColor + span').textContent = color;
+  document.body.style.background = color;
+}
+
+function changeElementSpacing(spacing) {
+  document.getElementById('spacingValue').textContent = spacing + 'px';
+  // Apply spacing to elements
+  document.querySelectorAll('.el').forEach(el => {
+    el.style.margin = spacing + 'px';
+  });
+}
+
+function changeBorderWidth(width) {
+  document.getElementById('borderValue').textContent = width + 'px';
+  // Apply border width to elements
+  document.querySelectorAll('.el').forEach(el => {
+    el.style.borderWidth = width + 'px';
+  });
+}
+
+function changeShadowStrength(strength) {
+  document.getElementById('shadowValue').textContent = strength + 'px';
+  // Apply shadow to elements
+  document.querySelectorAll('.el').forEach(el => {
+    el.style.boxShadow = `0 ${strength}px ${strength * 2}px rgba(0,0,0,0.25)`;
+  });
+}
+
+function changeShadowColor(color) {
+  // Apply shadow color to elements
+  document.querySelectorAll('.el').forEach(el => {
+    const s = getComputedStyle(el).boxShadow || '0 6px 12px rgba(0,0,0,0.25)';
+    const parts = s.match(/0\s+\d+px\s+\d+px\s+rgba\([^)]+\)/) ? s.split('rgba')[0] : '0 6px 12px ';
+    const rgb = hexToRgba(color, 0.25);
+    el.style.boxShadow = `${parts}${rgb}`;
+  });
+}
+
+function toggleAnimations(enabled) {
+  if (enabled) {
+    document.body.classList.add('animations-enabled');
+  } else {
+    document.body.classList.remove('animations-enabled');
+  }
+}
+
+function toggleGrid(enabled) {
+  const grid = document.querySelector('.grid');
+  if (grid) {
+    grid.style.display = enabled ? 'block' : 'none';
+  }
+}
+
+function toggleSnapping(enabled) {
+  // Implement grid snapping logic
+  console.log('Grid snapping:', enabled);
+}
+
+// Canvas-Anpassung nach Content
+function fitCanvasToContent() {
+  const canvas = document.getElementById('canvas');
+  const els = Array.from(canvas.querySelectorAll('.el'));
+  const maxBottom = els.reduce((m, el) => Math.max(m, el.offsetTop + el.offsetHeight), 0);
+  canvas.style.height = Math.max(maxBottom + 80, canvas.clientHeight) + 'px';
+}
+
+// Content ID Counter für Lokalisierung
+let cidCounter = 0;
+function assignContentId(node) {
+  const id = 'c' + (++cidCounter);
+  node.dataset.contentId = id;
+  contentStore.setContent(id, currentLanguage, node.innerHTML);
+}
+
+// Hex to RGBA Konverter für Schatten
+function hexToRgba(hex, a = 1) {
+  const m = hex.replace('#', '');
+  const r = parseInt(m.substring(0, 2), 16);
+  const g = parseInt(m.substring(2, 4), 16);
+  const b = parseInt(m.substring(4, 6), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ---------- Plugin System ---------- */
+const pluginSystem = {
+  hooks: {},
+  
+  on(event, callback) {
+    if (!this.hooks[event]) {
+      this.hooks[event] = [];
+    }
+    this.hooks[event].push(callback);
+  },
+  
+  emit(event, data) {
+    if (this.hooks[event]) {
+      this.hooks[event].forEach(callback => callback(data));
+    }
+  }
+};
+
+// Register default plugins
+pluginSystem.on('onInsert', (component) => {
+  console.log('Component inserted:', component);
+  saveToUndoStack();
+});
+
+pluginSystem.on('onRender', (element) => {
+  // Apply syntax highlighting for code blocks
+  if (element.querySelector('.code-block')) {
+    Prism.highlightAllUnder(element);
+  }
+});
+
+/* ---------- Assets / Media Store ---------- */
+const assetsStore = {
+  list: [], // {name, dataUrl, type}
+  add(file, dataUrl){
+    this.list.push({ name: file.name, dataUrl, type: file.type });
+    // du kannst hier auch eine kleine Galerie rendern, wenn gewünscht
+  }
+};
+
+/* ---------- Content Localization System ---------- */
+const contentStore = {
+  currentLanguage: 'de',
+  content: {},
+  
+  setContent(id, lang, content) {
+    if (!this.content[id]) this.content[id] = {};
+    this.content[id][lang] = content;
+  },
+  
+  getContent(id, lang = null) {
+    const targetLang = lang || this.currentLanguage;
+    return this.content[id]?.[targetLang] || this.content[id]?.['de'] || '';
+  },
+  
+  switchLanguage(lang) {
+    this.currentLanguage = lang;
+    this.updateAllContent();
+  },
+  
+  updateAllContent() {
+    // Update all contenteditable elements with localized content
+    document.querySelectorAll('[data-content-id]').forEach(el => {
+      const id = el.dataset.contentId;
+      const content = this.getContent(id);
+      if (content) {
+        el.innerHTML = content;
+      }
+    });
+  }
+};
+
+/* ---------- Accessibility Features ---------- */
+function setupAccessibility() {
+  // Add ARIA labels
+  document.querySelectorAll('.toolbar-btn').forEach(btn => {
+    const command = btn.dataset.command;
+    btn.setAttribute('aria-label', btn.title);
+    btn.setAttribute('role', 'button');
+  });
+  
+  // Add focus rings
+  document.querySelectorAll('button, select, input').forEach(el => {
+    el.addEventListener('focus', () => {
+      el.style.outline = '2px solid #4f46e5';
+      el.style.outlineOffset = '2px';
+    });
+    
+    el.addEventListener('blur', () => {
+      el.style.outline = '';
+      el.style.outlineOffset = '';
+    });
+  });
+}
+
+/* ---------- Inline Werkzeuge im Header -------- */
+let currentInlineHost = null;
+
+function buildInlineToolbar(type){
+  const wrap = document.createElement('div');
+  wrap.className = 'inline-tools';
+
+  // Gruppen definieren
+  const TEXT_BTNS = `
+    <button class="tbtn" data-cmd="bold"><strong>B</strong></button>
+    <button class="tbtn" data-cmd="italic"><em>I</em></button>
+    <button class="tbtn" data-cmd="underline"><u>U</u></button>
+    <button class="tbtn" data-cmd="h1">H1</button>
+    <button class="tbtn" data-cmd="h2">H2</button>
+    <button class="tbtn" data-cmd="h3">H3</button>
+    <button class="tbtn" data-cmd="ul">•</button>
+    <button class="tbtn" data-cmd="ol">1.</button>
+    <button class="tbtn" data-cmd="blockquote">"</button>
+    <button class="tbtn" data-cmd="code">&lt;/&gt;</button>
+    <button class="tbtn" data-cmd="link">🔗</button>
+    <button class="tbtn" data-cmd="image">🖼️</button>
+  `;
+
+  const IMAGE_BTNS = `
+    <button class="tbtn" data-cmd="image">🖼️ Bild ersetzen</button>
+    <button class="tbtn" data-cmd="link">🔗 Verlinken</button>
+  `;
+
+  const TABLE_BTNS = `
+    <button class="tbtn" data-cmd="table">⊞ Neue Tabelle</button>
+  `;
+
+  // Auswahl nach Typ
+  let inner = '<span class="hdr-title">Werkzeuge</span>';
+  if (['heading','paragraph','quote','list','code','button'].includes(type)) inner += TEXT_BTNS;
+  else if (type === 'image') inner += IMAGE_BTNS;
+  else if (type === 'table') inner += TABLE_BTNS;
+  else if (type === 'container') inner += `<span style="opacity:.8">Container - ziehe Komponenten hinein</span>`;
+  else if (type === 'form') inner += `<span style="opacity:.8">Formular - Felder bearbeiten</span>`;
+  else inner += `<span style="opacity:.8">Keine Text-Werkzeuge</span>`;
+  wrap.innerHTML = inner;
+
+  // Events: pointerdown, stopPropagation (verhindert Header-Drag)
+  wrap.querySelectorAll('.tbtn').forEach(b => {
+    b.type = 'button';
+    b.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      executeCommand(e.currentTarget.dataset.cmd);
+      updateToolbarState();
+    });
+  });
+  return wrap;
+}
+
+function mountInlineTools(el){
+  const hdr = el?.querySelector('.hdr'); 
+  if (!hdr) return;
+
+  // Komponententyp holen
+  const type = el.querySelector('.cnt')?.dataset?.componentType || 'unknown';
+
+  // alten Host aufräumen
+  if (currentInlineHost && currentInlineHost !== hdr){
+    currentInlineHost.querySelector('.inline-tools')?.remove();
+  }
+
+  const rightGrip = hdr.querySelector('.hdr-grip') || (() => {
+    const s = document.createElement('span'); 
+    s.className = 'hdr-grip'; 
+    s.textContent = '⇱⇲'; 
+    hdr.appendChild(s); 
+    return s;
+  })();
+
+  hdr.innerHTML = '';
+  hdr.appendChild(buildInlineToolbar(type));
+  hdr.appendChild(rightGrip);
+  currentInlineHost = hdr;
+}
+
+/* ---------- Component Inspector ---------- */
+function getSelectedEl(){
+  const selected = document.querySelector('.el.selected');
+  console.log('getSelectedEl returns:', selected);
+  return selected;
+}
+
+function updateInspector(targetEl = null){
+  const panel = document.getElementById('componentInspector');
+  if (!panel) {
+    console.error('Inspector panel not found!');
+    return;
+  }
+  
+  const el = targetEl || getSelectedEl();
+  console.log('updateInspector called with:', el);
+  
+  // Inline-Tools im Header der ausgewählten Komponente einhängen
+  if (el) {
+    mountInlineTools(el);
+  }
+  
+  if (!el){
+    panel.innerHTML = `<h4>⚙️ Werkzeuge</h4><div style="color:#94a3b8">Wähle eine Komponente auf dem Canvas aus.</div>`;
+    return;
+  }
+  
+  const cnt = el.querySelector('.cnt');
+  const type = cnt?.dataset?.componentType || 'unknown';
+  console.log('Component type:', type, 'Data:', cnt?.dataset);
+
+  // Gemeinsame Felder
+  const left = parseInt(el.style.left)||0;
+  const top  = parseInt(el.style.top)||0;
+  const width = parseInt(el.style.width)||260;
+  const br = parseInt((el.style.borderRadius||'10px'))||10;
+
+  // Inhalt-Target: erstes contenteditable Kind, sonst cnt
+  const editable = cnt.querySelector('[contenteditable]') || cnt;
+
+  let specific = '';
+  if (['heading','paragraph','quote','list','code','button'].includes(type)){
+    const currentHTML = (editable.innerHTML || '').replace(/"/g,'&quot;');
+    specific = `
+      <div class="row"><label>Ausrichtung</label>
+        <div class="btnline">
+          <button class="mini" data-act="align" data-val="left">Links</button>
+          <button class="mini" data-act="align" data-val="center">Zentriert</button>
+          <button class="mini" data-act="align" data-val="right">Rechts</button>
+        </div>
+      </div>
+      <div class="row"><label>Font-Größe</label><input id="inspFontSize" type="range" min="12" max="64" value="${parseInt(getComputedStyle(editable).fontSize)||24}"></div>
+      <div class="row"><label>Textfarbe</label><input id="inspColor" type="color" value="#000000"></div>
+      <div class="row" style="flex-direction:column;align-items:stretch">
+        <label>Inhalt</label>
+        <textarea id="inspContent" rows="4" style="resize:vertical;padding:8px;background:#374151;border:1px solid #4b5563;color:#e2e8f0;border-radius:6px">${(editable.innerHTML || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+      </div>
+      <div class="row"><label>H1/H2/H3/P</label>
+        <div class="btnline">
+          <button class="mini" data-act="block" data-val="H1">H1</button>
+          <button class="mini" data-act="block" data-val="H2">H2</button>
+          <button class="mini" data-act="block" data-val="H3">H3</button>
+          <button class="mini" data-act="block" data-val="P">P</button>
+        </div>
+      </div>
+    `;
+  }
+  if (type==='image'){
+    const curH = parseInt(cnt.firstElementChild?.style.height)||120;
+    specific = `
+      <div class="row"><label>Bild-URL</label><input id="inspImgUrl" type="text" placeholder="https://..."></div>
+      <div class="row"><label>oder Upload</label><input id="inspImgFile" type="file" accept="image/*"></div>
+      <div class="row"><label>Höhe (px)</label><input id="inspImgH" type="number" value="${curH}"></div>
+    `;
+  }
+  if (type==='table'){
+    specific = `
+      <div class="btnline">
+        <button class="mini" data-act="addRow">Zeile +</button>
+        <button class="mini" data-act="addCol">Spalte +</button>
+        <button class="mini" data-act="delRow">Zeile −</button>
+        <button class="mini" data-act="delCol">Spalte −</button>
+      </div>
+    `;
+  }
+
+  panel.innerHTML = `
+    <h4>⚙️ Werkzeuge – ${type.toUpperCase()}</h4>
+    <div class="row"><label>Breite</label><input id="inspW" type="number" value="${width}"></div>
+    <div class="row"><label>Links</label><input id="inspX" type="number" value="${left}"></div>
+    <div class="row"><label>Oben</label><input id="inspY" type="number" value="${top}"></div>
+    <div class="row"><label>Radius</label><input id="inspR" type="range" min="0" max="30" value="${br}"></div>
+    ${specific}
+    <div class="btnline" style="margin-top:6px">
+      <button class="mini danger" id="inspDelete">Löschen</button>
+    </div>
+  `;
+
+  // Listeners – Geometry
+  panel.querySelector('#inspW')?.addEventListener('input', e => { el.style.width = e.target.value + 'px'; fitCanvasToContent(); });
+  panel.querySelector('#inspX')?.addEventListener('input', e => { el.style.left  = e.target.value + 'px'; fitCanvasToContent(); });
+  panel.querySelector('#inspY')?.addEventListener('input', e => { el.style.top   = e.target.value + 'px'; fitCanvasToContent(); });
+  panel.querySelector('#inspR')?.addEventListener('input', e => { el.style.borderRadius = e.target.value + 'px'; });
+
+  // Typo/Color
+  panel.querySelector('#inspFontSize')?.addEventListener('input', e => { editable.style.fontSize = e.target.value + 'px'; });
+  panel.querySelector('#inspColor')?.addEventListener('input', e => { editable.style.color = e.target.value; });
+
+  // Content-Textarea
+  panel.querySelector('#inspContent')?.addEventListener('input', e=>{
+    // HTML aus dem Textarea zurück in die Komponente schreiben
+    const html = e.target.value
+      .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+    editable.innerHTML = html;                     // behält Bold/Links etc.
+    const id = editable.dataset.contentId;
+    if (id) contentStore.setContent(id, currentLanguage, editable.innerHTML);
+    saveToUndoStack?.();
+  });
+
+  // Image
+  panel.querySelector('#inspImgUrl')?.addEventListener('change', e => {
+    const box = cnt.firstElementChild;
+    if (box){ 
+      box.style.backgroundImage = `url('${e.target.value}')`;
+      box.style.backgroundSize = 'cover';
+      box.style.backgroundPosition = 'center';
+      box.textContent='';
+      saveToUndoStack?.();
+    }
+  });
+
+  panel.querySelector('#inspImgFile')?.addEventListener('change', e=>{
+    const file = e.target.files?.[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const dataUrl = reader.result;
+      assetsStore.add(file, dataUrl);
+      const box = cnt.firstElementChild;
+      if (box){
+        box.style.backgroundImage = `url('${dataUrl}')`;
+        box.style.backgroundSize = 'cover';
+        box.style.backgroundPosition = 'center';
+        box.textContent='';
+        saveToUndoStack?.();
+      }
+    };
+    reader.readAsDataURL(file); // lokal, keine Server-Abhängigkeit
+  });
+
+  panel.querySelector('#inspImgH')?.addEventListener('input', e => {
+    const box = cnt.firstElementChild;
+    if (box){ box.style.height = e.target.value + 'px'; fitCanvasToContent(); saveToUndoStack?.(); }
+  });
+
+  // Table ops
+  panel.querySelector('[data-act="addRow"]')?.addEventListener('click', ()=>{
+    const tb = cnt.querySelector('tbody'); if (!tb) return;
+    const cols = tb.querySelector('tr')?.children.length || 2;
+    const tr = document.createElement('tr');
+    for (let i=0;i<cols;i++){ const td=document.createElement('td'); td.contentEditable='true'; td.textContent=''; tr.appendChild(td); }
+    tb.appendChild(tr); fitCanvasToContent();
+  });
+  panel.querySelector('[data-act="addCol"]')?.addEventListener('click', ()=>{
+    cnt.querySelectorAll('tr').forEach(tr => { const cell = tr.parentElement.tagName==='THEAD' ? document.createElement('th') : document.createElement('td'); cell.contentEditable='true'; cell.textContent=''; tr.appendChild(cell); });
+    fitCanvasToContent();
+  });
+  panel.querySelector('[data-act="delRow"]')?.addEventListener('click', ()=>{
+    const tb = cnt.querySelector('tbody'); if (!tb) return;
+    tb.lastElementChild?.remove(); fitCanvasToContent();
+  });
+  panel.querySelector('[data-act="delCol"]')?.addEventListener('click', ()=>{
+    cnt.querySelectorAll('tr').forEach(tr => tr.lastElementChild?.remove()); fitCanvasToContent();
+  });
+
+  // Text align
+  panel.querySelectorAll('[data-act="align"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ editable.style.textAlign = btn.dataset.val; });
+  });
+
+  // Block-Level (H1/H2/H3/P) über execCommand
+  panel.querySelectorAll('[data-act="block"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      // Rich-Text: Selektion auf das Editable legen
+      if (editable.setSelectionRange) editable.focus();
+      document.execCommand('formatBlock', false, btn.dataset.val);
+      saveToUndoStack?.();
+    });
+  });
+
+  // Delete
+  panel.querySelector('#inspDelete')?.addEventListener('click', ()=>{
+    el.remove();
+    updateInspector(null);
+    saveToUndoStack();
+    fitCanvasToContent();
+  });
+}
+
+/* ---------- Publish / Export ---------- */
+function serializeToHTML(){
+  const canvas = document.getElementById('canvas');
+  // NUR die Nutzfläche ohne Grid/Placeholder
+  const clone = canvas.cloneNode(true);
+  clone.querySelector('.grid')?.remove();
+  clone.querySelector('#placeholder')?.remove();
+  
+  // Theme-Farbe ins Export-CSS übernehmen
+  const pageBg = getComputedStyle(document.documentElement)
+      .getPropertyValue('--bg-color')?.trim() || '#0b1220';
+  
+  // absolute Positionen in inline-Styles lassen wir (Layout bleibt wie im Builder)
+  return `<!DOCTYPE html>
+<html lang="${currentLanguage}">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Export</title>
+<style>
+body{margin:0;background:${pageBg};font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.canvas{position:relative;width:100%;min-height:100vh}
+.el{position:absolute;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.25)}
+.el .hdr{display:none} /* Builder-Header ausblenden */
+.el .cnt{padding:12px;background:#fff;color:#111827;border-radius:10px}
+.table-container{overflow-x:auto}
+.code-block{background:#1f2937;color:#e2e8f0;border:1px solid #374151;border-radius:6px;padding:12px}
+.quote-block{border-left:4px solid #4f46e5;padding-left:16px;margin:16px 0;font-style:italic;color:#6b7280}
+</style>
+</head>
+<body>
+<div class="canvas">
+${clone.innerHTML}
+</div>
+</body>
+</html>`;
+}
+
+function serializeToJSON(){
+  const data = [];
+  document.querySelectorAll('#canvas .el').forEach(el=>{
+    const cnt  = el.querySelector('.cnt');
+    const type = cnt?.dataset?.componentType || 'unknown';
+    const item = {
+      type,
+      left: el.style.left, top: el.style.top, width: el.style.width,
+      radius: el.style.borderRadius || '10px',
+      html: cnt.innerHTML
+    };
+    data.push(item);
+  });
+  return JSON.stringify({ lang: currentLanguage, items: data }, null, 2);
+}
+
+// Reihenfolge: von oben nach unten, dann links nach rechts
+function getReadingOrderEls(){
+  return Array.from(document.querySelectorAll('#canvas .el'))
+    .sort((a,b)=> (a.offsetTop - b.offsetTop) || (a.offsetLeft - b.offsetLeft));
+}
+
+// Builder-Attribute aus HTML entfernen
+function stripBuilderAttrs(html){
+  return html
+    .replace(/\scontenteditable="true"/gi,'')
+    .replace(/\sdata-content-id="[^"]*"/gi,'')
+    .replace(/\sdata-component-type="[^"]*"/gi,'');
+}
+
+// Komponente -> reiner Content (ohne .el/.hdr)
+function renderContentOnly(el){
+  const cnt  = el.querySelector('.cnt');
+  const type = cnt?.dataset?.componentType || 'unknown';
+
+  // Standardfall: vorhandenes semantisches HTML ausgeben
+  let html = cnt.innerHTML;
+
+  // Spezial: Bild (im Builder als DIV mit background-image)
+  if (type === 'image') {
+    const box = cnt.firstElementChild;
+    let src = '';
+    if (box) {
+      const bg = getComputedStyle(box).backgroundImage;
+      const m = bg && bg.match(/url\(["']?(.*?)["']?\)/i);
+      if (m) src = m[1];
+    }
+    html = src ? `<img src="${src}" alt="">` : '';
+  }
+
+  // Spezial: Container – Inhalt ohne dekorative Box
+  if (type === 'container') {
+    html = Array.from(cnt.childNodes)
+      .map(n => n.nodeType === 1 ? n.outerHTML : n.textContent)
+      .join('');
+  }
+
+  return stripBuilderAttrs(html);
+}
+
+// Vollständige HTML-Datei mit nur Content (Flow-Layout)
+function serializeContentOnlyHTML(){
+  const parts = getReadingOrderEls().map(renderContentOnly).filter(Boolean);
+  return `<!doctype html>
+<html lang="${currentLanguage}">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Content</title>
+<style>
+  body{margin:0;padding:24px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5}
+  img{max-width:100%;height:auto}
+  table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:8px}
+  code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace}
+</style>
+</head>
+<body>
+${parts.join('\n')}
+</body>
+</html>`;
+}
+
+function downloadFile(filename, content, mime='text/plain'){
+  const blob = new Blob([content], {type:mime});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+// Event-Listener für Publizieren-Button
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btnPublish')?.addEventListener('click', ()=>{
+    const choice = prompt('Export: content / html / json ?','content');
+    if(!choice) return;
+    const pick = choice.toLowerCase();
+    if (pick === 'json') {
+      downloadFile('export.json', serializeToJSON(), 'application/json');
+    } else if (pick === 'html') { // bisheriges Layout-HTML (mit .el, absolute Pos.)
+      downloadFile('export.html', serializeToHTML(), 'text/html');
+    } else { // "content" - Default für CMS
+      downloadFile('content.html', serializeContentOnlyHTML(), 'text/html');
+    }
+  });
+});
+
+/* ---------- Keyboard Shortcuts ---------- */
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      switch(e.key) {
+        case 'z':
+          e.preventDefault();
+          if (e.shiftKey) {
+            redo();
+          } else {
+            undo();
+          }
+          break;
+        case 'y':
+          e.preventDefault();
+          redo();
+          break;
+        case 'b':
+          e.preventDefault();
+          executeCommand('bold');
+          break;
+        case 'i':
+          e.preventDefault();
+          executeCommand('italic');
+          break;
+        case 'u':
+          e.preventDefault();
+          executeCommand('underline');
+          break;
+      }
+    }
+    
+    // Delete per Tastatur
+    if ((e.key === 'Delete' || e.key === 'Backspace') && document.querySelector('.el.selected')) {
+      const sel = document.querySelector('.el.selected');
+      sel.remove();
+      saveToUndoStack();
+      fitCanvasToContent();
+    }
+  });
+}
+
+/* ---------- ResizeObserver für Canvas-Wachstum ---------- */
+const ro = new ResizeObserver(() => fitCanvasToContent());
+
+function observe(el) { 
+  ro.observe(el); 
+}
+
+/* ---------- Boot ---------- */
+function initializeApp() {
+  initializeDragAndDrop();
+  setPreviewSize('full');
+  updateUILanguage();
+  setupRichTextToolbar();
+  setupAccessibility();
+  setupKeyboardShortcuts();
+  
+  // Inspector initialisieren
+  updateInspector(null);
+  
+  // Alle bestehenden Elemente beobachten
+  document.querySelectorAll('#canvas .el').forEach(observe);
+  
+  console.log('App bereit.');
+}
+
+function setupRichTextToolbar() {
+  // Add event listeners to toolbar buttons with pointerdown
+  document.querySelectorAll('.toolbar-btn').forEach(btn => {
+    btn.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); // verhindert Fokuswechsel
+      const command = btn.dataset.command;
+      executeCommand(command);
+    });
+  });
+  
+  // Klick ins Leere -> Auswahl aufheben
+  document.getElementById('canvas').addEventListener('mousedown', (e) => {
+    if (!e.target.closest('.el')) {
+      document.querySelectorAll('.el.selected').forEach(n => n.classList.remove('selected'));
+      updateInspector(null); // Inspector leeren
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btnInit').addEventListener('click', initializeDragAndDrop);
+  document.getElementById('sizeDesktop').addEventListener('click', () => setPreviewSize('desktop'));
+  document.getElementById('sizeTablet').addEventListener('click', () => setPreviewSize('tablet'));
+  document.getElementById('sizeMobile').addEventListener('click', () => setPreviewSize('mobile'));
+  document.getElementById('sizeFull').addEventListener('click', () => setPreviewSize('full'));
+  initializeApp();
+});
+</script>
+
+
+</body></html>

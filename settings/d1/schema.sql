@@ -111,3 +111,10 @@ CREATE INDEX IF NOT EXISTS idx_settings_audit_timestamp ON settings_audit_log(ti
 CREATE INDEX IF NOT EXISTS idx_user_distributions_key ON user_distributions(user_key_hash);
 CREATE INDEX IF NOT EXISTS idx_notary_verifications_entity ON notary_verifications(entity_type, entity_id);
 
+
+
+
+
+
+
+

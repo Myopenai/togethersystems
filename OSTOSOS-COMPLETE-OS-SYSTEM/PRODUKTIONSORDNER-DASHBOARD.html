@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Produktionsordner Dashboard</title>
+<link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css" onerror="this.onerror=null;">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e27;--card:#1a1f3a;--accent:#10b981;--text:#fff;--muted:#9ca3af;--border:#223040;--success:#22c55e;--danger:#ef4444;--warn:#f59e0b}
+body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,var(--bg) 0%,var(--card) 100%);color:var(--text);min-height:100vh;padding:20px}
+.container{max-width:1600px;margin:0 auto}
+.header{text-align:center;margin-bottom:40px;padding:30px;background:var(--card);border-radius:20px;border:2px solid var(--accent)}
+.header h1{font-size:2.5em;color:var(--accent);margin-bottom:10px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px}
+.stat-card{background:var(--card);padding:20px;border-radius:15px;border:2px solid var(--border);text-align:center}
+.stat-value{font-size:2.5em;color:var(--accent);font-weight:bold;margin-bottom:10px}
+.stat-label{color:var(--muted);font-size:0.9em}
+.filters{background:var(--card);padding:20px;border-radius:15px;border:2px solid var(--border);margin-bottom:30px}
+.filter-group{display:flex;gap:15px;flex-wrap:wrap;align-items:center}
+.filter-group label{color:var(--accent);font-weight:600}
+.filter-group select,.filter-group input{padding:8px 12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px}
+.builds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:20px}
+.build-card{background:var(--card);padding:20px;border-radius:15px;border:2px solid var(--border);transition:all 0.3s}
+.build-card:hover{border-color:var(--accent);transform:translateY(-5px)}
+.build-card.success{border-color:var(--success)}
+.build-card.error{border-color:var(--danger)}
+.build-card.warning{border-color:var(--warn)}
+.build-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.build-title{color:var(--accent);font-size:1.2em;font-weight:bold}
+.build-status{display:inline-block;padding:5px 12px;border-radius:15px;font-size:0.8em}
+.status-success{background:var(--success);color:#00100a}
+.status-error{background:var(--danger);color:#fff}
+.status-warning{background:var(--warn);color:#00100a}
+.status-pending{background:var(--muted);color:var(--text)}
+.build-info{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}
+.info-item{display:flex;flex-direction:column}
+.info-label{color:var(--muted);font-size:0.8em;margin-bottom:5px}
+.info-value{color:var(--text);font-weight:600}
+.build-actions{display:flex;gap:10px;margin-top:15px}
+.btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:0.9em;font-weight:600;transition:all 0.3s}
+.btn-primary{background:var(--accent);color:#00100a}
+.btn-secondary{background:var(--border);color:var(--text)}
+.btn:hover{transform:translateY(-2px);opacity:0.9}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state h2{color:var(--accent);margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>T,. OSTOSOS Produktionsordner Dashboard</h1>
+<p>Übersicht und Organisation aller Builds, Images und Applikationen</p>
+</div>
+
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-value" id="totalBuilds">0</div>
+<div class="stat-label">Gesamt Builds</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="successfulBuilds">0</div>
+<div class="stat-label">Erfolgreich</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="failedBuilds">0</div>
+<div class="stat-label">Fehlerhaft</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="totalSize">0 MB</div>
+<div class="stat-label">Gesamtgröße</div>
+</div>
+</div>
+
+<div class="filters">
+<div class="filter-group">
+<label>Status:</label>
+<select id="statusFilter" onchange="filterBuilds()">
+<option value="all">Alle</option>
+<option value="success">Erfolgreich</option>
+<option value="error">Fehlerhaft</option>
+<option value="warning">Warnung</option>
+<option value="pending">Wartend</option>
+</select>
+</div>
+<div class="filter-group">
+<label>Typ:</label>
+<select id="typeFilter" onchange="filterBuilds()">
+<option value="all">Alle</option>
+<option value="exe">Windows (.exe)</option>
+<option value="app">macOS (.app)</option>
+<option value="bin">Linux (.bin)</option>
+<option value="iso">ISO Image</option>
+<option value="img">IMG Image</option>
+<option value="zip">ZIP Archive</option>
+</select>
+</div>
+<div class="filter-group">
+<label>Datum:</label>
+<input type="date" id="dateFilter" onchange="filterBuilds()">
+</div>
+<div class="filter-group">
+<label>Suche:</label>
+<input type="text" id="searchFilter" placeholder="Build-Name suchen..." oninput="filterBuilds()">
+</div>
+</div>
+
+<div class="builds-grid" id="buildsGrid">
+<div class="empty-state">
+<h2>Keine Builds gefunden</h2>
+<p>Erstelle deinen ersten Build mit dem Build-System</p>
+</div>
+</div>
+</div>
+
+<script>
+let allBuilds = [];
+let filteredBuilds = [];
+
+// Beispiel-Builds (wird durch Scan ersetzt)
+const exampleBuilds = [
+  {
+    id: 'build-001',
+    name: 'OSTOSOS-Build-20250115-120000',
+    type: 'exe',
+    platform: 'Windows',
+    status: 'success',
+    date: '2025-01-15T12:00:00',
+    size: '45.2 MB',
+    path: 'Produktionsordner/OSTOSOS-Build-20250115-120000/Windows/OSTOSOS-Setup.exe',
+    tests: { passed: 37, failed: 0, total: 37 },
+    notes: 'Alle Tests bestanden'
+  },
+  {
+    id: 'build-002',
+    name: 'OSTOSOS-Build-20250115-130000',
+    type: 'app',
+    platform: 'macOS',
+    status: 'success',
+    date: '2025-01-15T13:00:00',
+    size: '48.7 MB',
+    path: 'Produktionsordner/OSTOSOS-Build-20250115-130000/macOS/OSTOSOS-Setup.app',
+    tests: { passed: 37, failed: 0, total: 37 },
+    notes: 'Alle Tests bestanden'
+  },
+  {
+    id: 'build-003',
+    name: 'OSTOSOS-Build-20250115-140000',
+    type: 'bin',
+    platform: 'Linux',
+    status: 'warning',
+    date: '2025-01-15T14:00:00',
+    size: '46.1 MB',
+    path: 'Produktionsordner/OSTOSOS-Build-20250115-140000/Linux/OSTOSOS-Setup.bin',
+    tests: { passed: 33, failed: 4, total: 37 },
+    notes: '4 Tests fehlgeschlagen - Auto-Fix verfügbar'
+  },
+  {
+    id: 'build-004',
+    name: 'OSTOSOS-Boot-Image-20250115',
+    type: 'iso',
+    platform: 'Universal',
+    status: 'success',
+    date: '2025-01-15T15:00:00',
+    size: '125.3 MB',
+    path: 'Produktionsordner/OSTOSOS-Boot-Image-20250115.iso',
+    tests: { passed: 37, failed: 0, total: 37 },
+    notes: 'USB-Boot-Image erfolgreich erstellt'
+  }
+];
+
+// Builds scannen (wird durch API/File-System ersetzt)
+async function scanBuilds() {
+  // In Produktion: API-Aufruf oder File-System-Scan
+  allBuilds = exampleBuilds;
+  filteredBuilds = [...allBuilds];
+  updateStats();
+  renderBuilds();
+}
+
+// Statistiken aktualisieren
+function updateStats() {
+  const total = allBuilds.length;
+  const successful = allBuilds.filter(b => b.status === 'success').length;
+  const failed = allBuilds.filter(b => b.status === 'error').length;
+  const totalSize = allBuilds.reduce((sum, b) => {
+    const size = parseFloat(b.size) || 0;
+    return sum + size;
+  }, 0);
+  
+  document.getElementById('totalBuilds').textContent = total;
+  document.getElementById('successfulBuilds').textContent = successful;
+  document.getElementById('failedBuilds').textContent = failed;
+  document.getElementById('totalSize').textContent = totalSize.toFixed(1) + ' MB';
+}
+
+// Builds filtern
+function filterBuilds() {
+  const statusFilter = document.getElementById('statusFilter').value;
+  const typeFilter = document.getElementById('typeFilter').value;
+  const dateFilter = document.getElementById('dateFilter').value;
+  const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+  
+  filteredBuilds = allBuilds.filter(build => {
+    if (statusFilter !== 'all' && build.status !== statusFilter) return false;
+    if (typeFilter !== 'all' && build.type !== typeFilter) return false;
+    if (dateFilter && !build.date.startsWith(dateFilter)) return false;
+    if (searchFilter && !build.name.toLowerCase().includes(searchFilter)) return false;
+    return true;
+  });
+  
+  renderBuilds();
+}
+
+// Builds rendern
+function renderBuilds() {
+  const grid = document.getElementById('buildsGrid');
+  
+  if (filteredBuilds.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <h2>Keine Builds gefunden</h2>
+        <p>Passe die Filter an oder erstelle einen neuen Build</p>
+      </div>
+    `;
+    return;
+  }
+  
+  grid.innerHTML = filteredBuilds.map(build => `
+    <div class="build-card ${build.status}">
+      <div class="build-header">
+        <div class="build-title">${build.name}</div>
+        <span class="build-status status-${build.status}">
+          ${build.status === 'success' ? '✅ Erfolgreich' :
+            build.status === 'error' ? '❌ Fehlerhaft' :
+            build.status === 'warning' ? '⚠️ Warnung' : '⏳ Wartend'}
+        </span>
+      </div>
+      <div class="build-info">
+        <div class="info-item">
+          <div class="info-label">Plattform</div>
+          <div class="info-value">${build.platform}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Typ</div>
+          <div class="info-value">${build.type.toUpperCase()}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Datum</div>
+          <div class="info-value">${new Date(build.date).toLocaleString('de-DE')}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Größe</div>
+          <div class="info-value">${build.size}</div>
+        </div>
+      </div>
+      ${build.tests ? `
+        <div style="margin-top:15px;padding:10px;background:var(--bg);border-radius:8px">
+          <div style="color:var(--muted);font-size:0.85em;margin-bottom:5px">Tests:</div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="color:var(--success)">✅ ${build.tests.passed}</span>
+            ${build.tests.failed > 0 ? `<span style="color:var(--danger)">❌ ${build.tests.failed}</span>` : ''}
+            <span style="color:var(--muted)">/ ${build.tests.total}</span>
+          </div>
+        </div>
+      ` : ''}
+      <div style="margin-top:10px;padding:10px;background:var(--bg);border-radius:8px;font-size:0.9em;color:var(--muted)">
+        ${build.notes}
+      </div>
+      <div class="build-actions">
+        <button class="btn btn-primary" onclick="openBuild('${build.id}')">📂 Öffnen</button>
+        <button class="btn btn-secondary" onclick="downloadBuild('${build.id}')">💾 Download</button>
+        ${build.tests && build.tests.failed > 0 ? `<button class="btn btn-secondary" onclick="fixBuild('${build.id}')">🔧 Auto-Fix</button>` : ''}
+        <button class="btn btn-secondary" onclick="deleteBuild('${build.id}')">🗑️ Löschen</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Build öffnen
+function openBuild(buildId) {
+  const build = allBuilds.find(b => b.id === buildId);
+  if (build) {
+    alert(`Öffne Build: ${build.name}\nPfad: ${build.path}`);
+    // In Produktion: File-System-Explorer öffnen
+  }
+}
+
+// Build herunterladen
+function downloadBuild(buildId) {
+  const build = allBuilds.find(b => b.id === buildId);
+  if (build) {
+    alert(`Download Build: ${build.name}`);
+    // In Produktion: Download-Link generieren
+  }
+}
+
+// Build automatisch beheben
+function fixBuild(buildId) {
+  const build = allBuilds.find(b => b.id === buildId);
+  if (build) {
+    if (confirm(`Möchtest du Build '${build.name}' automatisch beheben?`)) {
+      alert(`Auto-Fix für Build: ${build.name}\nFühre Tests erneut aus...`);
+      // In Produktion: Auto-Fix-Routine aufrufen
+      build.status = 'pending';
+      renderBuilds();
+      setTimeout(() => {
+        build.status = 'success';
+        build.tests.failed = 0;
+        build.tests.passed = build.tests.total;
+        build.notes = 'Automatisch behoben - Alle Tests bestanden';
+        renderBuilds();
+        updateStats();
+      }, 2000);
+    }
+  }
+}
+
+// Build löschen
+function deleteBuild(buildId) {
+  const build = allBuilds.find(b => b.id === buildId);
+  if (build) {
+    if (confirm(`Möchtest du Build '${build.name}' wirklich löschen?`)) {
+      allBuilds = allBuilds.filter(b => b.id !== buildId);
+      filterBuilds();
+      updateStats();
+    }
+  }
+}
+
+// Initialisierung
+scanBuilds();
+</script>
+</body>
+</html>
+

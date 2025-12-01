@@ -66,3 +66,10 @@ Das Accessibility-Feature "Skip to Content" wurde erfolgreich in allen Hauptseit
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Raymond Demitrio Tel - TEL&Gentlyoverdone Portal. Musik, Software, Interview und Downloads.">
+    <meta name="keywords" content="Raymond Tel, Gently Overdone, Musik, Software, Downloads, Interview">
+    <meta name="author" content="Raymond Demitrio Tel">
+    <title>Raymond Tel Portal - TEL&Gentlyoverdone</title>
+    
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --bg-primary: #0f0f12;
+            --bg-card: #0b1220;
+            --text-primary: #e9eef6;
+            --text-muted: #93a7bf;
+            --accent-color: #1f7aeb;
+            --border-color: rgba(255,255,255,0.1);
+            --shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--bg-card), var(--accent-color));
+            padding: 20px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .slogan {
+            color: var(--text-muted);
+            text-align: center;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            margin-bottom: 20px;
+        }
+        
+        /* Navigation */
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .nav-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31,122,235,0.3);
+        }
+        
+        /* Theme & Language Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+        
+        .control-btn:hover {
+            background: var(--accent-color);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        /* Playlist Cards */
+        .playlist-card {
+            background: linear-gradient(135deg, var(--bg-card), rgba(31,122,235,0.1));
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .playlist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(31,122,235,0.3);
+        }
+        
+        .playlist-icon {
+            font-size: 4rem;
+            margin: 20px 0;
+        }
+        
+        .playlist-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .playlist-link:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        /* Band Photo */
+        .band-photo {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .band-photo-placeholder {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            background: linear-gradient(135deg, #1f7aeb, #10b981);
+            border-radius: 12px;
+            border: 3px solid var(--accent-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .band-photo-placeholder:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(31,122,235,0.4);
+        }
+        
+        .band-photo-placeholder h3 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Software Cards */
+        .software-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .software-card:hover {
+            border-left-color: #10b981;
+            transform: translateX(5px);
+        }
+        
+        .tech-tag {
+            display: inline-block;
+            background: rgba(31,122,235,0.2);
+            color: var(--accent-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31,122,235,0.3);
+        }
+        
+        .btn-success {
+            background: #10b981;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        /* Link Grid */
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .link-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+        
+        /* Utility classes */
+        .hidden { display: none; }
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-muted); }
+        .mb-20 { margin-bottom: 20px; }
+        .mt-20 { margin-top: 20px; }
+        
+        /* Interview Content */
+        .interview-quote {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .card { padding: 15px; margin-bottom: 15px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .nav-item { font-size: 0.8rem; padding: 6px 10px; }
+            h1 { font-size: 1.8rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .controls { flex-direction: column; align-items: center; }
+            .nav-item { font-size: 0.75rem; padding: 5px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1 id="title">Raymond Tel Portal - TEL&Gentlyoverdone</h1>
+        <p class="slogan" id="slogan">Magnitudo Mundo Musica (MMM) — Musik als Kommunikation. Klang als Dialog.</p>
+        
+        <!-- Navigation -->
+        <nav id="nav">
+            <button class="nav-item active" onclick="showSection('home')">🏠 <span id="nav-home">Home</span></button>
+            <button class="nav-item" onclick="showSection('about')">👤 <span id="nav-about">Über Raymond</span></button>
+            <button class="nav-item" onclick="showSection('tracks')">🎵 <span id="nav-tracks">Tracks</span></button>
+            <button class="nav-item" onclick="showSection('links')">🔗 <span id="nav-links">Links</span></button>
+            <button class="nav-item" onclick="showSection('software')">💻 <span id="nav-software">Software</span></button>
+            <button class="nav-item" onclick="showSection('interview')">🎤 <span id="nav-interview">Interview</span></button>
+            <button class="nav-item" onclick="showSection('donate')">💰 <span id="nav-donate">Spenden</span></button>
+        </nav>
+        
+        <!-- Theme & Language Controls -->
+        <div class="controls">
+            <select class="control-btn" id="theme-select" onchange="applyTheme(this.value)">
+                <option value="dark">🌙 Dark</option>
+                <option value="light">☀️ Light</option>
+                <option value="ocean">🌊 Ocean</option>
+                <option value="forest">🌲 Forest</option>
+            </select>
+            
+            <select class="control-btn" id="lang-select" onchange="applyTranslation(this.value)">
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="en">🇺🇸 English</option>
+                <option value="nl">🇳🇱 Nederlands</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Home Section -->
+        <section id="home">
+            <div class="card">
+                <h2>🎸 Willkommen bei TEL&Gentlyoverdone</h2>
+                <p>Raymond Demitrio Tel - Musiker, Software-Entwickler, Innovator</p>
+                
+                <div class="grid-2 mt-20">
+                    <div class="playlist-card">
+                        <h3>🎵 Spotify Playlist</h3>
+                        <div class="playlist-icon">🎵</div>
+                        <p>Alle 29 Tracks von Gently Overdone</p>
+                        <p class="text-muted">Gentlyoverdonelivestudio</p>
+                        <a href="https://open.spotify.com/playlist/7BXr0cyoKuJSH6NUdPkrQ4" target="_blank" class="playlist-link">🔗 Auf Spotify öffnen</a>
+                    </div>
+                    
+                    <div class="playlist-card">
+                        <h3>📺 YouTube Playlist</h3>
+                        <div class="playlist-icon">📺</div>
+                        <p>Komplette Collection auf YouTube</p>
+                        <p class="text-muted">Alle Videos & Live-Aufnahmen</p>
+                        <a href="https://www.youtube.com/watch?v=zoWHvD4S9UM&list=PLCE4Plp9QXA5y1yQDFd0l7Mrd-jZDKZZc" target="_blank" class="playlist-link">🔗 Auf YouTube öffnen</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tracks Section -->
+        <section id="tracks" class="hidden">
+            <div class="card">
+                <h2 id="tracks-title">🎵 Tracks</h2>
+                <p class="text-muted">Alle Musik von Raymond Demitrio Tel</p>
+                
+                <div class="grid-2 mt-20">
+                    <div class="playlist-card">
+                        <h3>🎵 Spotify</h3>
+                        <div class="playlist-icon">🎵</div>
+                        <p><strong>Gentlyoverdonelivestudio</strong></p>
+                        <p class="text-muted">29 Original Tracks</p>
+                        <ul style="text-align:left; margin-top:15px;">
+                            <li>The End (Doors Cover)</li>
+                            <li>Wicked Game (Chris Isaak)</li>
+                            <li>Damn Liar (Original)</li>
+                            <li>+ 26 weitere Tracks</li>
+                        </ul>
+                        <a href="https://open.spotify.com/playlist/7BXr0cyoKuJSH6NUdPkrQ4" target="_blank" class="playlist-link">🔗 Playlist öffnen</a>
+                    </div>
+                    
+                    <div class="playlist-card">
+                        <h3>📺 YouTube</h3>
+                        <div class="playlist-icon">📺</div>
+                        <p><strong>Komplette Video Collection</strong></p>
+                        <p class="text-muted">Live-Aufnahmen & Studio</p>
+                        <ul style="text-align:left; margin-top:15px;">
+                            <li>Studio Sessions</li>
+                            <li>Live Performances</li>
+                            <li>Interview Aufnahmen</li>
+                            <li>Behind the Scenes</li>
+                        </ul>
+                        <a href="https://www.youtube.com/watch?v=zoWHvD4S9UM&list=PLCE4Plp9QXA5y1yQDFd0l7Mrd-jZDKZZc" target="_blank" class="playlist-link">🔗 Videos ansehen</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interview Section -->
+        <section id="interview" class="hidden">
+            <div class="card">
+                <h2 id="interview-title">🎤 Interview — De Kentering Nijmegen</h2>
+                <p class="text-muted">Quelle: <a href="https://www.dekentering.info/interview-rockband-gently-overdone-muziek-kan-mooie-herinneringen-laten-herleven/" target="_blank" style="color:var(--accent-color);">dekentering.info</a></p>
+                
+                <!-- Band Photo Placeholder -->
+                <div class="band-photo">
+                    <h3>Gently Overdone Band</h3>
+                    <a href="https://tel1.jouwweb.nl/" target="_blank">
+                        <div class="band-photo-placeholder">
+                            <h3>🎸 GENTLY OVERDONE</h3>
+                            <p style="font-size:1.2rem;">Band Foto</p>
+                            <p class="text-muted">Klick → tel1.jouwweb.nl</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Interview Content -->
+                <div class="card">
+                    <h3>💬 Interview mit Gitarrist Raymond Demitrio Tel</h3>
+                    
+                    <div class="interview-quote">
+                        <p><strong>❓ Wie sind Sie bei De Kentering gelandet?</strong></p>
+                        <p class="text-muted">"Musik als Therapie bei Pro Persona. Dann kam die WMO-Gesetzesänderung und die Band fiel in ein Gat."</p>
+                    </div>
+                    
+                    <div class="interview-quote">
+                        <p><strong>❓ Was ist Ihr Repertoire?</strong></p>
+                        <p class="text-muted">"The End (Doors), Wicked Game (Chris Isaak), Damn Liar (Original). Muziek kan herinneringen herleven aan leuke dingen van vroeger."</p>
+                    </div>
+                    
+                    <div class="interview-quote">
+                        <p><strong>🔬 Kritische Analyse:</strong></p>
+                        <p class="text-muted">Die WMO-Gesetzesänderung unterbrach eine funktionierende Musiktherapie. Wissenschaftlich belegt: Musik fördert Emotionsregulation, Memory Retrieval und kognitive Fokussierung bei Menschen mit Behinderung.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Software Section -->
+        <section id="software" class="hidden">
+            <div class="card">
+                <h2 id="software-title">💻 Software & Downloads</h2>
+                <p class="text-muted">Alle Downloads von <a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" style="color:var(--accent-color);">tel1.jouwweb.nl/servicesoftware</a></p>
+                
+                <div class="grid-3">
+                    <div class="software-card">
+                        <h3>🔬 Science And Electricity Cost Analyzer</h3>
+                        <div class="tech-tag">198.3 KB ZIP</div>
+                        <div class="tech-tag">2 Downloads</div>
+                        <p class="text-muted">Wissenschaftliche Analyse von Elektrizitätskosten mit Staalslakken-Technologie</p>
+                        <div class="tech-tag">Science</div>
+                        <div class="tech-tag">Analyzer</div>
+                        <br><br>
+                        <a class="btn btn-success" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank">📥 Download</a>
+                    </div>
+                    
+                    <div class="software-card">
+                        <h3>📚 Cursor Ontwikkelingsgids</h3>
+                        <div class="tech-tag">310.5 KB PDF</div>
+                        <div class="tech-tag">4 Downloads</div>
+                        <p class="text-muted">Entwicklungsguide für Cursor AI in niederländischer Sprache</p>
+                        <div class="tech-tag">PDF</div>
+                        <div class="tech-tag">Guide</div>
+                        <br><br>
+                        <a class="btn btn-success" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank">📥 Download</a>
+                    </div>
+                    
+                    <div class="software-card">
+                        <h3>🎁 TEL Geschenk Package</h3>
+                        <div class="tech-tag">49.3 KB ZIP</div>
+                        <div class="tech-tag">45 Downloads</div>
+                        <p class="text-muted">Multilinguales Geschenk-Paket mit Cover-Design</p>
+                        <div class="tech-tag">Multilingual</div>
+                        <div class="tech-tag">Package</div>
+                        <br><br>
+                        <a class="btn btn-success" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank">📥 Download</a>
+                    </div>
+                    
+                    <div class="software-card">
+                        <h3>🔥 Werrkvoorbeeld H10</h3>
+                        <div class="tech-tag">5.4 KB Word</div>
+                        <div class="tech-tag">1295 Downloads</div>
+                        <p class="text-muted">Der beliebteste Download! Arbeitsbeispiel H10</p>
+                        <div class="tech-tag">Popular</div>
+                        <div class="tech-tag">Word</div>
+                        <br><br>
+                        <a class="btn btn-success" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank">📥 Download</a>
+                    </div>
+                    
+                    <div class="software-card">
+                        <h3>🆓 FreePrompter</h3>
+                        <div class="tech-tag">Online Tool</div>
+                        <div class="tech-tag">Offline-fähig</div>
+                        <p class="text-muted">Offline-Prompter für die Zukunft und Jugend</p>
+                        <div class="tech-tag">Offline</div>
+                        <div class="tech-tag">Future</div>
+                        <br><br>
+                        <a class="btn btn-success" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank">🔗 Ansehen</a>
+                    </div>
+                    
+                    <div class="software-card">
+                        <h3>⚛️ Element-Kombinator CuZn</h3>
+                        <div class="tech-tag">Wissenschaftlich</div>
+                        <div class="tech-tag">128.9260 g/mol</div>
+                        <p class="text-muted">Erweiterte Valenzprüfung mit CuZn-Analyse</p>
+                        <div class="tech-tag">Cu(Kupfer)×1</div>
+                        <div class="tech-tag">Zn(Zink)×1</div>
+                        <br><br>
+                        <a class="btn btn-success" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank">🔗 Analysieren</a>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-20">
+                    <a class="btn" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" style="font-size:16px;padding:12px 20px;">
+                        🌐 Alle Downloads auf TEL1.nl
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Links Section -->
+        <section id="links" class="hidden">
+            <div class="card">
+                <h2>🔗 Verifizierte Links</h2>
+                <p class="text-muted">Alle wichtigen Links zu Raymond Tel & Gently Overdone</p>
+                
+                <div class="link-grid">
+                    <div class="link-card">
+                        <h3>🎵 Spotify</h3>
+                        <p>Gentlyoverdonelivestudio</p>
+                        <a class="btn" href="https://open.spotify.com/playlist/7BXr0cyoKuJSH6NUdPkrQ4" target="_blank">🔗 Öffnen</a>
+                    </div>
+                    
+                    <div class="link-card">
+                        <h3>📺 YouTube</h3>
+                        <p>Komplette Collection</p>
+                        <a class="btn" href="https://www.youtube.com/watch?v=zoWHvD4S9UM&list=PLCE4Plp9QXA5y1yQDFd0l7Mrd-jZDKZZc" target="_blank">🔗 Öffnen</a>
+                    </div>
+                    
+                    <div class="link-card">
+                        <h3>💻 TEL1.nl</h3>
+                        <p>Hauptseite</p>
+                        <a class="btn" href="https://tel1.jouwweb.nl/" target="_blank">🔗 Öffnen</a>
+                    </div>
+                    
+                    <div class="link-card">
+                        <h3>💾 Downloads</h3>
+                        <p>Servicesoftware</p>
+                        <a class="btn" href="https://tel1.jouwweb.nl/servicesoftware" target="_blank">🔗 Öffnen</a>
+                    </div>
+                    
+                    <div class="link-card">
+                        <h3>💰 GoFundMe</h3>
+                        <p>Magnitudo Musica</p>
+                        <a class="btn" href="https://www.gofundme.com/f/magnitudo" target="_blank">🔗 Öffnen</a>
+                    </div>
+                    
+                    <div class="link-card">
+                        <h3>🎤 Interview</h3>
+                        <p>De Kentering</p>
+                        <a class="btn" href="https://www.dekentering.info/interview-rockband-gently-overdone-muziek-kan-mooie-herinneringen-laten-herleven/" target="_blank">🔗 Öffnen</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="hidden">
+            <div class="card">
+                <h2 id="about-title">👤 Über Raymond Demitrio Tel</h2>
+                <p>Musiker, Software-Entwickler, Innovator aus Nijmegen, Niederlande</p>
+                
+                <div class="grid-2 mt-20">
+                    <div>
+                        <h3>🎵 Musik</h3>
+                        <p>Gently Overdone - Rockband mit therapeutischem Ansatz</p>
+                        <ul style="margin-left:20px; margin-top:10px;">
+                            <li>29 Tracks auf Spotify</li>
+                            <li>Komplette Collection auf YouTube</li>
+                            <li>Musiktherapie bei De Kentering</li>
+                            <li>Repertoire: The End, Wicked Game, Damn Liar</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3>💻 Software</h3>
+                        <p>Entwicklung für Menschen mit Behinderung</p>
+                        <ul style="margin-left:20px; margin-top:10px;">
+                            <li>10+ Software-Produkte</li>
+                            <li>Wissenschaftliche Tools</li>
+                            <li>Accessibility-Fokus</li>
+                            <li>1295+ Downloads (Werrkvoorbeeld H10)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donate Section -->
+        <section id="donate" class="hidden">
+            <div class="card">
+                <h2>💰 Magnitudo Musica Mundo</h2>
+                <p class="text-muted">Musik und Software für Menschen mit Behinderung</p>
+                
+                <div class="text-center mt-20">
+                    <h3>🎯 Ziel: €33.000</h3>
+                    <p style="font-size:1.2rem; margin:15px 0;">Aktuell: €25 (4 Spenden)</p>
+                    <p class="text-muted">Mission: Teilhabe, Kreativität und Lebensfreude fördern</p>
+                    
+                    <a class="btn btn-success" href="https://www.gofundme.com/f/magnitudo" target="_blank" style="font-size:18px;padding:15px 30px; margin-top:20px;">
+                        💰 Jetzt spenden
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="text-center">
+            <p><strong>Dr. Tel (mit einem L) — Raymond Demitrio Tel · Nijmegen, NL</strong></p>
+            <p class="text-muted">© 2020 - 2025 TEL & Gentlyoverdone</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Translations
+        const translations = {
+            de: {
+                title: "Raymond Tel Portal - TEL&Gentlyoverdone",
+                slogan: "Magnitudo Mundo Musica (MMM) — Musik als Kommunikation. Klang als Dialog.",
+                navHome: "Home",
+                navAbout: "Über Raymond",
+                navTracks: "Tracks",
+                navLinks: "Links",
+                navSoftware: "Software",
+                navInterview: "Interview",
+                navDonate: "Spenden"
+            },
+            en: {
+                title: "Raymond Tel Portal - TEL&Gentlyoverdone",
+                slogan: "Magnitudo Mundo Musica (MMM) — Music as Communication. Sound as Dialogue.",
+                navHome: "Home",
+                navAbout: "About Raymond",
+                navTracks: "Tracks",
+                navLinks: "Links",
+                navSoftware: "Software",
+                navInterview: "Interview",
+                navDonate: "Donate"
+            },
+            nl: {
+                title: "Raymond Tel Portal - TEL&Gentlyoverdone",
+                slogan: "Magnitudo Mundo Musica (MMM) — Muziek als Communicatie. Klank als Dialoog.",
+                navHome: "Home",
+                navAbout: "Over Raymond",
+                navTracks: "Tracks",
+                navLinks: "Links",
+                navSoftware: "Software",
+                navInterview: "Interview",
+                navDonate: "Doneer"
+            }
+        };
+
+        // Themes
+        const themes = {
+            dark: { bg: '#0f0f12', card: '#0b1220', text: '#e9eef6', accent: '#1f7aeb' },
+            light: { bg: '#ffffff', card: '#f8f9fa', text: '#212529', accent: '#007bff' },
+            ocean: { bg: '#0a1929', card: '#1e3a8a', text: '#e0f2fe', accent: '#06b6d4' },
+            forest: { bg: '#0d1b0d', card: '#1a2e1a', text: '#d1fae5', accent: '#10b981' }
+        };
+
+        // Apply Theme
+        function applyTheme(themeName) {
+            const theme = themes[themeName];
+            document.documentElement.style.setProperty('--bg-primary', theme.bg);
+            document.documentElement.style.setProperty('--bg-card', theme.card);
+            document.documentElement.style.setProperty('--text-primary', theme.text);
+            document.documentElement.style.setProperty('--accent-color', theme.accent);
+            localStorage.setItem('preferred-theme', themeName);
+        }
+
+        // Apply Translation
+        function applyTranslation(lang) {
+            const t = translations[lang];
+            document.documentElement.lang = lang;
+            document.title = t.title;
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('slogan').textContent = t.slogan;
+            document.getElementById('nav-home').textContent = t.navHome;
+            document.getElementById('nav-about').textContent = t.navAbout;
+            document.getElementById('nav-tracks').textContent = t.navTracks;
+            document.getElementById('nav-links').textContent = t.navLinks;
+            document.getElementById('nav-software').textContent = t.navSoftware;
+            document.getElementById('nav-interview').textContent = t.navInterview;
+            document.getElementById('nav-donate').textContent = t.navDonate;
+            localStorage.setItem('preferred-language', lang);
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            event.target.closest('.nav-item').classList.add('active');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferred-language') || 'de';
+            const savedTheme = localStorage.getItem('preferred-theme') || 'dark';
+            
+            applyTranslation(savedLang);
+            applyTheme(savedTheme);
+            
+            document.getElementById('theme-select').value = savedTheme;
+            document.getElementById('lang-select').value = savedLang;
+        });
+    </script>
+</body>
+</html>

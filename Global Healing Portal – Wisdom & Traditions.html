@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)file:///D:/Heilung/index.html -->
+<html lang="en" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Global Healing Portal – Wisdom &amp; Traditions</title>
+  <style>
+    :root{
+      --bg: #f7fafc;          /* light background */
+      --fg: #0f172a;          /* slate-900 */
+      --muted:#475569;        /* slate-600 */
+      --brand:#0ea5e9;        /* sky-500 */
+      --accent:#14b8a6;       /* teal-500 */
+      --card:#ffffff;         /* white */
+      --ring:#0ea5e9;
+      --ideology-blue:#0a3d91;/* darker blue for ideology *text* in light mode */
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#0b1220; --fg:#e5e7eb; --muted:#9ca3af; --brand:#38bdf8; --accent:#2dd4bf; --card:#0f172a; --ring:#38bdf8;
+        /* In dark we don't force ideology blue; inherit readable contrast */
+      }
+    }
+    html,body{margin:0; padding:0; background:var(--bg); color:var(--fg); font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;}
+    header{position:sticky; top:0; backdrop-filter:saturate(1.2) blur(6px); background:color-mix(in oklab, var(--bg) 80%, transparent); border-bottom:1px solid color-mix(in oklab,var(--fg) 10%, transparent); z-index:10}
+    .wrap{max-width:1100px; margin:0 auto; padding:1rem}
+    nav a{margin-right:.75rem; text-decoration:none; color:var(--fg); opacity:.8}
+    nav a:hover{opacity:1}
+    h1{font-size:clamp(1.5rem,2.5vw,2rem); margin:.25rem 0}
+    section{scroll-margin-top:5rem;}
+    .grid{display:grid; gap:1rem}
+    .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem}
+    .card{background:var(--card); border:1px solid color-mix(in oklab, var(--fg) 10%, transparent); border-radius:14px; padding:1rem; box-shadow:0 1px 4px rgba(0,0,0,.04)}
+    .btn{display:inline-flex; align-items:center; gap:.5rem; border-radius:999px; border:1px solid color-mix(in oklab,var(--fg) 15%, transparent); padding:.5rem 1rem; background:var(--card); cursor:pointer}
+    .btn[disabled]{opacity:.5; cursor:not-allowed}
+    .muted{color:var(--muted)}
+    .ticker{display:flex; gap:1rem; overflow:auto; white-space:nowrap}
+    .ticker a{color:var(--brand)}
+    .range{width:100%}
+    .meter{height:10px; background:linear-gradient(90deg,#22c55e,#eab308,#ef4444); border-radius:999px}
+    .meter>span{display:block; height:100%; width:0%; background:currentColor; border-radius:999px}
+    .ideology-remark{color:var(--ideology-blue)} /* light mode darker blue for text */
+    @media (prefers-color-scheme: dark){ .ideology-remark{color:inherit} }
+    details{background:var(--card); border:1px solid color-mix(in oklab, var(--fg) 10%, transparent); border-radius:12px; padding:.5rem 1rem}
+    canvas{max-width:100%; background:var(--card); border:1px solid color-mix(in oklab, var(--fg) 12%, transparent); border-radius:12px}
+    .kbd{font:600 .9rem ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background:color-mix(in oklab,var(--fg) 5%, transparent); padding:.1rem .45rem; border-radius:.4rem}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div style="display:flex; gap:1rem; align-items:center; justify-content:space-between">
+        <h1>Global Healing Portal – Wisdom &amp; Traditions</h1>
+        <nav>
+          <a href="file:///D:/Heilung/index.html#prologue">Prologue</a>
+          <a href="file:///D:/Heilung/index.html#news">World News</a>
+          <a href="file:///D:/Heilung/index.html#music">Music Healing</a>
+          <a href="file:///D:/Heilung/index.html#wellness">Wellness</a>
+          <a href="file:///D:/Heilung/index.html#practitioners">Practitioners</a>
+          <a href="file:///D:/Heilung/index.html#community">Community</a>
+          <a href="file:///D:/Heilung/index.html#groups">Groups &amp; Events</a>
+          <a href="file:///D:/Heilung/index.html#cultural">Cultural</a>
+          <a href="file:///D:/Heilung/index.html#ideology">Ideology</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap grid">
+
+    <section id="prologue" class="card">
+      <h2>Prologue</h2>
+      <p>This portal gathers perspectives on human healing from all cultures worldwide – historically, symbolically, and scientifically. It aims to be a single-file experience plus a tiny serverless proxy for news.</p>
+    </section>
+
+    <section id="news" class="card">
+      <h2>World News</h2>
+      <p class="muted">Live headlines (via in-house RSS proxy). Click to open sources.</p>
+      <div id="ticker" class="ticker" aria-live="polite">Failed to load news.</div>
+      <div style="display:flex; gap:.5rem; align-items:center; margin-top:.5rem">
+        <label>Source
+          <select id="feedSelect">
+            <option value="https://feeds.nos.nl/nosnieuwsalgemeen">NOS (Algemeen)</option>
+            <option value="https://www.tagesschau.de/xml/rss2">tagesschau</option>
+            <option value="https://rss.nytimes.com/services/xml/rss/nyt/World.xml">NYT World</option>
+            <option value="https://www.theguardian.com/world/rss">The Guardian World</option>
+          </select>
+        </label>
+        <button class="btn" id="refreshBtn">Refresh</button>
+      </div>
+    </section>
+
+    <section id="music" class="card">
+      <h2>Magnitudo Musica Mundo – Music is Healing</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Healing Audio Player</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:.5rem">
+            <button class="btn tone" data-freq="432">432Hz</button>
+            <button class="btn tone" data-freq="528">528Hz</button>
+            <button class="btn tone" data-freq="741">741Hz</button>
+            <button class="btn tone" data-freq="852">852Hz</button>
+            <button class="btn noise" data-type="rain">Rain</button>
+            <button class="btn noise" data-type="ocean">Ocean</button>
+            <button class="btn noise" data-type="forest">Forest</button>
+            <button class="btn" id="stopAudio">Stop</button>
+          </div>
+          <label>Volume <input id="vol" type="range" min="0" max="1" step="0.01" value="0.5" class="range"></label>
+        </div>
+        <div class="card">
+          <h3>Meditation Timer</h3>
+          <div style="font:600 2rem/1 ui-sans-serif" id="timer">00:00</div>
+          <div style="display:flex; gap:.5rem; margin-top:.5rem">
+            <button class="btn" data-min="5">5 min</button>
+            <button class="btn" data-min="10">10 min</button>
+            <button class="btn" data-min="15">15 min</button>
+            <button class="btn" data-min="30">30 min</button>
+          </div>
+          <div style="display:flex; gap:.5rem; margin-top:.5rem">
+            <button class="btn" id="startT">▶️ Start</button>
+            <button class="btn" id="pauseT">⏸️ Pause</button>
+            <button class="btn" id="resetT">Reset</button>
+          </div>
+          <p id="breath" class="muted">Breathe in…</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="wellness" class="card">
+      <h2>Wellness Tracker &amp; Mood Monitor</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Daily Mood</h3>
+          <div style="display:flex; gap:.5rem; align-items:center">
+            <input type="range" id="mood" min="0" max="100" step="1" class="range">
+            <output id="moodOut">50</output>
+            <button class="btn" id="saveMood">Save</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Wellness Dashboard</h3>
+          <div class="grid">
+            <div>Meditation Streak: <strong id="streak">0</strong> days</div>
+            <div>Wellness Score: <strong id="score">0</strong></div>
+            <div>
+              Healing Progress
+              <div class="meter"><span id="progressBar" style="width: 0%;"></span></div>
+            </div>
+            <div>Stress Level: <strong id="stressLbl">Low</strong></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>⚡ Stress Level Indicator</h3>
+          <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+            <button class="btn stress" data-v="0">Low</button>
+            <button class="btn stress" data-v="1">Moderate</button>
+            <button class="btn stress" data-v="2">High</button>
+            <button class="btn stress" data-v="3">Critical</button>
+          </div>
+          <details style="margin-top:.5rem"><summary>Stress Relief Tips</summary>
+            <ul>
+              <li>Take 5 deep breaths</li>
+              <li>Listen to calming music</li>
+              <li>Practice meditation</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="practitioners" class="card">
+      <h2>Find Healing Institutions &amp; Practitioners</h2>
+      <div class="grid">
+        <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:end">
+          <label>Specialty
+            <select id="spec">
+              <option>Acupuncture</option>
+              <option>Massage Therapy</option>
+              <option>Meditation</option>
+              <option>Yoga</option>
+              <option>Nutrition</option>
+              <option>Psychology</option>
+              <option>Energy Healing</option>
+              <option>Herbal Medicine</option>
+            </select>
+          </label>
+          <label>Near
+            <input id="near" placeholder="City or address">
+          </label>
+          <button class="btn" id="geo">Use my location</button>
+          <button class="btn" id="searchP">Search</button>
+        </div>
+        <div id="results" class="grid"></div>
+      </div>
+    </section>
+
+    <section id="community" class="card">
+      <h2>Healing Community &amp; Support</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Share Your Experience</h3>
+          <label>Category
+            <select id="cat">
+              <option>Meditation &amp; Mindfulness</option>
+              <option>Therapy &amp; Counseling</option>
+              <option>Nutrition &amp; Diet</option>
+              <option>Exercise &amp; Movement</option>
+              <option>Alternative Healing</option>
+              <option>General Wellness</option>
+            </select>
+          </label>
+          <textarea id="post" rows="4" placeholder="What helped you today?" style="width:100%"></textarea>
+          <button class="btn" id="share">Share</button>
+        </div>
+        <div class="card">
+          <h3>Your Community Stats</h3>
+          <div>Posts Shared: <strong id="postsCount">0</strong></div>
+          <div>Helpful Votes: <strong id="votesCount">0</strong></div>
+          <div>Community Level: <strong id="level">Beginner</strong></div>
+          <div>Healing Streak: <strong id="cStreak">0</strong> days</div>
+        </div>
+        <div class="card">
+          <h3>Community Feed</h3>
+          <div id="feed" class="grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="groups" class="card">
+      <h2>Local Wellness Groups &amp; Events</h2>
+      <div style="display:flex; gap:.5rem; align-items:center; justify-content:space-between">
+        <button class="btn" id="prevM">← Previous</button>
+        <div id="monthLbl" style="font-weight:700">december 2025</div>
+        <button class="btn" id="nextM">Next →</button>
+      </div>
+      <div id="calendar" class="cards" style="margin-top:.5rem"><div class="card"><div style="font-weight:700">1</div><div id="d1764595531145"></div><ul></ul></div><div class="card"><div style="font-weight:700">2</div><div id="d1764681931145"></div><ul></ul></div><div class="card"><div style="font-weight:700">3</div><div id="d1764768331145"></div><ul></ul></div><div class="card"><div style="font-weight:700">4</div><div id="d1764854731145"></div><ul></ul></div><div class="card"><div style="font-weight:700">5</div><div id="d1764941131145"></div><ul></ul></div><div class="card"><div style="font-weight:700">6</div><div id="d1765027531145"></div><ul></ul></div><div class="card"><div style="font-weight:700">7</div><div id="d1765113931145"></div><ul></ul></div><div class="card"><div style="font-weight:700">8</div><div id="d1765200331145"></div><ul></ul></div><div class="card"><div style="font-weight:700">9</div><div id="d1765286731145"></div><ul></ul></div><div class="card"><div style="font-weight:700">10</div><div id="d1765373131145"></div><ul></ul></div><div class="card"><div style="font-weight:700">11</div><div id="d1765459531145"></div><ul></ul></div><div class="card"><div style="font-weight:700">12</div><div id="d1765545931145"></div><ul></ul></div><div class="card"><div style="font-weight:700">13</div><div id="d1765632331145"></div><ul></ul></div><div class="card"><div style="font-weight:700">14</div><div id="d1765718731145"></div><ul></ul></div><div class="card"><div style="font-weight:700">15</div><div id="d1765805131145"></div><ul></ul></div><div class="card"><div style="font-weight:700">16</div><div id="d1765891531145"></div><ul></ul></div><div class="card"><div style="font-weight:700">17</div><div id="d1765977931145"></div><ul></ul></div><div class="card"><div style="font-weight:700">18</div><div id="d1766064331145"></div><ul></ul></div><div class="card"><div style="font-weight:700">19</div><div id="d1766150731145"></div><ul></ul></div><div class="card"><div style="font-weight:700">20</div><div id="d1766237131145"></div><ul></ul></div><div class="card"><div style="font-weight:700">21</div><div id="d1766323531145"></div><ul></ul></div><div class="card"><div style="font-weight:700">22</div><div id="d1766409931145"></div><ul></ul></div><div class="card"><div style="font-weight:700">23</div><div id="d1766496331145"></div><ul></ul></div><div class="card"><div style="font-weight:700">24</div><div id="d1766582731145"></div><ul></ul></div><div class="card"><div style="font-weight:700">25</div><div id="d1766669131145"></div><ul></ul></div><div class="card"><div style="font-weight:700">26</div><div id="d1766755531145"></div><ul></ul></div><div class="card"><div style="font-weight:700">27</div><div id="d1766841931145"></div><ul></ul></div><div class="card"><div style="font-weight:700">28</div><div id="d1766928331145"></div><ul></ul></div><div class="card"><div style="font-weight:700">29</div><div id="d1767014731145"></div><ul></ul></div><div class="card"><div style="font-weight:700">30</div><div id="d1767101131145"></div><ul></ul></div><div class="card"><div style="font-weight:700">31</div><div id="d1767187531145"></div><ul></ul></div></div>
+      <details style="margin-top:1rem"><summary>➕ Create Your Own Group</summary>
+        <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:end">
+          <label>Title <input id="gTitle"></label>
+          <label>Category
+            <select id="gCat">
+              <option>Meditation Circle</option>
+              <option>Yoga Group</option>
+              <option>Nutrition Club</option>
+              <option>Support Group</option>
+              <option>Fitness Group</option>
+              <option>Alternative Healing</option>
+            </select>
+          </label>
+          <label>Date <input id="gDate" type="date"></label>
+          <button class="btn" id="addGroup">Create Group</button>
+        </div>
+      </details>
+    </section>
+
+    <section id="cultural" class="card">
+      <h2>Cultural Healing Traditions</h2>
+      <p>Explore rituals, moon cycles, chakra balance, and medicinal plants.</p>
+    </section>
+
+    <section id="ideology" class="card">
+      <h2>Ideology Description</h2>
+      <p class="ideology-remark"><em>Light‑mode rule:</em> The color of this ideology remark is darker blue; the heading remains unchanged.</p>
+      <p>Guiding principle: The psyche and body are intertwined across all cultures…</p>
+    </section>
+
+    <section id="spiral" class="card">
+      <h2>Interactive Application – Healing Spiral</h2>
+      <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:end; margin-bottom:.5rem">
+        <label>Arms <input id="arms" type="number" value="5" min="1" max="20"></label>
+        <label>Turns <input id="turns" type="number" value="6" min="1" max="20"></label>
+        <label>Density <input id="density" type="number" value="800" min="200" max="5000" step="100"></label>
+        <button class="btn" id="redraw">Redraw <span class="kbd">R</span></button>
+        <button class="btn" id="savePng">Save PNG <span class="kbd">S</span></button>
+      </div>
+      <canvas id="cv" width="900" height="600" aria-label="Healing spiral drawing"></canvas>
+      <p class="muted">Tip: Hold <span class="kbd">R</span> to redraw; <span class="kbd">S</span> to save.</p>
+    </section>
+
+  </main>
+
+  <script type="module">
+  // Helpers
+  const $ = sel => document.querySelector(sel); const $$ = sel => [...document.querySelectorAll(sel)];
+  const ls = (k,v) => v===undefined ? JSON.parse(localStorage.getItem(k) || 'null') : localStorage.setItem(k, JSON.stringify(v));
+
+  // ----- Ideology color rule -----
+  // In light mode we already force .ideology-remark to darker blue via CSS.
+  // Nothing else needed; heading stays as-is.
+
+  // ----- News ticker (via CF Pages Function /functions/rss) -----
+  const feedSelect = $('#feedSelect'); const ticker = $('#ticker'); const refreshBtn = $('#refreshBtn');
+  async function loadFeed(){
+    ticker.textContent = 'Loading…';
+    const url = encodeURIComponent(feedSelect.value);
+    try{
+      const res = await fetch(`/functions/rss?url=${url}`);
+      if(!res.ok) throw new Error('RSS proxy error');
+      const data = await res.json();
+      ticker.innerHTML = '';
+      data.items.slice(0,15).forEach(item=>{
+        const a = document.createElement('a');
+        a.href = item.link; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.textContent = item.title; ticker.appendChild(a);
+      });
+    }catch(e){ ticker.textContent = 'Failed to load news.'; console.error(e); }
+  }
+  refreshBtn.addEventListener('click', loadFeed); feedSelect.addEventListener('change', loadFeed);
+  loadFeed();
+
+  // ----- WebAudio: tones & nature noises -----
+  const AudioCtx = window.AudioContext || window.webkitAudioContext; let ctx, master, node;
+  function ensureAudio(){ if(!ctx){ ctx = new AudioCtx(); master = ctx.createGain(); master.gain.value = $('#vol').value; master.connect(ctx.destination);} }
+  function stopAudio(){ if(node){ try{ node.stop ? node.stop() : node.disconnect(); }catch{} node.disconnect?.(); node=null; } }
+  $('#vol').addEventListener('input', e => { ensureAudio(); master.gain.value = e.target.value; });
+  $$('#music .tone').forEach(btn=>btn.addEventListener('click',()=>{ ensureAudio(); stopAudio(); const osc = ctx.createOscillator(); osc.type='sine'; osc.frequency.value = +btn.dataset.freq; osc.connect(master); osc.start(); node=osc; }));
+  function makeNoise(type){ ensureAudio(); stopAudio(); const bufferSize=2*ctx.sampleRate; const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate); const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++){ data[i] = Math.random()*2-1; }
+    const src = ctx.createBufferSource(); src.buffer = buffer; let chain = src;
+    if(type==='ocean' || type==='forest' || type==='rain'){
+      const biquad = ctx.createBiquadFilter(); biquad.type = 'lowpass'; biquad.frequency.value = type==='rain'? 800 : type==='forest'? 1200 : 600;
+      chain.connect(biquad); chain = biquad;
+    }
+    const gain = ctx.createGain(); gain.gain.value = .15; chain.connect(gain); gain.connect(master);
+    src.loop = true; src.start(); node=src; }
+  $$('#music .noise').forEach(btn=>btn.addEventListener('click',()=>makeNoise(btn.dataset.type)));
+  $('#stopAudio').addEventListener('click', stopAudio);
+
+  // ----- Meditation timer + breathing cue -----
+  let targetMs = 0, remain=0, tInt=null, paused=true; const timerEl=$('#timer'), breath=$('#breath');
+  function setMinutes(min){ targetMs = min*60*1000; remain = targetMs; updateTimer(); }
+  function updateTimer(){ const m=Math.floor(remain/60000), s=Math.floor((remain%60000)/1000); timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
+  function tick(){ if(remain<=0){ clearInterval(tInt); paused=true; timerEl.textContent='Done'; return; } remain-=1000; updateTimer(); const cycle=(Math.floor((targetMs-remain)/1000))%8; breath.textContent = cycle<4? 'Breathe in…' : 'Breathe out…'; }
+  $$('#music [data-min]').forEach(b=>b.addEventListener('click',()=>setMinutes(+b.dataset.min)));
+  $('#startT').addEventListener('click',()=>{ if(!remain) setMinutes(5); if(paused){ paused=false; tInt=setInterval(tick,1000);} });
+  $('#pauseT').addEventListener('click',()=>{ if(!paused){ paused=true; clearInterval(tInt);} });
+  $('#resetT').addEventListener('click',()=>{ paused=true; clearInterval(tInt); remain=0; updateTimer(); breath.textContent='Breathe in…'; });
+
+  // ----- Wellness tracker -----
+  const mood=$('#mood'), moodOut=$('#moodOut'), saveMood=$('#saveMood'); mood.addEventListener('input',()=>moodOut.value=mood.value);
+  function loadWellness(){ const w=ls('wellness')||{streak:0,last:0,score:0,progress:0,stress:0,posts:[],votes:0,communityStreak:0}; return w; }
+  function saveWellness(w){ ls('wellness', w); renderWellness(); }
+  function renderWellness(){ const w=loadWellness(); $('#streak').textContent=w.streak; $('#score').textContent=w.score; $('#progressBar').style.width=`${w.progress}%`; $('#stressLbl').textContent=['Low','Moderate','High','Critical'][w.stress]; $('#postsCount').textContent=w.posts.length; $('#votesCount').textContent=w.votes; $('#cStreak').textContent=w.communityStreak; renderFeed(); }
+  saveMood.addEventListener('click',()=>{ const w=loadWellness(); const today = new Date().toDateString(); if(ls('lastMoodDay')!==today){ w.streak++; ls('lastMoodDay', today); } w.score = Math.round((w.score*0.7) + (+mood.value)*0.3); w.progress = Math.min(100, Math.round((w.progress*0.9) + (+mood.value)*0.1)); saveWellness(w); });
+  $$('.stress').forEach(b=>b.addEventListener('click',()=>{ const w=loadWellness(); w.stress=+b.dataset.v; saveWellness(w); }));
+
+  // ----- Practitioners (Nominatim) -----
+  async function geocode(q){ const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`; const r=await fetch(url,{headers:{'Accept-Language':'en'}}); return r.json(); }
+  function dist(a,b){ const R=6371, toRad = d=>d*Math.PI/180; const dLat=toRad(b.lat-a.lat), dLon=toRad(b.lon-a.lon); const la=toRad(a.lat), lb=toRad(b.lat); const x=Math.sin(dLat/2)**2 + Math.cos(la)*Math.cos(lb)*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
+  async function searchPractitioners(){ const q=$('#spec').value; let origin=null; if($('#near').value){ const g=(await geocode($('#near').value))[0]; if(!g){ $('#results').textContent='Location not found.'; return;} origin={lat:+g.lat, lon:+g.lon, name:g.display_name}; } else if(navigator.geolocation){ origin = await new Promise(res=>navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude, lon:p.coords.longitude, name:'Your location'}),()=>res(null)));
+  }
+    const bbox = origin? `${origin.lon-1},${origin.lat-1},${origin.lon+1},${origin.lat+1}` : '';
+    const tagMap={
+      'Acupuncture':['healthcare:alternative','acupuncture'],
+      'Massage Therapy':['massage'],
+      'Meditation':['meditation_centre','community_centre'],
+      'Yoga':['yoga'],
+      'Nutrition':['nutritionist','dietitian'],
+      'Psychology':['psychotherapist','psychologist'],
+      'Energy Healing':['reiki','spiritualist'],
+      'Herbal Medicine':['herbalist','health_food']
+    };
+    const tags = tagMap[q]||[];
+    const queries = tags.map(t=>`[out:json][timeout:25];(node["${t}"]${bbox?`(${bbox})`:''};way["${t}"]${bbox?`(${bbox})`:''};relation["${t}"]${bbox?`(${bbox})`:''};);out center 50;`);
+    const results=[];
+    for (const overpass of queries){
+      try{
+        const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST', body:overpass});
+        const j=await r.json(); results.push(...(j.elements||[]));
+      }catch(e){ console.warn('Overpass failed', e); }
+    }
+    const unique = new Map(); results.forEach(el=>{ const id = `${el.type}/${el.id}`; if(!unique.has(id)) unique.set(id, el); });
+    const items=[...unique.values()].map(el=>({
+      name: el.tags?.name || `${q} place`,
+      lat: (el.lat??el.center?.lat), lon:(el.lon??el.center?.lon),
+      addr: [el.tags?.addr_street, el.tags?.addr_housenumber, el.tags?.addr_city].filter(Boolean).join(' ')
+    })).filter(v=>v.lat&&v.lon);
+    if(origin){ items.forEach(it=>it.km = dist({lat:origin.lat,lon:origin.lon}, it)); items.sort((a,b)=> (a.km??999) - (b.km??999)); }
+    const list = items.slice(0,30).map(it=>`<div class="card"><strong>${it.name}</strong><div class="muted">${it.addr||''}</div>${it.km?`<div>${it.km.toFixed(1)} km</div>`:''}</div>`).join('');
+    $('#results').innerHTML = list || '<div class="muted">No results found right now. Try another specialty or area.</div>';
+  }
+  $('#searchP').addEventListener('click', searchPractitioners);
+  $('#geo').addEventListener('click',()=>{ $('#near').value=''; searchPractitioners(); });
+
+  // ----- Community feed -----
+  function renderFeed(){ const w=loadWellness(); const feed=$('#feed'); feed.innerHTML=''; w.posts.slice().reverse().forEach((p,i)=>{ const d=document.createElement('div'); d.className='card'; d.innerHTML=`<div><strong>${p.cat}</strong> – <span class="muted">${new Date(p.ts).toLocaleString()}</span></div><p>${p.text}</p><button class="btn vote" data-i="${i}">Helpful (${p.votes||0})</button>`; feed.appendChild(d); }); $$('button.vote').forEach(b=>b.addEventListener('click',()=>{ const w=loadWellness(); const idx=+b.dataset.i; const post = w.posts[w.posts.length-1-idx]; post.votes=(post.votes||0)+1; w.votes++; saveWellness(w); })); }
+  $('#share').addEventListener('click',()=>{ const text=$('#post').value.trim(); if(!text) return; const w=loadWellness(); w.posts.push({text, cat:$('#cat').value, ts:Date.now(), votes:0}); w.communityStreak++; $('#post').value=''; saveWellness(w); });
+
+  // ----- Simple monthly calendar -----
+  let cur = new Date(); cur.setDate(1);
+  function renderCal(){ const lbl=$('#monthLbl'); lbl.textContent = cur.toLocaleString(undefined,{month:'long',year:'numeric'}); const start=new Date(cur), month=cur.getMonth(); const days=[]; while(start.getMonth()===month){ days.push(new Date(start)); start.setDate(start.getDate()+1); }
+    const ev=ls('events')||[]; const cal=$('#calendar'); cal.innerHTML='';
+    days.forEach(d=>{ const day= d.getDate(); const box=document.createElement('div'); box.className='card'; box.innerHTML=`<div style="font-weight:700">${day}</div><div id="d${+d}"></div>`; const ul=document.createElement('ul'); ev.filter(e=>new Date(e.date).toDateString()===d.toDateString()).forEach(e=>{ const li=document.createElement('li'); li.textContent = `${e.title} (${e.cat})`; ul.appendChild(li); }); box.appendChild(ul); cal.appendChild(box); });
+  }
+  $('#prevM').addEventListener('click',()=>{ cur.setMonth(cur.getMonth()-1); renderCal(); });
+  $('#nextM').addEventListener('click',()=>{ cur.setMonth(cur.getMonth()+1); renderCal(); });
+  $('#addGroup').addEventListener('click',()=>{ const title=$('#gTitle').value.trim(); const cat=$('#gCat').value; const date=$('#gDate').value; if(!title||!date) return; const ev=ls('events')||[]; ev.push({title,cat,date}); ls('events',ev); renderCal(); $('#gTitle').value=''; });
+  renderWellness(); renderCal();
+
+  // ----- Spiral canvas drawing -----
+  const cv=$('#cv'); const ctx2=cv.getContext('2d');
+  function draw(){ const arms=+$('#arms').value, turns=+$('#turns').value, density=+$('#density').value; const w=cv.width, h=cv.height; ctx2.clearRect(0,0,w,h); ctx2.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--card'); ctx2.fillRect(0,0,w,h); ctx2.translate(w/2,h/2); ctx2.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--brand'); ctx2.lineWidth=1.5; for(let a=0;a<arms;a++){ ctx2.beginPath(); for(let i=0;i<density;i++){ const t = i/density * Math.PI*2*turns; const r = 6*t; const x = Math.cos(t + (a*Math.PI*2/arms)) * r; const y = Math.sin(t + (a*Math.PI*2/arms)) * r; if(i===0) ctx2.moveTo(x,y); else ctx2.lineTo(x,y); } ctx2.stroke(); }
+    ctx2.setTransform(1,0,0,1,0,0);
+  }
+  $('#redraw').addEventListener('click',draw); document.addEventListener('keydown',e=>{ if(e.key.toLowerCase()==='r') draw(); if(e.key.toLowerCase()==='s') savePNG(); });
+  function savePNG(){ cv.toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='healing-spiral.png'; a.click(); URL.revokeObjectURL(a.href); }); }
+  $('#savePng').addEventListener('click',savePNG); draw();
+  </script>
+
+</body></html>

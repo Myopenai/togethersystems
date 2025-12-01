@@ -1,0 +1,4007 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)file:///D:/Heilungsversuch%20RIBW/index.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Cosmic Visualizer Enterprise Universe XXL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-elevated: #020817;
+      --card: #0b1020;
+      --card-border: rgba(255,255,255,0.08);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.15);
+      --accent-strong: #0ea5e9;
+      --gold: #f59e0b;
+      --muted: #64748b;
+      --text: #e5e7eb;
+      --text-soft: #9ca3af;
+      --border: #1e293b;
+      --danger: #f97373;
+      --success: #22c55e;
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 18px 45px rgba(0,0,0,0.45);
+      --shadow-inner: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                   "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 40%, #000 100%);
+      color: #e5e7eb;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      width: 100%;
+      height: 100vh;
+    }
+
+    #scene {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: transparent;
+    }
+
+    aside.panel {
+      background: radial-gradient(circle at top, #020617 0%, #020617 35%, #020617 100%);
+      border-left: 1px solid rgba(15,23,42,0.8);
+      box-shadow: -18px 0 40px rgba(15,23,42,0.9);
+      padding: 14px 16px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    aside.panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    aside.panel::-webkit-scrollbar-thumb {
+      background: rgba(148,163,184,0.45);
+      border-radius: 999px;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .logo-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .logo-orb {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #f9fafb 0, #38bdf8 40%, #0f172a 100%);
+      box-shadow:
+        0 0 0 1px rgba(148,163,184,0.4),
+        0 0 22px rgba(56,189,248,0.6),
+        0 0 60px rgba(56,189,248,0.4);
+    }
+
+    .badge {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(148,163,184,0.45);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,0.8);
+    }
+
+    .section {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.05), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(129,140,248,0.05), transparent 65%),
+        rgba(15,23,42,0.94);
+      border: 1px solid rgba(15,23,42,0.95);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.8),
+        0 18px 38px rgba(15,23,42,0.9);
+    }
+
+    .section h2 {
+      margin: 0 0 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .section h2 span.accent {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.12);
+      color: #bae6fd;
+      border: 1px solid rgba(56,189,248,0.6);
+    }
+
+    .card {
+      background: radial-gradient(circle at top, rgba(30,64,175,0.5), transparent 60%),
+                  linear-gradient(to bottom, rgba(15,23,42,0.98), rgba(15,23,42,0.95));
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 12px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-soft), var(--shadow-inner);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 20% 0, rgba(59,130,246,0.18), transparent 45%),
+        radial-gradient(circle at 80% 0, rgba(234,179,8,0.16), transparent 45%);
+      opacity: 0.7;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #cbd5f5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    h2 span.tag {
+      font-size: 10px;
+      padding: 1px 7px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(129,140,248,0.7);
+      background: rgba(15,23,42,0.95);
+      color: #a5b4fc;
+    }
+
+    .section-title {
+      margin-top: 10px;
+      margin-bottom: 4px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(148,163,184,0.95);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 24px;
+      height: 1px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(148,163,184,0.2), rgba(148,163,184,0.6));
+    }
+
+    .control-group {
+      margin-bottom: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .control-group label {
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      color: rgba(209,213,219,0.96);
+    }
+
+    .control-group label span.value {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(30,64,175,0.6);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 0, #f9fafb, #60a5fa);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.3);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #60a5fa;
+      border: 0;
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.3);
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    select, input[type="text"], textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      color: #e5e7eb;
+      font-size: 12px;
+      padding: 5px 7px;
+      outline: none;
+    }
+
+    select:focus, input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.6);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      max-height: 160px;
+    }
+
+    .small-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.55);
+      background: radial-gradient(circle at 20% 0, rgba(59,130,246,0.3), rgba(15,23,42,1));
+      color: #e5e7eb;
+      font-size: 11px;
+      padding: 5px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+                  background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+      border-color: rgba(191,219,254,1);
+      color: #0b1020;
+      font-weight: 600;
+    }
+
+    .btn.danger {
+      border-color: rgba(248,113,113,0.8);
+      background: radial-gradient(circle at 0 0, rgba(248,113,113,0.3), #111827);
+      color: #fecaca;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(15,23,42,0.7);
+      border-color: rgba(191,219,254,0.9);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 4px 0 6px;
+    }
+
+    .pill {
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(51,65,85,0.8);
+      color: var(--text-soft);
+      cursor: pointer;
+      background: radial-gradient(circle at top, rgba(15,23,42,1), rgba(15,23,42,1));
+    }
+
+    .pill.active {
+      border-color: rgba(56,189,248,0.9);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.16), rgba(15,23,42,1));
+      color: #e0f2fe;
+    }
+
+    /* Canvas-Bereich */
+    #studio-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .canvas-shell {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: radial-gradient(circle at top, rgba(30,64,175,0.8), rgba(15,23,42,1));
+      box-shadow: 0 24px 60px rgba(15,23,42,0.9);
+      min-height: 0;
+      flex: 1;
+    }
+
+
+    .canvas-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: rgba(226,232,240,0.8);
+    }
+
+    .canvas-overlay .bubble {
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: linear-gradient(135deg, rgba(15,23,42,0.8), rgba(15,23,42,0.96));
+      border-radius: 999px;
+      padding: 4px 9px;
+      border: 1px solid rgba(148,163,184,0.55);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .canvas-overlay .bubble span.key {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      padding: 1px 5px;
+      border-radius: 6px;
+      border: 1px solid rgba(148,163,184,0.8);
+      font-size: 10px;
+    }
+
+    .canvas-overlay .subtitle {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    /* Element-Liste */
+    .element-list {
+      margin-top: 4px;
+      max-height: 120px;
+      overflow-y: auto;
+      border-radius: 10px;
+      border: 1px solid rgba(30,64,175,0.6);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      padding: 4px;
+      scrollbar-width: thin;
+      font-size: 11px;
+    }
+
+    .element-item {
+      font-size: 11px;
+      padding: 5px 7px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      cursor: pointer;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+
+    .element-item span.type {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    .element-item.active {
+      background: radial-gradient(circle at left, rgba(56,189,248,0.35), rgba(15,23,42,0.98));
+      color: #e5f3ff;
+    }
+
+    .element-item.active span.type {
+      color: #bae6fd;
+    }
+
+    .notice {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 4px 0;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    /* Audio-Reactive & Timeline Styles */
+    .audio-visualizer {
+      display: flex;
+      gap: 2px;
+      height: 60px;
+      align-items: flex-end;
+      padding: 8px;
+      background: rgba(15,23,42,0.6);
+      border-radius: 8px;
+      margin: 8px 0;
+    }
+
+    .audio-bar {
+      flex: 1;
+      background: linear-gradient(to top, #3b82f6, #0ea5e9);
+      min-height: 2px;
+      border-radius: 2px 2px 0 0;
+      transition: height 0.05s linear;
+    }
+
+    .timeline-container {
+      margin: 12px 0;
+      padding: 12px;
+      background: rgba(15,23,42,0.8);
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.3);
+    }
+
+    .timeline-track {
+      position: relative;
+      height: 120px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 6px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      margin: 8px 0;
+    }
+
+    .timeline-ruler {
+      height: 24px;
+      background: rgba(15,23,42,0.9);
+      border-bottom: 1px solid rgba(148,163,184,0.3);
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .timeline-playhead {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #ef4444;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .timeline-controls {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .character-preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+      margin: 8px 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .character-preset-item {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      border: 2px solid rgba(148,163,184,0.3);
+      background: rgba(15,23,42,0.9);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .character-preset-item:hover {
+      border-color: #3b82f6;
+      transform: scale(1.05);
+    }
+
+    .character-preset-item.active {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 2px rgba(14,165,233,0.4);
+    }
+
+    .character-silhouette {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+
+    .audio-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 8px 0;
+      flex-wrap: wrap;
+    }
+
+    .audio-waveform {
+      height: 80px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      margin: 8px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .particle-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .badge-audio {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid rgba(56,189,248,0.7);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.22), rgba(15,23,42,1));
+      color: #e0f2fe;
+    }
+
+    .badge-audio span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,1);
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 8px;
+      }
+
+      header h1 {
+        font-size: 16px;
+      }
+
+      .card {
+        padding: 12px 10px 10px;
+      }
+
+      .character-preset-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <canvas id="scene" width="1482" height="885"></canvas>
+
+    <aside class="panel">
+      <div class="logo-row">
+        <div class="logo-main">
+          <div class="logo-orb"></div>
+          COSMIC VISUALIZER ENTERPRISE UNIVERSE XXL
+        </div>
+        <div class="badge">
+          <span class="dot"></span>
+          v2.0 ENTERPRISE
+        </div>
+      </div>
+      <!-- Visualisierung -->
+      <div class="section">
+        <h2>Visualisierung <span class="accent">Spiral Engine</span></h2>
+
+        <div class="control-group">
+          <label for="arms">
+            <span>Arme</span>
+            <span class="value" id="armsValue">8</span>
+          </label>
+          <input id="arms" type="range" min="1" max="24" step="1" value="8">
+        </div>
+
+        <div class="control-group">
+          <label for="twist">
+            <span>Verdrehung</span>
+            <span class="value" id="twistValue">3.0</span>
+          </label>
+          <input id="twist" type="range" min="0" max="8" step="0.1" value="3">
+        </div>
+
+        <div class="control-group">
+          <label for="density">
+            <span>Dichte</span>
+            <span class="value" id="densityValue">900</span>
+          </label>
+          <input id="density" type="range" min="200" max="2000" step="10" value="900">
+        </div>
+
+        <div class="control-group">
+          <label for="mode">
+            <span>Visualisierung</span>
+          </label>
+          <select id="mode">
+            <option value="2d">2D</option>
+            <option value="3d">3D Orbit</option>
+            <option value="morph">Morph / Atmung</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="speed">
+            <span>Animations-Geschwindigkeit</span>
+            <span class="value" id="speedValue">1.0x</span>
+          </label>
+          <input id="speed" type="range" min="0" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="control-group">
+          <label>
+            <span>Loop / Zyklus</span>
+          </label>
+          <label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" id="autoCycle">
+            <span>Alle Modi im Loop</span>
+          </label>
+          <label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" id="pulseMorph" checked="">
+            <span>Morph pulsiert (Atmung)</span>
+          </label>
+        </div>
+
+        <div class="small-label">Spiral-Presets</div>
+        <div class="pill-row" id="presetRow">
+          <button class="pill active" data-preset="healing">Healing</button>
+          <button class="pill" data-preset="yinYang">Yin / Yang</button>
+          <button class="pill" data-preset="lotus">Lotus</button>
+          <button class="pill" data-preset="galaxy">Galaxy</button>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" id="randomPresetBtn">✧ Zufall</button>
+          <button class="btn" id="universeRandomBtn">✨ Universe</button>
+          <button class="btn" id="resetBtn">↺ Reset</button>
+        </div>
+
+      <!-- Hollywood / Cinema -->
+      <div class="section">
+        <h2>Hollywood / Cinema <span class="accent">Camera &amp; FX</span></h2>
+
+        <div class="control-group">
+          <label>
+            <span>Hollywood Modus</span>
+          </label>
+          <label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" id="hollywoodMode">
+            <span>Cinematic Effekte aktiv</span>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label for="cameraOrbit">
+            <span>Kamera Orbit</span>
+            <span class="value" id="cameraOrbitValue">1.0</span>
+          </label>
+          <input id="cameraOrbit" type="range" min="0" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="control-group">
+          <label for="cameraZoom">
+            <span>Kamera Zoom</span>
+            <span class="value" id="cameraZoomValue">1.00</span>
+          </label>
+          <input id="cameraZoom" type="range" min="1" max="2" step="0.05" value="1">
+        </div>
+
+        <div class="control-group">
+          <label for="grainStrength">
+            <span>Filmgrain</span>
+            <span class="value" id="grainStrengthValue">0.20</span>
+          </label>
+          <input id="grainStrength" type="range" min="0" max="1" step="0.05" value="0.2">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn secondary" id="savePngBtn">⬇ PNG (Canvas)</button>
+          <button class="btn secondary" id="saveSvgBtn">⬇ Spiral als SVG</button>
+        </div>
+      </div>
+
+
+      <!-- Elemente -->
+      <div class="section">
+        <h2>Elemente <span class="accent">Canvas Objects</span></h2>
+
+        <div class="small-label">Im Canvas</div>
+
+        <div class="pill-row">
+          <button class="btn" id="addTextBtn">＋ Text</button>
+          <button class="btn" id="addImageBtn">＋ Bild</button>
+          <button class="btn" id="addVideoBtn">＋ Video</button>
+          <button class="btn" id="addOrbBtn">＋ Orb</button>
+          <button class="btn" id="addBeamBtn">＋ Lichtstrahl</button>
+        </div>
+
+        <input type="file" id="imageInput" accept="image/*" style="display:none;">
+        <input type="file" id="videoInput" accept="video/*" style="display:none;">
+
+        <div class="small-label">Liste</div>
+        <div class="element-list" id="elementList"></div>
+
+        <div class="small-label">Text-Inhalt (für Text-Elemente)</div>
+        <input type="text" id="textContentInput" placeholder="Text hier eingeben …">
+
+        <div class="small-label">Animationsprofil (pro Element)</div>
+        <select id="animationProfile">
+          <option value="none">Keine</option>
+          <option value="float">Schweben</option>
+          <option value="rotate">Rotieren</option>
+          <option value="pulse">Pulsieren</option>
+          <option value="orbit">Orbit</option>
+          <option value="shake">Shake</option>
+          <option value="flicker">Flicker</option>
+        </select>
+
+        <div class="control-group">
+          <label for="animIntensity">
+            <span>Intensität</span>
+            <span class="value" id="animIntensityValue">1.0</span>
+          </label>
+          <input id="animIntensity" type="range" min="0" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="control-group">
+          <label for="elementOpacity">
+            <span>Deckkraft (Element)</span>
+            <span class="value" id="elementOpacityValue">1.00</span>
+          </label>
+          <input id="elementOpacity" type="range" min="0" max="1" step="0.05" value="1">
+        </div>
+
+        <div class="small-label">Blend-Modus</div>
+        <select id="elementBlendMode">
+          <option value="source-over">Normal</option>
+          <option value="screen">Screen</option>
+          <option value="add">Additiv</option>
+        </select>
+
+        <div class="btn-row">
+          <button class="btn danger" id="deleteElementBtn">✕ Element löschen</button>
+        </div>
+
+      <!-- Audio-Reaktivität -->
+      <div class="section">
+        <h2>Audio-Reaktivität <span class="accent">Visual Sound</span></h2>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px;">
+          <label style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="audioReactive" checked="">
+            Animation reagiert auf Sound
+          </label>
+          <div class="badge-audio" id="audioStatus"><span class="dot"></span>Fallback-Ton</div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px;">
+          <label style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="animationSoundToggle" checked="">
+            Animationssound (Arpeggios &amp; Skalen)
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label for="audioSensitivity">
+            <span>Sensitivität</span>
+            <span class="value" id="audioSensitivityValue">1.0</span>
+          </label>
+          <input id="audioSensitivity" type="range" min="0" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="control-group">
+          <label for="audioReactiveIntensity">
+            <span>Audio-Reactive Intensität</span>
+            <span class="value" id="audioReactiveIntensityValue">1.0</span>
+          </label>
+          <input id="audioReactiveIntensity" type="range" min="0" max="5" step="0.1" value="1">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn secondary" id="useMicBtn">Mikrofon nutzen</button>
+          <button class="btn secondary" id="attachVideoAudioBtn">Audio vom Video</button>
+          <button class="btn secondary" id="loadAudioBtn">🎵 Audio laden</button>
+        </div>
+
+        <input type="file" id="audioInput" accept="audio/*" class="hidden-input">
+
+        <div class="audio-visualizer" id="audioVisualizer">
+          <!-- Audio bars werden dynamisch generiert -->
+        </div>
+
+        <div class="audio-waveform" id="audioWaveform">
+          <canvas id="waveformCanvas" width="270" height="80"></canvas>
+        </div>
+
+        <div class="hint">
+          Audio startet automatisch mit Fallback-Ton. Mit <code>Mikrofon nutzen</code> kannst du auf Eingaben reagieren lassen.
+        </div>
+
+        <!-- MUSIKSTUDIO-MIXER -->
+        <div class="section" style="margin-top:16px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
+          <h3 style="font-size:13px;margin-bottom:12px;color:var(--accent);">🎚️ Mixer (Musikstudio-Modus)</h3>
+          
+          <div class="control-group" style="margin-bottom:10px;">
+            <label for="channelGainAudio">
+              <span>🎵 Audio-Datei</span>
+              <span class="value" id="channelGainAudioValue">100%</span>
+            </label>
+            <input id="channelGainAudio" type="range" min="0" max="200" step="1" value="100">
+          </div>
+
+          <div class="control-group" style="margin-bottom:10px;">
+            <label for="channelGainVideo">
+              <span>🎬 Video-Audio</span>
+              <span class="value" id="channelGainVideoValue">100%</span>
+            </label>
+            <input id="channelGainVideo" type="range" min="0" max="200" step="1" value="100">
+          </div>
+
+          <div class="control-group" style="margin-bottom:10px;">
+            <label for="channelGainMic">
+              <span>🎤 Mikrofon</span>
+              <span class="value" id="channelGainMicValue">100%</span>
+            </label>
+            <input id="channelGainMic" type="range" min="0" max="200" step="1" value="100">
+          </div>
+
+          <div class="control-group" style="margin-bottom:10px;">
+            <label for="channelGainFallback">
+              <span>🎹 Animationssound</span>
+              <span class="value" id="channelGainFallbackValue">100%</span>
+            </label>
+            <input id="channelGainFallback" type="range" min="0" max="200" step="1" value="100">
+          </div>
+
+          <div class="control-group" style="margin-bottom:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;">
+            <label for="masterGain">
+              <span style="font-weight:600;color:var(--accent);">🔊 Master</span>
+              <span class="value" id="masterGainValue">100%</span>
+            </label>
+            <input id="masterGain" type="range" min="0" max="200" step="1" value="100">
+          </div>
+
+          <div class="hint" style="font-size:10px;margin-top:8px;opacity:0.7;">
+            <strong>Pipeline:</strong> Quellen → Kanal-Gain → Master-Mixer → Analyser + Recording
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline & Keyframes -->
+      <div class="section">
+        <h2>Timeline &amp; Keyframes <span class="accent">Animation Control</span></h2>
+
+        <div class="timeline-container">
+          <div class="timeline-ruler" id="timelineRuler">
+            <div class="timeline-playhead" id="timelinePlayhead"></div>
+          </div>
+          <div class="timeline-track" id="timelineTrack">
+            <canvas id="timelineCanvas" width="2000" height="120"></canvas>
+          </div>
+          <div class="timeline-controls">
+            <button class="btn" id="timelinePlayBtn">▶</button>
+            <button class="btn" id="timelinePauseBtn">⏸</button>
+            <button class="btn" id="timelineStopBtn">⏹</button>
+            <button class="btn" id="timelineAddKeyframeBtn">+ Keyframe</button>
+            <span style="font-size:11px;color:var(--muted);margin-left:auto;">
+              <span id="timelineTime">0:00</span> / <span id="timelineDuration">0:00</span>
+            </span>
+          </div>
+        </div>
+
+      <!-- Character Presets -->
+      <div class="section">
+        <h2>Character &amp; Avatare <span class="accent">Presets</span></h2>
+
+        <div class="character-preset-grid" id="characterPresetGrid"><div class="character-preset-item" title="Hero"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M50,20 L60,50 L50,80 L40,50 Z M30,70 L50,60 L70,70 L50,80 Z"></path></g></svg></div><div class="character-preset-item" title="Villain"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M50,15 L55,45 L50,85 L45,45 Z M25,75 L50,65 L75,75 L50,85 Z M40,30 L50,25 L60,30 L50,35 Z"></path></g></svg></div><div class="character-preset-item" title="Warrior"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M50,10 L55,40 L50,90 L45,40 Z M20,80 L50,70 L80,80 L50,90 Z M50,30 L60,25 L70,30 L50,40 Z"></path></g></svg></div><div class="character-preset-item" title="Mage"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M50,5 L55,35 L50,95 L45,35 Z M35,85 L50,75 L65,85 L50,95 Z M50,20 L45,15 L50,10 L55,15 Z"></path></g></svg></div><div class="character-preset-item" title="Ninja"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M50,10 L52,40 L50,90 L48,40 Z M30,80 L50,70 L70,80 L50,90 Z"></path></g></svg></div><div class="character-preset-item" title="Cyborg"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M50,15 L55,45 L50,85 L45,45 Z M35,75 L50,65 L65,75 L50,85 Z M45,30 L50,25 L55,30 L50,35 Z M40,50 L50,45 L60,50 L50,55 Z"></path></g></svg></div><div class="character-preset-item" title="Alien"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M50,5 L60,40 L50,95 L40,40 Z M30,80 L50,70 L70,80 L50,90 Z M50,20 L45,15 L50,10 L55,15 Z"></path></g></svg></div><div class="character-preset-item" title="Robot"><svg viewBox="0 0 100 100" width="100%" height="100%"><g fill="url(#charGradient)"><defs><lineargradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"></stop><stop offset="100%" stop-color="#0ea5e9"></stop></lineargradient></defs><path d="M40,20 L60,20 L60,50 L40,50 Z M35,50 L65,50 L65,80 L35,80 Z M45,25 L50,25 L50,30 L45,30 Z M50,25 L55,25 L55,30 L50,30 Z"></path></g></svg></div></div>
+
+        <div class="btn-row">
+          <button class="btn" id="addCharacterBtn">+ Character hinzufügen</button>
+        </div>
+
+      <!-- Projekt -->
+      <div class="section">
+        <h2>Projekt <span class="accent">Export/Import</span></h2>
+
+        <div class="btn-row">
+          <button class="btn" id="saveProjectBtn">⇣ Projekt speichern</button>
+          <button class="btn" id="loadProjectBtn">⇡ Projekt laden</button>
+        </div>
+
+        <label class="small-label" for="projectJson">Projekt-JSON</label>
+        <textarea id="projectJson" placeholder="Hier Projekt-JSON anzeigen / einfügen…"></textarea>
+
+        <p class="notice">
+          Alles was du baust – Spirale, Elemente, Animationsprofile – kann als JSON gespeichert
+          und wieder geladen werden. Perfekt für Serien, Templates &amp; Kundenprojekte.
+        </p>
+      </div>
+
+      <!-- Video-Aufnahme & Export -->
+      <div class="section">
+        <h2>Video-Aufnahme <span class="accent">Export</span></h2>
+
+        <div class="btn-row">
+          <button class="btn" id="startRecordingBtn">🔴 Aufnahme starten</button>
+          <button class="btn secondary" id="stopRecordingBtn" disabled="">⏹ Aufnahme stoppen</button>
+          <button class="btn secondary" id="downloadVideoBtn" disabled="">⬇ Video downloaden</button>
+        </div>
+
+        <div class="hint" id="recordingStatus">
+          Bereit für Aufnahme. Animation wird mit allen Elementen, Audio und Timeline aufgenommen. Aufnahme läuft unbegrenzt bis manuell gestoppt.
+        </div>
+
+        <p class="notice">
+          Die komplette Visualisierung wird als Video aufgenommen – inklusive aller Elemente, Audio-Reaktivität, Timeline und Keyframes. 
+          Das Video kann als MP4 heruntergeladen werden und ist auf jedem Rechner abspielbar.
+        </p>
+      </div>
+    </div></div></div></div></aside>
+  </div>
+
+<script>
+(function() {
+  // ===============================
+  // Grund-Referenzen
+  // ===============================
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+
+  const armsInput = document.getElementById('arms');
+  const twistInput = document.getElementById('twist');
+  const densityInput = document.getElementById('density');
+  const modeSelect = document.getElementById('mode');
+  const speedInput = document.getElementById('speed');
+  const autoCycleInput = document.getElementById('autoCycle');
+  const pulseMorphInput = document.getElementById('pulseMorph');
+
+  const armsValue = document.getElementById('armsValue');
+  const twistValue = document.getElementById('twistValue');
+  const densityValue = document.getElementById('densityValue');
+  const speedValue = document.getElementById('speedValue');
+
+  const presetRow = document.getElementById('presetRow');
+  const randomPresetBtn = document.getElementById('randomPresetBtn');
+  const universeRandomBtn = document.getElementById('universeRandomBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const savePngBtn = document.getElementById('savePngBtn');
+  const saveSvgBtn = document.getElementById('saveSvgBtn');
+
+  const hollywoodModeInput = document.getElementById('hollywoodMode');
+  const cameraOrbitInput = document.getElementById('cameraOrbit');
+  const cameraOrbitValue = document.getElementById('cameraOrbitValue');
+  const cameraZoomInput = document.getElementById('cameraZoom');
+  const cameraZoomValue = document.getElementById('cameraZoomValue');
+  const grainStrengthInput = document.getElementById('grainStrength');
+  const grainStrengthValue = document.getElementById('grainStrengthValue');
+
+  const addTextBtn = document.getElementById('addTextBtn');
+  const addImageBtn = document.getElementById('addImageBtn');
+  const addVideoBtn = document.getElementById('addVideoBtn');
+  const addOrbBtn = document.getElementById('addOrbBtn');
+  const addBeamBtn = document.getElementById('addBeamBtn');
+
+  const imageInput = document.getElementById('imageInput');
+  const videoInput = document.getElementById('videoInput');
+
+  const elementList = document.getElementById('elementList');
+  const textContentInput = document.getElementById('textContentInput');
+  const animationProfileSelect = document.getElementById('animationProfile');
+  const animIntensity = document.getElementById('animIntensity');
+  const animIntensityValue = document.getElementById('animIntensityValue');
+  const elementOpacityInput = document.getElementById('elementOpacity');
+  const elementOpacityValue = document.getElementById('elementOpacityValue');
+  const elementBlendModeSelect = document.getElementById('elementBlendMode');
+  const deleteElementBtn = document.getElementById('deleteElementBtn');
+
+  const saveProjectBtn = document.getElementById('saveProjectBtn');
+  const loadProjectBtn = document.getElementById('loadProjectBtn');
+  const projectJson = document.getElementById('projectJson');
+
+  // Video-Aufnahme
+  const startRecordingBtn = document.getElementById('startRecordingBtn');
+  const stopRecordingBtn = document.getElementById('stopRecordingBtn');
+  const downloadVideoBtn = document.getElementById('downloadVideoBtn');
+  const recordingStatus = document.getElementById('recordingStatus');
+
+  // Audio-Reactive System (Hybrid)
+  const audioReactiveInput = document.getElementById('audioReactive');
+  const audioSensitivityInput = document.getElementById('audioSensitivity');
+  const audioSensitivityValue = document.getElementById('audioSensitivityValue');
+  const loadAudioBtn = document.getElementById('loadAudioBtn');
+  const useMicBtn = document.getElementById('useMicBtn');
+  const attachVideoAudioBtn = document.getElementById('attachVideoAudioBtn');
+  const audioInput = document.getElementById('audioInput');
+  const audioVisualizer = document.getElementById('audioVisualizer');
+  const waveformCanvas = document.getElementById('waveformCanvas');
+  const waveformCtx = waveformCanvas ? waveformCanvas.getContext('2d') : null;
+  const audioReactiveIntensity = document.getElementById('audioReactiveIntensity');
+  const audioReactiveIntensityValue = document.getElementById('audioReactiveIntensityValue');
+
+  // Timeline System
+  const timelinePlayBtn = document.getElementById('timelinePlayBtn');
+  const timelinePauseBtn = document.getElementById('timelinePauseBtn');
+  const timelineStopBtn = document.getElementById('timelineStopBtn');
+  const timelineAddKeyframeBtn = document.getElementById('timelineAddKeyframeBtn');
+  const timelineCanvas = document.getElementById('timelineCanvas');
+  const timelineCtx = timelineCanvas.getContext('2d');
+  const timelineTime = document.getElementById('timelineTime');
+  const timelineDuration = document.getElementById('timelineDuration');
+  const timelinePlayhead = document.getElementById('timelinePlayhead');
+
+  // Character Presets
+  const characterPresetGrid = document.getElementById('characterPresetGrid');
+  const addCharacterBtn = document.getElementById('addCharacterBtn');
+
+  // ===============================
+  // Global State
+  // ===============================
+  let currentMode = '2d';
+  let lastTimestamp = 0;
+  let globalTime = 0;
+  let cycleTime = 0;
+  let currentPalette = {
+    base: '#020617',
+    primary: '#3b82f6',
+    secondary: '#facc15'
+  };
+
+  let cameraOffsetX = 0;
+  let cameraOffsetY = 0;
+  let cameraZoom = 1;
+
+  const hollywoodStars = Array.from({ length: 180 }, () => ({
+    x: Math.random(),
+    y: Math.random(),
+    size: 0.3 + Math.random() * 1.7,
+    phase: Math.random() * Math.PI * 2
+  }));
+
+  let elements = [];
+  let elementIdCounter = 1;
+  let activeElementId = null;
+
+  let isDragging = false;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+
+  // Audio-Reactive State (Hybrid: ROOT + CHAT)
+  let audioContext = null;
+  let audioSource = null;
+  let analyser = null;
+  let audioDataArray = null;
+  let currentAudio = null;
+  let isAudioPlaying = false;
+  let audioReactiveData = {
+    bass: 0,
+    mids: 0,
+    highs: 0,
+    overall: 0
+  };
+  let audioBars = [];
+  
+  // CHAT Audio Features
+  let audioEnabled = false;
+  let audioLevelSmoothed = 0;
+  let audioSourceType = 'fallback'; // 'fallback' | 'mic' | 'video' | 'upload'
+  let fallbackOscillator = null;
+  let fallbackGain = null;
+  let micStream = null;
+  let micSource = null; // MediaStreamSource für Mikrofon
+  let videoAudioSource = null;
+  let animationSoundEnabled = true; // Animationssound ein/aus
+  let arpeggioIndex = 0; // Für Arpeggio-Durchlauf
+  let scaleIndex = 0; // Für Skalen-Durchlauf
+  let arpeggioTimer = null; // Timer für Arpeggio-Updates
+  
+  // ===============================
+  // MUSIKSTUDIO-MIXER-SYSTEM
+  // ===============================
+  // Pipeline-Struktur:
+  // [Audio-Quellen] → [Kanal-Gain] → [Master-Mixer] → [Splitter] → [Analyser + Recording]
+  //
+  // Quellen:
+  // 1. Uploaded Audio (audioSource) → channelGainAudio
+  // 2. Video Audio (videoAudioSource) → channelGainVideo
+  // 3. Mikrofon (micSource) → channelGainMic
+  // 4. Animationssound (fallbackGain) → channelGainFallback
+  //
+  // Mixer:
+  // - Master-Mixer: Summiert alle Kanäle
+  // - Master-Gain: Gesamtlautstärke
+  // - Splitter: Verteilt Signal zu Analyser (Visualisierung) und Recording
+  //
+  let channelGainAudio = null;      // Gain für Uploaded Audio
+  let channelGainVideo = null;      // Gain für Video Audio
+  let channelGainMic = null;        // Gain für Mikrofon
+  let channelGainFallback = null;  // Gain für Animationssound
+  let masterMixer = null;           // Master-Mixer (Summierungs-Node)
+  let masterGain = null;            // Master-Gain (Gesamtlautstärke)
+  let mixerSplitter = null;        // Splitter für Analyser + Recording
+
+  // Timeline State
+  let timelineIsPlaying = false;
+  let timelineCurrentTime = 0;
+  let timelineDurationValue = 0;
+  let keyframes = [];
+  let timelineAnimationId = null;
+
+  // Video-Aufnahme State
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let isRecording = false;
+  let recordingStartTime = 0;
+  let recordingStatusInterval = null;
+
+  // Character Presets
+  const characterPresets = [
+    { id: 'hero', name: 'Hero', shape: 'hero' },
+    { id: 'villain', name: 'Villain', shape: 'villain' },
+    { id: 'warrior', name: 'Warrior', shape: 'warrior' },
+    { id: 'mage', name: 'Mage', shape: 'mage' },
+    { id: 'ninja', name: 'Ninja', shape: 'ninja' },
+    { id: 'cyborg', name: 'Cyborg', shape: 'cyborg' },
+    { id: 'alien', name: 'Alien', shape: 'alien' },
+    { id: 'robot', name: 'Robot', shape: 'robot' }
+  ];
+  let activeCharacterPreset = null;
+
+  // Particles
+  let particles = [];
+
+  // ===============================
+  // Utilities
+  // ===============================
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function randomInRange(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function updateLabelValues() {
+    armsValue.textContent = armsInput.value;
+    twistValue.textContent = parseFloat(twistInput.value).toFixed(1);
+    densityValue.textContent = densityInput.value;
+    speedValue.textContent = parseFloat(speedInput.value).toFixed(1) + 'x';
+    animIntensityValue.textContent = parseFloat(animIntensity.value).toFixed(1);
+
+    if (cameraOrbitInput && cameraOrbitValue) {
+      cameraOrbitValue.textContent = parseFloat(cameraOrbitInput.value).toFixed(1);
+    }
+    if (cameraZoomInput && cameraZoomValue) {
+      cameraZoomValue.textContent = parseFloat(cameraZoomInput.value).toFixed(2);
+    }
+    if (grainStrengthInput && grainStrengthValue) {
+      grainStrengthValue.textContent = parseFloat(grainStrengthInput.value).toFixed(2);
+    }
+    if (elementOpacityInput && elementOpacityValue) {
+      elementOpacityValue.textContent = parseFloat(elementOpacityInput.value).toFixed(2);
+    }
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    modeSelect.value = mode;
+  }
+
+  // ===============================
+  // Spiral-Presets
+  // ===============================
+  const spiralPresets = {
+    healing: {
+      arms: 8,
+      twist: 3,
+      density: 900,
+      mode: '2d',
+      palette: {
+        base: '#020617',
+        primary: '#38bdf8',
+        secondary: '#a855f7'
+      }
+    },
+    yinYang: {
+      arms: 2,
+      twist: 2.4,
+      density: 700,
+      mode: 'morph',
+      palette: {
+        base: '#020617',
+        primary: '#f97316',
+        secondary: '#f9fafb'
+      }
+    },
+    lotus: {
+      arms: 12,
+      twist: 4.5,
+      density: 1200,
+      mode: '2d',
+      palette: {
+        base: '#020617',
+        primary: '#22c55e',
+        secondary: '#eab308'
+      }
+    },
+    galaxy: {
+      arms: 5,
+      twist: 5.2,
+      density: 1500,
+      mode: '3d',
+      palette: {
+        base: '#020617',
+        primary: '#6366f1',
+        secondary: '#f472b6'
+      }
+    }
+  };
+
+  function applyPreset(key) {
+    const preset = spiralPresets[key];
+    if (!preset) return;
+    armsInput.value = preset.arms;
+    twistInput.value = preset.twist;
+    densityInput.value = preset.density;
+    currentPalette = { ...preset.palette };
+    setMode(preset.mode);
+    updateLabelValues();
+    
+    // CHAT: Pill-Aktivierung
+    if (presetRow) {
+      Array.from(presetRow.querySelectorAll('.pill')).forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.preset === key);
+      });
+    }
+  }
+
+  // ===============================
+  // Background
+  // ===============================
+  function drawBackground(w, h) {
+    const grd = ctx.createRadialGradient(
+      w*0.5, h*0.1, 0,
+      w*0.5, h*0.1, h*0.9
+    );
+    grd.addColorStop(0, '#020617');
+    grd.addColorStop(0.4, '#020617');
+    grd.addColorStop(1, '#000000');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(148,163,184,0.12)';
+    ctx.lineWidth = 1;
+    const rBase = Math.min(w,h) * 0.35;
+    [1, 1.4, 1.8].forEach(f => {
+      ctx.beginPath();
+      ctx.arc(w*0.5, h*0.48, rBase*f*0.35, 0, Math.PI*2);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function drawBackgroundHollywood(w, h, t) {
+    drawBackground(w, h);
+
+    // Starfield
+    ctx.save();
+    ctx.globalAlpha = 0.6;
+    hollywoodStars.forEach(star => {
+      const x = star.x * w;
+      const y = star.y * h;
+      const flicker = 0.6 + 0.4 * Math.sin(t * 2 + star.phase);
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(248,250,252,${0.2 * flicker})`;
+      ctx.arc(x, y, star.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+
+    // Lens-Flare
+    ctx.save();
+    ctx.translate(w * 0.5 + cameraOffsetX * 0.4, h * 0.5 + cameraOffsetY * 0.6);
+    ctx.rotate(Math.sin(t * 0.5) * 0.12);
+    const flareW = w * 0.7;
+    const flareH = h * 0.05;
+    const grad = ctx.createLinearGradient(-flareW/2, 0, flareW/2, 0);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(0.4, 'rgba(59,130,246,0)');
+    grad.addColorStop(0.5, 'rgba(248,250,252,0.95)');
+    grad.addColorStop(0.6, 'rgba(59,130,246,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = grad;
+    ctx.fillRect(-flareW/2, -flareH/2, flareW, flareH);
+    ctx.restore();
+
+    // Filmgrain
+    const strength = parseFloat(grainStrengthInput.value || '0') || 0;
+    if (strength > 0) {
+      ctx.save();
+      const count = Math.floor(600 * strength);
+      ctx.globalAlpha = 0.18 * strength;
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const s = 1 + Math.random() * 2;
+        ctx.fillStyle = Math.random() > 0.5 ? 'rgba(15,23,42,1)' : 'rgba(248,250,252,1)';
+        ctx.fillRect(x, y, s, s);
+      }
+      ctx.restore();
+    }
+  }
+
+  // ===============================
+  // Spirale
+  // ===============================
+  function drawSpiral2D(w, h, time) {
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const cx = w * 0.5 + cameraOffsetX;
+    const cy = h * 0.48 + cameraOffsetY;
+    const rMax = Math.min(w,h) * 0.32 * cameraZoom;
+
+    const speed = parseFloat(speedInput.value) || 1;
+    const phaseOffset = time * 0.4 * speed;
+    
+    // CHAT: Audio-Boost für Spiral
+    const audioBoost = 1 + audioLevelSmoothed * 0.9 * (pulseMorphInput?.checked ? 1 : 0.3);
+    const baseHueShift = audioLevelSmoothed * 40;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    const baseColor = currentPalette.primary || '#3b82f6';
+    const secondaryColor = currentPalette.secondary || '#facc15';
+
+    ctx.globalAlpha = 0.5;
+    ctx.lineWidth = 1.1;
+    for (let ring = 0; ring < 3; ring++) {
+      ctx.beginPath();
+      for (let i = 0; i <= N; i++) {
+        const f = i / N;
+        const angle = f * Math.PI * (2 + T + ring * 0.3);
+        const r = rMax * Math.pow(f, 0.9) * (0.6 + ring * 0.2);
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      const grad = ctx.createLinearGradient(-rMax, -rMax, rMax, rMax);
+      grad.addColorStop(0, 'rgba(15,23,42,0.0)');
+      grad.addColorStop(0.3, baseColor);
+      grad.addColorStop(0.7, secondaryColor);
+      grad.addColorStop(1, 'rgba(15,23,42,0.0)');
+      ctx.strokeStyle = grad;
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+    for (let a=0; a<A; a++) {
+      const armPhase = (a/A) * Math.PI * 2 + phaseOffset;
+      ctx.beginPath();
+      for (let i=0; i<=N; i++) {
+        const f = i/N;
+        const angle = f * Math.PI * (3.2 + T) + armPhase;
+        const r = rMax * Math.pow(f, 0.92) * audioBoost;
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+      }
+      const gradArm = ctx.createLinearGradient(-rMax, 0, rMax, 0);
+      gradArm.addColorStop(0, baseColor);
+      gradArm.addColorStop(0.5, '#f9fafb');
+      gradArm.addColorStop(1, secondaryColor);
+      ctx.strokeStyle = gradArm;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+
+    // Core
+    ctx.beginPath();
+    ctx.arc(0, 0, rMax*0.18, 0, Math.PI*2);
+    const coreGrad = ctx.createRadialGradient(0,0,0, 0,0,rMax*0.18);
+    coreGrad.addColorStop(0, '#f9fafb');
+    coreGrad.addColorStop(1, baseColor);
+    ctx.fillStyle = coreGrad;
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function project3D(x,y,z, w,h, t) {
+    const speed = parseFloat(speedInput.value) || 1;
+    const rotY = t * 0.25 * speed;
+    const rotX = t * 0.18 * speed;
+
+    const cosY = Math.cos(rotY);
+    const sinY = Math.sin(rotY);
+    const cosX = Math.cos(rotX);
+    const sinX = Math.sin(rotX);
+
+    let dx = x * cosY - z * sinY;
+    let dz = x * sinY + z * cosY;
+    let dy = y * cosX - dz * sinX;
+    dz = y * sinX + dz * cosX;
+
+    const dist = 420;
+    const f = dist / (dist + dz);
+    const px = dx * f;
+    const py = dy * f * 0.9;
+
+    return {
+      x: w*0.5 + cameraOffsetX + px * cameraZoom,
+      y: h*0.48 + cameraOffsetY + py * cameraZoom
+    };
+  }
+
+  function drawSpiral3D(w, h, time) {
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const rMax = Math.min(w,h) * 0.32 * cameraZoom;
+
+    const baseColor = currentPalette.primary || '#3b82f6';
+    const secondaryColor = currentPalette.secondary || '#f97316';
+
+    ctx.save();
+    ctx.lineWidth = 1.1;
+
+    for (let a=0; a<A; a++) {
+      const phase = (a/A) * Math.PI*2;
+      ctx.beginPath();
+      for (let i=0; i<=N; i++) {
+        const f = i/N;
+        const angle = f * Math.PI * (4 + T) + phase;
+        const radius = rMax * Math.pow(f, 0.85);
+        const x = radius * Math.cos(angle);
+        const y = (radius * Math.sin(angle)) * 0.5;
+        const z = (f - 0.5) * 420;
+        const p = project3D(x, y, z, w, h, time);
+        if (i===0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      const grad = ctx.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0, baseColor);
+      grad.addColorStop(0.5, '#f9fafb');
+      grad.addColorStop(1, secondaryColor);
+      ctx.strokeStyle = grad;
+      ctx.stroke();
+    }
+
+    // Orbit-Kreis
+    ctx.beginPath();
+    ctx.arc(w*0.5 + cameraOffsetX, h*0.45 + cameraOffsetY, rMax*0.45, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(148,163,184,0.4)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSpiralMorph(w,h,time) {
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const cx = w * 0.5 + cameraOffsetX;
+    const cy = h * 0.48 + cameraOffsetY;
+    const rMax = Math.min(w,h) * 0.32 * cameraZoom;
+
+    const speed = parseFloat(speedInput.value) || 1;
+    const pulseStrength = pulseMorphInput.checked ? 0.15 : 0.0;
+    const pulse = 1 + Math.sin(time * 1.2 * speed) * pulseStrength;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    const baseColor = currentPalette.primary || '#22c55e';
+    const secondaryColor = currentPalette.secondary || '#f97316';
+
+    for (let a=0; a<A; a++) {
+      const phase = (a/A) * Math.PI*2;
+      ctx.beginPath();
+      for (let i=0; i<=N; i++) {
+        const f = i/N;
+        const angleSpiral = f * Math.PI * (2 + T) + phase;
+        const angleCircle = f * Math.PI*2 + phase;
+        const rSpiral = rMax * Math.pow(f,0.9);
+        const rCircle = rMax * 0.6;
+
+        const mix = (Math.sin(time * 0.8 * speed + f*4) + 1) * 0.5;
+        const r = (rSpiral * (1-mix) + rCircle * mix) * pulse;
+
+        const angle = angleSpiral*(1-mix) + angleCircle*mix;
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle);
+
+        if (i===0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+      }
+      const grad = ctx.createLinearGradient(-rMax,0,rMax,0);
+      grad.addColorStop(0, baseColor);
+      grad.addColorStop(0.5, '#f9fafb');
+      grad.addColorStop(1, secondaryColor);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  // ===============================
+  // Elemente
+  // ===============================
+  function addElement(el) {
+    elements.push(el);
+    activeElementId = el.id;
+    renderElementList();
+  }
+
+  function createTextElement(text) {
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    const el = {
+      id: elementIdCounter++,
+      type: 'text',
+      text: text || 'Neuer Titel',
+      x: w * 0.5,
+      y: h * 0.85,
+      scale: 1,
+      rotation: 0,
+      opacity: 1,
+      color: '#e5e7eb',
+      fontSize: 32,
+      animationProfile: 'none',
+      animIntensity: 1,
+      blend: 'source-over'
+    };
+    addElement(el);
+    if (textContentInput) textContentInput.value = el.text;
+  }
+
+  function createImageElementFromFile(file) {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.onload = () => {
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+        const el = {
+          id: elementIdCounter++,
+          type: 'image',
+          _image: img,
+          _dataUrl: e.target.result,
+          x: w * 0.5,
+          y: h * 0.5,
+          scale: 0.8,
+          rotation: 0,
+          opacity: 1,
+          animationProfile: 'none',
+          animIntensity: 1,
+          width: img.naturalWidth || 300,
+          height: img.naturalHeight || 200,
+          blend: 'source-over'
+        };
+        addElement(el);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function createVideoElementFromFile(file) {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.src = url;
+    video.loop = true;
+    video.muted = false;
+    video.playsInline = true;
+    video.crossOrigin = 'anonymous';
+    
+    video.addEventListener('loadedmetadata', () => {
+      // Video-Audio automatisch extrahieren und Timeline-Dauer setzen
+      if (video.duration && !isNaN(video.duration) && isFinite(video.duration)) {
+        timelineDurationValue = video.duration;
+        updateTimelineDuration();
+      }
+      extractVideoAudio(video);
+    });
+    
+    video.addEventListener('timeupdate', () => {
+      if (video.duration && !isNaN(video.duration)) {
+        timelineCurrentTime = video.currentTime;
+        updateTimelineTime();
+      }
+    });
+    
+    video.addEventListener('play', () => {
+      timelineIsPlaying = true;
+    });
+    
+    video.addEventListener('pause', () => {
+      timelineIsPlaying = false;
+    });
+    
+    video.play().catch(() => {});
+    
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    const el = {
+      id: elementIdCounter++,
+      type: 'video',
+      _video: video,
+      x: w * 0.5,
+      y: h * 0.5,
+      scale: 0.8,
+      rotation: 0,
+      opacity: 1,
+      animationProfile: 'none',
+      animIntensity: 1,
+      width: 320,
+      height: 180,
+      blend: 'source-over'
+    };
+    addElement(el);
+  }
+
+  function createOrbElement() {
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    const el = {
+      id: elementIdCounter++,
+      type: 'orb',
+      x: w * 0.5,
+      y: h * 0.5,
+      scale: 1,
+      rotation: 0,
+      opacity: 0.9,
+      radius: 60,
+      innerColor: '#f9fafb',
+      outerColor: 'rgba(59,130,246,0)',
+      blend: 'screen',
+      animationProfile: 'pulse',
+      animIntensity: 1.2
+    };
+    addElement(el);
+  }
+
+  function createBeamElement() {
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    const el = {
+      id: elementIdCounter++,
+      type: 'beam',
+      x: w * 0.5,
+      y: h * 0.3,
+      scale: 1,
+      rotation: 0,
+      opacity: 0.85,
+      length: 260,
+      width: 40,
+      color: '#f97316',
+      coreColor: '#ffffff',
+      blend: 'screen',
+      animationProfile: 'float',
+      animIntensity: 1
+    };
+    addElement(el);
+  }
+
+  function getElementById(id) {
+    return elements.find(e => e.id === id);
+  }
+
+  function renderElementList() {
+    if (!elementList) return;
+    elementList.innerHTML = '';
+    const active = getElementById(activeElementId);
+
+    elements.forEach(el => {
+      const div = document.createElement('div');
+      div.className = 'element-item' + (el.id === activeElementId ? ' active' : '');
+
+      const label = document.createElement('span');
+      label.textContent = el.type === 'text'
+        ? (el.text || 'Text')
+        : el.type === 'character'
+        ? (characterPresets.find(p => p.id === el.presetId)?.name || 'Character')
+        : el.type.toUpperCase();
+
+      const type = document.createElement('span');
+      type.className = 'type';
+      type.textContent = el.type;
+
+      div.appendChild(label);
+      div.appendChild(type);
+
+      div.addEventListener('click', () => {
+        activeElementId = el.id;
+        animationProfileSelect.value = el.animationProfile || 'none';
+        animIntensity.value = el.animIntensity || 1;
+        elementOpacityInput.value = el.opacity ?? 1;
+        elementBlendModeSelect.value = el.blend || 'source-over';
+        if (el.type === 'text' && textContentInput) {
+          textContentInput.value = el.text || '';
+        } else if (textContentInput) {
+          textContentInput.value = '';
+        }
+        updateLabelValues();
+        renderElementList();
+      });
+
+      elementList.appendChild(div);
+    });
+  }
+
+  function applyAnimationToElement(el, t) {
+    const prof = el.animationProfile || 'none';
+    // CHAT: Audio-Level beeinflusst Intensität
+    const intensity = (el.animIntensity ?? 1) * (0.6 + 0.8 * audioLevelSmoothed);
+
+    el._renderX = el.x;
+    el._renderY = el.y;
+    el._renderScale = el.scale;
+    el._renderRotation = el.rotation;
+
+    if (prof === 'float') {
+      const amp = 10 * intensity;
+      el._renderY = el.y + Math.sin(t * 1.2 + el.id) * amp;
+    } else if (prof === 'rotate') {
+      el._renderRotation = el.rotation + t * 0.7 * intensity;
+    } else if (prof === 'pulse') {
+      const factor = 1 + 0.12 * intensity * Math.sin(t * 2.4 + el.id);
+      el._renderScale = el.scale * factor;
+      el._renderY = el.y + Math.sin(t * 1.3 + el.id) * 6 * intensity;
+    } else if (prof === 'orbit') {
+      const radius = 15 * intensity;
+      el._renderY = el.y + Math.sin(t * 1.3 + el.id) * radius;
+      el._renderRotation = el.rotation + t * 0.4 * intensity;
+    } else if (prof === 'shake') {
+      const amp = 2.5 * intensity;
+      el._renderY = el.y + (Math.random() - 0.5) * amp;
+      el._renderRotation = el.rotation + (Math.random() - 0.5) * 0.02 * intensity;
+    } else if (prof === 'flicker') {
+      const base = el.scale;
+      const flick = 0.1 * intensity;
+      const factor = 1 + flick * (Math.random() - 0.5);
+      el._renderScale = base * factor;
+    }
+  }
+
+  function drawElements(t) {
+    elements.forEach(el => {
+      applyAnimationToElement(el, t);
+
+      const x = el._renderX ?? el.x;
+      const y = el._renderY ?? el.y;
+      const sc = el._renderScale ?? el.scale ?? 1;
+      const rot = el._renderRotation ?? el.rotation ?? 0;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.scale(sc, sc);
+
+      const opacity = el.opacity ?? 1;
+      ctx.globalAlpha = opacity;
+
+      if (el.blend === 'screen') {
+        ctx.globalCompositeOperation = 'screen';
+      } else if (el.blend === 'add') {
+        ctx.globalCompositeOperation = 'lighter';
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      if (el.type === 'text') {
+        ctx.font = `${el.fontSize || 32}px system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = el.color || '#e5e7eb';
+        ctx.shadowColor = 'rgba(15,23,42,0.9)';
+        ctx.shadowBlur = 20;
+        ctx.fillText(el.text || '', 0, 0);
+      } else if (el.type === 'image' && el._image) {
+        const img = el._image;
+        const imgW = img.width;
+        const imgH = img.height;
+        const scaleFit = 260 / Math.max(imgW, imgH);
+        ctx.drawImage(img, -imgW * scaleFit * 0.5, -imgH * scaleFit * 0.5,
+          imgW * scaleFit, imgH * scaleFit);
+      } else if (el.type === 'video' && el._video && el._video.readyState >= 2) {
+        const video = el._video;
+        const vidW = video.videoWidth || 640;
+        const vidH = video.videoHeight || 360;
+        const maxW = 360;
+        const scaleFit = maxW / vidW;
+        ctx.drawImage(video,
+          -vidW * scaleFit * 0.5,
+          -vidH * scaleFit * 0.5,
+          vidW * scaleFit,
+          vidH * scaleFit);
+      } else if (el.type === 'orb') {
+        const r = el.radius || 60;
+        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+        grad.addColorStop(0, el.innerColor || '#ffffff');
+        grad.addColorStop(1, el.outerColor || 'rgba(59,130,246,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (el.type === 'beam') {
+        const len = el.length || 260;
+        const wBeam = el.width || 40;
+        const grad = ctx.createLinearGradient(-len * 0.5, 0, len * 0.5, 0);
+        grad.addColorStop(0, 'rgba(0,0,0,0)');
+        
+        // Color mit Alpha richtig handhaben (HSL oder Hex)
+        const color = el.color || '#f97316';
+        const colorWithAlpha = color.startsWith('hsl') 
+          ? color.replace(')', ', 0)').replace('hsl', 'hsla')
+          : color.length === 7 ? color + '00' : color;
+        
+        grad.addColorStop(0.25, colorWithAlpha);
+        grad.addColorStop(0.5, el.coreColor || '#ffffff');
+        grad.addColorStop(0.75, colorWithAlpha);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(-len * 0.5, -wBeam * 0.5);
+        ctx.lineTo(len * 0.5, 0);
+        ctx.lineTo(-len * 0.5, wBeam * 0.5);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.restore();
+    });
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+  }
+
+  // ===============================
+  // Projekt Export / Import
+  // ===============================
+  function exportProject() {
+    const simpleElements = elements.map(el => {
+      const base = {
+        id: el.id,
+        type: el.type,
+        x: el.x,
+        y: el.y,
+        scale: el.scale,
+        rotation: el.rotation,
+        opacity: el.opacity,
+        animationProfile: el.animationProfile,
+        animIntensity: el.animIntensity,
+        blend: el.blend
+      };
+      if (el.type === 'text') {
+        base.text = el.text;
+        base.color = el.color;
+        base.fontSize = el.fontSize;
+      } else if (el.type === 'image') {
+        base.imageDataUrl = el._dataUrl || null;
+      } else if (el.type === 'video') {
+        base.videoPlaceholder = true;
+      } else if (el.type === 'orb') {
+        base.radius = el.radius;
+        base.innerColor = el.innerColor;
+        base.outerColor = el.outerColor;
+      } else if (el.type === 'beam') {
+        base.length = el.length;
+        base.width = el.width;
+        base.color = el.color;
+        base.coreColor = el.coreColor;
+      }
+      return base;
+    });
+
+    const payload = {
+      version: 1,
+      spiral: {
+        arms: parseInt(armsInput.value, 10),
+        twist: parseFloat(twistInput.value),
+        density: parseInt(densityInput.value, 10),
+        mode: currentMode,
+        autoCycle: !!autoCycleInput.checked,
+        pulseMorph: !!pulseMorphInput.checked,
+        palette: currentPalette
+      },
+      hollywood: {
+        enabled: !!hollywoodModeInput.checked,
+        cameraOrbit: parseFloat(cameraOrbitInput.value || '1'),
+        cameraZoom: parseFloat(cameraZoomInput.value || '1'),
+        grainStrength: parseFloat(grainStrengthInput.value || '0')
+      },
+      elements: simpleElements
+    };
+
+    projectJson.value = JSON.stringify(payload, null, 2);
+  }
+
+  function importProject() {
+    let data;
+    try {
+      data = JSON.parse(projectJson.value);
+    } catch(e) {
+      alert('Projekt-JSON ist nicht gültig.');
+      return;
+    }
+    if (!data) return;
+
+    if (data.spiral) {
+      armsInput.value = data.spiral.arms ?? 8;
+      twistInput.value = data.spiral.twist ?? 3;
+      densityInput.value = data.spiral.density ?? 900;
+      currentPalette = data.spiral.palette || currentPalette;
+      setMode(data.spiral.mode || '2d');
+      autoCycleInput.checked = !!data.spiral.autoCycle;
+      pulseMorphInput.checked = !!data.spiral.pulseMorph;
+    }
+
+    if (data.hollywood) {
+      hollywoodModeInput.checked = !!data.hollywood.enabled;
+      cameraOrbitInput.value = data.hollywood.cameraOrbit ?? 1;
+      cameraZoomInput.value = data.hollywood.cameraZoom ?? 1;
+      grainStrengthInput.value = data.hollywood.grainStrength ?? 0.2;
+    }
+
+    elements = [];
+    const els = data.elements || [];
+    els.forEach(raw => {
+      if (raw.type === 'text') {
+        elements.push({
+          id: raw.id || elementIdCounter++,
+          type: 'text',
+          text: raw.text || 'Text',
+          x: raw.x, y: raw.y,
+          scale: raw.scale || 1,
+          rotation: raw.rotation || 0,
+          opacity: raw.opacity ?? 1,
+          color: raw.color || '#e5e7eb',
+          fontSize: raw.fontSize || 32,
+          animationProfile: raw.animationProfile || 'none',
+          animIntensity: raw.animIntensity ?? 1,
+          blend: raw.blend || 'source-over'
+        });
+      } else if (raw.type === 'image' && raw.imageDataUrl) {
+        const img = new Image();
+        img.src = raw.imageDataUrl;
+        elements.push({
+          id: raw.id || elementIdCounter++,
+          type: 'image',
+          x: raw.x, y: raw.y,
+          scale: raw.scale || 0.8,
+          rotation: raw.rotation || 0,
+          opacity: raw.opacity ?? 1,
+          _image: img,
+          _dataUrl: raw.imageDataUrl,
+          width: raw.width || 320,
+          height: raw.height || 200,
+          animationProfile: raw.animationProfile || 'none',
+          animIntensity: raw.animIntensity ?? 1,
+          blend: raw.blend || 'source-over'
+        });
+      } else if (raw.type === 'orb') {
+        elements.push({
+          id: raw.id || elementIdCounter++,
+          type: 'orb',
+          x: raw.x, y: raw.y,
+          scale: raw.scale || 1,
+          rotation: raw.rotation || 0,
+          opacity: raw.opacity ?? 0.9,
+          radius: raw.radius || 60,
+          innerColor: raw.innerColor || '#f9fafb',
+          outerColor: raw.outerColor || 'rgba(59,130,246,0)',
+          animationProfile: raw.animationProfile || 'pulse',
+          animIntensity: raw.animIntensity ?? 1.2,
+          blend: raw.blend || 'screen'
+        });
+      } else if (raw.type === 'beam') {
+        elements.push({
+          id: raw.id || elementIdCounter++,
+          type: 'beam',
+          x: raw.x, y: raw.y,
+          scale: raw.scale || 1,
+          rotation: raw.rotation || 0,
+          opacity: raw.opacity ?? 0.85,
+          length: raw.length || 260,
+          width: raw.width || 40,
+          color: raw.color || '#f97316',
+          coreColor: raw.coreColor || '#ffffff',
+          animationProfile: raw.animationProfile || 'shake',
+          animIntensity: raw.animIntensity ?? 1,
+          blend: raw.blend || 'screen'
+        });
+      }
+      // Videos können hier aus Sicherheitsgründen nicht automatisch neu geladen werden
+    });
+
+    updateLabelValues();
+    renderElementList();
+  }
+
+  // ===============================
+  // PNG / SVG-Export
+  // ===============================
+  function savePNG() {
+    const link = document.createElement('a');
+    link.download = 'heilungsspirale-hollywood.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  function saveSpiralAsSVG() {
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const w = 1024, h = 600;
+    const cx = w*0.5, cy = h*0.48;
+    const rMax = Math.min(w,h)*0.32;
+
+    let path = '';
+    for (let a=0; a<A; a++) {
+      const phase = (a/A) * Math.PI*2;
+      let sub = '';
+      for (let i=0; i<=N; i++) {
+        const f = i/N;
+        const angle = f * Math.PI * (2 + T) + phase;
+        const r = rMax * Math.pow(f,0.9);
+        const x = cx + r*Math.cos(angle);
+        const y = cy + r*Math.sin(angle);
+        if (i===0) sub += `M ${x.toFixed(2)} ${y.toFixed(2)} `;
+        else sub += `L ${x.toFixed(2)} ${y.toFixed(2)} `;
+      }
+      path += sub;
+    }
+
+    const svg =
+      `<?xml version="1.0" encoding="UTF-8"?>\n` +
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none">\n` +
+      `<rect width="${w}" height="${h}" fill="#020617"/>\n` +
+      `<path d="${path}" stroke="${currentPalette.primary || '#3b82f6'}" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>\n` +
+      `</svg>`;
+
+    const blob = new Blob([svg], {type: 'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'heilungsspirale-spiral.svg';
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ===============================
+  // Maus / Interaktion Canvas
+  // ===============================
+  function getEventPos(ev) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (ev.clientX - rect.left);
+    const y = (ev.clientY - rect.top);
+    return {x, y};
+  }
+
+  function pickElementAt(x, y) {
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const el = elements[i];
+      const sc = el.scale || 1;
+
+      let wEl = 200;
+      let hEl = 120;
+
+      if (el.type === 'text') {
+        const textLen = (el.text?.length || 6);
+        const fs = el.fontSize || 32;
+        wEl = fs * textLen * 0.4;
+        hEl = fs * 1.8;
+      } else if (el.type === 'image' || el.type === 'video') {
+        wEl = 260;
+        hEl = 260;
+      } else if (el.type === 'orb') {
+        const r = el.radius || 60;
+        wEl = hEl = r * 2.4;
+      } else if (el.type === 'beam') {
+        wEl = (el.length || 260);
+        hEl = (el.width || 40) * 2.2;
+      }
+
+      const dx = x - el.x;
+      const dy = y - el.y;
+
+      if (Math.abs(dx) <= (wEl * sc * 0.5) && Math.abs(dy) <= (hEl * sc * 0.5)) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousedown', (ev) => {
+    const pos = getEventPos(ev);
+    const el = pickElementAt(pos.x, pos.y);
+    if (el) {
+      activeElementId = el.id;
+      animationProfileSelect.value = el.animationProfile || 'none';
+      animIntensity.value = el.animIntensity ?? 1;
+      elementOpacityInput.value = el.opacity ?? 1;
+      elementBlendModeSelect.value = el.blend || 'source-over';
+      if (el.type === 'text' && textContentInput) {
+        textContentInput.value = el.text || '';
+      } else if (textContentInput) {
+        textContentInput.value = '';
+      }
+      updateLabelValues();
+      renderElementList();
+      isDragging = true;
+      dragOffsetX = pos.x - el.x;
+      dragOffsetY = pos.y - el.y;
+    }
+  });
+
+  canvas.addEventListener('mousemove', (ev) => {
+    if (!isDragging) return;
+    const el = getElementById(activeElementId);
+    if (!el) return;
+    const pos = getEventPos(ev);
+    el.x = pos.x - dragOffsetX;
+    el.y = pos.y - dragOffsetY;
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
+  // ===============================
+  // Events
+  // ===============================
+  [armsInput, twistInput, densityInput, speedInput,
+   animIntensity, cameraOrbitInput, cameraZoomInput,
+   grainStrengthInput, elementOpacityInput].forEach(input => {
+    if (!input) return;
+    input.addEventListener('input', () => {
+      updateLabelValues();
+    });
+  });
+
+  modeSelect.addEventListener('change', () => {
+    currentMode = modeSelect.value;
+    cycleTime = 0;
+  });
+
+  resetBtn.addEventListener('click', () => {
+    armsInput.value = 8;
+    twistInput.value = 3;
+    densityInput.value = 900;
+    speedInput.value = 1;
+    autoCycleInput.checked = false;
+    pulseMorphInput.checked = true;
+    setMode('2d');
+    currentPalette = spiralPresets.healing.palette;
+    hollywoodModeInput.checked = false;
+    cameraOrbitInput.value = 1;
+    cameraZoomInput.value = 1;
+    grainStrengthInput.value = 0.2;
+    updateLabelValues();
+  });
+
+  savePngBtn.addEventListener('click', savePNG);
+  saveSvgBtn.addEventListener('click', saveSpiralAsSVG);
+
+  if (presetRow) {
+    presetRow.addEventListener('click', (e) => {
+      const btn = e.target.closest('.pill');
+      if (!btn) return;
+      applyPreset(btn.dataset.preset);
+    });
+  }
+
+  randomPresetBtn.addEventListener('click', () => {
+    const keys = Object.keys(spiralPresets);
+    const key = keys[Math.floor(Math.random()*keys.length)];
+    applyPreset(key);
+  });
+
+  universeRandomBtn.addEventListener('click', () => {
+    armsInput.value = Math.floor(randomInRange(3, 20));
+    twistInput.value = randomInRange(0.8, 7.0).toFixed(1);
+    densityInput.value = Math.floor(randomInRange(400, 1800));
+
+    const modes = ['2d', '3d', 'morph'];
+    setMode(modes[Math.floor(Math.random() * modes.length)]);
+
+    const baseHue = randomInRange(190, 260);
+    currentPalette = {
+      base: '#020617',
+      primary: `hsl(${baseHue}, 100%, 65%)`,
+      secondary: `hsl(${(baseHue + randomInRange(40, 80)) % 360}, 100%, 60%)`
+    };
+
+    hollywoodModeInput.checked = true;
+    cameraOrbitInput.value = randomInRange(0.6, 2.2).toFixed(1);
+    cameraZoomInput.value = randomInRange(1.0, 1.6).toFixed(2);
+    grainStrengthInput.value = randomInRange(0.1, 0.7).toFixed(2);
+
+    elements = [];
+
+    const orbCount = Math.floor(randomInRange(1, 4));
+    for (let i = 0; i < orbCount; i++) {
+      const w = canvas.clientWidth || 1024;
+      const h = canvas.clientHeight || 600;
+      elements.push({
+        id: elementIdCounter++,
+        type: 'orb',
+        x: w * randomInRange(0.25, 0.75),
+        y: h * randomInRange(0.25, 0.7),
+        scale: 1,
+        rotation: 0,
+        opacity: randomInRange(0.7, 1),
+        radius: randomInRange(40, 90),
+        innerColor: '#f9fafb',
+        outerColor: `rgba(59,130,246,0)`,
+        blend: 'screen',
+        animationProfile: 'pulse',
+        animIntensity: randomInRange(0.6, 1.6)
+      });
+    }
+
+    const beamCount = Math.floor(randomInRange(1, 3));
+    for (let i = 0; i < beamCount; i++) {
+      const w = canvas.clientWidth || 1024;
+      const h = canvas.clientHeight || 600;
+      elements.push({
+        id: elementIdCounter++,
+        type: 'beam',
+        x: w * randomInRange(0.3, 0.7),
+        y: h * randomInRange(0.2, 0.6),
+        scale: 1,
+        rotation: randomInRange(-0.4, 0.4),
+        opacity: randomInRange(0.5, 0.9),
+        length: randomInRange(220, 320),
+        width: randomInRange(30, 70),
+        color: `hsl(${baseHue + randomInRange(-20, 40)}, 100%, 60%)`,
+        coreColor: '#ffffff',
+        blend: 'screen',
+        animationProfile: 'shake',
+        animIntensity: randomInRange(0.8, 1.4)
+      });
+    }
+
+    const titles = ['AWAKENING', 'COSMIC HEAL', 'QUANTUM SPIRAL', 'STARCODE', 'INFINITE'];
+    const title = titles[Math.floor(Math.random() * titles.length)];
+    const wCanvas = canvas.clientWidth || 1024;
+    const hCanvas = canvas.clientHeight || 600;
+    elements.push({
+      id: elementIdCounter++,
+      type: 'text',
+      text: title,
+      x: wCanvas * 0.5,
+      y: hCanvas * 0.85,
+      scale: 1,
+      rotation: 0,
+      opacity: 1,
+      color: '#e5e7eb',
+      fontSize: 32,
+      animationProfile: 'flicker',
+      animIntensity: 1.5,
+      blend: 'source-over'
+    });
+
+    updateLabelValues();
+    renderElementList();
+  });
+
+  addTextBtn.addEventListener('click', () => {
+    const value = textContentInput.value || 'Neuer Titel';
+    createTextElement(value);
+  });
+
+  addImageBtn.addEventListener('click', () => {
+    imageInput.click();
+  });
+
+  imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0];
+    if (file) createImageElementFromFile(file);
+    imageInput.value = '';
+  });
+
+  addVideoBtn.addEventListener('click', () => {
+    videoInput.click();
+  });
+
+  videoInput.addEventListener('change', () => {
+    const file = videoInput.files[0];
+    if (file) createVideoElementFromFile(file);
+    videoInput.value = '';
+  });
+
+  addOrbBtn.addEventListener('click', createOrbElement);
+  addBeamBtn.addEventListener('click', createBeamElement);
+
+  animationProfileSelect.addEventListener('change', () => {
+    const el = getElementById(activeElementId);
+    if (!el) return;
+    el.animationProfile = animationProfileSelect.value;
+    renderElementList();
+  });
+
+  animIntensity.addEventListener('input', () => {
+    const el = getElementById(activeElementId);
+    if (!el) return;
+    el.animIntensity = parseFloat(animIntensity.value);
+    updateLabelValues();
+  });
+
+  if (elementOpacityInput) {
+    elementOpacityInput.addEventListener('input', () => {
+      const el = getElementById(activeElementId);
+      if (!el) return;
+      el.opacity = parseFloat(elementOpacityInput.value);
+      updateLabelValues();
+    });
+  }
+
+  if (elementBlendModeSelect) {
+    elementBlendModeSelect.addEventListener('change', () => {
+      const el = getElementById(activeElementId);
+      if (!el) return;
+      el.blend = elementBlendModeSelect.value;
+    });
+  }
+
+  if (textContentInput) {
+    textContentInput.addEventListener('input', () => {
+      const el = getElementById(activeElementId);
+      if (!el || el.type !== 'text') return;
+      el.text = textContentInput.value;
+    });
+  }
+
+  deleteElementBtn.addEventListener('click', () => {
+    if (!activeElementId) return;
+    elements = elements.filter(el => el.id !== activeElementId);
+    activeElementId = null;
+    renderElementList();
+  });
+
+  saveProjectBtn.addEventListener('click', exportProject);
+  loadProjectBtn.addEventListener('click', importProject);
+
+  // Video-Aufnahme Event Listeners
+  if (startRecordingBtn) {
+    startRecordingBtn.addEventListener('click', startVideoRecording);
+  }
+
+  if (stopRecordingBtn) {
+    stopRecordingBtn.addEventListener('click', stopVideoRecording);
+  }
+
+  if (downloadVideoBtn) {
+    downloadVideoBtn.addEventListener('click', downloadRecordedVideo);
+  }
+
+
+  // ===============================
+  // Audio-Reactive Engine
+  // ===============================
+  // ===============================
+  // MIXER-SYSTEM INITIALISIERUNG
+  // ===============================
+  function initMixerSystem() {
+    if (!audioContext) return;
+    
+    // Master-Mixer erstellen (Channel-Merger für Summierung)
+    // In Web Audio API: Mehrere Quellen können zu einem Gain-Node verbunden werden
+    masterMixer = audioContext.createGain();
+    masterMixer.gain.value = 1.0;
+    
+    // Master-Gain (Gesamtlautstärke)
+    masterGain = audioContext.createGain();
+    masterGain.gain.value = 1.0;
+    
+    // Kanal-Gains für jede Quelle
+    channelGainAudio = audioContext.createGain();
+    channelGainAudio.gain.value = 1.0;
+    
+    channelGainVideo = audioContext.createGain();
+    channelGainVideo.gain.value = 1.0;
+    
+    channelGainMic = audioContext.createGain();
+    channelGainMic.gain.value = 1.0;
+    
+    channelGainFallback = audioContext.createGain();
+    channelGainFallback.gain.value = 1.0;
+    
+    // Verbindungsstruktur:
+    // [Quellen] → [Kanal-Gain] → [Master-Mixer] → [Master-Gain] → [Splitter]
+    // Splitter wird später erstellt (für Analyser + Recording)
+    
+    // Analyser für Visualisierung
+    if (!analyser) {
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 1024;
+      const bufferLength = analyser.frequencyBinCount;
+      audioDataArray = new Uint8Array(bufferLength);
+    }
+    
+    // Pipeline: Master-Gain → Analyser → Speakers
+    masterGain.connect(analyser);
+    analyser.connect(audioContext.destination);
+    
+    console.log('✅ Mixer-System initialisiert');
+  }
+  
+  // ===============================
+  // MIXER-ROUTING: Quellen durch Mixer routen
+  // ===============================
+  function routeAudioSourceToMixer(source, channelGain) {
+    if (!source || !channelGain || !masterMixer) return;
+    
+    // Trenne alte Verbindungen
+    try {
+      source.disconnect();
+    } catch(e) {}
+    
+    // Neue Pipeline: Source → Channel-Gain → Master-Mixer
+    source.connect(channelGain);
+    channelGain.connect(masterMixer);
+    masterMixer.connect(masterGain);
+  }
+  
+  function routeFallbackToMixer() {
+    if (!fallbackGain || !channelGainFallback || !masterMixer) return;
+    
+    try {
+      fallbackGain.disconnect();
+    } catch(e) {}
+    
+    fallbackGain.connect(channelGainFallback);
+    channelGainFallback.connect(masterMixer);
+    masterMixer.connect(masterGain);
+  }
+  
+  function initAudioContext() {
+    if (audioContext) {
+      // Mixer-System initialisieren falls noch nicht geschehen
+      if (!masterMixer) {
+        initMixerSystem();
+      }
+      return audioContext;
+    }
+    
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 1024;
+    const bufferLength = analyser.frequencyBinCount;
+    audioDataArray = new Uint8Array(bufferLength);
+    
+    // Mixer-System initialisieren
+    initMixerSystem();
+    
+    // CHAT: Fallback-Oscillator mit Arpeggios und Skalen (lyrisch, phrygisch, Jazz)
+    fallbackGain = audioContext.createGain();
+    fallbackGain.gain.value = 0.12;
+    
+    // Skalen-Definitionen
+    // Lyrische Skala (Lydian): C D E F# G A B C
+    const lydianScale = [261.63, 293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 523.25]; // C4-C5
+    
+    // Phrygische Skala: C Db Eb F G Ab Bb C
+    const phrygianScale = [261.63, 277.18, 311.13, 349.23, 392.00, 415.30, 466.16, 523.25];
+    
+    // Jazz-Skala (Lydian Dominant): C D E F# G A Bb C
+    const lydianDominantScale = [261.63, 293.66, 329.63, 369.99, 392.00, 440.00, 466.16, 523.25];
+    
+    // Arpeggio-Patterns (Dur, Moll, Erweitert)
+    const arpeggioMajor = [261.63, 329.63, 392.00, 523.25]; // C E G C
+    const arpeggioMinor = [261.63, 311.13, 392.00, 523.25]; // C Eb G C
+    const arpeggioJazz = [261.63, 329.63, 392.00, 466.16, 523.25]; // C E G Bb C
+    
+    // Mehrere Oszillatoren für harmonischen Sound mit Skalen
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
+    const osc3 = audioContext.createOscillator();
+    
+    // Starte mit Lydian-Skala
+    osc1.type = 'sine';
+    osc1.frequency.value = lydianScale[0]; // C
+    osc2.type = 'triangle';
+    osc2.frequency.value = lydianScale[2]; // E
+    osc3.type = 'sawtooth';
+    osc3.frequency.value = lydianScale[4]; // G
+    
+    const oscGain1 = audioContext.createGain();
+    const oscGain2 = audioContext.createGain();
+    const oscGain3 = audioContext.createGain();
+    
+    oscGain1.gain.value = 0.4;
+    oscGain2.gain.value = 0.3;
+    oscGain3.gain.value = 0.2;
+    
+    osc1.connect(oscGain1);
+    osc2.connect(oscGain2);
+    osc3.connect(oscGain3);
+    
+    oscGain1.connect(fallbackGain);
+    oscGain2.connect(fallbackGain);
+    oscGain3.connect(fallbackGain);
+    
+    // LFO für Modulation (macht den Sound interessanter)
+    const lfo = audioContext.createOscillator();
+    const lfoGain = audioContext.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.3; // Langsame Modulation
+    lfoGain.gain.value = 5;
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc1.frequency);
+    lfoGain.connect(osc2.frequency);
+    lfoGain.connect(osc3.frequency);
+    
+    // Fallback durch Mixer routen
+    routeFallbackToMixer();
+    
+    osc1.start();
+    osc2.start();
+    osc3.start();
+    lfo.start();
+    
+    // Speichere für späteres Stoppen und Arpeggio-Updates
+    fallbackOscillator = { 
+      osc1, osc2, osc3, lfo,
+      oscGain1, oscGain2, oscGain3,
+      scales: { lydian: lydianScale, phrygian: phrygianScale, lydianDominant: lydianDominantScale },
+      arpeggios: { major: arpeggioMajor, minor: arpeggioMinor, jazz: arpeggioJazz },
+      currentScale: 'lydian',
+      currentArpeggio: 'major'
+    };
+    
+    // Starte Arpeggio-Update-Timer (alle 0.5 Sekunden)
+    updateArpeggiosAndScales();
+    
+    audioEnabled = true;
+    audioSourceType = 'fallback';
+    updateAudioStatus();
+    
+    return audioContext;
+  }
+  
+  // Arpeggios und Skalen aktualisieren
+  function updateArpeggiosAndScales() {
+    if (!fallbackOscillator || !animationSoundEnabled) return;
+    
+    // Wechsle zwischen Skalen alle 4 Sekunden
+    const scaleNames = ['lydian', 'phrygian', 'lydianDominant'];
+    const currentScaleName = scaleNames[scaleIndex % scaleNames.length];
+    const currentScale = fallbackOscillator.scales[currentScaleName];
+    
+    // Wechsle zwischen Arpeggios alle 2 Sekunden
+    const arpeggioNames = ['major', 'minor', 'jazz'];
+    const currentArpeggioName = arpeggioNames[arpeggioIndex % arpeggioNames.length];
+    const currentArpeggio = fallbackOscillator.arpeggios[currentArpeggioName];
+    
+    // Aktualisiere Frequenzen basierend auf Arpeggio
+    const arpIndex = Math.floor(arpeggioIndex / 2) % currentArpeggio.length;
+    const scaleIndexForOsc = Math.floor(scaleIndex / 2) % currentScale.length;
+    
+    // Sanfte Übergänge mit exponentialRampToValueAtTime
+    const now = audioContext.currentTime;
+    const transitionTime = 0.1;
+    
+    // Oszillator 1: Arpeggio-Basis
+    fallbackOscillator.osc1.frequency.exponentialRampToValueAtTime(
+      currentArpeggio[arpIndex], 
+      now + transitionTime
+    );
+    
+    // Oszillator 2: Skalen-Noten
+    fallbackOscillator.osc2.frequency.exponentialRampToValueAtTime(
+      currentScale[(scaleIndexForOsc + 2) % currentScale.length], 
+      now + transitionTime
+    );
+    
+    // Oszillator 3: Kombination aus Arpeggio und Skala
+    const combinedFreq = (currentArpeggio[arpIndex] + currentScale[(scaleIndexForOsc + 4) % currentScale.length]) / 2;
+    fallbackOscillator.osc3.frequency.exponentialRampToValueAtTime(
+      combinedFreq, 
+      now + transitionTime
+    );
+    
+    // Update Indizes
+    arpeggioIndex++;
+    if (arpeggioIndex % 4 === 0) {
+      scaleIndex++;
+    }
+    
+    // Nächster Update in 0.5 Sekunden
+    if (animationSoundEnabled) {
+      arpeggioTimer = setTimeout(updateArpeggiosAndScales, 500);
+    }
+  }
+  
+  // Animationssound ein/ausschalten
+  function toggleAnimationSound(enabled) {
+    animationSoundEnabled = enabled;
+    
+    if (enabled) {
+      // Wenn Oszillatoren gestoppt wurden, müssen sie neu erstellt werden
+      if (!fallbackOscillator || !fallbackOscillator.osc1 || fallbackOscillator.osc1.state === 'stopped') {
+        // Re-initialisiere Audio-Context falls nötig
+        if (!audioContext) {
+          initAudioContext();
+        } else {
+          // Erstelle neue Oszillatoren
+          if (!fallbackGain) {
+            fallbackGain = audioContext.createGain();
+            fallbackGain.gain.value = 0.12;
+          }
+          
+          // Skalen und Arpeggios (aus initAudioContext kopiert)
+          const lydianScale = [261.63, 293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 523.25];
+          const phrygianScale = [261.63, 277.18, 311.13, 349.23, 392.00, 415.30, 466.16, 523.25];
+          const lydianDominantScale = [261.63, 293.66, 329.63, 369.99, 392.00, 440.00, 466.16, 523.25];
+          const arpeggioMajor = [261.63, 329.63, 392.00, 523.25];
+          const arpeggioMinor = [261.63, 311.13, 392.00, 523.25];
+          const arpeggioJazz = [261.63, 329.63, 392.00, 466.16, 523.25];
+          
+          const osc1 = audioContext.createOscillator();
+          const osc2 = audioContext.createOscillator();
+          const osc3 = audioContext.createOscillator();
+          
+          osc1.type = 'sine';
+          osc1.frequency.value = lydianScale[0];
+          osc2.type = 'triangle';
+          osc2.frequency.value = lydianScale[2];
+          osc3.type = 'sawtooth';
+          osc3.frequency.value = lydianScale[4];
+          
+          const oscGain1 = audioContext.createGain();
+          const oscGain2 = audioContext.createGain();
+          const oscGain3 = audioContext.createGain();
+          
+          oscGain1.gain.value = 0.4;
+          oscGain2.gain.value = 0.3;
+          oscGain3.gain.value = 0.2;
+          
+          osc1.connect(oscGain1);
+          osc2.connect(oscGain2);
+          osc3.connect(oscGain3);
+          
+          oscGain1.connect(fallbackGain);
+          oscGain2.connect(fallbackGain);
+          oscGain3.connect(fallbackGain);
+          
+          const lfo = audioContext.createOscillator();
+          const lfoGain = audioContext.createGain();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.3;
+          lfoGain.gain.value = 5;
+          lfo.connect(lfoGain);
+          lfoGain.connect(osc1.frequency);
+          lfoGain.connect(osc2.frequency);
+          lfoGain.connect(osc3.frequency);
+          
+          // Fallback durch Mixer routen
+          routeFallbackToMixer();
+          
+          osc1.start();
+          osc2.start();
+          osc3.start();
+          lfo.start();
+          
+          fallbackOscillator = { 
+            osc1, osc2, osc3, lfo,
+            oscGain1, oscGain2, oscGain3,
+            scales: { lydian: lydianScale, phrygian: phrygianScale, lydianDominant: lydianDominantScale },
+            arpeggios: { major: arpeggioMajor, minor: arpeggioMinor, jazz: arpeggioJazz },
+            currentScale: 'lydian',
+            currentArpeggio: 'major'
+          };
+        }
+      }
+      
+      // Aktiviere Gain
+      if (fallbackGain) {
+        fallbackGain.gain.value = 0.12;
+        // Fallback durch Mixer routen
+        routeFallbackToMixer();
+      }
+      
+      // Starte Arpeggio-Updates
+      if (!arpeggioTimer) {
+        updateArpeggiosAndScales();
+      }
+    } else {
+      // Deaktiviere Gain (stumm schalten)
+      if (fallbackGain) {
+        fallbackGain.gain.value = 0;
+      }
+      
+      // Stoppe Arpeggio-Updates
+      if (arpeggioTimer) {
+        clearTimeout(arpeggioTimer);
+        arpeggioTimer = null;
+      }
+    }
+  }
+  
+  function ensureAudioStarted() {
+    if (!audioReactiveInput || !audioReactiveInput.checked) return;
+    if (!audioContext) {
+      initAudioContext();
+    } else if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+  }
+  
+  function updateAudioStatus() {
+    const audioStatus = document.getElementById('audioStatus');
+    if (!audioStatus) return;
+    
+    if (!audioEnabled) {
+      audioStatus.innerHTML = '<span class="dot" style="background:#64748b;box-shadow:none;"></span>Inaktiv';
+    } else if (audioSourceType === 'fallback') {
+      audioStatus.innerHTML = '<span class="dot"></span>Fallback-Ton';
+    } else if (audioSourceType === 'mic') {
+      audioStatus.innerHTML = '<span class="dot"></span>Mikrofon';
+    } else if (audioSourceType === 'video') {
+      audioStatus.innerHTML = '<span class="dot"></span>Video-Audio';
+    } else if (audioSourceType === 'upload') {
+      audioStatus.innerHTML = '<span class="dot"></span>Audio-Datei';
+    }
+  }
+  
+  function setMicAsSource() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    ensureAudioStarted();
+    
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      micStream = stream;
+      
+      // WICHTIG: Speichere micSource für Aufnahme
+      if (micSource) {
+        try { micSource.disconnect(); } catch(e) {}
+      }
+      micSource = audioContext.createMediaStreamSource(stream);
+      
+      // Fallback-Oscillatoren stoppen (aber nicht löschen, für Toggle)
+      if (fallbackGain) {
+        fallbackGain.disconnect();
+      }
+      
+      // Mikrofon durch Mixer routen
+      routeAudioSourceToMixer(micSource, channelGainMic);
+      audioEnabled = true;
+      audioSourceType = 'mic';
+      updateAudioStatus();
+    }).catch(() => {});
+  }
+  
+  function attachVideoAudio() {
+    ensureAudioStarted();
+    const videoEl = elements.find(e => e.type === 'video' && e._video)?. _video;
+    if (!videoEl || !audioContext) return;
+    
+    if (videoAudioSource) {
+      try { videoAudioSource.disconnect(); } catch(e) {}
+    }
+    
+    // Fallback-Oscillatoren stoppen
+    if (fallbackOscillator && typeof fallbackOscillator === 'object') {
+      try {
+        if (fallbackOscillator.osc1) fallbackOscillator.osc1.stop();
+        if (fallbackOscillator.osc2) fallbackOscillator.osc2.stop();
+        if (fallbackOscillator.osc3) fallbackOscillator.osc3.stop();
+        if (fallbackOscillator.lfo) fallbackOscillator.lfo.stop();
+      } catch(e) {}
+    }
+    
+    const src = audioContext.createMediaElementSource(videoEl);
+    videoAudioSource = src;
+    // Video-Audio durch Mixer routen
+    routeAudioSourceToMixer(videoAudioSource, channelGainVideo);
+    audioEnabled = true;
+    audioSourceType = 'video';
+    updateAudioStatus();
+  }
+
+  function setupAudioAnalyzer(audioElement) {
+    if (!audioContext) initAudioContext();
+    
+    if (analyser) {
+      analyser.disconnect();
+    }
+    
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.8;
+    
+    if (audioSource) {
+      audioSource.disconnect();
+    }
+    
+    // Fallback-Oscillatoren stoppen
+    if (fallbackOscillator && typeof fallbackOscillator === 'object') {
+      try {
+        if (fallbackOscillator.osc1) fallbackOscillator.osc1.stop();
+        if (fallbackOscillator.osc2) fallbackOscillator.osc2.stop();
+        if (fallbackOscillator.osc3) fallbackOscillator.osc3.stop();
+        if (fallbackOscillator.lfo) fallbackOscillator.lfo.stop();
+      } catch(e) {}
+    }
+    
+    audioSource = audioContext.createMediaElementSource(audioElement);
+    // Audio durch Mixer routen
+    routeAudioSourceToMixer(audioSource, channelGainAudio);
+    
+    audioDataArray = new Uint8Array(analyser.frequencyBinCount);
+    
+    // Create audio bars
+    if (audioVisualizer) {
+      audioVisualizer.innerHTML = '';
+      audioBars = [];
+      const barCount = 32;
+      for (let i = 0; i < barCount; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'audio-bar';
+        audioVisualizer.appendChild(bar);
+        audioBars.push(bar);
+      }
+    }
+  }
+
+  function analyzeAudio() {
+    if (!analyser || !audioDataArray || !audioReactiveInput?.checked) {
+      audioLevelSmoothed *= 0.9;
+      return;
+    }
+    
+    analyser.getByteFrequencyData(audioDataArray);
+    
+    // CHAT: Audio-Level-Smoothing
+    let sum = 0;
+    for (let i = 0; i < audioDataArray.length; i++) {
+      sum += audioDataArray[i];
+    }
+    const avg = sum / (audioDataArray.length * 255);
+    const sensitivity = parseFloat(audioSensitivityInput?.value || '1') || 1;
+    const level = Math.min(1, avg * sensitivity * 2.2);
+    audioLevelSmoothed = audioLevelSmoothed * 0.8 + level * 0.2;
+    
+    // ROOT: Frequenz-Band-Analyse
+    const intensity = parseFloat(audioReactiveIntensity?.value || '1') || 1;
+    const bassEnd = Math.floor(audioDataArray.length * 0.1);
+    const midsEnd = Math.floor(audioDataArray.length * 0.5);
+    
+    let bassSum = 0, midsSum = 0, highsSum = 0;
+    for (let i = 0; i < bassEnd; i++) bassSum += audioDataArray[i];
+    for (let i = bassEnd; i < midsEnd; i++) midsSum += audioDataArray[i];
+    for (let i = midsEnd; i < audioDataArray.length; i++) highsSum += audioDataArray[i];
+    
+    audioReactiveData.bass = (bassSum / bassEnd / 255) * intensity;
+    audioReactiveData.mids = (midsSum / (midsEnd - bassEnd) / 255) * intensity;
+    audioReactiveData.highs = (highsSum / (audioDataArray.length - midsEnd) / 255) * intensity;
+    audioReactiveData.overall = (bassSum + midsSum + highsSum) / audioDataArray.length / 255 * intensity;
+    
+    // Update visualizer bars
+    audioBars.forEach((bar, i) => {
+      const index = Math.floor((i / audioBars.length) * audioDataArray.length);
+      const value = audioDataArray[index] / 255;
+      bar.style.height = `${Math.max(2, value * 100)}%`;
+      bar.style.opacity = 0.3 + value * 0.7;
+    });
+    
+    // Update waveform
+    if (waveformCtx && waveformCanvas) {
+      const w = waveformCanvas.width;
+      const h = waveformCanvas.height;
+      waveformCtx.clearRect(0, 0, w, h);
+      waveformCtx.strokeStyle = '#3b82f6';
+      waveformCtx.lineWidth = 2;
+      waveformCtx.beginPath();
+      
+      const sliceWidth = w / audioDataArray.length;
+      let x = 0;
+      
+      for (let i = 0; i < audioDataArray.length; i++) {
+        const v = audioDataArray[i] / 255;
+        const y = (v * h) / 2;
+        
+        if (i === 0) {
+          waveformCtx.moveTo(x, y);
+        } else {
+          waveformCtx.lineTo(x, y);
+        }
+        
+        x += sliceWidth;
+      }
+      
+      waveformCtx.lineTo(w, h / 2);
+      waveformCtx.stroke();
+    }
+  }
+
+  function loadAudioFile(file) {
+    if (!file) return;
+    ensureAudioStarted();
+    
+    // Altes Audio stoppen
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+    
+    const url = URL.createObjectURL(file);
+    const audio = new Audio(url);
+    audio.loop = true;
+    audio.crossOrigin = 'anonymous';
+    
+    audio.addEventListener('loadeddata', () => {
+      setupAudioAnalyzer(audio);
+      currentAudio = audio;
+      timelineDurationValue = audio.duration || 60; // Fallback auf 60s wenn keine Dauer
+      updateTimelineDuration();
+      audioSourceType = 'upload';
+      updateAudioStatus();
+      
+      // Audio automatisch abspielen
+      audio.play().catch(err => {
+        console.warn('Auto-play blocked, user interaction required:', err);
+      });
+    });
+    
+    audio.addEventListener('loadedmetadata', () => {
+      if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
+        timelineDurationValue = audio.duration;
+        updateTimelineDuration();
+      }
+    });
+    
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration && !isNaN(audio.duration)) {
+        timelineCurrentTime = audio.currentTime;
+        updateTimelineTime();
+      }
+    });
+    
+    audio.addEventListener('play', () => {
+      if (!audioContext || audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      isAudioPlaying = true;
+      timelineIsPlaying = true;
+    });
+    
+    audio.addEventListener('pause', () => {
+      isAudioPlaying = false;
+      timelineIsPlaying = false;
+    });
+    
+    audio.addEventListener('ended', () => {
+      isAudioPlaying = false;
+      timelineIsPlaying = false;
+    });
+    
+    // Audio laden
+    audio.load();
+  }
+
+  function extractVideoAudio(videoElement) {
+    if (!videoElement) return;
+    ensureAudioStarted();
+    
+    try {
+      if (videoAudioSource) {
+        try { videoAudioSource.disconnect(); } catch(e) {}
+      }
+      
+      const src = audioContext.createMediaElementSource(videoElement);
+      videoAudioSource = src;
+      // Video-Audio durch Mixer routen
+      routeAudioSourceToMixer(videoAudioSource, channelGainVideo);
+      audioEnabled = true;
+      audioSourceType = 'video';
+      updateAudioStatus();
+      
+      // Create audio bars if not exists
+      if (audioVisualizer && audioBars.length === 0) {
+        const barCount = 32;
+        for (let i = 0; i < barCount; i++) {
+          const bar = document.createElement('div');
+          bar.className = 'audio-bar';
+          audioVisualizer.appendChild(bar);
+          audioBars.push(bar);
+        }
+      }
+      
+      isAudioPlaying = true;
+    } catch (e) {
+      console.warn('Video audio extraction failed:', e);
+    }
+  }
+
+  // ===============================
+  // Timeline System
+  // ===============================
+  function updateTimelineDuration() {
+    const mins = Math.floor(timelineDurationValue / 60);
+    const secs = Math.floor(timelineDurationValue % 60);
+    timelineDuration.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function updateTimelineTime() {
+    const mins = Math.floor(timelineCurrentTime / 60);
+    const secs = Math.floor(timelineCurrentTime % 60);
+    timelineTime.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    
+    if (timelineDurationValue > 0) {
+      const percent = (timelineCurrentTime / timelineDurationValue) * 100;
+      timelinePlayhead.style.left = `${percent}%`;
+    }
+  }
+
+  function drawTimeline() {
+    const w = timelineCanvas.width;
+    const h = timelineCanvas.height;
+    timelineCtx.clearRect(0, 0, w, h);
+    
+    // Draw grid
+    timelineCtx.strokeStyle = 'rgba(148,163,184,0.2)';
+    timelineCtx.lineWidth = 1;
+    for (let i = 0; i < 20; i++) {
+      const x = (i / 20) * w;
+      timelineCtx.beginPath();
+      timelineCtx.moveTo(x, 0);
+      timelineCtx.lineTo(x, h);
+      timelineCtx.stroke();
+    }
+    
+    // Draw keyframes
+    keyframes.forEach(kf => {
+      const x = (kf.time / timelineDurationValue) * w;
+      timelineCtx.fillStyle = '#3b82f6';
+      timelineCtx.beginPath();
+      timelineCtx.arc(x, h / 2, 6, 0, Math.PI * 2);
+      timelineCtx.fill();
+    });
+  }
+
+  function timelinePlay() {
+    // Wenn Audio vorhanden, Audio abspielen
+    if (currentAudio && currentAudio.paused) {
+      currentAudio.play().catch(err => console.warn('Audio play failed:', err));
+    }
+    
+    timelineIsPlaying = true;
+    if (timelineAnimationId) {
+      cancelAnimationFrame(timelineAnimationId);
+    }
+    
+    timelineAnimationId = requestAnimationFrame(function animate() {
+      if (timelineIsPlaying) {
+        // Wenn Audio läuft, Zeit vom Audio nehmen, sonst manuell erhöhen
+        if (currentAudio && !currentAudio.paused) {
+          timelineCurrentTime = currentAudio.currentTime;
+        } else {
+          timelineCurrentTime += 0.016; // ~60fps
+        }
+        
+        if (timelineCurrentTime >= timelineDurationValue) {
+          timelineCurrentTime = timelineDurationValue;
+          timelineIsPlaying = false;
+          if (currentAudio) currentAudio.pause();
+        }
+        updateTimelineTime();
+        drawTimeline();
+        timelineAnimationId = requestAnimationFrame(animate);
+      }
+    });
+  }
+
+  function timelinePause() {
+    timelineIsPlaying = false;
+    if (currentAudio && !currentAudio.paused) {
+      currentAudio.pause();
+    }
+    if (timelineAnimationId) {
+      cancelAnimationFrame(timelineAnimationId);
+    }
+  }
+
+  function timelineStop() {
+    timelineIsPlaying = false;
+    timelineCurrentTime = 0;
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+    updateTimelineTime();
+    drawTimeline();
+    if (timelineAnimationId) {
+      cancelAnimationFrame(timelineAnimationId);
+    }
+  }
+
+  function addKeyframe() {
+    keyframes.push({
+      time: timelineCurrentTime,
+      elements: elements.map(el => ({
+        id: el.id,
+        x: el.x,
+        y: el.y,
+        scale: el.scale,
+        rotation: el.rotation,
+        opacity: el.opacity
+      }))
+    });
+    keyframes.sort((a, b) => a.time - b.time);
+    drawTimeline();
+  }
+
+  // ===============================
+  // Video-Aufnahme & Export
+  // ===============================
+
+  async function startVideoRecording() {
+    if (isRecording) return;
+    
+    try {
+      // Canvas-Stream für Video
+      const canvasStream = canvas.captureStream(60); // 60 FPS
+      
+      // Audio-Stream vom MIXER-SYSTEM
+      // WICHTIG: Alle Quellen sind bereits durch den Mixer gemischt!
+      // Wir nehmen einfach den Master-Gain-Output
+      let audioStream = null;
+      
+      if (audioContext && masterGain) {
+        // Erstelle Recording-Destination
+        const recordingDestination = audioContext.createMediaStreamDestination();
+        
+        // Master-Gain → Recording-Destination
+        // WICHTIG: Master-Gain ist bereits mit Analyser verbunden
+        // Wir verbinden zusätzlich zu Recording (Splitter-Funktion)
+        masterGain.connect(recordingDestination);
+        audioStream = recordingDestination.stream;
+        
+        console.log('✅ Aufnahme: Mixer-Output wird aufgenommen');
+      } else if (audioContext && masterMixer) {
+        // Fallback: Direkt vom Master-Mixer
+        const recordingDestination = audioContext.createMediaStreamDestination();
+        masterMixer.connect(recordingDestination);
+        audioStream = recordingDestination.stream;
+      }
+      
+      // Fallback: Wenn kein Mixer existiert, erstelle einen neuen AudioContext
+      if (!audioStream && currentAudio) {
+        try {
+          const recordingAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const source = recordingAudioContext.createMediaElementSource(currentAudio);
+          const destination = recordingAudioContext.createMediaStreamDestination();
+          source.connect(destination);
+          audioStream = destination.stream;
+          console.warn('⚠️ Aufnahme: Fallback-Modus (ohne Mixer)');
+        } catch (error) {
+          console.warn('Konnte Audio-Stream nicht erstellen:', error);
+        }
+      }
+      
+      // Streams kombinieren
+      const tracks = [...canvasStream.getVideoTracks()];
+      if (audioStream) {
+        tracks.push(...audioStream.getAudioTracks());
+      }
+      
+      const combinedStream = new MediaStream(tracks);
+      
+      // MediaRecorder initialisieren
+      const options = {
+        mimeType: 'video/webm;codecs=vp9,opus',
+        videoBitsPerSecond: 8000000 // 8 Mbps für hohe Qualität
+      };
+      
+      // Fallback auf webm wenn vp9 nicht unterstützt
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = 'video/webm;codecs=vp8,opus';
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options.mimeType = 'video/webm';
+      }
+      
+      mediaRecorder = new MediaRecorder(combinedStream, options);
+      recordedChunks = [];
+      
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        if (recordingStatus) {
+          recordingStatus.textContent = `Aufnahme beendet. ${(recordedChunks.length > 0 ? recordedChunks.reduce((acc, chunk) => acc + chunk.size, 0) / 1024 / 1024 : 0).toFixed(2)} MB aufgenommen.`;
+        }
+        if (downloadVideoBtn) {
+          downloadVideoBtn.disabled = false;
+        }
+        isRecording = false;
+      };
+      
+      mediaRecorder.start(100); // Chunks alle 100ms
+      isRecording = true;
+      recordingStartTime = Date.now();
+      
+      if (startRecordingBtn) startRecordingBtn.disabled = true;
+      if (stopRecordingBtn) stopRecordingBtn.disabled = false;
+      if (recordingStatus) {
+        recordingStatus.textContent = `🔴 Aufnahme läuft... (unbegrenzt - manuell stoppen)`;
+      }
+      
+      // Timer für Status-Anzeige (nur Anzeige, kein automatisches Stoppen)
+      recordingStatusInterval = setInterval(() => {
+        if (!isRecording) {
+          clearInterval(recordingStatusInterval);
+          recordingStatusInterval = null;
+          return;
+        }
+        const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        if (recordingStatus) {
+          recordingStatus.textContent = `🔴 Aufnahme läuft... ${minutes}:${seconds.toString().padStart(2, '0')} (unbegrenzt)`;
+        }
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Fehler beim Starten der Aufnahme:', error);
+      if (recordingStatus) {
+        recordingStatus.textContent = `Fehler: ${error.message}`;
+      }
+      isRecording = false;
+      if (startRecordingBtn) startRecordingBtn.disabled = false;
+      if (stopRecordingBtn) stopRecordingBtn.disabled = true;
+    }
+  }
+
+  function stopVideoRecording() {
+    if (!isRecording || !mediaRecorder) return;
+    
+    try {
+      // Status-Timer aufräumen
+      if (recordingStatusInterval) {
+        clearInterval(recordingStatusInterval);
+        recordingStatusInterval = null;
+      }
+      
+      mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      
+      if (startRecordingBtn) startRecordingBtn.disabled = false;
+      if (stopRecordingBtn) stopRecordingBtn.disabled = true;
+      
+    } catch (error) {
+      console.error('Fehler beim Stoppen der Aufnahme:', error);
+    }
+  }
+
+  function downloadRecordedVideo() {
+    if (recordedChunks.length === 0) {
+      alert('Keine Aufnahme vorhanden. Bitte zuerst aufnehmen.');
+      return;
+    }
+    
+    try {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cosmic-visualizer-${Date.now()}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      if (recordingStatus) {
+        recordingStatus.textContent = 'Video erfolgreich heruntergeladen!';
+      }
+    } catch (error) {
+      console.error('Fehler beim Download:', error);
+      alert('Fehler beim Download: ' + error.message);
+    }
+  }
+
+  // ===============================
+  // Character Presets
+  // ===============================
+  function renderCharacterPresets() {
+    characterPresetGrid.innerHTML = '';
+    characterPresets.forEach(preset => {
+      const item = document.createElement('div');
+      item.className = 'character-preset-item' + (activeCharacterPreset === preset.id ? ' active' : '');
+      item.title = preset.name;
+      
+      // Create SVG silhouette
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 100 100');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      
+      const shape = createCharacterShape(preset.shape);
+      svg.appendChild(shape);
+      
+      item.appendChild(svg);
+      
+      item.addEventListener('click', () => {
+        activeCharacterPreset = preset.id;
+        renderCharacterPresets();
+        addCharacterToCanvas(preset);
+      });
+      
+      characterPresetGrid.appendChild(item);
+    });
+  }
+
+  function createCharacterShape(shapeType) {
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.setAttribute('fill', 'url(#charGradient)');
+    
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    gradient.setAttribute('id', 'charGradient');
+    gradient.setAttribute('x1', '0%');
+    gradient.setAttribute('y1', '0%');
+    gradient.setAttribute('x2', '100%');
+    gradient.setAttribute('y2', '100%');
+    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop1.setAttribute('offset', '0%');
+    stop1.setAttribute('stop-color', '#3b82f6');
+    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop2.setAttribute('offset', '100%');
+    stop2.setAttribute('stop-color', '#0ea5e9');
+    gradient.appendChild(stop1);
+    gradient.appendChild(stop2);
+    defs.appendChild(gradient);
+    group.appendChild(defs);
+    
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    
+    switch(shapeType) {
+      case 'hero':
+        path.setAttribute('d', 'M50,20 L60,50 L50,80 L40,50 Z M30,70 L50,60 L70,70 L50,80 Z');
+        break;
+      case 'villain':
+        path.setAttribute('d', 'M50,15 L55,45 L50,85 L45,45 Z M25,75 L50,65 L75,75 L50,85 Z M40,30 L50,25 L60,30 L50,35 Z');
+        break;
+      case 'warrior':
+        path.setAttribute('d', 'M50,10 L55,40 L50,90 L45,40 Z M20,80 L50,70 L80,80 L50,90 Z M50,30 L60,25 L70,30 L50,40 Z');
+        break;
+      case 'mage':
+        path.setAttribute('d', 'M50,5 L55,35 L50,95 L45,35 Z M35,85 L50,75 L65,85 L50,95 Z M50,20 L45,15 L50,10 L55,15 Z');
+        break;
+      case 'ninja':
+        path.setAttribute('d', 'M50,10 L52,40 L50,90 L48,40 Z M30,80 L50,70 L70,80 L50,90 Z');
+        break;
+      case 'cyborg':
+        path.setAttribute('d', 'M50,15 L55,45 L50,85 L45,45 Z M35,75 L50,65 L65,75 L50,85 Z M45,30 L50,25 L55,30 L50,35 Z M40,50 L50,45 L60,50 L50,55 Z');
+        break;
+      case 'alien':
+        path.setAttribute('d', 'M50,5 L60,40 L50,95 L40,40 Z M30,80 L50,70 L70,80 L50,90 Z M50,20 L45,15 L50,10 L55,15 Z');
+        break;
+      case 'robot':
+        path.setAttribute('d', 'M40,20 L60,20 L60,50 L40,50 Z M35,50 L65,50 L65,80 L35,80 Z M45,25 L50,25 L50,30 L45,30 Z M50,25 L55,25 L55,30 L50,30 Z');
+        break;
+      default:
+        path.setAttribute('d', 'M50,20 L60,50 L50,80 L40,50 Z');
+    }
+    
+    group.appendChild(path);
+    return group;
+  }
+
+  function addCharacterToCanvas(preset) {
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    
+    const el = {
+      id: elementIdCounter++,
+      type: 'character',
+      presetId: preset.id,
+      x: w * 0.5,
+      y: h * 0.5,
+      scale: 1,
+      rotation: 0,
+      opacity: 1,
+      animationProfile: 'float',
+      animIntensity: 1,
+      blend: 'source-over',
+      color: '#3b82f6'
+    };
+    
+    addElement(el);
+  }
+
+  // ===============================
+  // Particle System
+  // ===============================
+  function createParticle(x, y, audioIntensity) {
+    return {
+      x: x || Math.random() * canvas.width,
+      y: y || Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      size: 2 + Math.random() * 3,
+      life: 1,
+      decay: 0.01 + Math.random() * 0.02,
+      color: `hsl(${200 + Math.random() * 60}, 100%, ${50 + Math.random() * 30}%)`,
+      intensity: audioIntensity || 1
+    };
+  }
+
+  function updateParticles() {
+    if (audioReactiveData.overall > 0.3) {
+      for (let i = 0; i < Math.floor(audioReactiveData.overall * 5); i++) {
+        particles.push(createParticle(
+          canvas.width * 0.5 + (Math.random() - 0.5) * 100,
+          canvas.height * 0.5 + (Math.random() - 0.5) * 100,
+          audioReactiveData.overall
+        ));
+      }
+    }
+    
+    particles = particles.filter(p => {
+      p.x += p.vx * p.intensity;
+      p.y += p.vy * p.intensity;
+      p.life -= p.decay;
+      return p.life > 0;
+    });
+  }
+
+  function drawParticles() {
+    particles.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.intensity, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  // ===============================
+  // Render Loop
+  // ===============================
+  function renderFrame(timestamp) {
+    const delta = (timestamp - lastTimestamp) / 1000 || 0;
+    lastTimestamp = timestamp;
+    globalTime += delta;
+
+    if (autoCycleInput.checked) {
+      cycleTime += delta;
+      const cycleLen = 18;
+      let t = (cycleTime % cycleLen) / cycleLen;
+      if (t < 1/3) setMode('2d');
+      else if (t < 2/3) setMode('3d');
+      else setMode('morph');
+    }
+
+    resizeCanvas();
+    const w = canvas.width / (window.devicePixelRatio || 1);
+    const h = canvas.height / (window.devicePixelRatio || 1);
+
+    cameraOffsetX = 0;
+    cameraOffsetY = 0;
+    cameraZoom = 1;
+
+    if (hollywoodModeInput && hollywoodModeInput.checked) {
+      const orbit = parseFloat(cameraOrbitInput?.value || '1') || 1;
+      const zoomStrength = parseFloat(cameraZoomInput?.value || '1') || 1;
+      const a = globalTime * orbit * 0.6;
+      cameraOffsetX = Math.cos(a) * w * 0.04;
+      cameraOffsetY = Math.sin(a * 1.4) * h * 0.03;
+      // CHAT: Audio-Level beeinflusst Zoom
+      cameraZoom = 1 + (zoomStrength - 1) * 0.35 + audioLevelSmoothed * 0.12;
+    }
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if (hollywoodModeInput.checked) {
+      drawBackgroundHollywood(w, h, globalTime);
+    } else {
+      drawBackground(w, h);
+    }
+
+    if (currentMode === '2d') {
+      drawSpiral2D(w, h, globalTime);
+    } else if (currentMode === '3d') {
+      drawSpiral3D(w, h, globalTime);
+    } else {
+      drawSpiralMorph(w, h, globalTime);
+    }
+
+    // Audio-Reactive Analysis (läuft immer wenn Audio aktiv)
+    if (audioEnabled && analyser && audioDataArray) {
+      analyzeAudio();
+      updateParticles();
+    }
+    
+    // Check video elements for audio
+    elements.forEach(el => {
+      if (el.type === 'video' && el._video && !el._video.paused && !el._audioExtracted) {
+        extractVideoAudio(el._video);
+        el._audioExtracted = true;
+      }
+    });
+
+    drawElements(globalTime);
+    drawParticles();
+    requestAnimationFrame(renderFrame);
+  }
+
+  // ===============================
+  // Audio-Reactive Element Animation
+  // ===============================
+  function applyAudioReactiveAnimation(el, t) {
+    if (!audioReactiveData.overall || audioReactiveData.overall < 0.1) return;
+    
+    const intensity = audioReactiveData.overall * (el.animIntensity || 1);
+    
+    // Bass affects scale
+    if (audioReactiveData.bass > 0.3) {
+      el._renderScale = (el.scale || 1) * (1 + audioReactiveData.bass * 0.3);
+    }
+    
+    // Mids affect rotation
+    if (audioReactiveData.mids > 0.3) {
+      el._renderRotation = (el.rotation || 0) + audioReactiveData.mids * 0.1;
+    }
+    
+    // Highs affect position
+    if (audioReactiveData.highs > 0.3) {
+      el._renderX = (el.x || 0) + Math.sin(t * 5) * audioReactiveData.highs * 10;
+      el._renderY = (el.y || 0) + Math.cos(t * 5) * audioReactiveData.highs * 10;
+    }
+  }
+
+  // ===============================
+  // Character Rendering
+  // ===============================
+  function drawCharacter(el) {
+    const preset = characterPresets.find(p => p.id === el.presetId);
+    if (!preset) return;
+    
+    ctx.save();
+    ctx.fillStyle = el.color || '#3b82f6';
+    ctx.globalAlpha = el.opacity || 1;
+    
+    const size = 60;
+    const shape = preset.shape;
+    
+    ctx.beginPath();
+    switch(shape) {
+      case 'hero':
+        ctx.moveTo(0, -size * 0.3);
+        ctx.lineTo(size * 0.2, size * 0.3);
+        ctx.lineTo(0, size * 0.5);
+        ctx.lineTo(-size * 0.2, size * 0.3);
+        ctx.closePath();
+        ctx.moveTo(-size * 0.4, size * 0.2);
+        ctx.lineTo(0, size * 0.1);
+        ctx.lineTo(size * 0.4, size * 0.2);
+        ctx.lineTo(0, size * 0.5);
+        ctx.closePath();
+        break;
+      case 'villain':
+        ctx.moveTo(0, -size * 0.35);
+        ctx.lineTo(size * 0.1, size * 0.15);
+        ctx.lineTo(0, size * 0.55);
+        ctx.lineTo(-size * 0.1, size * 0.15);
+        ctx.closePath();
+        ctx.moveTo(-size * 0.5, size * 0.25);
+        ctx.lineTo(0, size * 0.15);
+        ctx.lineTo(size * 0.5, size * 0.25);
+        ctx.lineTo(0, size * 0.55);
+        ctx.closePath();
+        break;
+      case 'warrior':
+        ctx.moveTo(0, -size * 0.4);
+        ctx.lineTo(size * 0.1, size * 0.1);
+        ctx.lineTo(0, size * 0.6);
+        ctx.lineTo(-size * 0.1, size * 0.1);
+        ctx.closePath();
+        ctx.moveTo(-size * 0.6, size * 0.3);
+        ctx.lineTo(0, size * 0.2);
+        ctx.lineTo(size * 0.6, size * 0.3);
+        ctx.lineTo(0, size * 0.6);
+        ctx.closePath();
+        break;
+      default:
+        ctx.arc(0, 0, size * 0.3, 0, Math.PI * 2);
+    }
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ===============================
+  // Event Handlers
+  // ===============================
+  // Audio Event Handlers
+  if (loadAudioBtn) {
+    loadAudioBtn.addEventListener('click', () => audioInput?.click());
+  }
+  
+  if (audioInput) {
+    audioInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) loadAudioFile(file);
+      audioInput.value = '';
+    });
+  }
+  
+  if (useMicBtn) {
+    useMicBtn.addEventListener('click', setMicAsSource);
+  }
+  
+  if (attachVideoAudioBtn) {
+    attachVideoAudioBtn.addEventListener('click', attachVideoAudio);
+  }
+  
+  // Animationssound Toggle
+  const animationSoundToggle = document.getElementById('animationSoundToggle');
+  if (animationSoundToggle) {
+    animationSoundToggle.addEventListener('change', (e) => {
+      toggleAnimationSound(e.target.checked);
+    });
+    // Initialisiere Toggle-Status
+    toggleAnimationSound(animationSoundToggle.checked);
+  }
+  
+  if (audioReactiveIntensity) {
+    audioReactiveIntensity.addEventListener('input', () => {
+      if (audioReactiveIntensityValue) {
+        audioReactiveIntensityValue.textContent = parseFloat(audioReactiveIntensity.value).toFixed(1);
+      }
+    });
+  }
+  
+  if (audioSensitivityInput) {
+    audioSensitivityInput.addEventListener('input', () => {
+      if (audioSensitivityValue) {
+        audioSensitivityValue.textContent = parseFloat(audioSensitivityInput.value).toFixed(1);
+      }
+      updateLabelValues();
+    });
+  }
+  
+  // ===============================
+  // MIXER-KONTROLLEN Event Handlers
+  // ===============================
+  const channelGainAudioInput = document.getElementById('channelGainAudio');
+  const channelGainVideoInput = document.getElementById('channelGainVideo');
+  const channelGainMicInput = document.getElementById('channelGainMic');
+  const channelGainFallbackInput = document.getElementById('channelGainFallback');
+  const masterGainInput = document.getElementById('masterGain');
+  
+  if (channelGainAudioInput) {
+    channelGainAudioInput.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value) / 100; // 0-200% → 0.0-2.0
+      if (channelGainAudio) {
+        channelGainAudio.gain.value = value;
+      }
+      const valueDisplay = document.getElementById('channelGainAudioValue');
+      if (valueDisplay) {
+        valueDisplay.textContent = Math.round(e.target.value) + '%';
+      }
+    });
+  }
+  
+  if (channelGainVideoInput) {
+    channelGainVideoInput.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value) / 100;
+      if (channelGainVideo) {
+        channelGainVideo.gain.value = value;
+      }
+      const valueDisplay = document.getElementById('channelGainVideoValue');
+      if (valueDisplay) {
+        valueDisplay.textContent = Math.round(e.target.value) + '%';
+      }
+    });
+  }
+  
+  if (channelGainMicInput) {
+    channelGainMicInput.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value) / 100;
+      if (channelGainMic) {
+        channelGainMic.gain.value = value;
+      }
+      const valueDisplay = document.getElementById('channelGainMicValue');
+      if (valueDisplay) {
+        valueDisplay.textContent = Math.round(e.target.value) + '%';
+      }
+    });
+  }
+  
+  if (channelGainFallbackInput) {
+    channelGainFallbackInput.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value) / 100;
+      if (channelGainFallback) {
+        channelGainFallback.gain.value = value;
+      }
+      const valueDisplay = document.getElementById('channelGainFallbackValue');
+      if (valueDisplay) {
+        valueDisplay.textContent = Math.round(e.target.value) + '%';
+      }
+    });
+  }
+  
+  if (masterGainInput) {
+    masterGainInput.addEventListener('input', (e) => {
+      const value = parseFloat(e.target.value) / 100;
+      if (masterGain) {
+        masterGain.gain.value = value;
+      }
+      const valueDisplay = document.getElementById('masterGainValue');
+      if (valueDisplay) {
+        valueDisplay.textContent = Math.round(e.target.value) + '%';
+      }
+    });
+  }
+  
+  timelinePlayBtn.addEventListener('click', timelinePlay);
+  timelinePauseBtn.addEventListener('click', timelinePause);
+  timelineStopBtn.addEventListener('click', timelineStop);
+  timelineAddKeyframeBtn.addEventListener('click', addKeyframe);
+  
+  addCharacterBtn.addEventListener('click', () => {
+    if (activeCharacterPreset) {
+      const preset = characterPresets.find(p => p.id === activeCharacterPreset);
+      if (preset) addCharacterToCanvas(preset);
+    }
+  });
+  
+  // Extend drawElements to handle characters and audio-reactive
+  const originalDrawElements = drawElements;
+  drawElements = function(t) {
+    elements.forEach(el => {
+      applyAnimationToElement(el, t);
+      applyAudioReactiveAnimation(el, t);
+      
+      const x = el._renderX ?? el.x;
+      const y = el._renderY ?? el.y;
+      const sc = el._renderScale ?? el.scale ?? 1;
+      const rot = el._renderRotation ?? el.rotation ?? 0;
+      
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.scale(sc, sc);
+      
+      const opacity = el.opacity ?? 1;
+      ctx.globalAlpha = opacity;
+      
+      if (el.blend === 'screen') {
+        ctx.globalCompositeOperation = 'screen';
+      } else if (el.blend === 'add') {
+        ctx.globalCompositeOperation = 'lighter';
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      
+      if (el.type === 'text') {
+        ctx.font = `${el.fontSize || 32}px system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = el.color || '#e5e7eb';
+        ctx.shadowColor = 'rgba(15,23,42,0.9)';
+        ctx.shadowBlur = 20;
+        ctx.fillText(el.text || '', 0, 0);
+      } else if (el.type === 'image' && el._image) {
+        const img = el._image;
+        const imgW = img.width;
+        const imgH = img.height;
+        const scaleFit = 260 / Math.max(imgW, imgH);
+        ctx.drawImage(img, -imgW * scaleFit * 0.5, -imgH * scaleFit * 0.5,
+          imgW * scaleFit, imgH * scaleFit);
+      } else if (el.type === 'video' && el._video && el._video.readyState >= 2) {
+        const video = el._video;
+        const vidW = video.videoWidth || 640;
+        const vidH = video.videoHeight || 360;
+        const maxW = 360;
+        const scaleFit = maxW / vidW;
+        ctx.drawImage(video,
+          -vidW * scaleFit * 0.5,
+          -vidH * scaleFit * 0.5,
+          vidW * scaleFit,
+          vidH * scaleFit);
+      } else if (el.type === 'character') {
+        drawCharacter(el);
+      } else if (el.type === 'orb') {
+        const r = el.radius || 60;
+        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+        grad.addColorStop(0, el.innerColor || '#ffffff');
+        grad.addColorStop(1, el.outerColor || 'rgba(59,130,246,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (el.type === 'beam') {
+        const len = el.length || 260;
+        const wBeam = el.width || 40;
+        const grad = ctx.createLinearGradient(-len * 0.5, 0, len * 0.5, 0);
+        grad.addColorStop(0, 'rgba(0,0,0,0)');
+        
+        // Color mit Alpha richtig handhaben (HSL oder Hex)
+        const color = el.color || '#f97316';
+        const colorWithAlpha = color.startsWith('hsl') 
+          ? color.replace(')', ', 0)').replace('hsl', 'hsla')
+          : color.length === 7 ? color + '00' : color;
+        
+        grad.addColorStop(0.25, colorWithAlpha);
+        grad.addColorStop(0.5, el.coreColor || '#ffffff');
+        grad.addColorStop(0.75, colorWithAlpha);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(-len * 0.5, -wBeam * 0.5);
+        ctx.lineTo(len * 0.5, 0);
+        ctx.lineTo(-len * 0.5, wBeam * 0.5);
+        ctx.closePath();
+        ctx.fill();
+      }
+      
+      ctx.restore();
+    });
+    
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+  };
+
+  // ===============================
+  // Initial
+  // ===============================
+  function initWaveformCanvas() {
+    if (waveformCanvas) {
+      const rect = waveformCanvas.parentElement.getBoundingClientRect();
+      waveformCanvas.width = rect.width || 400;
+      waveformCanvas.height = 80;
+    }
+  }
+
+  updateLabelValues();
+  initWaveformCanvas();
+  applyPreset('healing');
+  renderElementList();
+  renderCharacterPresets();
+  drawTimeline();
+  updateTimelineTime();
+  
+  // Audio automatisch starten (Fallback)
+  window.addEventListener('pointerdown', ensureAudioStarted, { once: true });
+  
+  requestAnimationFrame(renderFrame);
+  
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    initWaveformCanvas();
+  });
+})();
+</script>
+
+
+</body></html>

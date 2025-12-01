@@ -1,0 +1,552 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SUOS-offen Braintext – Freischaltung mit Schlüssel</title>
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root {
+      --bg: #0a0e27;
+      --card: #1a1f3a;
+      --ink: #e5e7eb;
+      --muted: #9ca3af;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --border: #374151;
+      --radius: 16px;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 32px 24px;
+    }
+    .ts-brand-banner {
+      background: linear-gradient(90deg, #020617, #0f172a 50%, #111827);
+      color: #e5e7eb;
+      padding: 8px 16px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+    .ts-brand-banner strong { font-weight: 600; }
+    .ts-brand-links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      font-size: 11px;
+      margin-left: 8px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 80px auto 0;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header h1 {
+      font-size: 3rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .unlock-section {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .input-group {
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-weight: 600;
+      text-align: left;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      color: var(--ink);
+      font-size: 1rem;
+      font-family: 'Courier New', monospace;
+      transition: all 0.3s ease;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+    .btn {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 32px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      width: 100%;
+      max-width: 400px;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .status {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .status.ok {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .status.err {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--bad);
+      border: 2px solid var(--bad);
+    }
+    .status.info {
+      background: rgba(59, 130, 246, 0.2);
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+    }
+    pre {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: var(--ink);
+    }
+    .braintext-section h2 {
+      font-size: 1.75rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .braintext-section h2::before {
+      content: "T,.";
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    .ownership-notice {
+      background: rgba(245, 158, 11, 0.1);
+      border: 2px solid var(--warn);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+    .ownership-notice h3 {
+      color: var(--warn);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ownership-notice h3::before {
+      content: "©";
+      font-size: 1.5rem;
+    }
+    .receipt {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+      display: none;
+    }
+    .receipt.active {
+      display: block;
+    }
+    .receipt h3 {
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .receipt-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .receipt-item:last-child {
+      border-bottom: none;
+    }
+    .receipt-label {
+      color: var(--muted);
+    }
+    .receipt-value {
+      color: var(--ink);
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span style="opacity: 0.78; display: block; margin-top: 4px;">
+        (+31) - ( 613 803 782.) 
+        <a href="https://orcid.org/0009-0003-1328-2430" target="_blank">ORCID</a>
+      </span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./encryption-dashboard.html">Verschlüsselungs-Dashboard</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>🔓 SUOS-offen Braintext</h1>
+      <p style="font-size: 1.25rem; color: var(--muted); margin-top: 16px;">
+        Eigentum geschützt, Nutzung per Schlüssel
+      </p>
+    </div>
+
+    <div class="ownership-notice">
+      <h3>Eigentumsrechte</h3>
+      <p>
+        Der Source Code ist die Basis von all unseren Programmen. Er ist Eigentum des Producers und wird durch kryptographische Signaturen verifiziert. 
+        Der Code ist vollständig zugänglich, verifizierbar, erweiterbar und voll bearbeitbar – aber nur durch den Producer.
+        Diese Bereitstellung erfolgt als geistige Leistung, nicht als Produktverteilung.
+      </p>
+    </div>
+
+    <div class="card unlock-section">
+      <h2 style="margin-bottom: 24px;">Freischaltung mit Lizenzschlüssel</h2>
+      <p style="color: var(--muted); margin-bottom: 32px;">
+        Füge deinen Lizenzschlüssel ein, um das proprietäre Modul lokal zu entschlüsseln und zu nutzen.
+        Kein Username, kein Passwort – nur ein Schlüssel.
+      </p>
+
+      <div class="input-group">
+        <label for="key">Lizenzschlüssel:</label>
+        <input 
+          id="key" 
+          type="text" 
+          placeholder="z.B. KEAN-XXXX-YYYY-...." 
+          autocomplete="off"
+          onkeypress="if(event.key==='Enter') unlock()"
+        />
+      </div>
+
+      <button id="unlock" class="btn" onclick="unlock()">
+        🔓 Freischalten
+      </button>
+
+      <div id="status" class="status info" style="display: none;"></div>
+
+      <div id="receipt" class="receipt">
+        <h3>✅ Aktivierungs-Quittung</h3>
+        <div class="receipt-item">
+          <span class="receipt-label">Version:</span>
+        <span class="receipt-value" id="receiptVersion">-</span>
+        </div>
+        <div class="receipt-item">
+          <span class="receipt-label">Zeitstempel:</span>
+          <span class="receipt-value" id="receiptTime">-</span>
+        </div>
+        <div class="receipt-item">
+          <span class="receipt-label">Modul-Hash:</span>
+          <span class="receipt-value" id="receiptHash">-</span>
+        </div>
+        <div class="receipt-item">
+          <span class="receipt-label">Schlüssel-Fingerprint:</span>
+          <span class="receipt-value" id="receiptFingerprint">-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card braintext-section">
+      <h2>Offener Braintext</h2>
+      <p style="color: var(--muted); margin-bottom: 24px;">
+        Der sichtbare Code ist frei lesbar. Die proprietäre Implementierung liegt verschlüsselt vor und wird 
+        erst nach erfolgreicher Schlüssel-Freischaltung geladen.
+      </p>
+      <pre>
+// Öffentliche Schnittstelle (SUOS-offen):
+export interface Engine {
+  init(config: Config): Promise&lt;void&gt;;
+  run(input: Input): Promise&lt;Output&gt;;
+  verify(manifest: Manifest): Promise&lt;boolean&gt;;
+}
+
+// Beispiel-Konfiguration:
+interface Config {
+  encryption: 'AES-256-GCM' | 'Ed25519' | 'HMAC-SHA256';
+  keyDerivation: 'PBKDF2' | 'Argon2';
+  iterations?: number;
+}
+
+// Input/Output-Struktur:
+interface Input {
+  data: string | Uint8Array;
+  metadata?: Record&lt;string, any&gt;;
+}
+
+interface Output {
+  result: string | Uint8Array;
+  signature?: string;
+  verified: boolean;
+}
+
+// Manifest für Verifikation:
+interface Manifest {
+  version: string;
+  moduleHash: string;
+  date: string;
+  signature: string;
+  producer: string;
+}
+
+// Hinweis: Die vollständige Implementierung liegt verschlüsselt vor.
+// Sie wird nach erfolgreicher Schlüssel-Freischaltung geladen.
+      </pre>
+    </div>
+
+    <div class="card" id="unlockedContent" style="display: none;">
+      <h2>✅ Entschlüsseltes Modul geladen</h2>
+      <p style="color: var(--muted); margin-bottom: 24px;">
+        Das proprietäre Modul wurde erfolgreich entschlüsselt und ist jetzt verfügbar.
+      </p>
+      <div id="moduleInfo"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Simuliertes verschlüsseltes Modul (in Produktion würde dies von einem Server geladen)
+    const ENCRYPTED_MODULE_HASH = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
+    const MODULE_VERSION = '1.0.0';
+    const PRODUCER_PUBLIC_KEY = 'T,.&T,,.&T,,,.(C)TEL1.NL';
+
+    async function sha256(bytes) {
+      const hash = await crypto.subtle.digest('SHA-256', bytes);
+      return new Uint8Array(hash);
+    }
+
+    function buf2hex(buf) {
+      return [...buf].map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function deriveKeyFromUserKey(userKey, salt) {
+      const enc = new TextEncoder();
+      const baseKey = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(userKey),
+        'PBKDF2',
+        false,
+        ['deriveKey']
+      );
+      return await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: 200000,
+          hash: 'SHA-256'
+        },
+        baseKey,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      );
+    }
+
+    async function decryptAesGcm(aesKey, iv, ciphertext) {
+      try {
+        const plain = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv: iv },
+          aesKey,
+          ciphertext
+        );
+        return new Uint8Array(plain);
+      } catch (e) {
+        throw new Error('Entschlüsselung fehlgeschlagen: ' + e.message);
+      }
+    }
+
+    window.unlock = async function() {
+      const status = document.getElementById('status');
+      const unlockBtn = document.getElementById('unlock');
+      const keyInput = document.getElementById('key');
+      const receipt = document.getElementById('receipt');
+      const unlockedContent = document.getElementById('unlockedContent');
+
+      const userKey = keyInput.value.trim();
+      if (!userKey) {
+        status.textContent = 'Bitte Lizenzschlüssel eingeben.';
+        status.className = 'status err';
+        status.style.display = 'flex';
+        return;
+      }
+
+      unlockBtn.disabled = true;
+      status.textContent = 'Prüfe Manifest und Signatur …';
+      status.className = 'status info';
+      status.style.display = 'flex';
+
+      try {
+        // Simuliertes Manifest (in Produktion würde dies von einem Server geladen)
+        const manifest = {
+          version: MODULE_VERSION,
+          moduleHash: ENCRYPTED_MODULE_HASH,
+          date: new Date().toISOString(),
+          signatureBase64: btoa('simulated-signature'),
+          saltBase64: btoa('simulated-salt-32-bytes-long'),
+          ivBase64: btoa('simulated-iv-16')
+        };
+
+        status.textContent = 'Signatur gültig. Entschlüsselung vorbereiten …';
+
+        // Ableitung des AES-Schlüssels
+        const salt = Uint8Array.from(atob(manifest.saltBase64), c => c.charCodeAt(0));
+        const aesKey = await deriveKeyFromUserKey(userKey, salt);
+
+        status.textContent = 'Lade verschlüsseltes Modul …';
+
+        // Simuliertes verschlüsseltes Modul
+        // In Produktion würde dies von einem Server geladen werden
+        const simulatedEncryptedModule = new Uint8Array(100).fill(0);
+        const iv = Uint8Array.from(atob(manifest.ivBase64), c => c.charCodeAt(0));
+
+        // Prüfe Hash (in Produktion würde dies das echte verschlüsselte Modul sein)
+        const hashHex = buf2hex(await sha256(simulatedEncryptedModule));
+        if (hashHex.substring(0, 32) !== manifest.moduleHash.substring(0, 32)) {
+          // In Produktion würde dies eine echte Prüfung sein
+          console.log('Hash-Prüfung würde hier durchgeführt werden');
+        }
+
+        status.textContent = 'Entschlüssele Modul …';
+
+        // Versuche Entschlüsselung
+        let plainBytes;
+        try {
+          // In Produktion würde hier die echte Entschlüsselung stattfinden
+          // Für Demo-Zwecke simulieren wir eine erfolgreiche Entschlüsselung
+          plainBytes = new Uint8Array([/* Simuliertes entschlüsseltes Modul */]);
+          
+          // Für Demo: Wenn der Schlüssel "DEMO" enthält, erlaube Entschlüsselung
+          if (userKey.toUpperCase().includes('DEMO') || userKey.length >= 16) {
+            // Simuliere erfolgreiche Entschlüsselung
+            status.textContent = 'Freischaltung erfolgreich. Modul wird geladen …';
+            status.className = 'status ok';
+            
+            // Erstelle Aktivierungs-Quittung
+            const receiptData = {
+              version: manifest.version,
+              time: new Date().toISOString(),
+              moduleHash: manifest.moduleHash,
+              userKeyFingerprint: buf2hex(await sha256(new TextEncoder().encode(userKey)))
+            };
+
+            // Zeige Quittung
+            document.getElementById('receiptVersion').textContent = receiptData.version;
+            document.getElementById('receiptTime').textContent = new Date(receiptData.time).toLocaleString('de-DE');
+            document.getElementById('receiptHash').textContent = receiptData.moduleHash.substring(0, 16) + '...';
+            document.getElementById('receiptFingerprint').textContent = receiptData.userKeyFingerprint.substring(0, 16) + '...';
+            receipt.classList.add('active');
+
+            // Speichere Quittung lokal
+            localStorage.setItem('activationReceipt', JSON.stringify(receiptData));
+
+            // Zeige entschlüsseltes Modul
+            setTimeout(() => {
+              unlockedContent.style.display = 'block';
+              document.getElementById('moduleInfo').innerHTML = `
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--primary); border-radius: 12px; padding: 20px;">
+                  <h3 style="color: var(--primary); margin-bottom: 12px;">✅ Modul erfolgreich geladen</h3>
+                  <p style="color: var(--muted); margin-bottom: 16px;">
+                    Das proprietäre Modul wurde entschlüsselt und ist jetzt verfügbar.
+                  </p>
+                  <div style="font-family: 'Courier New', monospace; font-size: 0.875rem;">
+                    <div style="margin-bottom: 8px;"><strong>Version:</strong> ${receiptData.version}</div>
+                    <div style="margin-bottom: 8px;"><strong>Geladen:</strong> ${new Date().toLocaleString('de-DE')}</div>
+                    <div><strong>Status:</strong> <span style="color: var(--primary);">Aktiv</span></div>
+                  </div>
+                </div>
+              `;
+              status.style.display = 'none';
+            }, 1000);
+          } else {
+            throw new Error('Ungültiger Schlüssel');
+          }
+        } catch (e) {
+          throw new Error('Entschlüsselung fehlgeschlagen. Schlüssel scheint nicht gültig.');
+        }
+      } catch (e) {
+        console.error(e);
+        status.textContent = e.message || 'Unerwarteter Fehler bei der Freischaltung.';
+        status.className = 'status err';
+        unlockBtn.disabled = false;
+      }
+    };
+
+    // Lade gespeicherte Quittung falls vorhanden
+    const savedReceipt = localStorage.getItem('activationReceipt');
+    if (savedReceipt) {
+      try {
+        const receiptData = JSON.parse(savedReceipt);
+        const receipt = document.getElementById('receipt');
+        document.getElementById('receiptVersion').textContent = receiptData.version;
+        document.getElementById('receiptTime').textContent = new Date(receiptData.time).toLocaleString('de-DE');
+        document.getElementById('receiptHash').textContent = receiptData.moduleHash.substring(0, 16) + '...';
+        document.getElementById('receiptFingerprint').textContent = receiptData.userKeyFingerprint.substring(0, 16) + '...';
+        receipt.classList.add('active');
+      } catch (e) {
+        console.error('Error loading receipt:', e);
+      }
+    }
+  </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>

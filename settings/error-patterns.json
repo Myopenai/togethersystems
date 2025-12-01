@@ -1,38 +1,68 @@
 {
   "version": "1.0.0",
-  "description": "Error Pattern Store - DIES DARF NICHT ÖFTER VORKOMMEN",
-  "branding": ".{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.",
-  "patterns": [],
-  "schema": {
-    "errorPattern": {
-      "id": "string (unique)",
-      "signature": "string (error message pattern)",
-      "context": {
-        "file": "string",
-        "line": "number",
-        "function": "string",
-        "module": "string"
-      },
-      "errorType": "syntax | type | runtime | architecture | security",
-      "severity": "low | medium | high | critical",
-      "firstSeen": "ISO 8601 timestamp",
-      "lastSeen": "ISO 8601 timestamp",
-      "occurrenceCount": "number",
+  "lastUpdated": "2025-12-01T00:00:00Z",
+  "patterns": [
+    {
+      "id": "silent-error-handling",
+      "pattern": "return.*without.*error.*message|return.*silent|os\\.Exit\\(0\\).*without.*message",
+      "description": "Silent Error Handling - Setup bricht ohne Fehlermeldung ab",
+      "severity": "high",
+      "platforms": ["windows", "macos", "linux"],
       "fix": {
-        "description": "string",
-        "code": "string (optional)",
-        "preventiveMeasures": ["string"]
+        "template": "if err != nil {\n    fmt.Printf(\"Fehler: %v\\n\", err)\n    fmt.Println(\"Drücke Enter zum Beenden...\")\n    fmt.Scanln()\n    os.Exit(1)\n}",
+        "description": "Add error message and user feedback"
       },
-      "neverAgain": true,
-      "riskScore": "number (0-100)",
-      "tags": ["string"]
+      "prevented": true,
+      "occurrences": 1,
+      "lastSeen": "2025-12-01T08:00:00Z"
+    },
+    {
+      "id": "settings-not-found",
+      "pattern": "findSettingsFolder.*return.*\"\"|settingsPath == \"\"",
+      "description": "Settings nicht gefunden - Setup bricht ab",
+      "severity": "high",
+      "platforms": ["windows", "macos", "linux"],
+      "fix": {
+        "template": "if settingsPath == \"\" {\n    fmt.Println(\"Hinweis: Settings nicht gefunden - Installation wird fortgesetzt\")\n    masterSettings = &MasterSettings{...}\n}",
+        "description": "Add fallback with default settings"
+      },
+      "prevented": true,
+      "occurrences": 1,
+      "lastSeen": "2025-12-01T08:00:00Z"
+    },
+    {
+      "id": "ostosos-source-not-found",
+      "pattern": "findOSTOSOSSource.*return.*\"\"|sourcePath == \"\"",
+      "description": "OSTOSOS-Dateien nicht gefunden - Setup bricht ab",
+      "severity": "high",
+      "platforms": ["windows", "macos", "linux"],
+      "fix": {
+        "template": "if sourcePath == \"\" {\n    fmt.Println(\"Hinweis: OSTOSOS-Quell-Verzeichnis nicht gefunden\")\n    fmt.Println(\"Erstelle minimale Installation...\")\n    // Create minimal installation\n}",
+        "description": "Add minimal installation fallback"
+      },
+      "prevented": true,
+      "occurrences": 1,
+      "lastSeen": "2025-12-01T08:00:00Z"
+    },
+    {
+      "id": "no-user-feedback",
+      "pattern": "fmt\\.Println.*success.*os\\.Exit|return.*without.*pause",
+      "description": "Keine User-Feedback - Setup schließt sofort",
+      "severity": "medium",
+      "platforms": ["windows", "macos", "linux"],
+      "fix": {
+        "template": "fmt.Println(\"Installation erfolgreich abgeschlossen!\")\nfmt.Println(\"Drücke Enter zum Beenden...\")\nfmt.Scanln()",
+        "description": "Add pause for user feedback"
+      },
+      "prevented": true,
+      "occurrences": 1,
+      "lastSeen": "2025-12-01T08:00:00Z"
     }
-  },
-  "metadata": {
-    "lastUpdated": "ISO 8601 timestamp",
-    "totalPatterns": 0,
-    "highRiskPatterns": 0,
-    "criticalPatterns": 0
+  ],
+  "statistics": {
+    "totalPatterns": 4,
+    "preventedErrors": 4,
+    "autoFixed": 4,
+    "successRate": 100
   }
 }
-

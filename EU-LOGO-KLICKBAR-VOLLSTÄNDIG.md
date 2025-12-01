@@ -152,3 +152,10 @@ Das EU-Logo ist als klickbares Link-Element implementiert. Bitte beachte:
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

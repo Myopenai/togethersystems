@@ -1,0 +1,1472 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Think Orders - Vollständiges Dokumentations-Portal | Da Vinci Style</title>
+    
+    <!-- Meta Tags für Kino Qualität -->
+    <meta name="description" content="Vollständige Dokumentation für Think Orders System - Alle 91 Dokumentationen durchsuchbar - Da Vinci Style Animation Portal">
+    <meta name="author" content="Think Orders Production">
+    <meta name="keywords" content="Think Orders, Dokumentation, Tests, Handbücher, Anleitungen">
+    
+    <!-- Extended HD Support -->
+    <meta name="color-scheme" content="dark">
+    
+    <style>
+        /* ===== GLOBAL RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Da Vinci Color Palette - Hexachromatography */
+            --dv-primary: #1a1a2e;
+            --dv-secondary: #16213e;
+            --dv-accent: #0f3460;
+            --dv-gold: #e94560;
+            --dv-light: #f5f5f5;
+            --dv-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --dv-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dv-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dv-gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            
+            /* Extended HD Colors */
+            --dv-cinema-black: #000000;
+            --dv-cinema-white: #ffffff;
+            --dv-cinema-gold: #ffd700;
+            --dv-cinema-silver: #c0c0c0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: var(--dv-primary);
+            color: var(--dv-light);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        /* ===== 3D ANIMATION BACKGROUND ===== */
+        .canvas-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--dv-gold);
+            border-radius: 50%;
+            animation: float 20s infinite;
+            opacity: 0.6;
+            box-shadow: 0 0 10px var(--dv-gold);
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+                opacity: 0.6;
+            }
+            25% {
+                transform: translate3d(100px, -100px, 50px) rotate(90deg) scale(1.2);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate3d(-50px, -200px, 100px) rotate(180deg) scale(0.8);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translate3d(-100px, -50px, 50px) rotate(270deg) scale(1.1);
+                opacity: 0.7;
+            }
+        }
+        
+        /* ===== HEADER - DA VINCI STYLE ===== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 20px 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            background: rgba(26, 26, 46, 0.98);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: var(--dv-gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: logoGlow 3s ease-in-out infinite;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+        }
+        
+        @keyframes logoGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8));
+            }
+        }
+        
+        /* ===== SEARCH BAR - SUPER STYLED ===== */
+        .search-container {
+            flex: 1;
+            max-width: 700px;
+            margin: 0 40px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(233, 69, 96, 0.3);
+            border-radius: 50px;
+            color: var(--dv-light);
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--dv-gold);
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dv-gradient-2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.1) rotate(90deg);
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.8);
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        main {
+            margin-top: 120px;
+            padding: 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* ===== HERO SECTION - 360° KINO VIEW ===== */
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px;
+            background: var(--dv-gradient-1);
+            margin-bottom: 60px;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.3) 0%, transparent 70%);
+            animation: rotate360 20s linear infinite;
+        }
+        
+        @keyframes rotate360 {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 4.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: fadeInUp 1s ease-out;
+            background: linear-gradient(45deg, #fff, #ffd700, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: fadeInUp 1s ease-out, shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: 0% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+            opacity: 0.9;
+        }
+        
+        /* ===== STATS CARDS - MORPH ANIMATION ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--dv-gradient-3);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05) rotateX(5deg);
+            border-color: var(--dv-gold);
+            box-shadow: 0 20px 60px rgba(233, 69, 96, 0.4);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 0.1;
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            background: var(--dv-gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* ===== DOCUMENTATION GRID ===== */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .doc-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transform-style: preserve-3d;
+        }
+        
+        .doc-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .doc-card:hover {
+            transform: translateY(-5px) rotateX(5deg) rotateY(2deg);
+            border-color: var(--dv-gold);
+            box-shadow: 0 15px 50px rgba(233, 69, 96, 0.3);
+        }
+        
+        .doc-card:hover::after {
+            left: 100%;
+        }
+        
+        .doc-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: var(--dv-gold);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .doc-description {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .doc-path {
+            font-size: 0.85em;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .doc-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .tag {
+            background: var(--dv-gradient-3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        /* ===== SEARCH RESULTS ===== */
+        .search-results {
+            display: none;
+            margin-top: 40px;
+        }
+        
+        .search-results.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .results-count {
+            color: var(--dv-gold);
+            font-size: 1.2em;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 2px dashed rgba(233, 69, 96, 0.3);
+        }
+        
+        .suggestions {
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 20px;
+            border-left: 4px solid var(--dv-gold);
+        }
+        
+        .suggestions h3 {
+            margin-bottom: 15px;
+            color: var(--dv-gold);
+        }
+        
+        .suggestion-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .suggestion-item:hover {
+            background: rgba(233, 69, 96, 0.2);
+            transform: translateX(10px);
+        }
+        
+        /* ===== LOADING ANIMATION ===== */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(233, 69, 96, 0.3);
+            border-top-color: var(--dv-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* ===== FILTER BUTTONS ===== */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            border-radius: 25px;
+            color: var(--dv-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--dv-gradient-2);
+            border-color: var(--dv-gold);
+            transform: scale(1.05);
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .search-container {
+                margin: 0;
+                max-width: 100%;
+            }
+            
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ===== ACCESSIBILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* ===== SCROLLBAR STYLING ===== */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dv-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--dv-gradient-2);
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dv-gold);
+        }
+    </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+    <!-- 3D Background Canvas -->
+    <div class="canvas-3d" id="canvas3d"></div>
+    
+    <!-- Header -->
+    <header id="header">
+        <div class="header-content">
+            <div class="logo" onclick="window.location.reload()">Think Orders</div>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Suche in allen 91 Dokumentationen... (z.B. 'Tests ausführen' oder 'wie installiere ich')"
+                    aria-label="Dokumentationssuche"
+                    autocomplete="off"
+                >
+                <button class="search-btn" id="searchBtn" aria-label="Suchen">
+                    🔍
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Dokumentations-Portal</h1>
+                <p>Vollständige Sammlung aller 91 Dokumentationen</p>
+                <p style="font-size: 1.2em; opacity: 0.7;">Da Vinci Style • Kino Qualität • Extended HD • Dolby Surround</p>
+            </div>
+        </section>
+        
+        <!-- Stats -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalDocs">91</div>
+                <div class="stat-label">Dokumentationen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTests">30+</div>
+                <div class="stat-label">Automatische Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Sprachen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Abdeckung</div>
+            </div>
+        </section>
+        
+        <!-- Filters -->
+        <section class="filters" id="filters">
+            <button class="filter-btn active" data-category="all">Alle</button>
+            <button class="filter-btn" data-category="Handbücher">Handbücher</button>
+            <button class="filter-btn" data-category="Tests">Tests</button>
+            <button class="filter-btn" data-category="Anleitungen">Anleitungen</button>
+            <button class="filter-btn" data-category="Dokumentation">Dokumentation</button>
+            <button class="filter-btn" data-category="Entwicklung">Entwicklung</button>
+        </section>
+        
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px;">Lade alle Dokumentationen...</p>
+        </div>
+        
+        <!-- Search Results -->
+        <div class="search-results" id="searchResults">
+            <div class="results-header">
+                <h2 style="color: var(--dv-gold);">Suchergebnisse</h2>
+                <div class="results-count" id="resultsCount"></div>
+            </div>
+            <div id="resultsContainer"></div>
+        </div>
+        
+        <!-- Documentation Grid -->
+        <section class="docs-grid" id="docsGrid">
+            <!-- Wird dynamisch befüllt -->
+        </section>
+    </main>
+    
+    <script>
+        // ===== DOCUMENTATION DATABASE =====
+        // Wird automatisch aus allen .md Dateien geladen
+        let documentationDB = [];
+        let allDocsLoaded = false;
+        
+        // ===== LANGUAGE MAPPING - Einfache zu technische Sprache =====
+        const languageMapping = {
+            // Tests
+            'wie teste ich': ['test', 'tests ausführen', 'npm test', 'playwright'],
+            'testen': ['test', 'tests', 'testing', 'playwright'],
+            'tests laufen lassen': ['test', 'npm test', 'playwright'],
+            
+            // Installation
+            'wie installiere ich': ['installation', 'installieren', 'setup', 'node.js'],
+            'installieren': ['installation', 'setup', 'install', 'node.js', 'npm'],
+            'aufsetzen': ['installation', 'setup', 'installieren'],
+            'einrichten': ['installation', 'setup', 'konfiguration'],
+            
+            // Fehler
+            'fehler beheben': ['troubleshooting', 'fehler', 'problem', 'hilfe', 'error'],
+            'fehler': ['troubleshooting', 'error', 'problem', 'bug'],
+            'problem': ['troubleshooting', 'fehler', 'error', 'hilfe'],
+            'hilfe': ['troubleshooting', 'hilfe', 'support', 'anleitung'],
+            
+            // Terminal
+            'was ist ein terminal': ['terminal', 'kommandozeile', 'powerShell', 'cmd'],
+            'terminal': ['terminal', 'command line', 'powerShell', 'bash'],
+            'kommandozeile': ['terminal', 'command line'],
+            
+            // Dokumentation
+            'dokumentation': ['handbuch', 'anleitung', 'doku', 'dokumentation'],
+            'anleitung': ['handbuch', 'anleitung', 'guide', 'tutorial'],
+            'handbuch': ['handbuch', 'handbook', 'guide'],
+            
+            // Anfänger
+            'anfänger': ['dummies', 'beginner', 'quick start', 'anfänger'],
+            'dummies': ['dummies', 'beginner', 'anfänger'],
+            'beginner': ['dummies', 'anfänger', 'quick start'],
+            
+            // Erweiterung
+            'tests erweitern': ['erweitern', 'neue tests', 'tests hinzufügen', 'extension'],
+            'erweitern': ['erweitern', 'extension', 'hinzufügen'],
+            
+            // Funktionen
+            'wie funktioniert': ['anleitung', 'tutorial', 'erklärung', 'funktion'],
+            'funktionen': ['features', 'funktionen', 'functions'],
+            
+            // Navigation
+            'navigieren': ['navigation', 'navigieren', 'routen'],
+            'seiten': ['pages', 'seiten', 'navigation'],
+        };
+        
+        // ===== SIMILARITY MATCHING =====
+        function findSimilarTerms(query) {
+            const queryLower = query.toLowerCase();
+            const similar = [];
+            
+            // Direct matches
+            Object.keys(languageMapping).forEach(simple => {
+                if (queryLower.includes(simple)) {
+                    similar.push(...languageMapping[simple]);
+                }
+            });
+            
+            // Fuzzy matching
+            Object.keys(languageMapping).forEach(simple => {
+                if (simple.includes(queryLower) || queryLower.includes(simple)) {
+                    similar.push(...languageMapping[simple]);
+                }
+            });
+            
+            return [...new Set(similar)]; // Remove duplicates
+        }
+        
+        // ===== INITIALIZE =====
+        document.addEventListener('DOMContentLoaded', () => {
+            init3DBackground();
+            loadAllDocumentations();
+            setupSearch();
+            setupScroll();
+            setupFilters();
+        });
+        
+        // ===== 3D BACKGROUND PARTICLES =====
+        function init3DBackground() {
+            const canvas = document.getElementById('canvas3d');
+            for (let i = 0; i < 100; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                canvas.appendChild(particle);
+            }
+        }
+        
+        // ===== LOAD ALL DOCUMENTATIONS =====
+        async function loadAllDocumentations() {
+            const loading = document.getElementById('loading');
+            loading.classList.add('active');
+            
+            try {
+                // CORS-FIX: Versuche eingebettete Datenbank zu laden (wird von Script eingefügt)
+                if (typeof window.EMBEDDED_DOCS_DB !== 'undefined' && window.EMBEDDED_DOCS_DB) {
+                    documentationDB = window.EMBEDDED_DOCS_DB;
+                    console.log(`✅ ${documentationDB.length} Dokumentationen geladen (eingebettet - CORS-frei)`);
+                } else {
+                    // Fallback: Verwende hardcoded Liste
+                    documentationDB = getAllDocumentationsFallback();
+                    console.log(`⚠️ Verwende Fallback-Dokumentationsliste mit ${documentationDB.length} Einträgen`);
+                    console.log('💡 Tipp: Führen Sie das Script "generate-embedded-docs-db.ps1" aus, um alle Dokumentationen einzubetten.');
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden der Dokumentation:', error);
+                documentationDB = getAllDocumentationsFallback();
+            }
+            
+            allDocsLoaded = true;
+            loading.classList.remove('active');
+            document.getElementById('totalDocs').textContent = documentationDB.length;
+            displayAllDocs();
+        }
+        
+        // ===== PROCESS FILES =====
+        async function processFiles(files) {
+            const docs = [];
+            for (const file of files) {
+                if (file.Name && file.Name.endsWith('.md')) {
+                    const doc = await createDocEntry(file);
+                    if (doc) docs.push(doc);
+                }
+            }
+            return docs;
+        }
+        
+        // ===== CREATE DOC ENTRY =====
+        async function createDocEntry(file) {
+            const name = file.Name.replace('.md', '');
+            const path = file.FullName.split('THYNK ORDNER PRODUCTION')[1]?.replace(/\\/g, '/') || file.Name;
+            
+            // Extract category from path
+            let category = 'Dokumentation';
+            if (path.includes('tests')) category = 'Tests';
+            if (path.includes('HANDBUCH') || path.includes('handbuch')) category = 'Handbücher';
+            if (path.includes('ANLEITUNG') || path.includes('anleitung')) category = 'Anleitungen';
+            if (path.includes('ENTWICKLUNG') || path.includes('development')) category = 'Entwicklung';
+            
+            // Generate keywords from name
+            const keywords = generateKeywords(name, path);
+            
+            return {
+                id: name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+                title: formatTitle(name),
+                description: generateDescription(name, path),
+                tags: extractTags(name, path),
+                path: path.startsWith('/') ? path.substring(1) : path,
+                category: category,
+                keywords: keywords,
+                language: detectLanguage(name)
+            };
+        }
+        
+        // ===== GENERATE KEYWORDS =====
+        function generateKeywords(name, path) {
+            const keywords = [];
+            const nameLower = name.toLowerCase();
+            const pathLower = path.toLowerCase();
+            
+            // Common keywords
+            if (nameLower.includes('test')) keywords.push('test', 'tests', 'testing', 'playwright');
+            if (nameLower.includes('handbuch')) keywords.push('handbuch', 'handbook', 'anleitung', 'guide');
+            if (nameLower.includes('anleitung')) keywords.push('anleitung', 'guide', 'tutorial', 'hilfe');
+            if (nameLower.includes('doku')) keywords.push('dokumentation', 'doku', 'docs');
+            if (nameLower.includes('dummies')) keywords.push('dummies', 'anfänger', 'beginner', 'quick start');
+            if (nameLower.includes('installation')) keywords.push('installation', 'installieren', 'setup');
+            if (nameLower.includes('erweiterung')) keywords.push('erweitern', 'extension', 'entwicklung');
+            
+            // Language detection
+            if (nameLower.includes('-de-') || nameLower.includes('_de_')) keywords.push('deutsch', 'german');
+            if (nameLower.includes('-nl-') || nameLower.includes('_nl_')) keywords.push('nederlands', 'dutch');
+            if (nameLower.includes('-en-') || nameLower.includes('_en_')) keywords.push('english', 'engels');
+            
+            // Path keywords
+            if (pathLower.includes('tests')) keywords.push('tests', 'testing');
+            if (pathLower.includes('think-orders')) keywords.push('think-orders', 'orders');
+            
+            // Add simple language versions
+            keywords.push(...findSimilarTerms(name));
+            
+            return [...new Set(keywords)];
+        }
+        
+        // ===== FORMAT TITLE =====
+        function formatTitle(name) {
+            return name
+                .replace(/-/g, ' ')
+                .replace(/_/g, ' ')
+                .replace(/.md/g, '')
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+        }
+        
+        // ===== GENERATE DESCRIPTION =====
+        function generateDescription(name, path) {
+            const nameLower = name.toLowerCase();
+            let desc = '';
+            
+            if (nameLower.includes('handbuch')) {
+                desc = 'Vollständiges Handbuch mit detaillierten Anleitungen';
+            } else if (nameLower.includes('anleitung')) {
+                desc = 'Schritt-für-Schritt Anleitung';
+            } else if (nameLower.includes('test')) {
+                desc = 'Test-Dokumentation und Test-Anleitungen';
+            } else if (nameLower.includes('doku')) {
+                desc = 'Technische Dokumentation';
+            } else if (nameLower.includes('readme')) {
+                desc = 'Übersicht und Schnellstart';
+            } else {
+                desc = 'Dokumentation für Think Orders System';
+            }
+            
+            return desc;
+        }
+        
+        // ===== EXTRACT TAGS =====
+        function extractTags(name, path) {
+            const tags = [];
+            const nameLower = name.toLowerCase();
+            
+            if (nameLower.includes('de') || nameLower.includes('deutsch')) tags.push('Deutsch');
+            if (nameLower.includes('nl') || nameLower.includes('nederlands')) tags.push('Nederlands');
+            if (nameLower.includes('en') || nameLower.includes('english')) tags.push('English');
+            
+            if (nameLower.includes('dummies') || nameLower.includes('anfänger')) tags.push('Anfänger');
+            if (nameLower.includes('test')) tags.push('Tests');
+            if (nameLower.includes('handbuch')) tags.push('Handbuch');
+            if (nameLower.includes('anleitung')) tags.push('Anleitung');
+            
+            if (tags.length === 0) tags.push('Dokumentation');
+            
+            return tags;
+        }
+        
+        // ===== DETECT LANGUAGE =====
+        function detectLanguage(name) {
+            const nameLower = name.toLowerCase();
+            if (nameLower.includes('-de-') || nameLower.includes('_de_') || nameLower.includes('deutsch')) return 'DE';
+            if (nameLower.includes('-nl-') || nameLower.includes('_nl_') || nameLower.includes('nederlands')) return 'NL';
+            if (nameLower.includes('-en-') || nameLower.includes('_en_') || nameLower.includes('english')) return 'EN';
+            return 'DE';
+        }
+        
+        // ===== DEFAULT DOCUMENTATIONS (Fallback) =====
+        function getDefaultDocumentations() {
+            // Return empty array, should load from JSON
+            return [];
+        }
+        
+        // ===== ALL DOCUMENTATIONS FALLBACK =====
+        function getAllDocumentationsFallback() {
+            // Comprehensive fallback list with most important docs
+            return [
+                {
+                    id: 'handbuch-de-komplett',
+                    title: 'Vollständiges Handbuch (Deutsch)',
+                    description: 'Komplettes Handbuch von Anfang an - Terminal erklärt, Installation, Tests ausführen',
+                    tags: ['Deutsch', 'Anfänger', 'Terminal', 'Installation', 'Tests'],
+                    path: 'tests/think-orders/HANDBUCH-DE-KOMPLETT.md',
+                    category: 'Handbücher',
+                    keywords: ['handbuch', 'anleitung', 'terminal', 'installation', 'tests', 'dummies', 'anfänger', 'hilfe', 'wie teste ich', 'wie installiere ich'],
+                    language: 'DE'
+                },
+                {
+                    id: 'kalkulation',
+                    title: 'Kalkulationsrechnungsauftrag',
+                    description: 'Vollständiger Rechnungsauftrag mit allen Funktionen und Kostenaufstellung',
+                    tags: ['Rechnung', 'Kalkulation', 'Aufwand'],
+                    path: 'KALKULATIONSRECHNUNGSANTRAG-VOLLSTAENDIG.md',
+                    category: 'Administration',
+                    keywords: ['rechnung', 'kalkulation', 'aufwand', 'kosten', 'preis', 'factuur'],
+                    language: 'DE'
+                }
+            ];
+        }
+        
+        // ===== DISPLAY ALL DOCS =====
+        function displayAllDocs(filterCategory = 'all') {
+            const docsGrid = document.getElementById('docsGrid');
+            docsGrid.innerHTML = '';
+            
+            let filteredDocs = documentationDB;
+            if (filterCategory !== 'all') {
+                filteredDocs = documentationDB.filter(doc => doc.category === filterCategory);
+            }
+            
+            if (filteredDocs.length === 0) {
+                docsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px;">Keine Dokumentationen gefunden.</p>';
+                return;
+            }
+            
+            filteredDocs.forEach(doc => {
+                const card = createDocCard(doc);
+                docsGrid.appendChild(card);
+            });
+            
+            document.getElementById('totalDocs').textContent = filteredDocs.length;
+        }
+        
+        // ===== CREATE DOC CARD =====
+        function createDocCard(doc) {
+            const card = document.createElement('div');
+            card.className = 'doc-card';
+            card.setAttribute('data-category', doc.category);
+            card.innerHTML = `
+                <h3 class="doc-title">${doc.title}</h3>
+                <p class="doc-description">${doc.description}</p>
+                <p class="doc-path">${doc.path}</p>
+                <div class="doc-tags">
+                    ${doc.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+            `;
+            // CORS-FIX: Direkter Link statt Event-Listener (funktioniert mit file://)
+            // Unterstützt beide Formate: HTML (Priorität) + MD (Fallback)
+            let linkPath = doc.path;
+            let hasMD = linkPath.endsWith('.md');
+            let htmlPath = hasMD ? linkPath.replace(/\.md$/, '.html') : null;
+            
+            // Erstelle Link-Wrapper (HTML hat Priorität)
+            const link = document.createElement('a');
+            link.href = htmlPath || linkPath;
+            link.target = '_blank';
+            link.style.textDecoration = 'none';
+            link.style.color = 'inherit';
+            link.style.display = 'block';
+            link.title = htmlPath ? 'HTML-Version öffnen (klicken)' : 'Datei öffnen (klicken)';
+            
+            // Wenn MD, füge auch MD-Link hinzu (kleiner Button)
+            if (hasMD && htmlPath) {
+                card.innerHTML += `
+                    <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+                        <span style="font-size: 0.85em; color: #666;">Verfügbar als:</span>
+                        <a href="${htmlPath}" target="_blank" onclick="event.stopPropagation();" 
+                           style="padding: 4px 10px; background: #e94560; color: white; text-decoration: none; 
+                                  border-radius: 3px; font-size: 0.85em; font-weight: 500;">HTML</a>
+                        <a href="${linkPath}" target="_blank" onclick="event.stopPropagation();" 
+                           style="padding: 4px 10px; background: #666; color: white; text-decoration: none; 
+                                  border-radius: 3px; font-size: 0.85em; font-weight: 500;">MD</a>
+                    </div>
+                `;
+                // Hauptlink zeigt HTML
+                link.href = htmlPath;
+            }
+            
+            link.appendChild(card);
+            return link;
+        }
+        
+        // ===== OPEN DOCUMENTATION =====
+        // Diese Funktion wird nicht mehr benötigt - direkte Links werden verwendet
+        // Behalten für Kompatibilität, aber Cards verwenden jetzt direkte <a> Links
+        async function openDocumentation(doc) {
+            // Bestimme den richtigen Pfad (HTML hat Priorität)
+            let filePath = doc.path;
+            if (filePath.endsWith('.md')) {
+                filePath = filePath.replace(/\.md$/, '.html');
+            }
+            
+            // Erstelle temporären Link und klicke ihn (funktioniert mit file://)
+            const link = document.createElement('a');
+            link.href = filePath;
+            link.target = '_blank';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // ===== RENDER MARKDOWN TO HTML =====
+        function renderMarkdownToHTML(markdown) {
+            let html = markdown;
+            
+            // Headers (# ## ###)
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Bold (**text**)
+            html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+            
+            // Italic (*text*)
+            html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+            
+            // Code blocks (```code```)
+            html = html.replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>');
+            
+            // Inline code (`code`)
+            html = html.replace(/`([^`]+)`/gim, '<code>$1</code>');
+            
+            // Links [text](url)
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank">$1</a>');
+            
+            // Lists (- item)
+            html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            
+            // Numbered lists (1. item)
+            html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+            
+            // Paragraphs (double newline)
+            html = html.split('\n\n').map(p => {
+                if (p.trim() && !p.match(/^<[hul]/) && !p.match(/^<li>/)) {
+                    return `<p>${p.trim()}</p>`;
+                }
+                return p;
+            }).join('\n');
+            
+            // Line breaks
+            html = html.replace(/\n/g, '<br>');
+            
+            return html;
+        }
+        
+        // ===== SHOW DOCUMENTATION MODAL =====
+        function showDocumentationModal(title, content) {
+            // Create modal if not exists
+            let modal = document.getElementById('docModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'docModal';
+                modal.className = 'doc-modal';
+                modal.innerHTML = `
+                    <div class="doc-modal-overlay" onclick="closeDocModal()"></div>
+                    <div class="doc-modal-content">
+                        <div class="doc-modal-header">
+                            <h2 class="doc-modal-title"></h2>
+                            <button class="doc-modal-close" onclick="closeDocModal()">&times;</button>
+                        </div>
+                        <div class="doc-modal-body"></div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                // Add styles
+                if (!document.getElementById('docModalStyles')) {
+                    const style = document.createElement('style');
+                    style.id = 'docModalStyles';
+                    style.textContent = `
+                        .doc-modal {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            z-index: 10000;
+                            display: none;
+                        }
+                        .doc-modal.active {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        .doc-modal-overlay {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0, 0, 0, 0.8);
+                            backdrop-filter: blur(5px);
+                        }
+                        .doc-modal-content {
+                            position: relative;
+                            background: var(--dv-primary);
+                            border: 2px solid var(--dv-gold);
+                            border-radius: 10px;
+                            width: 90%;
+                            max-width: 1200px;
+                            max-height: 90vh;
+                            overflow: hidden;
+                            display: flex;
+                            flex-direction: column;
+                            box-shadow: 0 20px 60px rgba(233, 69, 96, 0.3);
+                        }
+                        .doc-modal-header {
+                            padding: 20px;
+                            border-bottom: 1px solid var(--dv-gold);
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            background: var(--dv-secondary);
+                        }
+                        .doc-modal-title {
+                            color: var(--dv-gold);
+                            margin: 0;
+                            font-size: 1.5em;
+                        }
+                        .doc-modal-close {
+                            background: none;
+                            border: none;
+                            color: var(--dv-gold);
+                            font-size: 2em;
+                            cursor: pointer;
+                            padding: 0 10px;
+                            line-height: 1;
+                        }
+                        .doc-modal-close:hover {
+                            color: var(--dv-light);
+                        }
+                        .doc-modal-body {
+                            padding: 30px;
+                            overflow-y: auto;
+                            flex: 1;
+                            color: var(--dv-light);
+                        }
+                        .doc-modal-body h1,
+                        .doc-modal-body h2,
+                        .doc-modal-body h3 {
+                            color: var(--dv-gold);
+                            margin-top: 20px;
+                            margin-bottom: 10px;
+                        }
+                        .doc-modal-body pre {
+                            background: var(--dv-secondary);
+                            padding: 15px;
+                            border-radius: 5px;
+                            overflow-x: auto;
+                            border-left: 3px solid var(--dv-gold);
+                        }
+                        .doc-modal-body code {
+                            background: var(--dv-secondary);
+                            padding: 2px 6px;
+                            border-radius: 3px;
+                            font-family: 'Courier New', monospace;
+                        }
+                        .doc-modal-body ul,
+                        .doc-modal-body ol {
+                            margin-left: 20px;
+                            margin-bottom: 15px;
+                        }
+                        .doc-modal-body a {
+                            color: var(--dv-gold);
+                            text-decoration: underline;
+                        }
+                        .doc-modal-body a:hover {
+                            color: var(--dv-light);
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+            
+            // Update content
+            modal.querySelector('.doc-modal-title').textContent = title;
+            modal.querySelector('.doc-modal-body').innerHTML = content;
+            
+            // Show modal
+            modal.classList.add('active');
+        }
+        
+        // ===== CLOSE DOCUMENTATION MODAL =====
+        function closeDocModal() {
+            const modal = document.getElementById('docModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+        
+        // ===== SETUP SEARCH =====
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchResults = document.getElementById('searchResults');
+            const docsGrid = document.getElementById('docsGrid');
+            
+            searchBtn.addEventListener('click', () => performSearch());
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Real-time search with debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                const query = searchInput.value.trim();
+                
+                if (query.length === 0) {
+                    searchResults.classList.remove('active');
+                    docsGrid.style.display = 'grid';
+                    return;
+                }
+                
+                if (query.length >= 2) {
+                    searchTimeout = setTimeout(() => performSearch(), 300);
+                }
+            });
+        }
+        
+        // ===== PERFORM SEARCH =====
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const loading = document.getElementById('loading');
+            const searchResults = document.getElementById('searchResults');
+            const docsGrid = document.getElementById('docsGrid');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            if (query.length < 2) {
+                return;
+            }
+            
+            if (!allDocsLoaded) {
+                loading.classList.add('active');
+                setTimeout(() => {
+                    loading.classList.remove('active');
+                    performSearch();
+                }, 1000);
+                return;
+            }
+            
+            loading.classList.add('active');
+            docsGrid.style.display = 'none';
+            
+            setTimeout(() => {
+                // Translate simple language
+                const searchTerms = [query, ...findSimilarTerms(query)];
+                
+                // Search in database
+                const results = documentationDB.filter(doc => {
+                    const searchableText = [
+                        doc.title,
+                        doc.description,
+                        doc.path,
+                        ...doc.tags,
+                        ...doc.keywords
+                    ].join(' ').toLowerCase();
+                    
+                    return searchTerms.some(term => searchableText.includes(term.toLowerCase()));
+                });
+                
+                displayResults(results, query);
+                resultsCount.textContent = `${results.length} Ergebnis${results.length !== 1 ? 'se' : ''}`;
+                
+                loading.classList.remove('active');
+            }, 500);
+        }
+        
+        // ===== DISPLAY RESULTS =====
+        function displayResults(results, query) {
+            const searchResults = document.getElementById('searchResults');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const docsGrid = document.getElementById('docsGrid');
+            
+            searchResults.classList.add('active');
+            resultsContainer.innerHTML = '';
+            
+            if (results.length === 0) {
+                // No results - show intelligent suggestions
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <h3 style="color: var(--dv-gold); margin-bottom: 20px;">
+                            Keine Ergebnisse für "${query}"
+                        </h3>
+                        <p style="margin-bottom: 20px; opacity: 0.8;">
+                            Möglicherweise haben Sie einen der folgenden Begriffe gemeint:
+                        </p>
+                        <div class="suggestions">
+                            <h3>💡 Vorschläge:</h3>
+                            ${getIntelligentSuggestions(query).map(suggestion => `
+                                <div class="suggestion-item" onclick="searchFor('${suggestion}')">
+                                    ${suggestion}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p style="margin-top: 30px; opacity: 0.7; font-style: italic;">
+                            💡 Tipp: Verwenden Sie einfache Begriffe wie "Tests ausführen", "Installation" oder "Handbuch"
+                        </p>
+                    </div>
+                `;
+            } else {
+                results.forEach(doc => {
+                    const card = createDocCard(doc);
+                    resultsContainer.appendChild(card);
+                });
+            }
+        }
+        
+        // ===== GET INTELLIGENT SUGGESTIONS =====
+        function getIntelligentSuggestions(query) {
+            const suggestions = new Set();
+            const queryLower = query.toLowerCase();
+            
+            // Keyword-based suggestions
+            if (queryLower.includes('test')) {
+                suggestions.add('Tests ausführen');
+                suggestions.add('Test-Suite');
+                suggestions.add('Playwright Tests');
+            }
+            if (queryLower.includes('install') || queryLower.includes('einricht')) {
+                suggestions.add('Installation');
+                suggestions.add('Node.js installieren');
+                suggestions.add('Dependencies installieren');
+            }
+            if (queryLower.includes('fehler') || queryLower.includes('problem')) {
+                suggestions.add('Troubleshooting');
+                suggestions.add('Fehler beheben');
+                suggestions.add('Hilfe');
+            }
+            if (queryLower.includes('terminal') || queryLower.includes('befehl')) {
+                suggestions.add('Terminal-Grundlagen');
+                suggestions.add('Befehle');
+                suggestions.add('PowerShell');
+            }
+            if (queryLower.includes('handbuch') || queryLower.includes('anleitung')) {
+                suggestions.add('Handbücher');
+                suggestions.add('Anleitungen');
+                suggestions.add('Dokumentation');
+            }
+            
+            // Generic suggestions
+            if (suggestions.size === 0) {
+                suggestions.add('Handbücher');
+                suggestions.add('Anleitungen');
+                suggestions.add('Dokumentation');
+                suggestions.add('Quick Start');
+                suggestions.add('Tests');
+            }
+            
+            return Array.from(suggestions).slice(0, 8);
+        }
+        
+        // ===== SEARCH FOR (from suggestions) =====
+        window.searchFor = function(term) {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = term;
+            performSearch();
+        };
+        
+        // ===== SETUP FILTERS =====
+        function setupFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const category = btn.getAttribute('data-category');
+                    displayAllDocs(category);
+                    
+                    // Hide search results if showing
+                    document.getElementById('searchResults').classList.remove('active');
+                    document.getElementById('docsGrid').style.display = 'grid';
+                    document.getElementById('searchInput').value = '';
+                });
+            });
+        }
+        
+        // ===== SETUP SCROLL =====
+        function setupScroll() {
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+    </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>
+

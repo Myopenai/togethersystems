@@ -1,0 +1,111 @@
+{
+  "id": "FILE-ARCHIVIERUNGS-ROUTINE",
+  "version": "1.0.0",
+  "status": "ACTIVE",
+  "branding": "T,.&T,,.&T,,,.(C)TEL1.NL",
+  "created_at": "2025-01-15T00:00:00Z",
+  "description": "Automatische Archivierungs- und Konsolidierungs-Routine gemäß Settings-Standards",
+  
+  "workflow": {
+    "pre": [
+      "loadSettingsManifest",
+      "verifyIndustrialFabricationRoutine",
+      "activateConsoleMonitoring",
+      "runPreCodeVerification"
+    ],
+    "during": [
+      "characterByCharacterVerification",
+      "enforceChainSystemValidation_T1_T2_T3_Tinf",
+      "realtimeErrorDetection"
+    ],
+    "post": [
+      "updateSettingsManifest",
+      "consoleHeartHealthCheck",
+      "updateErrorPatternStore"
+    ]
+  },
+  
+  "archive_categories": {
+    "backup_files": {
+      "pattern": ["*.zip", "*kopie*", "*backup*", "*BACKUP*"],
+      "target": "archive/backups/",
+      "action": "MOVE"
+    },
+    "old_versions": {
+      "pattern": ["Prefinal*", "Anweisungen/*", "TTT/PRODUCTION-PROCESS/backups/*"],
+      "target": "archive/old-versions/",
+      "action": "MOVE"
+    },
+    "status_reports": {
+      "pattern": ["ALLE-*-BEHOBEN.md", "FINAL-*.md", "IMPLEMENTIERUNGS-STATUS*.md", "DEPLOYMENT-STATUS*.md"],
+      "target": "archive/status-reports/",
+      "action": "CONSOLIDATE_OR_MOVE",
+      "consolidate_to": "docs/STATUS-REPORT-CONSOLIDATED.md"
+    },
+    "test_files": {
+      "pattern": ["*.test.js", "*-test-*.js", "test-*.html", "TEST-*.md"],
+      "target": "dev/tests/",
+      "action": "MOVE"
+    }
+  },
+  
+  "consolidation_rules": {
+    "status_documents": {
+      "source_patterns": [
+        "ALLE-*-BEHOBEN.md",
+        "FINAL-STATUS-*.md",
+        "IMPLEMENTIERUNGS-STATUS*.md"
+      ],
+      "target": "docs/STATUS-REPORT.md",
+      "format": "MARKDOWN",
+      "structure": {
+        "sections": [
+          "Fehlerbehebung",
+          "Finale Status",
+          "Implementierungs-Status"
+        ]
+      }
+    },
+    "deployment_documents": {
+      "source_patterns": [
+        "DEPLOYMENT-*.md",
+        "GITHUB-PAGES-*.md",
+        "DEPLOY-*.md"
+      ],
+      "target": "docs/DEPLOYMENT-GUIDE.md",
+      "format": "MARKDOWN"
+    },
+    "test_documents": {
+      "source_patterns": [
+        "TEST-*.md",
+        "ALLE-TESTS-*.md",
+        "FINAL-TEST-*.md"
+      ],
+      "target": "docs/TEST-REPORT.md",
+      "format": "MARKDOWN"
+    }
+  },
+  
+  "validation": {
+    "before_archive": [
+      "verify_file_not_in_use",
+      "verify_backup_exists",
+      "check_dependencies"
+    ],
+    "after_archive": [
+      "verify_move_successful",
+      "update_references",
+      "verify_system_consistency"
+    ]
+  },
+  
+  "error_handling": {
+    "on_error": [
+      "log_error_to_console",
+      "store_in_error_patterns",
+      "rollback_if_critical",
+      "emit_warning"
+    ]
+  }
+}
+

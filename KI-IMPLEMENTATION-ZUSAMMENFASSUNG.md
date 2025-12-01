@@ -267,3 +267,10 @@ stärker zu sein als große Konzerne?
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

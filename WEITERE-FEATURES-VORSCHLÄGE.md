@@ -723,3 +723,10 @@ User B: "Ich biete Grafikdesign"
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

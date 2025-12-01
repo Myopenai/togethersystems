@@ -33,3 +33,10 @@ Write-Host "📊 Status-Datei: SYSTEM-STATUS.json" -ForegroundColor Yellow
 Write-Host "📋 Log-Datei: SYSTEM-LOG.txt" -ForegroundColor Yellow
 
 
+
+
+
+
+
+
+

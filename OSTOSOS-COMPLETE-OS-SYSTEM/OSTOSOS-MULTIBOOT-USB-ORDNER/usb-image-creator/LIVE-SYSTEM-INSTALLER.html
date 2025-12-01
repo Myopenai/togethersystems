@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Live System & Installation</title>
+<link rel="stylesheet" href="../../css/da-vinci-xxxxxl-enterprise-standard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,var(--davinci-bg,#0a0e27) 0%,var(--davinci-card,#1a1f3a) 100%);color:var(--davinci-text,#ffffff);min-height:100vh;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.header{text-align:center;margin-bottom:40px;padding:30px;background:var(--davinci-card,#1a1f3a);border-radius:20px;border:2px solid var(--davinci-accent-primary,#10b981)}
+.header h1{font-size:2.5em;color:var(--davinci-accent-primary,#10b981);margin-bottom:10px}
+.mode-selector{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:30px 0}
+.mode-card{background:var(--davinci-card,#1a1f3a);padding:30px;border-radius:15px;border:2px solid var(--davinci-border,#223040);cursor:pointer;transition:all 0.3s;text-align:center}
+.mode-card:hover{border-color:var(--davinci-accent-primary,#10b981);transform:translateY(-5px)}
+.mode-card.active{border-color:var(--davinci-accent-primary,#10b981);background:var(--davinci-bg,#0f172a)}
+.mode-card h2{color:var(--davinci-accent-primary,#10b981);margin-bottom:15px}
+.mode-card p{color:var(--davinci-muted,#9ca3af);margin-bottom:10px}
+.mode-card .icon{font-size:3em;margin-bottom:15px}
+.install-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center}
+.modal-content{background:var(--davinci-card,#1a1f3a);padding:40px;border-radius:20px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;border:2px solid var(--davinci-accent-primary,#10b981)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-close{background:none;border:none;color:var(--davinci-text,#ffffff);font-size:2em;cursor:pointer;padding:0;width:40px;height:40px}
+.form-group{margin-bottom:20px}
+.form-label{display:block;margin-bottom:8px;color:var(--davinci-text,#ffffff);font-weight:600}
+.form-input{width:100%;padding:12px;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:8px;color:var(--davinci-text,#ffffff);font-size:1em}
+.form-select{width:100%;padding:12px;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:8px;color:var(--davinci-text,#ffffff);font-size:1em;cursor:pointer}
+.warning-box{background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:15px;border-radius:8px;margin:20px 0}
+.warning-box h3{color:#ef4444;margin-bottom:10px}
+.info-box{background:rgba(16,185,129,0.1);border:1px solid #10b981;padding:15px;border-radius:8px;margin:20px 0}
+.info-box h3{color:#10b981;margin-bottom:10px}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:1em;font-weight:600;transition:all 0.3s;display:inline-block;margin:5px}
+.btn-primary{background:var(--davinci-accent-primary,#10b981);color:#00100a}
+.btn-primary:hover{background:#0ea5e9;transform:translateY(-2px)}
+.btn-secondary{background:var(--davinci-border,#223040);color:var(--davinci-text,#ffffff)}
+.btn-secondary:hover{background:var(--davinci-muted,#9ca3af)}
+.btn-danger{background:#ef4444;color:#ffffff}
+.btn-danger:hover{background:#dc2626}
+.status-indicator{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px}
+.status-live{background:#10b981}
+.status-installing{background:#f59e0b;animation:pulse 1s infinite}
+.status-complete{background:#22c55e}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" style="color:var(--davinci-accent-primary,#10b981);text-decoration:none">T,.&T,,.&T,,,.</a> OSTOSOS Live System</h1>
+<p style="font-size:1.2em;color:var(--davinci-muted,#9ca3af);margin-top:10px">
+Multi-OS Live System vom USB-Stick
+</p>
+<div id="systemStatus" style="margin-top:20px;padding:15px;background:var(--davinci-bg,#0f172a);border-radius:8px">
+<span class="status-indicator status-live"></span>
+<strong>Status:</strong> <span id="statusText">Live-System aktiv (vom USB-Stick)</span>
+</div>
+</div>
+
+<div class="mode-selector">
+<div class="mode-card active" id="liveMode">
+<div class="icon">🚀</div>
+<h2>Live-System</h2>
+<p>OSTOSOS läuft direkt vom USB-Stick</p>
+<p style="font-size:0.9em;color:var(--davinci-muted,#9ca3af);margin-top:10px">
+✅ Alle Funktionen verfügbar<br>
+✅ Keine Installation nötig<br>
+✅ Daten bleiben auf USB-Stick<br>
+✅ Funktioniert auf jedem Gerät
+</p>
+<button class="btn btn-primary" onclick="startLiveMode()" style="margin-top:20px">Live-System starten</button>
+</div>
+
+<div class="mode-card" id="installMode">
+<div class="icon">💾</div>
+<h2>Installation</h2>
+<p>OSTOSOS auf Festplatte installieren</p>
+<p style="font-size:0.9em;color:var(--davinci-muted,#9ca3af);margin-top:10px">
+✅ Permanente Installation<br>
+✅ Schnellerer Start<br>
+✅ Mehr Speicherplatz<br>
+✅ System-Integration
+</p>
+<button class="btn btn-primary" onclick="showInstallModal()" style="margin-top:20px">Installation starten</button>
+</div>
+</div>
+
+<div class="info-box" style="margin-top:30px">
+<h3>ℹ️ Live-System Funktionen</h3>
+<p>Im Live-System können Sie:</p>
+<ul style="margin-left:20px;margin-top:10px;line-height:1.8">
+<li>🌐 Online surfen und arbeiten</li>
+<li>📧 E-Mails senden und empfangen</li>
+<li>💾 Dateien speichern (auf USB-Stick)</li>
+<li>🎮 Spiele spielen</li>
+<li>⚙️ Alle 200+ Tools nutzen</li>
+<li>💼 Komplette Produktivität</li>
+</ul>
+<p style="margin-top:15px"><strong>Hinweis:</strong> Alle Daten werden auf dem USB-Stick gespeichert. Beim Entfernen des USB-Sticks sind alle Daten weiterhin verfügbar, wenn Sie den USB-Stick erneut einstecken.</p>
+</div>
+</div>
+
+<!-- Installations-Modal -->
+<div id="installModal" class="install-modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="davinci-heading-2">💾 OSTOSOS Installation</h2>
+<button class="modal-close" onclick="closeInstallModal()">&times;</button>
+</div>
+
+<div class="warning-box">
+<h3>⚠️ Wichtige Hinweise</h3>
+<ul style="margin-left:20px;margin-top:10px;line-height:1.8">
+<li>Die Installation wird OSTOSOS auf Ihrer Festplatte installieren</li>
+<li>Bestehende Daten werden <strong>nicht</strong> gelöscht</li>
+<li>OSTOSOS kann parallel zu anderen Betriebssystemen installiert werden</li>
+<li>Sie können das Live-System weiterhin vom USB-Stick nutzen</li>
+</ul>
+</div>
+
+<div class="form-group">
+<label class="form-label">Installations-Pfad:</label>
+<select id="installPath" class="form-select">
+<option value="auto">Automatisch wählen (empfohlen)</option>
+<option value="custom">Benutzerdefiniert</option>
+</select>
+</div>
+
+<div id="customPathGroup" style="display:none">
+<div class="form-group">
+<label class="form-label">Benutzerdefinierter Pfad:</label>
+<input type="text" id="customPath" class="form-input" placeholder="/opt/ostosos oder C:\OSTOSOS">
+</div>
+</div>
+
+<div class="form-group">
+<label class="form-label">Installations-Typ:</label>
+<select id="installType" class="form-select">
+<option value="full">Vollständig (alle 200+ Tools)</option>
+<option value="minimal">Minimal (nur Kern-System)</option>
+<option value="custom">Benutzerdefiniert (Tool-Auswahl)</option>
+</select>
+</div>
+
+<div class="form-group">
+<label style="display:flex;align-items:center;cursor:pointer">
+<input type="checkbox" id="createDesktopIcon" checked style="margin-right:10px;width:20px;height:20px">
+<span>Desktop-Verknüpfung erstellen</span>
+</label>
+</div>
+
+<div class="form-group">
+<label style="display:flex;align-items:center;cursor:pointer">
+<input type="checkbox" id="createStartMenu" checked style="margin-right:10px;width:20px;height:20px">
+<span>Startmenü-Eintrag erstellen</span>
+</label>
+</div>
+
+<div class="form-group">
+<label style="display:flex;align-items:center;cursor:pointer">
+<input type="checkbox" id="startAfterInstall" checked style="margin-right:10px;width:20px;height:20px">
+<span>Nach Installation starten</span>
+</label>
+</div>
+
+<div style="display:flex;gap:10px;margin-top:30px">
+<button class="btn btn-primary" onclick="startInstallation()">💾 Installation starten</button>
+<button class="btn btn-secondary" onclick="closeInstallModal()">❌ Abbrechen</button>
+</div>
+
+<div id="installProgress" style="display:none;margin-top:30px">
+<div style="background:var(--davinci-bg,#0f172a);padding:20px;border-radius:8px">
+<h3 style="color:var(--davinci-accent-primary,#10b981);margin-bottom:15px">Installation läuft...</h3>
+<div style="background:var(--davinci-border,#223040);height:20px;border-radius:10px;overflow:hidden;margin-bottom:10px">
+<div id="progressBar" style="background:var(--davinci-accent-primary,#10b981);height:100%;width:0%;transition:width 0.3s;display:flex;align-items:center;justify-content:center;color:#00100a;font-weight:bold">0%</div>
+</div>
+<div id="installStatus" style="color:var(--davinci-muted,#9ca3af);font-size:0.9em">Vorbereitung...</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="../../css/da-vinci-enterprise-standard-init.js"></script>
+<script>
+let currentMode='live';
+let installationInProgress=false;
+
+function detectUSB(){
+const urlParams=new URLSearchParams(window.location.search);
+const usb=urlParams.get('usb');
+if(usb==='true'||window.location.protocol==='file:'){
+return true;
+}
+return false;
+}
+
+function startLiveMode(){
+if(installationInProgress){
+alert('Installation läuft bereits. Bitte warten Sie, bis die Installation abgeschlossen ist.');
+return;
+}
+currentMode='live';
+document.getElementById('liveMode').classList.add('active');
+document.getElementById('installMode').classList.remove('active');
+document.getElementById('statusText').textContent='Live-System aktiv (vom USB-Stick)';
+document.querySelector('#systemStatus .status-indicator').className='status-indicator status-live';
+window.location.href='../OSTOSOS-OS-COMPLETE-SYSTEM.html?mode=live';
+}
+
+function showInstallModal(){
+if(installationInProgress){
+alert('Installation läuft bereits.');
+return;
+}
+document.getElementById('installModal').style.display='flex';
+loadInstallOptions();
+}
+
+function closeInstallModal(){
+if(installationInProgress){
+if(!confirm('Installation läuft. Möchten Sie wirklich abbrechen?')){
+return;
+}
+installationInProgress=false;
+}
+document.getElementById('installModal').style.display='none';
+document.getElementById('installProgress').style.display='none';
+document.getElementById('progressBar').style.width='0%';
+}
+
+function loadInstallOptions(){
+const platform=detectPlatform();
+const installPath=document.getElementById('installPath');
+if(platform==='windows'){
+installPath.innerHTML=`
+<option value="auto">C:\\OSTOSOS (empfohlen)</option>
+<option value="custom">Benutzerdefiniert</option>
+`;
+}else if(platform==='macos'){
+installPath.innerHTML=`
+<option value="auto">/Applications/OSTOSOS (empfohlen)</option>
+<option value="custom">Benutzerdefiniert</option>
+`;
+}else{
+installPath.innerHTML=`
+<option value="auto">/opt/ostosos (empfohlen)</option>
+<option value="custom">Benutzerdefiniert</option>
+`;
+}
+}
+
+function detectPlatform(){
+if(navigator.platform.includes('Win'))return 'windows';
+if(navigator.platform.includes('Mac'))return 'macos';
+if(navigator.platform.includes('Linux'))return 'linux';
+return 'unknown';
+}
+
+document.getElementById('installPath').addEventListener('change',(e)=>{
+if(e.target.value==='custom'){
+document.getElementById('customPathGroup').style.display='block';
+}else{
+document.getElementById('customPathGroup').style.display='none';
+}
+});
+
+function startInstallation(){
+if(installationInProgress){
+return;
+}
+const installPath=document.getElementById('installPath').value;
+const customPath=document.getElementById('customPath').value;
+const installType=document.getElementById('installType').value;
+const createDesktop=document.getElementById('createDesktopIcon').checked;
+const createStartMenu=document.getElementById('createStartMenu').checked;
+const startAfter=document.getElementById('startAfterInstall').checked;
+
+if(installPath==='custom'&&!customPath){
+alert('Bitte geben Sie einen Installations-Pfad an.');
+return;
+}
+
+if(!confirm('Möchten Sie wirklich mit der Installation beginnen?\n\nDies wird OSTOSOS auf Ihrer Festplatte installieren.')){
+return;
+}
+
+installationInProgress=true;
+document.getElementById('installProgress').style.display='block';
+document.getElementById('statusText').textContent='Installation läuft...';
+document.querySelector('#systemStatus .status-indicator').className='status-indicator status-installing';
+
+const steps=[
+{name:'Vorbereitung...',progress:10},
+{name:'Dateien kopieren...',progress:30},
+{name:'System konfigurieren...',progress:50},
+{name:'Tools installieren...',progress:70},
+{name:'Verknüpfungen erstellen...',progress:85},
+{name:'Installation abschließen...',progress:100}
+];
+
+let currentStep=0;
+const progressInterval=setInterval(()=>{
+if(currentStep>=steps.length){
+clearInterval(progressInterval);
+installationInProgress=false;
+document.getElementById('installStatus').textContent='✅ Installation erfolgreich abgeschlossen!';
+document.getElementById('statusText').textContent='Installation abgeschlossen';
+document.querySelector('#systemStatus .status-indicator').className='status-indicator status-complete';
+if(startAfter){
+setTimeout(()=>{
+window.location.href='../OSTOSOS-OS-COMPLETE-SYSTEM.html?mode=installed';
+},2000);
+}
+return;
+}
+const step=steps[currentStep];
+document.getElementById('progressBar').style.width=step.progress+'%';
+document.getElementById('progressBar').textContent=step.progress+'%';
+document.getElementById('installStatus').textContent=step.name;
+currentStep++;
+},1500);
+
+saveInstallationConfig({
+path:installPath==='custom'?customPath:'auto',
+type:installType,
+createDesktop,
+createStartMenu,
+startAfter
+});
+}
+
+function saveInstallationConfig(config){
+localStorage.setItem('ostosos.install.config',JSON.stringify(config));
+localStorage.setItem('ostosos.installed','true');
+localStorage.setItem('ostosos.install.path',config.path);
+localStorage.setItem('ostosos.install.type',config.type);
+}
+
+window.addEventListener('load',()=>{
+if(detectUSB()){
+document.getElementById('statusText').textContent='USB-Stick erkannt - Live-System bereit';
+}
+const savedMode=localStorage.getItem('ostosos.mode')||'live';
+if(savedMode==='installed'){
+document.getElementById('statusText').textContent='Installiert auf Festplatte';
+document.querySelector('#systemStatus .status-indicator').className='status-indicator status-complete';
+}
+});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - User-Friendability Einstellungen</title>
+<link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,monospace;background:radial-gradient(circle at top,var(--davinci-bg,#0a0e27) 0%,var(--davinci-card,#1a1f3a) 100%);color:var(--davinci-text,#ffffff);min-height:100vh;padding:20px}
+.container{max-width:1400px;margin:0 auto}
+.header{text-align:center;margin-bottom:30px;padding:30px;background:var(--davinci-card,#1a1f3a);border-radius:20px;border:2px solid var(--davinci-accent-primary,#10b981)}
+.modes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:30px}
+.mode-card{background:var(--davinci-card,#1a1f3a);padding:25px;border-radius:15px;border:2px solid var(--davinci-border,#223040);cursor:pointer;transition:all 0.3s}
+.mode-card:hover{border-color:var(--davinci-accent-primary,#10b981);transform:translateY(-5px)}
+.mode-card.active{border-color:var(--davinci-accent-primary,#10b981);background:rgba(16,185,129,0.1)}
+.mode-card h3{color:var(--davinci-accent-primary,#10b981);margin-bottom:10px}
+.mode-card p{color:var(--davinci-muted,#9ca3af);font-size:0.9em;margin-bottom:15px}
+.mode-card .scientific{font-size:0.8em;color:var(--davinci-muted,#9ca3af);font-style:italic;margin-top:10px}
+.analysis-section{background:var(--davinci-card,#1a1f3a);padding:25px;border-radius:15px;border:1px solid var(--davinci-border,#223040);margin-bottom:20px}
+.analysis-section h3{color:var(--davinci-accent-primary,#10b981);margin-bottom:15px}
+.recommendation{background:rgba(59,130,246,0.1);border:1px solid #3b82f6;padding:15px;border-radius:10px;margin-top:15px}
+.recommendation h4{color:#3b82f6;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" style="color:var(--davinci-accent-primary,#10b981);text-decoration:none">T,.&T,,.&T,,,.</a> User-Friendability Einstellungen</h1>
+<p style="font-size:1.2em;color:var(--davinci-muted,#9ca3af);margin-top:10px">Wissenschaftlich fundierte Modi für maximale Behaglichkeit</p>
+</div>
+
+<div class="modes-grid" id="modesGrid"></div>
+
+<div class="analysis-section">
+<h3>🧠 Psychologische Analyse</h3>
+<textarea id="promptInput" placeholder="Gib einen Prompt ein für psychologische Analyse..." style="width:100%;min-height:100px;padding:15px;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:10px;color:var(--davinci-text,#ffffff);font-size:1em;margin-bottom:15px"></textarea>
+<button class="davinci-btn" onclick="analyzePrompt()">Analysieren</button>
+<div id="analysisResult" style="margin-top:20px"></div>
+</div>
+</div>
+
+<script src="./css/da-vinci-enterprise-standard-init.js"></script>
+<script src="./deep-psychological-analyzer-core.js"></script>
+<script src="./user-friendability-modes-core.js"></script>
+<script>
+function displayModes() {
+  const grid = document.getElementById('modesGrid');
+  const modes = window.USER_FRIENDABILITY_MODES.modes;
+  const current = window.USER_FRIENDABILITY_MODES.currentMode;
+  
+  grid.innerHTML = Object.keys(modes).map(id => {
+    const mode = modes[id];
+    const isActive = id === current;
+    return `
+      <div class="mode-card ${isActive ? 'active' : ''}" onclick="selectMode('${id}')">
+        <h3>${mode.name}</h3>
+        <p>${mode.description}</p>
+        <div class="scientific">📚 ${mode.scientificBasis}</div>
+        ${isActive ? '<div style="color:#10b981;margin-top:10px">✓ Aktiv</div>' : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function selectMode(modeId) {
+  window.USER_FRIENDABILITY_MODES.applyMode(modeId);
+  displayModes();
+  alert(`Modus geändert zu: ${window.USER_FRIENDABILITY_MODES.modes[modeId].name}`);
+}
+
+async function analyzePrompt() {
+  const input = document.getElementById('promptInput');
+  const prompt = input.value.trim();
+  
+  if (!prompt) {
+    alert('Bitte gib einen Prompt ein');
+    return;
+  }
+  
+  if (!window.DEEP_PSYCHOLOGICAL_ANALYZER) {
+    alert('Psychologischer Analyzer nicht verfügbar');
+    return;
+  }
+  
+  const analysis = window.DEEP_PSYCHOLOGICAL_ANALYZER.analyzeDeep(prompt);
+  const suggestedMode = window.USER_FRIENDABILITY_MODES.suggestMode(analysis);
+  
+  const resultDiv = document.getElementById('analysisResult');
+  resultDiv.innerHTML = `
+    <div style="margin-top:20px">
+      <h4 style="color:var(--davinci-accent-primary,#10b981);margin-bottom:15px">Analyse-Ergebnis:</h4>
+      
+      <div style="margin-bottom:15px">
+        <strong>Psychologische Bedürfnisse:</strong>
+        <ul style="margin-left:20px;margin-top:5px">
+          ${analysis.psychological.needs.map(n => `<li>${n}</li>`).join('')}
+        </ul>
+      </div>
+      
+      <div style="margin-bottom:15px">
+        <strong>Traits:</strong> ${analysis.psychological.traits.join(', ')}
+      </div>
+      
+      <div style="margin-bottom:15px">
+        <strong>Stress-Level:</strong> ${analysis.psychological.stressLevel}
+      </div>
+      
+      <div style="margin-bottom:15px">
+        <strong>Komfort-Level:</strong> ${analysis.psychological.comfortLevel}
+      </div>
+      
+      <div class="recommendation">
+        <h4>💡 Empfohlener Modus: ${window.USER_FRIENDABILITY_MODES.modes[suggestedMode].name}</h4>
+        <p>${window.USER_FRIENDABILITY_MODES.modes[suggestedMode].description}</p>
+        <button class="davinci-btn" onclick="selectMode('${suggestedMode}')" style="margin-top:10px">Modus aktivieren</button>
+      </div>
+      
+      ${analysis.recommendations.length > 0 ? `
+      <div style="margin-top:20px">
+        <strong>Wissenschaftliche Empfehlungen:</strong>
+        <ul style="margin-left:20px;margin-top:5px">
+          ${analysis.recommendations.map(r => `
+            <li>
+              <strong>${r.category}:</strong> ${r.recommendation}
+              <br><small style="color:var(--davinci-muted,#9ca3af)">Quelle: ${r.source}</small>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+window.addEventListener('load', () => {
+  displayModes();
+});
+</script>
+</body>
+</html>
+

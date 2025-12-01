@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. Media Hub – OSTOSOS</title>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+  <style>
+    .player-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .player {
+      background: var(--davinci-card, #1a1f3a);
+      border-radius: var(--davinci-radius-lg, 18px);
+      padding: 2rem;
+    }
+    .waveform {
+      width: 100%;
+      height: 100px;
+      background: var(--davinci-bg, #0f172a);
+      border-radius: var(--davinci-radius-sm, 6px);
+      margin: 1rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .waveform-bar {
+      position: absolute;
+      bottom: 0;
+      width: 4px;
+      background: var(--davinci-accent-primary, #10b981);
+      margin: 0 2px;
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+    .playlist {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 1rem;
+    }
+    .playlist-item {
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      background: var(--davinci-bg, #0f172a);
+      border-radius: var(--davinci-radius-sm, 6px);
+      cursor: pointer;
+    }
+    .playlist-item:hover {
+      background: var(--davinci-border, #223040);
+    }
+    .playlist-item.active {
+      border-left: 3px solid var(--davinci-accent-primary, #10b981);
+    }
+  </style>
+</head>
+<body>
+  <div class="davinci-container" style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+    <h1 class="davinci-heading-1">T,. Media Hub</h1>
+    
+    <div class="davinci-card" data-davinci-phosphor-complete>
+      <h2 class="davinci-heading-2">Doppel-Host Player (A/B Synchronisiert)</h2>
+      
+      <div class="player-container">
+        <div class="player">
+          <h3 class="davinci-heading-3">Player A</h3>
+          <div class="waveform" id="waveformA"></div>
+          <div class="controls">
+            <button class="davinci-btn" id="playA">▶️</button>
+            <button class="davinci-btn" id="pauseA">⏸️</button>
+            <button class="davinci-btn" id="stopA">⏹️</button>
+            <input type="range" id="volumeA" min="0" max="100" value="50" style="flex: 1;">
+            <span class="davinci-text-muted" id="timeA">0:00</span>
+          </div>
+        </div>
+
+        <div class="player">
+          <h3 class="davinci-heading-3">Player B</h3>
+          <div class="waveform" id="waveformB"></div>
+          <div class="controls">
+            <button class="davinci-btn" id="playB">▶️</button>
+            <button class="davinci-btn" id="pauseB">⏸️</button>
+            <button class="davinci-btn" id="stopB">⏹️</button>
+            <input type="range" id="volumeB" min="0" max="100" value="50" style="flex: 1;">
+            <span class="davinci-text-muted" id="timeB">0:00</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <button class="davinci-btn" id="syncToggle">🔄 Synchronisation: AUS</button>
+        <button class="davinci-btn-secondary" id="loadDemo" style="margin-left: 1rem;">📦 Demo-Medien laden</button>
+      </div>
+    </div>
+
+    <div class="davinci-card" style="margin-top: 2rem;">
+      <h2 class="davinci-heading-2">Playlist</h2>
+      <div class="playlist" id="playlist">
+        <div class="davinci-text-muted">Keine Medien geladen</div>
+      </div>
+    </div>
+
+    <div class="davinci-card" style="margin-top: 2rem;">
+      <h2 class="davinci-heading-2">Visualisierer (Spiele-Qualität)</h2>
+      <canvas id="visualizer" width="800" height="400" style="width: 100%; height: 400px; background: var(--davinci-bg, #0f172a); border-radius: var(--davinci-radius-md, 12px);"></canvas>
+    </div>
+  </div>
+
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+  <script>
+    let audioA, audioB;
+    let syncEnabled = false;
+    let visualizerCtx;
+    let animationFrame;
+
+    function initWaveform(id) {
+      const waveform = document.getElementById(id);
+      waveform.innerHTML = '';
+      for (let i = 0; i < 100; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'waveform-bar';
+        bar.style.left = `${i * 1%}%`;
+        bar.style.height = `${Math.random() * 100}%`;
+        waveform.appendChild(bar);
+      }
+    }
+
+    function animateWaveform(id, audio) {
+      if (!audio) return;
+      
+      const waveform = document.getElementById(id);
+      const bars = waveform.querySelectorAll('.waveform-bar');
+      
+      function animate() {
+        if (audio.paused) return;
+        
+        bars.forEach((bar, i) => {
+          const height = Math.random() * 100;
+          bar.style.height = `${height}%`;
+          bar.style.background = `hsl(${120 + height * 2}, 70%, 50%)`;
+        });
+        
+        requestAnimationFrame(animate);
+      }
+      
+      animate();
+    }
+
+    function initVisualizer() {
+      const canvas = document.getElementById('visualizer');
+      visualizerCtx = canvas.getContext('2d');
+      
+      function draw() {
+        visualizerCtx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Spiele-Qualität Visualisierung
+        const time = Date.now() * 0.001;
+        for (let i = 0; i < 50; i++) {
+          const x = (canvas.width / 50) * i;
+          const y = canvas.height / 2 + Math.sin(time * 2 + i * 0.1) * 100;
+          const size = 10 + Math.sin(time * 3 + i) * 5;
+          
+          visualizerCtx.fillStyle = `hsl(${(i * 7) % 360}, 70%, 50%)`;
+          visualizerCtx.beginPath();
+          visualizerCtx.arc(x, y, size, 0, Math.PI * 2);
+          visualizerCtx.fill();
+        }
+        
+        animationFrame = requestAnimationFrame(draw);
+      }
+      
+      draw();
+    }
+
+    document.getElementById('syncToggle').addEventListener('click', function() {
+      syncEnabled = !syncEnabled;
+      this.textContent = `🔄 Synchronisation: ${syncEnabled ? 'AN' : 'AUS'}`;
+      this.style.background = syncEnabled ? 'var(--davinci-success, #22c55e)' : 'var(--davinci-accent-primary, #10b981)';
+    });
+
+    document.getElementById('loadDemo').addEventListener('click', () => {
+      const playlist = document.getElementById('playlist');
+      playlist.innerHTML = `
+        <div class="playlist-item active" data-file="demo1.mp3">
+          <strong>Demo Track 1</strong>
+          <div class="davinci-text-muted" style="font-size: 0.85em;">Lokale Demo-Datei</div>
+        </div>
+        <div class="playlist-item" data-file="demo2.mp3">
+          <strong>Demo Track 2</strong>
+          <div class="davinci-text-muted" style="font-size: 0.85em;">Lokale Demo-Datei</div>
+        </div>
+      `;
+      
+      document.querySelectorAll('.playlist-item').forEach(item => {
+        item.addEventListener('click', () => {
+          document.querySelectorAll('.playlist-item').forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+          // In echter Implementierung würde hier die Datei geladen
+        });
+      });
+    });
+
+    // Initialize
+    initWaveform('waveformA');
+    initWaveform('waveformB');
+    initVisualizer();
+
+    // Player Controls (simuliert - in echter Implementierung mit Web Audio API)
+    const playA = document.getElementById('playA');
+    const playB = document.getElementById('playB');
+    if (playA) {
+      playA.addEventListener('click', () => {
+        animateWaveform('waveformA', audioA);
+      });
+    }
+    if (playB) {
+      playB.addEventListener('click', () => {
+        animateWaveform('waveformB', audioB);
+      });
+    }
+  </script>
+</body>
+</html>
+

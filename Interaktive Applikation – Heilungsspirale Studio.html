@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)file:///D:/Heilungneuerversuch/index.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Interaktive Applikation – Heilungsspirale Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #0b1020;
+      --card-border: rgba(255,255,255,0.08);
+      --accent: #3b82f6;
+      --accent-soft: rgba(59,130,246,0.15);
+      --gold: #f59e0b;
+      --muted: #9ca3af;
+      --text: #e5e7eb;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --shadow-soft: 0 20px 40px rgba(0,0,0,0.6);
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    #app {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr) 260px;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 1400px;
+      height: 100vh;
+      padding: 16px;
+    }
+
+    header {
+      grid-column: 1 / 4;
+      padding: 10px 16px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(120deg, rgba(59,130,246,0.15), rgba(139,92,246,0.12));
+      border: 1px solid rgba(148,163,184,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header h1 span.badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.5);
+      border: 1px solid rgba(148,163,184,0.7);
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--muted);
+    }
+
+    header .tagline {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(59,130,246,0.24), rgba(15,23,42,0.98));
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--card-border);
+      padding: 12px 14px;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      border: 1px solid rgba(148,163,184,0.24);
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.35;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+    }
+
+    /* Linke Controls */
+    #controls-left {
+      grid-row: 2 / 3;
+      grid-column: 1 / 2;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-group {
+      margin-bottom: 8px;
+    }
+
+    .control-group label {
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+
+    .control-group span.value {
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      font-size: 11px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(148,163,184,0.3);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.4);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #e5e7eb, #3b82f6 60%, #1d4ed8 100%);
+      border: 1px solid rgba(15,23,42,0.9);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.4);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #e5e7eb, #3b82f6 60%, #1d4ed8 100%);
+      border: 1px solid rgba(15,23,42,0.9);
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.4);
+      cursor: pointer;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    button.btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      padding: 4px 9px;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.96));
+      color: var(--text);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+    }
+
+    button.btn.primary {
+      border-color: rgba(59,130,246,0.8);
+      background: radial-gradient(circle at top, rgba(59,130,246,0.26), rgba(15,23,42,0.96));
+    }
+
+    button.btn.danger {
+      border-color: rgba(239,68,68,0.9);
+      background: radial-gradient(circle at top, rgba(239,68,68,0.22), rgba(15,23,42,0.96));
+    }
+
+    button.btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    button.btn:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.6);
+      background: radial-gradient(circle at top left, rgba(59,130,246,0.32), rgba(15,23,42,0.96));
+    }
+
+    .kbd {
+      font-family: ui-monospace, Menlo, Consolas, "SF Mono", monospace;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.95);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.8);
+    }
+
+    p.notice {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 6px 0 0;
+    }
+
+    /* Mittel – Canvas/Studio */
+    #studio-card {
+      grid-row: 2 / 3;
+      grid-column: 2 / 3;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #canvas-wrapper {
+      position: relative;
+      flex: 1;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: radial-gradient(circle at center, #020617 0, #000 60%, #020617 100%);
+      border: 1px solid rgba(148,163,184,0.3);
+    }
+
+    #healCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    #play-indicator {
+      position: absolute;
+      left: 12px;
+      top: 10px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(59,130,246,0.7);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #play-indicator span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(34,197,94,0.9);
+      animation: pulse-dot 1.3s ease-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0% { transform: scale(0.95); opacity: 0.9; }
+      70% { transform: scale(1.4); opacity: 0.1; }
+      100% { transform: scale(0.95); opacity: 0.9; }
+    }
+
+    /* Rechte Tools: Elemente, Animation, Export */
+    #controls-right {
+      grid-row: 2 / 3;
+      grid-column: 3 / 4;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .pill {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.45);
+      background: rgba(15,23,42,0.9);
+      color: var(--muted);
+      cursor: default;
+      white-space: nowrap;
+    }
+
+    select, input[type="text"], textarea {
+      width: 100%;
+      padding: 4px 7px;
+      border-radius: 8px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.95);
+      color: var(--text);
+      font-size: 11px;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+      max-height: 110px;
+    }
+
+    .small-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 4px 0 2px;
+    }
+
+    .element-list {
+      max-height: 120px;
+      overflow-y: auto;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.9);
+      padding: 4px 4px;
+      font-size: 11px;
+    }
+
+    .element-item {
+      padding: 3px 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .element-item span.badge {
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+    }
+
+    .element-item.active {
+      background: rgba(59,130,246,0.2);
+      border: 1px solid rgba(59,130,246,0.9);
+    }
+
+    .element-item:not(.active):hover {
+      background: rgba(15,23,42,0.9);
+    }
+
+    .row-inline {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .row-inline > * {
+      flex: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      #app {
+        grid-template-columns: minmax(0,1fr);
+        grid-template-rows: auto auto auto auto;
+        height: auto;
+        overflow-y: auto;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      #controls-left, #studio-card, #controls-right {
+        grid-column: 1 / 2;
+      }
+      #studio-card {
+        height: 420px;
+      }
+      body {
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>
+      Heilungsspirale
+      <span class="badge">Interaktive Applikation · Mini-Studio</span>
+    </h1>
+    <div class="tagline">
+      2D · 3D-Projektion · Morph · Elemente · Animation · Export
+    </div>
+  </header>
+
+  <!-- Linke Seite: Original-Funktion + Modi -->
+  <section id="controls-left" aria-labelledby="controls-title">
+    <div class="card">
+      <h2 id="controls-title">Heilungsspirale · Parameter</h2>
+
+      <div class="control-group">
+        <label for="arms">
+          <span>Arme</span>
+          <span class="value" id="armsValue">8</span>
+        </label>
+        <input id="arms" type="range" min="1" max="24" step="1" value="8">
+      </div>
+
+      <div class="control-group">
+        <label for="twist">
+          <span>Drehung</span>
+          <span class="value" id="twistValue">3.2</span>
+        </label>
+        <input id="twist" type="range" min="0" max="8" step="0.1" value="3">
+      </div>
+
+      <div class="control-group">
+        <label for="density">
+          <span>Dichte</span>
+          <span class="value" id="densityValue">1000</span>
+        </label>
+        <input id="density" type="range" min="150" max="2000" step="10" value="900">
+      </div>
+
+      <div class="control-group">
+        <label for="mode">
+          <span>Visualisierung</span>
+        </label>
+        <select id="mode">
+          <option value="2d">2D-Modus</option>
+          <option value="3d">3D-Projektion</option>
+          <option value="morph">Morph-Modus (stärker)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="speed">
+          <span>Animationsgeschwindigkeit</span>
+          <span class="value" id="speedValue">1.0x</span>
+        </label>
+        <input id="speed" type="range" min="0" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="control-group">
+        <label>
+          <span>Loop / Zyklus</span>
+        </label>
+        <div class="row-inline">
+          <label style="font-size:11px;color:var(--muted);">
+            <input type="checkbox" id="autoCycle" checked="">
+            &nbsp;Alle Modi im Loop
+          </label>
+          <label style="font-size:11px;color:var(--muted);">
+            <input type="checkbox" id="pulseMorph" checked="">
+            &nbsp;Morph betonen
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" id="resetBtn">
+          ↺ <span>Zurücksetzen</span>
+        </button>
+        <button class="btn primary" id="savePngBtn">
+          ⬇ <span>Als PNG speichern</span>
+        </button>
+        <button class="btn" id="saveSvgBtn">
+          ⬇ <span>Als SVG (Spirale)</span>
+        </button>
+      </div>
+
+      <p class="notice">
+        Tipp: Halte <span class="kbd">R</span> für Neuzeichnen, <span class="kbd">S</span> für PNG-Speichern,
+        <span class="kbd">Leertaste</span> für Play/Pause.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Spiral-Presets &amp; Paletten</h2>
+
+      <div class="control-group">
+        <label for="presetSelect">
+          <span>Preset auswählen</span>
+        </label>
+        <select id="presetSelect">
+          <option value="none">— Frei —</option>
+          <option value="healing">Heilung · Gold / Blau</option>
+          <option value="yinYang">Yin·Yang · Dual</option>
+          <option value="lotus">Lotus · Blüte</option>
+          <option value="galaxy">Galaxie · Sternenarm</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" id="randomPresetBtn">✧ Zufall</button>
+        <button class="btn" id="exportPresetBtn">⇢ Preset exportieren</button>
+        <button class="btn" id="importPresetBtn">⇠ Preset importieren</button>
+      </div>
+
+      <label class="small-label" for="presetJson">Preset-JSON</label>
+      <textarea id="presetJson" placeholder="Hier Preset-JSON anzeigen / einfügen…"></textarea>
+    </div>
+  </section>
+
+  <!-- Mitte: Canvas/Studio -->
+  <section id="studio-card" class="card" aria-label="Canvas Studio">
+    <h2>Studio · Canvas</h2>
+    <div id="canvas-wrapper">
+      <canvas id="healCanvas" width="910" height="693"></canvas>
+      <div id="play-indicator" style="opacity: 1;">
+        <span class="dot"></span>
+        <span id="playText">Live · Loop</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rechte Seite: Elemente, Animationsprofile, Export -->
+  <section id="controls-right" aria-label="Elemente und Export">
+    <div class="card">
+      <h2>Elemente &amp; Animation</h2>
+      <div class="section-title">Elemente im Canvas</div>
+
+      <div class="pill-row">
+        <button class="btn" id="addTextBtn">＋ Text</button>
+        <button class="btn" id="addImageBtn">＋ Bild</button>
+        <button class="btn" id="addVideoBtn">＋ Video</button>
+      </div>
+
+      <input type="file" id="imageInput" accept="image/*" style="display:none;">
+      <input type="file" id="videoInput" accept="video/*" style="display:none;">
+
+      <div class="small-label">Liste</div>
+      <div class="element-list" id="elementList"></div>
+
+      <div class="small-label">Animationsprofil (pro Element)</div>
+      <select id="animationProfile">
+        <option value="none">Keine (statisch)</option>
+        <option value="rotate">Rotieren</option>
+        <option value="float">Schweben</option>
+        <option value="pulse">Pulsieren</option>
+      </select>
+
+      <div class="control-group">
+        <label for="animIntensity">
+          <span>Intensität</span>
+          <span class="value" id="animIntensityValue">1.0</span>
+        </label>
+        <input id="animIntensity" type="range" min="0" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn danger" id="deleteElementBtn">✕ Element löschen</button>
+      </div>
+
+      <p class="notice">
+        Elemente mit der Maus im Canvas verschieben. Doppelklick auf Text-Element zum Bearbeiten.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Export · Aufnahme</h2>
+      <div class="section-title">Video-Export (WebM)</div>
+
+      <div class="btn-row">
+        <button class="btn primary" id="startRecBtn">● Aufnahme starten</button>
+        <button class="btn" id="stopRecBtn" disabled="">■ Stop</button>
+      </div>
+
+      <p class="notice" id="recStatus">
+        Canvas-Capture als WebM. Audio aus Videos wird – soweit der Browser es erlaubt – mit aufgenommen.
+      </p>
+
+      <div class="section-title">Projekt</div>
+
+      <div class="btn-row">
+        <button class="btn" id="saveProjectBtn">⇣ Projekt speichern</button>
+        <button class="btn" id="loadProjectBtn">⇡ Projekt laden</button>
+      </div>
+
+      <textarea id="projectJson" placeholder="Projekt-JSON hier anzeigen / einsetzen…"></textarea>
+    </div>
+  </section>
+</div>
+
+<script>
+(function() {
+  // ===============================
+  // Grund-Referenzen
+  // ===============================
+  const canvas = document.getElementById('healCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const armsInput = document.getElementById('arms');
+  const twistInput = document.getElementById('twist');
+  const densityInput = document.getElementById('density');
+  const modeSelect = document.getElementById('mode');
+  const speedInput = document.getElementById('speed');
+  const autoCycleInput = document.getElementById('autoCycle');
+  const pulseMorphInput = document.getElementById('pulseMorph');
+
+  const armsValue = document.getElementById('armsValue');
+  const twistValue = document.getElementById('twistValue');
+  const densityValue = document.getElementById('densityValue');
+  const speedValue = document.getElementById('speedValue');
+
+  const resetBtn = document.getElementById('resetBtn');
+  const savePngBtn = document.getElementById('savePngBtn');
+  const saveSvgBtn = document.getElementById('saveSvgBtn');
+
+  const presetSelect = document.getElementById('presetSelect');
+  const randomPresetBtn = document.getElementById('randomPresetBtn');
+  const exportPresetBtn = document.getElementById('exportPresetBtn');
+  const importPresetBtn = document.getElementById('importPresetBtn');
+  const presetJson = document.getElementById('presetJson');
+
+  const playIndicator = document.getElementById('play-indicator');
+  const playText = document.getElementById('playText');
+
+  const addTextBtn = document.getElementById('addTextBtn');
+  const addImageBtn = document.getElementById('addImageBtn');
+  const addVideoBtn = document.getElementById('addVideoBtn');
+  const imageInput = document.getElementById('imageInput');
+  const videoInput = document.getElementById('videoInput');
+  const elementList = document.getElementById('elementList');
+  const animationProfileSelect = document.getElementById('animationProfile');
+  const animIntensity = document.getElementById('animIntensity');
+  const animIntensityValue = document.getElementById('animIntensityValue');
+  const deleteElementBtn = document.getElementById('deleteElementBtn');
+
+  const startRecBtn = document.getElementById('startRecBtn');
+  const stopRecBtn = document.getElementById('stopRecBtn');
+  const recStatus = document.getElementById('recStatus');
+
+  const saveProjectBtn = document.getElementById('saveProjectBtn');
+  const loadProjectBtn = document.getElementById('loadProjectBtn');
+  const projectJson = document.getElementById('projectJson');
+
+  // ===============================
+  // Globaler State
+  // ===============================
+  let isPlaying = true;
+  let lastTimestamp = 0;
+  let globalTime = 0; // in Sekunden
+  let cycleTime = 0;  // für Modiwechsel
+  const cycleDuration = 18; // Sekunden pro Modus im AutoCycle
+
+  let currentMode = '2d'; // 2d | 3d | morph
+
+  let elements = []; // {id, type, x, y, scale, rotation, opacity, animationProfile, animIntensity, ...}
+  let activeElementId = null;
+
+  // für Dragging
+  let dragging = false;
+  let dragElement = null;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+
+  // Aufnahme
+  let mediaRecorder = null;
+  let recordedChunks = [];
+
+  // einfacher AudioContext für Video-Audio -> Stream
+  let audioCtx = null;
+  let audioDest = null;
+
+  // ===============================
+  // Hilfsfunktionen
+  // ===============================
+  function resizeCanvasToDisplaySize() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const width = rect.width * dpr;
+    const height = rect.height * dpr;
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+  }
+
+  function updateLabelValues() {
+    armsValue.textContent = armsInput.value;
+    twistValue.textContent = parseFloat(twistInput.value).toFixed(1);
+    densityValue.textContent = densityInput.value;
+    speedValue.textContent = parseFloat(speedInput.value).toFixed(1) + 'x';
+    animIntensityValue.textContent = parseFloat(animIntensity.value).toFixed(1);
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    modeSelect.value = mode;
+  }
+
+  function randomInRange(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  // ===============================
+  // Spiral-Presets
+  // ===============================
+  const spiralPresets = {
+    healing: {
+      name: 'Heilung · Gold / Blau',
+      arms: 8,
+      twist: 3.2,
+      density: 1000,
+      palette: { base: '#0b1020', primary: '#3b82f6', secondary: '#facc15' },
+      mode: '2d'
+    },
+    yinYang: {
+      name: 'Yin·Yang · Dual',
+      arms: 2,
+      twist: 1.6,
+      density: 800,
+      palette: { base: '#020617', primary: '#e5e7eb', secondary: '#0f172a' },
+      mode: '2d'
+    },
+    lotus: {
+      name: 'Lotus · Blüte',
+      arms: 12,
+      twist: 4.5,
+      density: 1100,
+      palette: { base: '#020617', primary: '#a855f7', secondary: '#f97316' },
+      mode: 'morph'
+    },
+    galaxy: {
+      name: 'Galaxie · Sternenarm',
+      arms: 5,
+      twist: 6.2,
+      density: 1600,
+      palette: { base: '#020617', primary: '#7dd3fc', secondary: '#facc15' },
+      mode: '3d'
+    }
+  };
+
+  let currentPalette = spiralPresets.healing.palette;
+
+  function applyPreset(key) {
+    const preset = spiralPresets[key];
+    if (!preset) return;
+    armsInput.value = preset.arms;
+    twistInput.value = preset.twist;
+    densityInput.value = preset.density;
+    currentPalette = preset.palette;
+    setMode(preset.mode);
+    updateLabelValues();
+  }
+
+  function exportPreset() {
+    const obj = {
+      arms: parseInt(armsInput.value, 10),
+      twist: parseFloat(twistInput.value),
+      density: parseInt(densityInput.value, 10),
+      mode: currentMode,
+      palette: currentPalette
+    };
+    presetJson.value = JSON.stringify(obj, null, 2);
+  }
+
+  function importPreset() {
+    try {
+      const obj = JSON.parse(presetJson.value);
+      if (typeof obj !== 'object') return;
+      if (typeof obj.arms === 'number') armsInput.value = obj.arms;
+      if (typeof obj.twist === 'number') twistInput.value = obj.twist;
+      if (typeof obj.density === 'number') densityInput.value = obj.density;
+      if (obj.mode) setMode(obj.mode);
+      if (obj.palette) currentPalette = obj.palette;
+      updateLabelValues();
+    } catch(e) {
+      alert('Preset-JSON ist ungültig.');
+    }
+  }
+
+  // ===============================
+  // Spiral-Zeichnung (2D / 3D-Projektion / Morph)
+  // ===============================
+  function drawBackground(w, h) {
+    // weicher radialer Hintergrund
+    const g = ctx.createRadialGradient(
+      w*0.5, h*0.35, w*0.05,
+      w*0.5, h*0.7, w*0.7
+    );
+    g.addColorStop(0, 'rgba(15,23,42,1)');
+    g.addColorStop(0.4, 'rgba(15,23,42,0.95)');
+    g.addColorStop(1, 'rgba(0,0,0,1)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,w,h);
+
+    // feiner Glowkreis
+    const rGlow = Math.min(w,h)*0.28;
+    const g2 = ctx.createRadialGradient(
+      w*0.5, h*0.48, rGlow*0.2,
+      w*0.5, h*0.48, rGlow*1.1
+    );
+    g2.addColorStop(0.0, 'rgba(59,130,246,0.35)');
+    g2.addColorStop(0.5, 'rgba(59,130,246,0.08)');
+    g2.addColorStop(1.0, 'rgba(15,23,42,0)');
+    ctx.fillStyle = g2;
+    ctx.beginPath();
+    ctx.arc(w*0.5, h*0.48, rGlow*1.1, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function drawSpiral2D(w, h, time) {
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const cx = w * 0.5;
+    const cy = h * 0.48;
+    const rMax = Math.min(w,h) * 0.32;
+
+    // leichte Rotation im Loop
+    const baseRotation = time * 0.15 * parseFloat(speedInput.value);
+
+    // Spiral "Träger"
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    ctx.lineWidth = 1.6;
+    const baseColor = currentPalette.primary || '#3b82f6';
+    const secondaryColor = currentPalette.secondary || '#facc15';
+
+    // Hintergrund-Schleier
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    for (let i=0; i<=N; i++) {
+      const f = i / N;
+      const angle = f * Math.PI * (2 + T);
+      const r = rMax * Math.pow(f, 0.9);
+      const x = r * Math.cos(angle);
+      const y = r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle = baseColor;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Arme
+    for (let a=0; a<A; a++) {
+      const phase = (a / A) * Math.PI * 2 + baseRotation;
+
+      ctx.beginPath();
+      const col = ctx.createLinearGradient(-rMax, -rMax, rMax, rMax);
+      col.addColorStop(0, secondaryColor);
+      col.addColorStop(0.5, baseColor);
+      col.addColorStop(1, '#ffffff');
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2.0;
+
+      for (let i=0; i<=N; i++) {
+        const f = i / N;
+        const swirl = Math.sin(f * Math.PI * 4 + time * 1.2) * (0.2 + 0.4 * f);
+        const morphFactor = pulseMorphInput.checked ? (0.3 + 0.7*Math.sin(time*0.9 + f * Math.PI*2)) : 0.3;
+        const twistLocal = T + swirl * morphFactor;
+
+        const angle = f * Math.PI * (2 + twistLocal) + phase;
+        const radiusBase = rMax * Math.pow(f, 0.85 + 0.15*Math.sin(time*0.7));
+        const radius = radiusBase * (0.9 + 0.1*Math.sin(f*8 + time*1.1));
+
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Zentrum
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath();
+    ctx.arc(0,0, rMax*0.12, 0, Math.PI*2);
+    const cg = ctx.createRadialGradient(0,0,0, 0,0,rMax*0.12);
+    cg.addColorStop(0,'rgba(250,250,250,1)');
+    cg.addColorStop(0.4, secondaryColor);
+    cg.addColorStop(1,'rgba(59,130,246,0.0)');
+    ctx.fillStyle = cg;
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+
+    ctx.restore();
+
+    // Legende
+    ctx.fillStyle = 'rgba(148,163,184,0.9)';
+    ctx.font = '11px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    const text = `Arme: ${A} · Drehung: ${parseFloat(twistInput.value).toFixed(1)} · Dichte: ${N}`;
+    ctx.fillText(text, 16, canvas.height/ (window.devicePixelRatio||1) - 14);
+  }
+
+  function project3DPoint(x,y,z, w,h, time) {
+    // leichte Rotation um Y und X
+    const rotSpeed = 0.3;
+    const ry = time * rotSpeed;
+    const rx = time * rotSpeed * 0.6;
+
+    const cosy = Math.cos(ry), siny = Math.sin(ry);
+    const cosx = Math.cos(rx), sinx = Math.sin(rx);
+
+    // Rotation um Y
+    let dx = x * cosy - z * siny;
+    let dz = x * siny + z * cosy;
+    let dy = y;
+
+    // Rotation um X
+    let dy2 = dy * cosx - dz * sinx;
+    let dz2 = dy * sinx + dz * cosx;
+    dx = dx;
+    dy = dy2;
+    dz = dz2;
+
+    const dist = 450;
+    const perspective = dist / (dist + dz);
+    const sx = w*0.5 + dx * perspective;
+    const sy = h*0.45 + dy * perspective;
+    return {x: sx, y: sy};
+  }
+
+  function drawSpiral3D(w, h, time) {
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const rMax = Math.min(w,h) * 0.26;
+
+    const primary = currentPalette.primary || '#7dd3fc';
+    const secondary = currentPalette.secondary || '#facc15';
+
+    ctx.lineWidth = 1.5;
+
+    for (let a=0; a<A; a++) {
+      const phase = (a/A) * Math.PI*2;
+      ctx.beginPath();
+
+      const gradBase = ctx.createLinearGradient(0, h*0.3, 0, h*0.7);
+      gradBase.addColorStop(0, 'rgba(15,23,42,0)');
+      gradBase.addColorStop(0.4, primary);
+      gradBase.addColorStop(0.8, secondary);
+      gradBase.addColorStop(1, 'rgba(15,23,42,0)');
+      ctx.strokeStyle = gradBase;
+
+      for (let i=0; i<=N; i++) {
+        const f = i / N;
+        const angle = f * Math.PI * (4 + T);
+        const radius = rMax * Math.pow(f, 0.85);
+        const x = radius * Math.cos(angle + phase);
+        const y = (radius * Math.sin(angle + phase)) * 0.5;
+        const z = (f - 0.5) * 420;
+
+        const p = project3DPoint(x,y,z, w,h, time);
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+    }
+
+    // kleiner "Orbit-Kreis"
+    ctx.beginPath();
+    ctx.arc(w*0.5, h*0.45, rMax*0.45, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(148,163,184,0.4)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  function drawSpiralMorph(w, h, time) {
+    // Morph: Wechsel zwischen mehreren "inneren" States
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const cx = w * 0.5;
+    const cy = h * 0.48;
+    const rMax = Math.min(w,h) * 0.32;
+
+    const primary = currentPalette.primary || '#8b5cf6';
+    const secondary = currentPalette.secondary || '#f97316';
+
+    const morphPhase = time * 0.6;
+    const baseRotation = time * 0.25 * parseFloat(speedInput.value);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    for (let a=0; a<A; a++) {
+      const armPhase = (a/A) * Math.PI*2 + baseRotation;
+      ctx.beginPath();
+
+      const grad = ctx.createLinearGradient(-rMax,0,rMax,0);
+      grad.addColorStop(0, secondary);
+      grad.addColorStop(0.4, primary);
+      grad.addColorStop(0.7, '#fefce8');
+      grad.addColorStop(1, secondary);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.2;
+
+      for (let i=0; i<=N; i++) {
+        const f = i / N;
+
+        // morphing radius und twist
+        const m1 = Math.sin(morphPhase + f*Math.PI*2);
+        const m2 = Math.cos(morphPhase*0.7 + f*6);
+        const localTwist = T + 1.8*m1 + 0.8*m2;
+        const localRadiusFactor = 0.7 + 0.25*m1 + 0.15*m2;
+
+        const angle = f * Math.PI * (3 + localTwist) + armPhase;
+        const radius = rMax * Math.pow(f, 0.82) * localRadiusFactor;
+
+        const ripple = 6;
+        const rippleAmp = 0.06 * rMax;
+        const rr = radius + rippleAmp * Math.sin(f*ripple*2*Math.PI + morphPhase*3);
+
+        const x = rr * Math.cos(angle);
+        const y = rr * Math.sin(angle);
+
+        if (i === 0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(248,250,252,0.9)';
+    ctx.font = '11px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    ctx.fillText('Morph-Modus · organische Variationen', 16, canvas.height/(window.devicePixelRatio||1) - 32);
+  }
+
+  // ===============================
+  // Elemente: Text, Bild, Video
+  // ===============================
+  let elementIdCounter = 1;
+
+  function addElement(elem) {
+    elements.push(elem);
+    renderElementList();
+  }
+
+  function createTextElement() {
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    const el = {
+      id: elementIdCounter++,
+      type: 'text',
+      text: 'Text',
+      x: w * 0.5,
+      y: h * 0.5,
+      scale: 1,
+      rotation: 0,
+      opacity: 1,
+      color: '#e5e7eb',
+      fontSize: 24,
+      animationProfile: 'none',
+      animIntensity: 1
+    };
+    addElement(el);
+    activeElementId = el.id;
+  }
+
+  function createImageElement(img) {
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    const el = {
+      id: elementIdCounter++,
+      type: 'image',
+      image: img,
+      x: w * 0.5,
+      y: h * 0.5,
+      scale: 1,
+      rotation: 0,
+      opacity: 1,
+      animationProfile: 'none',
+      animIntensity: 1,
+      width: img.naturalWidth,
+      height: img.naturalHeight
+    };
+    addElement(el);
+    activeElementId = el.id;
+  }
+
+  function createVideoElement(video) {
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    video.loop = true;
+    video.muted = false; // Audio erlaubt – Browser-Rechte nötig
+    video.playsInline = true;
+    video.play().catch(()=>{ /* Autoplay ggf. blockiert, dann erst nach User-Interaktion */});
+
+    const el = {
+      id: elementIdCounter++,
+      type: 'video',
+      video: video,
+      x: w * 0.5,
+      y: h * 0.5,
+      scale: 0.8,
+      rotation: 0,
+      opacity: 1,
+      animationProfile: 'none',
+      animIntensity: 1,
+      width: video.videoWidth || 320,
+      height: video.videoHeight || 180
+    };
+    addElement(el);
+    activeElementId = el.id;
+  }
+
+  function getElementById(id) {
+    return elements.find(e => e.id === id);
+  }
+
+  function renderElementList() {
+    elementList.innerHTML = '';
+    elements.forEach(el => {
+      const div = document.createElement('div');
+      div.className = 'element-item' + (el.id === activeElementId ? ' active' : '');
+      let label = '';
+      if (el.type === 'text') label = 'Text: ' + (el.text.length > 12 ? el.text.slice(0,12)+'…' : el.text);
+      if (el.type === 'image') label = 'Bild';
+      if (el.type === 'video') label = 'Video';
+
+      div.innerHTML = `
+        <span>${label}</span>
+        <span class="badge">${el.animationProfile === 'none' ? 'statisch' : el.animationProfile}</span>
+      `;
+      div.addEventListener('click', () => {
+        activeElementId = el.id;
+        animationProfileSelect.value = el.animationProfile || 'none';
+        animIntensity.value = el.animIntensity || 1;
+        updateLabelValues();
+        renderElementList();
+      });
+      elementList.appendChild(div);
+    });
+  }
+
+  function applyAnimationToElement(el, t) {
+    const intensity = el.animIntensity || 1;
+    const prof = el.animationProfile || 'none';
+
+    if (prof === 'rotate') {
+      const speed = 0.6 * intensity;
+      el._renderRotation = el.rotation + t * speed;
+      el._renderY = el.y;
+      el._renderScale = el.scale;
+    } else if (prof === 'float') {
+      const amp = 8 * intensity;
+      el._renderY = el.y + Math.sin(t * 1.2 + el.id) * amp;
+      el._renderRotation = el.rotation;
+      el._renderScale = el.scale;
+    } else if (prof === 'pulse') {
+      const amp = 0.25 * intensity;
+      const s = el.scale * (1 + amp * Math.sin(t*2.2 + el.id));
+      el._renderScale = s;
+      el._renderRotation = el.rotation;
+      el._renderY = el.y;
+    } else {
+      el._renderRotation = el.rotation;
+      el._renderY = el.y;
+      el._renderScale = el.scale;
+    }
+  }
+
+  function drawElements(t) {
+    // Elemente werden über der Spirale gezeichnet
+    const w = canvas.clientWidth || 1024;
+    const h = canvas.clientHeight || 600;
+    const scaleBase = (window.devicePixelRatio || 1);
+
+    elements.forEach(el => {
+      applyAnimationToElement(el, t);
+      const rot = el._renderRotation || el.rotation;
+      const y = el._renderY || el.y;
+      const sc = el._renderScale || el.scale;
+
+      ctx.save();
+      ctx.translate(el.x * scaleBase, y * scaleBase);
+      ctx.rotate(rot);
+      ctx.scale(sc, sc);
+      ctx.globalAlpha = el.opacity;
+
+      if (el.type === 'text') {
+        ctx.font = `${el.fontSize}px system-ui, -apple-system, Segoe UI, Roboto, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = el.color;
+        ctx.strokeStyle = 'rgba(15,23,42,0.9)';
+        ctx.lineWidth = 3;
+        ctx.strokeText(el.text, 0,0);
+        ctx.fillText(el.text, 0, 0);
+      } else if (el.type === 'image' && el.image) {
+        const iw = el.width;
+        const ih = el.height;
+        const scaleFit = Math.min((w*0.4)/iw, (h*0.4)/ih);
+        const drawW = iw * scaleFit;
+        const drawH = ih * scaleFit;
+        ctx.drawImage(el.image, -drawW/2, -drawH/2, drawW, drawH);
+      } else if (el.type === 'video' && el.video) {
+        const vw = el.video.videoWidth || el.width;
+        const vh = el.video.videoHeight || el.height;
+        const scaleFit = Math.min((w*0.45)/vw, (h*0.45)/vh);
+        const drawW = vw * scaleFit;
+        const drawH = vh * scaleFit;
+        try {
+          ctx.drawImage(el.video, -drawW/2, -drawH/2, drawW, drawH);
+        } catch(e) {
+          // kann passieren, bevor Video bereit ist
+        }
+      }
+
+      ctx.restore();
+    });
+  }
+
+  // ===============================
+  // Projekt-Export / -Import
+  // ===============================
+  function exportProject() {
+    const simpleElements = elements.map(el => {
+      const base = {
+        id: el.id,
+        type: el.type,
+        x: el.x,
+        y: el.y,
+        scale: el.scale,
+        rotation: el.rotation,
+        opacity: el.opacity,
+        animationProfile: el.animationProfile,
+        animIntensity: el.animIntensity
+      };
+      if (el.type === 'text') {
+        base.text = el.text;
+        base.color = el.color;
+        base.fontSize = el.fontSize;
+      } else if (el.type === 'image') {
+        base.imageDataUrl = el._dataUrl || null; // optional
+      } else if (el.type === 'video') {
+        // Videos können aus Sicherheitsgründen meist nicht als DataURL exportiert werden.
+        base.videoNote = 'Video muss manuell wieder hinzugefügt werden.';
+      }
+      return base;
+    });
+
+    const project = {
+      spiral: {
+        arms: parseInt(armsInput.value,10),
+        twist: parseFloat(twistInput.value),
+        density: parseInt(densityInput.value,10),
+        mode: currentMode,
+        speed: parseFloat(speedInput.value),
+        autoCycle: autoCycleInput.checked,
+        pulseMorph: pulseMorphInput.checked,
+        palette: currentPalette
+      },
+      elements: simpleElements
+    };
+    projectJson.value = JSON.stringify(project, null, 2);
+  }
+
+  function importProject() {
+    try {
+      const project = JSON.parse(projectJson.value);
+      if (!project || typeof project !== 'object') throw new Error();
+
+      const sp = project.spiral || {};
+      if (typeof sp.arms === 'number') armsInput.value = sp.arms;
+      if (typeof sp.twist === 'number') twistInput.value = sp.twist;
+      if (typeof sp.density === 'number') densityInput.value = sp.density;
+      if (typeof sp.speed === 'number') speedInput.value = sp.speed;
+      if (typeof sp.autoCycle === 'boolean') autoCycleInput.checked = sp.autoCycle;
+      if (typeof sp.pulseMorph === 'boolean') pulseMorphInput.checked = sp.pulseMorph;
+      if (sp.mode) setMode(sp.mode);
+      if (sp.palette) currentPalette = sp.palette;
+
+      elements = [];
+      const els = project.elements || [];
+      els.forEach(raw => {
+        if (raw.type === 'text') {
+          elements.push({
+            id: raw.id || elementIdCounter++,
+            type: 'text',
+            text: raw.text || 'Text',
+            x: raw.x, y: raw.y,
+            scale: raw.scale || 1,
+            rotation: raw.rotation || 0,
+            opacity: raw.opacity ?? 1,
+            color: raw.color || '#e5e7eb',
+            fontSize: raw.fontSize || 24,
+            animationProfile: raw.animationProfile || 'none',
+            animIntensity: raw.animIntensity || 1
+          });
+        } else if (raw.type === 'image' && raw.imageDataUrl) {
+          const img = new Image();
+          img.src = raw.imageDataUrl;
+          img.onload = () => {
+            elements.push({
+              id: raw.id || elementIdCounter++,
+              type: 'image',
+              image: img,
+              _dataUrl: raw.imageDataUrl,
+              x: raw.x, y: raw.y,
+              scale: raw.scale || 1,
+              rotation: raw.rotation || 0,
+              opacity: raw.opacity ?? 1,
+              animationProfile: raw.animationProfile || 'none',
+              animIntensity: raw.animIntensity || 1,
+              width: img.naturalWidth,
+              height: img.naturalHeight
+            });
+          };
+        }
+        // Video-Infos lassen wir bewusst aus; Nutzer fügt neu hinzu.
+      });
+
+      updateLabelValues();
+      renderElementList();
+    } catch(e) {
+      alert('Projekt-JSON ist ungültig.');
+    }
+  }
+
+  // ===============================
+  // PNG / SVG-Export
+  // ===============================
+  function savePNG() {
+    const link = document.createElement('a');
+    link.download = 'heilungsspirale-studio.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  function saveSpiralAsSVG() {
+    const A = parseInt(armsInput.value, 10);
+    const T = parseFloat(twistInput.value);
+    const N = parseInt(densityInput.value, 10);
+    const w = 1024, h = 600;
+    const cx = w*0.5, cy = h*0.48;
+    const rMax = Math.min(w,h)*0.32;
+
+    function pointPath2D() {
+      let path = '';
+      for (let a=0; a<A; a++) {
+        const phase = (a/A) * Math.PI*2;
+        let sub = '';
+        for (let i=0; i<=N; i++) {
+          const f = i/N;
+          const angle = f * Math.PI * (2 + T) + phase;
+          const r = rMax * Math.pow(f,0.9);
+          const x = cx + r*Math.cos(angle);
+          const y = cy + r*Math.sin(angle);
+          if (i === 0) sub += `M ${x.toFixed(2)} ${y.toFixed(2)} `;
+          else sub += `L ${x.toFixed(2)} ${y.toFixed(2)} `;
+        }
+        path += sub;
+      }
+      return path;
+    }
+
+    const pathData = pointPath2D();
+    const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <defs>
+    <linearGradient id="spiralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${currentPalette.secondary || '#facc15'}"/>
+      <stop offset="50%" stop-color="${currentPalette.primary || '#3b82f6'}"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="${currentPalette.base || '#020617'}"/>
+  <path d="${pathData}" fill="none" stroke="url(#spiralGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`.trim();
+
+    const blob = new Blob([svg], {type:'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'heilungsspirale.svg';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ===============================
+  // WebM-Export (Canvas-Capture + Audio)
+  // ===============================
+  async function startRecording() {
+    if (mediaRecorder) return;
+    const stream = canvas.captureStream(30);
+
+    // Audio: wir versuchen, Videoton via AudioContext in den Stream einzubinden.
+    // Hinweis: Funktioniert nur, wenn Browser & CORS es erlauben.
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      audioDest = audioCtx.createMediaStreamDestination();
+    }
+
+    elements.forEach(el => {
+      if (el.type === 'video' && el.video) {
+        try {
+          const srcNode = audioCtx.createMediaElementSource(el.video);
+          srcNode.connect(audioDest);
+          srcNode.connect(audioCtx.destination);
+        } catch(e) {
+          // Element wurde evtl. schon connected – ignorieren
+        }
+      }
+    });
+
+    if (audioDest && audioDest.stream.getAudioTracks().length > 0) {
+      audioDest.stream.getAudioTracks().forEach(track => stream.addTrack(track));
+    }
+
+    recordedChunks = [];
+    try {
+      mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9,opus' });
+    } catch(e) {
+      try {
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      } catch(err) {
+        alert('MediaRecorder für WebM nicht unterstützt.');
+        return;
+      }
+    }
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) recordedChunks.push(e.data);
+    };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, {type:'video/webm'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'heilungsspirale-studio.webm';
+      a.click();
+      URL.revokeObjectURL(url);
+      mediaRecorder = null;
+      recordedChunks = [];
+    };
+
+    mediaRecorder.start();
+    recStatus.textContent = 'Aufnahme läuft…';
+    startRecBtn.disabled = true;
+    stopRecBtn.disabled = false;
+  }
+
+  function stopRecording() {
+    if (!mediaRecorder) return;
+    mediaRecorder.stop();
+    recStatus.textContent = 'Aufnahme beendet. WebM wird gespeichert.';
+    startRecBtn.disabled = false;
+    stopRecBtn.disabled = true;
+  }
+
+  // ===============================
+  // Maus / Interaktion auf Canvas
+  // ===============================
+  function getEventPos(ev) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const x = (ev.clientX - rect.left);
+    const y = (ev.clientY - rect.top);
+    return {x, y};
+  }
+
+  function pickElementAt(x, y) {
+    // von oben nach unten
+    for (let i=elements.length-1; i>=0; i--) {
+      const el = elements[i];
+      const rot = el.rotation;
+      const sc = el.scale;
+      // einfache Bounding-Box
+      let wEl = 120, hEl = 40;
+      if (el.type === 'text') {
+        wEl = el.fontSize * el.text.length * 0.4;
+        hEl = el.fontSize * 1.4;
+      } else if (el.type === 'image') {
+        wEl = 140; hEl = 140;
+      } else if (el.type === 'video') {
+        wEl = 180; hEl = 120;
+      }
+      const dx = x - el.x;
+      const dy = y - el.y;
+      // inverse Rotation (grob ignoriert)
+      const distX = Math.abs(dx);
+      const distY = Math.abs(dy);
+      if (distX <= (wEl*sc*0.5) && distY <= (hEl*sc*0.5)) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousedown', ev => {
+    const pos = getEventPos(ev);
+    const el = pickElementAt(pos.x, pos.y);
+    if (el) {
+      dragging = true;
+      dragElement = el;
+      dragOffsetX = pos.x - el.x;
+      dragOffsetY = pos.y - el.y;
+      activeElementId = el.id;
+      renderElementList();
+    }
+  });
+
+  canvas.addEventListener('mousemove', ev => {
+    if (!dragging || !dragElement) return;
+    const pos = getEventPos(ev);
+    dragElement.x = pos.x - dragOffsetX;
+    dragElement.y = pos.y - dragOffsetY;
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    dragging = false;
+    dragElement = null;
+  });
+  canvas.addEventListener('mouseleave', () => {
+    dragging = false;
+    dragElement = null;
+  });
+
+  canvas.addEventListener('dblclick', ev => {
+    const pos = getEventPos(ev);
+    const el = pickElementAt(pos.x, pos.y);
+    if (el && el.type === 'text') {
+      const t = prompt('Text bearbeiten:', el.text);
+      if (t !== null) el.text = t;
+    }
+  });
+
+  // ===============================
+  // Animationsloop
+  // ===============================
+  function renderFrame(timestamp) {
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    const deltaMs = timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+    const delta = deltaMs / 1000;
+    const speed = parseFloat(speedInput.value) || 1;
+
+    if (isPlaying) {
+      globalTime += delta * speed;
+      cycleTime += delta * speed;
+    }
+
+    resizeCanvasToDisplaySize();
+    const w = canvas.width / (window.devicePixelRatio || 1);
+    const h = canvas.height / (window.devicePixelRatio || 1);
+
+    // ggf. Modus automatisch wechseln
+    if (autoCycleInput.checked && cycleTime > cycleDuration) {
+      cycleTime = 0;
+      if (currentMode === '2d') setMode('3d');
+      else if (currentMode === '3d') setMode('morph');
+      else setMode('2d');
+    }
+
+    // Hintergrund
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawBackground(w, h);
+
+    // Spiral je nach Modus
+    if (currentMode === '2d') {
+      drawSpiral2D(w, h, globalTime);
+    } else if (currentMode === '3d') {
+      drawSpiral3D(w, h, globalTime);
+    } else if (currentMode === 'morph') {
+      drawSpiral2D(w, h, globalTime * 0.4); // Basis
+      drawSpiralMorph(w, h, globalTime);
+    }
+
+    // Elemente/Overlays
+    drawElements(globalTime);
+
+    // Play-Indicator
+    playIndicator.style.opacity = isPlaying ? '1' : '0.4';
+    playText.textContent = isPlaying ? 'Live · Loop' : 'Pause';
+
+    requestAnimationFrame(renderFrame);
+  }
+
+  // ===============================
+  // Events
+  // ===============================
+  [armsInput, twistInput, densityInput, speedInput, animIntensity].forEach(input => {
+    input.addEventListener('input', () => {
+      updateLabelValues();
+    });
+  });
+
+  modeSelect.addEventListener('change', () => {
+    currentMode = modeSelect.value;
+    cycleTime = 0;
+  });
+
+  resetBtn.addEventListener('click', () => {
+    armsInput.value = 8;
+    twistInput.value = 3;
+    densityInput.value = 900;
+    speedInput.value = 1;
+    autoCycleInput.checked = true;
+    pulseMorphInput.checked = true;
+    setMode('2d');
+    currentPalette = spiralPresets.healing.palette;
+    updateLabelValues();
+  });
+
+  savePngBtn.addEventListener('click', savePNG);
+  saveSvgBtn.addEventListener('click', saveSpiralAsSVG);
+
+  presetSelect.addEventListener('change', () => {
+    if (presetSelect.value === 'none') return;
+    applyPreset(presetSelect.value);
+  });
+  randomPresetBtn.addEventListener('click', () => {
+    const keys = Object.keys(spiralPresets);
+    const key = keys[Math.floor(Math.random()*keys.length)];
+    applyPreset(key);
+  });
+  exportPresetBtn.addEventListener('click', exportPreset);
+  importPresetBtn.addEventListener('click', importPreset);
+
+  addTextBtn.addEventListener('click', createTextElement);
+  addImageBtn.addEventListener('click', () => imageInput.click());
+  addVideoBtn.addEventListener('click', () => videoInput.click());
+
+  imageInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.src = ev.target.result;
+      img.onload = () => {
+        const el = {
+          id: elementIdCounter++,
+          type: 'image',
+          image: img,
+          x: (canvas.clientWidth||1024)*0.5,
+          y: (canvas.clientHeight||600)*0.5,
+          scale: 1,
+          rotation: 0,
+          opacity: 1,
+          animationProfile: 'none',
+          animIntensity: 1,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          _dataUrl: ev.target.result
+        };
+        addElement(el);
+        activeElementId = el.id;
+      };
+    };
+    reader.readAsDataURL(file);
+    imageInput.value = '';
+  });
+
+  videoInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.src = url;
+    video.addEventListener('loadedmetadata', () => {
+      createVideoElement(video);
+    });
+    videoInput.value = '';
+  });
+
+  animationProfileSelect.addEventListener('change', () => {
+    const el = getElementById(activeElementId);
+    if (!el) return;
+    el.animationProfile = animationProfileSelect.value;
+    renderElementList();
+  });
+
+  animIntensity.addEventListener('input', () => {
+    updateLabelValues();
+    const el = getElementById(activeElementId);
+    if (!el) return;
+    el.animIntensity = parseFloat(animIntensity.value) || 1;
+    renderElementList();
+  });
+
+  deleteElementBtn.addEventListener('click', () => {
+    if (!activeElementId) return;
+    elements = elements.filter(e => e.id !== activeElementId);
+    activeElementId = null;
+    renderElementList();
+  });
+
+  startRecBtn.addEventListener('click', startRecording);
+  stopRecBtn.addEventListener('click', stopRecording);
+
+  saveProjectBtn.addEventListener('click', exportProject);
+  loadProjectBtn.addEventListener('click', importProject);
+
+  window.addEventListener('keydown', e => {
+    if (e.key === ' ') {
+      e.preventDefault();
+      isPlaying = !isPlaying;
+    }
+    if (e.key === 'r' || e.key === 'R') {
+      globalTime = 0;
+      cycleTime = 0;
+    }
+    if (e.key === 's' || e.key === 'S') {
+      savePNG();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    resizeCanvasToDisplaySize();
+  });
+
+  // Initial
+  updateLabelValues();
+  resizeCanvasToDisplaySize();
+  applyPreset('healing');
+  renderElementList();
+  requestAnimationFrame(renderFrame);
+})();
+</script>
+
+
+</body></html>

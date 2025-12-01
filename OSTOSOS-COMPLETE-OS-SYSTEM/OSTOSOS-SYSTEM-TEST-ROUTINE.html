@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSTOSOS – System Test Routine</title>
+  <style>
+    :root {
+      --davinci-bg: #0a0e27;
+      --davinci-card: #1a1f3a;
+      --davinci-accent-primary: #10b981;
+      --davinci-accent-secondary: #3b82f6;
+      --davinci-text: #ffffff;
+      --davinci-danger: #ef4444;
+      --davinci-success: #22c55e;
+      --davinci-warn: #f59e0b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--davinci-bg);
+      color: var(--davinci-text);
+      padding: 20px;
+    }
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .test-header {
+      background: var(--davinci-card);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 2px solid var(--davinci-accent-primary);
+    }
+    .test-item {
+      background: var(--davinci-card);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid var(--davinci-warn);
+    }
+    .test-item.passing {
+      border-left-color: var(--davinci-success);
+    }
+    .test-item.failing {
+      border-left-color: var(--davinci-danger);
+    }
+    .test-status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      margin-left: 10px;
+    }
+    .status-pending { background: #6b7280; }
+    .status-passing { background: var(--davinci-success); }
+    .status-failing { background: var(--davinci-danger); }
+    .test-log {
+      background: #000;
+      color: #0f0;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.9em;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .btn {
+      background: var(--davinci-accent-primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      margin: 10px 5px;
+    }
+    .btn:hover {
+      background: #0ea5e9;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #1a1f3a;
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--davinci-accent-primary), var(--davinci-accent-secondary));
+      width: 0%;
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>T,. OSTOSOS – System Test Routine</h1>
+      <p>Automatische Tests bis alle Fehler behoben sind</p>
+      <button class="btn" onclick="runAllTests()">🚀 Alle Tests ausführen</button>
+      <button class="btn" onclick="runTestsUntilNoErrors()">🔄 Tests bis keine Fehler</button>
+      <button class="btn" onclick="clearResults()">🗑️ Ergebnisse löschen</button>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressBar">0%</div>
+    </div>
+
+    <div id="testResults"></div>
+
+    <div class="test-log" id="testLog"></div>
+  </div>
+
+  <script>
+    const tests = [
+      {
+        name: 'HTML-Struktur',
+        test: () => {
+          const html = document.documentElement;
+          return html && html.tagName === 'HTML';
+        }
+      },
+      {
+        name: 'CSS-Laden',
+        test: () => {
+          const styles = getComputedStyle(document.body);
+          return styles.backgroundColor !== '';
+        }
+      },
+      {
+        name: 'JavaScript-Ausführung',
+        test: () => {
+          return typeof runAllTests === 'function';
+        }
+      },
+      {
+        name: 'LocalStorage',
+        test: () => {
+          try {
+            localStorage.setItem('test', 'test');
+            const result = localStorage.getItem('test') === 'test';
+            localStorage.removeItem('test');
+            return result;
+          } catch (e) {
+            return false;
+          }
+        }
+      },
+      {
+        name: 'DOM-Manipulation',
+        test: () => {
+          const testEl = document.createElement('div');
+          testEl.id = 'test-element';
+          document.body.appendChild(testEl);
+          const found = document.getElementById('test-element');
+          document.body.removeChild(testEl);
+          return found !== null;
+        }
+      },
+      {
+        name: 'Event-Handling',
+        test: () => {
+          let eventFired = false;
+          const btn = document.createElement('button');
+          btn.onclick = () => { eventFired = true; };
+          btn.click();
+          return eventFired;
+        }
+      },
+      {
+        name: 'Fetch API (falls verfügbar)',
+        test: () => {
+          return typeof fetch !== 'undefined';
+        }
+      },
+      {
+        name: 'Service Worker (falls verfügbar)',
+        test: () => {
+          return 'serviceWorker' in navigator;
+        }
+      },
+      {
+        name: 'WebGL (falls verfügbar)',
+        test: () => {
+          try {
+            const canvas = document.createElement('canvas');
+            return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+          } catch (e) {
+            return false;
+          }
+        }
+      },
+      {
+        name: 'Responsive Design',
+        test: () => {
+          return window.innerWidth > 0 && window.innerHeight > 0;
+        }
+      },
+      {
+        name: 'Da Vinci CSS Variablen',
+        test: () => {
+          const root = getComputedStyle(document.documentElement);
+          return root.getPropertyValue('--davinci-bg') !== '';
+        }
+      },
+      {
+        name: 'Logo-Funktionalität',
+        test: () => {
+          const logo = document.querySelector('.logo a, .davinci-logo');
+          return logo !== null && logo.href !== '';
+        }
+      },
+      {
+        name: 'Navigation-Funktionalität',
+        test: () => {
+          const navItems = document.querySelectorAll('.nav-item');
+          return navItems.length > 0;
+        }
+      },
+      {
+        name: 'Button-Interaktion',
+        test: () => {
+          const buttons = document.querySelectorAll('.btn, .davinci-btn, button');
+          return buttons.length > 0;
+        }
+      },
+      {
+        name: 'Card-Komponenten',
+        test: () => {
+          const cards = document.querySelectorAll('.davinci-card, .card, .system-card');
+          return cards.length > 0;
+        }
+      },
+      {
+        name: 'Animationen',
+        test: () => {
+          const style = document.createElement('style');
+          style.textContent = '@keyframes test { from { opacity: 0; } to { opacity: 1; } }';
+          document.head.appendChild(style);
+          const hasAnimation = style.sheet && style.sheet.cssRules.length > 0;
+          document.head.removeChild(style);
+          return hasAnimation;
+        }
+      },
+      {
+        name: 'Console-Logging',
+        test: () => {
+          const originalLog = console.log;
+          let logged = false;
+          console.log = () => { logged = true; };
+          console.log('test');
+          console.log = originalLog;
+          return logged;
+        }
+      },
+      {
+        name: 'Error-Handling',
+        test: () => {
+          try {
+            throw new Error('test');
+          } catch (e) {
+            return e.message === 'test';
+          }
+        }
+      },
+      {
+        name: 'JSON-Parsing',
+        test: () => {
+          try {
+            const obj = JSON.parse('{"test": true}');
+            return obj.test === true;
+          } catch (e) {
+            return false;
+          }
+        }
+      },
+      {
+        name: 'Array-Operationen',
+        test: () => {
+          const arr = [1, 2, 3];
+          return arr.map(x => x * 2).reduce((a, b) => a + b, 0) === 12;
+        }
+      }
+    ];
+
+    let testResults = [];
+    let iterationCount = 0;
+    let maxIterations = 100;
+
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('testLog');
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? '#f00' : type === 'success' ? '#0f0' : '#0ff';
+      logEl.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+      console.log(`[TEST] ${message}`);
+    }
+
+    function updateProgress(passed, total) {
+      const percentage = Math.round((passed / total) * 100);
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = percentage + '%';
+      progressBar.textContent = `${percentage}% (${passed}/${total})`;
+    }
+
+    function runTest(test) {
+      try {
+        const result = test.test();
+        return {
+          name: test.name,
+          passed: result,
+          error: result ? null : 'Test fehlgeschlagen'
+        };
+      } catch (error) {
+        return {
+          name: test.name,
+          passed: false,
+          error: error.message
+        };
+      }
+    }
+
+    function displayResults(results) {
+      const resultsEl = document.getElementById('testResults');
+      resultsEl.innerHTML = '';
+
+      let passed = 0;
+      let failed = 0;
+
+      results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = `test-item ${result.passed ? 'passing' : 'failing'}`;
+        item.innerHTML = `
+          <strong>${result.name}</strong>
+          <span class="test-status status-${result.passed ? 'passing' : 'failing'}">
+            ${result.passed ? '✅ PASS' : '❌ FAIL'}
+          </span>
+          ${result.error ? `<div style="color: #f00; margin-top: 5px;">${result.error}</div>` : ''}
+        `;
+        resultsEl.appendChild(item);
+
+        if (result.passed) passed++;
+        else failed++;
+      });
+
+      updateProgress(passed, results.length);
+
+      log(`Tests abgeschlossen: ${passed} bestanden, ${failed} fehlgeschlagen`);
+      
+      return failed === 0;
+    }
+
+    async function runAllTests() {
+      log('=== Test-Lauf gestartet ===');
+      testResults = [];
+
+      for (const test of tests) {
+        const result = runTest(test);
+        testResults.push(result);
+        log(`${result.passed ? '✅' : '❌'} ${result.name}`, result.passed ? 'success' : 'error');
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      const allPassed = displayResults(testResults);
+      
+      if (allPassed) {
+        log('🎉 Alle Tests bestanden!', 'success');
+      } else {
+        log('⚠️ Einige Tests fehlgeschlagen', 'error');
+      }
+
+      return allPassed;
+    }
+
+    async function runTestsUntilNoErrors() {
+      log('=== Iterative Tests bis keine Fehler ===');
+      iterationCount = 0;
+
+      while (iterationCount < maxIterations) {
+        iterationCount++;
+        log(`\n--- Iteration ${iterationCount} ---`);
+
+        const allPassed = await runAllTests();
+
+        if (allPassed) {
+          log(`\n🎉 Alle Tests bestanden nach ${iterationCount} Iteration(en)!`, 'success');
+          break;
+        } else {
+          log(`\n⚠️ Fehler gefunden - weitere Iteration...`, 'error');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
+      if (iterationCount >= maxIterations) {
+        log(`\n⚠️ Maximale Iterationen (${maxIterations}) erreicht`, 'error');
+      }
+    }
+
+    function clearResults() {
+      document.getElementById('testResults').innerHTML = '';
+      document.getElementById('testLog').innerHTML = '';
+      document.getElementById('progressBar').style.width = '0%';
+      document.getElementById('progressBar').textContent = '0%';
+      testResults = [];
+      iterationCount = 0;
+      log('Ergebnisse gelöscht');
+    }
+
+    // Auto-run on load
+    window.addEventListener('load', () => {
+      log('Test-System geladen');
+      log('Bereit für Tests...');
+    });
+  </script>
+</body>
+</html>
+

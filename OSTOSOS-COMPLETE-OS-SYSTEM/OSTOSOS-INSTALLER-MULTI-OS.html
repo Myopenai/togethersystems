@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Multi-OS Installation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e27;--card:#1a1f3a;--accent:#10b981;--text:#fff;--muted:#9ca3af;--border:#223040;--warn:#f59e0b;--danger:#ef4444}
+body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,var(--bg) 0%,var(--card) 100%);color:var(--text);min-height:100vh;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.header{text-align:center;margin-bottom:40px;padding:30px;background:var(--card);border-radius:20px;border:2px solid var(--accent)}
+.header h1{font-size:3em;color:var(--accent);margin-bottom:10px}
+.header p{font-size:1.2em;color:var(--muted)}
+.install-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:40px}
+.option-card{background:var(--card);padding:30px;border-radius:15px;border:2px solid var(--border);cursor:pointer;transition:all 0.3s;position:relative}
+.option-card:hover{border-color:var(--accent);transform:translateY(-5px);box-shadow:0 10px 30px rgba(16,185,129,0.2)}
+.option-card.selected{border-color:var(--accent);background:linear-gradient(135deg,var(--card),rgba(16,185,129,0.1))}
+.option-card h3{font-size:1.5em;color:var(--accent);margin-bottom:15px}
+.option-card p{color:var(--muted);margin-bottom:10px;line-height:1.6}
+.option-card .badge{display:inline-block;padding:5px 12px;border-radius:20px;font-size:0.8em;margin-top:10px}
+.badge-new{background:var(--accent);color:#00100a}
+.badge-recommended{background:var(--warn);color:#00100a}
+.badge-advanced{background:var(--danger);color:#fff}
+.wizard{background:var(--card);padding:40px;border-radius:20px;border:2px solid var(--accent);display:none}
+.wizard.active{display:block}
+.wizard-step{display:none}
+.wizard-step.active{display:block}
+.wizard h2{font-size:2em;color:var(--accent);margin-bottom:20px}
+.wizard p{color:var(--muted);margin-bottom:20px;line-height:1.6}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;color:var(--text);margin-bottom:8px;font-weight:600}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1em}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(16,185,129,0.1)}
+.checkbox-group{display:flex;align-items:center;gap:10px}
+.checkbox-group input[type="checkbox"]{width:auto}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:1em;font-weight:600;transition:all 0.3s;display:inline-block}
+.btn-primary{background:var(--accent);color:#00100a}
+.btn-primary:hover{background:#0ea5e9;transform:translateY(-2px);box-shadow:0 5px 15px rgba(16,185,129,0.3)}
+.btn-secondary{background:var(--border);color:var(--text)}
+.btn-secondary:hover{background:var(--muted)}
+.btn-group{display:flex;gap:15px;margin-top:30px;justify-content:flex-end}
+.warning-box{background:rgba(245,158,11,0.1);border:2px solid var(--warn);padding:20px;border-radius:12px;margin-bottom:20px}
+.warning-box h4{color:var(--warn);margin-bottom:10px}
+.info-box{background:rgba(16,185,129,0.1);border:2px solid var(--accent);padding:20px;border-radius:12px;margin-bottom:20px}
+.info-box h4{color:var(--accent);margin-bottom:10px}
+.progress-bar{width:100%;height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:20px}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.3s}
+.os-detection{background:var(--bg);padding:20px;border-radius:12px;margin-bottom:20px;border:1px solid var(--border)}
+.os-detection h4{color:var(--accent);margin-bottom:15px}
+.os-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card);border-radius:8px;margin-bottom:10px}
+.os-item .os-name{font-weight:600}
+.os-item .os-status{color:var(--muted);font-size:0.9em}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>T,. OSTOSOS</h1>
+<p>Multi-OS Installation System</p>
+<p style="font-size:0.9em;color:var(--muted);margin-top:10px">Installiere OSTOSOS neben bestehenden Systemen oder als einziges OS</p>
+</div>
+
+<div class="install-options" id="installOptions">
+<div class="option-card" data-option="parallel" onclick="selectOption('parallel')">
+<h3>🔄 Parallel-Installation</h3>
+<p>Installiere OSTOSOS neben deinem bestehenden Betriebssystem (Windows, macOS, Linux).</p>
+<p><strong>Vorteile:</strong></p>
+<ul style="list-style:none;padding-left:0;color:var(--muted)">
+<li>✅ Beide Systeme bleiben erhalten</li>
+<li>✅ Dual-Boot beim Start</li>
+<li>✅ Keine Datenverluste</li>
+<li>✅ Einfache Deinstallation möglich</li>
+</ul>
+<span class="badge badge-recommended">Empfohlen</span>
+</div>
+
+<div class="option-card" data-option="standalone" onclick="selectOption('standalone')">
+<h3>🖥️ Standalone-Installation</h3>
+<p>Installiere OSTOSOS als einziges Betriebssystem (ersetzt vorhandenes OS).</p>
+<p><strong>Vorteile:</strong></p>
+<ul style="list-style:none;padding-left:0;color:var(--muted)">
+<li>✅ Maximale Performance</li>
+<li>✅ Vollständige Kontrolle</li>
+<li>✅ Keine Konflikte</li>
+<li>✅ Optimale Ressourcennutzung</li>
+</ul>
+<span class="badge badge-advanced">Erweitert</span>
+</div>
+
+<div class="option-card" data-option="virtual" onclick="selectOption('virtual')">
+<h3>💻 Virtual Machine</h3>
+<p>Installiere OSTOSOS in einer virtuellen Maschine (VMware, VirtualBox, Hyper-V).</p>
+<p><strong>Vorteile:</strong></p>
+<ul style="list-style:none;padding-left:0;color:var(--muted)">
+<li>✅ Komplett isoliert</li>
+<li>✅ Keine Änderungen am Host-OS</li>
+<li>✅ Einfaches Testen</li>
+<li>✅ Snapshots möglich</li>
+</ul>
+<span class="badge badge-new">Neu</span>
+</div>
+
+<div class="option-card" data-option="container" onclick="selectOption('container')">
+<h3>📦 Container-Installation</h3>
+<p>Installiere OSTOSOS als Container (Docker, Podman, LXC).</p>
+<p><strong>Vorteile:</strong></p>
+<ul style="list-style:none;padding-left:0;color:var(--muted)">
+<li>✅ Leichtgewicht</li>
+<li>✅ Schnelle Installation</li>
+<li>✅ Portabel</li>
+<li>✅ Einfache Updates</li>
+</ul>
+<span class="badge badge-new">Neu</span>
+</div>
+
+<div class="option-card" data-option="boot-image" onclick="selectOption('boot-image')">
+<h3>💾 Boot-Image (Ohne OS)</h3>
+<p>Installiere OSTOSOS als direktes Boot-Image auf Geräten ohne Betriebssystem.</p>
+<p><strong>Vorteile:</strong></p>
+<ul style="list-style:none;padding-left:0;color:var(--muted)">
+<li>✅ Direkter Boot</li>
+<li>✅ Kein OS nötig</li>
+<li>✅ Für IoT/Embedded</li>
+<li>✅ Firmware-Integration</li>
+</ul>
+<span class="badge badge-advanced">Erweitert</span>
+</div>
+
+<div class="option-card" data-option="pwa" onclick="selectOption('pwa')">
+<h3>🌐 Progressive Web App</h3>
+<p>Installiere OSTOSOS als PWA im Browser (keine System-Installation).</p>
+<p><strong>Vorteile:</strong></p>
+<ul style="list-style:none;padding-left:0;color:var(--muted)">
+<li>✅ Keine Installation</li>
+<li>✅ Funktioniert überall</li>
+<li>✅ Sofort nutzbar</li>
+<li>✅ Keine Berechtigungen</li>
+</ul>
+<span class="badge badge-new">Empfohlen</span>
+</div>
+</div>
+
+<div class="wizard" id="wizard">
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<div class="wizard-step active" id="step1">
+<h2>Schritt 1: System-Erkennung</h2>
+<div class="os-detection" id="osDetection">
+<h4>🔍 Erkannte Betriebssysteme:</h4>
+<div id="detectedOS"></div>
+</div>
+<div class="info-box">
+<h4>ℹ️ Information</h4>
+<p>OSTOSOS hat dein System analysiert. Wähle eine Installationsmethode aus.</p>
+</div>
+<div class="btn-group">
+<button class="btn btn-secondary" onclick="resetWizard()">Zurück</button>
+<button class="btn btn-primary" onclick="nextStep()">Weiter</button>
+</div>
+</div>
+
+<div class="wizard-step" id="step2">
+<h2>Schritt 2: Installations-Optionen</h2>
+<div class="form-group">
+<label>Installations-Pfad:</label>
+<input type="text" id="installPath" placeholder="C:\OSTOSOS oder /opt/ostosos" value="">
+</div>
+<div class="form-group">
+<label>Partitions-Größe (nur bei Parallel-Installation):</label>
+<select id="partitionSize">
+<option value="minimal">Minimal (2 GB)</option>
+<option value="standard" selected>Standard (10 GB)</option>
+<option value="recommended">Empfohlen (20 GB)</option>
+<option value="large">Groß (50 GB)</option>
+</select>
+</div>
+<div class="form-group">
+<label>Boot-Manager:</label>
+<select id="bootManager">
+<option value="auto">Automatisch erkannt</option>
+<option value="grub">GRUB (Linux)</option>
+<option value="windows-boot">Windows Boot Manager</option>
+<option value="refind">rEFInd (macOS/Linux)</option>
+<option value="ostosos">OSTOSOS Boot Manager</option>
+</select>
+</div>
+<div class="checkbox-group">
+<input type="checkbox" id="createBootEntry" checked>
+<label for="createBootEntry">Boot-Eintrag erstellen</label>
+</div>
+<div class="checkbox-group">
+<input type="checkbox" id="setDefaultBoot" checked>
+<label for="setDefaultBoot">OSTOSOS als Standard-Boot setzen</label>
+</div>
+<div class="warning-box" id="parallelWarning" style="display:none">
+<h4>⚠️ Warnung: Parallel-Installation</h4>
+<p>OSTOSOS wird neben deinem bestehenden System installiert. Stelle sicher, dass genügend Speicherplatz vorhanden ist.</p>
+</div>
+<div class="btn-group">
+<button class="btn btn-secondary" onclick="prevStep()">Zurück</button>
+<button class="btn btn-primary" onclick="nextStep()">Weiter</button>
+</div>
+</div>
+
+<div class="wizard-step" id="step3">
+<h2>Schritt 3: Installation starten</h2>
+<div class="info-box">
+<h4>✅ Bereit zur Installation</h4>
+<p>Die Installation wird jetzt gestartet. Bitte warte, bis der Prozess abgeschlossen ist.</p>
+</div>
+<div id="installProgress" style="display:none">
+<div class="progress-bar">
+<div class="progress-fill" id="installProgressFill" style="width:0%"></div>
+</div>
+<p id="installStatus" style="color:var(--muted);margin-top:10px">Vorbereitung...</p>
+</div>
+<div class="btn-group">
+<button class="btn btn-secondary" onclick="prevStep()">Zurück</button>
+<button class="btn btn-primary" id="startInstallBtn" onclick="startInstallation()">Installation starten</button>
+</div>
+</div>
+
+<div class="wizard-step" id="step4">
+<h2>✅ Installation abgeschlossen</h2>
+<div class="info-box">
+<h4>🎉 Erfolgreich installiert!</h4>
+<p>OSTOSOS wurde erfolgreich installiert. Du kannst das System jetzt starten.</p>
+</div>
+<div class="btn-group">
+<button class="btn btn-primary" onclick="restartSystem()">System neu starten</button>
+<button class="btn btn-secondary" onclick="openOSTOSOS()">OSTOSOS öffnen</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+let selectedOption = null;
+let currentStep = 1;
+const totalSteps = 4;
+
+function selectOption(option) {
+selectedOption = option;
+document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+document.querySelector(`[data-option="${option}"]`).classList.add('selected');
+document.getElementById('wizard').classList.add('active');
+detectOS();
+updateProgress();
+}
+
+function detectOS() {
+const detectedOSEl = document.getElementById('detectedOS');
+const osList = [];
+const userAgent = navigator.userAgent.toLowerCase();
+const platform = navigator.platform.toLowerCase();
+
+if (userAgent.includes('win') || platform.includes('win')) {
+osList.push({name: 'Windows', version: 'Erkannt', status: 'Aktiv'});
+}
+if (userAgent.includes('mac') || platform.includes('mac')) {
+osList.push({name: 'macOS', version: 'Erkannt', status: 'Aktiv'});
+}
+if (userAgent.includes('linux') || platform.includes('linux')) {
+osList.push({name: 'Linux', version: 'Erkannt', status: 'Aktiv'});
+}
+if (userAgent.includes('android')) {
+osList.push({name: 'Android', version: 'Erkannt', status: 'Aktiv'});
+}
+if (userAgent.includes('ios')) {
+osList.push({name: 'iOS', version: 'Erkannt', status: 'Aktiv'});
+}
+
+if (osList.length === 0) {
+osList.push({name: 'Unbekannt', version: 'Nicht erkannt', status: 'Kein OS erkannt'});
+}
+
+detectedOSEl.innerHTML = osList.map(os => `
+<div class="os-item">
+<div>
+<div class="os-name">${os.name}</div>
+<div class="os-status">${os.version} - ${os.status}</div>
+</div>
+</div>
+`).join('');
+
+if (selectedOption === 'parallel') {
+document.getElementById('parallelWarning').style.display = 'block';
+} else {
+document.getElementById('parallelWarning').style.display = 'none';
+}
+}
+
+function updateProgress() {
+const progress = (currentStep / totalSteps) * 100;
+document.getElementById('progressFill').style.width = progress + '%';
+}
+
+function nextStep() {
+if (currentStep < totalSteps) {
+document.getElementById(`step${currentStep}`).classList.remove('active');
+currentStep++;
+document.getElementById(`step${currentStep}`).classList.add('active');
+updateProgress();
+}
+}
+
+function prevStep() {
+if (currentStep > 1) {
+document.getElementById(`step${currentStep}`).classList.remove('active');
+currentStep--;
+document.getElementById(`step${currentStep}`).classList.add('active');
+updateProgress();
+}
+}
+
+function resetWizard() {
+document.getElementById('wizard').classList.remove('active');
+currentStep = 1;
+selectedOption = null;
+document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
+document.getElementById('step1').classList.add('active');
+updateProgress();
+}
+
+function startInstallation() {
+document.getElementById('installProgress').style.display = 'block';
+document.getElementById('startInstallBtn').disabled = true;
+document.getElementById('startInstallBtn').textContent = 'Installation läuft...';
+
+let progress = 0;
+const interval = setInterval(() => {
+progress += 10;
+document.getElementById('installProgressFill').style.width = progress + '%';
+
+const statusMessages = [
+'Vorbereitung...',
+'Dateien werden kopiert...',
+'Boot-Manager wird konfiguriert...',
+'System wird eingerichtet...',
+'Installation wird abgeschlossen...'
+];
+
+const messageIndex = Math.floor((progress / 100) * statusMessages.length);
+document.getElementById('installStatus').textContent = statusMessages[Math.min(messageIndex, statusMessages.length - 1)];
+
+if (progress >= 100) {
+clearInterval(interval);
+setTimeout(() => {
+nextStep();
+}, 1000);
+}
+}, 500);
+}
+
+function restartSystem() {
+if (confirm('Möchtest du das System wirklich neu starten?')) {
+if (typeof window.electron !== 'undefined') {
+window.electron.restart();
+} else {
+alert('Bitte starte dein System manuell neu, um OSTOSOS zu verwenden.');
+}
+}
+}
+
+function openOSTOSOS() {
+window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+}
+
+detectOS();
+</script>
+</body>
+</html>
+

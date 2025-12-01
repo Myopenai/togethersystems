@@ -1,0 +1,392 @@
+<!DOCTYPE html><html lang="de">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Globale Zeit-Suite – One-File Mega App (v3)</title>
+<meta name="theme-color" content="#0b0f14"/>
+<style>
+:root{--bg:#0b0f14;--card:#121923;--ink:#e6f0ff;--muted:#97a7bd;--accent:#70f0ff;--good:#41d47a;--warn:#f6c945;--bad:#ff6b6b}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif;background:radial-gradient(1200px 600px at 80% -10%,#0e1622 10%,var(--bg) 50%);color:var(--ink);line-height:1.35}
+h1{font-size:clamp(20px,3vw,28px);margin:6px 0 6px}h2{font-size:18px;margin:16px 0 8px;color:var(--accent)}p{color:var(--muted);margin:8px 0}
+.card{background:linear-gradient(160deg,rgba(112,240,255,.06),rgba(112,240,255,0)),var(--card);border:1px solid rgba(112,240,255,.15);border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);margin-bottom:12px}
+input,select,button,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(112,240,255,.25);background:#0c131c;color:var(--ink);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(112,240,255,.2)}
+button{cursor:pointer;font-weight:700;letter-spacing:.2px;background:linear-gradient(180deg,rgba(112,240,255,.25),rgba(112,240,255,.1))}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+.small{font-size:12px;color:var(--muted)}.bad{color:#ff6b6b}.ok{color:var(--good)}.warn{color:var(--warn)}
+.grid{display:grid;gap:12px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}@media (max-width:980px){.two{grid-template-columns:1fr}}
+.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.tab{padding:10px 12px;border:1px solid rgba(112,240,255,.25);border-radius:999px;cursor:pointer}
+.tab.active{background:rgba(112,240,255,.12);border-color:var(--accent);color:var(--accent)}
+.section{display:none}.section.active{display:block}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#0e1a25;border:1px solid rgba(112,240,255,.2);color:var(--accent);font-size:12px}
+.world{aspect-ratio: 3/1.5;width:100%;background:
+radial-gradient(200px 120px at 70% 20%,rgba(112,240,255,.15),transparent 60%),
+radial-gradient(300px 200px at 10% 90%,rgba(112,240,255,.12),transparent 60%),
+url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 600%22><defs><linearGradient id=%22g%22 x1=%220%22 x2=%220%22 y1=%220%22 y2=%221%22><stop stop-color=%22%23121923%22/><stop offset=%221%22 stop-color=%22%230b0f14%22/></linearGradient></defs><rect width=%221200%22 height=%22600%22 fill=%22url(%23g)%22/><g fill=%22none%22 stroke=%22%2370f0ff%22 stroke-opacity=%220.25%22><path d=%22M0,300 C200,200 400,200 600,300 S1000,400 1200,300%22/><circle cx=%22600%22 cy=%22300%22 r=%22240%22/><circle cx=%22600%22 cy=%22300%22 r=%22200%22/><circle cx=%22600%22 cy=%22300%22 r=%22160%22/></g></svg>') center/cover no-repeat;border-radius:14px;border:1px solid rgba(112,240,255,.15)}
+.kbd{border:1px solid rgba(255,255,255,.2);border-bottom-width:3px;padding:0 6px;border-radius:6px;background:#000;color:#fff;font-weight:700}
+table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid rgba(112,240,255,.15);padding:8px;text-align:left}
+.badge{display:inline-block;padding:2px 6px;border-radius:8px;border:1px solid rgba(112,240,255,.25);font-size:12px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo svg{width:44px;height:44px}
+footer{margin:28px 0 0}
+</style>
+</head>
+<body>
+<header class="card">
+  <div class="logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true">
+      <defs>
+        <radialGradient id="lg" cx="70%" cy="20%" r="80%"><stop offset="0" stop-color="#70f0ff"/><stop offset="1" stop-color="#0b0f14"/></radialGradient>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#70f0ff" flood-opacity=".55"/></filter>
+      </defs>
+      <g transform="translate(64 64)" fill="none" stroke="#70f0ff" stroke-width="3" filter="url(#glow)">
+        <circle r="40"/><path d="M-44,0 H44 M0,-44 V44" opacity=".35"/><path d="M-50,-8 C-10,-28, 10,28, 50,8" opacity=".7"/>
+      </g>
+      <g transform="translate(64 64)"><circle r="18" fill="url(#lg)" opacity=".9"/></g>
+    </svg>
+    <div>
+      <h1>Globale Zeit-Suite <span class="pill">UTC · Lokal · Partner</span></h1>
+      <div class="small">Producer: <strong>Raymond Demitrio Tel</strong> • <a href="mailto:gentlyoverdone@outlook.com">gentlyoverdone@outlook.com</a> • <a href="https://tel1.jouwweb.nl/contact" target="_blank">tel1.nl</a> • <a href="https://www.gentlyoverdone.com" target="_blank">gentlyoverdone.com</a></div>
+    </div>
+  </div>
+</header>
+
+<div class="card">
+  <div class="tabs" id="tabs"></div>
+  <section id="sec-clock" class="section active"></section>
+  <section id="sec-alias" class="section"></section>
+  <section id="sec-fair" class="section"></section>
+  <section id="sec-timecapsule" class="section"></section>
+  <section id="sec-csv" class="section"></section>
+  <section id="sec-jetlag" class="section"></section>
+  <section id="sec-daylight" class="section"></section>
+  <section id="sec-markets" class="section"></section>
+  <section id="sec-dst" class="section"></section>
+  <section id="sec-link" class="section"></section>
+</div>
+
+<footer>
+  <style>
+  .tel-embed {font-family:'Segoe UI',sans-serif;background:linear-gradient(to right,#111,#1a1a1a);color:#eee;padding:2rem;border-radius:16px;margin:2rem auto;max-width:1200px}
+  .tel-header {text-align:center;background:#1db954;color:#fff;border-radius:12px;padding:2rem 1rem;animation:fadeIn 1.5s ease-in}
+  .tel-header img {max-width:100%;height:auto;border-radius:8px;margin-bottom:1rem}
+  .tel-section {margin:2rem 0;animation:slideIn 1s ease-out}
+  .tel-section h2 {color:#1db954;text-align:center;margin-bottom:1rem}
+  .tel-section iframe {width:100%;height:315px;border:none;border-radius:12px;display:block;margin:0 auto}
+  .tel-info p {text-align:center;max-width:800px;margin:1rem auto;line-height:1.6}
+  .tel-socials {text-align:center;margin-top:2rem}
+  .tel-socials a {margin:0 12px;text-decoration:none;color:#1db954;font-weight:bold;font-size:1.2rem;transition:color .3s}
+  .tel-socials a:hover {color:#1fff75}
+  @media (max-width:768px){.tel-embed{padding:1rem}.tel-section iframe{height:250px}.tel-socials a{display:inline-block;margin:.5rem;font-size:1rem}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+  </style>
+  <div class="tel-embed">
+    <div class="tel-header">
+      <img src="https://tse4.mm.bing.net/th/id/OIP.DSkAHippfPm7Y3kbZ57D4QHaDt?pid=Api" alt="TEL & Gentlyoverdone Banner">
+      <h1>TEL & Gentlyoverdone</h1>
+      <p>Muziek als taal — waar ritme, toon & gevoel verbinden.</p>
+    </div>
+    <div class="tel-section"><h2>🎧 Gentlyoverdone op Spotify</h2><iframe src="https://open.spotify.com/embed/artist/4JoHEGXx9uwPmdT02ZSVwH?utm_source=generator" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe></div>
+    <div class="tel-section"><h2>🎧 Gentlyoverdonelivestudio op Spotify</h2><iframe src="https://open.spotify.com/embed/album/5Sk4bMBNLz8VfTeIliJIgw?utm_source=generator" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe></div>
+    <div class="tel-section"><h2>🎧 TEL & Gentlyoverdone Playlist</h2><iframe src="https://open.spotify.com/embed/playlist/7BXr0cyoKuJSH6NUdPkrQ4" allow="autoplay; encrypted-media"></iframe></div>
+    <div class="tel-section"><h2>📺 Gentlyoverdone op YouTube</h2><iframe src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_n9sfv4rSbaRrk-_NA1RMznMMC3gTbk_VM" allowfullscreen></iframe></div>
+    <div class="tel-section"><h2>📺 Gentlyoverdonelivestudio op YouTube</h2><iframe src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_kEtsbqqFe8StPkTQp-7CiNJy2tzNMHXzk" allowfullscreen></iframe></div>
+    <div class="tel-section"><h2>📺 TEL & Gentlyoverdone Video Playlist</h2><iframe src="https://www.youtube.com/embed/videoseries?list=PLqnjuwwlGspi672giIFTwUcNgM_cXdjGv" allowfullscreen></iframe></div>
+  </div>
+</footer>
+
+<script>
+function localTZ(){ return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' }
+function fmt(dt, tz){ return new Intl.DateTimeFormat('de-DE',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(dt) }
+function fmtHM(dt, tz){ return new Intl.DateTimeFormat('de-DE',{timeZone:tz,hour:'2-digit',minute:'2-digit',hour12:false}).format(dt) }
+function parseTZOffsetMin(tz, date){
+  try{
+    const dtf=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'shortOffset',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+    const parts=dtf.formatToParts(date); const t=parts.find(p=>p.type==='timeZoneName'); if(t){ const m=t.value.match(/GMT([+-]\\d{1,2})(?::?(\\d{2}))?/); if(m){ const s=m[1].startsWith('-')?-1:1; const h=Math.abs(parseInt(m[1],10)); const mm=m[2]?parseInt(m[2],10):0; return s*(h*60+mm) } }
+  }catch(e){}
+  const dtf2=new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+  const parts2=dtf2.formatToParts(date); const take=t=>Number(parts2.find(p=>p.type===t).value);
+  const y=take('year'),mo=take('month'),d=take('day'),h=take('hour'),mi=take('minute');
+  const asUTC=Date.UTC(y,mo-1,d,h,mi); return (asUTC-date.getTime())/60000
+}
+function makeUTCFromZoned(y,mo,d,hh,mi,tz){
+  let guess=Date.UTC(y,mo-1,d,hh,mi); let off=parseTZOffsetMin(tz,new Date(guess)); let t=guess-off*60000;
+  const ok=(ms)=>{ const parts=new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date(ms));
+    const val=n=>Number(parts.find(p=>p.type===n).value); return (val('year')===y && val('month')===mo && val('day')===d && val('hour')===hh && val('minute')===mi) };
+  if(ok(t)) return t; for(const delta of [-60,+60,-120,+120]){ const tt=t+delta*60000; if(ok(tt)) return tt } return t
+}
+function supportedTZs(){
+  if(typeof Intl.supportedValuesOf==='function'){ try{ const l=Intl.supportedValuesOf('timeZone'); if(Array.isArray(l)&&l.length) return l }catch(e){} }
+  return ["UTC","Europe/Amsterdam","Europe/Berlin","Europe/London","Europe/Paris","America/New_York","America/Los_Angeles","Asia/Tokyo","Asia/Kolkata","Australia/Sydney"];
+}
+const tabs=[
+  {id:'sec-clock', label:'Weltuhr & Alarm'},
+  {id:'sec-alias', label:'Alias-Suche'},
+  {id:'sec-fair', label:'Fairer Meeting-Finder'},
+  {id:'sec-timecapsule', label:'Zeitkapsel-Messenger'},
+  {id:'sec-csv', label:'CSV Normalizer'},
+  {id:'sec-jetlag', label:'Jetlag-Coach'},
+  {id:'sec-daylight', label:'Tageslicht'},
+  {id:'sec-markets', label:'Märkte'},
+  {id:'sec-dst', label:'DST-Radar'},
+  {id:'sec-link', label:'Meeting-Link'}
+];
+const tabsEl=document.getElementById('tabs');
+tabs.forEach((t,i)=>{
+  const b=document.createElement('button'); b.className='tab'+(i===0?' active':''); b.textContent=t.label;
+  b.addEventListener('click',()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); document.getElementById(t.id).classList.add('active') });
+  tabsEl.appendChild(b);
+});
+
+document.getElementById('sec-clock').innerHTML = `
+  <div class="grid two">
+    <section>
+      <h2>Weltuhr &amp; Umrechnung</h2>
+      <div class="row">
+        <div><label>Modus</label><select id="mode"><option value="partner">Partner-Zeitzone</option><option value="utc">UTC (Zulu)</option></select></div>
+        <div><label>Datum</label><input id="date" type="date"></div>
+        <div><label>Uhrzeit (24h)</label><input id="time" type="time" step="60"></div>
+      </div>
+      <div id="partnerRow" style="margin-top:10px;">
+        <label>Partner-Zeitzone</label>
+        <div class="row"><input id="tzFilter" placeholder="Suche… z. B. Europe, New_York"><select id="partnerTz" size="6"></select></div>
+      </div>
+      <div class="small" id="err" style="color:#ff6b6b;display:none"></div>
+    </section>
+    <section>
+      <h2>Ergebnis</h2>
+      <div class="world"></div>
+      <div class="row" style="margin-top:10px;"><div><label>Deine Zeitzone</label><input id="localTz" class="mono" readonly></div><div><label>UTC</label><input id="utcOut" class="mono" readonly></div></div>
+      <div class="row"><div><label>Lokale Zeit</label><input id="localOut" class="mono" readonly></div><div><label>Partner-Zeit</label><input id="partnerOut" class="mono" readonly></div></div>
+      <div class="row"><div><label>Countdown</label><input id="countdown" class="mono" readonly></div><div><label>Einladung</label><input id="invite" class="mono" readonly></div></div>
+      <div class="row" style="margin-top:8px;"><button id="alarmBtn">Alarm setzen</button><button id="copyBtn">Einladung kopieren</button></div>
+      <div id="alarmMsg" class="small"></div>
+    </section>
+  </div>
+`;
+(function(){
+  const tzs=supportedTZs().sort();
+  const local=localTZ(); const ids={mode:'mode',date:'date',time:'time',tzFilter:'tzFilter',partnerTz:'partnerTz',localTz:'localTz',utcOut:'utcOut',localOut:'localOut',partnerOut:'partnerOut',countdown:'countdown',invite:'invite',err:'err',alarmBtn:'alarmBtn',copyBtn:'copyBtn',alarmMsg:'alarmMsg'};
+  const el={}; Object.keys(ids).forEach(k=>el[k]=document.getElementById(ids[k]));
+  function populate(filter=''){ el.partnerTz.innerHTML=''; const q=filter.trim().toLowerCase(); const list=tzs.filter(z=>z.toLowerCase().includes(q)); list.forEach(z=>{ const o=document.createElement('option'); o.value=z; o.textContent=z; el.partnerTz.appendChild(o) }); const idx=list.indexOf('Europe/Amsterdam'); el.partnerTz.selectedIndex = idx>=0?idx:0; }
+  populate(); el.tzFilter.addEventListener('input',()=>populate(el.tzFilter.value));
+  el.localTz.value=local;
+  const now=new Date(), in2h=new Date(now.getTime()+2*3600*1000); document.getElementById('date').valueAsDate=in2h; document.getElementById('time').value=String(in2h.getHours()).padStart(2,'0')+':'+String(in2h.getMinutes()).padStart(2,'0');
+  function compute(){
+    el.err.style.display='none';
+    if(!el.date.value||!el.time.value){ el.err.textContent='Bitte Datum & Uhrzeit eingeben.'; el.err.style.display='block'; return; }
+    const [y,mo,d]=el.date.value.split('-').map(Number); const [hh,mi]=el.time.value.split(':').map(Number);
+    const pTZ = el.mode.value==='utc' ? 'UTC' : (el.partnerTz.value||'UTC');
+    const utcMs = (el.mode.value==='utc')? Date.UTC(y,mo-1,d,hh,mi) : makeUTCFromZoned(y,mo,d,hh,mi,pTZ);
+    const ev=new Date(utcMs);
+    el.utcOut.value=fmt(ev,'UTC'); el.localOut.value=fmt(ev,local); el.partnerOut.value=fmt(ev,pTZ);
+    el.invite.value=`Meeting: ${fmt(ev,'UTC')} UTC • ${fmt(ev,local)} (${local}) • ${fmt(ev,pTZ)} (${pTZ})`;
+    if(window._clockTimer) clearInterval(window._clockTimer);
+    window._clockTimer=setInterval(()=>{ const diff=utcMs - Date.now(); if(diff<=0){ el.countdown.value='JETZT!'; clearInterval(window._clockTimer); } else { const s=Math.floor(diff/1000), ddd=Math.floor(s/86400), hh=Math.floor((s%86400)/3600), mm=Math.floor((s%3600)/60), ss=s%60; el.countdown.value=`${ddd}d ${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}` } },500);
+    el.alarmMsg.textContent='';
+    window._currentUTC=utcMs; window._currentTZ=pTZ;
+  }
+  ['change','input'].forEach(evt=>['mode','date','time','partnerTz'].forEach(id=>document.getElementById(id).addEventListener(evt,compute)));
+  function beep(){ const ctx=new (window.AudioContext||window.webkitAudioContext)(), osc=ctx.createOscillator(), gain=ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type='sine'; osc.frequency.value=880; gain.gain.setValueAtTime(0.0001,ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.08,ctx.currentTime+0.02); osc.start(); setTimeout(()=>{ osc.stop(); ctx.close() },900) }
+  async function ensureNotify(){ if(!('Notification' in window)) return false; if(Notification.permission==='granted') return true; if(Notification.permission!=='denied'){ const p=await Notification.requestPermission(); return p==='granted' } return false }
+  el.alarmBtn.addEventListener('click',()=>{ if(!window._currentUTC){ el.err.textContent='Bitte zuerst Zeit berechnen.'; el.err.style.display='block'; return; } ensureNotify().then(ok=>{ el.alarmMsg.textContent='Alarm aktiv (Seite geöffnet lassen).'; const t=setInterval(()=>{ if(Date.now()>=window._currentUTC){ clearInterval(t); beep(); try{ if(ok) new Notification('Zeit ist jetzt!',{body:el.invite.value}); else alert('Zeit ist jetzt!\\n'+el.invite.value); }catch(_){ alert('Zeit ist jetzt!\\n'+el.invite.value) } } },1000); }); });
+  el.copyBtn.addEventListener('click',()=>{ el.invite.select(); document.execCommand('copy'); el.copyBtn.textContent='Kopiert!'; setTimeout(()=>el.copyBtn.textContent='Einladung kopieren',1000) });
+  compute();
+})();
+
+document.getElementById('sec-alias').innerHTML = `
+  <h2>Alias-Suche (Ortsnamen → IANA-Zeitzone)</h2>
+  <div class="row"><input id="aliasQuery" placeholder="z. B. Washington, D.C. oder Seattle"><button id="aliasBtn">Suchen</button></div>
+  <p class="small">Beispiele: „Washington, D.C.“ → America/New_York • „Seattle“ → America/Los_Angeles</p>
+  <div id="aliasOut" class="small"></div>
+`;
+(function(){
+  const ALIAS={"washington":"America/New_York","washington dc":"America/New_York","dc":"America/New_York","seattle":"America/Los_Angeles","wa":"America/Los_Angeles","nyc":"America/New_York","new york":"America/New_York","la":"America/Los_Angeles","los angeles":"America/Los_Angeles","london":"Europe/London","berlin":"Europe/Berlin","amsterdam":"Europe/Amsterdam","paris":"Europe/Paris","tokyo":"Asia/Tokyo","seoul":"Asia/Seoul","singapore":"Asia/Singapore","sydney":"Australia/Sydney","melbourne":"Australia/Melbourne","dubai":"Asia/Dubai","delhi":"Asia/Kolkata","mumbai":"Asia/Kolkata","mexico city":"America/Mexico_City"};
+  const q=document.getElementById('aliasQuery'), btn=document.getElementById('aliasBtn'), out=document.getElementById('aliasOut');
+  function search(){
+    const k=(q.value||'').trim().toLowerCase(); if(!k){ out.textContent='Bitte einen Ortsnamen eingeben.'; return; }
+    let guess=null; if(ALIAS[k]) guess=ALIAS[k]; else { const hit=Object.keys(ALIAS).find(a=>k.includes(a)); if(hit) guess=ALIAS[hit]; }
+    if(guess){ out.innerHTML=`Vermutete IANA-Zone: <span class="badge">${guess}</span> · <button id="useAlias">In Weltuhr übernehmen</button>`; document.getElementById('useAlias').onclick=()=>{ document.querySelectorAll('.tab')[0].click(); document.getElementById('mode').value='partner'; const sel=document.getElementById('partnerTz'), filter=document.getElementById('tzFilter'); filter.value=''; const opts=[...sel.options]; const idx=opts.findIndex(o=>o.value===guess); if(idx>=0){ sel.selectedIndex=idx; sel.dispatchEvent(new Event('change')); } }; }
+    else out.textContent='Keine passende Zone gefunden.';
+  }
+  btn.addEventListener('click',search); q.addEventListener('keydown',e=>{ if(e.key==='Enter') search() });
+})();
+
+document.getElementById('sec-fair').innerHTML = `
+  <h2>Fairer Meeting-Finder</h2>
+  <p class="small">Teilnehmer hinzufügen (Zone + Arbeitsfenster). Vorschläge minimieren Unbequem-Score.</p>
+  <div id="fairList"></div>
+  <div class="row"><input id="fairName" placeholder="Name"><input id="fairTZ" placeholder="Zeitzone (z. B. Europe/Amsterdam)"><input id="fairWork" placeholder="09:00-17:00"><button id="fairAdd">Hinzufügen</button></div>
+  <div class="row"><input id="fairDate" type="date"><input id="fairStep" type="number" min="15" max="120" value="30"><label class="small">Schritt (Min)</label><button id="fairCalc">Vorschläge berechnen</button></div>
+  <div id="fairOut"></div>
+`;
+(function(){
+  const list=[]; const fairList=document.getElementById('fairList'); const tzs=supportedTZs().sort();
+  function render(){ fairList.innerHTML='<table><tr><th>Name</th><th>Zeitzone</th><th>Arbeitszeit</th><th></th></tr>'+list.map((p,i)=>`<tr><td>${p.name}</td><td>${p.tz}</td><td>${p.work}</td><td><button data-i="${i}" class="rm">Entfernen</button></td></tr>`).join('')+'</table>'; fairList.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{ list.splice(Number(b.dataset.i),1); render(); }); }
+  document.getElementById('fairAdd').onclick=()=>{ const name=document.getElementById('fairName').value.trim()||('P'+(list.length+1)); const tz=document.getElementById('fairTZ').value.trim()||localTZ(); const work=(document.getElementById('fairWork').value.trim()||'09:00-17:00'); if(!tzs.includes(tz)) { alert('Unbekannte Zeitzone: '+tz); return; } list.push({name, tz, work}); render(); };
+  function parseHM(s){ const m=s.match(/(\d{1,2}):(\d{2})/); return m? (Number(m[1])*60+Number(m[2])) : null }
+  function scoreFor(tUTC, person){
+    const [a,b]=person.work.split('-'); const start=parseHM(a), end=parseHM(b);
+    const parts = new Intl.DateTimeFormat('en-GB',{timeZone:person.tz,hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date(tUTC));
+    const h=Number(parts.find(p=>p.type==='hour').value); const m=Number(parts.find(p=>p.type==='minute').value); const minutes=h*60+m;
+    const inWindow = (start<=end) ? (minutes>=start && minutes<=end) : (minutes>=start || minutes<=end);
+    if(inWindow) return 0;
+    const toStart = ((start - minutes + 1440) % 1440); const toEnd = ((minutes - end + 1440) % 1440); const dist = Math.min(toStart,toEnd);
+    return Math.round(dist/15);
+  }
+  document.getElementById('fairCalc').onclick=()=>{
+    const date=document.getElementById('fairDate').valueAsDate || new Date(); const step=Number(document.getElementById('fairStep').value||30);
+    const baseUTC = Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate(),0,0);
+    const candidates=[]; for(let m=0;m<1440;m+=step){ const t=baseUTC+m*60000; const total=list.reduce((sum,p)=>sum+scoreFor(t,p),0); candidates.push({t,total}) }
+    candidates.sort((a,b)=>a.total-b.total); const top=candidates.slice(0,10);
+    const out=document.getElementById('fairOut'); if(top.length===0){ out.textContent='Bitte Teilnehmer hinzufügen.'; return; }
+    out.innerHTML = '<table><tr><th>UTC</th><th>'+list.map(p=>p.name+' ('+p.tz+')').join(' · ')+'</th><th>Score</th><th></th></tr>' +
+      top.map(c=>'<tr><td class="mono">'+fmt(new Date(c.t),'UTC')+'</td><td>'+list.map(p=>fmtHM(new Date(c.t),p.tz)).join(' · ')+'</td><td>'+(c.total===0?'<span class="ok">0 (perfekt)</span>':c.total)+'</td><td><button data-t="'+c.t+'">In Uhr übernehmen</button></td></tr>').join('') + '</table>';
+    out.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>{ location.hash='t='+b.dataset.t; document.querySelectorAll('.tab')[0].click(); const ev=new Date(Number(b.dataset.t)); document.getElementById('mode').value='utc'; document.getElementById('date').valueAsDate=ev; document.getElementById('time').value=String(ev.getUTCHours()).padStart(2,'0')+':'+String(ev.getUTCMinutes()).padStart(2,'0'); document.getElementById('time').dispatchEvent(new Event('change')); });
+  };
+  render();
+})();
+
+document.getElementById('sec-timecapsule').innerHTML = `
+  <h2>Zeitkapsel-Messenger</h2>
+  <div class="row"><input id="zMsg" placeholder="Nachricht…"><input id="zTz" placeholder="Empfänger-Zeitzone (IANA)"><input id="zDate" type="date"><input id="zTime" type="time" step="60"></div>
+  <div class="row"><button id="zSchedule">Planen</button><input id="zStatus" class="mono" readonly></div>
+  <p class="small">Hinweis: funktioniert nur, solange die Seite offen ist (Browser-Regel).</p>
+`;
+(function(){
+  async function ensureNotify(){ if(!('Notification' in window)) return false; if(Notification.permission==='granted') return true; if(Notification.permission!=='denied'){ const p=await Notification.requestPermission(); return p==='granted' } return false }
+  function beep(){ const ctx=new (window.AudioContext||window.webkitAudioContext)(), osc=ctx.createOscillator(), gain=ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type='sine'; osc.frequency.value=660; gain.gain.setValueAtTime(0.0001,ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.08,ctx.currentTime+0.02); osc.start(); setTimeout(()=>{ osc.stop(); ctx.close() },900) }
+  document.getElementById('zSchedule').onclick=()=>{
+    const msg=document.getElementById('zMsg').value||'Zeitkapsel'; const tz=(document.getElementById('zTz').value||'UTC').trim();
+    const date=document.getElementById('zDate').value, time=document.getElementById('zTime').value; if(!date||!time){ alert('Bitte Datum & Uhrzeit setzen.'); return; }
+    const [y,mo,d]=date.split('-').map(Number); const [hh,mi]=time.split(':').map(Number); const tUTC=makeUTCFromZoned(y,mo,d,hh,mi,tz);
+    const out=document.getElementById('zStatus'); out.value='Geplant für '+fmt(new Date(tUTC), tz)+' ('+tz+') / '+fmt(new Date(tUTC),'UTC')+' UTC';
+    ensureNotify().then(ok=>{ const it=setInterval(()=>{ if(Date.now()>=tUTC){ clearInterval(it); beep(); try{ if(ok) new Notification('Zeitkapsel',{body: msg}); else alert('Zeitkapsel: '+msg) }catch(_){ alert('Zeitkapsel: '+msg) } } },1000); });
+  };
+})();
+
+document.getElementById('sec-csv').innerHTML = `
+  <h2>Zeitzonen-CSV Normalizer</h2>
+  <p class="small">CSV: Spalten <code class="mono">datetime</code> (YYYY-MM-DD HH:MM) &amp; <code class="mono">timezone</code> (IANA).</p>
+  <div class="row"><input id="csvFile" type="file" accept=".csv"><button id="csvRun">Konvertieren → UTC</button></div>
+  <div class="small" id="csvMsg"></div><pre id="csvPreview" class="small" style="white-space:pre-wrap"></pre>
+`;
+(function(){
+  function parseCSV(text){ const lines=text.split(/\r?\n/).filter(x=>x.trim()!==''); const headers=lines[0].split(',').map(h=>h.trim()); const rows=lines.slice(1).map(l=>l.split(',').map(x=>x.trim())); return {headers,rows} }
+  function convRow(h, r){
+    const idxDt=h.indexOf('datetime'), idxTz=h.indexOf('timezone'); if(idxDt<0||idxTz<0) return null;
+    const dt=r[idxDt], tz=r[idxTz]; const m=dt.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/); if(!m) return null;
+    const y=+m[1], mo=+m[2], d=+m[3], hh=+m[4], mi=+m[5]; const tUTC=makeUTCFromZoned(y,mo,d,hh,mi,tz); return [...r, new Date(tUTC).toISOString()];
+  }
+  document.getElementById('csvRun').onclick=()=>{
+    const f=document.getElementById('csvFile').files[0]; if(!f){ alert('Bitte eine CSV wählen.'); return; }
+    const reader=new FileReader(); reader.onload=e=>{
+      const txt=e.target.result; const {headers,rows}=parseCSV(txt); const outRows=[]; rows.forEach(r=>{ const o=convRow(headers,r); if(o) outRows.push(o) });
+      const outCSV=[...headers,'utc_iso'].join(',')+'\n'+outRows.map(r=>r.join(',')).join('\n');
+      const blob=new Blob([outCSV],{type:'text/csv'}); const url=URL.createObjectURL(blob);
+      document.getElementById('csvMsg').innerHTML='Fertig. <a href="'+url+'" download="normalized_utc.csv">Download</a>';
+      document.getElementById('csvPreview').textContent=outCSV.split('\n').slice(0,6).join('\n')+'\n…';
+    }; reader.readAsText(f);
+  };
+})();
+
+document.getElementById('sec-jetlag').innerHTML = `
+  <h2>Jetlag-Coach</h2>
+  <div class="row"><input id="jlFrom" placeholder="Von-Zone (z. B. Europe/Amsterdam)"><input id="jlTo" placeholder="Nach-Zone (z. B. Asia/Tokyo)"><input id="jlDays" type="number" value="4" min="1" max="14"><button id="jlPlan">Plan erstellen</button></div>
+  <div id="jlOut"></div>
+`;
+(function(){
+  function offsetAt(tz, dt){ return parseTZOffsetMin(tz, dt) }
+  function plan(from,to,days){ const now=new Date(); const diffMin=offsetAt(to,now)-offsetAt(from,now); const step=Math.round(diffMin/days); const res=[]; for(let i=1;i<=days;i++){ res.push({day:i, shiftMin:step, cumMin:step*i}); } return {diffMin, step, res}; }
+  document.getElementById('jlPlan').onclick=()=>{
+    const from=document.getElementById('jlFrom').value||localTZ(); const to=document.getElementById('jlTo').value||'UTC'; const days=Number(document.getElementById('jlDays').value||4);
+    const P=plan(from,to,days); const sign=P.diffMin>0?'+':'−'; const tips=(P.diffMin>0)?'Früher schlafen, morgens Licht.':'Später schlafen, abends Licht.';
+    document.getElementById('jlOut').innerHTML = `<p>Gesamt: <strong>${Math.abs(P.diffMin)} Min</strong> (${sign}${Math.abs(P.diffMin)/60}h), pro Tag ~<strong>${Math.abs(P.step)} Min</strong>.</p><p class="small">${tips}</p>`+
+      '<table><tr><th>Tag</th><th>Verschiebung</th><th>Summe</th></tr>'+P.res.map(r=>`<tr><td>${r.day}</td><td>${r.shiftMin>0?'+':''}${r.shiftMin} Min</td><td>${r.cumMin>0?'+':''}${r.cumMin} Min</td></tr>`).join('')+'</table>';
+  };
+})();
+
+document.getElementById('sec-daylight').innerHTML=`
+  <h2>Tageslicht &amp; Golden Hour</h2>
+  <div class="row"><select id="dlCityA"></select><select id="dlCityB"></select><input id="dlDate" type="date"><button id="dlCalc">Berechnen</button></div>
+  <div id="dlOut"></div>
+  <p class="small">Golden Hour ≈ 1h nach Sonnenaufgang / vor Sonnenuntergang.</p>
+`;
+(function(){
+  const CITIES={"Amsterdam (NL)":[52.3676,4.9041],"Berlin (DE)":[52.52,13.405],"London (UK)":[51.5074,-0.1278],"New York (US)":[40.7128,-74.0060],"Los Angeles (US)":[34.0522,-118.2437],"Tokyo (JP)":[35.6762,139.6503],"Sydney (AU)":[-33.8688,151.2093],"Dubai (AE)":[25.2048,55.2708]};
+  function fill(sel){ sel.innerHTML=''; Object.keys(CITIES).forEach(n=>{ const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o)}); }
+  function toRad(d){ return d*Math.PI/180 } function sunTimes(lat, lon, date){ const dayMs=86400000; const J2000=2451545; const toJulian=ms=>ms/86400000+2440587.5; const d = toJulian(Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate(),12,0))-J2000; const lw = (-lon)*Math.PI/180, phi=lat*Math.PI/180; function solarMeanAnomaly(d){ return (357.5291 + 0.98560028*d) * Math.PI/180 } function eclipticLongitude(M){ const C = (1.9148*Math.PI/180)*Math.sin(M) + (0.02*Math.PI/180)*Math.sin(2*M) + (0.0003*Math.PI/180)*Math.sin(3*M); const P = 102.9372*Math.PI/180; return M + C + P + Math.PI } function declination(L){ const e=23.4397*Math.PI/180; return Math.asin(Math.sin(e)*Math.sin(L)) } function hourAngle(h,phi,dec){ return Math.acos((Math.sin(h) - Math.sin(phi)*Math.sin(dec))/(Math.cos(phi)*Math.cos(dec))) } const M = solarMeanAnomaly(d), L = eclipticLongitude(M), dec=declination(L); const Jnoon = J2000 + d + (-lw)/(2*Math.PI); const h0 = -0.83*Math.PI/180; const H = hourAngle(h0, phi, dec); const Jrise = Jnoon - H/(2*Math.PI); const Jset  = Jnoon + H/(2*Math.PI); function fromJulian(j){ return new Date((j-2440587.5)*dayMs) } return {rise: fromJulian(Jrise), set: fromJulian(Jset)}; }
+  const A=document.getElementById('dlCityA'), B=document.getElementById('dlCityB'), D=document.getElementById('dlDate'), O=document.getElementById('dlOut'); fill(A); fill(B); D.valueAsDate = new Date();
+  document.getElementById('dlCalc').onclick=()=>{ const a=A.value,b=B.value; const [alat,alon]=CITIES[a], [blat,blon]=CITIES[b]; const date=D.valueAsDate || new Date(); const tA=sunTimes(alat,alon,date), tB=sunTimes(blat,blon,date);
+    O.innerHTML = '<table><tr><th>Ort</th><th>Sunrise (UTC)</th><th>Sunset (UTC)</th><th>Golden Hour (morgens, UTC)</th><th>Golden Hour (abends, UTC)</th></tr>'+
+      [[a,tA],[b,tB]].map(([n,t])=>`<tr><td>${n}</td><td>${fmt(t.rise,'UTC')}</td><td>${fmt(t.set,'UTC')}</td><td>${fmt(new Date(t.rise.getTime()+15*60000),'UTC')}–${fmt(new Date(t.rise.getTime()+75*60000),'UTC')}</td><td>${fmt(new Date(t.set.getTime()-75*60000),'UTC')}–${fmt(new Date(t.set.getTime()-15*60000),'UTC')}</td></tr>`).join('')+'</table>'; };
+})();
+
+document.getElementById('sec-markets').innerHTML=`
+  <h2>Markt-Fenster Coach</h2>
+  <p class="small">Überschneidung zweier Märkte in deiner Zeit.</p>
+  <div class="row"><select id="mktA"></select><select id="mktB"></select><button id="mktCalc">Berechnen</button></div>
+  <div id="mktOut"></div>
+`;
+(function(){
+  const MKTS={"NYSE/Nasdaq (US)":{"tz":"America/New_York","open":"09:30","close":"16:00"},"LSE (UK)":{"tz":"Europe/London","open":"08:00","close":"16:30"},"Euronext (NL/FR)":{"tz":"Europe/Paris","open":"09:00","close":"17:30"},"TSE (Tokyo)":{"tz":"Asia/Tokyo","open":"09:00","close":"15:00"}};
+  function fill(sel){ sel.innerHTML=''; Object.keys(MKTS).forEach(n=>{ const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o) }); }
+  const A=document.getElementById('mktA'), B=document.getElementById('mktB'); fill(A); fill(B);
+  function parseHM(s){ const [h,m]=s.split(':').map(Number); return h*60+m }
+  document.getElementById('mktCalc').onclick=()=>{
+    const a=A.value, b=B.value; const ma=MKTS[a], mb=MKTS[b];
+    const today=new Date(); const y=today.getUTCFullYear(),mo=today.getUTCMonth(),d=today.getUTCDate();
+    function toUTC(minutes, tz){ const hh=Math.floor(minutes/60), mi=minutes%60; return makeUTCFromZoned(y,mo+1,d,hh,mi,tz) }
+    const aStart=toUTC(parseHM(ma.open),ma.tz), aEnd=toUTC(parseHM(ma.close),ma.tz);
+    const bStart=toUTC(parseHM(mb.open),mb.tz), bEnd=toUTC(parseHM(mb.close),mb.tz);
+    const overlapStart=Math.max(aStart,bStart), overlapEnd=Math.min(aEnd,bEnd);
+    const O=document.getElementById('mktOut');
+    if(overlapEnd>overlapStart){
+      O.innerHTML=`<p>Überschneidung heute:</p><ul><li>UTC: ${fmt(new Date(overlapStart),'UTC')} – ${fmt(new Date(overlapEnd),'UTC')}</li><li>Deine Zone (${localTZ()}): ${fmt(new Date(overlapStart),localTZ())} – ${fmt(new Date(overlapEnd),localTZ())}</li></ul>`;
+    } else { O.textContent='Heute keine Überschneidung.'; }
+  };
+})();
+
+document.getElementById('sec-dst').innerHTML=`
+  <h2>DST-Änderungs-Radar</h2>
+  <div class="row"><input id="dstTz" placeholder="Zeitzone (IANA)"><button id="dstFind">Nächste Umstellung suchen</button></div>
+  <div id="dstOut"></div>
+`;
+(function(){
+  function nextTransition(tz){
+    const now=Date.now(); const startOffset=parseTZOffsetMin(tz,new Date(now));
+    for(let d=1; d<=370; d++){
+      const t=now + d*86400000; const off=parseTZOffsetMin(tz,new Date(t));
+      if(off!==startOffset){
+        let lo=t-86400000, hi=t;
+        while(hi-lo>60000){
+          const mid=Math.floor((hi+lo)/2); const o=parseTZOffsetMin(tz,new Date(mid)); if(o===startOffset) lo=mid; else hi=mid;
+        }
+        return hi;
+      }
+    }
+    return null;
+  }
+  document.getElementById('dstFind').onclick=()=>{
+    const tz=(document.getElementById('dstTz').value||localTZ()).trim(); const t=nextTransition(tz); const out=document.getElementById('dstOut');
+    if(t){ out.innerHTML=`Nächste Umstellung in <strong>${tz}</strong>: ${fmt(new Date(t),'UTC')} UTC (${fmt(new Date(t),tz)} lokal).`; }
+    else { out.textContent='Keine Umstellung in den nächsten ~12 Monaten gefunden.'; }
+  };
+})();
+
+document.getElementById('sec-link').innerHTML=`
+  <h2>Meeting-Link Generator</h2>
+  <p class="small">Erzeugt einen Link mit eingebettetem UTC-Zeitpunkt.</p>
+  <div class="row"><input id="mlTitle" placeholder="Titel (optional)"><button id="mlMake">Link generieren aus aktueller Uhrzeit</button></div>
+  <div class="row"><input id="mlOut" class="mono" readonly><button id="mlCopy">Kopieren</button></div>
+`;
+(function(){
+  document.getElementById('mlMake').onclick=()=>{
+    const t=window._currentUTC || Date.now(); const u=new URL(location.href); u.hash='t='+Math.floor(t); const title=document.getElementById('mlTitle').value.trim(); if(title) u.searchParams.set('title',encodeURIComponent(title)); const s=u.toString(); document.getElementById('mlOut').value=s;
+  };
+  document.getElementById('mlCopy').onclick=()=>{ const el=document.getElementById('mlOut'); el.select(); document.execCommand('copy') };
+})();
+</script>
+</body></html>

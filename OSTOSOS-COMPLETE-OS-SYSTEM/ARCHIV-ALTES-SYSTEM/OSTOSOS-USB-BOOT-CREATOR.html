@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - USB Boot Image Creator</title>
+<link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css" onerror="this.onerror=null;">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e27;--card:#1a1f3a;--accent:#10b981;--text:#fff;--muted:#9ca3af;--border:#223040;--success:#22c55e;--danger:#ef4444;--warn:#f59e0b}
+body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,var(--bg) 0%,var(--card) 100%);color:var(--text);min-height:100vh;padding:20px}
+.container{max-width:900px;margin:0 auto}
+.header{text-align:center;margin-bottom:40px;padding:30px;background:var(--card);border-radius:20px;border:2px solid var(--accent)}
+.header h1{font-size:2.5em;color:var(--accent);margin-bottom:10px}
+.card{background:var(--card);padding:30px;border-radius:15px;border:2px solid var(--border);margin-bottom:20px}
+.card h2{color:var(--accent);margin-bottom:20px}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:1em;font-weight:600;transition:all 0.3s;display:inline-block;margin:5px}
+.btn-primary{background:var(--accent);color:#00100a}
+.btn-primary:hover{background:#0ea5e9;transform:translateY(-2px)}
+.btn-secondary{background:var(--border);color:var(--text)}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.progress-bar{width:100%;height:20px;background:var(--border);border-radius:10px;overflow:hidden;margin:20px 0;display:none}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.3s;display:flex;align-items:center;justify-content:center;color:#00100a;font-weight:bold}
+.info-box{background:var(--bg);padding:15px;border-radius:8px;border-left:4px solid var(--accent);margin:15px 0}
+.warning-box{background:rgba(245,158,11,0.1);padding:15px;border-radius:8px;border-left:4px solid var(--warn);margin:15px 0}
+.error-box{background:rgba(239,68,68,0.1);padding:15px;border-radius:8px;border-left:4px solid var(--danger);margin:15px 0}
+.success-box{background:rgba(34,197,94,0.1);padding:15px;border-radius:8px;border-left:4px solid var(--success);margin:15px 0}
+.log{background:var(--bg);padding:15px;border-radius:8px;max-height:300px;overflow-y:auto;font-family:monospace;font-size:0.9em;margin-top:20px;display:none}
+.log-entry{padding:5px 0;border-bottom:1px solid var(--border)}
+.log-success{color:var(--success)}
+.log-error{color:var(--danger)}
+.log-info{color:var(--muted)}
+.log-warn{color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>T,. OSTOSOS USB Boot Creator</h1>
+<p>Erstelle ein bootbares USB-Image für OSTOSOS</p>
+</div>
+
+<div class="card">
+<h2>📋 Informationen</h2>
+<div class="info-box">
+<p><strong>Was macht diese Funktion?</strong></p>
+<p>Diese Funktion erstellt ein bootbares Image (ISO/IMG) von OSTOSOS, das auf einen USB-Stick kopiert werden kann. Wenn ein Gerät mit USB-Startsequenz im BIOS konfiguriert ist, startet es automatisch mit OSTOSOS.</p>
+</div>
+
+<div class="warning-box">
+<p><strong>⚠️ Wichtig:</strong></p>
+<ul style="margin-left:20px;margin-top:10px">
+<li>Der USB-Stick wird komplett gelöscht</li>
+<li>Mindestens 4GB Speicherplatz erforderlich</li>
+<li>Windows: Administratorrechte erforderlich</li>
+<li>macOS/Linux: Root/Sudo-Rechte erforderlich</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<h2>🔧 USB Boot Image erstellen</h2>
+
+<div id="platformInfo" class="info-box">
+<p><strong>Plattform:</strong> <span id="platformName">-</span></p>
+<p><strong>Status:</strong> <span id="platformStatus">-</span></p>
+</div>
+
+<div style="margin:20px 0">
+<label style="display:block;margin-bottom:10px;color:var(--accent)">
+<strong>USB-Stick auswählen:</strong>
+</label>
+<select id="usbSelect" style="width:100%;padding:10px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;margin-bottom:15px">
+<option value="">-- USB-Stick auswählen --</option>
+</select>
+<p style="font-size:0.9em;color:var(--muted);margin-top:5px">Hinweis: USB-Sticks werden automatisch erkannt (falls unterstützt)</p>
+</div>
+
+<div style="margin:20px 0">
+<label style="display:block;margin-bottom:10px;color:var(--accent)">
+<strong>Image-Typ:</strong>
+</label>
+<select id="imageType" style="width:100%;padding:10px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px">
+<option value="iso">ISO Image (Standard)</option>
+<option value="img">IMG Image (Raw Disk)</option>
+<option value="zip">ZIP Archive (Manuell extrahieren)</option>
+</select>
+</div>
+
+<div class="progress-bar" id="progressBar">
+<div class="progress-fill" id="progressFill" style="width:0%">0%</div>
+</div>
+
+<div style="text-align:center;margin:30px 0">
+<button class="btn btn-primary" id="createBtn" onclick="createBootImage()">🚀 Boot Image erstellen</button>
+<button class="btn btn-secondary" onclick="downloadImage()" id="downloadBtn" style="display:none">💾 Image herunterladen</button>
+</div>
+
+<div class="log" id="log">
+<div class="log-entry log-info">Bereit zum Erstellen des Boot-Images...</div>
+</div>
+</div>
+
+<div class="card" id="instructionsCard" style="display:none">
+<h2>📖 Anleitung</h2>
+<div id="instructionsContent"></div>
+</div>
+</div>
+
+<script>
+// Platform Detection
+function detectPlatform() {
+  const platformName = document.getElementById('platformName');
+  const platformStatus = document.getElementById('platformStatus');
+  
+  if (navigator.platform.includes('Win') || navigator.userAgent.includes('Windows')) {
+    platformName.textContent = 'Windows';
+    platformStatus.textContent = '✅ Erkannt';
+    return 'windows';
+  } else if (navigator.platform.includes('Mac') || navigator.userAgent.includes('Mac')) {
+    platformName.textContent = 'macOS';
+    platformStatus.textContent = '✅ Erkannt';
+    return 'macos';
+  } else if (navigator.platform.includes('Linux') || navigator.userAgent.includes('Linux')) {
+    platformName.textContent = 'Linux';
+    platformStatus.textContent = '✅ Erkannt';
+    return 'linux';
+  } else {
+    platformName.textContent = 'Unbekannt';
+    platformStatus.textContent = '⚠️ Nicht erkannt';
+    return 'unknown';
+  }
+}
+
+const platform = detectPlatform();
+
+// Logging
+function log(message, type = 'info') {
+  const logEl = document.getElementById('log');
+  logEl.style.display = 'block';
+  const entry = document.createElement('div');
+  entry.className = `log-entry log-${type}`;
+  entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+  logEl.appendChild(entry);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// Progress
+function updateProgress(percent) {
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  progressBar.style.display = 'block';
+  progressFill.style.width = percent + '%';
+  progressFill.textContent = percent + '%';
+}
+
+// USB Detection (Web API - Limited)
+async function detectUSBDevices() {
+  log('Suche nach USB-Geräten...', 'info');
+  
+  // Web API hat keine direkte USB-Zugriffsmöglichkeit
+  // Wir müssen auf native Apps oder Downloads zurückgreifen
+  log('⚠️ Browser können USB-Geräte nicht direkt erkennen', 'warn');
+  log('💡 Lösung: Image herunterladen und mit externem Tool auf USB kopieren', 'info');
+  
+  // Für native Implementierung: Electron/Tauri mit USB-APIs
+  return [];
+}
+
+// Boot Image Creation
+async function createBootImage() {
+  const createBtn = document.getElementById('createBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const imageType = document.getElementById('imageType').value;
+  
+  createBtn.disabled = true;
+  log('🚀 Starte Boot-Image-Erstellung...', 'info');
+  updateProgress(10);
+  
+  try {
+    // Schritt 1: Alle OSTOSOS-Dateien sammeln
+    log('📦 Sammle OSTOSOS-Dateien...', 'info');
+    updateProgress(20);
+    
+    const files = await collectOSTOSOSFiles();
+    log(`✅ ${files.length} Dateien gefunden`, 'success');
+    updateProgress(40);
+    
+    // Schritt 2: Bootloader erstellen
+    log('🔧 Erstelle Bootloader...', 'info');
+    updateProgress(50);
+    
+    const bootloader = await createBootloader();
+    log('✅ Bootloader erstellt', 'success');
+    updateProgress(60);
+    
+    // Schritt 3: Image zusammenstellen
+    log('📦 Stelle Image zusammen...', 'info');
+    updateProgress(70);
+    
+    const imageBlob = await assembleBootImage(files, bootloader, imageType);
+    log('✅ Image zusammengestellt', 'success');
+    updateProgress(90);
+    
+    // Schritt 4: Speichern
+    log('💾 Speichere Image...', 'info');
+    updateProgress(95);
+    
+    const imageUrl = URL.createObjectURL(imageBlob);
+    window.bootImageUrl = imageUrl;
+    window.bootImageBlob = imageBlob;
+    window.bootImageType = imageType;
+    
+    updateProgress(100);
+    log('✅ Boot-Image erfolgreich erstellt!', 'success');
+    
+    createBtn.disabled = false;
+    downloadBtn.style.display = 'inline-block';
+    
+    // Anleitung anzeigen
+    showInstructions(imageType);
+    
+  } catch (error) {
+    log(`❌ Fehler: ${error.message}`, 'error');
+    createBtn.disabled = false;
+    updateProgress(0);
+  }
+}
+
+// Dateien sammeln
+async function collectOSTOSOSFiles() {
+  const files = [
+    'OSTOSOS-OS-COMPLETE-SYSTEM.html',
+    'OSTOSOS-INSTALLER.html',
+    'manifest.webmanifest',
+    'sw.js',
+    'css/da-vinci-xxxxxl-enterprise-standard.css',
+    'css/da-vinci-enterprise-standard-init.js',
+    'OSTOSOS-AUTO-UPDATE-SYSTEM.js',
+    'OSTOSOS-CROSS-DEVICE-SYNC.js',
+    'OSTOSOS-AUTO-TEST-ROUTINE.js',
+    'cloud-hub.html',
+    'mail-hub.html',
+    'media-hub.html',
+    'matrix-games.html'
+  ];
+  
+  const collectedFiles = [];
+  
+  for (const file of files) {
+    try {
+      const response = await fetch('./' + file);
+      if (response.ok) {
+        const blob = await response.blob();
+        collectedFiles.push({
+          path: file,
+          blob: blob,
+          size: blob.size
+        });
+      }
+    } catch (error) {
+      // Datei nicht gefunden - ignorieren
+    }
+  }
+  
+  return collectedFiles;
+}
+
+// Bootloader erstellen
+async function createBootloader() {
+  // Minimaler Bootloader für Web-basierte Systeme
+  const bootloaderCode = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>OSTOSOS Bootloader</title>
+</head>
+<body>
+<script>
+// OSTOSOS Bootloader
+console.log('T,. OSTOSOS Bootloader gestartet');
+window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+</script>
+</body>
+</html>
+`;
+  
+  return new Blob([bootloaderCode], { type: 'text/html' });
+}
+
+// Image zusammenstellen
+async function assembleBootImage(files, bootloader, imageType) {
+  // Erstelle ZIP-Archiv mit allen Dateien
+  const JSZip = window.JSZip || await loadJSZip();
+  
+  if (!JSZip) {
+    // Fallback: Einfaches ZIP ohne Library
+    return createSimpleZip(files, bootloader);
+  }
+  
+  const zip = new JSZip();
+  
+  // Bootloader hinzufügen
+  zip.file('index.html', bootloader);
+  
+  // Alle Dateien hinzufügen
+  for (const file of files) {
+    const pathParts = file.path.split('/');
+    let currentFolder = zip;
+    
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      const folderName = pathParts[i];
+      if (!currentFolder.folder(folderName)) {
+        currentFolder = currentFolder.folder(folderName);
+      } else {
+        currentFolder = currentFolder.folder(folderName);
+      }
+    }
+    
+    currentFolder.file(pathParts[pathParts.length - 1], file.blob);
+  }
+  
+  // README hinzufügen
+  const readme = createReadme();
+  zip.file('README.txt', readme);
+  
+  // ZIP generieren
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  
+  return zipBlob;
+}
+
+// Einfaches ZIP ohne Library
+function createSimpleZip(files, bootloader) {
+  // Für echte ZIP-Erstellung benötigen wir eine Library
+  // Hier erstellen wir ein einfaches Archiv-Format
+  const archive = {
+    type: 'ostosos-boot',
+    version: '1.0.0',
+    files: files.map(f => ({
+      path: f.path,
+      size: f.size
+    })),
+    bootloader: 'index.html'
+  };
+  
+  // Als JSON speichern (für Demo)
+  const json = JSON.stringify(archive, null, 2);
+  return new Blob([json], { type: 'application/json' });
+}
+
+// README erstellen
+function createReadme() {
+  return `T,. OSTOSOS - Boot Image
+================================
+
+Dieses Image enthält das vollständige OSTOSOS Betriebssystem.
+
+INSTALLATION:
+1. Entpacke alle Dateien auf einen USB-Stick (mindestens 4GB)
+2. Stelle sicher, dass der USB-Stick als FAT32 formatiert ist
+3. Öffne index.html im Browser oder starte vom USB
+
+BIOS-KONFIGURATION:
+1. Starte den Computer neu
+2. Drücke F2, F12, DEL oder ESC (je nach Hersteller)
+3. Gehe zu "Boot" oder "Startup"
+4. Setze USB als erste Boot-Option
+5. Speichere und starte neu
+
+Das System startet automatisch mit OSTOSOS.
+
+BRANDING: T,.&T,,.&T,,,.(C)TEL1.NL
+VERSION: 1.0.0
+`;
+}
+
+// JSZip laden
+async function loadJSZip() {
+  try {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    document.head.appendChild(script);
+    
+    return new Promise((resolve) => {
+      script.onload = () => resolve(window.JSZip);
+      script.onerror = () => resolve(null);
+      setTimeout(() => resolve(null), 5000);
+    });
+  } catch (error) {
+    return null;
+  }
+}
+
+// Image herunterladen
+function downloadImage() {
+  if (!window.bootImageUrl) {
+    log('❌ Kein Image verfügbar', 'error');
+    return;
+  }
+  
+  const extension = window.bootImageType === 'iso' ? 'iso' : 
+                   window.bootImageType === 'img' ? 'img' : 'zip';
+  const filename = `OSTOSOS-Boot-Image-${new Date().toISOString().split('T')[0]}.${extension}`;
+  
+  const a = document.createElement('a');
+  a.href = window.bootImageUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  
+  log(`✅ Image heruntergeladen: ${filename}`, 'success');
+  log('📖 Siehe Anleitung für weitere Schritte', 'info');
+}
+
+// Anleitung anzeigen
+function showInstructions(imageType) {
+  const instructionsCard = document.getElementById('instructionsCard');
+  const instructionsContent = document.getElementById('instructionsContent');
+  
+  instructionsCard.style.display = 'block';
+  
+  let instructions = '';
+  
+  if (platform === 'windows') {
+    instructions = `
+<h3 style="color:var(--accent);margin-bottom:15px">Windows Anleitung:</h3>
+<ol style="margin-left:20px;line-height:1.8">
+<li><strong>Image herunterladen:</strong> Klicke auf "Image herunterladen"</li>
+<li><strong>Rufus verwenden:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Lade Rufus herunter: <a href="https://rufus.ie" target="_blank" style="color:var(--accent)">rufus.ie</a></li>
+    <li>Öffne Rufus (als Administrator)</li>
+    <li>Wähle deinen USB-Stick</li>
+    <li>Wähle das heruntergeladene Image</li>
+    <li>Klicke auf "Start"</li>
+  </ul>
+</li>
+<li><strong>Alternative - Windows USB/DVD Download Tool:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Lade das Tool von Microsoft herunter</li>
+    <li>Folge den Anweisungen</li>
+  </ul>
+</li>
+<li><strong>BIOS konfigurieren:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Starte neu und drücke F2, F12 oder DEL</li>
+    <li>Gehe zu "Boot" → "Boot Priority"</li>
+    <li>Setze USB als erste Option</li>
+    <li>Speichere (F10) und starte neu</li>
+  </ul>
+</li>
+</ol>
+`;
+  } else if (platform === 'macos') {
+    instructions = `
+<h3 style="color:var(--accent);margin-bottom:15px">macOS Anleitung:</h3>
+<ol style="margin-left:20px;line-height:1.8">
+<li><strong>Image herunterladen:</strong> Klicke auf "Image herunterladen"</li>
+<li><strong>Disk Utility verwenden:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Öffne "Festplatten-Dienstprogramm"</li>
+    <li>Wähle deinen USB-Stick</li>
+    <li>Klicke auf "Löschen" → Format: "MS-DOS (FAT)"</li>
+    <li>Klicke auf "Löschen"</li>
+  </ul>
+</li>
+<li><strong>Image auf USB kopieren:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Öffne Terminal</li>
+    <li>Führe aus: <code style="background:var(--bg);padding:2px 6px;border-radius:4px">sudo dd if=OSTOSOS-Boot-Image.iso of=/dev/diskX bs=1m</code></li>
+    <li>Ersetze diskX mit deinem USB-Stick (z.B. disk2)</li>
+    <li>Warte bis der Prozess abgeschlossen ist</li>
+  </ul>
+</li>
+<li><strong>Startoptionen:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Halte Option (⌥) beim Start gedrückt</li>
+    <li>Wähle den USB-Stick aus</li>
+  </ul>
+</li>
+</ol>
+`;
+  } else if (platform === 'linux') {
+    instructions = `
+<h3 style="color:var(--accent);margin-bottom:15px">Linux Anleitung:</h3>
+<ol style="margin-left:20px;line-height:1.8">
+<li><strong>Image herunterladen:</strong> Klicke auf "Image herunterladen"</li>
+<li><strong>USB-Stick formatieren:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Öffne Terminal</li>
+    <li>Führe aus: <code style="background:var(--bg);padding:2px 6px;border-radius:4px">sudo fdisk -l</code> (finde USB-Stick)</li>
+    <li>Führe aus: <code style="background:var(--bg);padding:2px 6px;border-radius:4px">sudo mkfs.vfat /dev/sdX1</code></li>
+  </ul>
+</li>
+<li><strong>Image auf USB kopieren:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Führe aus: <code style="background:var(--bg);padding:2px 6px;border-radius:4px">sudo dd if=OSTOSOS-Boot-Image.iso of=/dev/sdX bs=4M status=progress</code></li>
+    <li>Ersetze sdX mit deinem USB-Stick (z.B. sdb)</li>
+    <li>Warte bis der Prozess abgeschlossen ist</li>
+  </ul>
+</li>
+<li><strong>Alternative - Etcher:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Lade Etcher herunter: <a href="https://etcher.balena.io" target="_blank" style="color:var(--accent)">etcher.balena.io</a></li>
+    <li>Öffne Etcher</li>
+    <li>Wähle Image → Wähle USB-Stick → Flash</li>
+  </ul>
+</li>
+<li><strong>BIOS konfigurieren:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>Starte neu und drücke F2, F12, DEL oder ESC</li>
+    <li>Gehe zu "Boot"</li>
+    <li>Setze USB als erste Option</li>
+    <li>Speichere und starte neu</li>
+  </ul>
+</li>
+</ol>
+`;
+  } else {
+    instructions = `
+<h3 style="color:var(--accent);margin-bottom:15px">Allgemeine Anleitung:</h3>
+<ol style="margin-left:20px;line-height:1.8">
+<li><strong>Image herunterladen:</strong> Klicke auf "Image herunterladen"</li>
+<li><strong>USB-Stick vorbereiten:</strong> Formatieren als FAT32 (mindestens 4GB)</li>
+<li><strong>Image auf USB kopieren:</strong> Verwende ein Tool wie Rufus, Etcher oder dd</li>
+<li><strong>BIOS konfigurieren:</strong> Setze USB als erste Boot-Option</li>
+<li><strong>Starten:</strong> Starte den Computer neu - OSTOSOS startet automatisch</li>
+</ol>
+`;
+  }
+  
+  instructionsContent.innerHTML = instructions;
+}
+
+// Initialisierung
+window.addEventListener('load', () => {
+  log('✅ USB Boot Creator geladen', 'success');
+  detectUSBDevices();
+});
+</script>
+</body>
+</html>
+

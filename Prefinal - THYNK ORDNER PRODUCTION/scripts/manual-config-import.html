@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THYNK ORDERS - Manuelle Konfiguration Import</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .section {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .info-box {
+            background: #1a3a1a;
+            border: 1px solid #4CAF50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .config-preview {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 THYNK ORDERS - Konfiguration Import</h1>
+            <p>Manuelle Eingabe aller Konfigurationen von thynkorders.com</p>
+        </header>
+
+        <div class="info-box">
+            <strong>ℹ️ Anleitung:</strong> Öffnen Sie https://thynkorders.com/#/userCenter in einem anderen Browser-Tab.
+            Loggen Sie sich ein und kopieren Sie alle Konfigurations-Daten hier hinein.
+        </div>
+
+        <!-- Salesforce Config -->
+        <div class="section">
+            <h2>☁️ Salesforce CRM Konfiguration</h2>
+            <div class="form-group">
+                <label>Org-ID / Instance URL:</label>
+                <input type="text" id="sfOrgId" placeholder="z.B. https://xxx.salesforce.com">
+            </div>
+            <div class="form-group">
+                <label>API Version:</label>
+                <input type="text" id="sfApiVersion" placeholder="z.B. v59.0" value="v59.0">
+            </div>
+            <div class="form-group">
+                <label>Client ID:</label>
+                <input type="text" id="sfClientId" placeholder="OAuth Client ID">
+            </div>
+            <div class="form-group">
+                <label>Client Secret:</label>
+                <input type="password" id="sfClientSecret" placeholder="OAuth Client Secret">
+            </div>
+            <div class="form-group">
+                <label>Object-Namen (JSON):</label>
+                <textarea id="sfObjects" placeholder='{"orders": "Order__c", "customers": "Account"}'></textarea>
+            </div>
+        </div>
+
+        <!-- Dimensions -->
+        <div class="section">
+            <h2>📐 Dimensionen & Geschäftslogik</h2>
+            <div class="form-group">
+                <label>Workflow-Status (Komma-getrennt):</label>
+                <input type="text" id="workflowStatus" placeholder="draft, pending, approved, processing, completed">
+            </div>
+            <div class="form-group">
+                <label>Bestelltypen (JSON Array):</label>
+                <textarea id="orderTypes" placeholder='["restaurant", "hotel", "catering"]'></textarea>
+            </div>
+            <div class="form-group">
+                <label>Produktkategorien (JSON Array):</label>
+                <textarea id="productCategories" placeholder='["food", "beverage", "service"]'></textarea>
+            </div>
+        </div>
+
+        <!-- Neural Networks -->
+        <div class="section">
+            <h2>🧠 Neuronale Netzwerke / AI</h2>
+            <div class="form-group">
+                <label>AI-Modelle Konfiguration (JSON):</label>
+                <textarea id="neuralConfig" placeholder='{"recommendation_engine": {...}, "demand_forecasting": {...}}'></textarea>
+            </div>
+            <div class="form-group">
+                <label>Training-Parameter (JSON):</label>
+                <textarea id="trainingParams" placeholder='{"learning_rate": 0.001, "epochs": 100}'></textarea>
+            </div>
+        </div>
+
+        <!-- User Center -->
+        <div class="section">
+            <h2>👤 User Center Konfiguration</h2>
+            <div class="form-group">
+                <label>Berechtigungen / Rollen (JSON):</label>
+                <textarea id="userRoles" placeholder='{"admin": [...], "user": [...]}'></textarea>
+            </div>
+            <div class="form-group">
+                <label>Dashboard-Widgets (JSON Array):</label>
+                <textarea id="dashboardWidgets" placeholder='["order_summary", "revenue_chart"]'></textarea>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="section">
+            <h2>💾 Export</h2>
+            <button class="btn" onclick="exportAllConfigs()">✅ Alle Konfigurationen exportieren</button>
+            <button class="btn" onclick="validateConfigs()">🔍 Validieren</button>
+            <button class="btn" onclick="loadFromFile()">📥 Aus Datei laden</button>
+            
+            <div id="configPreview" class="config-preview" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        function collectConfigs() {
+            return {
+                salesforce: {
+                    org_id: document.getElementById('sfOrgId').value,
+                    api_version: document.getElementById('sfApiVersion').value,
+                    client_id: document.getElementById('sfClientId').value,
+                    client_secret: document.getElementById('sfClientSecret').value,
+                    objects: parseJSONSafely(document.getElementById('sfObjects').value)
+                },
+                dimensions: {
+                    workflow_status: document.getElementById('workflowStatus').value.split(',').map(s => s.trim()),
+                    order_types: parseJSONSafely(document.getElementById('orderTypes').value),
+                    product_categories: parseJSONSafely(document.getElementById('productCategories').value)
+                },
+                neural_networks: {
+                    models: parseJSONSafely(document.getElementById('neuralConfig').value),
+                    training_params: parseJSONSafely(document.getElementById('trainingParams').value)
+                },
+                user_center: {
+                    roles: parseJSONSafely(document.getElementById('userRoles').value),
+                    dashboard_widgets: parseJSONSafely(document.getElementById('dashboardWidgets').value)
+                }
+            };
+        }
+
+        function parseJSONSafely(str) {
+            if (!str || str.trim() === '') return {};
+            try {
+                return JSON.parse(str);
+            } catch (e) {
+                return str; // Falls kein JSON, als String zurückgeben
+            }
+        }
+
+        function exportAllConfigs() {
+            const configs = collectConfigs();
+            const exportData = {
+                exported_at: new Date().toISOString(),
+                source: 'https://thynkorders.com/#/userCenter',
+                configurations: configs
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'thynk-orders-config-export-' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            alert('✅ Konfigurationen exportiert!');
+        }
+
+        function validateConfigs() {
+            const configs = collectConfigs();
+            const errors = [];
+
+            if (!configs.salesforce.org_id) errors.push('Salesforce Org-ID fehlt');
+            if (!configs.salesforce.api_version) errors.push('API Version fehlt');
+
+            if (errors.length > 0) {
+                alert('⚠️ Fehler:\n' + errors.join('\n'));
+            } else {
+                alert('✅ Alle Konfigurationen sind valide!');
+            }
+        }
+
+        function loadFromFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.configurations) {
+                            loadConfigs(data.configurations);
+                            alert('✅ Konfigurationen geladen!');
+                        }
+                    } catch (err) {
+                        alert('❌ Fehler beim Laden: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function loadConfigs(configs) {
+            if (configs.salesforce) {
+                document.getElementById('sfOrgId').value = configs.salesforce.org_id || '';
+                document.getElementById('sfApiVersion').value = configs.salesforce.api_version || '';
+                document.getElementById('sfClientId').value = configs.salesforce.client_id || '';
+                document.getElementById('sfClientSecret').value = configs.salesforce.client_secret || '';
+                document.getElementById('sfObjects').value = JSON.stringify(configs.salesforce.objects || {}, null, 2);
+            }
+            // ... weitere Felder
+        }
+
+        // Preview-Funktion
+        document.addEventListener('input', function() {
+            const configs = collectConfigs();
+            const preview = document.getElementById('configPreview');
+            preview.textContent = JSON.stringify(configs, null, 2);
+            preview.style.display = 'block';
+        });
+    </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>
+

@@ -100,3 +100,10 @@ Alle Basis-Komponenten sind erstellt und bereit für die Integration in das Toge
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

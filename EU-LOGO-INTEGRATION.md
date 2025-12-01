@@ -59,3 +59,10 @@ Das Logo kann jetzt verwendet werden:
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

@@ -1,0 +1,529 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THYNK ORDNER - Lokales Bestellsystem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
+        .section {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn-secondary {
+            background: #555;
+        }
+        .btn-secondary:hover {
+            background: #666;
+        }
+        .btn-danger {
+            background: #f44336;
+        }
+        .btn-danger:hover {
+            background: #da190b;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .order-item {
+            background: #222;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .order-number {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .status-pending { background: #ff9800; color: #000; }
+        .status-paid { background: #4CAF50; color: #fff; }
+        .status-shipped { background: #2196F3; color: #fff; }
+        .status-cancelled { background: #f44336; color: #fff; }
+        .info-box {
+            background: #1a3a1a;
+            border: 1px solid #4CAF50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .hidden {
+            display: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background: #1a1a1a;
+            color: #4CAF50;
+        }
+        .amount {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+    </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛒 THYNK ORDNER</h1>
+            <p class="subtitle">Lokales Bestellsystem - Click & Run - Kein Server nötig!</p>
+        </header>
+
+        <div class="info-box">
+            <strong>ℹ️ Wichtig:</strong> Dies ist eine <strong>lokale Version</strong> - alles läuft direkt in Ihrem Browser. 
+            Keine Server, keine Installation nötig! Alle Daten werden lokal gespeichert (localStorage).
+        </div>
+
+        <!-- Neue Bestellung -->
+        <div class="section">
+            <h2>➕ Neue Bestellung erstellen</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Produkt hinzufügen</h3>
+                    <input type="text" id="productName" placeholder="Produktname" value="Beispiel-Produkt">
+                    <input type="number" id="productPrice" placeholder="Preis" value="29.99" step="0.01">
+                    <input type="number" id="productQuantity" placeholder="Menge" value="1" min="1">
+                    <button class="btn" onclick="addProductToCart()">➕ Zum Warenkorb</button>
+                </div>
+                <div class="card">
+                    <h3>Kundendaten</h3>
+                    <input type="text" id="customerName" placeholder="Name" value="Max Mustermann">
+                    <input type="email" id="customerEmail" placeholder="E-Mail" value="max@example.com">
+                    <input type="text" id="customerAddress" placeholder="Adresse" value="Musterstraße 123">
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <h3>Warenkorb:</h3>
+                <div id="cartItems"></div>
+                <div style="margin-top: 15px;">
+                    <strong>Gesamt: <span id="cartTotal" class="amount">€0.00</span></strong>
+                </div>
+                <button class="btn" onclick="createOrder()" style="margin-top: 15px;">✅ Bestellung erstellen</button>
+            </div>
+        </div>
+
+        <!-- Bestellungen anzeigen -->
+        <div class="section">
+            <h2>📋 Meine Bestellungen</h2>
+            <button class="btn btn-secondary" onclick="loadOrders()">🔄 Aktualisieren</button>
+            <button class="btn btn-secondary" onclick="exportData()">💾 Daten exportieren</button>
+            <button class="btn btn-secondary" onclick="importData()">📥 Daten importieren</button>
+            <div id="ordersList" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Statistiken -->
+        <div class="section">
+            <h2>📊 Statistiken</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Gesamt Bestellungen</h3>
+                    <div class="amount" id="statsTotal">0</div>
+                </div>
+                <div class="card">
+                    <h3>Gesamtumsatz</h3>
+                    <div class="amount" id="statsRevenue">€0.00</div>
+                </div>
+                <div class="card">
+                    <h3>Ausstehend</h3>
+                    <div class="amount" id="statsPending">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lokale Datenverwaltung (localStorage)
+        const STORAGE_KEY = 'thynk_orders';
+        let cart = [];
+
+        // Beim Laden: Bestellungen und Warenkorb laden
+        window.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+            updateCartDisplay();
+        });
+
+        // Warenkorb-Funktionen
+        function addProductToCart() {
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+
+            if (!name || !price || !quantity) {
+                alert('Bitte alle Felder ausfüllen!');
+                return;
+            }
+
+            cart.push({
+                id: Date.now().toString(),
+                name: name,
+                price: price,
+                quantity: quantity,
+                total: price * quantity
+            });
+
+            updateCartDisplay();
+            
+            // Felder zurücksetzen
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productQuantity').value = '1';
+        }
+
+        function updateCartDisplay() {
+            const container = document.getElementById('cartItems');
+            const totalEl = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="color: #888;">Warenkorb ist leer</p>';
+                totalEl.textContent = '€0.00';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.total;
+                html += `
+                    <div class="order-item">
+                        <strong>${item.name}</strong> - 
+                        ${item.quantity}x €${item.price.toFixed(2)} = 
+                        <span class="amount">€${item.total.toFixed(2)}</span>
+                        <button class="btn btn-danger" onclick="removeFromCart(${index})" style="float: right; padding: 5px 10px; font-size: 12px;">🗑️</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            totalEl.textContent = '€' + total.toFixed(2);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        // Bestellung erstellen
+        function createOrder() {
+            const customerName = document.getElementById('customerName').value;
+            const customerEmail = document.getElementById('customerEmail').value;
+            const customerAddress = document.getElementById('customerAddress').value;
+
+            if (!customerName || !customerEmail) {
+                alert('Bitte Kundendaten ausfüllen!');
+                return;
+            }
+
+            if (cart.length === 0) {
+                alert('Warenkorb ist leer!');
+                return;
+            }
+
+            const order = {
+                id: 'order-' + Date.now(),
+                order_number: 'ORD-' + new Date().getFullYear() + 
+                              String(new Date().getMonth() + 1).padStart(2, '0') + 
+                              String(new Date().getDate()).padStart(2, '0') + '-' +
+                              Math.random().toString(36).substring(2, 8).toUpperCase(),
+                status: 'pending',
+                payment_status: 'pending',
+                customer: {
+                    name: customerName,
+                    email: customerEmail,
+                    address: customerAddress
+                },
+                items: [...cart],
+                total_amount: cart.reduce((sum, item) => sum + item.total, 0),
+                currency: 'EUR',
+                created_at: new Date().toISOString()
+            };
+
+            // In localStorage speichern
+            const orders = getOrders();
+            orders.push(order);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+
+            // Warenkorb leeren
+            cart = [];
+            updateCartDisplay();
+
+            // Felder zurücksetzen
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerEmail').value = '';
+            document.getElementById('customerAddress').value = '';
+
+            alert('✅ Bestellung erfolgreich erstellt: ' + order.order_number);
+            loadOrders();
+        }
+
+        // Bestellungen laden
+        function getOrders() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function loadOrders() {
+            const orders = getOrders();
+            const container = document.getElementById('ordersList');
+
+            if (orders.length === 0) {
+                container.innerHTML = '<p style="color: #888;">Noch keine Bestellungen vorhanden.</p>';
+                updateStats();
+                return;
+            }
+
+            // Sortiere nach Datum (neueste zuerst)
+            orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            let html = '<table><thead><tr><th>Bestellnummer</th><th>Kunde</th><th>Betrag</th><th>Status</th><th>Datum</th><th>Aktionen</th></tr></thead><tbody>';
+
+            orders.forEach(order => {
+                const date = new Date(order.created_at).toLocaleString('de-DE');
+                html += `
+                    <tr>
+                        <td class="order-number">${order.order_number}</td>
+                        <td>${order.customer.name}<br><small>${order.customer.email}</small></td>
+                        <td class="amount">€${order.total_amount.toFixed(2)}</td>
+                        <td><span class="status status-${order.status}">${order.status}</span></td>
+                        <td><small>${date}</small></td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewOrder('${order.id}')" style="padding: 5px 10px; font-size: 12px;">👁️</button>
+                            <button class="btn btn-secondary" onclick="updateOrderStatus('${order.id}')" style="padding: 5px 10px; font-size: 12px;">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteOrder('${order.id}')" style="padding: 5px 10px; font-size: 12px;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            updateStats();
+        }
+
+        // Bestellung anzeigen
+        function viewOrder(orderId) {
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) return;
+
+            let itemsHtml = '';
+            order.items.forEach(item => {
+                itemsHtml += `
+                    <div class="order-item">
+                        <strong>${item.name}</strong><br>
+                        ${item.quantity}x €${item.price.toFixed(2)} = €${item.total.toFixed(2)}
+                    </div>
+                `;
+            });
+
+            const details = `
+Bestellnummer: ${order.order_number}
+Status: ${order.status}
+Zahlungsstatus: ${order.payment_status}
+Kunde: ${order.customer.name}
+E-Mail: ${order.customer.email}
+Adresse: ${order.customer.address}
+Gesamtbetrag: €${order.total_amount.toFixed(2)}
+Datum: ${new Date(order.created_at).toLocaleString('de-DE')}
+
+Items:
+${order.items.map(item => `- ${item.name}: ${item.quantity}x €${item.price.toFixed(2)}`).join('\n')}
+            `;
+
+            alert(details);
+        }
+
+        // Status aktualisieren
+        function updateOrderStatus(orderId) {
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) return;
+
+            const newStatus = prompt('Neuer Status:\n1 = pending\n2 = paid\n3 = shipped\n4 = cancelled', 
+                order.status === 'pending' ? '1' : 
+                order.status === 'paid' ? '2' : 
+                order.status === 'shipped' ? '3' : '4');
+
+            if (!newStatus) return;
+
+            const statusMap = { '1': 'pending', '2': 'paid', '3': 'shipped', '4': 'cancelled' };
+            order.status = statusMap[newStatus] || order.status;
+            
+            if (order.status === 'paid' && !order.paid_at) {
+                order.paid_at = new Date().toISOString();
+            }
+            if (order.status === 'shipped' && !order.shipped_at) {
+                order.shipped_at = new Date().toISOString();
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+            loadOrders();
+        }
+
+        // Bestellung löschen
+        function deleteOrder(orderId) {
+            if (!confirm('Bestellung wirklich löschen?')) return;
+
+            const orders = getOrders().filter(o => o.id !== orderId);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+            loadOrders();
+        }
+
+        // Statistiken aktualisieren
+        function updateStats() {
+            const orders = getOrders();
+            
+            document.getElementById('statsTotal').textContent = orders.length;
+            
+            const revenue = orders
+                .filter(o => o.status !== 'cancelled')
+                .reduce((sum, o) => sum + o.total_amount, 0);
+            document.getElementById('statsRevenue').textContent = '€' + revenue.toFixed(2);
+            
+            const pending = orders.filter(o => o.status === 'pending').length;
+            document.getElementById('statsPending').textContent = pending;
+        }
+
+        // Daten exportieren
+        function exportData() {
+            const orders = getOrders();
+            const dataStr = JSON.stringify(orders, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'thynk-orders-backup-' + new Date().toISOString().split('T')[0] + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            alert('✅ Daten exportiert!');
+        }
+
+        // Daten importieren
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (Array.isArray(imported)) {
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(imported));
+                            alert('✅ Daten importiert: ' + imported.length + ' Bestellungen');
+                            loadOrders();
+                        } else {
+                            alert('❌ Ungültiges Format!');
+                        }
+                    } catch (err) {
+                        alert('❌ Fehler beim Importieren: ' + err.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+    </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>
+

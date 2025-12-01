@@ -80,3 +80,10 @@ Alle MCPs werden in der Registry dokumentiert mit:
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

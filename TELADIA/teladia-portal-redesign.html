@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -126,6 +126,9 @@
       }
     }
   </style>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
 </head>
 <body class="layout">
   <header class="layout__header">
@@ -141,12 +144,12 @@
   <main class="layout__main">
     <section class="hero">
       <h1 class="hero__title">TELADIA</h1>
-      <p class="hero__subtitle">Asset Exchange Sphere - Fiat ↔ Crypto ↔ Digital</p>
+      <p class="hero__subtitle">Asset Exchange Sphere - Fiat â†” Crypto â†” Digital</p>
     </section>
 
     <section class="stats-grid">
       <div class="stat-card">
-        <div class="stat-card__value" id="totalAssets">€0</div>
+        <div class="stat-card__value" id="totalAssets">â‚¬0</div>
         <div class="stat-card__label">Gesamt Assets</div>
       </div>
       <div class="stat-card">
@@ -154,12 +157,12 @@
         <div class="stat-card__label">Aktive Exchanges</div>
       </div>
       <div class="stat-card">
-        <div class="stat-card__value" id="exchangeVolume">€0</div>
+        <div class="stat-card__value" id="exchangeVolume">â‚¬0</div>
         <div class="stat-card__label">Exchange Volumen</div>
       </div>
       <div class="stat-card">
         <div class="stat-card__value" id="supportedAssets">0</div>
-        <div class="stat-card__label">Unterstützte Assets</div>
+        <div class="stat-card__label">UnterstÃ¼tzte Assets</div>
       </div>
     </section>
 
@@ -170,7 +173,7 @@
           <div class="form-group">
             <label class="form-label" for="fromAsset">Von</label>
             <select class="form-input" id="fromAsset" required>
-              <option value="">Asset wählen...</option>
+              <option value="">Asset wÃ¤hlen...</option>
               <option value="EUR">EUR (Euro)</option>
               <option value="USD">USD (US Dollar)</option>
               <option value="BTC">BTC (Bitcoin)</option>
@@ -180,7 +183,7 @@
           <div class="form-group">
             <label class="form-label" for="toAsset">Zu</label>
             <select class="form-input" id="toAsset" required>
-              <option value="">Asset wählen...</option>
+              <option value="">Asset wÃ¤hlen...</option>
               <option value="EUR">EUR (Euro)</option>
               <option value="USD">USD (US Dollar)</option>
               <option value="BTC">BTC (Bitcoin)</option>
@@ -193,15 +196,15 @@
           <input type="number" class="form-input" id="amount" step="0.01" min="0" required>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn--primary btn--large">Exchange durchführen</button>
+          <button type="submit" class="btn btn--primary btn--large">Exchange durchfÃ¼hren</button>
         </div>
       </form>
     </section>
 
     <section>
-      <h2 class="card__title mb-6">Verfügbare Assets</h2>
+      <h2 class="card__title mb-6">VerfÃ¼gbare Assets</h2>
       <div class="grid grid--3" id="assetsGrid">
-        <!-- Wird dynamisch gefüllt -->
+        <!-- Wird dynamisch gefÃ¼llt -->
       </div>
     </section>
   </main>
@@ -235,17 +238,17 @@
       }
 
       async getRealAssets() {
-        // Fallback: Demo-Daten wenn API nicht verfügbar
+        // Fallback: Demo-Daten wenn API nicht verfÃ¼gbar
         return {
           success: true,
           data: {
             fiat: [
-              { symbol: 'EUR', type: 'Fiat', value: '€1.00', change: 0.0 },
+              { symbol: 'EUR', type: 'Fiat', value: 'â‚¬1.00', change: 0.0 },
               { symbol: 'USD', type: 'Fiat', value: '$1.08', change: 0.1 }
             ],
             crypto: [
-              { symbol: 'BTC', type: 'Crypto', value: '€45,454.55', change: 2.3 },
-              { symbol: 'ETH', type: 'Crypto', value: '€2,857.14', change: -1.2 }
+              { symbol: 'BTC', type: 'Crypto', value: 'â‚¬45,454.55', change: 2.3 },
+              { symbol: 'ETH', type: 'Crypto', value: 'â‚¬2,857.14', change: -1.2 }
             ],
             digital: []
           }
@@ -326,7 +329,7 @@
                 <span class="asset-card__type">Fiat</span>
                 <span class="badge badge--primary">EUR</span>
               </div>
-              <div class="asset-card__value">€1.00</div>
+              <div class="asset-card__value">â‚¬1.00</div>
               <div class="asset-card__change asset-card__change--positive">+0.0%</div>
             </div>
             <div class="asset-card">
@@ -334,7 +337,7 @@
                 <span class="asset-card__type">Crypto</span>
                 <span class="badge badge--accent">BTC</span>
               </div>
-              <div class="asset-card__value">€45,234.56</div>
+              <div class="asset-card__value">â‚¬45,234.56</div>
               <div class="asset-card__change asset-card__change--positive">+2.3%</div>
             </div>
             <div class="asset-card">
@@ -342,7 +345,7 @@
                 <span class="asset-card__type">Crypto</span>
                 <span class="badge badge--accent">ETH</span>
               </div>
-              <div class="asset-card__value">€2,789.12</div>
+              <div class="asset-card__value">â‚¬2,789.12</div>
               <div class="asset-card__change asset-card__change--negative">-1.2%</div>
             </div>
           `;
@@ -352,7 +355,7 @@
       }
     }
     
-    // Exchange form handler mit vollständiger Umrechnung
+    // Exchange form handler mit vollstÃ¤ndiger Umrechnung
     document.getElementById('exchangeForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fromAsset = document.getElementById('fromAsset').value;
@@ -360,12 +363,12 @@
       const amount = parseFloat(document.getElementById('amount').value);
       
       if (!fromAsset || !toAsset || !amount || amount <= 0) {
-        alert('Bitte alle Felder korrekt ausfüllen');
+        alert('Bitte alle Felder korrekt ausfÃ¼llen');
         return;
       }
       
       if (fromAsset === toAsset) {
-        alert('Bitte unterschiedliche Assets wählen');
+        alert('Bitte unterschiedliche Assets wÃ¤hlen');
         return;
       }
       
@@ -377,12 +380,12 @@
         // Berechne umgerechneten Betrag
         const convertedAmount = amount * rate;
         
-        // Formatiere Beträge
+        // Formatiere BetrÃ¤ge
         const formatAmount = (val, asset) => {
-          if (asset === 'EUR') return `€${val.toFixed(2)}`;
+          if (asset === 'EUR') return `â‚¬${val.toFixed(2)}`;
           if (asset === 'USD') return `$${val.toFixed(2)}`;
-          if (asset === 'BTC') return `₿${val.toFixed(8)}`;
-          if (asset === 'ETH') return `Ξ${val.toFixed(6)}`;
+          if (asset === 'BTC') return `â‚¿${val.toFixed(8)}`;
+          if (asset === 'ETH') return `Îž${val.toFixed(6)}`;
           return `${val.toFixed(2)} ${asset}`;
         };
         
@@ -423,15 +426,15 @@
           const converted = amount * rate;
           
           const formatAmount = (val, asset) => {
-            if (asset === 'EUR') return `€${val.toFixed(2)}`;
+            if (asset === 'EUR') return `â‚¬${val.toFixed(2)}`;
             if (asset === 'USD') return `$${val.toFixed(2)}`;
-            if (asset === 'BTC') return `₿${val.toFixed(8)}`;
-            if (asset === 'ETH') return `Ξ${val.toFixed(6)}`;
+            if (asset === 'BTC') return `â‚¿${val.toFixed(8)}`;
+            if (asset === 'ETH') return `Îž${val.toFixed(6)}`;
             return `${val.toFixed(2)} ${asset}`;
           };
           
           rateDisplay.textContent = amount > 0 
-            ? `≈ ${formatAmount(converted, to)} (Kurs: 1 ${from} = ${rate.toFixed(6)} ${to})`
+            ? `â‰ˆ ${formatAmount(converted, to)} (Kurs: 1 ${from} = ${rate.toFixed(6)} ${to})`
             : `Kurs: 1 ${from} = ${rate.toFixed(6)} ${to}`;
           rateDisplay.style.color = 'var(--color-primary)';
         } catch (error) {
@@ -449,6 +452,7 @@
     // Load on page load
     loadAssets();
   </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
 </body>
 </html>
 

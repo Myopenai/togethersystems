@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Manifest of Thinkers – Portal</title>
+<title>Manifest of Thinkers â€“ Portal</title>
 <style>
 :root{
 	--bg:#0f1419;
@@ -66,6 +66,9 @@ input[type="url"], input[type="text"]{
 body.public-view{ --cursor: not-allowed }
 .public-view .content::selection { background: transparent }
 </style>
+
+  <link rel="stylesheet" href="../../css/teladia-complete-design-system.css">
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
 </head>
 <body class="public-view">
 	<div class="wr">
@@ -73,12 +76,12 @@ body.public-view{ --cursor: not-allowed }
 			<div class="header">
 				<div class="badge">MoT</div>
 				<div>
-					<h1>Manifest of Thinkers – Portal</h1>
-					<div class="sub">Öffentliche Ansicht (nur lesen) · Verifizierte Nutzer schalten Live-Funktionen frei</div>
+					<h1>Manifest of Thinkers â€“ Portal</h1>
+					<div class="sub">Ã–ffentliche Ansicht (nur lesen) Â· Verifizierte Nutzer schalten Live-Funktionen frei</div>
 				</div>
 			</div>
 			<div class="row" style="margin-top:10px">
-				<span class="pill" title="Nur verifizierte Nutzer mit Offline-Datei">Zugang: eingeschränkt</span>
+				<span class="pill" title="Nur verifizierte Nutzer mit Offline-Datei">Zugang: eingeschrÃ¤nkt</span>
 				<span class="pill">Multilingual</span>
 				<span class="pill">Business & Teams</span>
 				<span class="pill">Kontrakte & Transfer</span>
@@ -94,7 +97,7 @@ body.public-view{ --cursor: not-allowed }
 						<input id="token" type="text" placeholder="Token aus Offline-Forum (automatisch via Link)">
 						<button class="btn" id="verifyBtn">Verifizieren</button>
 					</div>
-					<p class="muted">Wenn du das Offline-Forum nutzt und über „Portal öffnen“ kommst, wird der Token automatisch im Link übergeben. Manuell kannst du ihn hier einfügen.</p>
+					<p class="muted">Wenn du das Offline-Forum nutzt und Ã¼ber â€žPortal Ã¶ffnenâ€œ kommst, wird der Token automatisch im Link Ã¼bergeben. Manuell kannst du ihn hier einfÃ¼gen.</p>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
 					<h3 class="title">Daten laden</h3>
@@ -103,7 +106,7 @@ body.public-view{ --cursor: not-allowed }
 						<input id="jsonFile" type="file" accept="application/json">
 						<button class="btn alt" id="payloadBtn">Payload anzeigen</button>
 					</div>
-					<p class="muted">Für Live-Betrieb kann hier eine API-Quelle konfiguriert werden.</p>
+					<p class="muted">FÃ¼r Live-Betrieb kann hier eine API-Quelle konfiguriert werden.</p>
 					<div style="margin-top:10px">
 						<input id="apiUrl" type="url" placeholder="https://deine-seite.tld/api/manifest/list">
 						<div class="row" style="margin-top:8px">
@@ -114,9 +117,9 @@ body.public-view{ --cursor: not-allowed }
 					<pre class="kbd" id="payloadBox" hidden></pre>
 				</div>
 				<div class="pad" style="border-top:1px solid var(--border)">
-					<h3 class="title">Live-Funktionen (für verifizierte Nutzer)</h3>
+					<h3 class="title">Live-Funktionen (fÃ¼r verifizierte Nutzer)</h3>
 					<ul class="muted" id="liveList" style="margin:0 0 8px 16px">
-						<li>Video-Chat Räume (Signaling URL konfigurierbar)</li>
+						<li>Video-Chat RÃ¤ume (Signaling URL konfigurierbar)</li>
 						<li>Text-Chat</li>
 						<li>Datei-Transfer mit Freigabe</li>
 						<li>Signierte Kontrakte (Upload/Download)</li>
@@ -133,9 +136,9 @@ body.public-view{ --cursor: not-allowed }
 
 <script>
 const REACTIONS = [
-	{key:'like', label:'Gefällt mir'},
+	{key:'like', label:'GefÃ¤llt mir'},
 	{key:'celebrate', label:'Gefeliciteerd'},
-	{key:'support', label:'Stützen'},
+	{key:'support', label:'StÃ¼tzen'},
 	{key:'love', label:'Gewaltig'},
 	{key:'insightful', label:'Verheldernd'},
 	{key:'curious', label:'Interessant'},
@@ -199,7 +202,7 @@ function renderFeed(db){
 	if(!posts.length){
 		const empty = document.createElement('div');
 		empty.className = 'pad';
-		empty.innerHTML = `<div class="muted">Keine Beiträge geladen.</div>`;
+		empty.innerHTML = `<div class="muted">Keine BeitrÃ¤ge geladen.</div>`;
 		feed.appendChild(empty);
 		return;
 	}
@@ -208,7 +211,7 @@ function renderFeed(db){
 		el.className = 'entry';
 		el.innerHTML = `
 			<h3>${e(p.title||'Ohne Titel')}</h3>
-			<div class="meta">${new Date(p.createdAt).toLocaleString()} ${p.initials? '· '+e(p.initials):''} ${p.tags?.length? '· Tags: '+p.tags.map(e).join(', '):''}</div>
+			<div class="meta">${new Date(p.createdAt).toLocaleString()} ${p.initials? 'Â· '+e(p.initials):''} ${p.tags?.length? 'Â· Tags: '+p.tags.map(e).join(', '):''}</div>
 			<div class="content" style="margin-top:8px;white-space:pre-wrap">${e(p.content)}</div>
 			<div class="reactions">
 				${REACTIONS.map(r=>{
@@ -236,7 +239,7 @@ jsonFile.addEventListener('change', async ()=>{
 	const text = await f.text();
 	try{
 		const data = (function() { try { return JSON.parse(text); } catch(e) { console.error('JSON parse error:', e); return null; } })();
-		if(!data || !Array.isArray(data.posts)) throw new Error('Ungültiges Format');
+		if(!data || !Array.isArray(data.posts)) throw new Error('UngÃ¼ltiges Format');
 		renderFeed(data);
 		payloadBox.hidden=false; payloadBox.textContent = JSON.stringify(data, null, 2);
 	}catch(err){ alert('Import fehlgeschlagen: '+err.message); }
@@ -280,6 +283,7 @@ window.addEventListener('keydown', (e)=>{
 	await tryAutoVerify();
 })();
 </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
 </body>
 </html>
 

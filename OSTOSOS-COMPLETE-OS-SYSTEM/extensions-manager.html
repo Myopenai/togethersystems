@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Erweiterungen Manager</title>
+<link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,var(--davinci-bg,#0a0e27) 0%,var(--davinci-card,#1a1f3a) 100%);color:var(--davinci-text,#ffffff);min-height:100vh;padding:20px}
+.container{max-width:1400px;margin:0 auto}
+.header{text-align:center;margin-bottom:30px;padding:30px;background:var(--davinci-card,#1a1f3a);border-radius:20px;border:2px solid var(--davinci-accent-primary,#10b981)}
+.extensions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:20px}
+.ext-card{background:var(--davinci-bg,#0f172a);padding:20px;border-radius:12px;border:1px solid var(--davinci-border,#223040);transition:all 0.3s}
+.ext-card:hover{border-color:var(--davinci-accent-primary,#10b981);transform:translateY(-3px)}
+.ext-card.installed{border-color:#22c55e}
+.ext-card h3{color:var(--davinci-accent-primary,#10b981);margin-bottom:10px}
+.ext-card .status{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.8em;margin-top:10px}
+.status-installed{background:#22c55e;color:#fff}
+.status-available{background:#3b82f6;color:#fff}
+.status-update{background:#f59e0b;color:#fff}
+.search-bar{width:100%;padding:15px;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:8px;color:var(--davinci-text,#ffffff);font-size:1em;margin-bottom:20px}
+.filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{padding:8px 16px;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:8px;cursor:pointer;color:var(--davinci-text,#ffffff);transition:all 0.3s}
+.filter-btn.active{background:var(--davinci-accent-primary,#10b981);color:#00100a}
+.stats{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap}
+.stat-card{background:var(--davinci-card,#1a1f3a);padding:15px;border-radius:8px;flex:1;min-width:150px}
+.stat-value{font-size:2em;color:var(--davinci-accent-primary,#10b981);font-weight:bold}
+.stat-label{color:var(--davinci-muted,#9ca3af);font-size:0.9em}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" style="color:var(--davinci-accent-primary,#10b981);text-decoration:none">T,.&T,,.&T,,,.</a> Erweiterungen Manager</h1>
+<p style="font-size:1.2em;color:var(--davinci-muted,#9ca3af);margin-top:10px">200+ / 2000+ Erweiterungen verwalten und installieren</p>
+</div>
+
+<div class="stats">
+<div class="stat-card">
+<div class="stat-value" id="totalExtensions">0</div>
+<div class="stat-label">Gesamt Erweiterungen</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="installedExtensions">0</div>
+<div class="stat-label">Installiert</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="availableExtensions">0</div>
+<div class="stat-label">Verfügbar</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="updateExtensions">0</div>
+<div class="stat-label">Updates verfügbar</div>
+</div>
+</div>
+
+<input type="text" id="searchBar" class="search-bar" placeholder="🔍 Erweiterungen suchen..." onkeyup="filterExtensions()">
+
+<div class="filters">
+<button class="filter-btn active" onclick="setFilter('all')">Alle</button>
+<button class="filter-btn" onclick="setFilter('installed')">Installiert</button>
+<button class="filter-btn" onclick="setFilter('available')">Verfügbar</button>
+<button class="filter-btn" onclick="setFilter('updates')">Updates</button>
+<button class="filter-btn" onclick="setFilter('core')">Core</button>
+<button class="filter-btn" onclick="setFilter('tools')">Tools</button>
+<button class="filter-btn" onclick="setFilter('design')">Design</button>
+<button class="filter-btn" onclick="setFilter('network')">Netzwerk</button>
+</div>
+
+<div class="extensions-grid" id="extensionsGrid"></div>
+
+<div style="margin-top:30px;padding:20px;background:var(--davinci-card,#1a1f3a);border-radius:15px;border:1px solid var(--davinci-border,#223040)">
+<h3 class="davinci-heading-3">🔄 Aktionen-Historie</h3>
+<button class="btn btn-secondary" onclick="undoLastAction()" style="margin-top:15px">↩️ Letzte Aktion rückgängig</button>
+<button class="btn btn-secondary" onclick="verifyAllExtensions()" style="margin-left:10px">✅ Alle Erweiterungen verifizieren</button>
+<div id="verificationResults" style="margin-top:15px"></div>
+</div>
+</div>
+
+<script src="./css/da-vinci-enterprise-standard-init.js"></script>
+<script src="./help-system-core.js"></script>
+<script src="./extensions-manager-core.js"></script>
+</body>
+</html>
+

@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>TPGA Telbank – Transfer Admin</title>
+    <title>TPGA Telbank â€“ Transfer Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       :root {
@@ -169,10 +169,13 @@
         font-size: 10px;
       }
     </style>
-  </head>
+  
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
   <body>
     <header>
-      <h1>TPGA Telbank – Transfer Ledger Admin</h1>
+      <h1>TPGA Telbank â€“ Transfer Ledger Admin</h1>
       <p class="sub">
         Read-only view for logged inflow/outflow transfers from the Telbank console. <br />
         Real-money execution must happen in regulated backends and banks.
@@ -203,7 +206,7 @@
           </div>
         </div>
         <p class="hint">
-          API base: <span id="apiBaseLabel" class="small"></span> • You can override this by
+          API base: <span id="apiBaseLabel" class="small"></span> â€¢ You can override this by
           setting <code>window.TELBANK_TRANSFER_API_BASE</code> before loading this page.
         </p>
       </section>
@@ -271,12 +274,12 @@
             const wShort =
               tr.walletAddress && tr.walletAddress.length > 12
                 ? tr.walletAddress.slice(0, 6) +
-                  '…' +
+                  'â€¦' +
                   tr.walletAddress.slice(tr.walletAddress.length - 4)
-                : tr.walletAddress || '—';
+                : tr.walletAddress || 'â€”';
             const created = tr.createdAt
               ? new Date(tr.createdAt).toLocaleString()
-              : '—';
+              : 'â€”';
             html += '<tr>';
             html +=
               '<td>' +
@@ -287,7 +290,7 @@
               (tr.direction === 'in' ? 'INFLOW' : 'OUTFLOW') +
               '</span></td>';
             html += '<td>' + escapeHtml(wShort) + '</td>';
-            html += '<td>' + escapeHtml(tr.network || '—') + '</td>';
+            html += '<td>' + escapeHtml(tr.network || 'â€”') + '</td>';
             html +=
               '<td>' +
               escapeHtml(String(tr.cryptoAmount || '0')) +
@@ -301,7 +304,7 @@
               escapeHtml(tr.fiatCurrency || '') +
               '</td>';
             html +=
-              '<td>' + escapeHtml(tr.externalAccount || '—') + '</td>';
+              '<td>' + escapeHtml(tr.externalAccount || 'â€”') + '</td>';
             html +=
               '<td class="status ' +
               escapeHtml(tr.status || 'logged') +
@@ -332,7 +335,8 @@
       })();
     </script>
     <script type="module" src="../autofix-client.js"></script>
-  </body>
+    <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
   </html>
 
 

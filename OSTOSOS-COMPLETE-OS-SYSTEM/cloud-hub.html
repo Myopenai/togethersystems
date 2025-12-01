@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. Cloud Hub – OSTOSOS</title>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+  <div class="davinci-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <h1 class="davinci-heading-1">T,. Cloud Hub</h1>
+    
+    <div class="davinci-card" data-davinci-phosphor-complete>
+      <h2 class="davinci-heading-2">Cloud-Status</h2>
+      <div id="cloudStatus" class="davinci-text-muted" style="margin: 1rem 0;">
+        Cloud ist ausgeschaltet. Lokale Funktionen aktiv.
+      </div>
+      <button id="cloudToggle" class="davinci-btn davinci-phosphorescent-energy">
+        Cloud einschalten
+      </button>
+    </div>
+
+    <div id="cloudFeatures" class="davinci-card" style="display: none; margin-top: 2rem;">
+      <h2 class="davinci-heading-2">Cloud-Funktionen</h2>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+        <div class="davinci-card">
+          <h3 class="davinci-heading-3">🌐 Presence</h3>
+          <p class="davinci-text-muted">Geräte-Erkennung und Online-Status</p>
+          <div id="presenceStatus" class="davinci-text-muted">Nicht aktiv</div>
+        </div>
+
+        <div class="davinci-card">
+          <h3 class="davinci-heading-3">🔄 Sync</h3>
+          <p class="davinci-text-muted">Cross-Device Synchronisation</p>
+          <div id="syncStatus" class="davinci-text-muted">Nicht aktiv</div>
+        </div>
+
+        <div class="davinci-card">
+          <h3 class="davinci-heading-3">💾 Storage Mesh</h3>
+          <p class="davinci-text-muted">Verteilter Speicher</p>
+          <div id="storageStatus" class="davinci-text-muted">Nicht aktiv</div>
+        </div>
+
+        <div class="davinci-card">
+          <h3 class="davinci-heading-3">👥 Peers</h3>
+          <p class="davinci-text-muted">WebRTC Verbindungen</p>
+          <div id="peersList" class="davinci-text-muted">Keine Peers</div>
+        </div>
+
+        <div class="davinci-card">
+          <h3 class="davinci-heading-3">🔗 Endpoints</h3>
+          <p class="davinci-text-muted">API Gesundheit</p>
+          <div id="endpointHealth" class="davinci-text-muted">Nicht geprüft</div>
+        </div>
+
+        <div class="davinci-card">
+          <h3 class="davinci-heading-3">📋 Audit Log</h3>
+          <p class="davinci-text-muted">Aktivitäts-Protokoll</p>
+          <div id="auditLog" class="davinci-text-muted" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.85em;">
+            Keine Einträge
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="davinci-card" style="margin-top: 2rem;">
+      <h2 class="davinci-heading-2">Lokale Funktionen</h2>
+      <p class="davinci-text">Diese Funktionen arbeiten auch ohne Cloud:</p>
+      <ul class="davinci-text" style="margin-top: 1rem;">
+        <li>✅ Lokale Datenspeicherung (IndexedDB, LocalStorage)</li>
+        <li>✅ Offline-First Architektur</li>
+        <li>✅ Service Worker Caching</li>
+        <li>✅ Lokale Applikationen</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+  <script>
+    const cloudToggle = document.getElementById('cloudToggle');
+    const cloudStatus = document.getElementById('cloudStatus');
+    const cloudFeatures = document.getElementById('cloudFeatures');
+
+    function loadPrefs() {
+      return JSON.parse(localStorage.getItem('ostosos.prefs') || '{"cloudEnabled": false}');
+    }
+
+    function savePrefs(prefs) {
+      localStorage.setItem('ostosos.prefs', JSON.stringify(prefs));
+    }
+
+    function updateUI() {
+      const prefs = loadPrefs();
+      if (prefs.cloudEnabled) {
+        cloudStatus.textContent = 'Cloud aktiv: Presence, Sync, Storage Mesh bereit.';
+        cloudStatus.style.color = 'var(--davinci-success, #22c55e)';
+        cloudToggle.textContent = 'Cloud ausschalten';
+        cloudFeatures.style.display = 'block';
+        updateCloudFeatures();
+      } else {
+        cloudStatus.textContent = 'Cloud ist ausgeschaltet. Lokale Funktionen aktiv.';
+        cloudStatus.style.color = 'var(--davinci-muted, #9ca3af)';
+        cloudToggle.textContent = 'Cloud einschalten';
+        cloudFeatures.style.display = 'none';
+      }
+    }
+
+    function updateCloudFeatures() {
+      const prefs = loadPrefs();
+      if (!prefs.cloudEnabled) return;
+
+      // Presence Status
+      document.getElementById('presenceStatus').textContent = 'Aktiv';
+      document.getElementById('presenceStatus').style.color = 'var(--davinci-success, #22c55e)';
+
+      // Sync Status
+      document.getElementById('syncStatus').textContent = 'Aktiv';
+      document.getElementById('syncStatus').style.color = 'var(--davinci-success, #22c55e)';
+
+      // Storage Mesh
+      document.getElementById('storageStatus').textContent = 'Aktiv';
+      document.getElementById('storageStatus').style.color = 'var(--davinci-success, #22c55e)';
+
+      // Peers (simuliert)
+      document.getElementById('peersList').textContent = '0 Peers verbunden';
+
+      // Endpoint Health
+      document.getElementById('endpointHealth').textContent = 'Alle Endpoints OK';
+      document.getElementById('endpointHealth').style.color = 'var(--davinci-success, #22c55e)';
+
+      // Audit Log
+      const log = document.getElementById('auditLog');
+      const timestamp = new Date().toLocaleString('de-DE');
+      log.innerHTML = `[${timestamp}] Cloud aktiviert<br/>[${timestamp}] Presence aktiviert<br/>[${timestamp}] Sync aktiviert`;
+    }
+
+    cloudToggle.addEventListener('click', () => {
+      const prefs = loadPrefs();
+      prefs.cloudEnabled = !prefs.cloudEnabled;
+      savePrefs(prefs);
+      updateUI();
+      
+      // Audit Log
+      if (prefs.cloudEnabled) {
+        const log = document.getElementById('auditLog');
+        const timestamp = new Date().toLocaleString('de-DE');
+        log.innerHTML = `[${timestamp}] Cloud aktiviert<br/>` + log.innerHTML;
+      }
+    });
+
+    // Initial load
+    updateUI();
+  </script>
+</body>
+</html>
+

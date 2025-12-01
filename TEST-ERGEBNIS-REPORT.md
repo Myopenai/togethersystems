@@ -93,3 +93,10 @@ Alle `response.json()` Aufrufe wurden mit `res.ok` Checks versehen:
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

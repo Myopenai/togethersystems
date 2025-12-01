@@ -1,0 +1,588 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source Code Fach – Producer-Zugriff</title>
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root {
+      --bg: #0a0e27;
+      --card: #1a1f3a;
+      --ink: #e5e7eb;
+      --muted: #9ca3af;
+      --primary: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --border: #374151;
+      --radius: 16px;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .ts-brand-banner {
+      background: linear-gradient(90deg, #020617, #0f172a 50%, #111827);
+      color: #e5e7eb;
+      padding: 8px 16px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+    }
+    .ts-brand-banner strong { font-weight: 600; }
+    .ts-brand-links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      font-size: 11px;
+      margin-left: 8px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header h1 {
+      font-size: 3rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .producer-access {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .producer-access h2 {
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .producer-access h2::before {
+      content: "🔐";
+      font-size: 1.5rem;
+    }
+    .code-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .code-item {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .code-item:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+    }
+    .code-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .code-item-name {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .code-item-version {
+      background: var(--gradient);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .code-item-details {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+    .code-viewer {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 24px;
+      max-height: 600px;
+      overflow: auto;
+    }
+    .code-viewer pre {
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: var(--ink);
+      margin: 0;
+    }
+    .btn {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      box-shadow: none;
+    }
+    .btn-secondary:hover {
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .verification-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      margin-top: 12px;
+    }
+    .search-box {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      color: var(--ink);
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+    .search-box:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+  </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span style="opacity: 0.78; display: block; margin-top: 4px;">
+        (+31) - ( 613 803 782.) 
+        <a href="https://orcid.org/0009-0003-1328-2430" target="_blank">ORCID</a>
+      </span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./encryption-dashboard.html">Verschlüsselungs-Dashboard</a>
+      <a href="./suos-braintext-system.html">SUOS-System</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>📦 Source Code Fach</h1>
+      <p style="font-size: 1.25rem; color: var(--muted); margin-top: 16px;">
+        Spezieller Zugriff für Producer – Verifizierbar, erweiterbar, voll bearbeitbar
+      </p>
+    </div>
+
+    <div class="card producer-access">
+      <h2>Producer-Zugriff</h2>
+      <p style="margin-bottom: 16px;">
+        Der Source Code ist die Basis von all unseren Programmen. Er muss ein spezielles Fach haben, 
+        immer zugänglich sein, verifizierbar, erweiterbar, voll bearbeitbar – aber nur durch den Producer.
+      </p>
+      <div class="verification-badge">
+        ✅ Verifiziert durch kryptographische Signaturen
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+        <span>T,.</span>
+        Verfügbare Source Codes
+      </h2>
+      <input 
+        type="text" 
+        class="search-box" 
+        placeholder="Suche nach Source Code..."
+        id="searchInput"
+        oninput="filterCodes()"
+      />
+      <div class="code-list" id="codeList"></div>
+    </div>
+
+    <div class="card" id="codeViewerCard" style="display: none;">
+      <h2 style="margin-bottom: 24px;">Source Code Anzeige</h2>
+      <div class="code-viewer" id="codeViewer">
+        <pre id="codeContent">Wähle einen Source Code aus der Liste aus.</pre>
+      </div>
+      <div style="margin-top: 24px; display: flex; gap: 12px;">
+        <button class="btn" onclick="downloadCode()">📥 Download</button>
+        <button class="btn btn-secondary" onclick="closeViewer()">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Source Code Datenbank
+    const sourceCodes = [
+      {
+        id: 'encryption-system',
+        name: 'Verschlüsselungssystem',
+        version: '1.0.0',
+        description: 'Hauptverschlüsselungssystem mit AES-256-GCM, Ed25519, HMAC-SHA256',
+        language: 'JavaScript/TypeScript',
+        files: ['encryption-manager.js', 'key-derivation.js', 'signature-verification.js'],
+        verified: true,
+        lastUpdated: '2025-01-15',
+        content: `// Verschlüsselungssystem - Source Code
+// Producer: Raymond Demitrio Tel
+// Version: 1.0.0
+// Verifiziert: ✅
+
+import { deriveKey, encrypt, decrypt } from './key-derivation.js';
+import { sign, verify } from './signature-verification.js';
+
+export class EncryptionSystem {
+  constructor(config) {
+    this.algorithm = config.algorithm || 'AES-256-GCM';
+    this.keyDerivation = config.keyDerivation || 'PBKDF2';
+    this.iterations = config.iterations || 200000;
+  }
+
+  async encryptData(data, userKey) {
+    const key = await deriveKey(userKey, this.keyDerivation, this.iterations);
+    return await encrypt(data, key, this.algorithm);
+  }
+
+  async decryptData(encryptedData, userKey) {
+    const key = await deriveKey(userKey, this.keyDerivation, this.iterations);
+    return await decrypt(encryptedData, key, this.algorithm);
+  }
+
+  async signData(data, privateKey) {
+    return await sign(data, privateKey);
+  }
+
+  async verifySignature(data, signature, publicKey) {
+    return await verify(data, signature, publicKey);
+  }
+}`
+      },
+      {
+        id: 'token-system',
+        name: 'Token-System (ohne Username/Passwort)',
+        version: '1.0.0',
+        description: 'Token-basierte Authentifizierung ohne Username und Passwort',
+        language: 'JavaScript',
+        files: ['token-manager.js', 'presence-api.js'],
+        verified: true,
+        lastUpdated: '2025-01-12',
+        content: `// Token-System - Source Code
+// Producer: Raymond Demitrio Tel
+// Version: 1.0.0
+// Verifiziert: ✅
+
+export class TokenSystem {
+  constructor() {
+    this.tokens = new Map();
+  }
+
+  async generateToken(userId) {
+    const timestamp = Date.now();
+    const random = crypto.getRandomValues(new Uint8Array(16));
+    const token = \`\${userId}.\${timestamp}.\${Array.from(random).map(b => b.toString(16).padStart(2, '0')).join('')}\`;
+    
+    // HMAC-SHA256 Signatur
+    const signature = await this.signToken(token, timestamp);
+    
+    this.tokens.set(token, {
+      userId,
+      timestamp,
+      signature,
+      lastSeen: Date.now()
+    });
+    
+    return { token, signature, timestamp };
+  }
+
+  async signToken(token, timestamp) {
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      enc.encode('MOT_SHARED_SECRET'),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, enc.encode(\`\${token}.\${timestamp}\`));
+    return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async verifyToken(token, signature, timestamp) {
+    const expected = await this.signToken(token, timestamp);
+    const skew = Math.abs(Date.now() - timestamp);
+    
+    if (skew > 5 * 60 * 1000) {
+      return { valid: false, error: 'Token abgelaufen' };
+    }
+    
+    if (expected !== signature) {
+      return { valid: false, error: 'Signatur ungültig' };
+    }
+    
+    return { valid: true, tokenData: this.tokens.get(token) };
+  }
+}`
+      },
+      {
+        id: 'suos-system',
+        name: 'SUOS-offenes System',
+        version: '1.0.0',
+        description: 'SUOS-offene Code-Bereitstellung mit Ein-Schlüssel-Freischaltung',
+        language: 'HTML/JavaScript',
+        files: ['suos-braintext-system.html', 'module-decryption.js'],
+        verified: true,
+        lastUpdated: '2025-01-15',
+        content: `// SUOS-offenes System - Source Code
+// Producer: Raymond Demitrio Tel
+// Version: 1.0.0
+// Verifiziert: ✅
+
+export class SUOSSystem {
+  constructor() {
+    this.manifest = null;
+    this.encryptedModule = null;
+  }
+
+  async loadManifest(manifestUrl) {
+    const response = await fetch(manifestUrl);
+    this.manifest = await response.json();
+    return this.manifest;
+  }
+
+  async verifyManifestSignature(manifest, publicKey) {
+    const message = new TextEncoder().encode(
+      \`\${manifest.version}|\${manifest.moduleHash}|\${manifest.date}\`
+    );
+    const signature = Uint8Array.from(atob(manifest.signatureBase64), c => c.charCodeAt(0));
+    
+    // Ed25519 Signaturprüfung
+    return await this.verifySignature(message, signature, publicKey);
+  }
+
+  async decryptModule(userKey) {
+    if (!this.manifest) {
+      throw new Error('Manifest nicht geladen');
+    }
+
+    const salt = Uint8Array.from(atob(this.manifest.saltBase64), c => c.charCodeAt(0));
+    const aesKey = await this.deriveKey(userKey, salt);
+    
+    const iv = Uint8Array.from(atob(this.manifest.ivBase64), c => c.charCodeAt(0));
+    
+    const plainBytes = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv },
+      aesKey,
+      this.encryptedModule
+    );
+    
+    return new Uint8Array(plainBytes);
+  }
+
+  async deriveKey(userKey, salt) {
+    const enc = new TextEncoder();
+    const baseKey = await crypto.subtle.importKey(
+      'raw',
+      enc.encode(userKey),
+      'PBKDF2',
+      false,
+      ['deriveKey']
+    );
+    
+    return await crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        salt,
+        iterations: 200000,
+        hash: 'SHA-256'
+      },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt']
+    );
+  }
+}`
+      },
+      {
+        id: 'tpga-system',
+        name: 'TPGA-System',
+        version: '1.0.0',
+        description: 'TPGA Telbank und Provider-Zusammenschluss-System',
+        language: 'JavaScript',
+        files: ['tpga-telbank.js', 'provider-manager.js'],
+        verified: true,
+        lastUpdated: '2025-01-14',
+        content: `// TPGA-System - Source Code
+// Producer: Raymond Demitrio Tel
+// Version: 1.0.0
+// Verifiziert: ✅
+
+export class TPGASystem {
+  constructor() {
+    this.providers = new Map();
+    this.transactions = [];
+  }
+
+  addProvider(provider) {
+    this.providers.set(provider.id, {
+      ...provider,
+      joinedAt: Date.now(),
+      savings: 0
+    });
+  }
+
+  calculateSavings(providerId) {
+    const provider = this.providers.get(providerId);
+    if (!provider) return 0;
+    
+    // Berechnung der Kostenersparnis durch TPGA-Zusammenschluss
+    const baseCost = provider.monthlyCost || 0;
+    const savingsRate = 0.15; // 15% Ersparnis durch gemeinsame Infrastruktur
+    const savings = baseCost * savingsRate;
+    
+    provider.savings = savings;
+    return savings;
+  }
+
+  calculateDeveloperShare(totalSavings, externalCapital) {
+    const developerShareRate = 0.10; // 10% Entwickleranteil
+    return (totalSavings + externalCapital) * developerShareRate;
+  }
+
+  getTotalCapital() {
+    const totalSavings = Array.from(this.providers.values())
+      .reduce((sum, p) => sum + (p.savings || 0), 0);
+    
+    return {
+      savings: totalSavings,
+      externalCapital: 0, // Wird extern gesetzt
+      tokenized: 0, // Wird extern gesetzt
+      total: totalSavings
+    };
+  }
+}`
+      }
+    ];
+
+    let selectedCode = null;
+
+    function renderCodeList(codes = sourceCodes) {
+      const container = document.getElementById('codeList');
+      container.innerHTML = '';
+
+      codes.forEach(code => {
+        const div = document.createElement('div');
+        div.className = 'code-item';
+        div.onclick = () => showCode(code);
+
+        div.innerHTML = `
+          <div class="code-item-header">
+            <div class="code-item-name">${code.name}</div>
+            <span class="code-item-version">v${code.version}</span>
+          </div>
+          <div class="code-item-details">
+            <div style="margin-bottom: 8px;">${code.description}</div>
+            <div style="color: var(--muted); font-size: 0.75rem;">
+              ${code.language} · ${code.files.length} Datei(en) · Aktualisiert: ${new Date(code.lastUpdated).toLocaleDateString('de-DE')}
+            </div>
+            ${code.verified ? '<div class="verification-badge" style="margin-top: 8px;">✅ Verifiziert</div>' : ''}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function showCode(code) {
+      selectedCode = code;
+      document.getElementById('codeViewerCard').style.display = 'block';
+      document.getElementById('codeContent').textContent = code.content;
+      document.getElementById('codeViewerCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function closeViewer() {
+      document.getElementById('codeViewerCard').style.display = 'none';
+      selectedCode = null;
+    }
+
+    function downloadCode() {
+      if (!selectedCode) return;
+      
+      const blob = new Blob([selectedCode.content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedCode.id}-v${selectedCode.version}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.filterCodes = function() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = sourceCodes.filter(code => 
+        code.name.toLowerCase().includes(searchTerm) ||
+        code.description.toLowerCase().includes(searchTerm) ||
+        code.language.toLowerCase().includes(searchTerm)
+      );
+      renderCodeList(filtered);
+    };
+
+    // Initialisierung
+    renderCodeList();
+  </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>

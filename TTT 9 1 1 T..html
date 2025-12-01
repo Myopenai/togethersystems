@@ -1,0 +1,574 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0051)file:///C:/Users/Gebruiker/Downloads/ttt-911-t.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>TTT 9 1 1 T.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-dark: #050710;
+      --bg-gradient-top: #101631;
+      --bg-gradient-bottom: #050710;
+      --accent-gold: #f0c674;
+      --accent-soft: #8fd6ff;
+      --accent-red: #ff5c5c;
+      --text-main: #f8f8ff;
+      --text-muted: #a9afc7;
+      --card-bg: rgba(8, 12, 30, 0.9);
+      --border-soft: rgba(255, 255, 255, 0.08);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, #303c6b 0, transparent 55%),
+        radial-gradient(circle at 90% 0%, #4a214a 0, transparent 55%),
+        radial-gradient(circle at 50% 100%, #0b4c5f 0, transparent 60%),
+        linear-gradient(to bottom, var(--bg-gradient-top), var(--bg-gradient-bottom));
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .frame {
+      width: 100%;
+      max-width: 1200px;
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.05), transparent 60%),
+                  radial-gradient(circle at 100% 100%, rgba(0, 230, 255, 0.05), transparent 60%),
+                  rgba(3, 5, 15, 0.92);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 30px 80px rgba(0, 0, 0, 0.85),
+        0 0 80px rgba(126, 212, 255, 0.25);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .frame::before,
+    .frame::after {
+      content: "";
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .frame::before {
+      top: -220px;
+      left: -180px;
+      background: conic-gradient(from 160deg,
+        rgba(245, 222, 179, 0.8),
+        rgba(162, 222, 255, 0.9),
+        rgba(253, 160, 133, 0.9),
+        rgba(245, 222, 179, 0.9));
+      animation: orbitA 24s linear infinite;
+    }
+
+    .frame::after {
+      bottom: -260px;
+      right: -220px;
+      background: conic-gradient(from 320deg,
+        rgba(90, 196, 255, 0.9),
+        rgba(132, 255, 195, 0.7),
+        rgba(255, 150, 100, 0.8),
+        rgba(90, 196, 255, 0.9));
+      animation: orbitB 32s linear infinite;
+    }
+
+    @keyframes orbitA {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitB {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .glow-ring {
+      position: absolute;
+      inset: 8px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(131, 240, 255, 0.08), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .layout {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .frame {
+        padding: 24px;
+      }
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding-right: 12px;
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(4, 10, 30, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(18px);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .pill-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffffff, #ffa45b);
+      box-shadow: 0 0 8px rgba(255, 196, 118, 0.8);
+    }
+
+    .hero-main-title {
+      font-size: clamp(3.2rem, 5vw, 3.8rem);
+      line-height: 1.02;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-main-title span {
+      display: inline-block;
+    }
+
+    .hero-main-title .line-top {
+      font-size: 0.65em;
+      letter-spacing: 0.7em;
+      opacity: 0.9;
+    }
+
+    .hero-main-title .line-mid {
+      font-size: 1.1em;
+      display: flex;
+      align-items: baseline;
+      gap: 0.35em;
+    }
+
+    .digit {
+      position: relative;
+      padding: 0.05em 0.2em;
+      border-radius: 0.7em;
+      background: radial-gradient(circle at 30% 0%,
+        rgba(255, 255, 255, 0.35),
+        rgba(255, 255, 255, 0.05));
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 12px 30px rgba(0, 0, 0, 0.8);
+      text-shadow:
+        0 0 18px rgba(240, 198, 116, 0.9),
+        0 0 30px rgba(88, 194, 255, 0.8);
+    }
+
+    .hero-main-title .line-bottom {
+      font-size: 0.85em;
+      letter-spacing: 0.55em;
+      opacity: 0.9;
+    }
+
+    .hero-sub {
+      margin-top: 18px;
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      max-width: 34rem;
+    }
+
+    .hero-sub strong {
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 18px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(6, 12, 32, 0.92);
+    }
+
+    .meta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      box-shadow: 0 0 8px rgba(143, 214, 255, 0.9);
+    }
+
+    .info-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      background: var(--card-bg);
+      box-shadow:
+        0 14px 40px rgba(0, 0, 0, 0.85),
+        0 0 40px rgba(53, 150, 255, 0.16);
+      backdrop-filter: blur(20px);
+      padding: 18px 18px 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% -10%, rgba(250, 220, 150, 0.22), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-soft);
+    }
+
+    .chip {
+      font-size: 0.7rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(3, 6, 18, 0.9);
+      color: var(--text-muted);
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 10px;
+      padding-left: 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: grid;
+      gap: 8px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: linear-gradient(to bottom,
+        rgba(143, 214, 255, 0.7),
+        rgba(240, 198, 116, 0.3));
+      opacity: 0.8;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 9px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 6px;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: radial-gradient(circle, #ffffff, #f0c674);
+      box-shadow:
+        0 0 8px rgba(240, 198, 116, 0.9),
+        0 0 18px rgba(88, 194, 255, 0.5);
+    }
+
+    .timeline-item strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .symbol-card {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .symbol-chip {
+      border-radius: 16px;
+      padding: 10px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 55%),
+                  rgba(3, 8, 24, 0.95);
+      font-size: 0.76rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 62px;
+    }
+
+    .symbol-key {
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .symbol-expl {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+    }
+
+    .fact-list {
+      list-style: none;
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: grid;
+      gap: 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .fact-list li strong {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-note span {
+      color: var(--accent-soft);
+    }
+
+    .soft-divider {
+      margin-top: 18px;
+      height: 1px;
+      border-radius: 999px;
+      background: linear-gradient(to right,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent);
+      opacity: 0.7;
+    }
+
+    .credit {
+      margin-top: 8px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.85;
+    }
+  </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+  <main class="frame" aria-label="Übersichtsseite TTT 9 1 1 T.">
+    <div class="glow-ring" aria-hidden="true"></div>
+    <section class="layout">
+      <header class="hero">
+        <div class="hero-label">
+          <span class="pill-dot"></span>
+          <span>Symbolische Übersicht · 11. September 2001</span>
+        </div>
+        <h1 class="hero-main-title">
+          <span class="line-top">T&nbsp;T&nbsp;T</span>
+          <span class="line-mid">
+            <span class="digit">9</span>
+            <span class="digit">1</span>
+            <span class="digit">1</span>
+          </span>
+          <span class="line-bottom">T.</span>
+        </h1>
+        <p class="hero-sub">
+          Die Buchstaben und Ziffern verbinden zwei Ebenen: die
+          <strong>Notrufnummer 9–1–1</strong> in den Vereinigten Staaten
+          und das Datum <strong>11. September 2001</strong> – der Tag der
+          Terroranschläge auf das World Trade Center, das Pentagon und Flug
+          UA93. Die Komposition erinnert an ein technisches, fast
+          systemisches Symbol: ein <strong>T</strong> für Träger, Türme,
+          Technik, vielleicht auch Trauma – mehrfach gespiegelt.
+        </p>
+        <div class="hero-meta" aria-label="Meta-Informationen zum Symbol">
+          <div class="meta-item">
+            <span class="meta-dot"></span>
+            <span>Datum: 11.09.2001 — geschrieben als 9/11</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-dot"></span>
+            <span>Ort: USA — World Trade Center, Pentagon, Pennsylvania</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-dot"></span>
+            <span>Bedeutung: Notruf, Katastrophe, globale Zäsur</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="info-grid" aria-label="Informationen zum 11. September 2001">
+        <article class="card">
+          <div class="card-header">
+            <h2 class="card-title">Zeitleiste 11. September 2001</h2>
+            <span class="chip">historische Fakten</span>
+          </div>
+          <div class="timeline" aria-label="Chronologie des Tages">
+            <div class="timeline-item">
+              <strong>Früher Morgen, US-Ostküste</strong>
+              Vier Passagierflugzeuge werden von Terroristen der Gruppe
+              al-Qaida entführt. Ziele sind symbolische Orte der USA:
+              Wirtschaft, Militär, Politik.
+            </div>
+            <div class="timeline-item">
+              <strong>World Trade Center, New York City</strong>
+              Zwei Maschinen treffen die Zwillingstürme. Beide Türme
+              stürzen später ein. Tausende Menschen kommen ums Leben.
+            </div>
+            <div class="timeline-item">
+              <strong>Pentagon &amp; Flug UA93</strong>
+              Eine weitere Maschine trifft das Pentagon bei Washington,
+              D.C. Ein viertes Flugzeug stürzt in Pennsylvania ab, nachdem
+              Passagiere sich gegen die Entführer gewehrt haben.
+            </div>
+            <div class="timeline-item">
+              <strong>Nachwirkungen</strong>
+              Weltweit werden Sicherheits- und Kommunikationssysteme neu
+              gedacht. Der Tag markiert eine Zäsur in Politik, Militär,
+              Geheimdienst-Analytik und globaler Sicherheit.
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <h2 class="card-title">Symbol &amp; Bedeutung</h2>
+            <span class="chip">T · 9 · 1 · 1 · T.</span>
+          </div>
+          <div class="symbol-card" aria-label="Bedeutung der Symbole">
+            <div class="symbol-chip">
+              <div class="symbol-key">T&nbsp;T&nbsp;T</div>
+              <div class="symbol-expl">
+                Dreifaches T wie Pfeiler oder Türme: Technik, Türme,
+                Trägerstrukturen. Kann für Systeme stehen – Daten,
+                Kommunikation, Sicherheit –, die an einem Tag ins Wanken geraten.
+              </div>
+            </div>
+            <div class="symbol-chip">
+              <div class="symbol-key">9&nbsp;1&nbsp;1</div>
+              <div class="symbol-expl">
+                In den USA: <strong>Notrufnummer</strong>. International: Chiffre
+                für die Anschläge vom <strong>11.&nbsp;September&nbsp;2001</strong>.
+                Die Zahlenfolge ist damit sowohl Ruf nach Hilfe als auch Name
+                einer Katastrophe.
+              </div>
+            </div>
+            <div class="symbol-chip">
+              <div class="symbol-key">T.</div>
+              <div class="symbol-expl">
+                Das abschließende T mit Punkt wirkt wie ein Cursor, der stehen
+                bleibt. Es kann gelesen werden als: ein System, das an diesem
+                Tag abrupt stoppt – eine Welt vor und nach diesem Punkt.
+              </div>
+            </div>
+          </div>
+          <ul class="fact-list">
+            <li><strong>Datum:</strong> 11. September 2001 (11/09/2001, in den USA als 9/11 geschrieben)</li>
+            <li><strong>Ort:</strong> New York City, Arlington (Pentagon), Shanksville (Pennsylvania)</li>
+            <li><strong>Kontext:</strong> Größter Terroranschlag der jüngeren Geschichte, Auslöser weitreichender politischer und militärischer Folgen.</li>
+          </ul>
+        </article>
+      </section>
+    </section>
+
+    <div class="soft-divider" aria-hidden="true"></div>
+    <p class="footer-note">
+      Diese visuelle Übersicht ist als ruhige, gut lesbare Oberfläche gedacht:
+      hoher Kontrast für den <span>Text</span>, gedämpfte, aber lebendige
+      Lichter im Hintergrund – damit die Botschaft klar bleibt und
+      die Augen nicht von der Information abgelenkt werden.
+    </p>
+    <p class="credit">
+      Hinweis: Die Fakten zu den Ereignissen des 11. September 2001 basieren
+      auf allgemein zugänglichen historischen Quellen (z.&nbsp;B. Memorial-,
+      Geschichts- und Nachrichtenportale).
+    </p>
+  </main>
+
+
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body></html>

@@ -68,3 +68,10 @@ async function example() {
 // Führe Beispiel aus
 example().catch(console.error);
 
+
+
+
+
+
+
+

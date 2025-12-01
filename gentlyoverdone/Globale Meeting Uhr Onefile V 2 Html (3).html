@@ -1,0 +1,3759 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Globale Meeting-Uhr – One-File App (v2)</title>
+<meta name="description" content="Eine einzige Datei: Weltzeit-Umrechnung, UTC, Partner-Zeitzonen, Countdown & Alarm — im Bond-Style."/>
+<meta name="theme-color" content="#0b0f14"/>
+<style>
+:root{--bg:#0b0f14;--card:#121923;--ink:#e6f0ff;--muted:#97a7bd;--accent:#70f0ff;--good:#41d47a;--warn:#f6c945;--bad:#ff6b6b}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;padding:16px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial,sans-serif;background:radial-gradient(1200px 600px at 80% -10%,#0e1622 10%,var(--bg) 50%);color:var(--ink);line-height:1.35}
+h1{font-size:clamp(20px,3vw,28px);margin:6px 0 6px}h2{font-size:18px;margin:18px 0 8px;color:var(--accent)}p{color:var(--muted);margin:8px 0}
+.grid{display:grid;gap:12px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}@media (max-width:860px){.two{grid-template-columns:1fr}}
+.card{background:linear-gradient(160deg,rgba(112,240,255,.06),rgba(112,240,255,0)),var(--card);border:1px solid rgba(112,240,255,.15);border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+label{display:block;font-weight:600;margin-bottom:6px}
+input,select,button,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(112,240,255,.25);background:#0c131c;color:var(--ink);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(112,240,255,.2)}
+button{cursor:pointer;font-weight:700;letter-spacing:.2px;background:linear-gradient(180deg,rgba(112,240,255,.25),rgba(112,240,255,.1))}
+button:hover{background:linear-gradient(180deg,rgba(112,240,255,.35),rgba(112,240,255,.2))}
+button:active{transform:translateY(1px)}
+.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+.small{font-size:12px;color:var(--muted)}.ghost{opacity:.85}.divider{height:1px;background:rgba(112,240,255,.15);margin:12px 0}
+.world{aspect-ratio: 3/1.5;width:100%;background:
+radial-gradient(200px 120px at 70% 20%,rgba(112,240,255,.15),transparent 60%),
+radial-gradient(300px 200px at 10% 90%,rgba(112,240,255,.12),transparent 60%),
+url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 600%22><defs><linearGradient id=%22g%22 x1=%220%22 x2=%220%22 y1=%220%22 y2=%221%22><stop stop-color=%22%23121923%22/><stop offset=%221%22 stop-color=%22%230b0f14%22/></linearGradient></defs><rect width=%221200%22 height=%22600%22 fill=%22url(%23g)%22/><g fill=%22none%22 stroke=%22%2370f0ff%22 stroke-opacity=%220.25%22><path d=%22M0,300 C200,200 400,200 600,300 S1000,400 1200,300%22/><circle cx=%22600%22 cy=%22300%22 r=%22240%22/><circle cx=%22600%22 cy=%22300%22 r=%22200%22/><circle cx=%22600%22 cy=%22300%22 r=%22160%22/></g></svg>') center/cover no-repeat;border-radius:14px;border:1px solid rgba(112,240,255,.15)}
+.kbd{border:1px solid rgba(255,255,255,.2);border-bottom-width:3px;padding:0 6px;border-radius:6px;background:#000;color:#fff;font-weight:700}
+.logo{display:flex;align-items:center;gap:10px}
+.logo svg{width:42px;height:42px;flex:0 0 auto}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#0e1a25;border:1px solid rgba(112,240,255,.2);color:var(--accent);font-size:12px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.nav a{color:var(--accent);text-decoration:none;border:1px solid rgba(112,240,255,.2);padding:6px 10px;border-radius:999px}
+.nav a:hover{background:rgba(112,240,255,.1)}
+footer{margin-top:14px;position:relative}
+.bad{color:#ff6b6b}
+.good{color:var(--good)}
+.warn{color:var(--warn)}
+.status{display:inline-block;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.status.success{background:rgba(65,212,122,.2);color:var(--good)}
+.status.warning{background:rgba(246,201,69,.2);color:var(--warn)}
+.status.error{background:rgba(255,107,107,.2);color:var(--bad)}
+
+/* Donation Button Styles */
+.donation-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #41d47a, #70f0ff);
+  color: #0b0f14;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 8px 25px rgba(65, 212, 122, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.donation-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(65, 212, 122, 0.6);
+  background: linear-gradient(135deg, #70f0ff, #41d47a);
+}
+
+.donation-button:active {
+  transform: translateY(0);
+}
+
+.donation-button .heart {
+  font-size: 16px;
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+</style>
+</head><body>
+<header class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+  <div class="logo">
+    <!-- Inline Logo -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true">
+      <defs><radialGradient id="lg" cx="70%" cy="20%" r="80%"><stop offset="0" stop-color="#70f0ff"/><stop offset="1" stop-color="#0b0f14"/></radialGradient></defs>
+      <g transform="translate(64 64)" fill="none" stroke="#70f0ff" stroke-width="3">
+        <circle r="40"/><path d="M-44,0 H44 M0,-44 V44" opacity=".35"/>
+        <path d="M-50,-8 C-10,-28, 10,28, 50,8" opacity=".7"/>
+      </g><g transform="translate(64 64)"><circle r="18" fill="url(#lg)" opacity=".9"/></g>
+    </svg>
+    <div>
+      <h1 data-translate="app_title">Globale Meeting-Uhr <span class="pill" data-translate="app_subtitle">UTC · Lokal · Partner</span></h1>
+      <div class="nav">
+        <a href="#app">App</a>
+        <a href="#how">Anleitung</a>
+        <a href="#producer">Producer</a>
+        <div style="margin-left:auto;display:flex;gap:4px;">
+          <button onclick="changeLanguage('de')" class="lang-btn" style="padding:4px 8px;background:none;border:1px solid rgba(112,240,255,.2);color:var(--accent);border-radius:4px;font-size:11px;">DE</button>
+          <button onclick="changeLanguage('en')" class="lang-btn" style="padding:4px 8px;background:none;border:1px solid rgba(112,240,255,.2);color:var(--accent);border-radius:4px;font-size:11px;">EN</button>
+          <button onclick="changeLanguage('nl')" class="lang-btn" style="padding:4px 8px;background:none;border:1px solid rgba(112,240,255,.2);color:var(--accent);border-radius:4px;font-size:11px;">NL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Ziffernblatt-Uhren-Bereich -->
+<div class="clock-section card" style="margin:12px 0;">
+  <h2 style="text-align:center;margin-bottom:20px;">🕐 Aktuelle Zeiten weltweit</h2>
+  
+  <!-- Städte-Auswahl für Uhren -->
+  <div class="clock-city-selector" style="margin-bottom:20px;display:grid;grid-template-columns:repeat(5,1fr);gap:15px;">
+    <div class="city-selector-item">
+      <label style="font-size:12px;color:var(--muted);margin-bottom:4px;">Uhr 1 - Stadt wählen:</label>
+      <select id="citySelect1" class="city-select" style="font-size:12px;padding:6px 8px;">
+        <option value="Europe/Berlin">Berlin</option>
+        <option value="America/New_York">New York</option>
+        <option value="Asia/Tokyo">Tokyo</option>
+        <option value="Australia/Sydney">Sydney</option>
+        <option value="Europe/London">London</option>
+      </select>
+    </div>
+    
+    <div class="city-selector-item">
+      <label style="font-size:12px;color:var(--muted);margin-bottom:4px;">Uhr 2 - Stadt wählen:</label>
+      <select id="citySelect2" class="city-select" style="font-size:12px;padding:6px 8px;">
+        <option value="America/New_York">New York</option>
+        <option value="Europe/Berlin">Berlin</option>
+        <option value="Asia/Tokyo">Tokyo</option>
+        <option value="Australia/Sydney">Sydney</option>
+        <option value="Europe/London">London</option>
+      </select>
+    </div>
+    
+    <div class="city-selector-item">
+      <label style="font-size:12px;color:var(--muted);margin-bottom:4px;">Uhr 3 - Stadt wählen:</label>
+      <select id="citySelect3" class="city-select" style="font-size:12px;padding:6px 8px;">
+        <option value="Asia/Tokyo">Tokyo</option>
+        <option value="Europe/Berlin">Berlin</option>
+        <option value="America/New_York">New York</option>
+        <option value="Australia/Sydney">Sydney</option>
+        <option value="Europe/London">London</option>
+      </select>
+    </div>
+    
+    <div class="city-selector-item">
+      <label style="font-size:12px;color:var(--muted);margin-bottom:4px;">Uhr 4 - Stadt wählen:</label>
+      <select id="citySelect4" class="city-select" style="font-size:12px;padding:6px 8px;">
+        <option value="Australia/Sydney">Sydney</option>
+        <option value="Europe/Berlin">Berlin</option>
+        <option value="America/New_York">New York</option>
+        <option value="Asia/Tokyo">Tokyo</option>
+        <option value="Europe/London">London</option>
+      </select>
+    </div>
+    
+    <div class="city-selector-item">
+      <label style="font-size:12px;color:var(--muted);margin-bottom:4px;">Uhr 5 - Stadt wählen:</label>
+      <select id="citySelect5" class="city-select" style="font-size:12px;padding:6px 8px;">
+        <option value="Europe/London">London</option>
+        <option value="Europe/Berlin">Berlin</option>
+        <option value="America/New_York">New York</option>
+        <option value="Asia/Tokyo">Tokyo</option>
+        <option value="Australia/Sydney">Sydney</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Erweiterte Städte-Suche -->
+  <div class="advanced-city-search" style="margin-bottom:20px;text-align:center;">
+    <input type="text" id="citySearchInput" placeholder="Suche nach Stadt, Land, Insel oder Zeitzone..." 
+           style="width:80%;max-width:500px;padding:10px 15px;border-radius:20px;border:2px solid var(--accent);background:var(--card);color:var(--ink);">
+    <div id="citySearchResults" style="margin-top:10px;max-height:200px;overflow-y:auto;display:none;"></div>
+  </div>
+  
+  <div class="clock-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:20px;justify-items:center;">
+    <div class="clock-item">
+      <div class="clock-face" style="width:120px;height:120px;border-radius:50%;border:3px solid var(--accent);position:relative;background:var(--card);box-shadow:0 0 20px rgba(112,240,255,.3);">
+        <div class="clock-center" style="position:absolute;top:50%;left:50%;width:8px;height:8px;background:var(--accent);border-radius:50%;transform:translate(-50%,-50%);z-index:10;"></div>
+        <div class="hour-hand" id="hour1" style="position:absolute;top:50%;left:50%;width:4px;height:35px;background:var(--ink);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:8;"></div>
+        <div class="minute-hand" id="min1" style="position:absolute;top:50%;left:50%;width:3px;height:45px;background:var(--accent);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:9;"></div>
+        <div class="second-hand" id="sec1" style="position:absolute;top:50%;left:50%;width:2px;height:50px;background:#ff6b6b;border-radius:1px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:7;"></div>
+        <div class="clock-numbers">
+          <span class="number number-12" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">12</span>
+          <span class="number number-3" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">3</span>
+          <span class="number number-6" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">6</span>
+          <span class="number number-9" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">9</span>
+        </div>
+      </div>
+      <div class="clock-info" style="text-align:center;margin-top:10px;">
+        <div class="city-name" id="cityName1" style="font-weight:bold;color:var(--accent);margin-bottom:4px;">Berlin</div>
+        <div class="time-display" id="time1" style="font-size:18px;font-weight:bold;color:var(--ink);">--:--</div>
+        <div class="date-display" id="date1" style="font-size:12px;color:var(--muted);">--</div>
+      </div>
+    </div>
+    
+    <div class="clock-item">
+      <div class="clock-face" style="width:120px;height:120px;border-radius:50%;border:3px solid var(--accent);position:relative;background:var(--card);box-shadow:0 0 20px rgba(112,240,255,.3);">
+        <div class="clock-center" style="position:absolute;top:50%;left:50%;width:8px;height:8px;background:var(--accent);border-radius:50%;transform:translate(-50%,-50%);z-index:10;"></div>
+        <div class="hour-hand" id="hour2" style="position:absolute;top:50%;left:50%;width:4px;height:35px;background:var(--ink);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:8;"></div>
+        <div class="minute-hand" id="min2" style="position:absolute;top:50%;left:50%;width:3px;height:45px;background:var(--accent);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:9;"></div>
+        <div class="second-hand" id="sec2" style="position:absolute;top:50%;left:50%;width:2px;height:50px;background:#ff6b6b;border-radius:1px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:7;"></div>
+        <div class="clock-numbers">
+          <span class="number number-12" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">12</span>
+          <span class="number number-3" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">3</span>
+          <span class="number number-6" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">6</span>
+          <span class="number number-9" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">9</span>
+        </div>
+      </div>
+      <div class="clock-info" style="text-align:center;margin-top:10px;">
+        <div class="city-name" id="cityName2" style="font-weight:bold;color:var(--accent);margin-bottom:4px;">New York</div>
+        <div class="time-display" id="time2" style="font-size:18px;font-weight:bold;color:var(--ink);">--:--</div>
+        <div class="date-display" id="date2" style="font-size:12px;color:var(--muted);">--</div>
+      </div>
+    </div>
+    
+    <div class="clock-item">
+      <div class="clock-face" style="width:120px;height:120px;border-radius:50%;border:3px solid var(--accent);position:relative;background:var(--card);box-shadow:0 0 20px rgba(112,240,255,.3);">
+        <div class="clock-center" style="position:absolute;top:50%;left:50%;width:8px;height:8px;background:var(--accent);border-radius:50%;transform:translate(-50%,-50%);z-index:10;"></div>
+        <div class="hour-hand" id="hour3" style="position:absolute;top:50%;left:50%;width:4px;height:35px;background:var(--ink);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:8;"></div>
+        <div class="minute-hand" id="min3" style="position:absolute;top:50%;left:50%;width:3px;height:45px;background:var(--accent);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:9;"></div>
+        <div class="second-hand" id="sec3" style="position:absolute;top:50%;left:50%;width:2px;height:50px;background:#ff6b6b;border-radius:1px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:7;"></div>
+        <div class="clock-numbers">
+          <span class="number number-12" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">12</span>
+          <span class="number number-3" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">3</span>
+          <span class="number number-6" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">6</span>
+          <span class="number number-9" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">9</span>
+        </div>
+      </div>
+      <div class="clock-info" style="text-align:center;margin-top:10px;">
+        <div class="city-name" id="cityName3" style="font-weight:bold;color:var(--accent);margin-bottom:4px;">Tokyo</div>
+        <div class="time-display" id="time3" style="font-size:18px;font-weight:bold;color:var(--ink);">--:--</div>
+        <div class="date-display" id="date3" style="font-size:12px;color:var(--muted);">--</div>
+      </div>
+    </div>
+    
+    <div class="clock-item">
+      <div class="clock-face" style="width:120px;height:120px;border-radius:50%;border:3px solid var(--accent);position:relative;background:var(--card);box-shadow:0 0 20px rgba(112,240,255,.3);">
+        <div class="clock-center" style="position:absolute;top:50%;left:50%;width:8px;height:8px;background:var(--accent);border-radius:50%;transform:translate(-50%,-50%);z-index:10;"></div>
+        <div class="hour-hand" id="hour4" style="position:absolute;top:50%;left:50%;width:4px;height:35px;background:var(--ink);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:8;"></div>
+        <div class="minute-hand" id="min4" style="position:absolute;top:50%;left:50%;width:3px;height:45px;background:var(--accent);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:9;"></div>
+        <div class="second-hand" id="sec4" style="position:absolute;top:50%;left:50%;width:2px;height:50px;background:#ff6b6b;border-radius:1px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:7;"></div>
+        <div class="clock-numbers">
+          <span class="number number-12" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">12</span>
+          <span class="number number-3" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">3</span>
+          <span class="number number-6" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">6</span>
+          <span class="number number-9" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">9</span>
+        </div>
+      </div>
+      <div class="clock-info" style="text-align:center;margin-top:10px;">
+        <div class="city-name" id="cityName4" style="font-weight:bold;color:var(--accent);margin-bottom:4px;">Sydney</div>
+        <div class="time-display" id="time4" style="font-size:18px;font-weight:bold;color:var(--ink);">--:--</div>
+        <div class="date-display" id="date4" style="font-size:12px;color:var(--muted);">--</div>
+      </div>
+    </div>
+    
+    <div class="clock-item">
+      <div class="clock-face" style="width:120px;height:120px;border-radius:50%;border:3px solid var(--accent);position:relative;background:var(--card);box-shadow:0 0 20px rgba(112,240,255,.3);">
+        <div class="clock-center" style="position:absolute;top:50%;left:50%;width:8px;height:8px;background:var(--accent);border-radius:50%;transform:translate(-50%,-50%);z-index:10;"></div>
+        <div class="hour-hand" id="hour5" style="position:absolute;top:50%;left:50%;width:4px;height:35px;background:var(--ink);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:8;"></div>
+        <div class="minute-hand" id="min5" style="position:absolute;top:50%;left:50%;width:3px;height:45px;background:var(--accent);border-radius:2px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:9;"></div>
+        <div class="second-hand" id="sec5" style="position:absolute;top:50%;left:50%;width:2px;height:50px;background:#ff6b6b;border-radius:1px;transform-origin:bottom center;transform:translate(-50%,-100%) rotate(0deg);z-index:7;"></div>
+        <div class="clock-numbers">
+          <span class="number number-12" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">12</span>
+          <span class="number number-3" style="position:absolute;top:50%;right:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">3</span>
+          <span class="number number-6" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-weight:bold;color:var(--ink);">6</span>
+          <span class="number number-9" style="position:absolute;top:50%;left:8px;transform:translateY(-50%);font-weight:bold;color:var(--ink);">9</span>
+        </div>
+      </div>
+      <div class="clock-info" style="text-align:center;margin-top:10px;">
+        <div class="city-name" id="cityName5" style="font-weight:bold;color:var(--accent);margin-bottom:4px;">London</div>
+        <div class="time-display" id="time5" style="font-size:18px;font-weight:bold;color:var(--ink);">--:--</div>
+        <div class="date-display" id="date5" style="font-size:12px;color:var(--muted);">--</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="app" class="grid two" style="margin-top:12px;">
+  <section class="card">
+    <h2>1) Eingabe</h2>
+    <div class="row">
+      <div>
+        <label for="mode">Wie gibst du die Zeit ein?</label>
+        <select id="mode"><option value="partner">Partner-Zeitzone</option><option value="utc">UTC (Zulu)</option></select>
+      </div>
+      <div>
+        <label for="date">Datum</label>
+        <input id="date" type="date"/>
+      </div>
+      <div>
+        <label for="time">Uhrzeit (24h)</label>
+        <input id="time" type="time" step="60"/>
+      </div>
+    </div>
+
+    <div id="partnerRow" style="margin-top:10px;">
+      <label>Partner-Zeitzone (IANA-Name)</label>
+      <div class="row">
+        <input id="tzFilter" placeholder="Suche: Stadt, Land oder Kontinent (z.B. New York, USA, Europe, Asia)"/>
+        <select id="partnerTz" size="8"></select>
+      </div>
+      <p class="small">Tipp: Suche nach Stadt (z.B. "Berlin"), Land (z.B. "USA") oder Kontinent (z.B. "Europe"). Wähle eine Zone aus der Liste.</p>
+      <p id="tzCount" class="small" style="margin-top:4px;color:var(--accent);"></p>
+    </div>
+
+    <div class="divider"></div>
+    <button id="calcBtn">Zeit umrechnen</button>
+    <p id="error" class="small" style="display:none;margin-top:8px;"></p>
+  </section>
+
+  <section class="card">
+    <h2>2) Ergebnis</h2>
+    <div class="world" aria-hidden="true"></div>
+    <p class="small ghost">Sommer-/Winterzeit wird automatisch berücksichtigt.</p>
+    <div class="grid" style="margin-top:10px;">
+      <div class="row">
+        <div><label>Deine Zeitzone</label><input id="localTz" readonly class="mono"/></div>
+        <div><label>UTC (Zulu)</label><input id="utcOut" readonly class="mono"/></div>
+      </div>
+      <div class="row">
+        <div><label>Deine lokale Zeit</label><input id="localOut" readonly class="mono"/></div>
+        <div><label>Partner-Zeit</label><input id="partnerOut" readonly class="mono"/></div>
+      </div>
+      <div class="row">
+        <div><label>Countdown</label><input id="countdown" readonly class="mono"/></div>
+        <div><label>Einladungs-Text</label><input id="invite" readonly class="mono"/></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="row"><button id="alarmBtn">Alarm setzen</button><button id="copyBtn">Einladung kopieren</button></div>
+    <p id="alarmMsg" class="small"></p>
+  </section>
+</main>
+
+<!-- Neue erweiterte Funktionen -->
+<section class="card" style="margin-top:12px;">
+  <h2>🌍 Globale Verabredungs-Finder</h2>
+  <div class="grid two">
+    <div>
+      <h3>Team-Zeitzonen</h3>
+      <div id="teamZones">
+        <div class="row">
+          <input id="teamMember1" placeholder="Name (z.B. Max)" style="flex:2"/>
+          <select id="teamTz1" style="flex:3">
+            <option value="">Zeitzone wählen</option>
+          </select>
+          <button onclick="addTeamMember()" style="flex:1">+</button>
+        </div>
+      </div>
+      <button id="findFairSlotBtn" onclick="findFairMeetingSlot()" style="margin-top:10px;">Fairen Termin finden</button>
+      <p id="fairSlotResult" class="small" style="margin-top:8px;"></p>
+    </div>
+    
+    <div>
+      <h3>Ruhezeiten-Verhandler</h3>
+      <div class="row">
+        <div>
+          <label>Arbeitszeiten Start</label>
+          <input id="workStart" type="time" value="09:00"/>
+        </div>
+        <div>
+          <label>Arbeitszeiten Ende</label>
+          <input id="workEnd" type="time" value="17:00"/>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Schlafzeit Start</label>
+          <input id="sleepStart" type="time" value="22:00"/>
+        </div>
+        <div>
+          <label>Schlafzeit Ende</label>
+          <input id="sleepEnd" type="time" value="07:00"/>
+        </div>
+      </div>
+      <button onclick="suggestQuietTimeSlots()" style="margin-top:10px;">Ruhezeiten-Slots vorschlagen</button>
+      <p id="quietTimeResult" class="small" style="margin-top:8px;"></p>
+    </div>
+  </div>
+</section>
+
+<section class="card" style="margin-top:12px;">
+  <h2>🚀 Follow-the-Sun Task Router</h2>
+  <div class="grid two">
+    <div>
+      <h3>Team-Verteilung</h3>
+      <div id="taskTeam">
+        <div class="row">
+          <input id="taskName" placeholder="Aufgabe beschreiben"/>
+          <select id="taskPriority">
+            <option value="low">Niedrig</option>
+            <option value="medium" selected>Mittel</option>
+            <option value="high">Hoch</option>
+            <option value="urgent">Dringend</option>
+          </select>
+        </div>
+        <button onclick="distributeTask()" style="margin-top:10px;">Aufgabe verteilen</button>
+        <p id="taskDistributionResult" class="small" style="margin-top:8px;"></p>
+      </div>
+    </div>
+    
+    <div>
+      <h3>Jetlag-Coach</h3>
+      <div class="row">
+        <div>
+          <label>Reiseziel</label>
+          <select id="travelDestination">
+            <option value="">Zeitzone wählen</option>
+          </select>
+        </div>
+        <div>
+          <label>Reisedatum</label>
+          <input id="travelDate" type="date"/>
+        </div>
+      </div>
+      <button onclick="createJetlagPlan()" style="margin-top:10px;">Jetlag-Plan erstellen</button>
+      <p id="jetlagPlanResult" class="small" style="margin-top:8px;"></p>
+    </div>
+  </div>
+</section>
+
+<section class="card" style="margin-top:12px;">
+  <h2>📅 Kultur-/Feiertags-Harmonizer</h2>
+  <div class="grid two">
+    <div>
+      <h3>Feiertage & Kultur</h3>
+      <div class="row">
+        <div>
+          <label>Region 1</label>
+          <select id="cultureRegion1">
+            <option value="">Zeitzone wählen</option>
+          </select>
+        </div>
+        <div>
+          <label>Region 2</label>
+          <select id="cultureRegion2">
+            <option value="">Zeitzone wählen</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="checkCulturalConflicts()" style="margin-top:10px;">Kultur-Konflikte prüfen</button>
+      <p id="culturalResult" class="small" style="margin-top:8px;"></p>
+    </div>
+    
+    <div>
+      <h3>Daylight-Planner</h3>
+      <div class="row">
+        <div>
+          <label>Video-Call Optimierung</label>
+          <select id="videoOptimization">
+            <option value="golden">Goldene Stunde</option>
+            <option value="daylight">Tageslicht</option>
+            <option value="evening">Abendlicht</option>
+          </select>
+        </div>
+        <div>
+          <label>Datum</label>
+          <input id="daylightDate" type="date"/>
+        </div>
+      </div>
+      <button onclick="optimizeDaylight()" style="margin-top:10px;">Tageslicht optimieren</button>
+      <p id="daylightResult" class="small" style="margin-top:8px;"></p>
+    </div>
+  </div>
+</section>
+
+<section class="card" style="margin-top:12px;">
+  <h2>🌐 Erweiterte Zeitzonen-Features</h2>
+  <div class="grid two">
+    <div>
+      <h3>Bandbreiten-/Latenz-Map</h3>
+      <div class="row">
+        <div>
+          <label>Von</label>
+          <select id="latencyFrom">
+            <option value="">Zeitzone wählen</option>
+          </select>
+        </div>
+        <div>
+          <label>Nach</label>
+          <select id="latencyTo">
+            <option value="">Zeitzone wählen</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="checkInternetQuality()" style="margin-top:10px;">Internet-Qualität prüfen</button>
+      <p id="latencyResult" class="small" style="margin-top:8px;"></p>
+    </div>
+    
+    <div>
+      <h3>Zeitzonen-To-Do</h3>
+      <div class="row">
+        <div>
+          <label>To-Do</label>
+          <input id="todoText" placeholder="Was zu tun ist"/>
+        </div>
+        <div>
+          <label>Zeitzone</label>
+          <select id="todoTimezone">
+            <option value="">Zeitzone wählen</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Uhrzeit</label>
+          <input id="todoTime" type="time"/>
+        </div>
+        <div>
+          <label>Datum</label>
+          <input id="todoDate" type="date"/>
+        </div>
+      </div>
+      <button onclick="addTimezoneTodo()" style="margin-top:10px;">To-Do hinzufügen</button>
+      <p id="todoResult" class="small" style="margin-top:8px;"></p>
+    </div>
+  </div>
+</section>
+
+<section class="card" style="margin-top:12px;">
+  <h2>🎯 Meeting-Alias-Links & Fairness-Score</h2>
+  <div class="grid two">
+    <div>
+      <h3>Meeting-Link Generator</h3>
+      <div class="row">
+        <div>
+          <label>Meeting-Titel</label>
+          <input id="meetingTitle" placeholder="Meeting beschreiben"/>
+        </div>
+        <div>
+          <label>Dauer (Minuten)</label>
+          <input id="meetingDuration" type="number" value="60" min="15" max="480"/>
+        </div>
+      </div>
+      <button onclick="generateMeetingLink()" style="margin-top:10px;">Meeting-Link erstellen</button>
+      <p id="meetingLinkResult" class="small" style="margin-top:8px;"></p>
+    </div>
+    
+    <div>
+      <h3>Fairness-Score</h3>
+      <div id="fairnessInputs">
+        <div class="row">
+          <div>
+            <label>Teilnehmer 1</label>
+            <select id="fairnessTz1">
+              <option value="">Zeitzone wählen</option>
+            </select>
+          </div>
+          <div>
+            <label>Teilnehmer 2</label>
+            <select id="fairnessTz2">
+              <option value="">Zeitzone wählen</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <button onclick="calculateFairnessScore()" style="margin-top:10px;">Fairness bewerten</button>
+      <p id="fairnessResult" class="small" style="margin-top:8px;"></p>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="card" style="margin-top:12px;">
+  <h2>Anleitung (kinderleicht)</h2>
+  <ol>
+    <li>Wähle oben „<strong>Partner-Zeitzone</strong>" oder „<strong>UTC</strong>".</li>
+    <li>Gib Datum & Uhrzeit ein.</li>
+    <li>Suche/markiere die <strong>Partner-Zeitzone</strong> in der Liste.</li>
+    <li>Klicke <span class="kbd">Zeit umrechnen</span> – fertig! Danach kannst du <strong>Alarm setzen</strong>.</li>
+  </ol>
+</section>
+
+<section id="producer" class="card" style="margin-top:12px;">
+  <h2>Producer / Kontakt</h2>
+  <p><strong>Name:</strong> Raymond Demitrio Tel</p>
+  <p><strong>E-Mail:</strong> <a href="mailto:gentlyoverdone@outlook.com" rel="me">gentlyoverdone@outlook.com</a></p>
+  <p><strong>Internet (Text):</strong> <a href="https://tel1.jouwweb.nl/contact" target="_blank" rel="noopener">www.tel1.nl</a></p>
+  <p><strong>Ziel-URL:</strong> <a href="https://tel1.jouwweb.nl/contact" target="_blank" rel="noopener">https://tel1.jouwweb.nl/contact</a></p>
+  <p><strong>Weitere Seite:</strong> <a href="https://www.gentlyoverdone.com" target="_blank" rel="noopener">www.gentlyoverdone.com</a></p>
+  <footer class="small">© <span id="year"></span> Globale Meeting-Uhr • Ein-Datei-App • Design im Bond-Style • Alle Zeiten in UTC synchronisiert</footer>
+</section>
+
+<script>
+// ===== Timezone Source =====
+// We'll get ALL available timezones from the browser
+const FALLBACK_TZS = [
+  // UTC
+  "UTC",
+  
+  // USA - Major Cities and States
+  "America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles",
+  "America/Phoenix", "America/Anchorage", "America/Honolulu", "America/Indiana/Indianapolis",
+  "America/Detroit", "America/Kentucky/Louisville", "America/Kentucky/Monticello",
+  "America/Indiana/Vincennes", "America/Indiana/Winamac", "America/Indiana/Marengo",
+  "America/Indiana/Petersburg", "America/Indiana/Tell_City", "America/Indiana/Knox",
+  "America/Menominee", "America/North_Dakota/Center", "America/North_Dakota/New_Salem",
+  "America/North_Dakota/Beulah", "America/Boise", "America/Regina",
+  "America/Swift_Current", "America/Edmonton", "America/Vancouver", "America/Winnipeg",
+  "America/Toronto", "America/Montreal", "America/Halifax", "America/St_Johns",
+  "America/Whitehorse", "America/Dawson", "America/Yellowknife", "America/Iqaluit",
+  "America/Rankin_Inlet", "America/Resolute", "America/Thule", "America/Nuuk",
+  "America/Scoresbysund", "America/Danmarkshavn", "America/Pangnirtung",
+  
+  // Caribbean Islands and Central America
+  "America/Aruba", "America/Curacao", "America/Jamaica", "America/Nassau", "America/Barbados",
+  "America/Port_of_Spain", "America/Grenada", "America/St_Lucia", "America/Antigua",
+  "America/Dominica", "America/St_Kitts", "America/St_Vincent", "America/Port-au-Prince",
+  "America/Santo_Domingo", "America/Havana", "America/Puerto_Rico", "America/St_Thomas",
+  "America/Tortola", "America/Cayman", "America/Anguilla", "America/Montserrat",
+  "America/Cayenne", "America/Guyana", "America/Paramaribo", "America/El_Salvador",
+  "America/Tegucigalpa", "America/Managua", "America/Guatemala", "America/Belize",
+  
+  // South America
+  "America/Sao_Paulo", "America/Rio_de_Janeiro", "America/Buenos_Aires", "America/Santiago",
+  "America/Lima", "America/Bogota", "America/Caracas", "America/Quito", "America/La_Paz",
+  "America/Asuncion", "America/Montevideo", "America/Panama", "America/San_Jose",
+  "America/Guatemala", "America/El_Salvador", "America/Tegucigalpa", "America/Managua",
+  "America/Santo_Domingo", "America/Havana", "America/Jamaica", "America/Port-au-Prince",
+  "America/Port_of_Spain", "America/Barbados", "America/Grenada", "America/St_Lucia",
+  
+  // Europe - Major Cities
+  "Europe/London", "Europe/Paris", "Europe/Berlin", "Europe/Rome", "Europe/Madrid", 
+  "Europe/Amsterdam", "Europe/Brussels", "Europe/Vienna", "Europe/Zurich", "Europe/Stockholm",
+  "Europe/Oslo", "Europe/Copenhagen", "Europe/Helsinki", "Europe/Warsaw", "Europe/Prague",
+  "Europe/Budapest", "Europe/Bucharest", "Europe/Sofia", "Europe/Athens", "Europe/Istanbul",
+  "Europe/Moscow", "Europe/Kiev", "Europe/Minsk", "Europe/Riga", "Europe/Tallinn",
+  "Europe/Vilnius", "Europe/Dublin", "Europe/Lisbon", "Europe/Barcelona", "Europe/Belgrade",
+  "Europe/Zagreb", "Europe/Ljubljana", "Europe/Bratislava", "Europe/Luxembourg",
+  "Europe/Monaco", "Europe/Vatican", "Europe/San_Marino", "Europe/Andorra",
+  "Europe/Liechtenstein", "Europe/Malta", "Europe/Cyprus", "Europe/Gibraltar",
+  
+  // Asia - Major Cities
+  "Asia/Tokyo", "Asia/Shanghai", "Asia/Beijing", "Asia/Hong_Kong", "Asia/Singapore",
+  "Asia/Seoul", "Asia/Taipei", "Asia/Bangkok", "Asia/Manila", "Asia/Jakarta",
+  "Asia/Kuala_Lumpur", "Asia/Ho_Chi_Minh", "Asia/Hanoi", "Asia/Vientiane",
+  "Asia/Phnom_Penh", "Asia/Yangon", "Asia/Dhaka", "Asia/Kolkata", "Asia/Karachi",
+  "Asia/Dubai", "Asia/Abu_Dhabi", "Asia/Qatar", "Asia/Kuwait", "Asia/Riyadh",
+  "Asia/Jerusalem", "Asia/Amman", "Asia/Beirut", "Asia/Damascus", "Asia/Baghdad",
+  "Asia/Tehran", "Asia/Tashkent", "Asia/Almaty", "Asia/Novosibirsk", "Asia/Vladivostok",
+  "Asia/Yekaterinburg", "Asia/Omsk", "Asia/Krasnoyarsk", "Asia/Irkutsk", "Asia/Chita",
+  "Asia/Ulaanbaatar", "Asia/Ulan_Bator", "Asia/Pyongyang", "Asia/Urumqi", "Asia/Kashgar",
+  
+  // Africa - Major Cities
+  "Africa/Cairo", "Africa/Johannesburg", "Africa/Nairobi", "Africa/Lagos", "Africa/Casablanca",
+  "Africa/Algiers", "Africa/Tunis", "Africa/Tripoli", "Africa/Khartoum", "Africa/Addis_Ababa",
+  "Africa/Dar_es_Salaam", "Africa/Kampala", "Africa/Kinshasa", "Africa/Luanda",
+  "Africa/Windhoek", "Africa/Harare", "Africa/Lusaka", "Africa/Gaborone", "Africa/Maseru",
+  "Africa/Mbabane", "Africa/Maputo", "Africa/Lilongwe", "Africa/Blantyre", "Africa/Lusaka",
+  "Africa/Harare", "Africa/Bulawayo", "Africa/Gweru", "Africa/Mutare", "Africa/Chitungwiza",
+  
+  // Australia & Pacific
+  "Australia/Sydney", "Australia/Melbourne", "Australia/Brisbane", "Australia/Perth",
+  "Australia/Adelaide", "Australia/Darwin", "Australia/Hobart", "Australia/Canberra",
+  "Australia/Broken_Hill", "Australia/Lindeman", "Australia/Lord_Howe", "Australia/Eucla",
+  "Pacific/Auckland", "Pacific/Fiji", "Pacific/Guam", "Pacific/Honolulu", "Pacific/Samoa",
+  "Pacific/Pago_Pago", "Pacific/Tahiti", "Pacific/Noumea", "Pacific/Port_Moresby",
+  "Pacific/Guadalcanal", "Pacific/Chuuk", "Pacific/Pohnpei", "Pacific/Kosrae",
+  "Pacific/Kwajalein", "Pacific/Majuro", "Pacific/Tarawa", "Pacific/Enderbury",
+  
+  // Indian Ocean
+  "Indian/Mauritius", "Indian/Reunion", "Indian/Maldives", "Indian/Chagos",
+  "Indian/Cocos", "Indian/Christmas", "Indian/Comoro", "Indian/Mayotte",
+  "Indian/Antananarivo", "Indian/Mahe", "Indian/Kerguelen",
+  
+  // Atlantic
+  "Atlantic/Azores", "Atlantic/Canary", "Atlantic/Faroe", "Atlantic/Madeira",
+  "Atlantic/Reykjavik", "Atlantic/St_Helena", "Atlantic/Stanley", "Atlantic/South_Georgia",
+  "Atlantic/Bermuda", "Atlantic/Cape_Verde",
+  
+  // Arctic & Antarctica (only valid IANA timezones)
+  "Arctic/Longyearbyen", "Antarctica/McMurdo", "Antarctica/Davis", "Antarctica/Mawson",
+  "Antarctica/Palmer", "Antarctica/Rothera", "Antarctica/Syowa", "Antarctica/Troll",
+  "Antarctica/Vostok", "Antarctica/Concordia", "Antarctica/Amundsen_Scott",
+  
+  // Pacific Islands
+  "Pacific/Palau", "Pacific/Majuro", "Pacific/Kwajalein", "Pacific/Tarawa", "Pacific/Enderbury",
+  "Pacific/Nauru", "Pacific/Funafuti", "Pacific/Efate", "Pacific/Noumea", "Pacific/Apia",
+  "Pacific/Rarotonga", "Pacific/Niue", "Pacific/Fakaofo", "Pacific/Pitcairn", "Pacific/Easter",
+  "Pacific/Galapagos", "Pacific/Guadalcanal", "Pacific/Chuuk", "Pacific/Pohnpei", "Pacific/Kosrae",
+  "Pacific/Chatham", "Pacific/Auckland", "Pacific/Fiji", "Pacific/Guam", "Pacific/Honolulu",
+  "Pacific/Samoa", "Pacific/Pago_Pago", "Pacific/Tahiti", "Pacific/Port_Moresby",
+  
+  // Additional Caribbean and Atlantic Islands
+  "America/Aruba", "America/Curacao", "America/Jamaica", "America/Nassau", "America/Barbados",
+  "America/Port_of_Spain", "America/Grenada", "America/St_Lucia", "America/Antigua",
+  "America/Dominica", "America/St_Kitts", "America/St_Vincent", "America/Port-au-Prince",
+  "America/Santo_Domingo", "America/Havana", "America/Puerto_Rico", "America/St_Thomas",
+  "America/Tortola", "America/Cayman", "America/Anguilla", "America/Montserrat",
+  "America/Cayenne", "America/Guyana", "America/Paramaribo", "America/El_Salvador",
+  "America/Tegucigalpa", "America/Managua", "America/Guatemala", "America/Belize",
+  
+  // Additional African Islands
+  "Indian/Antananarivo", "Indian/Mahe", "Indian/Kerguelen", "Indian/Reunion",
+  "Indian/Mauritius", "Indian/Comoro", "Indian/Mayotte", "Indian/Maldives",
+  "Indian/Chagos", "Indian/Cocos", "Indian/Christmas",
+  
+  // Additional European Islands
+  "Europe/Malta", "Europe/Cyprus", "Europe/Faroe", "Europe/Azores",
+  "Europe/Madeira",
+  
+  // Additional Asian Islands
+  "Asia/Brunei", "Asia/Dili", "Asia/Macau", "Asia/Colombo", "Asia/Kathmandu",
+  "Asia/Thimphu", "Asia/Yangon", "Asia/Ho_Chi_Minh", "Asia/Bangkok", "Asia/Manila", "Asia/Jakarta", "Asia/Kuala_Lumpur",
+  "Asia/Singapore",
+  // Additional Pacific Islands
+  "Pacific/Palau", "Pacific/Majuro", "Pacific/Pohnpei", "Pacific/Chuuk",
+  "Pacific/Tarawa", "Pacific/Nauru", "Pacific/Funafuti", "Pacific/Efate",
+  "Pacific/Noumea", "Pacific/Fiji", "Pacific/Tongatapu", "Pacific/Apia",
+  "Pacific/Rarotonga", "Pacific/Niue", "Pacific/Fakaofo", "Pacific/Pitcairn",
+  "Pacific/Easter", "Pacific/Galapagos", "Pacific/Guadalcanal",
+  "Pacific/Port_Moresby", "Asia/Dili", "Asia/Brunei", "Asia/Kuala_Lumpur",
+  "Asia/Singapore", "Asia/Jakarta", "Asia/Manila", "Asia/Taipei",
+  "Asia/Tokyo", "Asia/Seoul", "Asia/Pyongyang", "Asia/Shanghai",
+  "Asia/Hong_Kong", "Asia/Macau", "Asia/Ulaanbaatar", "Asia/Almaty",
+  "Asia/Tashkent", "Asia/Bishkek", "Asia/Dushanbe",
+  "Asia/Kabul", "Asia/Karachi", "Asia/Kolkata", "Asia/Dhaka", "Asia/Kathmandu",
+  "Asia/Thimphu", "Asia/Colombo", "Indian/Maldives", "Indian/Mahe", "Indian/Antananarivo",
+  "Indian/Mauritius", "Indian/Comoro", "Indian/Mayotte", "Indian/Reunion", "Indian/Chagos",
+  "Indian/Cocos", "Indian/Christmas", "Indian/Kerguelen", "Antarctica/Syowa", "Antarctica/McMurdo",
+  "Antarctica/Davis",
+  
+  "Antarctica/Palmer", "Antarctica/Rothera",
+  
+
+];
+
+// Cache for optimized timezone list
+let cachedTimezones = null;
+
+// Timezone validation system
+function isValidTimeZone(tz) {
+  if (!tz || typeof tz !== 'string') return false;
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: tz }).format();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Internationalization system
+let currentLanguage = 'de'; // Default: German
+
+const translations = {
+  de: {
+    // Header
+    'app_title': 'Globale Meeting-Uhr',
+    'app_subtitle': 'UTC · Lokal · Partner',
+    'current_times_worldwide': '🕐 Aktuelle Zeiten weltweit',
+    
+    // Main sections
+    'input_section': '1) Eingabe',
+    'result_section': '2) Ergebnis',
+    'advanced_features': '3) Erweiterte Features',
+    
+    // Input fields
+    'how_enter_time': 'Wie gibst du die Zeit ein?',
+    'partner_timezone': 'Partner-Zeitzone',
+    'utc_time': 'UTC (Zulu)',
+    'date': 'Datum',
+    'time_24h': 'Uhrzeit (24h)',
+    
+    // Buttons
+    'convert_time': 'Zeit umrechnen',
+    'set_alarm': 'Alarm setzen',
+    'copy_invitation': 'Einladung kopieren',
+    'donate': 'Spenden',
+    
+    // Messages
+    'error_name_timezone': 'Bitte Name und Zeitzone eingeben',
+    'error_min_2_members': 'Bitte mindestens 2 Team-Mitglieder hinzufügen',
+    'search_placeholder': 'Suche nach Stadt, Land, Insel oder Zeitzone...'
+  },
+  
+  en: {
+    // Header
+    'app_title': 'Global Meeting Clock',
+    'app_subtitle': 'UTC · Local · Partner',
+    'current_times_worldwide': '🕐 Current Times Worldwide',
+    
+    // Main sections
+    'input_section': '1) Input',
+    'result_section': '2) Result',
+    'advanced_features': '3) Advanced Features',
+    
+    // Input fields
+    'how_enter_time': 'How do you enter the time?',
+    'partner_timezone': 'Partner Timezone',
+    'utc_time': 'UTC (Zulu)',
+    'date': 'Date',
+    'time_24h': 'Time (24h)',
+    
+    // Buttons
+    'convert_time': 'Convert Time',
+    'set_alarm': 'Set Alarm',
+    'copy_invitation': 'Copy Invitation',
+    'donate': 'Donate',
+    
+    // Messages
+    'error_name_timezone': 'Please enter name and timezone',
+    'error_min_2_members': 'Please add at least 2 team members',
+    'search_placeholder': 'Search for city, country, island or timezone...'
+  },
+  
+  nl: {
+    // Header
+    'app_title': 'Globale Meeting-Klok',
+    'app_subtitle': 'UTC · Lokaal · Partner',
+    'current_times_worldwide': '🕐 Huidige Tijden Wereldwijd',
+    
+    // Main sections
+    'input_section': '1) Invoer',
+    'result_section': '2) Resultaat',
+    'advanced_features': '3) Geavanceerde Functies',
+    
+    // Input fields
+    'how_enter_time': 'Hoe voer je de tijd in?',
+    'partner_timezone': 'Partner Tijdzone',
+    'utc_time': 'UTC (Zulu)',
+    'date': 'Datum',
+    'time_24h': 'Tijd (24u)',
+    
+    // Buttons
+    'convert_time': 'Tijd Omrekenen',
+    'set_alarm': 'Alarm Instellen',
+    'copy_invitation': 'Uitnodiging Kopiëren',
+    'donate': 'Doneren',
+    
+    // Messages
+    'error_name_timezone': 'Voer naam en tijdzone in',
+    'error_min_2_members': 'Voeg minstens 2 teamleden toe',
+    'search_placeholder': 'Zoek naar stad, land, eiland of tijdzone...'
+  }
+};
+
+// Translation function
+function t(key) {
+  return translations[currentLanguage][key] || translations['de'][key] || key;
+}
+
+// Change language function
+function changeLanguage(lang) {
+  if (translations[lang]) {
+    currentLanguage = lang;
+    updateUILanguage();
+    localStorage.setItem('weltzeituhr_language', lang);
+  }
+}
+
+// Update UI with current language
+function updateUILanguage() {
+  // Update elements with data-translate attribute
+  document.querySelectorAll('[data-translate]').forEach(element => {
+    const key = element.getAttribute('data-translate');
+    if (translations[currentLanguage][key]) {
+      if (element.tagName === 'INPUT' && element.type === 'text') {
+        element.placeholder = translations[currentLanguage][key];
+      } else {
+        element.textContent = translations[currentLanguage][key];
+      }
+    }
+  });
+}
+
+// Reset timezone cache (useful for testing validation)
+function resetTimezoneCache() {
+  cachedTimezones = null;
+  console.log('Timezone cache reset - will revalidate on next getAllTimeZones() call');
+}
+
+function getAllTimeZones(){
+  // Return cached result if available
+  if (cachedTimezones) {
+    return cachedTimezones;
+  }
+  
+  let browserList = [];
+  if (typeof Intl !== 'undefined' && typeof Intl.supportedValuesOf === 'function') {
+    try {
+      browserList = Intl.supportedValuesOf('timeZone') || [];
+    } catch(e){
+      console.log('Error getting browser timezones:', e);
+    }
+  }
+  
+  // Combine browser and fallback timezones, remove duplicates
+  const base = [...new Set([...browserList, ...FALLBACK_TZS])];
+  
+  // Filter only valid timezones and cache the result
+  cachedTimezones = base.filter(isValidTimeZone).sort();
+  
+  console.log(`Timezone validation: ${base.length} total, ${cachedTimezones.length} valid`);
+  return cachedTimezones;
+}
+
+// ===== Helpers =====
+function getLocalTimeZone(){ return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC' }
+
+// Inline notification system
+function showInlineMessage(targetElementId, message, type = 'error', duration = 3000) {
+  const targetElement = document.getElementById(targetElementId);
+  if (!targetElement) return;
+  
+  // Remove existing message
+  const existingMsg = targetElement.parentNode.querySelector('.inline-message');
+  if (existingMsg) existingMsg.remove();
+  
+  // Create new message
+  const msgElement = document.createElement('div');
+  msgElement.className = `inline-message status ${type}`;
+  msgElement.textContent = message;
+  msgElement.style.cssText = 'margin-top:8px;padding:8px 12px;border-radius:8px;font-size:12px;animation:fadeIn 0.3s ease;';
+  
+  // Insert after target element
+  targetElement.parentNode.insertBefore(msgElement, targetElement.nextSibling);
+  
+  // Auto-remove after duration
+  if (duration > 0) {
+    setTimeout(() => {
+      if (msgElement.parentNode) {
+        msgElement.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => msgElement.remove(), 300);
+      }
+    }, duration);
+  }
+}
+
+// Add fade animations to CSS if not already present
+if (!document.querySelector('#fade-animations')) {
+  const style = document.createElement('style');
+  style.id = 'fade-animations';
+  style.textContent = `
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+  `;
+  document.head.appendChild(style);
+}
+
+function fmtShort(date, timeZone){
+  if (!isValidTimeZone(timeZone)) {
+    console.warn(`Invalid timezone in fmtShort: ${timeZone}`);
+    showInlineMessage('partnerTz', `Ungültige Zeitzone: ${timeZone}`, 'warning');
+    return date.toLocaleString('de-DE', {
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit',
+      hour12:false
+    });
+  }
+  
+  try {
+    return new Intl.DateTimeFormat('de-DE',{
+      timeZone,
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit',
+      hour12:false
+    }).format(date);
+  } catch(e) {
+    console.warn(`Error formatting date for timezone ${timeZone}:`, e);
+    showInlineMessage('partnerTz', `Fehler bei Zeitzone: ${timeZone}`, 'error');
+    return date.toLocaleString('de-DE', {
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit',
+      hour12:false
+    });
+  }
+}
+
+function parseTimeZoneOffsetMinutes(timeZone, date){
+  try{
+    const dtf = new Intl.DateTimeFormat('en-US',{
+      timeZone,
+      timeZoneName:'shortOffset',
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit',
+      hour12:false
+    });
+    const parts = dtf.formatToParts(date);
+    const tzPart = parts.find(p => p.type === 'timeZoneName');
+    if(tzPart){
+      const m = tzPart.value.match(/GMT([+-]\d{1,2})(?::?(\d{2}))?/);
+      if(m){
+        const sign = m[1].startsWith('-') ? -1 : 1;
+        const h = Math.abs(parseInt(m[1], 10));
+        const mm = m[2] ? parseInt(m[2], 10) : 0;
+        return sign * (h * 60 + mm);
+      }
+    }
+  } catch(e){}
+  
+  // Fallback method
+  try {
+    const dtf2 = new Intl.DateTimeFormat('en-US',{
+      timeZone,
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit',
+      hour:'2-digit',
+      minute:'2-digit',
+      hour12:false
+    });
+    const parts2 = dtf2.formatToParts(date);
+    const take = t => Number(parts2.find(p => p.type === t).value);
+    const y = take('year'), mo = take('month'), d = take('day'), h = take('hour'), mi = take('minute');
+    const asUTC = Date.UTC(y, mo-1, d, h, mi);
+    return (asUTC - date.getTime()) / 60000;
+  } catch(e) {
+    return 0; // Default to UTC if all else fails
+  }
+}
+
+function makeUTCFromZonedLocal(y, mo, d, hh, mi, timeZone){
+  try {
+    let guess = Date.UTC(y, mo-1, d, hh, mi);
+    let off = parseTimeZoneOffsetMinutes(timeZone, new Date(guess));
+    let t = guess - off * 60000;
+    
+    const ok = (ms) => {
+      try {
+        const parts = new Intl.DateTimeFormat('en-US',{
+          timeZone,
+          year:'numeric',
+          month:'2-digit',
+          day:'2-digit',
+          hour:'2-digit',
+          minute:'2-digit',
+          hour12:false
+        }).formatToParts(new Date(ms));
+        const val = (n) => Number(parts.find(p => p.type === n).value);
+        return (val('year') === y && val('month') === mo && val('day') === d && val('hour') === hh && val('minute') === mi);
+      } catch(e) {
+        return false;
+      }
+    };
+    
+    if(ok(t)) return t;
+    
+    // Try to find the correct time with small adjustments
+    for(const delta of [-60, +60, -120, +120]){
+      const tt = t + delta * 60000;
+      if(ok(tt)) return tt;
+    }
+    return t;
+  } catch(e) {
+    // If all else fails, return the original UTC time
+    return Date.UTC(y, mo-1, d, hh, mi);
+  }
+}
+
+// ===== App State & Elements =====
+const modeEl = document.getElementById('mode');
+const dateEl = document.getElementById('date');
+const timeEl = document.getElementById('time');
+const partnerRow = document.getElementById('partnerRow');
+const tzFilter = document.getElementById('tzFilter');
+const partnerTzSel = document.getElementById('partnerTz');
+const localTzEl = document.getElementById('localTz');
+const utcOutEl = document.getElementById('utcOut');
+const localOutEl = document.getElementById('localOut');
+const partnerOutEl = document.getElementById('partnerOut');
+const countdownEl = document.getElementById('countdown');
+const inviteEl = document.getElementById('invite');
+const errorEl = document.getElementById('error');
+const alarmBtn = document.getElementById('alarmBtn');
+const alarmMsg = document.getElementById('alarmMsg');
+const calcBtn = document.getElementById('calcBtn');
+const copyBtn = document.getElementById('copyBtn');
+const tzCountEl = document.getElementById('tzCount');
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let localTZ = getLocalTimeZone();
+localTzEl.value = localTZ;
+let eventUTCms = null;
+let timer = null;
+let alarmTimer = null;
+let ALL_TZS = getAllTimeZones().sort();
+
+// Team management
+let teamMembers = [];
+let timezoneTodos = [];
+
+// Populate all timezone dropdowns
+function populateAllTimezones() {
+  const timezoneSelects = [
+    'teamTz1', 'travelDestination', 'cultureRegion1', 'cultureRegion2',
+    'latencyFrom', 'latencyTo', 'todoTimezone', 'fairnessTz1', 'fairnessTz2'
+  ];
+  
+  timezoneSelects.forEach(selectId => {
+    const select = document.getElementById(selectId);
+    if (select) {
+      select.innerHTML = '<option value="">Zeitzone wählen</option>';
+      ALL_TZS.forEach(tz => {
+        const opt = document.createElement('option');
+        opt.value = tz;
+        opt.textContent = getTimezoneDisplayName(tz);
+        select.appendChild(opt);
+      });
+    }
+  });
+  
+
+}
+
+// ===== Advanced Features =====
+
+// Team member management
+function addTeamMember() {
+  const memberName = document.getElementById('teamMember1').value.trim();
+  const memberTz = document.getElementById('teamTz1').value;
+  
+  if (!memberName || !memberTz) {
+    showInlineMessage('teamTz1', t('error_name_timezone'), 'error');
+    return;
+  }
+  
+  teamMembers.push({ name: memberName, timezone: memberTz });
+  updateTeamDisplay();
+  
+  // Clear inputs
+  document.getElementById('teamMember1').value = '';
+  document.getElementById('teamTz1').value = '';
+}
+
+function updateTeamDisplay() {
+  const teamZones = document.getElementById('teamZones');
+  // Keep the first row for adding new members
+  const firstRow = teamZones.querySelector('.row');
+  teamZones.innerHTML = '';
+  teamZones.appendChild(firstRow);
+  
+  teamMembers.forEach((member, index) => {
+    const memberRow = document.createElement('div');
+    memberRow.className = 'row';
+    memberRow.style.marginTop = '8px';
+    memberRow.innerHTML = `
+      <span style="flex:2;color:var(--accent);">${member.name}</span>
+      <span style="flex:3;color:var(--muted);">${getTimezoneDisplayName(member.timezone)}</span>
+      <button onclick="removeTeamMember(${index})" style="flex:1;background:var(--bad);">-</button>
+    `;
+    teamZones.appendChild(memberRow);
+  });
+}
+
+function removeTeamMember(index) {
+  teamMembers.splice(index, 1);
+  updateTeamDisplay();
+}
+
+// Find fair meeting slot
+function findFairMeetingSlot() {
+  if (teamMembers.length < 2) {
+    showInlineMessage('findFairSlotBtn', t('error_min_2_members'), 'warning');
+    return;
+  }
+  
+  const resultEl = document.getElementById('fairSlotResult');
+  resultEl.innerHTML = '<span class="status warning">Suche fairen Termin...</span>';
+  
+  // Simple algorithm: find time when most people are in working hours
+  const workingHours = { start: 9, end: 17 }; // 9 AM to 5 PM
+  const date = new Date();
+  const suggestions = [];
+  
+  // Check next 7 days
+  for (let day = 0; day < 7; day++) {
+    const checkDate = new Date(date.getTime() + day * 24 * 60 * 60 * 1000);
+    
+    // Check different times during the day
+    for (let hour = workingHours.start; hour <= workingHours.end - 1; hour++) {
+      const utcTime = Date.UTC(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate(), hour, 0);
+      let score = 0;
+      let totalMembers = teamMembers.length;
+      
+      teamMembers.forEach(member => {
+        const localTime = new Date(utcTime);
+        const localHour = new Intl.DateTimeFormat('en-US', {
+          timeZone: member.timezone,
+          hour: 'numeric',
+          hour12: false
+        }).format(localTime);
+        
+        const localHourNum = parseInt(localHour);
+        if (localHourNum >= workingHours.start && localHourNum <= workingHours.end) {
+          score++;
+        }
+      });
+      
+      const fairness = score / totalMembers;
+      if (fairness >= 0.8) { // 80% of team can attend
+        suggestions.push({
+          date: checkDate,
+          hour: hour,
+          score: fairness,
+          utcTime: utcTime
+        });
+      }
+    }
+  }
+  
+  // Sort by fairness score
+  suggestions.sort((a, b) => b.score - a.score);
+  
+  if (suggestions.length > 0) {
+    const best = suggestions[0];
+    const bestDate = new Date(best.utcTime);
+    const localTime = fmtShort(bestDate, localTZ);
+    
+    resultEl.innerHTML = `
+      <span class="status success">Bester Termin gefunden!</span><br>
+      <strong>Datum:</strong> ${bestDate.toLocaleDateString('de-DE')}<br>
+      <strong>Uhrzeit:</strong> ${best.hour}:00 UTC<br>
+      <strong>Deine Zeit:</strong> ${localTime}<br>
+      <strong>Fairness:</strong> ${Math.round(best.score * 100)}%
+    `;
+  } else {
+    resultEl.innerHTML = '<span class="status error">Kein fairer Termin gefunden. Erweitere den Zeitraum.</span>';
+  }
+}
+
+// Quiet time negotiator
+function suggestQuietTimeSlots() {
+  const workStart = document.getElementById('workStart').value;
+  const workEnd = document.getElementById('workEnd').value;
+  const sleepStart = document.getElementById('sleepStart').value;
+  const sleepEnd = document.getElementById('sleepEnd').value;
+  
+  const resultEl = document.getElementById('quietTimeResult');
+  resultEl.innerHTML = '<span class="status warning">Analysiere Ruhezeiten...</span>';
+  
+  // Convert time strings to hours
+  const workStartHour = parseInt(workStart.split(':')[0]);
+  const workEndHour = parseInt(workEnd.split(':')[0]);
+  const sleepStartHour = parseInt(sleepStart.split(':')[0]);
+  const sleepEndHour = parseInt(sleepEnd.split(':')[0]);
+  
+  // Find quiet time slots
+  const quietSlots = [];
+  
+  // Morning slot (after sleep, before work)
+  if (sleepEndHour < workStartHour) {
+    quietSlots.push({
+      time: `${sleepEndHour + 1}:00 - ${workStartHour}:00`,
+      description: 'Morgen (nach dem Aufstehen, vor der Arbeit)'
+    });
+  }
+  
+  // Lunch break
+  quietSlots.push({
+    time: '12:00 - 13:00',
+    description: 'Mittagspause'
+  });
+  
+  // Evening slot (after work, before sleep)
+  if (workEndHour < sleepStartHour) {
+    quietSlots.push({
+      time: `${workEndHour + 1}:00 - ${sleepStartHour}:00`,
+      description: 'Abend (nach der Arbeit, vor dem Schlafen)'
+    });
+  }
+  
+  if (quietSlots.length > 0) {
+    let html = '<span class="status success">Ruhezeiten-Slots gefunden:</span><br>';
+    quietSlots.forEach(slot => {
+      html += `<strong>${slot.time}:</strong> ${slot.description}<br>`;
+    });
+    resultEl.innerHTML = html;
+  } else {
+    resultEl.innerHTML = '<span class="status error">Keine Ruhezeiten-Slots gefunden. Überprüfe deine Einstellungen.</span>';
+  }
+}
+
+// Task distribution
+function distributeTask() {
+  const taskName = document.getElementById('taskName').value.trim();
+  const taskPriority = document.getElementById('taskPriority').value;
+  
+  if (!taskName) {
+    showInlineMessage('taskInput', 'Bitte Aufgabe beschreiben', 'error');
+    return;
+  }
+  
+  if (teamMembers.length === 0) {
+    showInlineMessage('taskInput', 'Bitte Team-Mitglieder hinzufügen', 'error');
+    return;
+  }
+  
+  const resultEl = document.getElementById('taskDistributionResult');
+  resultEl.innerHTML = '<span class="status warning">Verteile Aufgabe...</span>';
+  
+  // Simple round-robin distribution based on priority
+  const now = new Date();
+  let bestMember = null;
+  let bestScore = -1;
+  
+  teamMembers.forEach(member => {
+    const localTime = new Intl.DateTimeFormat('en-US', {
+      timeZone: member.timezone,
+      hour: 'numeric',
+      hour12: false
+    }).format(now);
+    
+    const localHour = parseInt(localTime);
+    let score = 0;
+    
+    // Working hours bonus
+    if (localHour >= 9 && localHour <= 17) {
+      score += 10;
+    }
+    
+    // Priority-based scoring
+    switch (taskPriority) {
+      case 'urgent':
+        score += 20;
+        break;
+      case 'high':
+        score += 15;
+        break;
+      case 'medium':
+        score += 10;
+        break;
+      case 'low':
+        score += 5;
+        break;
+    }
+    
+    // Random factor for fairness
+    score += Math.random() * 5;
+    
+    if (score > bestScore) {
+      bestScore = score;
+      bestMember = member;
+    }
+  });
+  
+  if (bestMember) {
+    const localTime = fmtShort(now, bestMember.timezone);
+    resultEl.innerHTML = `
+      <span class="status success">Aufgabe zugewiesen!</span><br>
+      <strong>Aufgabe:</strong> ${taskName}<br>
+      <strong>Zugewiesen an:</strong> ${bestMember.name}<br>
+      <strong>Zeitzone:</strong> ${getTimezoneDisplayName(bestMember.timezone)}<br>
+      <strong>Lokale Zeit:</strong> ${localTime}<br>
+      <strong>Priorität:</strong> ${taskPriority}
+    `;
+  }
+}
+
+// Jetlag coach
+function createJetlagPlan() {
+  const destination = document.getElementById('travelDestination').value;
+  const travelDate = document.getElementById('travelDate').value;
+  
+  if (!destination || !travelDate) {
+    showInlineMessage('travelDestination', 'Bitte Reiseziel und Datum eingeben', 'error');
+    return;
+  }
+  
+  const resultEl = document.getElementById('jetlagPlanResult');
+  resultEl.innerHTML = '<span class="status warning">Erstelle Jetlag-Plan...</span>';
+  
+  // Calculate time difference
+  const now = new Date();
+  const travel = new Date(travelDate);
+  const daysUntilTravel = Math.ceil((travel - now) / (1000 * 60 * 60 * 24));
+  
+  // Get timezone offset
+  const localOffset = parseTimeZoneOffsetMinutes(localTZ, now);
+  const destOffset = parseTimeZoneOffsetMinutes(destination, now);
+  const timeDiff = Math.abs(destOffset - localOffset);
+  
+  let plan = '';
+  
+  if (daysUntilTravel >= 7) {
+    plan = `
+      <span class="status success">7-Tage Jetlag-Plan erstellt!</span><br>
+      <strong>Zeitversatz:</strong> ${Math.round(timeDiff / 60)} Stunden<br>
+      <strong>Plan:</strong><br>
+      • ${daysUntilTravel - 6}: 15 Min. früher/später schlafen<br>
+      • ${daysUntilTravel - 5}: 30 Min. früher/später schlafen<br>
+      • ${daysUntilTravel - 4}: 45 Min. früher/später schlafen<br>
+      • ${daysUntilTravel - 3}: 1 Stunde früher/später schlafen<br>
+      • ${daysUntilTravel - 2}: 1.5 Stunden früher/später schlafen<br>
+      • ${daysUntilTravel - 1}: 2 Stunden früher/später schlafen<br>
+      • ${daysUntilTravel}: Normale Schlafenszeit im Zielort
+    `;
+  } else if (daysUntilTravel >= 3) {
+    plan = `
+      <span class="status warning">3-Tage Express-Plan erstellt!</span><br>
+      <strong>Zeitversatz:</strong> ${Math.round(timeDiff / 60)} Stunden<br>
+      <strong>Plan:</strong><br>
+      • ${daysUntilTravel - 2}: 1 Stunde früher/später schlafen<br>
+      • ${daysUntilTravel - 1}: 2 Stunden früher/später schlafen<br>
+      • ${daysUntilTravel}: Normale Schlafenszeit im Zielort
+    `;
+  } else {
+    plan = `
+      <span class="status error">Zu wenig Zeit für Jetlag-Anpassung!</span><br>
+      <strong>Empfehlung:</strong> Direkt im Zielort anpassen
+    `;
+  }
+  
+  resultEl.innerHTML = plan;
+}
+
+// Cultural conflicts checker
+function checkCulturalConflicts() {
+  const region1 = document.getElementById('cultureRegion1').value;
+  const region2 = document.getElementById('cultureRegion2').value;
+  
+  if (!region1 || !region2) {
+    alert('Bitte beide Regionen auswählen');
+    return;
+  }
+  
+  const resultEl = document.getElementById('culturalResult');
+  resultEl.innerHTML = '<span class="status warning">Prüfe Kultur-Konflikte...</span>';
+  
+  // Simple cultural conflict detection
+  const conflicts = [];
+  
+  // Check for major timezone differences
+  const now = new Date();
+  const offset1 = parseTimeZoneOffsetMinutes(region1, now);
+  const offset2 = parseTimeZoneOffsetMinutes(region2, now);
+  const timeDiff = Math.abs(offset1 - offset2);
+  
+  if (timeDiff > 480) { // More than 8 hours
+    conflicts.push('Große Zeitverschiebung - schwierig für regelmäßige Meetings');
+  }
+  
+  // Check for weekend conflicts (simplified)
+  const weekendConflicts = [];
+  if (region1.includes('Asia') && region2.includes('America')) {
+    weekendConflicts.push('Asien: Samstag ist oft Arbeitstag');
+  }
+  if (region1.includes('Middle_East') || region2.includes('Middle_East')) {
+    weekendConflicts.push('Naher Osten: Freitag-Samstag Wochenende');
+  }
+  
+  if (conflicts.length > 0 || weekendConflicts.length > 0) {
+    let html = '<span class="status warning">Kultur-Konflikte gefunden:</span><br>';
+    conflicts.forEach(conflict => {
+      html += `⚠️ ${conflict}<br>`;
+    });
+    weekendConflicts.forEach(conflict => {
+      html += `📅 ${conflict}<br>`;
+    });
+    resultEl.innerHTML = html;
+  } else {
+    resultEl.innerHTML = '<span class="status success">Keine größeren Kultur-Konflikte gefunden!</span>';
+  }
+}
+
+// Daylight optimization
+function optimizeDaylight() {
+  const optimization = document.getElementById('videoOptimization').value;
+  const date = document.getElementById('daylightDate').value;
+  
+  if (!date) {
+    alert('Bitte Datum eingeben');
+    return;
+  }
+  
+  const resultEl = document.getElementById('daylightResult');
+  resultEl.innerHTML = '<span class="status warning">Optimiere Tageslicht...</span>';
+  
+  // Simple daylight optimization
+  let bestTime = '';
+  let description = '';
+  
+  switch (optimization) {
+    case 'golden':
+      bestTime = '17:00 - 19:00';
+      description = 'Goldene Stunde - weiches, warmes Licht für Video-Calls';
+      break;
+    case 'daylight':
+      bestTime = '10:00 - 16:00';
+      description = 'Helles Tageslicht - beste Sichtbarkeit';
+      break;
+    case 'evening':
+      bestTime = '19:00 - 21:00';
+      description = 'Abendlicht - angenehme Atmosphäre';
+      break;
+  }
+  
+  resultEl.innerHTML = `
+    <span class="status success">Tageslicht optimiert!</span><br>
+    <strong>Beste Zeit:</strong> ${bestTime}<br>
+    <strong>Grund:</strong> ${description}<br>
+    <strong>Datum:</strong> ${new Date(date).toLocaleDateString('de-DE')}
+  `;
+}
+
+// Internet quality checker
+function checkInternetQuality() {
+  const from = document.getElementById('latencyFrom').value;
+  const to = document.getElementById('latencyTo').value;
+  
+  if (!from || !to) {
+    alert('Bitte beide Zeitzonen auswählen');
+    return;
+  }
+  
+  const resultEl = document.getElementById('latencyResult');
+  resultEl.innerHTML = '<span class="status warning">Prüfe Internet-Qualität...</span>';
+  
+  // Simulate internet quality based on timezone distance
+  const now = new Date();
+  const offset1 = parseTimeZoneOffsetMinutes(from, now);
+  const offset2 = parseTimeZoneOffsetMinutes(to, now);
+  const timeDiff = Math.abs(offset1 - offset2);
+  
+  let quality = '';
+  let latency = '';
+  let recommendation = '';
+  
+  if (timeDiff <= 60) { // Same or adjacent timezone
+    quality = 'Sehr gut';
+    latency = '20-50ms';
+    recommendation = 'Ideal für Video-Calls und Echtzeit-Kollaboration';
+  } else if (timeDiff <= 180) { // 1-3 hours difference
+    quality = 'Gut';
+    latency = '50-100ms';
+    recommendation = 'Gut für Video-Calls, gelegentliche Lags möglich';
+  } else if (timeDiff <= 480) { // 3-8 hours difference
+    quality = 'Mittel';
+    latency = '100-200ms';
+    recommendation = 'Video-Calls möglich, aber mit Einschränkungen';
+  } else { // More than 8 hours
+    quality = 'Eingeschränkt';
+    latency = '200ms+';
+    recommendation = 'Audio-Calls bevorzugen, Video nur bei guter Verbindung';
+  }
+  
+  resultEl.innerHTML = `
+    <span class="status success">Internet-Qualität analysiert!</span><br>
+    <strong>Qualität:</strong> ${quality}<br>
+    <strong>Erwartete Latenz:</strong> ${latency}<br>
+    <strong>Empfehlung:</strong> ${recommendation}
+  `;
+}
+
+// Timezone todo management
+function addTimezoneTodo() {
+  const todoText = document.getElementById('todoText').value.trim();
+  const todoTimezone = document.getElementById('todoTimezone').value;
+  const todoTime = document.getElementById('todoTime').value;
+  const todoDate = document.getElementById('todoDate').value;
+  
+  if (!todoText || !todoTimezone || !todoTime || !todoDate) {
+    alert('Bitte alle Felder ausfüllen');
+    return;
+  }
+  
+  const todo = {
+    text: todoText,
+    timezone: todoTimezone,
+    time: todoTime,
+    date: todoDate,
+    id: Date.now()
+  };
+  
+  timezoneTodos.push(todo);
+  updateTodoDisplay();
+  
+  // Clear inputs
+  document.getElementById('todoText').value = '';
+  document.getElementById('todoTimezone').value = '';
+  document.getElementById('todoTime').value = '';
+  document.getElementById('todoDate').value = '';
+  
+  const resultEl = document.getElementById('todoResult');
+  resultEl.innerHTML = '<span class="status success">To-Do hinzugefügt!</span>';
+}
+
+function updateTodoDisplay() {
+  // This would typically update a todo list display
+  // For now, we just store them in the array
+  console.log('Current todos:', timezoneTodos);
+}
+
+// Meeting link generator
+function generateMeetingLink() {
+  const title = document.getElementById('meetingTitle').value.trim();
+  const duration = document.getElementById('meetingDuration').value;
+  
+  if (!title) {
+    showInlineMessage('meetingTitle', 'Bitte Meeting-Titel eingeben', 'error');
+    return;
+  }
+  
+  const resultEl = document.getElementById('meetingLinkResult');
+  resultEl.innerHTML = '<span class="status warning">Erstelle Meeting-Link...</span>';
+  
+  // Generate a simple meeting link
+  const meetingId = Math.random().toString(36).substr(2, 9);
+  const meetingLink = `https://meet.example.com/${meetingId}`;
+  
+  const now = new Date();
+  const localTime = fmtShort(now, localTZ);
+  const utcTime = fmtShort(now, 'UTC');
+  
+  resultEl.innerHTML = `
+    <span class="status success">Meeting-Link erstellt!</span><br>
+    <strong>Titel:</strong> ${title}<br>
+    <strong>Dauer:</strong> ${duration} Minuten<br>
+    <strong>Link:</strong> <a href="${meetingLink}" target="_blank">${meetingLink}</a><br>
+    <strong>Erstellt:</strong> ${localTime} (${utcTime} UTC)<br>
+    <small>Teile diesen Link mit deinen Teilnehmern</small>
+  `;
+}
+
+// Fairness score calculator
+function calculateFairnessScore() {
+  const tz1 = document.getElementById('fairnessTz1').value;
+  const tz2 = document.getElementById('fairnessTz2').value;
+  
+  if (!tz1 || !tz2) {
+    showInlineMessage('fairnessTz1', 'Bitte beide Zeitzonen auswählen', 'error');
+    return;
+  }
+  
+  const resultEl = document.getElementById('fairnessResult');
+  resultEl.innerHTML = '<span class="status warning">Berechne Fairness-Score...</span>';
+  
+  // Calculate timezone fairness
+  const now = new Date();
+  const offset1 = parseTimeZoneOffsetMinutes(tz1, now);
+  const offset2 = parseTimeZoneOffsetMinutes(tz2, now);
+  const timeDiff = Math.abs(offset1 - offset2);
+  
+  let fairnessScore = 0;
+  let fairnessLevel = '';
+  let recommendation = '';
+  
+  if (timeDiff <= 60) { // Same or adjacent timezone
+    fairnessScore = 100;
+    fairnessLevel = 'Perfekt fair';
+    recommendation = 'Ideal für regelmäßige Meetings';
+  } else if (timeDiff <= 180) { // 1-3 hours difference
+    fairnessScore = 85;
+    fairnessLevel = 'Sehr fair';
+    recommendation = 'Gut für regelmäßige Meetings, gelegentliche Rotation';
+  } else if (timeDiff <= 360) { // 3-6 hours difference
+    fairnessScore = 70;
+    fairnessLevel = 'Fair';
+    recommendation = 'Regelmäßige Rotation der Meeting-Zeiten empfohlen';
+  } else if (timeDiff <= 480) { // 6-8 hours difference
+    fairnessScore = 50;
+    fairnessLevel = 'Mäßig fair';
+    recommendation = 'Strenge Rotation der Meeting-Zeiten erforderlich';
+  } else { // More than 8 hours
+    fairnessScore = 30;
+    fairnessLevel = 'Ungerecht';
+    recommendation = 'Alternative Meeting-Formate oder getrennte Teams';
+  }
+  
+  resultEl.innerHTML = `
+    <span class="status success">Fairness-Score berechnet!</span><br>
+    <strong>Score:</strong> ${fairnessScore}/100<br>
+    <strong>Bewertung:</strong> ${fairnessLevel}<br>
+    <strong>Zeitversatz:</strong> ${Math.round(timeDiff / 60)} Stunden<br>
+    <strong>Empfehlung:</strong> ${recommendation}
+  `;
+}
+
+// Get a user-friendly display name for timezones
+function getTimezoneDisplayName(timezone) {
+  const parts = timezone.split('/');
+  if (parts.length >= 2) {
+    const region = parts[0];
+    const city = parts[parts.length - 1].replace(/_/g, ' ');
+    
+    // Add region indicator for clarity
+    const regionNames = {
+      
+    };
+    
+    const regionName = regionNames[region] || region;
+    return `${city} (${regionName})`;
+  }
+  
+  return timezone;
+}
+
+// Populate timezone list
+function populateList(filter = ""){
+  partnerTzSel.innerHTML = "";
+  const q = filter.trim().toLowerCase();
+  
+  console.log('DEBUG: Searching for:', q); // Debug output
+  
+  // Enhanced search with multiple search terms
+  const searchTerms = q.split(/\s+/).filter(term => term.length > 0);
+  
+  let items = ALL_TZS;
+  
+  if (searchTerms.length > 0) {
+    // Special handling for country searches to prevent false matches
+    if (q === 'usa' || q === 'us') {
+      console.log('DEBUG: USA search - using hardcoded list');
+      console.log('DEBUG: Search term q =', q);
+      console.log('DEBUG: searchTerms =', searchTerms);
+      items = [
+        'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
+        'America/Phoenix', 'America/Anchorage', 'America/Honolulu', 'America/Detroit',
+        'America/Indiana/Indianapolis', 'America/Kentucky/Louisville', 'America/Boise',
+        'America/Adak', 'America/Metlakatla', 'America/Sitka', 'America/Juneau',
+        'America/Yakutat', 'America/Nome'
+      ].filter(tz => ALL_TZS.includes(tz));
+      console.log('DEBUG: Final USA items =', items);
+    } else if (q === 'canada' || q === 'kanada') {
+      console.log('DEBUG: Canada search - using hardcoded list');
+      items = [
+        'America/Toronto', 'America/Vancouver', 'America/Montreal', 'America/Halifax',
+        'America/Winnipeg', 'America/Regina', 'America/Edmonton', 'America/St_Johns',
+        'America/Iqaluit', 'America/Whitehorse', 'America/Yellowknife', 'America/Dawson'
+      ].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'germany' || q === 'deutschland') {
+      items = ['Europe/Berlin'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'france' || q === 'frankreich') {
+      items = ['Europe/Paris'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'uk' || q === 'england' || q === 'britain' || q === 'united kingdom') {
+      items = ['Europe/London'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'spain' || q === 'spanien' || q === 'espana') {
+      items = ['Europe/Madrid'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'italy' || q === 'italien' || q === 'italia') {
+      items = ['Europe/Rome'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'russia' || q === 'russland') {
+      items = [
+        'Europe/Moscow', 'Asia/Yekaterinburg', 'Asia/Omsk', 'Asia/Krasnoyarsk',
+        'Asia/Irkutsk', 'Asia/Yakutsk', 'Asia/Vladivostok', 'Asia/Magadan',
+        'Asia/Kamchatka', 'Europe/Kaliningrad', 'Europe/Samara'
+      ].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'china' || q === 'chinese') {
+      items = ['Asia/Shanghai', 'Asia/Urumqi'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'japan' || q === 'nippon') {
+      items = ['Asia/Tokyo'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'india' || q === 'indien') {
+      items = ['Asia/Kolkata'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'australia' || q === 'australien') {
+      items = [
+        'Australia/Sydney', 'Australia/Melbourne', 'Australia/Brisbane',
+        'Australia/Perth', 'Australia/Adelaide', 'Australia/Darwin',
+        'Australia/Hobart', 'Australia/Canberra'
+      ].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'brazil' || q === 'brasil' || q === 'brasilien') {
+      items = [
+        'America/Sao_Paulo', 'America/Rio_Branco', 'America/Manaus',
+        'America/Fortaleza', 'America/Recife', 'America/Bahia',
+        'America/Belem', 'America/Noronha'
+      ].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'mexico' || q === 'mexiko') {
+      items = [
+        'America/Mexico_City', 'America/Cancun', 'America/Merida',
+        'America/Monterrey', 'America/Mazatlan', 'America/Chihuahua',
+        'America/Tijuana', 'America/Hermosillo'
+      ].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'argentina' || q === 'argentinien') {
+      items = [
+        'America/Buenos_Aires', 'America/Argentina/Cordoba', 'America/Argentina/Mendoza',
+        'America/Argentina/Tucuman', 'America/Argentina/Salta', 'America/Argentina/Ushuaia'
+      ].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'israel') {
+      items = ['Asia/Jerusalem'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'netherlands' || q === 'niederlande' || q === 'holland') {
+      items = ['Europe/Amsterdam'].filter(tz => ALL_TZS.includes(tz));
+    } else if (q === 'turkey' || q === 'tuerkei' || q === 'turkiye') {
+      items = ['Europe/Istanbul'].filter(tz => ALL_TZS.includes(tz));
+    } else {
+      // First check if it's a direct city name
+      const directCityMatch = searchCityInTimezone(q);
+      if (directCityMatch) {
+        // If it's a direct city match, show that timezone first
+        items = [directCityMatch, ...ALL_TZS.filter(tz => tz !== directCityMatch)];
+      } else {
+        // Regular search through timezone names and aliases
+        items = ALL_TZS.filter(tz => {
+          // Check if all search terms are found in the timezone string
+          return searchTerms.every(term => {
+            // Regular search in timezone name for cities and regions
+            if (tz.toLowerCase().includes(term)) return true;
+            
+            // Search in common aliases
+            const aliases = getTimezoneAliases(tz);
+            return aliases.some(alias => alias.toLowerCase().includes(term));
+          });
+        });
+      }
+    }
+  }
+  
+  // Sort by relevance (exact matches first, then partial matches)
+  items.sort((a, b) => {
+    // For country searches, prioritize exact alias matches
+    if (['usa', 'us', 'canada', 'mexico', 'brazil', 'argentina', 'uk', 'germany', 'france', 'spain', 'italy'].includes(q)) {
+      const aAliases = getTimezoneAliases(a);
+      const bAliases = getTimezoneAliases(b);
+      
+      const aExact = aAliases.some(alias => alias.toLowerCase() === q);
+      const bExact = bAliases.some(alias => alias.toLowerCase() === q);
+      
+      if (aExact && !bExact) return -1;
+      if (!aExact && bExact) return 1;
+    }
+    
+    // Then sort alphabetically
+    return a.localeCompare(b);
+  });
+  
+  // Limit results to prevent overwhelming the dropdown
+  const maxResults = 200;
+  let displayItems = items;
+  let hasMore = false;
+  
+  if (items.length > maxResults) {
+    displayItems = items.slice(0, maxResults);
+    hasMore = true;
+    // Add a note about more results
+    const noteOpt = document.createElement('option');
+    noteOpt.disabled = true;
+    noteOpt.textContent = `... und ${items.length - maxResults} weitere (verfeinere deine Suche)`;
+    partnerTzSel.appendChild(noteOpt);
+  }
+  
+  for(const tz of displayItems){
+    const opt = document.createElement('option');
+    opt.value = tz;
+    
+    // Show timezone with common name
+    const displayName = getTimezoneDisplayName(tz);
+    opt.textContent = displayName;
+    
+    partnerTzSel.appendChild(opt);
+  }
+  
+  // Update timezone count display
+  if (tzCountEl) {
+    if (q) {
+      tzCountEl.textContent = `Gefunden: ${items.length} von ${ALL_TZS.length} Zeitzonen`;
+      if (hasMore) {
+        tzCountEl.textContent += ` (zeige erste ${maxResults})`;
+      }
+    } else {
+      tzCountEl.textContent = `Verfügbar: ${ALL_TZS.length} Zeitzonen weltweit`;
+    }
+  }
+  
+  // Preselect Berlin if exists, else first item
+  const want = (q ? displayItems[0] : (displayItems.includes('Europe/Berlin') ? 'Europe/Berlin' : displayItems[0]));
+  const idx = Array.from(partnerTzSel.options).findIndex(o => o.value === want);
+  partnerTzSel.selectedIndex = Math.max(0, idx);
+}
+
+// Get common aliases for timezones to improve search
+function getTimezoneAliases(timezone) {
+  // Extract the city/country part from the timezone
+  const parts = timezone.split('/');
+  if (parts.length >= 2) {
+    const city = parts[parts.length - 1].replace(/_/g, ' ');
+    const region = parts[0];
+    
+    // Add common variations
+    const aliases = [city, region];
+    
+    // Add common abbreviations and alternative names
+    if (region === 'America') {
+      // Only add USA aliases for actual US timezones
+      if (timezone.startsWith('America/New_York') || 
+          timezone.startsWith('America/Chicago') || 
+          timezone.startsWith('America/Denver') || 
+          timezone.startsWith('America/Los_Angeles') || 
+          timezone.startsWith('America/Phoenix') || 
+          timezone.startsWith('America/Detroit') || 
+          timezone.startsWith('America/Indiana/') || 
+          timezone.startsWith('America/Kentucky/') || 
+          timezone.startsWith('America/North_Dakota/') || 
+          timezone.startsWith('America/Boise') || 
+          timezone.startsWith('America/Anchorage') || 
+          timezone.startsWith('America/Honolulu') || 
+          timezone.startsWith('America/Adak') || 
+          timezone.startsWith('America/Metlakatla') || 
+          timezone.startsWith('America/Sitka') || 
+          timezone.startsWith('America/Juneau') || 
+          timezone.startsWith('America/Yakutat') || 
+          timezone.startsWith('America/Nome') || 
+          timezone.startsWith('America/Atka')) {
+        aliases.push('USA', 'United States', 'US', 'America');
+      }
+      
+      // Add specific country aliases for non-US timezones
+      if (timezone.startsWith('America/Toronto') || 
+          timezone.startsWith('America/Vancouver') || 
+          timezone.startsWith('America/Montreal') || 
+          timezone.startsWith('America/Halifax') || 
+          timezone.startsWith('America/Winnipeg') || 
+          timezone.startsWith('America/Regina') || 
+          timezone.startsWith('America/Edmonton') || 
+          timezone.startsWith('America/St_Johns') || 
+          timezone.startsWith('America/Iqaluit') || 
+          timezone.startsWith('America/Whitehorse') || 
+          timezone.startsWith('America/Yellowknife') || 
+          timezone.startsWith('America/Inuvik') || 
+          timezone.startsWith('America/Dawson_Creek') || 
+          timezone.startsWith('America/Fort_Nelson') || 
+          timezone.startsWith('America/Creston') || 
+          timezone.startsWith('America/Dawson') || 
+          timezone.startsWith('America/Swift_Current') || 
+          timezone.startsWith('America/Thunder_Bay') || 
+          timezone.startsWith('America/Nipigon') || 
+          timezone.startsWith('America/Rainy_River') || 
+          timezone.startsWith('America/Atikokan') || 
+          timezone.startsWith('America/Rankin_Inlet') || 
+          timezone.startsWith('America/Resolute') || 
+          timezone.startsWith('America/Cambridge_Bay') || 
+          timezone.startsWith('America/Pangnirtung') || 
+          timezone.startsWith('America/Coral_Harbour')) {
+        aliases.push('Canada', 'Kanada');
+      }
+      
+      if (timezone.startsWith('America/Mexico_City') || 
+          timezone.startsWith('America/Cancun') || 
+          timezone.startsWith('America/Merida') || 
+          timezone.startsWith('America/Monterrey') || 
+          timezone.startsWith('America/Matamoros') || 
+          timezone.startsWith('America/Mazatlan') || 
+          timezone.startsWith('America/Chihuahua') || 
+          timezone.startsWith('America/Ojinaga') || 
+          timezone.startsWith('America/Hermosillo') || 
+          timezone.startsWith('America/Tijuana') || 
+          timezone.startsWith('America/Bahia_Banderas')) {
+        aliases.push('Mexico', 'Mexiko');
+      }
+      
+      if (timezone.startsWith('America/Sao_Paulo') || 
+          timezone.startsWith('America/Rio_Branco') || 
+          timezone.startsWith('America/Boa_Vista') || 
+          timezone.startsWith('America/Manaus') || 
+          timezone.startsWith('America/Campo_Grande') || 
+          timezone.startsWith('America/Cuiaba') || 
+          timezone.startsWith('America/Santarem') || 
+          timezone.startsWith('America/Porto_Velho') || 
+          timezone.startsWith('America/Belem') || 
+          timezone.startsWith('America/Fortaleza') || 
+          timezone.startsWith('America/Recife') || 
+          timezone.startsWith('America/Araguaina') || 
+          timezone.startsWith('America/Maceio') || 
+          timezone.startsWith('America/Bahia') || 
+          timezone.startsWith('America/Noronha')) {
+        aliases.push('Brazil', 'Brasil', 'Brasilien');
+      }
+      
+      if (timezone.startsWith('America/Buenos_Aires') || 
+          timezone.startsWith('America/Argentina/') || 
+          timezone.startsWith('America/Catamarca') || 
+          timezone.startsWith('America/Cordoba') || 
+          timezone.startsWith('America/Jujuy') || 
+          timezone.startsWith('America/La_Rioja') || 
+          timezone.startsWith('America/Mendoza') || 
+          timezone.startsWith('America/Rio_Gallegos') || 
+          timezone.startsWith('America/Salta') || 
+          timezone.startsWith('America/San_Juan') || 
+          timezone.startsWith('America/San_Luis') || 
+          timezone.startsWith('America/Tucuman') || 
+          timezone.startsWith('America/Ushuaia')) {
+        aliases.push('Argentina', 'Argentinien');
+      }
+      
+      // Add specific US city aliases
+      if (timezone === 'America/New_York') {
+        aliases.push('NYC', 'Manhattan', 'Brooklyn', 'Queens', 'New York City', 'NY', 'Washington DC', 'Washington', 'DC', 'District of Columbia', 'Capital', 'US Capital');
+      }
+      if (timezone === 'America/Los_Angeles') {
+        aliases.push('LA', 'Los Angeles', 'California', 'Hollywood', 'San Francisco');
+      }
+      if (timezone === 'America/Chicago') {
+        aliases.push('Chicago', 'Illinois', 'Midwest', 'Windy City');
+      }
+      if (timezone === 'America/Denver') {
+        aliases.push('Denver', 'Colorado', 'Rocky Mountains', 'Mile High City');
+      }
+      if (timezone === 'America/Phoenix') {
+        aliases.push('Phoenix', 'Arizona', 'AZ', 'Valley of the Sun');
+      }
+      if (timezone === 'America/Detroit') {
+        aliases.push('Detroit', 'Michigan', 'Motor City', 'Motown');
+      }
+      if (timezone === 'America/Indiana/Indianapolis') {
+        aliases.push('Indianapolis', 'Indy', 'Indiana', 'IN');
+      }
+      if (timezone === 'America/Kentucky/Louisville') {
+        aliases.push('Louisville', 'Kentucky', 'KY', 'Derby City');
+      }
+      if (timezone === 'America/Boise') {
+        aliases.push('Boise', 'Idaho', 'ID', 'City of Trees');
+      }
+      if (timezone === 'America/Anchorage') {
+        aliases.push('Anchorage', 'Alaska', 'AK', 'Last Frontier');
+      }
+      if (timezone === 'America/Honolulu') {
+        aliases.push('Honolulu', 'Hawaii', 'HI', 'Aloha State');
+      }
+      if (timezone === 'America/Toronto') {
+        aliases.push('Toronto', 'Ontario', 'ON', 'Canada');
+      }
+      if (timezone === 'America/Vancouver') {
+        aliases.push('Vancouver', 'British Columbia', 'BC', 'Canada');
+      }
+      if (timezone === 'America/Montreal') {
+        aliases.push('Montreal', 'Quebec', 'QC', 'Canada');
+      }
+      if (timezone === 'America/Mexico_City') {
+        aliases.push('Mexico City', 'Mexico', 'CDMX', 'Distrito Federal');
+      }
+      if (timezone === 'America/Sao_Paulo') {
+        aliases.push('Sao Paulo', 'Brazil', 'Brasil', 'SP');
+      }
+      if (timezone === 'America/Buenos_Aires') {
+        aliases.push('Buenos Aires', 'Argentina', 'BA', 'Capital Federal');
+      }
+    }
+    
+    if (region === 'Europe') aliases.push('EU', 'European', 'Europa');
+    if (region === 'Asia') aliases.push('Asian', 'Asien');
+    if (region === 'Africa') aliases.push('African', 'Afrika');
+    if (region === 'Pacific') aliases.push('Oceania', 'Pazifik');
+    if (region === 'Australia') aliases.push('Oceania', 'Australien');
+    if (region === 'Indian') aliases.push('Indian Ocean', 'Indischer Ozean');
+    if (region === 'Atlantic') aliases.push('Atlantik');
+    if (region === 'Arctic') aliases.push('Arktis');
+    if (region === 'Antarctica') aliases.push('Antarktis');
+    
+    return aliases;
+  }
+  
+  return [timezone];
+}
+
+// Enhanced city search with comprehensive mapping
+function searchCityInTimezone(cityName) {
+  const cityMappings = {
+    // US Cities without IANA timezones
+    'washington': 'America/New_York',
+    'washington dc': 'America/New_York',
+    'washington d.c.': 'America/New_York',
+    'dc': 'America/New_York',
+    'district of columbia': 'America/New_York',
+    'us capital': 'America/New_York',
+    'capital': 'America/New_York',
+    
+    // Major US cities
+    'new york': 'America/New_York',
+    'nyc': 'America/New_York',
+    'manhattan': 'America/New_York',
+    'brooklyn': 'America/New_York',
+    'queens': 'America/New_York',
+    
+    'los angeles': 'America/Los_Angeles',
+    'la': 'America/Los_Angeles',
+    'hollywood': 'America/Los_Angeles',
+    'san francisco': 'America/Los_Angeles',
+    
+    'chicago': 'America/Chicago',
+    'windy city': 'America/Chicago',
+    
+    'denver': 'America/Denver',
+    'mile high city': 'America/Denver',
+    
+    'phoenix': 'America/Phoenix',
+    'valley of the sun': 'America/Phoenix',
+    
+    'detroit': 'America/Detroit',
+    'motor city': 'America/Detroit',
+    'motown': 'America/Detroit',
+    
+    'indianapolis': 'America/Indiana/Indianapolis',
+    'indy': 'America/Indiana/Indianapolis',
+    
+    'louisville': 'America/Kentucky/Louisville',
+    'derby city': 'America/Kentucky/Louisville',
+    
+    'boise': 'America/Boise',
+    'city of trees': 'America/Boise',
+    
+    'anchorage': 'America/Anchorage',
+    'last frontier': 'America/Anchorage',
+    
+    'honolulu': 'America/Honolulu',
+    'aloha state': 'America/Honolulu',
+    
+    // Canadian cities
+    'toronto': 'America/Toronto',
+    'vancouver': 'America/Vancouver',
+    'montreal': 'America/Montreal',
+    'ottawa': 'America/Toronto', // Hauptstadt, gleiche Zeitzone wie Toronto
+    'canada capital': 'America/Toronto',
+    
+    // Mexican cities
+    'mexico city': 'America/Mexico_City',
+    'cdmx': 'America/Mexico_City',
+    'mexico': 'America/Mexico_City',
+    
+    // Caribbean Islands and Central America
+    'aruba': 'America/Aruba', // Niederlande (autonomes Land)
+    'oranjestad': 'America/Aruba',
+    'curacao': 'America/Curacao', // Niederlande (autonomes Land)
+    'willemstad': 'America/Curacao',
+    'bonaire': 'America/Aruba', // Gleiche Zeitzone wie Aruba
+    'kralendijk': 'America/Aruba',
+    
+    'jamaica': 'America/Jamaica',
+    'kingston': 'America/Jamaica',
+    
+    'bahamas': 'America/Nassau',
+    'nassau': 'America/Nassau',
+    
+    'barbados': 'America/Barbados',
+    'bridgetown': 'America/Barbados',
+    
+    'trinidad and tobago': 'America/Port_of_Spain',
+    'trinidad': 'America/Port_of_Spain',
+    'tobago': 'America/Port_of_Spain',
+    'port of spain': 'America/Port_of_Spain',
+    
+    'grenada': 'America/Grenada',
+    'st georges': 'America/Grenada',
+    
+    'st lucia': 'America/St_Lucia',
+    'castries': 'America/St_Lucia',
+    
+    'antigua and barbuda': 'America/Antigua',
+    'antigua': 'America/Antigua',
+    'barbuda': 'America/Antigua',
+    'saint johns': 'America/Antigua',
+    
+    'dominica': 'America/Dominica',
+    'roseau': 'America/Dominica',
+    
+    'st kitts and nevis': 'America/St_Kitts',
+    'st kitts': 'America/St_Kitts',
+    'nevis': 'America/St_Kitts',
+    'basseterre': 'America/St_Kitts',
+    
+    'st vincent and grenadines': 'America/St_Vincent',
+    'st vincent': 'America/St_Vincent',
+    'kingstown': 'America/St_Vincent',
+    
+    'haiti': 'America/Port-au-Prince',
+    'port au prince': 'America/Port-au-Prince',
+    
+    'dominican republic': 'America/Santo_Domingo',
+    'dominican': 'America/Santo_Domingo',
+    'santo domingo': 'America/Santo_Domingo',
+    
+    'cuba': 'America/Havana',
+    'havana': 'America/Havana',
+    'la habana': 'America/Havana',
+    
+    'puerto rico': 'America/Puerto_Rico', // US-Territorium
+    'san juan': 'America/Puerto_Rico',
+    
+    'us virgin islands': 'America/St_Thomas', // US-Territorium
+    'st thomas': 'America/St_Thomas',
+    'st john': 'America/St_Thomas',
+    'st croix': 'America/St_Thomas',
+    'charlotte amalie': 'America/St_Thomas',
+    
+    'british virgin islands': 'America/Tortola', // UK-Territorium
+    'tortola': 'America/Tortola',
+    'road town': 'America/Tortola',
+    
+    'cayman islands': 'America/Cayman', // UK-Territorium
+    'georgetown': 'America/Cayman',
+    'grand cayman': 'America/Cayman',
+    
+    'bermuda': 'Atlantic/Bermuda', // UK-Territorium
+    'hamilton': 'Atlantic/Bermuda',
+    
+    'turks and caicos': 'America/Grand_Turk', // UK-Territorium
+    'grand turk': 'America/Grand_Turk',
+    'cockburn town': 'America/Grand_Turk',
+    
+    'anguilla': 'America/Anguilla', // UK-Territorium
+    'the valley': 'America/Anguilla',
+    
+    'montserrat': 'America/Montserrat', // UK-Territorium
+    'plymouth': 'America/Montserrat',
+    
+    'french guiana': 'America/Cayenne', // Frankreich (Übersee-Département)
+    'cayenne': 'America/Cayenne',
+    
+    'guyana': 'America/Guyana',
+    'georgetown guyana': 'America/Guyana',
+    
+    'suriname': 'America/Paramaribo',
+    'paramaribo': 'America/Paramaribo',
+    
+    'falkland islands': 'Atlantic/Stanley', // UK-Territorium
+    'falklands': 'Atlantic/Stanley',
+    'stanley': 'Atlantic/Stanley',
+    
+    'south georgia': 'Atlantic/South_Georgia', // UK-Territorium
+    'south georgia and sandwich islands': 'Atlantic/South_Georgia',
+    'grytviken': 'Atlantic/South_Georgia',
+    
+    // Brazilian cities
+    'sao paulo': 'America/Sao_Paulo',
+    'rio de janeiro': 'America/Rio_de_Janeiro',
+    'brasilia': 'America/Sao_Paulo', // Hauptstadt, gleiche Zeitzone wie Sao Paulo
+    'brazil capital': 'America/Sao_Paulo',
+    
+    // Argentine cities
+    'buenos aires': 'America/Buenos_Aires',
+    'capital federal': 'America/Buenos_Aires',
+    'argentina': 'America/Buenos_Aires',
+    
+    // Chilean cities
+    'santiago': 'America/Santiago',
+    'chile': 'America/Santiago',
+    
+    // Peruvian cities
+    'lima': 'America/Lima',
+    'peru': 'America/Lima',
+    
+    // Colombian cities
+    'bogota': 'America/Bogota',
+    'colombia': 'America/Bogota',
+    
+    // Venezuelan cities
+    'caracas': 'America/Caracas',
+    'venezuela': 'America/Caracas',
+    
+    // Ecuadorian cities
+    'quito': 'America/Quito',
+    'ecuador': 'America/Quito',
+    
+    // Bolivian cities
+    'la paz': 'America/La_Paz',
+    'bolivia': 'America/La_Paz',
+    
+    // Paraguayan cities
+    'asuncion': 'America/Asuncion',
+    'paraguay': 'America/Asuncion',
+    
+    // Uruguayan cities
+    'montevideo': 'America/Montevideo',
+    'uruguay': 'America/Montevideo',
+    
+    // Panamanian cities
+    'panama': 'America/Panama',
+    'panama city': 'America/Panama',
+    
+    // Costa Rican cities
+    'san jose': 'America/San_Jose',
+    'costa rica': 'America/San_Jose',
+    
+    // European cities and capitals
+    'london': 'Europe/London',
+    'uk': 'Europe/London',
+    'united kingdom': 'Europe/London',
+    'great britain': 'Europe/London',
+    'britain': 'Europe/London',
+    'england': 'Europe/London',
+    
+    'paris': 'Europe/Paris',
+    'france': 'Europe/Paris',
+    'french': 'Europe/Paris',
+    
+    'berlin': 'Europe/Berlin',
+    'germany': 'Europe/Berlin',
+    'deutschland': 'Europe/Berlin',
+    'german': 'Europe/Berlin',
+    
+    'rome': 'Europe/Rome',
+    'italy': 'Europe/Rome',
+    'italian': 'Europe/Rome',
+    
+    'madrid': 'Europe/Madrid',
+    'spain': 'Europe/Madrid',
+    'spanish': 'Europe/Madrid',
+    'espana': 'Europe/Madrid',
+    
+    'amsterdam': 'Europe/Amsterdam',
+    'netherlands': 'Europe/Amsterdam',
+    'holland': 'Europe/Amsterdam',
+    'dutch': 'Europe/Amsterdam',
+    'nederland': 'Europe/Amsterdam',
+    
+    'brussels': 'Europe/Brussels',
+    'belgium': 'Europe/Brussels',
+    'belgian': 'Europe/Brussels',
+    'belgie': 'Europe/Brussels',
+    
+    'vienna': 'Europe/Vienna',
+    'austria': 'Europe/Vienna',
+    'austrian': 'Europe/Vienna',
+    'osterreich': 'Europe/Vienna',
+    
+    'zurich': 'Europe/Zurich',
+    'switzerland': 'Europe/Zurich',
+    'swiss': 'Europe/Zurich',
+    'schweiz': 'Europe/Zurich',
+    
+    'stockholm': 'Europe/Stockholm',
+    'sweden': 'Europe/Stockholm',
+    'swedish': 'Europe/Stockholm',
+    'sverige': 'Europe/Stockholm',
+    
+    'oslo': 'Europe/Oslo',
+    'norway': 'Europe/Oslo',
+    'norwegian': 'Europe/Oslo',
+    'norge': 'Europe/Oslo',
+    
+    'copenhagen': 'Europe/Copenhagen',
+    'denmark': 'Europe/Copenhagen',
+    'danish': 'Europe/Copenhagen',
+    'danmark': 'Europe/Copenhagen',
+    
+    'helsinki': 'Europe/Helsinki',
+    'finland': 'Europe/Helsinki',
+    'finnish': 'Europe/Helsinki',
+    'suomi': 'Europe/Helsinki',
+    
+    'warsaw': 'Europe/Warsaw',
+    'poland': 'Europe/Warsaw',
+    'polish': 'Europe/Warsaw',
+    'polska': 'Europe/Warsaw',
+    
+    'prague': 'Europe/Prague',
+    'czech republic': 'Europe/Prague',
+    'czech': 'Europe/Prague',
+    'ceska republika': 'Europe/Prague',
+    
+    'budapest': 'Europe/Budapest',
+    'hungary': 'Europe/Budapest',
+    'hungarian': 'Europe/Budapest',
+    'magyarorszag': 'Europe/Budapest',
+    
+    'bucharest': 'Europe/Bucharest',
+    'romania': 'Europe/Bucharest',
+    'romanian': 'Europe/Bucharest',
+    'romania': 'Europe/Bucharest',
+    
+    'sofia': 'Europe/Sofia',
+    'bulgaria': 'Europe/Sofia',
+    'bulgarian': 'Europe/Sofia',
+    'bulgariya': 'Europe/Sofia',
+    
+    'athens': 'Europe/Athens',
+    'greece': 'Europe/Athens',
+    'greek': 'Europe/Athens',
+    'ellada': 'Europe/Athens',
+    
+    'istanbul': 'Europe/Istanbul',
+    'turkey': 'Europe/Istanbul',
+    'turkish': 'Europe/Istanbul',
+    'turkiye': 'Europe/Istanbul',
+    
+    'moscow': 'Europe/Moscow',
+    'russia': 'Europe/Moscow',
+    'russian': 'Europe/Moscow',
+    'rossiya': 'Europe/Moscow',
+    
+    'kiev': 'Europe/Kiev',
+    'ukraine': 'Europe/Kiev',
+    'ukrainian': 'Europe/Kiev',
+    'ukraina': 'Europe/Kiev',
+    
+    'minsk': 'Europe/Minsk',
+    'belarus': 'Europe/Minsk',
+    'belarusian': 'Europe/Minsk',
+    'belarus': 'Europe/Minsk',
+    
+    'riga': 'Europe/Riga',
+    'latvia': 'Europe/Riga',
+    'latvian': 'Europe/Riga',
+    'latvija': 'Europe/Riga',
+    
+    'tallinn': 'Europe/Tallinn',
+    'estonia': 'Europe/Tallinn',
+    'estonian': 'Europe/Tallinn',
+    'eesti': 'Europe/Tallinn',
+    
+    'vilnius': 'Europe/Vilnius',
+    'lithuania': 'Europe/Vilnius',
+    'lithuanian': 'Europe/Vilnius',
+    'lietuva': 'Europe/Vilnius',
+    
+    'dublin': 'Europe/Dublin',
+    'ireland': 'Europe/Dublin',
+    'irish': 'Europe/Dublin',
+    'eire': 'Europe/Dublin',
+    
+    'lisbon': 'Europe/Lisbon',
+    'portugal': 'Europe/Lisbon',
+    'portuguese': 'Europe/Lisbon',
+    'portugal': 'Europe/Lisbon',
+    
+    'barcelona': 'Europe/Barcelona',
+    'catalonia': 'Europe/Madrid', // Gleiche Zeitzone wie Madrid
+    'catalunya': 'Europe/Madrid',
+    
+    'belgrade': 'Europe/Belgrade',
+    'serbia': 'Europe/Belgrade',
+    'serbian': 'Europe/Belgrade',
+    'srbija': 'Europe/Belgrade',
+    
+    'zagreb': 'Europe/Zagreb',
+    'croatia': 'Europe/Zagreb',
+    'croatian': 'Europe/Zagreb',
+    'hrvatska': 'Europe/Zagreb',
+    
+    'ljubljana': 'Europe/Ljubljana',
+    'slovenia': 'Europe/Ljubljana',
+    'slovenian': 'Europe/Ljubljana',
+    'slovenija': 'Europe/Ljubljana',
+    
+    'bratislava': 'Europe/Bratislava',
+    'slovakia': 'Europe/Bratislava',
+    'slovak': 'Europe/Bratislava',
+    'slovensko': 'Europe/Bratislava',
+    
+    'luxembourg': 'Europe/Luxembourg',
+    'luxemburg': 'Europe/Luxembourg',
+    
+    'monaco': 'Europe/Monaco',
+    'monaco ville': 'Europe/Monaco',
+    
+    'vatican': 'Europe/Vatican',
+    'vatican city': 'Europe/Vatican',
+    'holy see': 'Europe/Vatican',
+    
+    'san marino': 'Europe/San_Marino',
+    'republic of san marino': 'Europe/San_Marino',
+    
+    'andorra': 'Europe/Andorra',
+    'andorra la vella': 'Europe/Andorra',
+    
+    'liechtenstein': 'Europe/Liechtenstein',
+    'vaduz': 'Europe/Liechtenstein',
+    
+    'malta': 'Europe/Malta',
+    'valletta': 'Europe/Malta',
+    
+    'cyprus': 'Europe/Cyprus',
+    'nicosia': 'Europe/Cyprus',
+    
+    'gibraltar': 'Europe/Gibraltar',
+    'gibraltar town': 'Europe/Gibraltar',
+    'europa point': 'Europe/Gibraltar',
+    
+    // Additional Pacific Islands
+    'palau': 'Pacific/Palau',
+    'koror': 'Pacific/Palau',
+    'melekeok': 'Pacific/Palau',
+    'ngerulmud': 'Pacific/Palau',
+    
+    'marshall islands': 'Pacific/Majuro',
+    'majuro': 'Pacific/Majuro',
+    'ebeye': 'Pacific/Majuro',
+    'jaluit': 'Pacific/Majuro',
+    
+    'micronesia': 'Pacific/Pohnpei',
+    'palikir': 'Pacific/Pohnpei',
+    'kolonia': 'Pacific/Pohnpei',
+    'weno': 'Pacific/Chuuk',
+    
+    'kiribati': 'Pacific/Tarawa',
+    'tarawa': 'Pacific/Tarawa',
+    'betio': 'Pacific/Tarawa',
+    'bikenibeu': 'Pacific/Tarawa',
+    
+    'nauru': 'Pacific/Nauru',
+    'yaren': 'Pacific/Nauru',
+    'denigomodu': 'Pacific/Nauru',
+    'aiwo': 'Pacific/Nauru',
+    
+    'tuvalu': 'Pacific/Funafuti',
+    'funafuti': 'Pacific/Funafuti',
+    'vaiaku': 'Pacific/Funafuti',
+    'fongafale': 'Pacific/Funafuti',
+    
+    'vanuatu': 'Pacific/Efate',
+    'port vila': 'Pacific/Efate',
+    'luganville': 'Pacific/Efate',
+    'santo': 'Pacific/Efate',
+    
+    'new caledonia': 'Pacific/Noumea',
+    'noumea': 'Pacific/Noumea',
+    'mont dore': 'Pacific/Noumea',
+    'dumbea': 'Pacific/Noumea',
+    
+    'fiji': 'Pacific/Fiji',
+    'suva': 'Pacific/Fiji',
+    'nadi': 'Pacific/Fiji',
+    'lautoka': 'Pacific/Fiji',
+    
+    'tonga': 'Pacific/Tongatapu',
+    'nuku alofa': 'Pacific/Tongatapu',
+    'neiafu': 'Pacific/Tongatapu',
+    'pangai': 'Pacific/Tongatapu',
+    
+    'samoa': 'Pacific/Apia',
+    'apia': 'Pacific/Apia',
+    'salelologa': 'Pacific/Apia',
+    'asau': 'Pacific/Apia',
+    
+    'cook islands': 'Pacific/Rarotonga',
+    'rarotonga': 'Pacific/Rarotonga',
+    'arutanga': 'Pacific/Rarotonga',
+    'omoka': 'Pacific/Rarotonga',
+    
+    'niue': 'Pacific/Niue',
+    'alofi': 'Pacific/Niue',
+    'hakupu': 'Pacific/Niue',
+    'avatele': 'Pacific/Niue',
+    
+    'tokelau': 'Pacific/Fakaofo',
+    'fakaofo': 'Pacific/Fakaofo',
+    'atafu': 'Pacific/Fakaofo',
+    'nukunonu': 'Pacific/Fakaofo',
+    
+    'pitcairn': 'Pacific/Pitcairn',
+    'adamstown': 'Pacific/Pitcairn',
+    'bounty bay': 'Pacific/Pitcairn',
+    'down rope': 'Pacific/Pitcairn',
+    
+    'easter island': 'Pacific/Easter',
+    'rapa nui': 'Pacific/Easter',
+    'hanga roa': 'Pacific/Easter',
+    'orongo': 'Pacific/Easter',
+    
+    'galapagos': 'Pacific/Galapagos',
+    'san cristobal': 'Pacific/Galapagos',
+    'santa cruz': 'Pacific/Galapagos',
+    'isabela': 'Pacific/Galapagos',
+    
+    'solomon islands': 'Pacific/Guadalcanal',
+    'honiara': 'Pacific/Guadalcanal',
+    'gizo': 'Pacific/Guadalcanal',
+    'auki': 'Pacific/Guadalcanal',
+    
+    'papua new guinea': 'Pacific/Port_Moresby',
+    'port moresby': 'Pacific/Port_Moresby',
+    'lae': 'Pacific/Port_Moresby',
+    'mount hagen': 'Pacific/Port_Moresby',
+    
+    'timor leste': 'Asia/Dili',
+    'dili': 'Asia/Dili',
+    'baucau': 'Asia/Dili',
+    'maliana': 'Asia/Dili',
+    
+    'brunei': 'Asia/Brunei',
+    'bandar seri begawan': 'Asia/Brunei',
+    'kuala belait': 'Asia/Brunei',
+    'tutong': 'Asia/Brunei',
+    
+    'malaysia': 'Asia/Kuala_Lumpur',
+    'kuala lumpur': 'Asia/Kuala_Lumpur',
+    'penang': 'Asia/Kuala_Lumpur',
+    'langkawi': 'Asia/Kuala_Lumpur',
+    
+    'singapore': 'Asia/Singapore',
+    'singapore city': 'Asia/Singapore',
+    'jurong': 'Asia/Singapore',
+    'woodlands': 'Asia/Singapore',
+    
+    'indonesia': 'Asia/Jakarta',
+    'jakarta': 'Asia/Jakarta',
+    'surabaya': 'Asia/Jakarta',
+    'bandung': 'Asia/Jakarta',
+    
+    'philippines': 'Asia/Manila',
+    'manila': 'Asia/Manila',
+    'cebu': 'Asia/Manila',
+    'davao': 'Asia/Manila',
+    
+    'taiwan': 'Asia/Taipei',
+    'taipei': 'Asia/Taipei',
+    'kaohsiung': 'Asia/Taipei',
+    'taichung': 'Asia/Taipei',
+    
+    'japan': 'Asia/Tokyo',
+    'tokyo': 'Asia/Tokyo',
+    'osaka': 'Asia/Tokyo',
+    'kyoto': 'Asia/Tokyo',
+    
+    'south korea': 'Asia/Seoul',
+    'seoul': 'Asia/Seoul',
+    'busan': 'Asia/Seoul',
+    'incheon': 'Asia/Seoul',
+    
+    'north korea': 'Asia/Pyongyang',
+    'pyongyang': 'Asia/Pyongyang',
+    'hamhung': 'Asia/Pyongyang',
+    'chongjin': 'Asia/Pyongyang',
+    
+    'china': 'Asia/Shanghai',
+    'shanghai': 'Asia/Shanghai',
+    'beijing': 'Asia/Shanghai',
+    'guangzhou': 'Asia/Shanghai',
+    
+    'hong kong': 'Asia/Hong_Kong',
+    'hong kong island': 'Asia/Hong_Kong',
+    'kowloon': 'Asia/Hong_Kong',
+    'new territories': 'Asia/Hong_Kong',
+    
+    'macau': 'Asia/Macau',
+    'macao': 'Asia/Macau',
+    'taipa': 'Asia/Macau',
+    'coloane': 'Asia/Macau',
+    
+    'mongolia': 'Asia/Ulaanbaatar',
+    'ulaanbaatar': 'Asia/Ulaanbaatar',
+    'erdenet': 'Asia/Ulaanbaatar',
+    'darkhan': 'Asia/Ulaanbaatar',
+    
+    'kazakhstan': 'Asia/Almaty',
+    'almaty': 'Asia/Almaty',
+    'nur sultan': 'Asia/Almaty',
+    'shymkent': 'Asia/Almaty',
+    
+    'uzbekistan': 'Asia/Tashkent',
+    'tashkent': 'Asia/Tashkent',
+    'samarkand': 'Asia/Tashkent',
+    'bukhara': 'Asia/Tashkent',
+    
+    'kyrgyzstan': 'Asia/Bishkek',
+    'bishkek': 'Asia/Bishkek',
+    'osh': 'Asia/Bishkek',
+    'jalal abad': 'Asia/Bishkek',
+    
+    'tajikistan': 'Asia/Dushanbe',
+    'dushanbe': 'Asia/Dushanbe',
+    'khujand': 'Asia/Dushanbe',
+    'kulob': 'Asia/Dushanbe',
+    
+    'afghanistan': 'Asia/Kabul',
+    'kabul': 'Asia/Kabul',
+    'kandahar': 'Asia/Kabul',
+    'herat': 'Asia/Kabul',
+    
+    'pakistan': 'Asia/Karachi',
+    'karachi': 'Asia/Karachi',
+    'lahore': 'Asia/Karachi',
+    'islamabad': 'Asia/Karachi',
+    
+    'india': 'Asia/Kolkata',
+    'kolkata': 'Asia/Kolkata',
+    'mumbai': 'Asia/Kolkata',
+    'delhi': 'Asia/Kolkata',
+    
+    'bangladesh': 'Asia/Dhaka',
+    'dhaka': 'Asia/Dhaka',
+    'chittagong': 'Asia/Dhaka',
+    'sylhet': 'Asia/Dhaka',
+    
+    'nepal': 'Asia/Kathmandu',
+    'kathmandu': 'Asia/Kathmandu',
+    'pokhara': 'Asia/Kathmandu',
+    'biratnagar': 'Asia/Kathmandu',
+    
+    'bhutan': 'Asia/Thimphu',
+    'thimphu': 'Asia/Thimphu',
+    'phuentsholing': 'Asia/Thimphu',
+    'gelephu': 'Asia/Thimphu',
+    
+    'sri lanka': 'Asia/Colombo',
+    'colombo': 'Asia/Colombo',
+    'kandy': 'Asia/Colombo',
+    'galle': 'Asia/Colombo',
+    
+    'maldives': 'Indian/Maldives',
+    'male': 'Indian/Maldives',
+    'addu city': 'Indian/Maldives',
+    'fuvahmulah': 'Indian/Maldives',
+    
+    'seychelles': 'Indian/Mahe',
+    'mahe': 'Indian/Mahe',
+    'victoria': 'Indian/Mahe',
+    'beau vallon': 'Indian/Mahe',
+    
+    'madagascar': 'Indian/Antananarivo',
+    'antananarivo': 'Indian/Antananarivo',
+    'toamasina': 'Indian/Antananarivo',
+    'antsirabe': 'Indian/Antananarivo',
+    
+    'mauritius': 'Indian/Mauritius',
+    'port louis': 'Indian/Mauritius',
+    'beau bassin': 'Indian/Mauritius',
+    'curepipe': 'Indian/Mauritius',
+    
+    'comoros': 'Indian/Comoro',
+    'moroni': 'Indian/Comoro',
+    'mutsamudu': 'Indian/Comoro',
+    'fomboni': 'Indian/Comoro',
+    
+    'mayotte': 'Indian/Mayotte',
+    'mamoudzou': 'Indian/Mayotte',
+    'koungou': 'Indian/Mayotte',
+    'bandraboua': 'Indian/Mayotte',
+    
+    'reunion': 'Indian/Reunion',
+    'saint denis': 'Indian/Reunion',
+    'saint paul': 'Indian/Reunion',
+    'saint pierre': 'Indian/Reunion',
+    
+    'chagos': 'Indian/Chagos',
+    'diego garcia': 'Indian/Chagos',
+    'peros banhos': 'Indian/Chagos',
+    'salomon islands': 'Indian/Chagos',
+    
+    'cocos': 'Indian/Cocos',
+    'west island': 'Indian/Cocos',
+    'home island': 'Indian/Cocos',
+    'direction island': 'Indian/Cocos',
+    
+    'christmas': 'Indian/Christmas',
+    'flying fish cove': 'Indian/Christmas',
+    'drumsite': 'Indian/Christmas',
+    'settlement': 'Indian/Christmas',
+    
+    'kerguelen': 'Indian/Kerguelen',
+    'port aux francais': 'Indian/Kerguelen',
+    'port christmas': 'Indian/Kerguelen',
+    'port couvreux': 'Indian/Kerguelen',
+    
+    'crozet': 'Indian/Reunion',
+    'port alfred': 'Indian/Reunion',
+    'port aux francais': 'Indian/Reunion',
+    'port mathurin': 'Indian/Reunion',
+    
+    'prince edward': 'Indian/Mauritius',
+    'marion island': 'Indian/Mauritius',
+    'prince edward island': 'Indian/Mauritius',
+    'marion': 'Indian/Mauritius',
+    
+    'bouvet': 'Atlantic/Reykjavik',
+    'bouvet island': 'Atlantic/Reykjavik',
+    'norway bouvet': 'Atlantic/Reykjavik',
+    'norwegian bouvet': 'Atlantic/Reykjavik',
+    
+    'peter i': 'Antarctica/Syowa',
+    'peter i island': 'Antarctica/Syowa',
+    'norway peter': 'Antarctica/Syowa',
+    'norwegian peter': 'Antarctica/Syowa',
+    
+    'queen maud': 'Antarctica/Syowa',
+    'dronning maud land': 'Antarctica/Syowa',
+    'norway queen maud': 'Antarctica/Syowa',
+    'norwegian queen maud': 'Antarctica/Syowa',
+    
+    'ross dependency': 'Antarctica/McMurdo',
+    'ross': 'Antarctica/McMurdo',
+    'new zealand ross': 'Antarctica/McMurdo',
+    'kiwi ross': 'Antarctica/McMurdo',
+    
+    'australian antarctic': 'Antarctica/Davis',
+    'australian antarctic territory': 'Antarctica/Davis',
+    'oz antarctic': 'Antarctica/Davis',
+    'aussie antarctic': 'Antarctica/Davis',
+    
+    'adelie land': 'Antarctica/Davis',
+    'terre adelie': 'Antarctica/Davis',
+    'france adelie': 'Antarctica/Davis',
+    'french adelie': 'Antarctica/Davis',
+    
+    'chilean antarctic': 'Antarctica/Palmer',
+    'chilean antarctic territory': 'Antarctica/Palmer',
+    'chile antarctic': 'Antarctica/Palmer',
+    'chilean antarctica': 'Antarctica/Palmer',
+    
+    'argentine antarctica': 'Antarctica/Syowa',
+    'argentine antarctic': 'Antarctica/Syowa',
+    'argentina antarctic': 'Antarctica/Syowa',
+    'argentine antarctica': 'Antarctica/Syowa',
+    
+    'british antarctic': 'Antarctica/Rothera',
+    'british antarctic territory': 'Antarctica/Rothera',
+    'uk antarctic': 'Antarctica/Rothera',
+    'british antarctica': 'Antarctica/Rothera',
+    
+    'norwegian antarctic': 'Antarctica/Syowa',
+    'norwegian antarctic territory': 'Antarctica/Syowa',
+    'norway antarctic': 'Antarctica/Syowa',
+    'norwegian antarctica': 'Antarctica/Syowa',
+    
+    'russian antarctic': 'Antarctica/Syowa',
+    'russian antarctica': 'Antarctica/Syowa',
+    'russia antarctic': 'Antarctica/Syowa',
+    'soviet antarctic': 'Antarctica/Syowa',
+    
+    'chinese antarctic': 'Antarctica/Syowa',
+    'chinese antarctica': 'Antarctica/Syowa',
+    'china antarctic': 'Antarctica/Syowa',
+    'prc antarctic': 'Antarctica/Syowa',
+    
+    'japanese antarctic': 'Antarctica/Syowa',
+    'japanese antarctica': 'Antarctica/Syowa',
+    'japan antarctic': 'Antarctica/Syowa',
+    'nippon antarctic': 'Antarctica/Syowa',
+    
+    'indian antarctic': 'Antarctica/Syowa',
+    'indian antarctica': 'Antarctica/Syowa',
+    'india antarctic': 'Antarctica/Syowa',
+    'bharat antarctic': 'Antarctica/Syowa',
+    
+    'italian antarctic': 'Antarctica/Syowa',
+    'italian antarctica': 'Antarctica/Syowa',
+    'italy antarctic': 'Antarctica/Syowa',
+    'italia antarctic': 'Antarctica/Syowa',
+    
+    'german antarctic': 'Antarctica/Syowa',
+    'german antarctica': 'Antarctica/Syowa',
+    'germany antarctic': 'Antarctica/Syowa',
+    'deutschland antarctic': 'Antarctica/Syowa',
+    
+    'french antarctic': 'Antarctica/Syowa',
+    'french antarctica': 'Antarctica/Syowa',
+    'france antarctic': 'Antarctica/Syowa',
+    'france antarctica': 'Antarctica/Syowa',
+    
+    'spanish antarctic': 'Antarctica/Syowa',
+    'spanish antarctica': 'Antarctica/Syowa',
+    'spain antarctic': 'Antarctica/Syowa',
+    'espana antarctic': 'Antarctica/Syowa',
+    
+    'portuguese antarctic': 'Antarctica/Syowa',
+    'portuguese antarctica': 'Antarctica/Syowa',
+    'portugal antarctic': 'Antarctica/Syowa',
+    'portugal antarctica': 'Antarctica/Syowa',
+    
+    'dutch antarctic': 'Antarctica/Syowa',
+    'dutch antarctica': 'Antarctica/Syowa',
+    'netherlands antarctic': 'Antarctica/Syowa',
+    'holland antarctic': 'Antarctica/Syowa',
+    
+    'belgian antarctic': 'Antarctica/Syowa',
+    'belgian antarctica': 'Antarctica/Syowa',
+    'belgium antarctic': 'Antarctica/Syowa',
+    'belgie antarctic': 'Antarctica/Syowa',
+    
+    'swiss antarctic': 'Antarctica/Syowa',
+    'swiss antarctica': 'Antarctica/Syowa',
+    'switzerland antarctic': 'Antarctica/Syowa',
+    'schweiz antarctic': 'Antarctica/Syowa',
+    
+    'austrian antarctic': 'Antarctica/Syowa',
+    'austrian antarctica': 'Antarctica/Syowa',
+    'austria antarctic': 'Antarctica/Syowa',
+    'osterreich antarctic': 'Antarctica/Syowa',
+    
+    'polish antarctic': 'Antarctica/Syowa',
+    'polish antarctica': 'Antarctica/Syowa',
+    'poland antarctic': 'Antarctica/Syowa',
+    'polska antarctic': 'Antarctica/Syowa',
+    
+    'czech antarctic': 'Antarctica/Syowa',
+    'czech antarctica': 'Antarctica/Syowa',
+    'czech republic antarctic': 'Antarctica/Syowa',
+    'ceska antarctic': 'Antarctica/Syowa',
+    
+    'slovak antarctic': 'Antarctica/Syowa',
+    'slovak antarctica': 'Antarctica/Syowa',
+    'slovakia antarctic': 'Antarctica/Syowa',
+    'slovensko antarctic': 'Antarctica/Syowa',
+    
+    'hungarian antarctic': 'Antarctica/Syowa',
+    'hungarian antarctica': 'Antarctica/Syowa',
+    'hungary antarctic': 'Antarctica/Syowa',
+    'magyar antarctic': 'Antarctica/Syowa',
+    
+    'romanian antarctic': 'Antarctica/Syowa',
+    'romanian antarctica': 'Antarctica/Syowa',
+    'romania antarctic': 'Antarctica/Syowa',
+    'romania antarctica': 'Antarctica/Syowa',
+    
+    'bulgarian antarctic': 'Antarctica/Syowa',
+    'bulgarian antarctica': 'Antarctica/Syowa',
+    'bulgaria antarctic': 'Antarctica/Syowa',
+    'bulgaria antarctica': 'Antarctica/Syowa',
+    
+    'greek antarctic': 'Antarctica/Syowa',
+    'greek antarctica': 'Antarctica/Syowa',
+    'greece antarctic': 'Antarctica/Syowa',
+    'ellada antarctic': 'Antarctica/Syowa',
+    
+    'turkish antarctic': 'Antarctica/Syowa',
+    'turkish antarctica': 'Antarctica/Syowa',
+    'turkey antarctic': 'Antarctica/Syowa',
+    'turkiye antarctic': 'Antarctica/Syowa',
+    
+    'ukrainian antarctic': 'Antarctica/Syowa',
+    'ukrainian antarctica': 'Antarctica/Syowa',
+    'ukraine antarctic': 'Antarctica/Syowa',
+    'ukraina antarctic': 'Antarctica/Syowa',
+    
+    'belarusian antarctic': 'Antarctica/Syowa',
+    'belarusian antarctica': 'Antarctica/Syowa',
+    'belarus antarctic': 'Antarctica/Syowa',
+    'belarus antarctica': 'Antarctica/Syowa',
+    
+    'latvian antarctic': 'Antarctica/Syowa',
+    'latvian antarctica': 'Antarctica/Syowa',
+    'latvia antarctic': 'Antarctica/Syowa',
+    'latvija antarctic': 'Antarctica/Syowa',
+    
+    'estonian antarctic': 'Antarctica/Syowa',
+    'estonian antarctica': 'Antarctica/Syowa',
+    'estonia antarctic': 'Antarctica/Syowa',
+    'eesti antarctic': 'Antarctica/Syowa',
+    
+    'lithuanian antarctic': 'Antarctica/Syowa',
+    'lithuanian antarctica': 'Antarctica/Syowa',
+    'lithuania antarctic': 'Antarctica/Syowa',
+    'lietuva antarctic': 'Antarctica/Syowa',
+    
+    'irish antarctic': 'Antarctica/Syowa',
+    'irish antarctica': 'Antarctica/Syowa',
+    'ireland antarctic': 'Antarctica/Syowa',
+    'eire antarctic': 'Antarctica/Syowa',
+    
+    'catalan antarctic': 'Antarctica/Syowa',
+    'catalan antarctica': 'Antarctica/Syowa',
+    'catalonia antarctic': 'Antarctica/Syowa',
+    'catalunya antarctic': 'Antarctica/Syowa',
+    
+    'serbian antarctic': 'Antarctica/Syowa',
+    'serbian antarctica': 'Antarctica/Syowa',
+    'serbia antarctic': 'Antarctica/Syowa',
+    'srbija antarctic': 'Antarctica/Syowa',
+    
+    'croatian antarctic': 'Antarctica/Syowa',
+    'croatian antarctica': 'Antarctica/Syowa',
+    'croatia antarctic': 'Antarctica/Syowa',
+    'hrvatska antarctic': 'Antarctica/Syowa',
+    
+    'slovenian antarctic': 'Antarctica/Syowa',
+    'slovenian antarctica': 'Antarctica/Syowa',
+    'slovenia antarctic': 'Antarctica/Syowa',
+    'slovenija antarctic': 'Antarctica/Syowa',
+    
+    'luxembourgish antarctic': 'Antarctica/Syowa',
+    'luxembourgish antarctica': 'Antarctica/Syowa',
+    'luxembourg antarctic': 'Antarctica/Syowa',
+    'luxemburg antarctic': 'Antarctica/Syowa',
+    
+    'monacan antarctic': 'Antarctica/Syowa',
+    'monacan antarctica': 'Antarctica/Syowa',
+    'monaco antarctic': 'Antarctica/Syowa',
+    'monaco antarctica': 'Antarctica/Syowa',
+    
+    'vatican antarctic': 'Antarctica/Syowa',
+    'vatican antarctica': 'Antarctica/Syowa',
+    'vatican city antarctic': 'Antarctica/Syowa',
+    'holy see antarctic': 'Antarctica/Syowa',
+    
+    'san marino antarctic': 'Antarctica/Syowa',
+    'san marino antarctica': 'Antarctica/Syowa',
+    'san marino antarctic': 'Antarctica/Syowa',
+    'san marino antarctica': 'Antarctica/Syowa',
+    
+    'andorran antarctic': 'Antarctica/Syowa',
+    'andorran antarctica': 'Antarctica/Syowa',
+    'andorra antarctic': 'Antarctica/Syowa',
+    'andorra antarctica': 'Antarctica/Syowa',
+    
+    'liechtenstein antarctic': 'Antarctica/Syowa',
+    'liechtenstein antarctica': 'Antarctica/Syowa',
+    'liechtenstein antarctic': 'Antarctica/Syowa',
+    'liechtenstein antarctica': 'Antarctica/Syowa',
+    
+    'maltese antarctic': 'Antarctica/Syowa',
+    'maltese antarctica': 'Antarctica/Syowa',
+    'malta antarctic': 'Antarctica/Syowa',
+    'malta antarctica': 'Antarctica/Syowa',
+    
+    'cypriot antarctic': 'Antarctica/Syowa',
+    'cypriot antarctica': 'Antarctica/Syowa',
+    'cyprus antarctic': 'Antarctica/Syowa',
+    'kypros antarctic': 'Antarctica/Syowa',
+    
+    'gibraltarian antarctic': 'Antarctica/Syowa',
+    'gibraltarian antarctica': 'Antarctica/Syowa',
+    'gibraltar antarctic': 'Antarctica/Syowa',
+    'gibraltar antarctica': 'Antarctica/Syowa'
+  };
+  
+  const normalizedCity = cityName.toLowerCase().trim();
+  return cityMappings[normalizedCity] || null;
+}
+
+populateList();
+// REMOVED: duplicate event listener - using the one in DOMContentLoaded
+
+function selectedPartnerTZ(){
+  const opt = partnerTzSel.options[partnerTzSel.selectedIndex];
+  const tz = opt ? opt.value : 'UTC';
+  
+  if (!isValidTimeZone(tz)) {
+    showInlineMessage('partnerTz', 'Ungültige Zeitzone ausgewählt - verwende UTC', 'warning');
+    return 'UTC';
+  }
+  return tz;
+}
+
+function updatePartnerRow(){
+  partnerRow.style.display = (modeEl.value === 'partner') ? 'block' : 'none';
+}
+
+updatePartnerRow();
+modeEl.addEventListener('change', () => { updatePartnerRow(); compute(); });
+
+// Defaults: today +2h
+const now = new Date();
+const in2h = new Date(now.getTime() + 2 * 3600 * 1000);
+dateEl.valueAsDate = in2h;
+timeEl.value = String(in2h.getHours()).padStart(2, '0') + ':' + String(in2h.getMinutes()).padStart(2, '0');
+
+function setError(msg, type = 'error'){
+  errorEl.textContent = msg;
+  errorEl.style.display = msg ? 'block' : 'none';
+  errorEl.className = `small ${type}`;
+}
+
+function compute(){
+  setError('');
+  
+  if(!dateEl.value || !timeEl.value){
+    setError('Bitte Datum und Uhrzeit eingeben.', 'error');
+    return;
+  }
+  
+  const [y, mo, d] = dateEl.value.split('-').map(Number);
+  const [hh, mi] = timeEl.value.split(':').map(Number);
+  let partnerTZ = (modeEl.value === 'partner') ? selectedPartnerTZ() : 'UTC';
+
+  try {
+    if(modeEl.value === 'utc'){
+      eventUTCms = Date.UTC(y, mo-1, d, hh, mi);
+    } else {
+      eventUTCms = makeUTCFromZonedLocal(y, mo, d, hh, mi, partnerTZ);
+    }
+
+    const eventDateUTC = new Date(eventUTCms);
+    
+    // Validate the result
+    if(isNaN(eventUTCms) || eventDateUTC.getTime() !== eventUTCms){
+      setError('Fehler bei der Zeitberechnung. Bitte überprüfe deine Eingaben.', 'error');
+      return;
+    }
+
+    utcOutEl.value = fmtShort(eventDateUTC, 'UTC');
+    localOutEl.value = fmtShort(eventDateUTC, localTZ);
+    partnerOutEl.value = fmtShort(eventDateUTC, partnerTZ);
+    
+    inviteEl.value = `Meeting: ${fmtShort(eventDateUTC, 'UTC')} UTC  •  ${fmtShort(eventDateUTC, localTZ)} (${localTZ})  •  ${fmtShort(eventDateUTC, partnerTZ)} (${partnerTZ})`;
+
+    // Start countdown
+    if(timer) clearInterval(timer);
+    timer = setInterval(() => {
+      const diff = eventUTCms - Date.now();
+      if(diff <= 0){
+        countdownEl.value = 'JETZT!';
+        countdownEl.style.color = 'var(--good)';
+        clearInterval(timer);
+      } else {
+        const s = Math.floor(diff / 1000);
+        const ddd = Math.floor(s / 86400);
+        const hh = Math.floor((s % 86400) / 3600);
+        const mm = Math.floor((s % 3600) / 60);
+        const ss = s % 60;
+        countdownEl.value = `${ddd}d ${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+        countdownEl.style.color = 'var(--ink)';
+      }
+    }, 500);
+    
+    alarmMsg.textContent = '';
+    setError('Zeit erfolgreich berechnet!', 'good');
+    
+  } catch(e) {
+    setError('Fehler bei der Berechnung: ' + e.message, 'error');
+  }
+}
+
+function beep(){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+    
+    osc.start();
+    setTimeout(() => {
+      osc.stop();
+      ctx.close();
+    }, 1000);
+  } catch(e) {
+    // Fallback for browsers without AudioContext
+    console.log('Audio not supported');
+  }
+}
+
+async function ensureNotifyPermission(){
+  if(!('Notification' in window)) return false;
+  if(Notification.permission === 'granted') return true;
+  if(Notification.permission !== 'denied'){
+    try {
+      const p = await Notification.requestPermission();
+      return p === 'granted';
+    } catch(e) {
+      return false;
+    }
+  }
+  return false;
+}
+
+function setAlarm(){
+  if(!eventUTCms){
+    setError('Bitte zuerst auf „Zeit umrechnen" klicken.', 'error');
+    return;
+  }
+  
+  const diff = eventUTCms - Date.now();
+  if(diff <= 0){
+    setError('Die Zeit liegt in der Vergangenheit.', 'error');
+    return;
+  }
+  
+  // Clear any existing alarm
+  if(alarmTimer) {
+    clearInterval(alarmTimer);
+    alarmTimer = null;
+  }
+  
+  alarmMsg.innerHTML = '<span class="status warning">Alarm wird gestellt …</span>';
+  
+  ensureNotifyPermission().then(ok => {
+    alarmMsg.innerHTML = '<span class="status success">Alarm aktiv. Seite geöffnet lassen!</span>';
+    
+    alarmTimer = setInterval(() => {
+      const remain = eventUTCms - Date.now();
+      if(remain <= 0){
+        clearInterval(alarmTimer);
+        alarmTimer = null;
+        beep();
+        
+        try {
+          if(ok){
+            new Notification('Zeit ist jetzt!', { body: inviteEl.value });
+          } else {
+            // Show prominent notification in the UI instead of alert
+            const countdownEl = document.getElementById('countdown');
+            if (countdownEl) {
+              countdownEl.style.color = 'var(--good)';
+              countdownEl.style.fontSize = '24px';
+              countdownEl.style.fontWeight = 'bold';
+              countdownEl.textContent = 'ZEIT IST JETZT!';
+            }
+          }
+        } catch(_) {
+          // Show prominent notification in the UI instead of alert
+          const countdownEl = document.getElementById('countdown');
+          if (countdownEl) {
+            countdownEl.style.color = 'var(--good)';
+            countdownEl.style.fontSize = '24px';
+            countdownEl.style.fontWeight = 'bold';
+            countdownEl.textContent = 'ZEIT IST JETZT!';
+          }
+        }
+        
+        alarmMsg.innerHTML = '<span class="status success">Alarm ausgelöst!</span>';
+      }
+    }, 1000);
+  }).catch(e => {
+    alarmMsg.innerHTML = '<span class="status error">Fehler beim Setzen des Alarms</span>';
+  });
+}
+
+async function copyInvite(){
+  try {
+    if(navigator.clipboard && window.isSecureContext){
+      // Modern clipboard API
+      await navigator.clipboard.writeText(inviteEl.value);
+      copyBtn.textContent = 'Kopiert!';
+      copyBtn.style.background = 'linear-gradient(180deg,rgba(65,212,122,.25),rgba(65,212,122,.1))';
+      setTimeout(() => {
+        copyBtn.textContent = 'Einladung kopieren';
+        copyBtn.style.background = 'linear-gradient(180deg,rgba(112,240,255,.25),rgba(112,240,255,.1))';
+      }, 1200);
+    } else {
+      // Fallback for older browsers
+      inviteEl.select();
+      if(document.execCommand('copy')){
+        copyBtn.textContent = 'Kopiert!';
+        copyBtn.style.background = 'linear-gradient(180deg,rgba(65,212,122,.25),rgba(65,212,122,.1))';
+        setTimeout(() => {
+          copyBtn.textContent = 'Einladung kopieren';
+          copyBtn.style.background = 'linear-gradient(180deg,rgba(112,240,255,.25),rgba(112,240,255,.1))';
+        }, 1200);
+      } else {
+        throw new Error('Copy command failed');
+      }
+    }
+  } catch(e) {
+    // Final fallback - show text for manual copy
+    inviteEl.select();
+    showInlineMessage('copyBtn', 'Bitte kopiere den Text manuell (Strg+C)', 'warning');
+  }
+}
+
+// Auto-recompute on changes to reduce errors
+[modeEl, dateEl, timeEl, partnerTzSel].forEach(el => el.addEventListener('change', compute));
+
+// REMOVED: duplicate event listener - using the one in DOMContentLoaded
+
+tzFilter.addEventListener('change', () => { compute(); });
+
+// Event listeners
+calcBtn.addEventListener('click', compute);
+alarmBtn.addEventListener('click', setAlarm);
+copyBtn.addEventListener('click', copyInvite);
+
+// Initial compute
+compute();
+
+// Initialize all timezone dropdowns
+populateAllTimezones();
+
+// Initialize the main timezone search dropdown
+populateList("");
+
+// Add some visual feedback for better UX
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize the main timezone search dropdown
+  populateList("");
+  
+  // Add search functionality for timezone filter - MAIN EVENT LISTENER
+  tzFilter.addEventListener('input', (e) => {
+    const searchTerm = e.target.value;
+    console.log('DEBUG: Main event listener called with:', searchTerm);
+    populateList(searchTerm);
+  });
+  // Add loading states
+  calcBtn.addEventListener('click', () => {
+    calcBtn.textContent = 'Berechne...';
+    calcBtn.disabled = true;
+    setTimeout(() => {
+      calcBtn.textContent = 'Zeit umrechnen';
+      calcBtn.disabled = false;
+    }, 500);
+  });
+  
+  // Add keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if(e.ctrlKey || e.metaKey) {
+      switch(e.key) {
+        case 'Enter':
+          e.preventDefault();
+          compute();
+          break;
+        case 'c':
+          if(document.activeElement === inviteEl) {
+            e.preventDefault();
+            copyInvite();
+          }
+          break;
+      }
+    }
+  });
+  
+  // Set default dates for new features
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('travelDate').valueAsDate = tomorrow;
+  document.getElementById('daylightDate').valueAsDate = tomorrow;
+  document.getElementById('todoDate').valueAsDate = tomorrow;
+  
+  // Set default time for todo
+  document.getElementById('todoTime').value = '09:00';
+  
+  // Initialize analog clocks
+  updateAnalogClocks();
+  setInterval(updateAnalogClocks, 1000); // Update every second
+  
+  // Load all timezones for clock city selection
+  loadAllTimezonesForClocks();
+  
+  // Setup city search functionality
+  setupCitySearch();
+  
+  // Add change event listeners to city selectors
+  for (let i = 1; i <= 5; i++) {
+    const select = document.getElementById(`citySelect${i}`);
+    if (select) {
+      select.addEventListener('change', () => {
+        updateAnalogClocks(); // Update clocks when city changes
+      });
+    }
+  }
+  
+  // Initialize language system
+  const savedLanguage = localStorage.getItem('weltzeituhr_language') || 'de';
+  changeLanguage(savedLanguage);
+  
+  // Highlight active language button
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.lang-btn').forEach(b => b.style.background = 'none');
+      this.style.background = 'rgba(112,240,255,.2)';
+    });
+  });
+});
+
+// ===== Analog Clock Functions =====
+function updateAnalogClocks() {
+  // Get selected cities from dropdowns
+  const selectedCities = [];
+  for (let i = 1; i <= 5; i++) {
+    const select = document.getElementById(`citySelect${i}`);
+    if (select) {
+      const timezone = select.value;
+      const cityName = select.options[select.selectedIndex].text;
+      selectedCities.push({ name: cityName, timezone: timezone });
+    }
+  }
+  
+  selectedCities.forEach((city, index) => {
+    const clockIndex = index + 1;
+    updateClock(clockIndex, city.timezone, city.name);
+  });
+}
+
+// Load all available timezones for city selection
+function loadAllTimezonesForClocks() {
+  const allTimezones = getAllTimeZones();
+  const citySelects = ['citySelect1', 'citySelect2', 'citySelect3', 'citySelect4', 'citySelect5'];
+  
+  citySelects.forEach(selectId => {
+    const select = document.getElementById(selectId);
+    if (select) {
+      // Clear existing options except the first one
+      const firstOption = select.options[0];
+      select.innerHTML = '';
+      select.appendChild(firstOption);
+      
+      // Add all available timezones, avoiding duplicates
+      allTimezones.forEach(timezone => {
+        // Skip if this timezone is already the first option
+        if (firstOption && timezone === firstOption.value) return;
+        
+        const option = document.createElement('option');
+        option.value = timezone;
+        option.textContent = timezone.replace(/_/g, ' ').replace(/\//g, ' - ');
+        select.appendChild(option);
+      });
+    }
+  });
+}
+
+// Function to get city mappings for search
+function getCityMappings() {
+  return {
+    // US Cities (including Washington)
+    'washington': 'America/New_York',
+    'washington dc': 'America/New_York',
+    'washington d.c.': 'America/New_York',
+    'dc': 'America/New_York',
+    'district of columbia': 'America/New_York',
+    'us capital': 'America/New_York',
+    'capital': 'America/New_York',
+    
+    // Major cities
+    'new york': 'America/New_York',
+    'nyc': 'America/New_York',
+    'manhattan': 'America/New_York',
+    'brooklyn': 'America/New_York',
+    'queens': 'America/New_York',
+    
+    'los angeles': 'America/Los_Angeles',
+    'la': 'America/Los_Angeles',
+    'hollywood': 'America/Los_Angeles',
+    'san francisco': 'America/Los_Angeles',
+    
+    'chicago': 'America/Chicago',
+    'windy city': 'America/Chicago',
+    
+    'denver': 'America/Denver',
+    'mile high city': 'America/Denver',
+    
+    'phoenix': 'America/Phoenix',
+    'valley of the sun': 'America/Phoenix',
+    
+    'detroit': 'America/Detroit',
+    'motor city': 'America/Detroit',
+    'motown': 'America/Detroit',
+    
+    // European cities
+    'berlin': 'Europe/Berlin',
+    'germany': 'Europe/Berlin',
+    'deutschland': 'Europe/Berlin',
+    
+    'london': 'Europe/London',
+    'england': 'Europe/London',
+    'uk': 'Europe/London',
+    'united kingdom': 'Europe/London',
+    
+    'paris': 'Europe/Paris',
+    'france': 'Europe/Paris',
+    'frankreich': 'Europe/Paris',
+    
+    'rome': 'Europe/Rome',
+    'italy': 'Europe/Rome',
+    'italia': 'Europe/Rome',
+    
+    'madrid': 'Europe/Madrid',
+    'spain': 'Europe/Madrid',
+    'espana': 'Europe/Madrid',
+    
+    // Asian cities
+    'tokyo': 'Asia/Tokyo',
+    'japan': 'Asia/Tokyo',
+    'nippon': 'Asia/Tokyo',
+    
+    'beijing': 'Asia/Shanghai',
+    'china': 'Asia/Shanghai',
+    'shanghai': 'Asia/Shanghai',
+    
+    'mumbai': 'Asia/Kolkata',
+    'delhi': 'Asia/Kolkata',
+    'india': 'Asia/Kolkata',
+    'kolkata': 'Asia/Kolkata',
+    
+    // Australian cities
+    'sydney': 'Australia/Sydney',
+    'melbourne': 'Australia/Melbourne',
+    'australia': 'Australia/Sydney',
+    
+    // More cities...
+    'moscow': 'Europe/Moscow',
+    'russia': 'Europe/Moscow',
+    
+    'dubai': 'Asia/Dubai',
+    'uae': 'Asia/Dubai',
+    
+    'singapore': 'Asia/Singapore',
+    
+    'hong kong': 'Asia/Hong_Kong',
+    
+    'bangkok': 'Asia/Bangkok',
+    'thailand': 'Asia/Bangkok',
+    
+    'seoul': 'Asia/Seoul',
+    'south korea': 'Asia/Seoul',
+    'korea': 'Asia/Seoul'
+  };
+}
+
+// Advanced city search functionality
+function setupCitySearch() {
+  const searchInput = document.getElementById('citySearchInput');
+  const searchResults = document.getElementById('citySearchResults');
+  
+  if (searchInput && searchResults) {
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      if (searchTerm.length < 2) {
+        searchResults.style.display = 'none';
+        return;
+      }
+      
+      const allTimezones = getAllTimeZones();
+      
+      // First check if the search term directly maps to a timezone
+      const directMatch = searchCityInTimezone(searchTerm);
+      
+      // Filter timezones that contain the search term OR match the direct mapping
+      let filtered = [];
+      
+      // Special handling for country searches to prevent false matches
+      if (searchTerm === 'usa' || searchTerm === 'us' || searchTerm === 'united states') {
+        // Use hardcoded list for USA to avoid false matches like Lusaka, Jerusalem
+        filtered = [
+          'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
+          'America/Phoenix', 'America/Anchorage', 'America/Honolulu', 'America/Detroit',
+          'America/Indiana/Indianapolis', 'America/Kentucky/Louisville', 'America/Boise',
+          'America/Adak', 'America/Metlakatla', 'America/Sitka', 'America/Juneau',
+          'America/Yakutat', 'America/Nome'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'canada' || searchTerm === 'kanada') {
+        // Use hardcoded list for Canada
+        filtered = [
+          'America/Toronto', 'America/Vancouver', 'America/Montreal', 'America/Halifax',
+          'America/Winnipeg', 'America/Regina', 'America/Edmonton', 'America/St_Johns',
+          'America/Iqaluit', 'America/Whitehorse', 'America/Yellowknife', 'America/Dawson'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'germany' || searchTerm === 'deutschland') {
+        filtered = ['Europe/Berlin'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'france' || searchTerm === 'frankreich') {
+        filtered = ['Europe/Paris'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'uk' || searchTerm === 'england' || searchTerm === 'britain' || searchTerm === 'united kingdom') {
+        filtered = ['Europe/London'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'spain' || searchTerm === 'spanien' || searchTerm === 'espana') {
+        filtered = ['Europe/Madrid'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'italy' || searchTerm === 'italien' || searchTerm === 'italia') {
+        filtered = ['Europe/Rome'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'russia' || searchTerm === 'russland') {
+        filtered = [
+          'Europe/Moscow', 'Asia/Yekaterinburg', 'Asia/Omsk', 'Asia/Krasnoyarsk',
+          'Asia/Irkutsk', 'Asia/Yakutsk', 'Asia/Vladivostok', 'Asia/Magadan',
+          'Asia/Kamchatka', 'Europe/Kaliningrad', 'Europe/Samara'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'china' || searchTerm === 'chinese') {
+        filtered = ['Asia/Shanghai', 'Asia/Urumqi'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'japan' || searchTerm === 'nippon') {
+        filtered = ['Asia/Tokyo'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'india' || searchTerm === 'indien') {
+        filtered = ['Asia/Kolkata'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'australia' || searchTerm === 'australien') {
+        filtered = [
+          'Australia/Sydney', 'Australia/Melbourne', 'Australia/Brisbane',
+          'Australia/Perth', 'Australia/Adelaide', 'Australia/Darwin',
+          'Australia/Hobart', 'Australia/Canberra'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'brazil' || searchTerm === 'brasil' || searchTerm === 'brasilien') {
+        filtered = [
+          'America/Sao_Paulo', 'America/Rio_Branco', 'America/Manaus',
+          'America/Fortaleza', 'America/Recife', 'America/Bahia',
+          'America/Belem', 'America/Noronha'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'mexico' || searchTerm === 'mexiko') {
+        filtered = [
+          'America/Mexico_City', 'America/Cancun', 'America/Merida',
+          'America/Monterrey', 'America/Mazatlan', 'America/Chihuahua',
+          'America/Tijuana', 'America/Hermosillo'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'argentina' || searchTerm === 'argentinien') {
+        filtered = [
+          'America/Buenos_Aires', 'America/Argentina/Cordoba', 'America/Argentina/Mendoza',
+          'America/Argentina/Tucuman', 'America/Argentina/Salta', 'America/Argentina/Ushuaia'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'south africa' || searchTerm === 'suedafrika') {
+        filtered = ['Africa/Johannesburg'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'egypt' || searchTerm === 'aegypten') {
+        filtered = ['Africa/Cairo'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'turkey' || searchTerm === 'tuerkei' || searchTerm === 'turkiye') {
+        filtered = ['Europe/Istanbul'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'netherlands' || searchTerm === 'niederlande' || searchTerm === 'holland') {
+        filtered = ['Europe/Amsterdam'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'belgium' || searchTerm === 'belgien') {
+        filtered = ['Europe/Brussels'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'switzerland' || searchTerm === 'schweiz') {
+        filtered = ['Europe/Zurich'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'austria' || searchTerm === 'oesterreich') {
+        filtered = ['Europe/Vienna'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'norway' || searchTerm === 'norwegen') {
+        filtered = ['Europe/Oslo'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'sweden' || searchTerm === 'schweden') {
+        filtered = ['Europe/Stockholm'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'denmark' || searchTerm === 'daenemark') {
+        filtered = ['Europe/Copenhagen'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'finland' || searchTerm === 'finnland') {
+        filtered = ['Europe/Helsinki'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'poland' || searchTerm === 'polen') {
+        filtered = ['Europe/Warsaw'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'greece' || searchTerm === 'griechenland') {
+        filtered = ['Europe/Athens'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'portugal') {
+        filtered = ['Europe/Lisbon', 'Atlantic/Azores', 'Atlantic/Madeira'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'israel') {
+        filtered = ['Asia/Jerusalem'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'uae' || searchTerm === 'dubai' || searchTerm === 'emirates') {
+        filtered = ['Asia/Dubai'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'saudi arabia' || searchTerm === 'saudi') {
+        filtered = ['Asia/Riyadh'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'south korea' || searchTerm === 'korea') {
+        filtered = ['Asia/Seoul'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'thailand') {
+        filtered = ['Asia/Bangkok'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'singapore' || searchTerm === 'singapur') {
+        filtered = ['Asia/Singapore'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'malaysia') {
+        filtered = ['Asia/Kuala_Lumpur'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'indonesia' || searchTerm === 'indonesien') {
+        filtered = [
+          'Asia/Jakarta', 'Asia/Pontianak', 'Asia/Makassar', 'Asia/Jayapura'
+        ].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'philippines' || searchTerm === 'philippinen') {
+        filtered = ['Asia/Manila'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'vietnam') {
+        filtered = ['Asia/Ho_Chi_Minh'].filter(tz => allTimezones.includes(tz));
+      } else if (searchTerm === 'new zealand' || searchTerm === 'neuseeland') {
+        filtered = ['Pacific/Auckland', 'Pacific/Chatham'].filter(tz => allTimezones.includes(tz));
+      } else {
+        // Regular search for cities and regions
+        filtered = allTimezones.filter(tz => 
+          tz.toLowerCase().includes(searchTerm) ||
+          tz === directMatch
+        );
+      }
+      
+      // Also search in the reverse direction - find all cities that map to timezones containing the search term
+      const cityMappings = getCityMappings();
+      Object.keys(cityMappings).forEach(city => {
+        if (city.toLowerCase().includes(searchTerm) && !filtered.includes(cityMappings[city])) {
+          filtered.push(cityMappings[city]);
+        }
+      });
+      
+      // Remove duplicates and limit results
+      filtered = Array.from(new Set(filtered)).slice(0, 20);
+      
+      if (filtered.length > 0) {
+        searchResults.innerHTML = filtered.map(tz => {
+          // Check if this timezone was found via city mapping
+          const cityMappings = getCityMappings();
+          const matchingCities = Object.keys(cityMappings).filter(city => 
+            cityMappings[city] === tz && city.toLowerCase().includes(searchTerm)
+          );
+          
+          let displayText = tz.replace(/_/g, ' ').replace(/\//g, ' - ');
+          if (matchingCities.length > 0) {
+            const cityName = matchingCities[0].charAt(0).toUpperCase() + matchingCities[0].slice(1);
+            displayText = `${cityName} (${displayText})`;
+          }
+          
+          return `<div class="search-result-item" style="padding:8px;border-bottom:1px solid rgba(112,240,255,.2);cursor:pointer;" onclick="selectCityForClock('${tz}')" onmouseover="this.style.background='rgba(112,240,255,.1)'" onmouseout="this.style.background='transparent'">
+            ${displayText}
+          </div>`;
+        }).join('');
+        searchResults.style.display = 'block';
+      } else {
+        searchResults.innerHTML = '<div style="padding:8px;color:var(--muted);">Keine Ergebnisse gefunden</div>';
+        searchResults.style.display = 'block';
+      }
+    });
+    
+    // Hide results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.style.display = 'none';
+      }
+    });
+  }
+}
+
+// Function to select a city for any clock
+function selectCityForClock(timezone) {
+  // Find the first clock that doesn't have this timezone
+  for (let i = 1; i <= 5; i++) {
+    const select = document.getElementById(`citySelect${i}`);
+    if (select && select.value !== timezone) {
+      select.value = timezone;
+      select.dispatchEvent(new Event('change'));
+      break;
+    }
+  }
+  
+  // Hide search results
+  const searchResults = document.getElementById('citySearchResults');
+  if (searchResults) {
+    searchResults.style.display = 'none';
+  }
+  
+  // Clear search input
+  const searchInput = document.getElementById('citySearchInput');
+  if (searchInput) {
+    searchInput.value = '';
+  }
+}
+
+function updateClock(clockIndex, timezone, cityName) {
+  try {
+    const now = new Date();
+    const cityTime = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
+    
+    // Update city name display
+    const cityNameElement = document.getElementById(`cityName${clockIndex}`);
+    if (cityNameElement) {
+      // Extract city name from timezone (e.g., "Europe/Berlin" -> "Berlin")
+      const displayName = timezone.split('/').pop().replace(/_/g, ' ');
+      cityNameElement.textContent = displayName;
+    }
+    
+    // Update digital time display
+    const timeDisplay = document.getElementById(`time${clockIndex}`);
+    const dateDisplay = document.getElementById(`date${clockIndex}`);
+    
+    if (timeDisplay && dateDisplay) {
+      timeDisplay.textContent = cityTime.toLocaleTimeString('de-DE', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      });
+      dateDisplay.textContent = cityTime.toLocaleDateString('de-DE', { 
+        day: '2-digit', 
+        month: '2-digit' 
+      });
+    }
+    
+    // Update analog clock hands
+    const hours = cityTime.getHours() % 12;
+    const minutes = cityTime.getMinutes();
+    const seconds = cityTime.getSeconds();
+    
+    const hourHand = document.getElementById(`hour${clockIndex}`);
+    const minuteHand = document.getElementById(`min${clockIndex}`);
+    const secondHand = document.getElementById(`sec${clockIndex}`);
+    
+    if (hourHand && minuteHand && secondHand) {
+      // Calculate angles (0 degrees = 12 o'clock)
+      const hourAngle = (hours * 30) + (minutes * 0.5); // 30° per hour + 0.5° per minute
+      const minuteAngle = minutes * 6; // 6° per minute
+      const secondAngle = seconds * 6; // 6° per minute
+      
+      // Apply rotations
+      hourHand.style.transform = `translate(-50%, -100%) rotate(${hourAngle}deg)`;
+      minuteHand.style.transform = `translate(-50%, -100%) rotate(${minuteAngle}deg)`;
+      secondHand.style.transform = `translate(-50%, -100%) rotate(${secondAngle}deg)`;
+    }
+  } catch (error) {
+    console.log(`Error updating clock ${clockIndex}:`, error);
+  }
+}
+</script>
+
+<!-- Donation Button -->
+<a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&utm_medium=referral&utm_source=widget" 
+   target="_blank" 
+   rel="noopener noreferrer" 
+   class="donation-button" 
+   title="Unterstütze Magnitudo Musica Mundo - Laat muziek de wereld versterken!">
+  <span class="heart">💝</span>
+  Spenden
+</a>
+
+</body></html>

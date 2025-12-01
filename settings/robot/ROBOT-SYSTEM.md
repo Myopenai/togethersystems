@@ -84,3 +84,10 @@ Der **Settings-Ordner ist der Macher** - ein Modell für die Erstellung von:
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

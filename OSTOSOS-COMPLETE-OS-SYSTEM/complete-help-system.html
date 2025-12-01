@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Komplettes Hilfe-System</title>
+<link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,monospace;background:radial-gradient(circle at top,var(--davinci-bg,#0a0e27) 0%,var(--davinci-card,#1a1f3a) 100%);color:var(--davinci-text,#ffffff);min-height:100vh;padding:20px}
+.container{max-width:1600px;margin:0 auto}
+.header{text-align:center;margin-bottom:30px;padding:30px;background:var(--davinci-card,#1a1f3a);border-radius:20px;border:2px solid var(--davinci-accent-primary,#10b981)}
+.search-section{background:var(--davinci-card,#1a1f3a);padding:30px;border-radius:15px;border:1px solid var(--davinci-border,#223040);margin-bottom:20px}
+.search-input{width:100%;padding:15px;background:var(--davinci-bg,#0f172a);border:2px solid var(--davinci-border,#223040);border-radius:10px;color:var(--davinci-text,#ffffff);font-size:1.1em;margin-bottom:15px}
+.search-input:focus{outline:none;border-color:var(--davinci-accent-primary,#10b981)}
+.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;margin-top:20px}
+.result-card{background:var(--davinci-bg,#0f172a);padding:20px;border-radius:12px;border:1px solid var(--davinci-border,#223040);cursor:pointer;transition:all 0.3s}
+.result-card:hover{border-color:var(--davinci-accent-primary,#10b981);transform:translateY(-3px)}
+.ai-suggestion{background:rgba(16,185,129,0.1);border:1px solid #10b981;padding:20px;border-radius:12px;margin-top:20px}
+.psychological-analysis{background:rgba(59,130,246,0.1);border:1px solid #3b82f6;padding:20px;border-radius:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" style="color:var(--davinci-accent-primary,#10b981);text-decoration:none">T,.&T,,.&T,,,.</a> Komplettes Hilfe-System</h1>
+<p style="font-size:1.2em;color:var(--davinci-muted,#9ca3af);margin-top:10px">Superintelligente Suche mit KI-Unterstützung</p>
+<div style="margin-top:20px;padding:15px;background:rgba(59,130,246,0.1);border:1px solid #3b82f6;border-radius:10px">
+<p style="color:#3b82f6;font-weight:600;margin-bottom:10px">🧪 WISSENSCHAFTLICHES STUDIENPROJEKT</p>
+<p style="font-size:0.9em;color:var(--davinci-text,#ffffff)">OSTOSOS ist ein wissenschaftliches Studienprojekt. Fertige Programme aus dem Gentlyoverdone-Ordner können als Studienobjekte verwendet werden. AI-Begeisterte können mit Dokumentationen schnell Programme erstellen, üben und lernen - ohne von null anfangen zu müssen. Wie eine Oase mit grenzenlosem, immer erreichbarem Trinkwasser - lebenserhaltend und erste Lebensregeln für alle.</p>
+<p style="margin-top:10px"><a href="./gentlyoverdone-documentation.html" style="color:#3b82f6;text-decoration:none;font-weight:600">→ Studienprojekt-Dokumentation öffnen</a></p>
+</div>
+</div>
+
+<div class="search-section">
+<input type="text" id="helpSearch" class="search-input" placeholder="Suche nach Funktionen, Features, Problemen... (KI erkennt auch fehlerhafte Eingaben)" />
+<div id="searchResults" class="results"></div>
+<div id="aiSuggestion" class="ai-suggestion" style="display:none"></div>
+<div id="psychologicalAnalysis" class="psychological-analysis" style="display:none"></div>
+</div>
+</div>
+
+<script src="./css/da-vinci-enterprise-standard-init.js"></script>
+<script src="./help-system-core.js"></script>
+<script src="./superintelligent-search-system-core.js"></script>
+<script src="./psychological-analyzer-core.js"></script>
+<script src="./ai-chat-system-core.js"></script>
+<script>
+const searchInput = document.getElementById('helpSearch');
+const resultsDiv = document.getElementById('searchResults');
+const aiSuggestionDiv = document.getElementById('aiSuggestion');
+const psychAnalysisDiv = document.getElementById('psychologicalAnalysis');
+
+let searchTimeout;
+
+searchInput.addEventListener('input', async () => {
+  clearTimeout(searchTimeout);
+  const query = searchInput.value.trim();
+  
+  if (!query) {
+    resultsDiv.innerHTML = '';
+    aiSuggestionDiv.style.display = 'none';
+    psychAnalysisDiv.style.display = 'none';
+    return;
+  }
+  
+  searchTimeout = setTimeout(async () => {
+    // Psychologische Analyse
+    if (window.PSYCHOLOGICAL_ANALYZER) {
+      const analysis = window.PSYCHOLOGICAL_ANALYZER.analyzePrompt(query);
+      const userDesc = window.PSYCHOLOGICAL_ANALYZER.generateUserDescription(analysis);
+      
+      psychAnalysisDiv.innerHTML = `
+        <h3 style="color:#3b82f6;margin-bottom:10px">🧠 Psychologische Analyse</h3>
+        <div style="margin-bottom:10px"><strong>Zusammenfassung:</strong><br>${userDesc.summary}</div>
+        <div><strong>Empfehlungen:</strong><br>${userDesc.recommendations}</div>
+      `;
+      psychAnalysisDiv.style.display = 'block';
+    }
+    
+    // Suche
+    if (window.SUPERINTELLIGENT_SEARCH) {
+      const searchResult = await window.SUPERINTELLIGENT_SEARCH.search(query);
+      
+      if (searchResult.needsClarify && searchResult.aiSuggestion) {
+        aiSuggestionDiv.innerHTML = `
+          <h3 style="color:#10b981;margin-bottom:10px">🤖 KI-Vorschlag</h3>
+          <div>${searchResult.aiSuggestion}</div>
+        `;
+        aiSuggestionDiv.style.display = 'block';
+      } else {
+        aiSuggestionDiv.style.display = 'none';
+      }
+      
+      if (searchResult.results && searchResult.results.length > 0) {
+        resultsDiv.innerHTML = searchResult.results.map(r => `
+          <div class="result-card" onclick="window.location.href='#${r.doc.id}'">
+            <h3 style="color:var(--davinci-accent-primary,#10b981);margin-bottom:10px">${r.doc.title}</h3>
+            <p style="color:var(--davinci-muted,#9ca3af);font-size:0.9em;margin-bottom:10px">${r.doc.content}</p>
+            <div style="font-size:0.8em;color:var(--davinci-muted,#9ca3af)">Tags: ${r.doc.tags.join(', ')}</div>
+            <div style="font-size:0.8em;color:#10b981;margin-top:5px">Relevanz: ${r.score.toFixed(1)}</div>
+          </div>
+        `).join('');
+      } else {
+        resultsDiv.innerHTML = '<div style="color:var(--davinci-muted,#9ca3af);text-align:center;padding:40px">Keine Ergebnisse gefunden. Die KI hilft dir oben weiter.</div>';
+      }
+    }
+  }, 500);
+});
+</script>
+</body>
+</html>
+

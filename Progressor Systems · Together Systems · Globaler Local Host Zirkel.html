@@ -1,0 +1,762 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0068)file:///C:/Users/Gebruiker/Downloads/progressor-together-global.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Progressor Systems · Together Systems · Globaler Local Host Zirkel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-dark: #050814;
+      --bg-top: #0b1028;
+      --bg-bottom: #03040c;
+      --accent-gold: #f4c978;
+      --accent-blue: #8fd6ff;
+      --accent-pink: #ff8ad8;
+      --accent-green: #86f3c3;
+      --text-main: #f9fbff;
+      --text-muted: #a8b0c9;
+      --card-bg: rgba(5, 9, 25, 0.94);
+      --border-soft: rgba(255, 255, 255, 0.09);
+      --radius-xl: 28px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, #343f80 0, transparent 55%),
+        radial-gradient(circle at 100% 0%, #622a6d 0, transparent 55%),
+        radial-gradient(circle at 0% 100%, #215970 0, transparent 55%),
+        radial-gradient(circle at 100% 100%, #1b3d54 0, transparent 55%),
+        linear-gradient(to bottom, var(--bg-top), var(--bg-bottom));
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1240px;
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.09), transparent 60%),
+        radial-gradient(circle at 90% 100%, rgba(109, 234, 255, 0.15), transparent 60%),
+        rgba(6, 10, 25, 0.94);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 36px 110px rgba(0, 0, 0, 0.95),
+        0 0 110px rgba(146, 226, 255, 0.35);
+      position: relative;
+      overflow: hidden;
+      padding: 26px 26px 22px 26px;
+    }
+
+    @media (max-width: 900px) {
+      .shell {
+        padding: 20px 16px 18px 16px;
+      }
+    }
+
+    .shell::before,
+    .shell::after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .shell::before {
+      top: -260px;
+      left: -220px;
+      background: conic-gradient(from 160deg,
+        rgba(255, 255, 255, 0.8),
+        rgba(144, 220, 255, 0.95),
+        rgba(255, 166, 122, 0.95),
+        rgba(255, 237, 190, 0.9));
+      animation: orbitOuter 36s linear infinite;
+    }
+
+    .shell::after {
+      bottom: -260px;
+      right: -220px;
+      background: conic-gradient(from 330deg,
+        rgba(134, 243, 195, 0.9),
+        rgba(127, 205, 255, 0.8),
+        rgba(255, 152, 210, 0.88),
+        rgba(134, 243, 195, 0.9));
+      animation: orbitInner 42s linear infinite;
+    }
+
+    @keyframes orbitOuter {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitInner {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    .ring-overlay {
+      position: absolute;
+      inset: 10px;
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background:
+        radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(111, 243, 255, 0.12), transparent 60%);
+      mix-blend-mode: screen;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero {
+      padding-right: 10px;
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        padding-right: 0;
+      }
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(4, 9, 24, 0.96);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.75);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .hero-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffffff, #ffa657);
+      box-shadow:
+        0 0 10px rgba(255, 198, 120, 0.9),
+        0 0 20px rgba(255, 198, 120, 0.9);
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 4.2vw, 3.1rem);
+      line-height: 1.06;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-title-main {
+      font-size: 0.74em;
+      letter-spacing: 0.7em;
+    }
+
+    .hero-title-mid {
+      font-size: 0.96em;
+      letter-spacing: 0.22em;
+      margin-top: 2px;
+    }
+
+    .hero-title-circle {
+      font-size: 0.62em;
+      letter-spacing: 0.55em;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .hero-emblem {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.16), transparent 60%),
+                  rgba(5, 10, 30, 0.96);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    .hero-emblem span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #ffffff, #8fd6ff);
+      box-shadow: 0 0 14px rgba(151, 220, 255, 0.95);
+    }
+
+    .hero-subtitle {
+      margin-top: 16px;
+      font-size: 0.94rem;
+      color: var(--text-muted);
+      max-width: 34rem;
+    }
+
+    .hero-subtitle strong {
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 620px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-pill {
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(3, 8, 24, 0.95);
+      padding: 9px 10px;
+      display: grid;
+      gap: 2px;
+    }
+
+    .hero-pill-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      color: var(--accent-blue);
+    }
+
+    .hero-pill-body {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hero-footer {
+      margin-top: 16px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .hero-footer span {
+      color: var(--accent-blue);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 14px;
+    }
+
+    .card {
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-soft);
+      background: var(--card-bg);
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.9),
+        0 0 52px rgba(141, 217, 255, 0.18);
+      backdrop-filter: blur(22px);
+      padding: 14px 16px 13px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.13), transparent 60%);
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .card-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-blue);
+    }
+
+    .card-chip {
+      font-size: 0.7rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(3, 6, 16, 0.98);
+      color: var(--text-muted);
+    }
+
+    .pill-row {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.78rem;
+    }
+
+    @media (max-width: 620px) {
+      .pill-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .pill {
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 65%),
+                  rgba(4, 9, 28, 0.98);
+      padding: 7px 8px 6px 8px;
+      display: grid;
+      gap: 1px;
+    }
+
+    .pill-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-gold);
+    }
+
+    .pill-text {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .list {
+      position: relative;
+      z-index: 1;
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: grid;
+      gap: 3px;
+      padding-left: 1px;
+    }
+
+    .list li {
+      list-style: none;
+    }
+
+    .list strong {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 6px;
+      padding-left: 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: grid;
+      gap: 6px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: linear-gradient(to bottom,
+        rgba(143, 214, 255, 0.8),
+        rgba(244, 201, 120, 0.4));
+      opacity: 0.9;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 9px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      background: radial-gradient(circle, #ffffff, #f4c978);
+      box-shadow:
+        0 0 10px rgba(244, 201, 120, 0.95),
+        0 0 18px rgba(143, 214, 255, 0.7);
+    }
+
+    .timeline-item strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .equation {
+      position: relative;
+      z-index: 1;
+      margin-top: 8px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.22);
+      padding: 7px 8px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.1), transparent 65%);
+    }
+
+    .equation strong {
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .footer span {
+      color: var(--accent-blue);
+    }
+
+    .footer-note {
+      max-width: 520px;
+    }
+
+    .footer-brand {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+  </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+  <main class="shell" aria-label="Manifest-Portal-System Progressor &amp; Together Systems">
+    <div class="ring-overlay" aria-hidden="true"></div>
+
+    <section class="layout">
+      <!-- HERO -->
+      <header class="hero">
+        <div class="hero-label">
+          <span class="hero-dot"></span>
+          <span>Manifest-Portal-System · Progressor Systems · Together Systems</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="hero-title-main">CEOs · CIRCLE · LOCAL HOST</span>
+          <span class="hero-title-mid">Jeder Mensch sein eigener&nbsp;CEO</span>
+          <span class="hero-title-circle">Der Zirkel ist rund · Einstichpunkt: alle&nbsp;CEOs</span>
+        </h1>
+
+        <div class="hero-emblem" aria-label="Autarkes Netzwerk Emblem">
+          <span class="dot"></span>
+          <span>autark · unabhängig · nicht zu knacken</span>
+        </div>
+
+        <p class="hero-subtitle">
+          Diese Seite beschreibt einen <strong>globalen Local-Host-Zirkel</strong>, in dem jede Person, jeder Haushalt,
+          sein eigenes Unternehmen ist – mit eigenem Manifest-Portal-System von
+          <strong>Progressor Systems</strong> und einem Beratungsnetzwerk von
+          <strong>Together Systems</strong>. Das makroökonomische System dahinter arbeitet virtuell,
+          aber nicht als Code: es besteht aus Emotionen, Gedanken, Gefühlen, Beziehungen und
+          Entscheidungen der Menschen selbst. Software und Technik bleiben nur Werkzeug –
+          die eigentliche Steuerung liegt in der menschlichen Psyche.
+        </p>
+
+        <div class="hero-grid" aria-label="Kurzüberblick">
+          <div class="hero-pill">
+            <div class="hero-pill-title">Local Host &amp; Person</div>
+            <div class="hero-pill-body">
+              Jeder Mensch behält alle Datenbestände in eigener Form auf seinem eigenen Local Host.
+              Digitale Identität, Vermögen, Erbschaftsrechte und Lebensdokumente werden in einem
+              persönlichen Haushaltsunternehmen verwaltet.
+            </div>
+          </div>
+          <div class="hero-pill">
+            <div class="hero-pill-title">Virtuelles Makrosystem</div>
+            <div class="hero-pill-body">
+              Ein weltweites, kulturell übergreifendes, emotionales Netzwerk: rein zwischen Menschen,
+              psychologisch, physiologisch, soziologisch, psychiatrisch und gesellschaftlich gedacht.
+              Kein Hacker, kein Crack-Coder, keine Technik-Giganten können es brechen, weil es nicht
+              aus Code besteht, sondern aus Bewusstsein.
+            </div>
+          </div>
+        </div>
+
+        <p class="hero-footer">
+          <span>Startsignal:</span> Das Konzept gilt für acht Milliarden Menschen.
+          Teilnahme: alle – Spezialisten, Full-Stack-Developer, Code-Cracker, Büroangestellte,
+          Menschen ohne Technikverständnis. Der Einstieg ist wie beim ersten Fernseher:
+          man lernt nur die Fernbedienung – mehr wird nicht verlangt.
+        </p>
+      </header>
+
+      <!-- RIGHT GRID -->
+      <section class="grid" aria-label="Systembeschreibung und Einführungsplan">
+        <!-- CARD 1: PSYCHO / SOCIO / CULTURAL -->
+        <article class="card">
+          <div class="card-header">
+            <h2 class="card-title">Menschliche Dimension</h2>
+            <span class="card-chip">psychologisch · physiologisch · soziologisch · kulturell</span>
+          </div>
+
+          <div class="pill-row">
+            <div class="pill">
+              <div class="pill-label">Psychologisch &amp; psychiatrisch</div>
+              <div class="pill-text">
+                Emotionen, Gedanken, innere Muster bauen das eigentliche Sicherheits- und
+                Steuersystem: Selbstwahrnehmung, Selbstkontrolle, Selbstverantwortung.
+                Jeder ist sein eigener CEO, trifft bewusste Entscheidungen und bleibt
+                geistig souverän.
+              </div>
+            </div>
+            <div class="pill">
+              <div class="pill-label">Physiologisch &amp; harmonisch</div>
+              <div class="pill-text">
+                Der Körper liefert Signale: Stress, Ruhe, Gesundheit, Erschöpfung.
+                Das System akzeptiert natürliche Grenzen – Arbeit wird zwischen
+                alltägliche Aufgaben eingebettet, nicht gegen sie: kurze oder längere
+                Prompts entstehen im Rhythmus des Lebens.
+              </div>
+            </div>
+            <div class="pill">
+              <div class="pill-label">Soziologisch &amp; kulturell</div>
+              <div class="pill-text">
+                Acht Milliarden Menschen, alle Kulturen, alle Sprachen, alle Regionen.
+                Jeder Haushalt ist ein Unternehmen, ein Knoten in einem globalen,
+                multikulturellen Netz. Niemand ist ausgeschlossen; jede Kultur bringt
+                eigene Werte, Währungen und Formen von „Gewinn“ ein.
+              </div>
+            </div>
+          </div>
+
+          <ul class="list">
+            <li><strong>Psychologisch:</strong> Autonomie statt Fremdsteuerung.</li>
+            <li><strong>Physiologisch:</strong> Arbeit als verdichtete, hochkonzentrierte Aktivität – dazwischen echte Freizeit.</li>
+            <li><strong>Soziologisch:</strong> Netzwerke auf Basis von Vertrauen, Reputation und Beratung, nicht auf Zwang.</li>
+            <li><strong>Kulturell:</strong> Monetäre Werte werden in jeder Region als das interpretiert, was dort als Wohlstand gilt.</li>
+          </ul>
+        </article>
+
+        <!-- CARD 2: ARCHITEKTUR & ROLLEN -->
+        <article class="card">
+          <div class="card-header">
+            <h2 class="card-title">Architektur &amp; Rollen</h2>
+            <span class="card-chip">Local Host · Haushaltsunternehmen · Portal</span>
+          </div>
+
+          <div class="pill-row">
+            <div class="pill">
+              <div class="pill-label">Haushaltsunternehmen</div>
+              <div class="pill-text">
+                Jeder Haushalt ist regulatorisch ein Unternehmen, mit geringerer
+                Besteuerung als klassische Betriebe. Keine zusätzliche Firmen-ID
+                nötig: bestehende Nummern (BSN, Telefonnummern, weitere IDs) reichen,
+                werden in Maschinencode verifiziert.
+              </div>
+            </div>
+            <div class="pill">
+              <div class="pill-label">Manifest-Portal-System</div>
+              <div class="pill-text">
+                Das Portal von Progressor Systems begleitet ein ganzes Leben:
+                Geburt, Identität, digitale Vermögenswerte, Geschäftsvorgänge,
+                Überleiten, Erbschaftsrechte, Übertragungen in zukünftige Generationen.
+              </div>
+            </div>
+            <div class="pill">
+              <div class="pill-label">Together Systems</div>
+              <div class="pill-text">
+                Ein Beratungsnetz für Spezialisten aller Bereiche: Recht, Finanzen,
+                Technik, Psychologie, Kultur. Sie helfen, jeden Local Host einzustellen,
+                zu erklären und anzupassen – so einfach wie die erste Fernbedienung.
+              </div>
+            </div>
+          </div>
+
+          <ul class="list">
+            <li><strong>8 Milliarden Rollen:</strong> Jede Person kann beraten oder Beratung bekommen.</li>
+            <li><strong>Arbeitsplätze:</strong> Together Systems schafft neue Aufgabenfelder rund um Local Host, Identität und Lebensplanung.</li>
+            <li><strong>Transparenz:</strong> Alle Einstellungen sind detailliert erklärt – auch für Menschen ohne Technikverständnis.</li>
+          </ul>
+        </article>
+      </section>
+    </section>
+
+    <!-- LOWER ROW: ROLLOUT + RECHENMODELL -->
+    <section class="layout" style="margin-top: 16px;">
+      <!-- ROLLOUT -->
+      <article class="card">
+        <div class="card-header">
+          <h2 class="card-title">Globaler Rollout in sieben Tagen</h2>
+          <span class="card-chip">Konzept · eine Woche · weltweit</span>
+        </div>
+        <div class="timeline" aria-label="Einführungsplan">
+          <div class="timeline-item">
+            <strong>Tag 1 — Manifest &amp; Sprache</strong>
+            Erstellung und Verbreitung des neuen Sprachmodells: Begriffe wie
+            Local Host, Haushaltsunternehmen, CEO des eigenen Lebens,
+            Manifest-Portal-System und Together Systems werden definiert,
+            übersetzt und kulturell angepasst.
+          </div>
+          <div class="timeline-item">
+            <strong>Tag 2 — Bewusstsein &amp; Emotion</strong>
+            Weltweite Informationskampagnen: Fokus auf psychologische, physiologische,
+            soziologische und kulturelle Dimension. Menschen erkennen: Das System
+            lebt aus ihren Entscheidungen, nicht aus fremdem Code.
+          </div>
+          <div class="timeline-item">
+            <strong>Tag 3 — Local Host Aktivierung</strong>
+            Technische Minimal-Infrastruktur: Jeder Haushalt erhält Zugang zu einem
+            Local-Host-Einstiegspunkt (Gerät, App, Portal). Einstiegskosten: null.
+          </div>
+          <div class="timeline-item">
+            <strong>Tag 4 — Manifest-Portale</strong>
+            Progressor Systems aktiviert das Manifest-Portal-System: Lebensdaten,
+            Identitäten, Vermögenswerte, Erbschaftsrechte werden in eine konsistente,
+            vom User gesteuerte Struktur gebracht.
+          </div>
+          <div class="timeline-item">
+            <strong>Tag 5 — Together Systems Beratung</strong>
+            Spezialisten aus allen Disziplinen beginnen mit der Beratung:
+            kurze und lange Prompts helfen, Entscheidungen zu strukturieren,
+            Verträge zu verstehen, lokale Gesetze einzuhalten und Ziele zu definieren.
+          </div>
+          <div class="timeline-item">
+            <strong>Tag 6 — Vernetzung der CEOs</strong>
+            Die CEOs – alle Menschen – werden im Zirkel sichtbar:
+            Vertrauenskreise, Kooperationen, Projekte, Übertragungen von Werten,
+            Erbschaften, Beteiligungen entstehen im emotionalen Makrosystem.
+          </div>
+          <div class="timeline-item">
+            <strong>Tag 7 — Stabilisierung &amp; Iteration</strong>
+            Feedback-Schleifen im Netzwerk: kulturelle Anpassung, Optimierung
+            der Beratung, Balancierung von Arbeit und Freizeit. Das System
+            konsolidiert sich, bleibt aber offen für ständige Verbesserung.
+          </div>
+        </div>
+      </article>
+
+      <!-- RECHENMODELL -->
+      <article class="card">
+        <div class="card-header">
+          <h2 class="card-title">Virtuelles Makrosystem &amp; Gewinnrate</h2>
+          <span class="card-chip">monetäre Werte · alle Kulturen · 100&nbsp;% Erfolg</span>
+        </div>
+
+        <ul class="list">
+          <li><strong>Virtuelle Wirtschaft:</strong> Wert entsteht aus Aufmerksamkeit, Wissen, Beratung,
+            Vertrauensaufbau, Entscheidungsqualität – nicht nur aus klassischer Lohnarbeit.</li>
+          <li><strong>Minimaler Einsatz:</strong> Kein Startkapital nötig. Nur Zeit, Aufmerksamkeit
+            und Bereitschaft zur Selbststeuerung.</li>
+          <li><strong>Komprimierte Arbeit:</strong> Prompts statt ständiger Präsenz – verdichtete,
+            hochproduktive Interaktionen, eingebettet in den Alltag.</li>
+        </ul>
+
+        <div class="equation" aria-label="Rechenmodell">
+          <strong>Rechenidee (vereinfacht):</strong><br>
+          <code>
+          Gewinnrate_Global = Σ (Beitrag_i × Wertkultur_i × Vertrauensfaktor_i)
+          / Σ (Zeit_i)
+          </code>
+          <br><br>
+          - <strong>Beitrag_i</strong>: jede Form von Beratung, Entscheidung, Hilfe oder Kreativität
+          eines Menschen.<br>
+          - <strong>Wertkultur_i</strong>: Faktor, wie in einer Region „Wert“ verstanden wird
+          (Geld, Zeit, Gemeinschaft, Sicherheit, Wissen).<br>
+          - <strong>Vertrauensfaktor_i</strong>: wie stabil und fair Beziehungen sind.<br>
+          - <strong>Zeit_i</strong>: die investierte Zeit, verteilt zwischen Alltag und
+          konzentrierten Prompt-Phasen.<br><br>
+          Ziel des Sprachmodells ist es, diese Faktoren so zu strukturieren, dass
+          <strong>minimaler Einsatz</strong> mit <strong>maximalem Nutzen</strong> für jede
+          Person und jede Kultur möglich wird – theoretisch bis zu 100&nbsp;% Erfolg.
+        </div>
+
+        <ul class="list">
+          <li><strong>Monetäre Valuen:</strong> werden pro Kultur und Region anders gemessen, aber
+            das Modell erlaubt ihre Abbildung in einem gemeinsamen Rahmen.</li>
+          <li><strong>Kein Code-Angriff möglich:</strong> Das entscheidende Makrosystem ist die
+            menschliche Ebene – Emotionen, Gedanken, Werte. Technik dient nur der
+            Unterstützung, nicht der Kontrolle.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <p class="footer-note">
+        Dieses Dokument ist ein Bericht und Manifest in einem: eine <strong>Da-Vinci-artige Blaupause</strong>
+        für ein virtuelles, emotional gesteuertes Makrosystem, in dem jeder Mensch CEO seines
+        eigenen Lebens ist und sein Local Host der Mittelpunkt aller digitalen und identitätsbezogenen
+        Prozesse bleibt.
+      </p>
+      <p class="footer-brand">
+        <span>Progressor&nbsp;Systems</span> · Together&nbsp;Systems · Globaler&nbsp;Local&nbsp;Host&nbsp;Zirkel
+      </p>
+    </footer>
+  </main>
+
+
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body></html>

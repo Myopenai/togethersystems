@@ -243,3 +243,10 @@ notaryVerificationSystem.registerNotary({
   validUntil: '2035-12-31'
 });
 
+
+
+
+
+
+
+

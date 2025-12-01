@@ -10,6 +10,8 @@
   "workflow": {
     "pre": [
       "loadSettingsManifest",
+      "runAllTests",
+      "verifyTestResults",
       "verifyRoutineDefinitionIntegrity",
       "startConsoleHeartMonitoring",
       "runStaticAnalysis",
@@ -26,11 +28,14 @@
       "enforceSettingsFolderProtection"
     ],
     "post": [
+      "runAllTests",
+      "verifyTestResults",
       "runFullTestSuiteIfAvailable",
       "runPostCodeConsistencyChecks",
       "updateErrorPatternStoreOnFailure",
       "updateNeuronalDimensionalModel",
-      "consoleHeartHealthCheck"
+      "consoleHeartHealthCheck",
+      "blockDecisionsIfTestsFailed"
     ]
   },
   "errorPrevention": {

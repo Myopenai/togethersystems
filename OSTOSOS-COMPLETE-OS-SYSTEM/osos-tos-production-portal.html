@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSOS · tOS — Final Production Software Fabrication International TTT</title>
+<link rel="stylesheet" href="./css/osos-tos-production.css">
+</head>
+<body>
+<header>
+  <div class="brand">OSOS · tOS — Final Production Software Fabrication</div>
+  <div class="sub">Sovereign Localhost · Software > Hardware · International TTT</div>
+  <div style="margin-left:auto" class="pill" id="version">v2.0.0-factory</div>
+  <button onclick="UI_THEME_SWITCHER.applyTheme('davinci-default'); window.location.reload();" style="margin-left:10px;padding:4px 8px;background:#161b22;color:#e6edf3;border:1px solid #30363d;border-radius:6px;cursor:pointer">🎨 Theme wechseln</button>
+</header>
+
+<main>
+  <!-- Search + Help -->
+  <section class="card" id="help">
+    <h2>Hilfe & Suche</h2>
+    <input class="search" id="searchBox" placeholder="Suche: identität, performance, sicherheit, mesh, telbank, diagramm…" />
+    <div id="searchOut" class="row"></div>
+    <div class="list mono" id="assistOut"></div>
+  </section>
+
+  <!-- Identity & Audit -->
+  <section class="card" id="identity">
+    <h2>Identität & Audit</h2>
+    <div class="kv">
+      <div>Public Key:</div><div class="mono" id="pubkey">–</div>
+      <div>Algo:</div><div class="mono" id="algo">–</div>
+      <div>Universe ID:</div><div class="mono" id="universe">–</div>
+      <div>Device Class:</div><div class="mono" id="devclass">–</div>
+    </div>
+    <div class="row">
+      <button id="genKey">Schlüssel erzeugen</button>
+      <button id="exportKit" class="secondary">Recovery‑Kit exportieren</button>
+      <button id="sealSnap" class="danger">Snapshot versiegeln</button>
+    </div>
+    <div class="statusline muted">Status: <span id="idStatus">Bereit</span></div>
+    <div class="row">
+      <button id="writeManifest">Manifest erstellen & signieren</button>
+      <button id="exportLog" class="secondary">Audit‑Log exportieren</button>
+    </div>
+  </section>
+
+  <!-- Performance -->
+  <section class="card" id="perf">
+    <h2>Performance Uplift (Software kitzelt Hardware)</h2>
+    <div class="row">
+      <button id="startBaseline">Baseline messen</button>
+      <button id="applyOptim">Optimierer anwenden</button>
+      <span class="pill">Fenster: 5m rollend</span>
+    </div>
+    <div class="row"><span class="badge">Bars</span><span class="badge">Pie</span><span class="badge">Towers</span><span class="badge">Ribbons</span></div>
+    <div class="row">
+      <canvas id="bars"></canvas>
+    </div>
+    <div class="row">
+      <canvas id="pie"></canvas>
+    </div>
+    <div class="row">
+      <canvas id="towers"></canvas>
+    </div>
+    <div class="row">
+      <canvas id="ribbons"></canvas>
+    </div>
+    <div class="kv">
+      <div>FPS:</div><div class="mono" id="fps">–</div>
+      <div>Jank p95 (ms):</div><div class="mono" id="jank95">–</div>
+      <div>RTT p50 (ms):</div><div class="mono" id="rtt50">–</div>
+      <div>RTT p95 (ms):</div><div class="mono" id="rtt95">–</div>
+      <div>Downlink (Mbps):</div><div class="mono" id="downlink">–</div>
+      <div>Coalesce‑Rate:</div><div class="mono" id="coal">–</div>
+    </div>
+    <div class="row">
+      <button id="captureProof" class="secondary">Beweis erfassen & signieren</button>
+      <button id="exportPerf" class="secondary">Performance‑Export</button>
+    </div>
+  </section>
+
+  <!-- Security -->
+  <section class="card" id="security">
+    <h2>Sicherheit & Verifikation</h2>
+    <div class="row">
+      <button id="verifyChain">Hash‑Kette prüfen</button>
+      <button id="rotateKeys" class="secondary">Key‑Rotation</button>
+      <button id="compliance" class="secondary">Compliance‑Check</button>
+    </div>
+    <div class="statusline muted">Ergebnis: <span id="verifyStatus">–</span></div>
+  </section>
+
+  <!-- Mesh -->
+  <section class="card" id="mesh">
+    <h2>Netzwerk & Mesh</h2>
+    <div class="row">
+      <button id="presence">Presence verify (HMAC)</button>
+      <button id="p2p" class="secondary">P2P aktivieren (lokal)</button>
+      <button id="publish" class="secondary">Selektiv veröffentlichen</button>
+    </div>
+    <div class="kv">
+      <div>Peers:</div><div class="mono" id="peers">0</div>
+      <div>Token Window:</div><div class="mono" id="tokwin">5m</div>
+      <div>Last Publish:</div><div class="mono" id="lastPub">–</div>
+    </div>
+  </section>
+
+  <!-- Offline -->
+  <section class="card" id="offline">
+    <h2>Offline‑First & Service Worker</h2>
+    <div class="row">
+      <button id="installSW">Offline aktivieren</button>
+      <button id="cacheSelf" class="secondary">Diese Datei cachen</button>
+    </div>
+    <div class="statusline muted">SW: <span id="swStatus">–</span></div>
+  </section>
+
+  <!-- Apps Hub -->
+  <section class="card" id="apps">
+    <h2>Apps Hub</h2>
+    <div class="row">
+      <button id="telbank">Telbank Transaktion signieren</button>
+      <button id="voucher">Voucher einlösen</button>
+      <button id="legal">Vertrag signieren</button>
+      <button id="honeycomb">Honeycomb Prozess starten</button>
+    </div>
+    <div class="list mono" id="appsOut"></div>
+  </section>
+
+  <!-- Developer Superkiste -->
+  <section class="card" id="devkit">
+    <h2>Developer Superkiste</h2>
+    <div class="row">
+      <button id="profiler">Profiler starten</button>
+      <button id="cryptolab">Crypto‑Lab</button>
+      <button id="solver">Math‑Solver</button>
+      <button id="diagram">Diagramm‑Generator</button>
+      <button id="runner">Code Runner</button>
+      <button id="dataset">Dataset‑Sandbox</button>
+      <button id="viznet">Netz‑Graph</button>
+    </div>
+    <div id="devout" class="mono" style="white-space:pre-wrap;max-height:280px;overflow:auto;"></div>
+  </section>
+</main>
+
+<div class="footer">© OSOS · tOS — Final Production Software Fabrication International TTT · Sovereign Localhost</div>
+
+<script src="./osos-tos-production-core.js"></script>
+<script src="./ui-theme-switcher-core.js"></script>
+</body>
+</html>
+

@@ -169,3 +169,10 @@ Die OpenAPI-Spezifikation kann jetzt verwendet werden für:
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

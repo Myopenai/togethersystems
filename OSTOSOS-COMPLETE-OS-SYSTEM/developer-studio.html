@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Developer Studio</title>
+<link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,monospace;background:radial-gradient(circle at top,var(--davinci-bg,#0a0e27) 0%,var(--davinci-card,#1a1f3a) 100%);color:var(--davinci-text,#ffffff);min-height:100vh;padding:20px}
+.container{max-width:1800px;margin:0 auto}
+.header{text-align:center;margin-bottom:30px;padding:30px;background:var(--davinci-card,#1a1f3a);border-radius:20px;border:2px solid var(--davinci-accent-primary,#10b981)}
+.studio-layout{display:grid;grid-template-columns:300px 1fr 400px;gap:20px;height:calc(100vh - 200px)}
+.sidebar{background:var(--davinci-card,#1a1f3a);padding:20px;border-radius:15px;border:1px solid var(--davinci-border,#223040);overflow-y:auto}
+.main-editor{background:var(--davinci-card,#1a1f3a);padding:20px;border-radius:15px;border:1px solid var(--davinci-border,#223040);display:flex;flex-direction:column}
+.code-editor{flex:1;background:#1e1e1e;color:#d4d4d4;font-family:'Courier New',monospace;font-size:14px;padding:15px;border-radius:8px;border:1px solid var(--davinci-border,#223040);resize:none;width:100%}
+.panel{background:var(--davinci-card,#1a1f3a);padding:20px;border-radius:15px;border:1px solid var(--davinci-border,#223040);overflow-y:auto}
+.tool-item{padding:12px;margin:8px 0;background:var(--davinci-bg,#0f172a);border-radius:8px;cursor:pointer;transition:all 0.3s;border-left:3px solid transparent}
+.tool-item:hover{border-left-color:var(--davinci-accent-primary,#10b981);background:var(--davinci-border,#223040)}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:1em;font-weight:600;transition:all 0.3s;display:inline-block;margin:5px}
+.btn-primary{background:var(--davinci-accent-primary,#10b981);color:#00100a}
+.btn-primary:hover{background:#0ea5e9;transform:translateY(-2px)}
+.btn-secondary{background:var(--davinci-border,#223040);color:var(--davinci-text,#ffffff)}
+.history-item{padding:8px;margin:5px 0;background:var(--davinci-bg,#0f172a);border-radius:6px;cursor:pointer;font-size:0.9em}
+.history-item:hover{background:var(--davinci-border,#223040)}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" style="color:var(--davinci-accent-primary,#10b981);text-decoration:none">T,.&T,,.&T,,,.</a> Developer Studio</h1>
+<p style="font-size:1.2em;color:var(--davinci-muted,#9ca3af);margin-top:10px">Experimentieren, Erweitern, Programmieren - Alle Schnittstellen zugänglich</p>
+</div>
+
+<div class="studio-layout">
+<div class="sidebar">
+<h3 class="davinci-heading-3">🛠️ Tools & Schnittstellen</h3>
+<div class="tool-item" onclick="loadTool('api')">🌐 API-Schnittstellen</div>
+<div class="tool-item" onclick="loadTool('storage')">💾 Storage-APIs</div>
+<div class="tool-item" onclick="loadTool('network')">🌐 Netzwerk-APIs</div>
+<div class="tool-item" onclick="loadTool('media')">🎵 Media-APIs</div>
+<div class="tool-item" onclick="loadTool('device')">📱 Device-APIs</div>
+<div class="tool-item" onclick="loadTool('extension')">📦 Erweiterung erstellen</div>
+<div class="tool-item" onclick="loadTool('test')">🧪 Test erstellen</div>
+<div class="tool-item" onclick="loadTool('experiment')">🔬 Experiment-Modus</div>
+</div>
+
+<div class="main-editor">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+<h3 class="davinci-heading-3" id="editorTitle">Code Editor</h3>
+<div>
+<button class="btn btn-primary" onclick="executeCode()">▶️ Ausführen</button>
+<button class="btn btn-secondary" onclick="saveCode()">💾 Speichern</button>
+<button class="btn btn-secondary" onclick="loadCode()">📂 Laden</button>
+</div>
+</div>
+<textarea id="codeEditor" class="code-editor" placeholder="// Code hier eingeben...&#10;&#10;// Beispiel:&#10;console.log('OSTOSOS Developer Studio');&#10;&#10;// Experimentiere mit allen APIs und Schnittstellen!"></textarea>
+<div id="codeOutput" style="margin-top:15px;padding:15px;background:var(--davinci-bg,#0f172a);border-radius:8px;font-family:monospace;font-size:0.9em;min-height:100px;display:none"></div>
+</div>
+
+<div class="panel">
+<h3 class="davinci-heading-3">📚 Hilfe & Dokumentation</h3>
+<div id="helpContent" style="margin-top:15px">
+<div style="color:var(--davinci-muted,#9ca3af);padding:15px;text-align:center">
+Bewege die Maus über ein Tool oder Code-Bereich für kontextuelle Hilfe
+</div>
+</div>
+
+<h3 class="davinci-heading-3" style="margin-top:30px">🔄 Aktionen-Historie</h3>
+<div id="historyList" style="margin-top:15px">
+<div style="color:var(--davinci-muted,#9ca3af);padding:10px;text-align:center;font-size:0.9em">Keine Aktionen</div>
+</div>
+<div style="margin-top:15px">
+<button class="btn btn-secondary" onclick="undoAction()" style="width:100%;padding:8px;font-size:0.9em">↩️ Rückgängig</button>
+<button class="btn btn-secondary" onclick="redoAction()" style="width:100%;padding:8px;font-size:0.9em;margin-top:5px">↪️ Wiederholen</button>
+<button class="btn btn-secondary" onclick="clearHistory()" style="width:100%;padding:8px;font-size:0.9em;margin-top:5px">🗑️ Historie löschen</button>
+</div>
+</div>
+</div>
+</div>
+
+<script src="./css/da-vinci-enterprise-standard-init.js"></script>
+<script src="./help-system-core.js"></script>
+<script src="./developer-studio-core.js"></script>
+</body>
+</html>
+

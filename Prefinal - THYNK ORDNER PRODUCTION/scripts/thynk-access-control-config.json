@@ -1,0 +1,131 @@
+{
+  "$schema": "../Settings/schemas/industrial-design.json",
+  "version": "1.0.0-THYNK-SPECIFIC",
+  "status": "🔴 AKTIV - NUR FÜR THYNK ORDERS PRODUCTION",
+  "project": "THYNK ORDERS PRODUCTION",
+  "metadata": {
+    "created": "2025-01-XX",
+    "author": "Together Systems International",
+    "purpose": "THYNK-spezifische Zugangsbegrenzung und Kauf-Anreiz Konfiguration",
+    "note": "Allgemeine Regulierung bleibt in Settings für zukünftige Produktionen"
+  },
+  "thynk_specific": {
+    "enabled": true,
+    "description": "Zugangsbegrenzung und Kauf-Anreiz System speziell für THYNK ORDERS"
+  },
+  "user_slots": {
+    "demo": {
+      "enabled": false,
+      "reason": "THYNK benötigt keine Demo-Version"
+    },
+    "free": {
+      "enabled": true,
+      "delay_multiplier": 1.5,
+      "max_delay_seconds": 10,
+      "features": [
+        "view_orders",
+        "create_order",
+        "view_products"
+      ],
+      "description": "Kostenlose Basis-Version für THYNK"
+    },
+    "prickle_user": {
+      "enabled": true,
+      "delay_multiplier": 2.0,
+      "max_delay_seconds": 15,
+      "progressive_delay": true,
+      "features": [
+        "view_orders",
+        "create_order",
+        "view_products",
+        "view_customers",
+        "export_data"
+      ],
+      "description": "THYNK User die zum Kauf angeregt werden sollen"
+    },
+    "purchased": {
+      "enabled": true,
+      "delay_multiplier": 0.1,
+      "max_delay_seconds": 0,
+      "features": [
+        "all"
+      ],
+      "description": "Gekaufte THYNK ORDERS Software"
+    },
+    "premium": {
+      "enabled": true,
+      "delay_multiplier": 0.0,
+      "max_delay_seconds": 0,
+      "features": [
+        "all",
+        "premium_reports",
+        "advanced_statistics",
+        "priority_support"
+      ],
+      "description": "THYNK ORDERS Premium-Version"
+    }
+  },
+  "default_slot": "free",
+  "slot_assignment": {
+    "on_first_use": "free",
+    "after_grace_period": "prickle_user",
+    "after_purchase": "purchased",
+    "after_premium_upgrade": "premium"
+  },
+  "grace_period": {
+    "enabled": true,
+    "duration_hours": 168,
+    "full_access_during_grace": true,
+    "slot_during_grace": "free"
+  },
+  "function_delays": {
+    "create_order": {
+      "free": 2000,
+      "prickle_user": 4000,
+      "purchased": 100,
+      "premium": 0
+    },
+    "export_data": {
+      "free": 5000,
+      "prickle_user": 10000,
+      "purchased": 500,
+      "premium": 0
+    },
+    "view_statistics": {
+      "free": 3000,
+      "prickle_user": 6000,
+      "purchased": 200,
+      "premium": 0
+    }
+  },
+  "purchase_incentive_messages": {
+    "en": {
+      "after_delay": "⚡ Want instant access? Upgrade to Premium for 0 seconds wait time!",
+      "upgrade_prompt": "💎 Upgrade to Premium and get:\n• Instant access (0 seconds delay)\n• All features unlocked\n• Priority support\n• Advanced statistics",
+      "comparison": "Free: 10s delay | Premium: 0s delay"
+    },
+    "de": {
+      "after_delay": "⚡ Sofortiger Zugriff gewünscht? Upgrade auf Premium für 0 Sekunden Wartezeit!",
+      "upgrade_prompt": "💎 Upgrade auf Premium und erhalten Sie:\n• Sofortigen Zugriff (0 Sekunden Verzögerung)\n• Alle Features freigeschaltet\n• Prioritäts-Support\n• Erweiterte Statistiken",
+      "comparison": "Free: 10s Verzögerung | Premium: 0s Verzögerung"
+    },
+    "nl": {
+      "after_delay": "⚡ Directe toegang gewenst? Upgrade naar Premium voor 0 seconden wachttijd!",
+      "upgrade_prompt": "💎 Upgrade naar Premium en krijg:\n• Directe toegang (0 seconden vertraging)\n• Alle functies ontgrendeld\n• Prioriteitsondersteuning\n• Geavanceerde statistieken",
+      "comparison": "Gratis: 10s vertraging | Premium: 0s vertraging"
+    }
+  },
+  "storage": {
+    "user_slot": "localStorage.thynk_user_slot",
+    "first_use_date": "localStorage.thynk_first_use",
+    "grace_period_end": "localStorage.thynk_grace_period_end",
+    "voucher_code": "localStorage.thynk_voucher_code",
+    "license_status": "localStorage.thynk_license_status"
+  },
+  "integration": {
+    "use_settings_system": true,
+    "settings_path": "../Settings/INDUSTRIAL-DESIGN-SYSTEM.json",
+    "extends_base_config": true
+  }
+}
+

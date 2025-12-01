@@ -58,3 +58,10 @@ if ($maxIterations -le 0) {
 Write-Host "✅ Fehlerbehebung abgeschlossen" -ForegroundColor Green
 
 
+
+
+
+
+
+
+

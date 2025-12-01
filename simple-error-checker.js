@@ -109,3 +109,10 @@ if (require.main === module) {
 module.exports = { runChecks, checkFile };
 
 
+
+
+
+
+
+
+

@@ -82,3 +82,10 @@ Das System arbeitet jetzt selbstständig:
 **IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
 
 ---
+
+
+
+
+
+
+

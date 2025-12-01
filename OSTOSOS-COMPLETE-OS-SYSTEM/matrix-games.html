@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. Matrix Games – OSTOSOS</title>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+  <style>
+    .game-container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 2rem;
+      height: calc(100vh - 200px);
+    }
+    .game-menu {
+      background: var(--davinci-card, #1a1f3a);
+      border-radius: var(--davinci-radius-md, 12px);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .game-canvas-container {
+      background: var(--davinci-card, #1a1f3a);
+      border-radius: var(--davinci-radius-md, 12px);
+      padding: 1rem;
+      position: relative;
+    }
+    .game-canvas {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: var(--davinci-radius-sm, 6px);
+    }
+    .game-item {
+      padding: 1rem;
+      margin: 0.5rem 0;
+      background: var(--davinci-bg, #0f172a);
+      border-radius: var(--davinci-radius-sm, 6px);
+      cursor: pointer;
+      transition: all var(--davinci-transition-fast, 0.15s);
+    }
+    .game-item:hover {
+      background: var(--davinci-border, #223040);
+      transform: translateX(5px);
+    }
+    .game-item.active {
+      border-left: 3px solid var(--davinci-accent-primary, #10b981);
+    }
+    .p2p-status {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--davinci-bg, #0f172a);
+      border-radius: var(--davinci-radius-sm, 6px);
+    }
+  </style>
+</head>
+<body>
+  <div class="davinci-container" style="max-width: 1600px; margin: 0 auto; padding: 2rem;">
+    <h1 class="davinci-heading-1"><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" style="color: var(--davinci-accent-primary, #10b981); text-decoration: none;">T,.&T,,.&T,,,.</a> Matrix Games</h1>
+    
+    <div class="davinci-card" data-davinci-phosphor-complete>
+      <div class="game-container">
+        <div class="game-menu">
+          <h2 class="davinci-heading-2">Spiele</h2>
+          
+          <div class="game-item active" data-game="tunnel">
+            <strong>🚇 Tunnel Network</strong>
+            <div class="davinci-text-muted" style="font-size: 0.85em; margin-top: 0.5rem;">
+              Doom-like 4D/5D Demo
+            </div>
+          </div>
+          
+          <div class="game-item" data-game="matrix">
+            <strong>🌐 Matrix Multiplayer</strong>
+            <div class="davinci-text-muted" style="font-size: 0.85em; margin-top: 0.5rem;">
+              P2P Multiplayer (Cloud erforderlich)
+            </div>
+          </div>
+
+          <div class="p2p-status">
+            <h3 class="davinci-heading-3">P2P Status</h3>
+            <div class="davinci-text-muted" id="p2pStatus">Offline (Lokaler Modus)</div>
+            <div class="davinci-text-muted" style="font-size: 0.85em; margin-top: 0.5rem;" id="peersCount">
+              0 Peers verbunden
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--davinci-border, #223040);">
+            <h3 class="davinci-heading-3">Steuerung</h3>
+            <div class="davinci-text-muted" style="font-size: 0.85em; margin-top: 0.5rem;">
+              <div>WASD / Pfeiltasten: Bewegung</div>
+              <div>Leertaste: Aktion</div>
+              <div>ESC: Menü</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--davinci-border, #223040);">
+            <h3 class="davinci-heading-3">Einstellungen</h3>
+            <label style="display: flex; align-items: center; margin: 10px 0;">
+              <input type="checkbox" id="fullscreen" style="margin-right: 10px;">
+              <span style="font-size: 0.85em;">Vollbild</span>
+            </label>
+            <label style="display: flex; align-items: center; margin: 10px 0;">
+              <input type="range" id="speed" min="0.01" max="0.1" step="0.01" value="0.02" style="width: 100%; margin-right: 10px;">
+              <span style="font-size: 0.85em;">Geschwindigkeit</span>
+            </label>
+            <label style="display: flex; align-items: center; margin: 10px 0;">
+              <input type="range" id="quality" min="10" max="50" step="5" value="20" style="width: 100%; margin-right: 10px;">
+              <span style="font-size: 0.85em;">Qualität</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="game-canvas-container">
+          <canvas id="gameCanvas" class="game-canvas"></canvas>
+          <div style="position: absolute; top: 1rem; left: 1rem; background: rgba(0,0,0,0.7); padding: 0.5rem 1rem; border-radius: 6px; color: #10b981; font-family: monospace;">
+            FPS: <span id="fps">60</span> | Latenz: <span id="latency">0ms</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="davinci-card" style="margin-top: 2rem;">
+      <h2 class="davinci-heading-2">Lokaler Modus</h2>
+      <p class="davinci-text">Tunnel Network Demo läuft sofort offline. Multiplayer wird verfügbar, sobald Cloud aktiviert ist.</p>
+    </div>
+  </div>
+
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let gameLoop;
+    let fps = 60;
+    let lastTime = performance.now();
+
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+
+    let gameSettings = {
+      speed: 0.02,
+      quality: 20,
+      fullscreen: false
+    };
+
+    function initTunnelGame() {
+      resizeCanvas();
+      
+      let angle = 0;
+      const tunnel = {
+        segments: gameSettings.quality,
+        radius: 100,
+        speed: gameSettings.speed
+      };
+
+      function draw() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Tunnel-Effekt
+        for (let i = 0; i < tunnel.segments; i++) {
+          const z = (i + angle) % tunnel.segments;
+          const scale = 1 - (z / tunnel.segments);
+          const x = canvas.width / 2;
+          const y = canvas.height / 2;
+          const radius = tunnel.radius * scale;
+
+          ctx.strokeStyle = `hsl(${(z * 18) % 360}, 70%, 50%)`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        angle += tunnel.speed;
+
+        // FPS Counter
+        const now = performance.now();
+        fps = Math.round(1000 / (now - lastTime));
+        lastTime = now;
+        document.getElementById('fps').textContent = fps;
+
+        gameLoop = requestAnimationFrame(draw);
+      }
+
+      draw();
+    }
+
+    function checkCloudStatus() {
+      const prefs = JSON.parse(localStorage.getItem('ostosos.prefs') || '{"cloudEnabled": false}');
+      if (prefs.cloudEnabled) {
+        document.getElementById('p2pStatus').textContent = 'Online (P2P aktiv)';
+        document.getElementById('p2pStatus').style.color = 'var(--davinci-success, #22c55e)';
+        // Hier würde P2P-Verbindung initialisiert werden
+      } else {
+        document.getElementById('p2pStatus').textContent = 'Offline (Lokaler Modus)';
+        document.getElementById('p2pStatus').style.color = 'var(--davinci-muted, #9ca3af)';
+      }
+    }
+
+    document.querySelectorAll('.game-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.game-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        
+        const game = item.dataset.game;
+        if (game === 'tunnel') {
+          if (gameLoop) cancelAnimationFrame(gameLoop);
+          initTunnelGame();
+        } else if (game === 'matrix') {
+          const prefs = JSON.parse(localStorage.getItem('ostosos.prefs') || '{"cloudEnabled": false}');
+          if (!prefs.cloudEnabled) {
+            alert('Multiplayer erfordert aktivierte Cloud. Bitte Cloud Hub aktivieren.');
+          } else {
+            // Multiplayer initialisieren
+            initMatrixMultiplayer();
+          }
+        }
+      });
+    });
+
+    function initMatrixMultiplayer() {
+      if (gameLoop) cancelAnimationFrame(gameLoop);
+      resizeCanvas();
+      
+      // Matrix Multiplayer Game
+      let players = [];
+      let myPlayer = { x: canvas.width / 2, y: canvas.height / 2, color: '#10b981' };
+      
+      function drawMultiplayer() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Zeichne alle Spieler
+        ctx.fillStyle = myPlayer.color;
+        ctx.beginPath();
+        ctx.arc(myPlayer.x, myPlayer.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+        
+        players.forEach(player => {
+          ctx.fillStyle = player.color || '#3b82f6';
+          ctx.beginPath();
+          ctx.arc(player.x, player.y, 10, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        
+        // FPS Counter
+        const now = performance.now();
+        fps = Math.round(1000 / (now - lastTime));
+        lastTime = now;
+        document.getElementById('fps').textContent = fps;
+        
+        gameLoop = requestAnimationFrame(drawMultiplayer);
+      }
+      
+      drawMultiplayer();
+    }
+
+    // Einstellungen
+    document.getElementById('speed').addEventListener('input', (e) => {
+      gameSettings.speed = parseFloat(e.target.value);
+      if (gameLoop) {
+        cancelAnimationFrame(gameLoop);
+        initTunnelGame();
+      }
+    });
+
+    document.getElementById('quality').addEventListener('input', (e) => {
+      gameSettings.quality = parseInt(e.target.value);
+      if (gameLoop) {
+        cancelAnimationFrame(gameLoop);
+        initTunnelGame();
+      }
+    });
+
+    document.getElementById('fullscreen').addEventListener('change', (e) => {
+      gameSettings.fullscreen = e.target.checked;
+      if (e.target.checked) {
+        canvas.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    });
+
+    // Steuerung
+    const keys = {};
+    window.addEventListener('keydown', (e) => {
+      keys[e.key.toLowerCase()] = true;
+      if (e.key === 'Escape') {
+        // Menü öffnen
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key.toLowerCase()] = false;
+    });
+
+    // Initialize
+    window.addEventListener('resize', resizeCanvas);
+    initTunnelGame();
+    checkCloudStatus();
+
+    // Simuliere Latenz
+    setInterval(() => {
+      const latency = Math.floor(Math.random() * 16);
+      document.getElementById('latency').textContent = `${latency}ms`;
+    }, 1000);
+  </script>
+</body>
+</html>
+
