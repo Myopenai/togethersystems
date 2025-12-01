@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GIT-PUSH-LOESUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Git Push Lösung - Remote Änderungen integrieren</h1>
+
+<h2>Problem</h2>
+```
+! [rejected]        main -> main (fetch first)
+error: failed to push some refs
+```
+
+<strong>Ursache:</strong> Der Remote (GitHub) hat Änderungen, die lokal nicht vorhanden sind.
+
+<h2>Lösung: 3 Optionen</h2>
+
+<h3>Option 1: Pull mit Merge (empfohlen)</h3>
+```powershell
+<h1>1. Remote Änderungen holen und mergen</h1>
+git pull origin main --allow-unrelated-histories
+
+<h1>2. Falls Konflikte auftreten, diese lösen, dann:</h1>
+git add .
+git commit -m "Merge remote changes"
+
+<h1>3. Dann pushen</h1>
+git push origin main
+```
+
+<h3>Option 2: Pull mit Rebase (sauberer History)</h3>
+```powershell
+<h1>1. Remote Änderungen holen und auf lokale Commits anwenden</h1>
+git pull --rebase origin main
+
+<h1>2. Falls Konflikte auftreten, diese lösen, dann:</h1>
+git add .
+git rebase --continue
+
+<h1>3. Dann pushen</h1>
+git push origin main
+```
+
+<h3>Option 3: Force Push (NUR wenn du sicher bist!)</h3>
+⚠️ <strong>WARNUNG:</strong> Überschreibt Remote-Änderungen!
+
+```powershell
+<h1>NUR wenn du 100% sicher bist, dass deine lokalen Änderungen wichtiger sind!</h1>
+git push --force origin main
+```
+
+---
+
+<h2>Empfohlene Vorgehensweise</h2>
+
+<strong>Schritt 1:</strong> Remote Änderungen ansehen
+```powershell
+git fetch origin
+git log HEAD..origin/main --oneline
+```
+
+<strong>Schritt 2:</strong> Pull mit Merge
+```powershell
+git pull origin main --allow-unrelated-histories
+```
+
+<strong>Schritt 3:</strong> Falls Konflikte → lösen, dann:
+```powershell
+git add .
+git commit -m "Merge: Integriere Remote-Änderungen"
+git push origin main
+```
+
+---
+
+<h2>Schnelllösung (Copy & Paste)</h2>
+
+```powershell
+<h1>1. Remote Änderungen holen</h1>
+git pull origin main --allow-unrelated-histories
+
+<h1>2. Falls erfolgreich, pushen</h1>
+git push origin main
+```
+
+Falls Konflikte auftreten, melde dich und ich helfe beim Lösen!
+</body>
+</html>

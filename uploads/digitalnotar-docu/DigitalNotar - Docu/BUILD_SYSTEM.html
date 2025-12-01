@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BUILD_SYSTEM</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🏗️ Produktions-Build System - Digitales Notariat</h1>
+
+<h2>📋 Übersicht</h2>
+
+Das Digitales Notariat verfügt über ein vollständiges Build-System, das automatisch Produktions-Builds für alle gängigen Plattformen erstellt:
+
+- <strong>Windows</strong> (x64, ia32)
+- <strong>macOS</strong> (x64, arm64)
+- <strong>Linux</strong> (x64)
+
+<h2>🚀 Schnellstart</h2>
+
+<h3>One-Click Build (Empfohlen)</h3>
+
+<h4>Windows</h4>
+```batch
+build-all-platforms.bat
+```
+
+<h4>Linux/macOS</h4>
+```bash
+chmod +x build-all-platforms.sh
+./build-all-platforms.sh
+```
+
+<h3>Manuelle Builds</h3>
+
+<h4>Alle Plattformen</h4>
+```bash
+pnpm run dist-all
+```
+
+<h4>Einzelne Plattformen</h4>
+```bash
+<h1>Windows</h1>
+pnpm run dist-win
+
+<h1>macOS</h1>
+pnpm run dist-mac
+
+<h1>Linux</h1>
+pnpm run dist-linux
+```
+
+<h2>📦 Erstellte Build-Typen</h2>
+
+<h3>Windows</h3>
+- <strong>NSIS Installer</strong> (.exe) - Vollständiger Installer
+- <strong>Portable</strong> (.exe) - Tragbare Version ohne Installation
+
+<h3>macOS</h3>
+- <strong>DMG</strong> (.dmg) - Disk Image für einfache Installation
+- <strong>ZIP</strong> (.zip) - Komprimierte Version
+
+<h3>Linux</h3>
+- <strong>AppImage</strong> (.AppImage) - Universelle Linux-Distribution
+- <strong>DEB</strong> (.deb) - Debian/Ubuntu Paket
+- <strong>RPM</strong> (.rpm) - Red Hat/Fedora Paket
+
+<h2>🛠️ Build-Konfiguration</h2>
+
+<h3>Electron Builder Konfiguration</h3>
+
+```json
+{
+  "build": {
+    "appId": "com.digitales-notariat.app",
+    "productName": "Digitales Notariat",
+    "directories": {
+      "output": "dist-production"
+    },
+    "files": [
+      "dist/<em></em>/*",
+      "dist-electron/<em></em>/*",
+      "node_modules/<em></em>/*"
+    ]
+  }
+}
+```
+
+<h3>Plattform-spezifische Einstellungen</h3>
+
+<h4>Windows</h4>
+- <strong>Targets</strong>: NSIS Installer, Portable
+- <strong>Architekturen</strong>: x64, ia32
+- <strong>Features</strong>: Desktop-Shortcut, Start-Menü
+
+<h4>macOS</h4>
+- <strong>Targets</strong>: DMG, ZIP
+- <strong>Architekturen</strong>: x64, arm64 (Apple Silicon)
+- <strong>Kategorie</strong>: Business
+
+<h4>Linux</h4>
+- <strong>Targets</strong>: AppImage, DEB, RPM
+- <strong>Architekturen</strong>: x64
+- <strong>Kategorie</strong>: Office
+
+<h2>📁 Build-Ausgabe</h2>
+
+<h3>Verzeichnisstruktur</h3>
+```
+dist-production/
+├── build-report.json          # Detaillierter Build-Report
+├── Digitales Notariat-1.0.0.exe          # Windows NSIS
+├── Digitales Notariat-1.0.0-portable.exe # Windows Portable
+├── Digitales Notariat-1.0.0.dmg          # macOS DMG
+├── Digitales Notariat-1.0.0-mac.zip      # macOS ZIP
+├── Digitales Notariat-1.0.0.AppImage     # Linux AppImage
+├── digitales-notariat_1.0.0_amd64.deb    # Linux DEB
+└── digitales-notariat-1.0.0.x86_64.rpm   # Linux RPM
+```
+
+<h3>Build-Report</h3>
+```json
+{
+  "timestamp": "2025-08-02T10:30:00.000Z",
+  "duration": "45.23s",
+  "success": true,
+  "errors": [],
+  "logs": [...],
+  "buildInfo": {
+    "nodeVersion": "v20.18.1",
+    "pnpmVersion": "8.15.0",
+    "platform": "win32",
+    "arch": "x64"
+  }
+}
+```
+
+<h2>🔧 Erweiterte Build-Optionen</h2>
+
+<h3>Entwicklung vs. Produktion</h3>
+
+<h4>Entwicklung</h4>
+```bash
+<h1>Electron mit Hot-Reload</h1>
+pnpm run electron-dev
+
+<h1>Nur Electron (ohne Hot-Reload)</h1>
+pnpm run electron
+```
+
+<h4>Produktion</h4>
+```bash
+<h1>Vollständiger Build</h1>
+pnpm run dist-all
+
+<h1>Nur Packaging (ohne Distribution)</h1>
+pnpm run package-all
+```
+
+<h3>Plattform-spezifische Builds</h3>
+
+<h4>Windows-spezifisch</h4>
+```bash
+<h1>Nur Windows Builds</h1>
+pnpm run build-win
+pnpm run dist-win
+pnpm run package-win
+```
+
+<h4>macOS-spezifisch</h4>
+```bash
+<h1>Nur macOS Builds</h1>
+pnpm run build-mac
+pnpm run dist-mac
+pnpm run package-mac
+```
+
+<h4>Linux-spezifisch</h4>
+```bash
+<h1>Nur Linux Builds</h1>
+pnpm run build-linux
+pnpm run dist-linux
+pnpm run package-linux
+```
+
+<h2>🎨 Icon-Generierung</h2>
+
+Das Build-System erstellt automatisch Icons für alle Plattformen:
+
+- <strong>Windows</strong>: `assets/icon.ico`
+- <strong>macOS</strong>: `assets/icon.icns`
+- <strong>Linux</strong>: `assets/icon.png`
+
+<h3>Icon-Spezifikationen</h3>
+- <strong>Größe</strong>: 256x256 Pixel
+- <strong>Format</strong>: PNG, ICO, ICNS
+- <strong>Design</strong>: Professionelles Notariat-Design
+
+<h2>🔒 Sicherheitsfeatures</h2>
+
+<h3>Code-Signierung (Optional)</h3>
+```bash
+<h1>Windows Code-Signierung</h1>
+pnpm run dist-win -- --sign
+
+<h1>macOS Code-Signierung</h1>
+pnpm run dist-mac -- --sign
+
+<h1>Linux Code-Signierung</h1>
+pnpm run dist-linux -- --sign
+```
+
+<h3>Notarization (macOS)</h3>
+```bash
+<h1>macOS Notarization</h1>
+pnpm run dist-mac -- --notarize
+```
+
+<h2>📊 Build-Performance</h2>
+
+<h3>Optimierungen</h3>
+- <strong>Parallel Builds</strong>: Mehrere Plattformen gleichzeitig
+- <strong>Caching</strong>: Electron Builder Cache
+- <strong>Compression</strong>: Optimierte Dateigrößen
+- <strong>Tree Shaking</strong>: Unnötiger Code entfernt
+
+<h3>Build-Zeiten (Durchschnitt)</h3>
+- <strong>Windows</strong>: ~2-3 Minuten
+- <strong>macOS</strong>: ~3-4 Minuten
+- <strong>Linux</strong>: ~2-3 Minuten
+- <strong>Alle Plattformen</strong>: ~8-10 Minuten
+
+<h2>🐛 Troubleshooting</h2>
+
+<h3>Häufige Probleme</h3>
+
+<h4>1. Build-Fehler</h4>
+```bash
+<h1>Abhängigkeiten neu installieren</h1>
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+
+<h1>Build-Cache löschen</h1>
+rm -rf dist-production
+```
+
+<h4>2. Electron Builder Fehler</h4>
+```bash
+<h1>Electron Builder Cache löschen</h1>
+rm -rf ~/.cache/electron-builder
+rm -rf ~/.cache/electron
+```
+
+<h4>3. Plattform-spezifische Probleme</h4>
+
+<strong>Windows</strong>
+- Visual Studio Build Tools erforderlich
+- Windows SDK installieren
+
+<strong>macOS</strong>
+- Xcode Command Line Tools erforderlich
+- Apple Developer Account für Code-Signierung
+
+<strong>Linux</strong>
+- Build-Essentials installieren
+- AppImage-Tools für AppImage-Builds
+
+<h3>Debug-Modus</h3>
+```bash
+<h1>Detaillierte Build-Logs</h1>
+DEBUG=electron-builder pnpm run dist-all
+
+<h1>Nur Web-Build testen</h1>
+pnpm run build
+pnpm run preview
+```
+
+<h2>📈 Monitoring & Logging</h2>
+
+<h3>Build-Logs</h3>
+- <strong>Console Output</strong>: Echtzeit-Build-Status
+- <strong>Log-Dateien</strong>: `logs/build-YYYY-MM-DD.log`
+- <strong>Build-Report</strong>: `dist-production/build-report.json`
+
+<h3>Performance-Monitoring</h3>
+```bash
+<h1>Build-Zeit messen</h1>
+time pnpm run dist-all
+
+<h1>Speicherverbrauch überwachen</h1>
+node build-production.js --monitor
+```
+
+<h2>🔄 CI/CD Integration</h2>
+
+<h3>GitHub Actions</h3>
+```yaml
+name: Build and Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install -g pnpm
+      - run: pnpm install
+      - run: pnpm run dist-${{ matrix.platform }}
+```
+
+<h3>GitLab CI</h3>
+```yaml
+build:
+  stage: build
+  image: node:20
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm run dist-all
+  artifacts:
+    paths:
+      - dist-production/
+```
+
+<h2>📚 Weitere Ressourcen</h2>
+
+<h3>Dokumentation</h3>
+- <a href="https://www.electron.build/">Electron Builder Dokumentation</a>
+- <a href="https://www.electronjs.org/docs">Electron Dokumentation</a>
+- <a href="https://vitejs.dev/">Vite Dokumentation</a>
+
+<h3>Tools</h3>
+- <a href="https://github.com/electron-userland/electron-builder">Electron Builder</a>
+- <a href="https://www.electronforge.io/">Electron Forge</a>
+- <a href="https://github.com/AppImageCrafters/appimage-builder">AppImage Builder</a>
+
+---
+
+<strong>🎯 Das Build-System ist vollständig automatisiert und erstellt professionelle Distributions-Pakete für alle gängigen Plattformen!</strong>
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

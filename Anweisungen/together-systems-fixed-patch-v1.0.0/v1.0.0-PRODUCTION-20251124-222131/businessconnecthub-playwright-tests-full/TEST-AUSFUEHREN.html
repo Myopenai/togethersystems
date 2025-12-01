@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TEST-AUSFUEHREN</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Tests manuell ausführen</h1>
+
+Die Tests benötigen einen <strong>laufenden lokalen Webserver</strong> auf Port 9323.
+
+<h2>Schritt 1: Webserver starten</h2>
+
+<strong>Im TELCOMPETIOION Root-Verzeichnis:</strong>
+
+```bash
+cd D:\TELCOMPETIOION
+python -m http.server 9323
+```
+
+ODER mit PowerShell:
+
+```powershell
+cd D:\TELCOMPETIOION
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "python -m http.server 9323"
+```
+
+<h2>Schritt 2: Tests ausführen</h2>
+
+<strong>In einem NEUEN Terminal:</strong>
+
+```bash
+cd D:\TELBOUISNINESSTESTS\businessconnecthub-playwright-tests-full
+npx playwright test --project=Chromium
+```
+
+<h2>Schritt 3: HTML-Report anzeigen (optional)</h2>
+
+```bash
+npx playwright show-report
+```
+
+<h2>Schnelltest (nur ein Test)</h2>
+
+```bash
+cd D:\TELBOUISNINESSTESTS\businessconnecthub-playwright-tests-full
+npx playwright test --project=Chromium tests/start.spec.ts
+```
+
+<h2>Wichtige Hinweise</h2>
+
+- ✅ Webserver <strong>MUSS</strong> auf Port 9323 laufen, bevor Tests gestartet werden
+- ✅ Webserver im Hintergrund lassen, während Tests laufen
+- ✅ Tests dauern ca. 2-5 Minuten (29 Tests insgesamt)
+- ✅ Bei Timeout-Fehlern: Server prüfen ob er läuft
+</body>
+</html>

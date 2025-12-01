@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)file:///D:/Productions/CHARM/heilungsspirale_webapp/index.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Heilungsspirale DR.Tel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #1f2933;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .contact-line {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: #e0f2fe;
+      flex-wrap: wrap;
+    }
+
+    .contact-line a,
+    .dr-tel-link {
+      color: #38bdf8;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .contact-line a:hover,
+    .dr-tel-link:hover {
+      color: #f472b6;
+    }
+
+    header button {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #10b981;
+      color: white;
+      font-size: 0.85rem;
+    }
+
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    #canvas-section {
+      background: radial-gradient(circle at top, #0b1120, #020617);
+      border-radius: 1rem;
+      border: 1px solid #1f2937;
+      padding: 0.5rem;
+      display: flex;
+    }
+
+    #spiralCanvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 0.75rem;
+      background: #020617;
+    }
+
+    #controls {
+      border-radius: 1rem;
+      border: 1px solid #1f2937;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .control-group {
+      font-size: 0.8rem;
+    }
+
+    .control-group label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+
+    .control-group .value {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.7rem;
+      opacity: 0.8;
+      align-self: flex-end;
+    }
+
+    footer {
+      font-size: 0.7rem;
+      text-align: center;
+      padding: 0.5rem 1rem;
+      opacity: 0.6;
+      border-top: 1px solid #1f2933;
+    }
+
+    footer a {
+      color: #38bdf8;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: #f472b6;
+    }
+
+    footer span {
+      margin: 0 0.35rem;
+      color: rgba(224, 242, 254, 0.8);
+    }
+
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      #canvas-section {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      Heilungsspirale <a class="dr-tel-link" href="https://www.linkedin.com/pulse/big-bang-invisible-raymond-demitrio-tel-unwpe/?trackingId=xT3YeXQ3YyZeqgYUkzslxg%3D%3D">DR.Tel</a>
+    </h1>
+    <div class="contact-line">
+      <a href="mailto:X@TEL1.NL">X@TEL1.NL</a>
+      <span>·</span>
+      <span>0031613803782</span>
+      <span>·</span>
+      <a href="https://www.t-systems.com/">T,.SYSTEMS.T,.</a>
+      <span>T,.&amp;.T,.</span>
+      <a href="https://www.linkedin.com/in/rob-jetten/">JeTTen</a>
+    </div>
+    <button id="playPauseBtn">Pause</button>
+  </header>
+
+  <main>
+    <section id="canvas-section">
+      <canvas id="spiralCanvas" width="1198" height="721"></canvas>
+    </section>
+    <section id="controls">
+      <div class="control-group">
+        <label>Arme
+          <input id="arms" type="range" min="1" max="12" step="1" value="3">
+          <span class="value" id="armsVal">3</span>
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Drehungen
+          <input id="turns" type="range" min="1" max="24" step="1" value="7">
+          <span class="value" id="turnsVal">7</span>
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Dichte
+          <input id="density" type="range" min="0.1" max="1" step="0.05" value="0.6">
+          <span class="value" id="densityVal">0.60</span>
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Radius
+          <input id="radius" type="range" min="60" max="320" step="5" value="180">
+          <span class="value" id="radiusVal">180</span>
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Dicke
+          <input id="thickness" type="range" min="1" max="12" step="0.5" value="3">
+          <span class="value" id="thicknessVal">3.0</span>
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Twist
+          <input id="twist" type="range" min="0" max="1" step="0.02" value="0.2">
+          <span class="value" id="twistVal">0.20</span>
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Morph-Intensität
+          <input id="noiseAmp" type="range" min="0" max="0.8" step="0.02" value="0.15">
+          <span class="value" id="noiseAmpVal">0.15</span>
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Farbe 1
+          <input id="color1" type="color" value="#7c3aed">
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Farbe 2
+          <input id="color2" type="color" value="#06b6d4">
+        </label>
+      </div>
+      <div class="control-group">
+        <label>Hintergrund
+          <input id="background" type="color" value="#020617">
+        </label>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget">
+      Wiedersehen, Herr Pfeffer. Sieg erfreut. Alles berechnen.
+    </a>
+    <span>·</span>
+    <a href="https://github.com/Myopenai/DD5BE/commit/392239d095fc839272bfddbc0e402b3ed582fc5a">vision</a>
+    <span>·</span>
+    <a href="https://github.com/Myopenai/DD5BE/commit/392239d095fc839272bfddbc0e402b3ed582fc5a#diff-b335630551682c19a781afebcf4d07bf978fb1f8ac04c6bf87428ed5106870f5">Developer</a>
+    <span>·</span>
+    <a href="https://tel1.jouwweb.nl/home">DD5BE</a> CQCQDX WELCOME AND GOOD BYE. 🚀
+  </footer>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById("spiralCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const params = {
+        arms: 3,
+        turns: 7,
+        density: 0.6,
+        radius: 180,
+        thickness: 3,
+        twist: 0.2,
+        noiseAmp: 0.15,
+        color1: "#7c3aed",
+        color2: "#06b6d4",
+        background: "#020617",
+      };
+
+      let morphT = 0;
+      let playing = true;
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      function draw() {
+        const W = canvas.clientWidth;
+        const H = canvas.clientHeight;
+        if (!W || !H) return;
+
+        ctx.fillStyle = params.background;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.save();
+        ctx.translate(W / 2, H / 2);
+        ctx.lineCap = "round";
+
+        const total = Math.max(60, Math.floor(params.density * 2000));
+        const twoPi = Math.PI * 2;
+
+        for (let a = 0; a < Math.max(1, Math.round(params.arms)); a++) {
+          ctx.beginPath();
+          for (let i = 0; i <= total; i++) {
+            const t = i / total;
+            const theta =
+              t * params.turns * twoPi +
+              (a * twoPi) / Math.max(1, params.arms) +
+              params.twist * t * twoPi;
+            const r = params.radius * t * (1 + params.noiseAmp * Math.sin(theta + morphT));
+            const x = r * Math.cos(theta);
+            const y = r * Math.sin(theta);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          const grd = ctx.createLinearGradient(-params.radius, -params.radius, params.radius, params.radius);
+          grd.addColorStop(0, params.color1);
+          grd.addColorStop(1, params.color2);
+          ctx.strokeStyle = grd;
+          ctx.lineWidth = params.thickness;
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+
+      function loop() {
+        if (playing) {
+          morphT += 0.01;
+        }
+        draw();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      function bindRange(id, key, formatter) {
+        const input = document.getElementById(id);
+        const span = document.getElementById(id + "Val");
+        if (!input) return;
+        input.addEventListener("input", () => {
+          let v = parseFloat(input.value);
+          if (key === "arms" || key === "turns") v = Math.round(v);
+          params[key] = v;
+          if (span) {
+            span.textContent = formatter ? formatter(v) : String(v);
+          }
+        });
+      }
+
+      bindRange("arms", "arms");
+      bindRange("turns", "turns");
+      bindRange("density", "density", (v) => v.toFixed(2));
+      bindRange("radius", "radius");
+      bindRange("thickness", "thickness", (v) => v.toFixed(1));
+      bindRange("twist", "twist", (v) => v.toFixed(2));
+      bindRange("noiseAmp", "noiseAmp", (v) => v.toFixed(2));
+
+      function bindColor(id, key) {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.addEventListener("input", () => {
+          params[key] = input.value;
+        });
+      }
+
+      bindColor("color1", "color1");
+      bindColor("color2", "color2");
+      bindColor("background", "background");
+
+      const btn = document.getElementById("playPauseBtn");
+      btn.addEventListener("click", () => {
+        playing = !playing;
+        btn.textContent = playing ? "Pause" : "Play";
+      });
+
+      console.assert(params.radius > 0, "Radius > 0");
+      console.assert(params.arms >= 1, "Arms >= 1");
+    })();
+  </script>
+
+</body></html>

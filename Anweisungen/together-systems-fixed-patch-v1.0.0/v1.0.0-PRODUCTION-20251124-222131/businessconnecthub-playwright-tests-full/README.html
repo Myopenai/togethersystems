@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>README</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>TELCOMPETIOION – Playwright Testsuite</h1>
+<p>Diese Testsuite testet das <strong>TELCOMPETIOION Root-Projekt</strong> auf `http://localhost:9323/`.</p>
+<h2>Getestete Bereiche</h2>
+<p>- <strong>Startseite / Dashboard</strong> (`/index.html`)
+  - Portal öffnen, Dashboard, Daten-Tabelle, Berichte, Manifest-Forum-Download
+  
+- <strong>Manifest-Portal</strong> (`/manifest-portal.html`)
+  - Bonus-Ökosystem, Module, Mesh-Historie
+  - Verifizierung
+  - Admin-Moderation (Server)
+  - Hidden Viewer
+  - Medien & Chat
+  - P2P Datei-Transfer
+  - Daten laden / API
+  - Live-Funktionen
+  - Datei-Transfer (R2)
+  
+- <strong>Manifest-Forum – Offline-Editor</strong> (`/manifest-forum.html`)
+  - Beitrag erstellen
+  - Hyperkommunikation (Text/Audio/Video/Code/Formel/Daten)
+  - Daten Export/Import
+  - Statische Webseite erzeugen
+  - API-Veröffentlichung & Warteschlange
+  - Mesh-Networking (P2P-Sync)</p>
+<h2>Voraussetzungen</h2>
+<p>1. <strong>Node.js</strong> (empfohlen >= 18) installiert
+2. <strong>Lokaler Webserver</strong> läuft auf `http://localhost:9323/` (z.B. via `python -m http.server 9323` im TELCOMPETIOION Root)</p>
+<h2>Installation</h2>
+<pre><code>cd D:\TELBOUISNINESSTESTS\businessconnecthub-playwright-tests-full
+npm install
+npx playwright install --with-deps chromium
+</code></pre>
+<h2>Tests ausführen</h2>
+<h3>Alle Tests (Chromium):</h3>
+<pre><code>npx playwright test --project=Chromium
+</code></pre>
+<h3>Nur Startseite:</h3>
+<pre><code>npx playwright test --project=Chromium tests/start.spec.ts
+</code></pre>
+<h3>Nur Forum:</h3>
+<pre><code>npx playwright test --project=Chromium tests/offline-forum.spec.ts
+</code></pre>
+<h3>Nur Portal:</h3>
+<pre><code>npx playwright test --project=Chromium tests/portal.spec.ts
+</code></pre>
+<h3>HTML-Report:</h3>
+<pre><code>npx playwright test --project=Chromium --reporter=html
+npx playwright show-report
+</code></pre>
+<h3>Mit anderer Base URL:</h3>
+<pre><code>$env:PLAYWRIGHT_BASE_URL="http://localhost:8000/"; npx playwright test --project=Chromium
+</code></pre>
+<h2>Konfiguration</h2>
+<p>Die Base URL ist in `playwright.config.ts` definiert:
+- <strong>Default:</strong> `http://localhost:9323/` (TELCOMPETIOION Root)
+- <strong>Überschreibbar:</strong> via Umgebungsvariable `PLAYWRIGHT_BASE_URL`</p>
+<p>> <strong>Hinweis:</strong> Komplexe Funktionen wie echte Audio-/Videoübertragung, P2P-Sync oder API-Publishing
+> werden hier als <strong>UI-Smoke-Tests</strong> abgedeckt (Buttons/Elemente sichtbar und klickbar).
+> Für echte End-to-End-Prüfung inkl. Server/Signaling/API brauchst du zusätzlich
+> Backends, Testkonten oder Mocks.</p>
+</body>
+</html>

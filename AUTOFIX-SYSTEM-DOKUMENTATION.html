@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AUTOFIX-SYSTEM-DOKUMENTATION</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Autofix-System: Automatische Fehlererkennung und -korrektur</h1>
+
+<h2>Übersicht</h2>
+
+Das Autofix-System erkennt automatisch Fehler, die durch User-Aktionen auftauchen, und korrigiert sie <strong>online, live, just-in-time</strong> mit Benachrichtigungen an den User.
+
+<h2>Architektur</h2>
+
+<h3>Backend (Cloudflare Pages Functions)</h3>
+
+1. <strong>`/api/autofix/errors` (POST)</strong>
+   - Empfängt Fehler von Client
+   - Erkennt Fehlermuster
+   - Wendet automatische Korrekturen an
+   - Speichert Events in D1
+
+2. <strong>`/api/autofix/notify` (GET)</strong>
+   - Server-Sent Events (SSE) Stream
+   - Sendet Live-Benachrichtigungen über automatische Korrekturen
+   - Polling alle 2 Sekunden
+
+3. <strong>`/api/autofix/status` (GET)</strong>
+   - Status der automatischen Korrekturen
+   - Statistiken (letzte 24 Stunden)
+   - Liste der letzten Korrekturen
+
+<h3>Frontend (`autofix-client.js`)</h3>
+
+- <strong>Global Error Handler</strong>: Fängt alle JavaScript-Fehler ab
+- <strong>Unhandled Promise Rejection Handler</strong>: Fängt Promise-Rejections ab
+- <strong>Fetch Error Handler</strong>: Wrappt `fetch()` und erkennt HTTP-Fehler
+- <strong>Error Queue</strong>: Batch-Verarbeitung (alle 2 Sekunden oder bei 5 Fehlern)
+- <strong>Live-Benachrichtigungen</strong>: SSE-Verbindung für Echtzeit-Updates
+- <strong>UI-Benachrichtigungen</strong>: Visuelle Popups mit Korrektur-Details
+
+<h2>Unterstützte Fehlermuster</h2>
+
+| Muster | Typ | Korrektur | Beschreibung |
+|--------|-----|-----------|--------------|
+| `ERR_CONNECTION_REFUSED` | api_connection | disable_api_calls | API-Verbindung fehlgeschlagen |
+| `404` | not_found | fallback_content | Ressource nicht gefunden |
+| `500` | server_error | retry_with_backoff | Server-Fehler |
+| `CORS` | cors_error | use_relative_paths | CORS-Fehler |
+| `timeout` | timeout | increase_timeout | Timeout erkannt |
+| `null` | null_reference | add_null_check | Null-Referenz |
+| `undefined` | undefined_reference | add_undefined_check | Undefined-Referenz |
+
+<h2>Automatische Korrekturen</h2>
+
+<h3>1. `disable_api_calls`</h3>
+- <strong>Aktion</strong>: Setzt API-Base-URL auf `null`
+- <strong>Verwendung</strong>: Wenn API-Verbindung nicht möglich ist
+- <strong>Ergebnis</strong>: API-Aufrufe werden deaktiviert, keine weiteren Fehler
+
+<h3>2. `fallback_content`</h3>
+- <strong>Aktion</strong>: Zeigt Fallback-Inhalt
+- <strong>Verwendung</strong>: Wenn Ressource nicht gefunden wird
+- <strong>Ergebnis</strong>: Benutzerfreundliche Fehlermeldung
+
+<h3>3. `retry_with_backoff`</h3>
+- <strong>Aktion</strong>: Plant Wiederholung mit Backoff
+- <strong>Verwendung</strong>: Bei Server-Fehlern
+- <strong>Ergebnis</strong>: Automatische Wiederholung nach 2 Sekunden (max. 3x)
+
+<h3>4. `use_relative_paths`</h3>
+- <strong>Aktion</strong>: Wechselt zu relativen Pfaden
+- <strong>Verwendung</strong>: Bei CORS-Fehlern
+- <strong>Ergebnis</strong>: Verwendet relative Pfade statt absolute URLs
+
+<h3>5. `increase_timeout`</h3>
+- <strong>Aktion</strong>: Erhöht Timeout auf 30 Sekunden
+- <strong>Verwendung</strong>: Bei Timeout-Fehlern
+- <strong>Ergebnis</strong>: Längere Wartezeit für langsame Verbindungen
+
+<h3>6. `add_null_check`</h3>
+- <strong>Aktion</strong>: Fügt Null-Prüfung hinzu
+- <strong>Verwendung</strong>: Bei Null-Referenz-Fehlern
+- <strong>Ergebnis</strong>: Verhindert weitere Null-Referenz-Fehler
+
+<h3>7. `add_undefined_check`</h3>
+- <strong>Aktion</strong>: Fügt Undefined-Prüfung hinzu
+- <strong>Verwendung</strong>: Bei Undefined-Referenz-Fehlern
+- <strong>Ergebnis</strong>: Verhindert weitere Undefined-Referenz-Fehler
+
+<h2>Integration</h2>
+
+<h3>In HTML-Dateien einbinden</h3>
+
+```html
+<script type="module" src="./autofix-client.js"></script>
+```
+
+Das System initialisiert sich automatisch beim Laden der Seite.
+
+<h3>Manuelle Initialisierung</h3>
+
+```javascript
+import { initAutofix, getAutofixStatus } from './autofix-client.js';
+
+// Initialisierung
+initAutofix();
+
+// Status abrufen
+const status = await getAutofixStatus();
+console.log(status);
+```
+
+<h2>Benachrichtigungen</h2>
+
+<h3>Visuelle Benachrichtigungen</h3>
+
+- <strong>Position</strong>: Oben rechts (fixed)
+- <strong>Design</strong>: Neon-grüner Rahmen, dunkler Hintergrund
+- <strong>Auto-Entfernung</strong>: Nach 10 Sekunden
+- <strong>Animation</strong>: Slide-in von rechts
+
+<h3>Benachrichtigungsinhalt</h3>
+
+- <strong>Titel</strong>: "🔧 Automatische Fehlerkorrektur"
+- <strong>Erkanntes Muster</strong>: Typ des Fehlers
+- <strong>Aktion</strong>: Beschreibung der Korrektur
+- <strong>Zeitstempel</strong>: Wann die Korrektur angewendet wurde
+
+<h2>Monitoring</h2>
+
+<h3>Admin-Monitoring-Dashboard</h3>
+
+Das `admin-monitoring.html` Dashboard zeigt:
+- <strong>Autofix-Statistiken</strong> (letzte 24 Stunden)
+- <strong>Anzahl der Korrekturen</strong> nach Typ
+- <strong>Letzte Korrekturen</strong> mit Details
+
+<h3>API-Endpoints</h3>
+
+- `GET /api/autofix/status` - Status und Statistiken
+- `GET /api/autofix/notify` - SSE-Stream für Live-Updates
+- `POST /api/autofix/errors` - Fehler melden und korrigieren
+
+<h2>Datenbank</h2>
+
+<h3>Events-Tabelle</h3>
+
+Alle automatischen Korrekturen werden in der `events` Tabelle gespeichert:
+
+```sql
+INSERT INTO events (id, type, actor_id, subject_type, subject_id, meta, created_at)
+VALUES (?, 'autofix.applied', ?, 'error', ?, ?, ?)
+```
+
+<strong>Meta-Felder:</strong>
+- `fixType`: Typ der Korrektur
+- `action`: Durchgeführte Aktion
+- `params`: Parameter der Aktion
+- `error`: Original-Fehlermeldung
+- `timestamp`: Zeitstempel
+
+<h2>Beispiel-Workflow</h2>
+
+1. <strong>User-Aktion</strong>: Klickt auf "Voucher laden"
+2. <strong>Fehler tritt auf</strong>: `ERR_CONNECTION_REFUSED` bei API-Aufruf
+3. <strong>Autofix erkennt</strong>: Fehlermuster `ERR_CONNECTION_REFUSED`
+4. <strong>Korrektur wird angewendet</strong>: `disable_api_calls` → API-Base-URL auf `null`
+5. <strong>Benachrichtigung</strong>: "API-Verbindung fehlgeschlagen. API-Aufrufe werden deaktiviert."
+6. <strong>Event gespeichert</strong>: In D1-Datenbank für Monitoring
+7. <strong>Weitere Fehler verhindert</strong>: Keine weiteren API-Aufrufe, keine weiteren Fehler
+
+<h2>Erweiterung</h2>
+
+<h3>Neue Fehlermuster hinzufügen</h3>
+
+1. In `functions/api/autofix/errors.js`:
+   ```javascript
+   const ERROR_PATTERNS = {
+     'NEUES_MUSTER': {
+       type: 'neuer_typ',
+       fix: 'neue_korrektur',
+       message: 'Beschreibung',
+     },
+   };
+   ```
+
+2. Neue Korrektur implementieren:
+   ```javascript
+   const AUTO_FIXES = {
+     neue_korrektur: (error, context) => {
+       return {
+         action: 'neue_aktion',
+         params: { ... },
+         message: 'Korrektur-Beschreibung',
+       };
+     },
+   };
+   ```
+
+<h3>Frontend-Integration erweitern</h3>
+
+In `autofix-client.js` können weitere Error-Handler hinzugefügt werden:
+
+```javascript
+// Beispiel: Custom Error Handler
+window.addEventListener('customError', (event) => {
+  enqueueError(event.detail.error, event.detail.context);
+});
+```
+
+<h2>Status</h2>
+
+✅ <strong>Implementiert:</strong>
+- Backend API-Endpoints
+- Frontend Error-Handler
+- Live-Benachrichtigungen (SSE)
+- Visuelle UI-Benachrichtigungen
+- Integration in manifest-portal.html
+- Integration in admin-monitoring.html
+- Batch-Verarbeitung
+- Event-Speicherung in D1
+
+🔄 <strong>In Entwicklung:</strong>
+- Erweiterte Fehlermuster
+- Proaktive Fehlerprävention
+- Machine Learning für Fehlererkennung
+
+<h2>Kontakt</h2>
+
+Bei Fragen oder Problemen:
+- <strong>T,.&T,,.TOGETHERSYSTEMS.T,,,.(C)</strong>
+- <strong>+31 - 613 803 782 | X@TEL1.NL | TEL1.NL</strong>
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

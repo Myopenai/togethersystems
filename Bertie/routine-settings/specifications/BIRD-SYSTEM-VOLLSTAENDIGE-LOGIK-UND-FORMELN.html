@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIRD-SYSTEM-VOLLSTAENDIGE-LOGIK-UND-FORMELN</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>VOLLSTÄNDIGE SYSTEM-LOGIK & FORMELN</h1>
+<h2>Customer Engagement & Messaging Platform - Komplettes Entwickler-Dokument</h2>
+
+<strong>⭐ USER-FRIENDLY ⭐</strong>
+
+<strong>Version:</strong> 1.0.0  
+<strong>Erstellt:</strong> 2025-01-27  
+<strong>Zweck:</strong> Formel-basierte Spezifikation für Developer  
+<strong>Basis:</strong> Generische Messaging- & Engagement-Plattform-Architektur
+
+---
+
+<h2>⭐ USER-FRIENDLINESS-PRINZIP ⭐</h2>
+
+<strong>Alle Komponenten dieses Systems sind user-friendly implementiert:</strong>
+
+- ✅ <strong>Minimale User-Aktionen:</strong> Automatisierung wo immer möglich, 0-1 Klicks bevorzugt
+- ✅ <strong>Klare Kommunikation:</strong> Verständliche Meldungen, keine technischen Fehler-Codes
+- ✅ <strong>Fehler-Prävention:</strong> Proaktive Validierung, intelligente Vorschläge
+- ✅ <strong>Sofortiges Feedback:</strong> Loading-Indicators, Progress-Bars, Status-Updates
+- ✅ <strong>Accessibility:</strong> WCAG 2.1 AA konform, Keyboard-Navigation, Screenreader-Support
+- ✅ <strong>Performance:</strong> < 1s Response-Time, optimierte Queries, intelligentes Caching
+
+<strong>Jede Funktion, jeder Endpoint, jedes Feature folgt diesen Prinzipien.</strong>
+
+<strong>Siehe:</strong> <a href="../MORAL-CODING-USER-FRIENDLINESS.md">MORAL-CODING-USER-FRIENDLINESS.md</a> für vollständige Richtlinien.
+
+---
+
+<h2>1. SYSTEM-ÜBERSICHT & KERNZIELE</h2>
+
+<h3>1.1 System-Definition</h3>
+
+Das System ist eine Multi-Tenant Customer Engagement Platform, die folgende Kernfunktionen bereitstellt:
+
+- <strong>Kontaktverwaltung (CDP - Customer Data Platform)</strong>
+- <strong>Event-Tracking & -Verarbeitung</strong>
+- <strong>Segmentierung (dynamisch & statisch)</strong>
+- <strong>Journey-Automatisierung (Workflow-Engine)</strong>
+- <strong>Multi-Channel-Messaging (SMS, WhatsApp, Email, Voice, etc.)</strong>
+- <strong>Template-Engine für personalisierte Nachrichten</strong>
+- <strong>Webhook-Integration für externe Systeme</strong>
+- <strong>API-basierte Steuerung</strong>
+
+<h3>1.2 Formale System-Definition</h3>
+
+```
+SYSTEM = (W, U, C, E, S, J, CH, T, M, API)
+
+wobei:
+- W = Workspace-Menge (Multi-Tenant)
+- U = User-Menge (interne Benutzer)
+- C = Contact-Menge (Endkunden)
+- E = Event-Menge (Kundeninteraktionen)
+- S = Segment-Menge (Kontaktgruppen)
+- J = Journey-Menge (Automatisierungs-Workflows)
+- CH = Channel-Menge (Kommunikationskanäle)
+- T = Template-Menge (Nachrichtenvorlagen)
+- M = Message-Menge (gesendete Nachrichten)
+- API = API-Schicht (Schnittstellen)
+```
+
+---
+
+<h2>2. DATENMODELL - FORMALE DEFINITIONEN</h2>
+
+<h3>2.1 Workspaces & Multi-Tenancy</h3>
+
+<strong>Workspace-Entität:</strong>
+
+```
+W = { w | w.id ∈ UUID, w.name ∈ String, w.created_at ∈ Timestamp }
+
+Workspace-Metadaten:
+w.settings : Map(String, Value)
+w.quotas : Map(String, Number)  // z.B. {"messages_per_month": 10000}
+w.status : {"active", "suspended", "trial"}
+```
+
+<strong>Multi-Tenant-Isolation-Formel:</strong>
+
+```
+∀ entity ∈ {C, E, S, J, CH, T, M}:
+  entity.workspace_id ∈ W.id
+  
+Zugriffsregel:
+can_access_entity(u, entity) = true 
+  ⇔ entity.workspace_id = u.workspace_id 
+    ∧ user_has_permission(u, entity_type)
+```
+
+<h3>2.2 Users (Interne Benutzer)</h3>
+
+<strong>User-Entität:</strong>
+
+```
+U = { u | u.id ∈ UUID }
+
+u.workspace_id ∈ W.id
+u.email ∈ String (eindeutig pro Workspace)
+u.roles ⊆ ROLE = {"admin", "developer", "analyst", "marketer", "viewer"}
+u.permissions ⊆ PERMISSION = {
+  "contacts:read", "contacts:write",
+  "events:read", "events:write",
+  "journeys:read", "journeys:write", "journeys:execute",
+  "messages:read", "messages:send",
+  "segments:read", "segments:write",
+  "channels:read", "channels:write",
+  "templates:read", "templates:write"
+}
+u.last_login ∈ Timestamp ∪ {null}
+u.created_at ∈ Timestamp
+```
+
+<strong>Berechtigungs-Prüf-Formel:</strong>
+
+```
+has_permission(u, action, resource_type) = true
+  ⇔ ∃ p ∈ u.permissions: 
+      (p.action = action ∧ p.resource = resource_type)
+    ∨ "admin" ∈ u.roles
+```
+
+<h3>2.3 Contacts (Endkunden)</h3>
+
+<strong>Contact-Entität:</strong>
+
+```
+C = { c | c.id ∈ UUID }
+
+c.workspace_id ∈ W.id
+c.attributes : Map(String, Value)
+  wobei Value ∈ {String, Number, Boolean, Date, Array, Object, null}
+
+Standard-Attribute (immer vorhanden):
+c.attributes["id"] = c.id
+c.attributes["workspace_id"] = c.workspace_id
+c.attributes["created_at"] ∈ Timestamp
+c.attributes["updated_at"] ∈ Timestamp
+
+Häufige Attribute:
+c.attributes["email"] ∈ String ∪ {null}
+c.attributes["phone"] ∈ String ∪ {null}
+c.attributes["first_name"] ∈ String ∪ {null}
+c.attributes["last_name"] ∈ String ∪ {null}
+c.attributes["country"] ∈ String ∪ {null}
+c.attributes["timezone"] ∈ String ∪ {null}
+c.attributes["language"] ∈ String ∪ {null}
+c.attributes["tags"] ⊆ String
+c.attributes["custom_fields"] : Map(String, Value)
+
+Berechnete Attribute (on-the-fly):
+c.attributes["lifetime_value"] = Σ(e ∈ events_of_contact(c): 
+  if event_type(e) = "purchase" then event_properties(e)["amount"] else 0)
+c.attributes["last_event_time"] = max({event_time(e) | e ∈ events_of_contact(c)})
+c.attributes["event_count"] = |events_of_contact(c)|
+```
+
+<strong>Kontakt-Aktualisierungs-Formel:</strong>
+
+```
+update_contact(c, updates : Map(String, Value)) → c':
+  ∀ key ∈ keys(updates):
+    c'.attributes[key] = updates[key]
+  c'.attributes["updated_at"] = now()
+  return c'
+```
+
+<h3>2.4 Events (Ereignisse)</h3>
+
+<strong>Event-Entität:</strong>
+
+```
+E = { e | e.id ∈ UUID }
+
+e.workspace_id ∈ W.id
+e.contact_id ∈ C.id ∪ {null}  // null = anonymes Event
+e.event_type ∈ String  // z.B. "page_view", "purchase", "login", "cart_abandoned"
+e.event_time ∈ Timestamp
+e.event_properties : Map(String, Value)
+e.source ∈ String  // z.B. "web", "api", "webhook", "journey"
+e.session_id ∈ String ∪ {null}
+```
+
+<strong>Event-Filter-Formel:</strong>
+
+```
+events_matching(c, filters) := { e ∈ E |
+  e.contact_id = c.id
+  ∧ (filters.type = null ∨ e.event_type = filters.type)
+  ∧ (filters.start_time = null ∨ e.event_time ≥ filters.start_time)
+  ∧ (filters.end_time = null ∨ e.event_time ≤ filters.end_time)
+  ∧ (filters.properties = null ∨ 
+      ∀ (k, v) ∈ filters.properties: e.event_properties[k] = v)
+}
+```
+
+<strong>Events pro Kontakt:</strong>
+
+```
+events_of_contact(c) := { e ∈ E | e.contact_id = c.id }
+```
+
+<strong>Event-Aggregation:</strong>
+
+```
+count_events(c, event_type, time_window) := 
+  |{ e ∈ events_of_contact(c) |
+      e.event_type = event_type
+      ∧ e.event_time ≥ now() - time_window }|
+
+sum_event_property(c, event_type, property_key, time_window) :=
+  Σ(e ∈ events_of_contact(c) |
+      e.event_type = event_type
+      ∧ e.event_time ≥ now() - time_window:
+    if e.event_properties[property_key] ∈ Number 
+    then e.event_properties[property_key] 
+    else 0)
+```
+
+<h3>2.5 Channels (Kommunikationskanäle)</h3>
+
+<strong>Channel-Entität:</strong>
+
+```
+CH = { ch | ch.id ∈ UUID }
+
+ch.workspace_id ∈ W.id
+ch.kind ∈ CHANNEL_KIND = {"sms", "whatsapp", "email", "voice", "push", "inbox"}
+ch.name ∈ String
+ch.status ∈ {"active", "inactive", "pending"}
+ch.config : Map(String, Value)  // kanal-spezifische Konfiguration
+
+Beispiel-Konfigurationen:
+
+SMS/WhatsApp:
+ch.config["provider"] ∈ String  // z.B. "twilio", "bird", "messagebird"
+ch.config["api_key"] ∈ String
+ch.config["api_secret"] ∈ String
+ch.config["sender_id"] ∈ String
+ch.config["rate_limit_per_minute"] ∈ Number
+
+Email:
+ch.config["smtp_host"] ∈ String
+ch.config["smtp_port"] ∈ Number
+ch.config["smtp_user"] ∈ String
+ch.config["smtp_password"] ∈ String
+ch.config["from_email"] ∈ String
+ch.config["from_name"] ∈ String
+ch.config["reply_to"] ∈ String
+```
+
+<strong>Channel-Verfügbarkeit:</strong>
+
+```
+is_channel_available(ch, contact) = true
+  ⇔ ch.status = "active"
+    ∧ ch.workspace_id = contact.workspace_id
+    ∧ has_required_identifier(contact, ch.kind)
+
+wobei:
+has_required_identifier(c, "sms") = (c.attributes["phone"] ≠ null)
+has_required_identifier(c, "whatsapp") = (c.attributes["phone"] ≠ null)
+has_required_identifier(c, "email") = (c.attributes["email"] ≠ null)
+has_required_identifier(c, "push") = (c.attributes["push_token"] ≠ null)
+```
+
+<h3>2.6 Templates (Nachrichtenvorlagen)</h3>
+
+<strong>Template-Entität:</strong>
+
+```
+T = { t | t.id ∈ UUID }
+
+t.workspace_id ∈ W.id
+t.name ∈ String
+t.channel_kind ∈ CHANNEL_KIND
+t.subject ∈ String ∪ {null}  // für Email
+t.body ∈ String  // mit Platzhaltern: {{variable_name}}
+t.variables : Set(String)  // extrahierte Platzhalter aus body
+t.status ∈ {"draft", "active", "archived"}
+t.created_at, t.updated_at ∈ Timestamp
+```
+
+<strong>Template-Platzhalter-Syntax:</strong>
+
+```
+Platzhalter-Format: {{variable_name}} oder {{variable_name | filter}}
+
+Unterstützte Variablen:
+- Kontakt-Attribute: {{first_name}}, {{email}}, {{country}}
+- Journey-State: {{journey.step_name}}, {{journey.data.key}}
+- Events: {{last_event.type}}, {{last_event.properties.key}}
+- System: {{workspace.name}}, {{current_date}}, {{current_time}}
+
+Filter:
+- {{amount | currency: EUR}}
+- {{date | format: DD.MM.YYYY}}
+- {{text | uppercase}}
+- {{text | lowercase}}
+```
+
+<strong>Template-Rendering-Formel:</strong>
+
+```
+render_template(t, context) → String:
+  context = {
+    contact: c,
+    journey_state: ji.state_data,
+    events: events_of_contact(c),
+    workspace: w
+  }
+  
+  resolved_body = t.body
+  ∀ var_name ∈ extract_placeholders(t.body):
+    value = resolve_variable(var_name, context)
+    resolved_body = replace(resolved_body, "{{" + var_name + "}}", value)
+  
+  return resolved_body
+
+wobei:
+resolve_variable(var_name, context) :=
+  if var_name.startswith("contact."):
+    return context.contact.attributes[var_name.substring(8)]
+  else if var_name.startswith("journey."):
+    return context.journey_state[var_name.substring(8)]
+  else if var_name.startswith("last_event."):
+    last_e = max_by_time(context.events)
+    return last_e.event_properties[var_name.substring(11)]
+  else if var_name = "current_date":
+    return format_date(now(), "YYYY-MM-DD")
+  else:
+    return ""
+```
+
+<h3>2.7 Messages (Gesendete Nachrichten)</h3>
+
+<strong>Message-Entität:</strong>
+
+```
+M = { m | m.id ∈ UUID }
+
+m.workspace_id ∈ W.id
+m.contact_id ∈ C.id
+m.channel_id ∈ CH.id
+m.template_id ∈ T.id ∪ {null}
+m.journey_instance_id ∈ JI.id ∪ {null}
+m.body ∈ String  // bereits aufgelöst (keine Platzhalter)
+m.subject ∈ String ∪ {null}  // für Email
+m.status ∈ MESSAGE_STATUS = {
+  "queued",      // in Warteschlange
+  "sending",     // wird gerade gesendet
+  "sent",        // an Provider gesendet
+  "delivered",   // beim Empfänger angekommen
+  "read",        // gelesen (wenn verfügbar)
+  "failed",      // Fehler beim Senden
+  "bounced",     // Bounce/Abweisung
+  "unsubscribed" // Abmeldung
+}
+m.external_message_id ∈ String ∪ {null}  // ID vom Provider
+m.error_message ∈ String ∪ {null}
+m.queued_at, m.sent_at, m.delivered_at, m.failed_at ∈ Timestamp ∪ {null}
+m.created_at ∈ Timestamp
+```
+
+<strong>Message-Status-Übergangs-Formel:</strong>
+
+```
+message_status_transition(m, new_status, timestamp) → m':
+  m'.status = new_status
+  
+  if new_status = "queued":
+    m'.queued_at = timestamp
+  else if new_status = "sending":
+    m'.sent_at = timestamp
+  else if new_status = "sent":
+    m'.sent_at = timestamp
+  else if new_status = "delivered":
+    m'.delivered_at = timestamp
+  else if new_status = "failed":
+    m'.failed_at = timestamp
+    m'.status = "failed"
+  
+  return m'
+```
+
+<h3>2.8 Segments (Kontaktgruppen)</h3>
+
+<strong>Segment-Entität:</strong>
+
+```
+S = { s | s.id ∈ UUID }
+
+s.workspace_id ∈ W.id
+s.name ∈ String
+s.description ∈ String ∪ {null}
+s.segment_query : BOOLEAN_EXPRESSION  // logische Formel
+s.is_dynamic : Boolean  // true = automatisch aktualisiert
+s.contact_count : Number  // Anzahl Kontakte (bei dynamisch: geschätzt)
+s.last_calculated_at ∈ Timestamp ∪ {null}
+s.created_at, s.updated_at ∈ Timestamp
+```
+
+<strong>Segment-Prädikat (mathematisch):</strong>
+
+```
+segment_predicate_s : C × P(E) → {true, false}
+
+wobei P(E) = Potenzmenge von E (alle Event-Mengen)
+
+Segment-Menge:
+segment_set_s := { c ∈ C |
+  c.workspace_id = s.workspace_id
+  ∧ segment_predicate_s(c, events_of_contact(c)) = true
+}
+```
+
+<strong>Segment-Query-Syntax (für Developer):</strong>
+
+```
+BOOLEAN_EXPRESSION :=
+  | ATTRIBUTE_COMPARISON
+  | EVENT_EXISTS
+  | EVENT_AGGREGATE
+  | LOGICAL_OP(BOOLEAN_EXPRESSION, BOOLEAN_EXPRESSION)
+  | NOT(BOOLEAN_EXPRESSION)
+
+ATTRIBUTE_COMPARISON := 
+  contact.attributes["key"] OPERATOR VALUE
+  OPERATOR ∈ {=, !=, >, <, >=, <=, IN, NOT_IN, CONTAINS, STARTS_WITH, ENDS_WITH}
+
+EVENT_EXISTS :=
+  EXISTS event WHERE
+    event.type = "event_type"
+    [AND event.time >= DATE]
+    [AND event.time <= DATE]
+    [AND event.properties["key"] OPERATOR VALUE]
+
+EVENT_AGGREGATE :=
+  COUNT(event WHERE ...) OPERATOR NUMBER
+  | SUM(event.properties["key"] WHERE ...) OPERATOR NUMBER
+  | AVG(event.properties["key"] WHERE ...) OPERATOR NUMBER
+  | MAX(event.properties["key"] WHERE ...) OPERATOR NUMBER
+  | MIN(event.properties["key"] WHERE ...) OPERATOR NUMBER
+
+LOGICAL_OP ∈ {AND, OR}
+```
+
+<strong>Beispiel-Segment-Formel:</strong>
+
+```
+Segment "Aktive Käufer in Deutschland (letzte 30 Tage)":
+
+segment_predicate_active_buyers_DE(c, events) :=
+  c.attributes["country"] = "DE"
+  ∧ EXISTS e ∈ events:
+      e.event_type = "purchase"
+      ∧ e.event_time ≥ now() - 30d
+  ∧ COUNT(e ∈ events WHERE 
+      e.event_type = "purchase" 
+      ∧ e.event_time ≥ now() - 30d) ≥ 1
+```
+
+<strong>Segment-Berechnung (Dynamisch):</strong>
+
+```
+recalculate_segment(s) → S':
+  s'.segment_set = { c ∈ C |
+    c.workspace_id = s.workspace_id
+    ∧ evaluate_boolean_expression(s.segment_query, c, events_of_contact(c))
+  }
+  s'.contact_count = |s'.segment_set|
+  s'.last_calculated_at = now()
+  return s'
+```
+
+<h3>2.9 Journeys (Automatisierungs-Workflows)</h3>
+
+<strong>Journey-Entität:</strong>
+
+```
+J = { j | j.id ∈ UUID }
+
+j.workspace_id ∈ W.id
+j.name ∈ String
+j.description ∈ String ∪ {null}
+j.status ∈ {"draft", "active", "paused", "archived"}
+j.nodes : Set(N)  // alle Nodes dieser Journey
+j.edges : Set(N × N)  // gerichtete Kanten zwischen Nodes
+j.start_node_id ∈ N.id
+j.created_at, j.updated_at ∈ Timestamp
+```
+
+<strong>Journey-Node-Entität:</strong>
+
+```
+N = { n | n.id ∈ UUID }
+
+n.journey_id ∈ J.id
+n.node_type ∈ NODE_TYPE = {
+  "trigger",         // Startpunkt, triggert neue Journey-Instanz
+  "condition",       // Bedingungsprüfung (if/else)
+  "wait",            // Warten (Zeit oder Event)
+  "send_message",    // Nachricht senden
+  "update_contact",  // Kontakt aktualisieren
+  "branch",          // Mehrfach-Verzweigung
+  "exit"             // Journey beenden
+}
+n.label ∈ String
+n.config : Map(String, Value)  // node-type-spezifische Konfiguration
+n.position : (x: Number, y: Number)  // für UI
+```
+
+<strong>Journey-Instance (Laufende Instanz pro Kontakt):</strong>
+
+```
+JI = { ji | ji.id ∈ UUID }
+
+ji.workspace_id ∈ W.id
+ji.journey_id ∈ J.id
+ji.contact_id ∈ C.id
+ji.current_node_id ∈ N.id
+ji.status ∈ {"active", "completed", "paused", "cancelled"}
+ji.state_data : Map(String, Value)  // Kontext-Daten für Journey
+ji.entry_time, ji.last_updated ∈ Timestamp
+ji.completed_at ∈ Timestamp ∪ {null}
+```
+
+<strong>Journey-State-Update-Formel:</strong>
+
+```
+update_journey_instance(ji, new_node_id, state_updates) → ji':
+  ji'.current_node_id = new_node_id
+  ∀ (key, value) ∈ state_updates:
+    ji'.state_data[key] = value
+  ji'.last_updated = now()
+  
+  if new_node_id.type = "exit":
+    ji'.status = "completed"
+    ji'.completed_at = now()
+  
+  return ji'
+```
+
+---
+
+<h2>3. JOURNEY-ENGINE - ZUSTANDSAUTOMAT & LOGIK</h2>
+
+<h3>3.1 Journey als Deterministischer Automat</h3>
+
+<strong>Formale Definition:</strong>
+
+```
+Journey J = (Q, Σ, δ, q₀, F)
+
+wobei:
+- Q = N (alle Nodes der Journey)
+- Σ = EVENT ∪ {TIMEOUT, MANUAL_TRIGGER} (Input-Alphabet)
+- δ : Q × Σ × CONTEXT → Q ∪ {EXIT} (Übergangsfunktion)
+- q₀ = j.start_node_id (Start-Node)
+- F = {n | n.node_type = "exit"} (End-Zustände)
+```
+
+<strong>Context-Struktur:</strong>
+
+```
+CONTEXT = {
+  contact: C,
+  events: P(E),  // events_of_contact(c)
+  journey_state: Map(String, Value),
+  system_time: Timestamp,
+  workspace: W
+}
+```
+
+<strong>Übergangsfunktion (allgemein):</strong>
+
+```
+δ(n, input, context) → n' ∪ {EXIT}:
+  
+  SWITCH n.node_type:
+    
+    CASE "trigger":
+      // Trigger-Nodes werden nur beim Start evaluiert
+      return n_next  // nächster Node im Graph
+    
+    CASE "condition":
+      condition_result = evaluate_boolean(
+        n.config["condition"], 
+        context
+      )
+      if condition_result:
+        return n.config["true_node_id"]
+      else:
+        return n.config["false_node_id"]
+    
+    CASE "wait":
+      if n.config["wait_type"] = "duration":
+        wait_until = context.journey_state["wait_until"]
+        if context.system_time ≥ wait_until:
+          return n.config["next_node_id"]
+        else:
+          return n  // bleibt im aktuellen Node
+      
+      else if n.config["wait_type"] = "event":
+        wait_event_type = n.config["event_type"]
+        if EXISTS e ∈ context.events:
+          e.event_type = wait_event_type
+          ∧ e.event_time > context.journey_state["wait_start_time"]:
+          return n.config["next_node_id"]
+        else:
+          return n
+    
+    CASE "send_message":
+      // Nachricht senden (siehe Message-Send-Formel)
+      send_result = send_message_from_node(n, context)
+      return n.config["next_node_id"]
+    
+    CASE "update_contact":
+      // Kontakt aktualisieren
+      apply_contact_updates(n.config["updates"], context.contact)
+      return n.config["next_node_id"]
+    
+    CASE "branch":
+      // Prüfe Bedingungen in Reihenfolge
+      ∀ branch ∈ n.config["branches"]:
+        if evaluate_boolean(branch.condition, context):
+          return branch.next_node_id
+      return n.config["default_node_id"]
+    
+    CASE "exit":
+      return EXIT
+```
+
+<h3>3.2 Node-Typen - Detaillierte Formeln</h3>
+
+<h4>3.2.1 Trigger-Node</h4>
+
+```
+n.node_type = "trigger"
+
+n.config = {
+  "trigger_type": "event" | "segment" | "manual",
+  
+  // Für Event-Trigger:
+  "event_type": String,
+  "event_conditions": BOOLEAN_EXPRESSION,  // optional
+  
+  // Für Segment-Trigger:
+  "segment_id": S.id,
+  "trigger_on": "enter" | "exit",  // Segment-Eintritt oder -Austritt
+}
+
+Trigger-Logik:
+trigger_condition_met(e, c, n) :=
+  if n.config["trigger_type"] = "event":
+    e.event_type = n.config["event_type"]
+    ∧ evaluate_boolean(n.config["event_conditions"], {
+        contact: c,
+        event: e,
+        events: events_of_contact(c)
+      })
+  else if n.config["trigger_type"] = "segment":
+    if n.config["trigger_on"] = "enter":
+      c ∈ segment_set_s  // gerade eingetreten
+      ∧ c ∉ segment_set_s_old  // war vorher nicht drin
+    else:
+      c ∉ segment_set_s  // gerade ausgetreten
+      ∧ c ∈ segment_set_s_old  // war vorher drin
+  else:
+    false
+
+Wenn trigger_condition_met(e, c, n) = true:
+  Erzeuge neue Journey-Instance ji mit:
+    ji.contact_id = c
+    ji.journey_id = n.journey_id
+    ji.current_node_id = n.config["next_node_id"]
+    ji.state_data["trigger_event_id"] = e.id
+    ji.state_data["entry_time"] = now()
+```
+
+<h4>3.2.2 Condition-Node</h4>
+
+```
+n.node_type = "condition"
+
+n.config = {
+  "condition": BOOLEAN_EXPRESSION,
+  "true_node_id": N.id,
+  "false_node_id": N.id
+}
+
+Condition-Evaluation:
+evaluate_condition(n, context) → Boolean:
+  return evaluate_boolean_expression(
+    n.config["condition"],
+    context
+  )
+
+Übergang:
+δ(n, _, context) = 
+  if evaluate_condition(n, context):
+    n.config["true_node_id"]
+  else:
+    n.config["false_node_id"]
+```
+
+<h4>3.2.3 Wait-Node</h4>
+
+```
+n.node_type = "wait"
+
+n.config = {
+  "wait_type": "duration" | "event" | "condition",
+  
+  // Für duration:
+  "duration": Duration,  // z.B. "3d", "2h", "30m"
+  "duration_unit": "days" | "hours" | "minutes",
+  "duration_value": Number,
+  
+  // Für event:
+  "wait_event_type": String,
+  "wait_event_conditions": BOOLEAN_EXPRESSION,
+  "timeout_duration": Duration,  // optional: maximales Warten
+  
+  // Für condition:
+  "wait_condition": BOOLEAN_EXPRESSION,
+  "check_interval": Duration  // wie oft prüfen
+}
+
+Wait-Logik (Duration):
+Bei Eintritt in Wait-Node:
+  ji.state_data["wait_until"] = now() + parse_duration(n.config["duration"])
+  ji.state_data["wait_start_time"] = now()
+
+Bei jeder Evaluation:
+  if now() ≥ ji.state_data["wait_until"]:
+    δ(n, _, context) = n.config["next_node_id"]
+  else:
+    δ(n, _, context) = n  // bleibt stehen
+
+Wait-Logik (Event):
+Bei Eintritt:
+  ji.state_data["wait_start_time"] = now()
+  if n.config["timeout_duration"]:
+    ji.state_data["wait_timeout"] = now() + parse_duration(n.config["timeout_duration"])
+
+Bei jedem neuen Event e für Kontakt c:
+  if e.event_type = n.config["wait_event_type"]
+    ∧ e.event_time > ji.state_data["wait_start_time"]
+    ∧ evaluate_boolean(n.config["wait_event_conditions"], {contact: c, event: e}):
+    δ(n, e, context) = n.config["next_node_id"]
+  
+  if ji.state_data["wait_timeout"] exists ∧ now() ≥ ji.state_data["wait_timeout"]:
+    δ(n, _, context) = n.config["timeout_node_id"]  // oder next_node_id
+```
+
+<h4>3.2.4 Send-Message-Node</h4>
+
+```
+n.node_type = "send_message"
+
+n.config = {
+  "channel_id": CH.id,
+  "template_id": T.id,
+  "delay": Duration,  // optional: Verzögerung vor dem Senden
+  "rate_limit": {
+    "max_per_contact": Number,
+    "window": Duration
+  },
+  "priority": Number,  // 1-10, höher = wichtiger
+  "fallback_channel_id": CH.id ∪ {null}  // falls Haupt-Channel fehlschlägt
+}
+
+Send-Message-Logik:
+
+send_message_from_node(n, context) → Message m:
+
+  // 1. Rate-Limit prüfen
+  if check_rate_limit(context.contact, n.config["channel_id"], n.config["rate_limit"]):
+    // Rate-Limit überschritten, optional: warten oder skip
+    return null
+  
+  // 2. Template rendern
+  template = get_template(n.config["template_id"])
+  resolved_body = render_template(template, context)
+  resolved_subject = if template.subject:
+    render_template(template.subject, context)
+  else:
+    null
+  
+  // 3. Channel-Verfügbarkeit prüfen
+  channel = get_channel(n.config["channel_id"])
+  if not is_channel_available(channel, context.contact):
+    if n.config["fallback_channel_id"]:
+      channel = get_channel(n.config["fallback_channel_id"])
+    else:
+      // Kein verfügbarer Channel, optional: Error-Handling
+      return null
+  
+  // 4. Message erstellen
+  m = create_message({
+    workspace_id: context.workspace.id,
+    contact_id: context.contact.id,
+    channel_id: channel.id,
+    template_id: template.id,
+    body: resolved_body,
+    subject: resolved_subject,
+    status: "queued",
+    journey_instance_id: context.journey_instance.id
+  })
+  
+  // 5. In Queue einreihen (mit Priority)
+  queue_message(m, priority = n.config["priority"])
+  
+  // 6. Journey-State aktualisieren
+  context.journey_state["last_message_id"] = m.id
+  context.journey_state["last_message_channel"] = channel.kind
+  
+  return m
+
+Rate-Limit-Prüfung:
+check_rate_limit(c, ch_id, rate_limit) → Boolean:
+  window_start = now() - rate_limit.window
+  recent_messages = { m ∈ M |
+    m.contact_id = c.id
+    ∧ m.channel_id = ch_id
+    ∧ m.created_at ≥ window_start
+  }
+  return |recent_messages| ≥ rate_limit.max_per_contact
+```
+
+<h4>3.2.5 Update-Contact-Node</h4>
+
+```
+n.node_type = "update_contact"
+
+n.config = {
+  "updates": [
+    {
+      "operation": "set" | "increment" | "append" | "remove",
+      "attribute": String,  // z.B. "tags", "lifetime_value"
+      "value": Value | EXPRESSION  // kann auch Formel sein
+    },
+    ...
+  ]
+}
+
+Update-Contact-Logik:
+
+apply_contact_updates(n, context) → c':
+
+  c' = context.contact
+  
+  ∀ update ∈ n.config["updates"]:
+    
+    if update.operation = "set":
+      // Wert auswerten (kann Formel sein)
+      evaluated_value = if update.value is EXPRESSION:
+        evaluate_expression(update.value, context)
+      else:
+        update.value
+      c'.attributes[update.attribute] = evaluated_value
+    
+    else if update.operation = "increment":
+      current_value = c'.attributes[update.attribute] ?? 0
+      increment = evaluate_expression(update.value, context)
+      c'.attributes[update.attribute] = current_value + increment
+    
+    else if update.operation = "append":
+      // Für Arrays/Tags
+      current_array = c'.attributes[update.attribute] ?? []
+      new_value = evaluate_expression(update.value, context)
+      c'.attributes[update.attribute] = current_array + [new_value]
+    
+    else if update.operation = "remove":
+      // Für Arrays/Tags
+      current_array = c'.attributes[update.attribute] ?? []
+      remove_value = evaluate_expression(update.value, context)
+      c'.attributes[update.attribute] = current_array.filter(x => x ≠ remove_value)
+  
+  c'.attributes["updated_at"] = now()
+  save_contact(c')
+  
+  return c'
+
+Beispiel-Expressions:
+- "{{contact.attributes.lifetime_value}} + {{last_event.properties.amount}}"
+- "{{journey.data.step_count}} + 1"
+- "customer"
+```
+
+<h4>3.2.6 Branch-Node</h4>
+
+```
+n.node_type = "branch"
+
+n.config = {
+  "branches": [
+    {
+      "condition": BOOLEAN_EXPRESSION,
+      "next_node_id": N.id,
+      "priority": Number  // Reihenfolge der Prüfung
+    },
+    ...
+  ],
+  "default_node_id": N.id  // wenn keine Bedingung zutrifft
+}
+
+Branch-Logik:
+
+δ(n, _, context) = 
+  // Branches nach Priority sortieren
+  sorted_branches = sort(n.config["branches"], by: "priority")
+  
+  ∀ branch ∈ sorted_branches:
+    if evaluate_boolean_expression(branch.condition, context):
+      return branch.next_node_id
+  
+  // Keine Bedingung erfüllt → Default
+  return n.config["default_node_id"]
+```
+
+<h4>3.2.7 Exit-Node</h4>
+
+```
+n.node_type = "exit"
+
+n.config = {
+  "reason": String ∪ {null}  // optional: Grund für Exit
+}
+
+Exit-Logik:
+
+δ(n, _, context) = EXIT
+
+Bei Exit:
+  ji.status = "completed"
+  ji.completed_at = now()
+  ji.state_data["exit_reason"] = n.config["reason"]
+  
+  // Optional: Cleanup, Analytics, etc.
+```
+
+<h3>3.3 Journey-Execution-Engine</h3>
+
+<strong>Journey-Processor (Hauptschleife):</strong>
+
+```
+process_journey_instances():
+
+  // Alle aktiven Journey-Instanzen
+  active_instances = { ji ∈ JI | ji.status = "active" }
+  
+  ∀ ji ∈ active_instances:
+    
+    // 1. Aktuellen Node holen
+    current_node = get_node(ji.current_node_id)
+    
+    // 2. Context aufbauen
+    context = build_context(ji)
+    
+    // 3. Node evaluieren (abhängig vom Typ)
+    if current_node.node_type = "wait":
+      // Wait-Nodes werden nur bei Events oder Timeouts evaluiert
+      if check_wait_condition(ji, context):
+        next_node_id = evaluate_node(current_node, null, context)
+      else:
+        continue  // noch warten
+    
+    else if current_node.node_type = "trigger":
+      // Trigger-Nodes nur beim Start
+      if ji.entry_time = ji.last_updated:  // gerade gestartet
+        next_node_id = current_node.config["next_node_id"]
+      else:
+        continue  // bereits weiter
+    
+    else:
+      // Alle anderen Nodes: sofort evaluieren
+      next_node_id = evaluate_node(current_node, null, context)
+    
+    // 4. Übergang durchführen
+    if next_node_id = EXIT:
+      ji.status = "completed"
+      ji.completed_at = now()
+    else:
+      ji.current_node_id = next_node_id
+      ji.last_updated = now()
+    
+    // 5. Speichern
+    save_journey_instance(ji)
+
+build_context(ji) → CONTEXT:
+  return {
+    contact: get_contact(ji.contact_id),
+    events: events_of_contact(ji.contact_id),
+    journey_state: ji.state_data,
+    system_time: now(),
+    workspace: get_workspace(ji.workspace_id),
+    journey_instance: ji
+  }
+```
+
+<strong>Event-basierte Journey-Aktivierung:</strong>
+
+```
+on_event_received(e: Event):
+
+  // 1. Alle Trigger-Nodes finden, die auf dieses Event reagieren
+  relevant_triggers = { n ∈ N |
+    n.node_type = "trigger"
+    ∧ n.config["trigger_type"] = "event"
+    ∧ n.config["event_type"] = e.event_type
+    ∧ evaluate_boolean(n.config["event_conditions"] ?? true, {
+        contact: get_contact(e.contact_id),
+        event: e
+      })
+  }
+  
+  // 2. Für jeden Trigger: Journey starten
+  ∀ trigger_node ∈ relevant_triggers:
+    journey = get_journey(trigger_node.journey_id)
+    
+    // Prüfen ob Journey aktiv ist
+    if journey.status ≠ "active":
+      continue
+    
+    // Prüfen ob Kontakt bereits in dieser Journey ist
+    existing_ji = { ji ∈ JI |
+      ji.contact_id = e.contact_id
+      ∧ ji.journey_id = journey.id
+      ∧ ji.status = "active"
+    }
+    
+    if |existing_ji| > 0:
+      // Bereits aktiv, optional: skip oder restart
+      if journey.config["reentry_policy"] = "skip":
+        continue
+      else if journey.config["reentry_policy"] = "restart":
+        // Alte Instanz beenden
+        ∀ ji ∈ existing_ji:
+          ji.status = "cancelled"
+    
+    // Neue Instanz erstellen
+    ji = create_journey_instance({
+      workspace_id: e.workspace_id,
+      journey_id: journey.id,
+      contact_id: e.contact_id,
+      current_node_id: trigger_node.config["next_node_id"],
+      status: "active",
+      state_data: {
+        "trigger_event_id": e.id,
+        "entry_time": now()
+      }
+    })
+    
+    // Sofort ersten Node verarbeiten
+    process_journey_instance(ji)
+```
+
+---
+
+<h2>4. MESSAGING-API-SCHICHT</h2>
+
+<h3>4.1 Message-Queue-System</h3>
+
+<strong>Queue-Struktur:</strong>
+
+```
+QUEUE = PriorityQueue<Message>
+
+Queue-Element:
+  message: M
+  priority: Number  // 1-10, höher = wichtiger
+  scheduled_at: Timestamp  // für verzögerte Nachrichten
+  retry_count: Number
+  max_retries: Number = 3
+```
+
+<strong>Queue-Verarbeitung:</strong>
+
+```
+message_worker_loop():
+
+  while true:
+    // Nächste Message aus Queue holen (nach Priority & scheduled_at)
+    m = queue.dequeue()
+    
+    if m = null:
+      sleep(1 second)
+      continue
+    
+    // Prüfen ob Zeitpunkt erreicht
+    if m.scheduled_at > now():
+      queue.enqueue(m)  // wieder einreihen
+      sleep(1 second)
+      continue
+    
+    // Message senden
+    result = send_message_via_channel(m)
+    
+    if result.success:
+      update_message_status(m, "sent", result.external_id)
+    else:
+      // Fehlerbehandlung
+      m.retry_count++
+      if m.retry_count < m.max_retries:
+        // Retry mit Exponential Backoff
+        delay = 2^m.retry_count seconds
+        m.scheduled_at = now() + delay
+        queue.enqueue(m)
+      else:
+        update_message_status(m, "failed", error = result.error)
+```
+
+<h3>4.2 Channel-Adapter-Pattern</h3>
+
+<strong>Abstrakte Channel-Interface:</strong>
+
+```
+ChannelAdapter = {
+  send(message: M, config: Map) → SendResult,
+  validate_credentials(config: Map) → Boolean,
+  get_status(external_id: String) → MessageStatus,
+  handle_webhook(payload: Map) → Event
+}
+```
+
+<strong>Send-Result:</strong>
+
+```
+SendResult = {
+  success: Boolean,
+  external_message_id: String ∪ {null},
+  error: String ∪ {null},
+  estimated_delivery_time: Timestamp ∪ {null}
+}
+```
+
+<strong>Konkrete Channel-Adapter:</strong>
+
+```
+SMSAdapter implements ChannelAdapter:
+  send(m, config):
+    // Provider: Twilio, MessageBird, etc.
+    provider_api = get_provider_api(config["provider"])
+    result = provider_api.send_sms({
+      to: m.contact.attributes["phone"],
+      body: m.body,
+      from: config["sender_id"]
+    })
+    
+    return {
+      success: result.status = "sent",
+      external_message_id: result.message_id,
+      error: result.error,
+      estimated_delivery_time: now() + 30s
+    }
+
+WhatsAppAdapter implements ChannelAdapter:
+  send(m, config):
+    // Provider: Meta Business API, Twilio, etc.
+    provider_api = get_provider_api(config["provider"])
+    result = provider_api.send_whatsapp({
+      to: m.contact.attributes["phone"],
+      body: m.body,
+      template_id: m.template.external_template_id  // wenn Template
+    })
+    
+    return {
+      success: result.status = "sent",
+      external_message_id: result.message_id,
+      error: result.error
+    }
+
+EmailAdapter implements ChannelAdapter:
+  send(m, config):
+    // SMTP oder API (SendGrid, Mailgun, etc.)
+    smtp_client = get_smtp_client(config)
+    result = smtp_client.send({
+      to: m.contact.attributes["email"],
+      subject: m.subject,
+      body: m.body,
+      from: config["from_email"],
+      reply_to: config["reply_to"]
+    })
+    
+    return {
+      success: result.status = "sent",
+      external_message_id: result.message_id,
+      error: result.error
+    }
+```
+
+<h3>4.3 Webhook-Handler</h3>
+
+<strong>Webhook-Struktur:</strong>
+
+```
+WebhookEvent = {
+  workspace_id: W.id,
+  channel_kind: CHANNEL_KIND,
+  event_type: String,  // "delivered", "failed", "read", "reply", etc.
+  external_message_id: String,
+  timestamp: Timestamp,
+  payload: Map(String, Value)  // provider-spezifisch
+}
+```
+
+<strong>Webhook-Verarbeitung:</strong>
+
+```
+handle_webhook(webhook: WebhookEvent):
+
+  // 1. Message finden
+  m = find_message_by_external_id(
+    webhook.external_message_id,
+    webhook.workspace_id
+  )
+  
+  if m = null:
+    log_error("Message nicht gefunden: " + webhook.external_message_id)
+    return
+  
+  // 2. Status aktualisieren
+  if webhook.event_type = "delivered":
+    update_message_status(m, "delivered", webhook.timestamp)
+    
+  else if webhook.event_type = "failed" or webhook.event_type = "bounced":
+    update_message_status(m, "failed", webhook.timestamp)
+    m.error_message = webhook.payload["error"]
+    
+  else if webhook.event_type = "read":
+    update_message_status(m, "read", webhook.timestamp)
+  
+  // 3. Event erstellen (für Journey-Triggers)
+  if webhook.event_type = "reply":
+    create_event({
+      workspace_id: m.workspace_id,
+      contact_id: m.contact_id,
+      event_type: "message_reply",
+      event_time: webhook.timestamp,
+      event_properties: {
+        "channel": m.channel.kind,
+        "message_id": m.id,
+        "reply_text": webhook.payload["text"]
+      },
+      source: "webhook"
+    })
+  
+  // 4. Journey-Instanzen prüfen (für Wait-Nodes auf Events)
+  active_journey_instances = { ji ∈ JI |
+    ji.contact_id = m.contact_id
+    ∧ ji.status = "active"
+    ∧ ji.current_node.node_type = "wait"
+    ∧ ji.current_node.config["wait_type"] = "event"
+  }
+  
+  ∀ ji ∈ active_journey_instances:
+    // Journey-Processor wird Event verarbeiten
+    trigger_journey_processing(ji)
+```
+
+---
+
+<h2>5. API-SCHICHT (REST)</h2>
+
+<h3>5.1 API-Endpoint-Struktur</h3>
+
+```
+BASE_URL = /api/v1
+
+Authentifizierung:
+  Header: Authorization: Bearer {access_key}
+  Access-Key hat workspace_id und permissions
+```
+
+<h3>5.2 Kontakt-API</h3>
+
+```
+POST /contacts
+  Body: {
+    "email": String,
+    "phone": String,
+    "attributes": Map(String, Value)
+  }
+  → { "id": UUID, "contact": Contact }
+
+GET /contacts/:id
+  → { "contact": Contact }
+
+PUT /contacts/:id
+  Body: {
+    "attributes": Map(String, Value)
+  }
+  → { "contact": Contact }
+
+DELETE /contacts/:id
+  → { "success": Boolean }
+```
+
+<h3>5.3 Event-API</h3>
+
+```
+POST /events
+  Body: {
+    "contact_id": UUID,
+    "event_type": String,
+    "event_properties": Map(String, Value),
+    "timestamp": Timestamp  // optional, default: now()
+  }
+  → { "id": UUID, "event": Event }
+  
+  Logik:
+  - Event erstellen
+  - Journey-Trigger prüfen (on_event_received)
+  - Segment-Berechnungen anstoßen (bei Bedarf)
+```
+
+<h3>5.4 Segment-API</h3>
+
+```
+GET /segments
+  Query: ?workspace_id=UUID
+  → { "segments": Array<Segment> }
+
+POST /segments
+  Body: {
+    "name": String,
+    "segment_query": BOOLEAN_EXPRESSION,
+    "is_dynamic": Boolean
+  }
+  → { "id": UUID, "segment": Segment }
+
+GET /segments/:id/contacts
+  → { "contacts": Array<Contact>, "count": Number }
+```
+
+<h3>5.5 Journey-API</h3>
+
+```
+GET /journeys
+  Query: ?workspace_id=UUID&status=active
+  → { "journeys": Array<Journey> }
+
+POST /journeys
+  Body: {
+    "name": String,
+    "nodes": Array<Node>,
+    "edges": Array<Edge>
+  }
+  → { "id": UUID, "journey": Journey }
+
+PUT /journeys/:id
+  Body: {
+    "status": "active" | "paused" | "archived",
+    "nodes": Array<Node>,  // optional
+    "edges": Array<Edge>   // optional
+  }
+  → { "journey": Journey }
+
+GET /journeys/:id/instances
+  Query: ?contact_id=UUID&status=active
+  → { "instances": Array<JourneyInstance> }
+```
+
+<h3>5.6 Message-API</h3>
+
+```
+POST /messages
+  Body: {
+    "contact_id": UUID,
+    "channel_id": UUID,
+    "template_id": UUID,
+    "body": String,  // optional, falls kein Template
+    "priority": Number,  // 1-10
+    "scheduled_at": Timestamp  // optional
+  }
+  → { "id": UUID, "message": Message }
+
+GET /messages
+  Query: ?contact_id=UUID&status=sent&limit=100
+  → { "messages": Array<Message> }
+
+GET /messages/:id/status
+  → { "message": Message, "status": MessageStatus }
+```
+
+<h3>5.7 Template-API</h3>
+
+```
+GET /templates
+  Query: ?workspace_id=UUID&channel_kind=sms
+  → { "templates": Array<Template> }
+
+POST /templates
+  Body: {
+    "name": String,
+    "channel_kind": CHANNEL_KIND,
+    "subject": String,  // für Email
+    "body": String,
+    "variables": Array<String>  // optional
+  }
+  → { "id": UUID, "template": Template }
+```
+
+<h3>5.8 Channel-API</h3>
+
+```
+GET /channels
+  Query: ?workspace_id=UUID&status=active
+  → { "channels": Array<Channel> }
+
+POST /channels
+  Body: {
+    "kind": CHANNEL_KIND,
+    "name": String,
+    "config": Map(String, Value)
+  }
+  → { "id": UUID, "channel": Channel }
+
+PUT /channels/:id/test
+  → { "success": Boolean, "error": String }
+```
+
+---
+
+<h2>6. BOOLEAN-EXPRESSION-ENGINE</h2>
+
+<h3>6.1 Expression-Parser</h3>
+
+<strong>Expression-Syntax (BNF):</strong>
+
+```
+EXPRESSION := BOOLEAN_EXPR | NUMERIC_EXPR | STRING_EXPR
+
+BOOLEAN_EXPR :=
+    COMPARISON
+  | EXISTS_CLAUSE
+  | AGGREGATE_COMPARISON
+  | LOGICAL_EXPR
+
+COMPARISON :=
+    PATH OPERATOR VALUE
+  | PATH IN (VALUE, ...)
+  | PATH NOT_IN (VALUE, ...)
+  | PATH CONTAINS VALUE
+  | PATH STARTS_WITH VALUE
+  | PATH ENDS_WITH VALUE
+
+PATH := 
+    "contact.attributes[" KEY "]" 
+  | "contact.attributes." KEY
+  | "journey.state[" KEY "]"
+  | "event.properties[" KEY "]"
+  | "event.type"
+  | "event.time"
+
+EXISTS_CLAUSE :=
+    EXISTS "event" WHERE BOOLEAN_EXPR
+  | EXISTS "contact" WHERE BOOLEAN_EXPR
+
+AGGREGATE_COMPARISON :=
+    AGGREGATE_FUNC("event" WHERE BOOLEAN_EXPR) OPERATOR NUMBER
+  | AGGREGATE_FUNC("contact" WHERE BOOLEAN_EXPR) OPERATOR NUMBER
+
+AGGREGATE_FUNC := COUNT | SUM | AVG | MAX | MIN
+
+LOGICAL_EXPR :=
+    BOOLEAN_EXPR AND BOOLEAN_EXPR
+  | BOOLEAN_EXPR OR BOOLEAN_EXPR
+  | NOT BOOLEAN_EXPR
+  | ( BOOLEAN_EXPR )
+
+OPERATOR := = | != | > | < | >= | <=
+
+VALUE := String | Number | Boolean | Date | null
+```
+
+<h3>6.2 Expression-Evaluator</h3>
+
+<strong>Evaluator-Funktion:</strong>
+
+```
+evaluate_expression(expr: EXPRESSION, context: CONTEXT) → Value:
+
+  SWITCH expr.type:
+    
+    CASE "comparison":
+      left_value = resolve_path(expr.path, context)
+      right_value = expr.value
+      
+      SWITCH expr.operator:
+        CASE "=": return left_value = right_value
+        CASE "!=": return left_value ≠ right_value
+        CASE ">": return left_value > right_value
+        CASE "<": return left_value < right_value
+        CASE ">=": return left_value ≥ right_value
+        CASE "<=": return left_value ≤ right_value
+        CASE "IN": return left_value ∈ right_value
+        CASE "NOT_IN": return left_value ∉ right_value
+        CASE "CONTAINS": return left_value.contains(right_value)
+        CASE "STARTS_WITH": return left_value.startsWith(right_value)
+        CASE "ENDS_WITH": return left_value.endsWith(right_value)
+    
+    CASE "exists":
+      if expr.entity = "event":
+        matching_events = { e ∈ context.events |
+          evaluate_boolean(expr.where_clause, {
+            contact: context.contact,
+            event: e,
+            events: context.events
+          })
+        }
+        return |matching_events| > 0
+      
+      else if expr.entity = "contact":
+        // Für Contact-Exists (selten)
+        return context.contact ≠ null
+    
+    CASE "aggregate":
+      if expr.entity = "event":
+        matching_events = { e ∈ context.events |
+          evaluate_boolean(expr.where_clause, {
+            contact: context.contact,
+            event: e,
+            events: context.events
+          })
+        }
+        
+        SWITCH expr.function:
+          CASE "COUNT": return |matching_events|
+          CASE "SUM": return Σ(e ∈ matching_events: resolve_path(expr.property, e))
+          CASE "AVG": return AVG(e ∈ matching_events: resolve_path(expr.property, e))
+          CASE "MAX": return MAX(e ∈ matching_events: resolve_path(expr.property, e))
+          CASE "MIN": return MIN(e ∈ matching_events: resolve_path(expr.property, e))
+    
+    CASE "logical":
+      left_result = evaluate_expression(expr.left, context)
+      right_result = evaluate_expression(expr.right, context)
+      
+      SWITCH expr.operator:
+        CASE "AND": return left_result ∧ right_result
+        CASE "OR": return left_result ∨ right_result
+        CASE "NOT": return ¬left_result
+
+resolve_path(path: String, context: CONTEXT) → Value:
+  
+  if path.startsWith("contact.attributes["):
+    key = extract_key(path)
+    return context.contact.attributes[key]
+  
+  else if path.startsWith("contact.attributes."):
+    key = path.substring(19)
+    return context.contact.attributes[key]
+  
+  else if path.startsWith("journey.state["):
+    key = extract_key(path)
+    return context.journey_state[key]
+  
+  else if path.startsWith("event.properties["):
+    key = extract_key(path)
+    return context.event.event_properties[key]
+  
+  else if path = "event.type":
+    return context.event.event_type
+  
+  else if path = "event.time":
+    return context.event.event_time
+  
+  else:
+    return null
+```
+
+---
+
+<h2>7. BACKEND-ARCHITEKTUR & INFRASTRUKTUR</h2>
+
+<h3>7.1 Datenbank-Schema (relational oder NoSQL)</h3>
+
+<strong>Tabellen/Collections:</strong>
+
+```
+workspaces
+  - id (UUID, PK)
+  - name (String)
+  - settings (JSON)
+  - quotas (JSON)
+  - status (Enum)
+  - created_at (Timestamp)
+
+users
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - email (String, unique per workspace)
+  - roles (Array<String>)
+  - permissions (Array<String>)
+  - created_at (Timestamp)
+
+contacts
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - attributes (JSON)  // oder normalisiert in contact_attributes
+  - created_at (Timestamp)
+  - updated_at (Timestamp)
+  - INDEX: (workspace_id, attributes.email)
+  - INDEX: (workspace_id, attributes.phone)
+
+events
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - contact_id (UUID, FK → contacts.id, nullable)
+  - event_type (String)
+  - event_time (Timestamp)
+  - event_properties (JSON)
+  - source (String)
+  - INDEX: (workspace_id, contact_id, event_time)
+  - INDEX: (workspace_id, event_type, event_time)
+
+channels
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - kind (Enum)
+  - name (String)
+  - status (Enum)
+  - config (JSON)
+
+templates
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - channel_kind (Enum)
+  - name (String)
+  - subject (String, nullable)
+  - body (String)
+  - status (Enum)
+
+messages
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - contact_id (UUID, FK → contacts.id)
+  - channel_id (UUID, FK → channels.id)
+  - template_id (UUID, FK → templates.id, nullable)
+  - journey_instance_id (UUID, nullable)
+  - body (String)
+  - subject (String, nullable)
+  - status (Enum)
+  - external_message_id (String, nullable)
+  - error_message (String, nullable)
+  - queued_at, sent_at, delivered_at, failed_at (Timestamp, nullable)
+  - created_at (Timestamp)
+  - INDEX: (workspace_id, contact_id, created_at)
+  - INDEX: (workspace_id, status, queued_at)
+
+segments
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - name (String)
+  - segment_query (JSON)  // Boolean-Expression als AST
+  - is_dynamic (Boolean)
+  - contact_count (Number)
+  - last_calculated_at (Timestamp, nullable)
+
+segment_contacts  // nur für statische Segmente
+  - segment_id (UUID, FK → segments.id)
+  - contact_id (UUID, FK → contacts.id)
+  - INDEX: (segment_id, contact_id)
+
+journeys
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - name (String)
+  - status (Enum)
+  - config (JSON)  // start_node_id, reentry_policy, etc.
+  - created_at (Timestamp)
+  - updated_at (Timestamp)
+
+journey_nodes
+  - id (UUID, PK)
+  - journey_id (UUID, FK → journeys.id)
+  - node_type (Enum)
+  - label (String)
+  - config (JSON)
+  - position_x, position_y (Number)
+
+journey_edges
+  - from_node_id (UUID, FK → journey_nodes.id)
+  - to_node_id (UUID, FK → journey_nodes.id)
+  - condition (String, nullable)  // "true", "false", etc.
+
+journey_instances
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - journey_id (UUID, FK → journeys.id)
+  - contact_id (UUID, FK → contacts.id)
+  - current_node_id (UUID, FK → journey_nodes.id)
+  - status (Enum)
+  - state_data (JSON)
+  - entry_time (Timestamp)
+  - last_updated (Timestamp)
+  - completed_at (Timestamp, nullable)
+  - INDEX: (workspace_id, contact_id, status)
+  - INDEX: (workspace_id, journey_id, status)
+  - INDEX: (status, last_updated)  // für Processing
+
+access_keys
+  - id (UUID, PK)
+  - workspace_id (UUID, FK → workspaces.id)
+  - key_hash (String)  // gehasht
+  - permissions (Array<String>)
+  - expires_at (Timestamp, nullable)
+  - created_at (Timestamp)
+```
+
+<h3>7.2 Caching-Strategie</h3>
+
+```
+Cache-Layer (Redis):
+
+Keys:
+  - contact:{workspace_id}:{contact_id} → Contact (TTL: 5 min)
+  - segment:{segment_id}:contacts → Set<ContactID> (TTL: 1 hour)
+  - journey:{journey_id} → Journey + Nodes (TTL: 10 min)
+  - template:{template_id} → Template (TTL: 30 min)
+  - channel:{channel_id} → Channel (TTL: 10 min)
+
+Invalidation:
+  - Bei Contact-Update: contact:{workspace_id}:{contact_id} löschen
+  - Bei Segment-Update: segment:{segment_id}:contacts löschen
+  - Bei Journey-Update: journey:{journey_id} löschen
+```
+
+<h3>7.3 Background-Jobs</h3>
+
+```
+Job-Types:
+
+1. journey_processor
+   - Verarbeitet alle aktiven Journey-Instanzen
+   - Läuft kontinuierlich (jede Sekunde)
+   - Batch-Größe: 100 Instanzen pro Durchlauf
+
+2. segment_recalculator
+   - Berechnet dynamische Segmente neu
+   - Läuft alle 5 Minuten
+   - Pro Segment: Kontakte prüfen & aktualisieren
+
+3. message_sender
+   - Sendet Nachrichten aus Queue
+   - Läuft kontinuierlich
+   - Rate-Limiting beachten
+
+4. webhook_processor
+   - Verarbeitet eingehende Webhooks
+   - Asynchron, nicht-blockierend
+
+5. analytics_aggregator
+   - Berechnet Statistiken
+   - Läuft stündlich/täglich
+```
+
+---
+
+<h2>8. FORMELSPRACHE FÜR DEVELOPER (DSL)</h2>
+
+<h3>8.1 DSL-Syntax</h3>
+
+```
+// ========== KONTAKT ==========
+
+Kontakt erstellen:
+CREATE CONTACT
+  email: "user@example.com",
+  phone: "+49123456789",
+  attributes: {
+    first_name: "Max",
+    country: "DE",
+    tags: ["vip", "newsletter"]
+  }
+
+Kontakt aktualisieren:
+UPDATE CONTACT contact_id
+  SET attributes.first_name = "Maximilian"
+  ADD tags = "premium"
+  INCREMENT attributes.lifetime_value = 50.00
+
+// ========== EVENT ==========
+
+Event tracken:
+TRACK EVENT
+  contact_id: contact_id,
+  type: "purchase",
+  properties: {
+    product_id: "prod_123",
+    amount: 99.99,
+    currency: "EUR"
+  }
+
+// ========== SEGMENT ==========
+
+Segment definieren:
+DEFINE SEGMENT active_buyers_DE
+  WHERE
+    contact.attributes.country = "DE"
+    AND EXISTS event WHERE
+      event.type = "purchase"
+      AND event.time >= NOW() - 30 DAYS
+    AND COUNT(event WHERE event.type = "purchase") >= 1
+  DYNAMIC: true
+
+Segment-Kontakte abfragen:
+GET CONTACTS FROM SEGMENT active_buyers_DE
+
+// ========== JOURNEY ==========
+
+Journey definieren:
+DEFINE JOURNEY onboarding
+  TRIGGER ON event "user_registered"
+  REENTRY_POLICY: skip
+
+  NODE send_welcome (send_message)
+    CHANNEL: email_channel_id
+    TEMPLATE: welcome_template_id
+    NEXT: wait_3_days
+
+  NODE wait_3_days (wait)
+    TYPE: duration
+    DURATION: 3 DAYS
+    NEXT: check_activity
+
+  NODE check_activity (condition)
+    IF contact.attributes.last_login >= NOW() - 3 DAYS:
+      NEXT: exit
+    ELSE:
+      NEXT: send_reminder
+
+  NODE send_reminder (send_message)
+    CHANNEL: email_channel_id
+    TEMPLATE: reminder_template_id
+    NEXT: exit
+
+  NODE exit (exit)
+    REASON: "User activated or reminder sent"
+
+Journey aktivieren:
+ACTIVATE JOURNEY onboarding
+
+// ========== MESSAGE ==========
+
+Nachricht senden:
+SEND MESSAGE
+  TO: contact_id
+  CHANNEL: email_channel_id
+  TEMPLATE: template_id
+  PRIORITY: 8
+
+Nachricht mit Custom-Body:
+SEND MESSAGE
+  TO: contact_id
+  CHANNEL: sms_channel_id
+  BODY: "Hallo {{contact.attributes.first_name}}, deine Bestellung ist unterwegs!"
+  SCHEDULED_AT: "2025-01-28T10:00:00Z"
+
+// ========== TEMPLATE ==========
+
+Template erstellen:
+CREATE TEMPLATE welcome_email
+  CHANNEL: email
+  SUBJECT: "Willkommen bei {{workspace.name}}!"
+  BODY: |
+    Hallo {{contact.attributes.first_name}},
+    
+    Willkommen in unserer Community!
+    
+    Dein Registrierungsdatum: {{contact.attributes.created_at | format: DD.MM.YYYY}}
+    
+    Viele Grüße,
+    {{workspace.name}}
+
+// ========== BOOLEAN-EXPRESSION ==========
+
+Bedingung:
+IF contact.attributes.country = "DE"
+   AND EXISTS event WHERE
+     event.type = "purchase"
+     AND event.properties.amount > 100
+   AND COUNT(event WHERE event.type = "page_view") >= 5
+THEN
+  // Aktion
+END
+
+Aggregat-Bedingung:
+IF SUM(event.properties.amount WHERE event.type = "purchase") > 500
+   AND AVG(event.properties.amount WHERE event.type = "purchase") > 50
+THEN
+  // Aktion
+END
+```
+
+<h3>8.2 DSL-zu-Formel-Mapping</h3>
+
+```
+DSL → Formel-Übersetzung:
+
+"contact.attributes.country = 'DE'"
+  →
+  attributes(contact)["country"] = "DE"
+
+"EXISTS event WHERE event.type = 'purchase'"
+  →
+  ∃ e ∈ events_of_contact(contact): 
+    event_type(e) = "purchase"
+
+"COUNT(event WHERE event.type = 'purchase') >= 1"
+  →
+  |{e ∈ events_of_contact(contact) | event_type(e) = "purchase"}| ≥ 1
+
+"SUM(event.properties.amount WHERE event.type = 'purchase')"
+  →
+  Σ(e ∈ events_of_contact(contact) |
+    event_type(e) = "purchase":
+    event_properties(e)["amount"])
+```
+
+---
+
+<h2>9. BEISPIEL-JOURNEY: KOMPLETT DURCHGEFÜHRT</h2>
+
+<h3>9.1 Use Case: E-Commerce Onboarding</h3>
+
+<strong>Ziel:</strong> Neuen Kunden durch Onboarding führen, Re-Engagement bei Inaktivität
+
+<h3>9.2 Journey-Definition (DSL):</h3>
+
+```
+DEFINE JOURNEY ecommerce_onboarding
+  TRIGGER ON event "user_registered"
+  REENTRY_POLICY: skip
+  
+  NODE welcome_email (send_message)
+    CHANNEL: email_channel
+    TEMPLATE: welcome_template
+    NEXT: wait_24h
+
+  NODE wait_24h (wait)
+    TYPE: duration
+    DURATION: 24 HOURS
+    NEXT: check_first_visit
+
+  NODE check_first_visit (condition)
+    IF EXISTS event WHERE
+         event.type = "page_view"
+         AND event.time >= journey.state.entry_time:
+      NEXT: wait_3d
+    ELSE:
+      NEXT: send_browse_reminder
+
+  NODE send_browse_reminder (send_message)
+    CHANNEL: email_channel
+    TEMPLATE: browse_reminder_template
+    NEXT: wait_3d
+
+  NODE wait_3d (wait)
+    TYPE: duration
+    DURATION: 3 DAYS
+    NEXT: check_activity
+
+  NODE check_activity (condition)
+    IF EXISTS event WHERE
+         event.type IN ("purchase", "cart_add", "page_view")
+         AND event.time >= NOW() - 3 DAYS:
+      NEXT: update_active_tag
+    ELSE:
+      NEXT: send_offer
+
+  NODE update_active_tag (update_contact)
+    SET tags = tags + ["active_user"]
+    NEXT: exit
+
+  NODE send_offer (send_message)
+    CHANNEL: email_channel
+    TEMPLATE: special_offer_template
+    NEXT: wait_7d
+
+  NODE wait_7d (wait)
+    TYPE: duration
+    DURATION: 7 DAYS
+    NEXT: check_purchase
+
+  NODE check_purchase (condition)
+    IF EXISTS event WHERE
+         event.type = "purchase"
+         AND event.time >= journey.state.send_offer_time:
+      NEXT: send_thank_you
+    ELSE:
+      NEXT: exit
+
+  NODE send_thank_you (send_message)
+    CHANNEL: email_channel
+    TEMPLATE: thank_you_template
+    NEXT: update_customer_tag
+
+  NODE update_customer_tag (update_contact)
+    SET tags = tags + ["customer"]
+    SET attributes.is_customer = true
+    INCREMENT attributes.lifetime_value = last_purchase_amount
+    NEXT: exit
+
+  NODE exit (exit)
+    REASON: "Onboarding completed or timeout"
+```
+
+<h3>9.3 Formale Journey-Logik:</h3>
+
+```
+Journey ecommerce_onboarding:
+
+Trigger:
+  trigger_condition(e, c) := 
+    event_type(e) = "user_registered"
+    ∧ e.contact_id = c.id
+
+Journey-Graph:
+  n1 (trigger) → n2 (send_message: welcome_email)
+  n2 → n3 (wait: 24h)
+  n3 → n4 (condition: check_first_visit)
+  n4 → [true: n5 (wait: 3d), false: n6 (send_message: browse_reminder)]
+  n6 → n5
+  n5 → n7 (condition: check_activity)
+  n7 → [true: n8 (update_contact), false: n9 (send_message: offer)]
+  n8 → n10 (exit)
+  n9 → n11 (wait: 7d)
+  n11 → n12 (condition: check_purchase)
+  n12 → [true: n13 (send_message: thank_you), false: n10]
+  n13 → n14 (update_contact)
+  n14 → n10
+
+Node-Bedingungen:
+
+n4.condition := 
+  ∃ e ∈ events_of_contact(c):
+    event_type(e) = "page_view"
+    ∧ event_time(e) ≥ ji.state_data["entry_time"]
+
+n7.condition :=
+  ∃ e ∈ events_of_contact(c):
+    event_type(e) ∈ {"purchase", "cart_add", "page_view"}
+    ∧ event_time(e) ≥ now() - 3d
+
+n12.condition :=
+  ∃ e ∈ events_of_contact(c):
+    event_type(e) = "purchase"
+    ∧ event_time(e) ≥ ji.state_data["send_offer_time"]
+```
+
+---
+
+<h2>10. PERFORMANCE & SKALIERUNG</h2>
+
+<h3>10.1 Optimierungen</h3>
+
+```
+Segment-Berechnung:
+  - Nur dynamische Segmente bei Bedarf neu berechnen
+  - Caching von Segment-Ergebnissen
+  - Incremental Updates (nur geänderte Kontakte prüfen)
+
+Journey-Processing:
+  - Batch-Processing von Journey-Instanzen
+  - Nur aktive Instanzen laden
+  - Lazy Loading von Context-Daten
+
+Event-Verarbeitung:
+  - Asynchrone Event-Ingestion
+  - Batch-Inserts in Datenbank
+  - Index-Optimierung für häufig verwendete Queries
+
+Message-Queue:
+  - Priority-Queue für wichtige Nachrichten
+  - Rate-Limiting pro Channel
+  - Retry-Mechanismus mit Exponential Backoff
+```
+
+<h3>10.2 Skalierung</h3>
+
+```
+Horizontal Scaling:
+  - Journey-Processor: Mehrere Worker (Round-Robin)
+  - Message-Sender: Mehrere Worker (Channel-basiert)
+  - API-Server: Load Balancer
+
+Database Scaling:
+  - Read Replicas für Analytics
+  - Sharding nach workspace_id
+  - Event-Table Partitionierung nach Zeit
+
+Caching:
+  - Redis-Cluster für größere Datenmengen
+  - Local Cache (L1) + Distributed Cache (L2)
+```
+
+---
+
+<h2>11. SICHERHEIT & COMPLIANCE</h2>
+
+<h3>11.1 Zugriffskontrolle</h3>
+
+```
+Multi-Tenant-Isolation:
+  ∀ API-Request:
+    workspace_id = extract_from_access_key(access_key)
+    ∀ Entity in Request:
+      assert(entity.workspace_id = workspace_id)
+
+Permission-Check:
+  ∀ Action:
+    assert(has_permission(access_key, action, resource_type))
+
+Rate-Limiting:
+  ∀ Workspace:
+    messages_per_minute ≤ workspace.quotas["messages_per_minute"]
+    api_requests_per_minute ≤ 1000
+```
+
+<h3>11.2 Datenschutz</h3>
+
+```
+DSGVO/GDPR-Compliance:
+  - Right to Access: GET /contacts/:id/export
+  - Right to Deletion: DELETE /contacts/:id (anonymisieren)
+  - Data Portability: Export in strukturiertem Format
+  - Consent Management: Tags für Zustimmungen
+
+Datenverschlüsselung:
+  - Sensitive Daten verschlüsselt speichern (PII)
+  - TLS für alle API-Verbindungen
+  - Access Keys gehasht (nicht im Klartext)
+```
+
+---
+
+<h2>12. MONITORING & ANALYTICS</h2>
+
+<h3>12.1 Metriken</h3>
+
+```
+System-Metriken:
+  - Journey-Instanzen: aktiv, completed, failed
+  - Messages: gesendet, delivered, failed (pro Channel)
+  - Events: pro Minute, pro Typ
+  - API-Requests: Response-Time, Error-Rate
+  - Queue-Length: Nachrichten in Warteschlange
+
+Business-Metriken:
+  - Journey-Conversion-Rate
+  - Message-Open-Rate (Email)
+  - Message-Click-Rate
+  - Segment-Größen
+  - Kontakt-Wachstum
+```
+
+<h3>12.2 Logging</h3>
+
+```
+Strukturierte Logs:
+  {
+    "timestamp": Timestamp,
+    "level": "info" | "warn" | "error",
+    "service": "journey_processor" | "message_sender" | "api",
+    "workspace_id": UUID,
+    "message": String,
+    "metadata": Map(String, Value)
+  }
+
+Wichtige Events loggen:
+  - Journey-Start/End
+  - Message-Send (mit Status)
+  - Segment-Berechnung
+  - API-Errors
+```
+
+---
+
+<h2>13. DEPLOYMENT & INFRASTRUKTUR</h2>
+
+<h3>13.1 Container-Architektur</h3>
+
+```
+Services:
+  - api-server (REST API)
+  - journey-processor (Background Job)
+  - message-sender (Background Job)
+  - segment-recalculator (Background Job)
+  - webhook-handler (API-Endpoint)
+
+Dependencies:
+  - PostgreSQL (Datenbank)
+  - Redis (Cache & Queue)
+  - Message Queue (RabbitMQ / AWS SQS)
+```
+
+<h3>13.2 CI/CD</h3>
+
+```
+Pipeline:
+  1. Code-Commit → GitHub/GitLab
+  2. Automatische Tests (Unit, Integration)
+  3. Build Docker-Images
+  4. Deploy to Staging
+  5. Smoke-Tests
+  6. Deploy to Production (mit Rollback-Option)
+```
+
+---
+
+<h2>14. ZUSAMMENFASSUNG FÜR DEVELOPER</h2>
+
+<h3>14.1 Implementierungs-Reihenfolge</h3>
+
+```
+Phase 1: Datenmodell
+  - Tabellen/Collections erstellen
+  - Indexes setzen
+  - Migration-Scripts
+
+Phase 2: API-Grundfunktionen
+  - Kontakt-CRUD
+  - Event-Tracking
+  - Authentication/Authorization
+
+Phase 3: Template-Engine
+  - Template-Parser
+  - Variable-Resolution
+  - Rendering
+
+Phase 4: Messaging-Layer
+  - Channel-Adapter
+  - Message-Queue
+  - Webhook-Handler
+
+Phase 5: Boolean-Expression-Engine
+  - Parser (DSL → AST)
+  - Evaluator
+  - Test-Suite
+
+Phase 6: Segment-Engine
+  - Segment-Definition
+  - Segment-Berechnung
+  - Segment-Caching
+
+Phase 7: Journey-Engine
+  - Node-Typen implementieren
+  - Journey-Processor
+  - State-Management
+
+Phase 8: Optimierung & Monitoring
+  - Caching
+  - Performance-Tuning
+  - Logging & Metrics
+```
+
+<h3>14.2 Wichtige Formeln (Cheat-Sheet)</h3>
+
+```
+// Kontakt-Events
+events_of_contact(c) = {e ∈ E | e.contact_id = c.id}
+
+// Segment-Prädikat
+segment_set = {c ∈ C | segment_predicate(c, events_of_contact(c))}
+
+// Journey-Übergang
+δ(n, input, context) → n' ∪ {EXIT}
+
+// Message-Status
+message_status_transition(m, new_status, timestamp) → m'
+
+// Template-Rendering
+render_template(t, context) → resolved_body
+
+// Boolean-Expression
+evaluate_boolean(expr, context) → true | false
+```
+
+---
+
+<h2>ENDE DES DOKUMENTS</h2>
+
+<strong>Dieses Dokument enthält:</strong>
+- ✅ Vollständige formale Definitionen aller Entitäten
+- ✅ Mathematische Formeln für alle Logik-Bereiche
+- ✅ Journey-Engine als Zustandsautomat
+- ✅ Boolean-Expression-Engine
+- ✅ Messaging-API-Architektur
+- ✅ Backend-Datenbank-Schema
+- ✅ DSL für Developer
+- ✅ Praktische Beispiele
+- ✅ Skalierungs- & Performance-Überlegungen
+
+<strong>Keine kopierten Inhalte</strong> - Alles basiert auf generischen Konzepten von Messaging-/Engagement-Plattformen.
+
+<strong>Dein Developer kann:</strong>
+1. Dieses Dokument als vollständige Spezifikation nutzen
+2. Alle Formeln 1:1 in Code umsetzen
+3. Die DSL implementieren für eigene Journeys
+4. Schritt für Schritt das System aufbauen
+
+---
+
+<strong>Version:</strong> 1.0.0  
+<strong>Erstellt:</strong> 2025-01-27  
+<strong>Lizenz:</strong> Proprietär - Nur für internen Entwicklungsgebrauch
+</body>
+</html>

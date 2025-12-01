@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TEST-STATUS</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Playwright Test-Suite Status</h1>
+<h2>✅ Implementiert</h2>
+<p>1. <strong>Playwright-Config</strong> (`playwright.config.ts`)
+   - Base URL: `http://localhost:9323/` (TELCOMPETIOION Root)
+   - Chromium, Firefox, WebKit Projekte konfiguriert
+   - Timeout: 60 Sekunden, Retries: 1</p>
+<p>2. <strong>Test-Dateien (aktuelle Architektur):</strong>
+   - ✅ `tests/start.spec.ts` – Startseite / Dashboard (`index.html`)
+   - ✅ `tests/offline-forum.spec.ts` – Offline-Forum (`manifest-forum.html`)
+   - ✅ `tests/portal.spec.ts` – Online-Portal (`manifest-portal.html`, inkl. Voucher/Events/Live/Mehrbenutzer-Szenario)
+   - ✅ `tests/business-admin.spec.ts` – Business-Admin (Vouchers & Buchungen)
+   - ✅ `tests/admin-monitoring.spec.ts` – Monitoring & Events
+   - ✅ `tests/honeycomb.spec.ts` – Wabenräume
+   - ✅ `tests/legal-hub.spec.ts` – Legal-Hub (Verträge)
+   - ✅ `tests/telbank.spec.ts` – TELBANK-Konsole
+   - ✅ `checks/home.check.ts` – Checkly-Integration</p>
+<p>3. <strong>Dependencies installiert:</strong>
+   - ✅ `npm install` erfolgreich
+   - ✅ Playwright Chromium Browser installiert</p>
+<h2>🎯 Tests zielen auf TELCOMPETIOION Root</h2>
+<p>- `http://localhost:9323/index.html` → Startseite
+- `http://localhost:9323/manifest-forum.html` → Offline-Forum
+- `http://localhost:9323/manifest-portal.html` → Portal</p>
+<h2>📝 Tests ausführen</h2>
+<strong>Wichtig:</strong> Lokaler Webserver muss auf Port 9323 laufen!
+<pre><code># Im TELCOMPETIOION Root-Verzeichnis:
+python -m http.server 9323
+<h1>Dann in anderem Terminal:</h1>
+cd D:\TELBOUISNINESSTESTS\businessconnecthub-playwright-tests-full
+npx playwright test --project=Chromium
+</code></pre>
+<h2>📊 Test-Statistiken (ungefähr)</h2>
+<p>- <strong>40+ Tests</strong> insgesamt (je nach Skip/Browser)
+- Startseite / Dashboard
+- Offline-Forum (Social-Editor)
+- Online-Portal (Voucher, Events, Live-UI, Multi-User)
+- Business-Admin (Vouchers & Buchungen)
+- Monitoring (Events & Telemetrie)
+- Honeycomb (Wabenräume)
+- Legal-Hub (Vertrags-UI)
+- TELBANK (Wallet-Konsole)</p>
+<h2>⚠️ Bekannte Probleme</h2>
+<p>- Manche Tests können fehlschlagen, wenn lokaler Server nicht läuft
+- UI-Elemente können sich geändert haben (Tests müssen angepasst werden)
+- Timeouts bei langsamen Verbindungen (60s Timeout)</p>
+
+</body>
+</html>

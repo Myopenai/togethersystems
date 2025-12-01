@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARCHITECTURE-IBM-XXXL</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>TELBANK ARCHITECTURE - IBM XXXL STANDARD</h1>
+
+<strong>Version:</strong> 1.0.0-XXXL  
+<strong>Branding:</strong> T,.&T,,.&T,,,.TELBANK(C)(R)  
+<strong>Standard:</strong> IBM Machine Product Standard Fabrication Industrial Software Machine Hardcoded
+
+---
+
+<h2>🏗️ LAYER-ARCHITEKTUR</h2>
+
+<h3>Layer 0 – Infrastruktur / Fabric</h3>
+- <strong>Compute:</strong> Cloudflare Workers / D1 / Kubernetes
+- <strong>Storage:</strong> D1 Database (SQLite) + R2 (Event Store)
+- <strong>Security:</strong> IAM, HSM für Schlüssel, TLS überall
+- <strong>Monitoring:</strong> Cloudflare Analytics + Custom Metrics
+
+<h3>Layer 1 – Integration & Bank-Anbindung</h3>
+- <strong>Bank Connectors:</strong> SWIFT/SEPA/API-Adapter
+- <strong>Batch-Import:</strong> CSV / SFTP für Bestände, Negativ-Positionen
+- <strong>Canonical Message Format:</strong> Einheitliches Schema
+- <strong>Message Bus:</strong> Event-basierte Architektur
+
+<h3>Layer 2 – Minus-Asset-Universum</h3>
+- <strong>Negative Asset Normalizer Service:</strong> Rohdaten → kanonisches Modell
+- <strong>Negative Asset Pool Service:</strong> Logik-Sicht auf alle Forderungen < 0
+- <strong>Ledger / Event Store:</strong> Immutable Event-Historie
+
+<h3>Layer 3 – Bank-Layer (Mandanten-/Tenant-Ebene)</h3>
+- <strong>Bank Tenant Boundary:</strong> Logische Trennung pro Bank (BIC/LEI)
+- <strong>Bank Services:</strong> Exposure, Limits, Reporting
+
+<h3>Layer 4 – +/--Geschäftsschicht (Business-Layer)</h3>
+- <strong>Netting Engine:</strong> Ausgleich zwischen Banken
+- <strong>Restructuring / Workout Engine:</strong> Umbuchungen, Laufzeitverlängerungen
+- <strong>Produktlogik:</strong> Negative-Asset-Swap, Bad-Pool-Participation
+- <strong>Rules/Workflow Engine:</strong> Genehmigungen, Compliance
+
+<h3>Layer 5 – Portale & Externe Schnittstellen</h3>
+- <strong>TELBANK-Portal:</strong> HTML-UI für Banken, Regulatoren
+- <strong>API-Gateway:</strong> REST/GraphQL/gRPC
+- <strong>Admin-Portal:</strong> Verwaltung von Kontakten, Endpunkten
+
+---
+
+<h2>📊 DATENBANKMODELL</h2>
+
+<h3>Kern-Tabellen:</h3>
+1. `bank` - Banken / monetäre Systeme
+2. `asset_class` - Asset-Kategorien (DIGITAL_CURRENCY, LOAN, etc.)
+3. `instrument` - Handelbare Assets
+4. `negative_asset` - Negativ-Assets von Banken
+5. `transformation_action` - Minus → Plus Transformationen
+6. `telbank_ledger` - Bilanzierung
+7. `participation_agreement` - Teilnahmeverträge
+8. `position` - Aktuelle Positionen
+9. `position_ledger_entry` - Event-/Buchungsebene
+10. `limit_agreement` - Limits
+11. `import_batch` - CSV-Imports
+12. `import_line` - Import-Zeilen
+13. `software_negative_asset` - Software-Fehler als "Minus-Assets"
+
+<h3>Views:</h3>
+- `negative_asset_nullpoint_status` - Nullpunkt-Status
+- `bank_exposure` - Bank-Exposure
+- `global_negative_asset_pool` - Globale Aggregation
+
+---
+
+<h2>🔧 IBM-STANDARD ZERO-DEFECT-PIPELINE</h2>
+
+<h3>Static Checks Stage</h3>
+- Code-Formatierung, Linting
+- Statische Codeanalyse (SonarQube-Gate)
+- Security-Scan (Dependencies)
+
+<h3>Unit-Test Stage</h3>
+- 90–95% Branch-Coverage für Kern-Services
+- Deterministische Tests
+
+<h3>Contract-Test Stage</h3>
+- Consumer/Producer-Contracts (Pact)
+- Schema-Validierung
+
+<h3>Integration-Test Stage</h3>
+- Echte DB-Schemas, Message Bus
+- Import-Beispiele, Netting-Deals
+
+<h3>E2E / System-Test Stage</h3>
+- Playwright-Tests für Portal
+- End-2-End-Flows
+- Performance & Load-Tests
+
+<h3>Deployment Stage</h3>
+- Staging → Pre-Prod → Prod
+- Blue/Green oder Canary
+- Automatisiertes Rollback
+
+---
+
+<h2>🎯 NULLPUNKT-KONZEPT</h2>
+
+<strong>"Aus dem Dunkeln ins Licht"</strong>
+
+Ein Asset erreicht den Nullpunkt, wenn:
+- `nominal_amount + total_effect >= 0`
+- Status: `beyond_nullpoint`
+
+Nicht mehr gefährlich/latent, sondern neutral/unter Kontrolle.
+
+---
+
+<h2>🔐 SECURITY & COMPLIANCE</h2>
+
+- <strong>Anonymisierung:</strong> `anonymized_hash` für Matching
+- <strong>Pseudonymisierung:</strong> Für Analysen
+- <strong>Audit-Log:</strong> Alle Änderungen protokolliert
+- <strong>4-Augen-Prinzip:</strong> Genehmigungen erforderlich
+
+---
+
+<h2>📈 SKALIERUNG: XXXXXXXXXXXLS</h2>
+
+- <strong>Horizontale Partitionierung:</strong> Nach `asset_class_id`, `bank_id`, `value_date`
+- <strong>Read-Optimierte Replikate:</strong> Separate DB für Reporting
+- <strong>Strict Schemas:</strong> Versioniert, kontrollierte Migrations
+- <strong>Archivierung:</strong> Ältere Events in Archiv-Storage
+
+---
+
+<strong>STATUS:</strong> 🟢 <strong>ARCHITECTURE DEFINED - IMPLEMENTATION IN PROGRESS</strong>
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

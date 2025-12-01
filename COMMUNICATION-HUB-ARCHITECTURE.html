@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COMMUNICATION-HUB-ARCHITECTURE</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Communication Hub – Architekturübersicht</h1>
+
+> Ziel: Autopilot‑Kommunikation für Manifest‑Offline‑Portal + Online‑Portal  
+> („Ich bin online“ → Präsenz, Matching, Live‑Raum, Signaling, APIs – alles automatisch)
+
+---
+
+<h2>1. Systemkomponenten im Überblick</h2>
+
+<strong>Frontend</strong>
+- `manifest-forum.html` (Offline‑Manifest)
+  - Speichert Beiträge lokal (`localStorage`).
+  - Kennt `MOT_ACCESS_TOKEN` bzw. Token/Lokale Identität.
+  - Öffnet das Online‑Portal mit HMAC‑gesichertem Token in der URL (`#mot=...&ts=...&sig=...`).
+- `manifest-portal.html` (Online‑Portal)
+  - Liest Token aus `location.hash` / optional `localStorage.mot_token`.
+  - Auto‑Verifikation + Auto‑Presence + Auto‑Matching.
+  - UI für:
+    - JSON‑Import / API‑URL
+    - Signaling‑URL / Presets
+    - No‑Code Raum‑JSON‑Builder
+    - Auto‑Connect (`pairCodeInput`, `connectStatus`, `liveRoom`).
+
+<strong>Backend</strong>
+- `presence-api-server.js` (Node/Express Presence‑API)
+  - `/verify` – Identität klären und `thinker_id` ableiten.
+  - `/heartbeat` – Anwesenheit melden (Status + `last_seen` + `pair_code`).
+  - `/match` – passende Partner/Gruppe mit gleichem `pair_code` finden, `room_id` vergeben.
+  - Optional später: Anschluss an DB (Supabase/Firebase/Postgres).
+- (zukünftig) Signaling‑Server (WSS)
+  - Verwaltet WebSocket‑Verbindungen/Signaling für Text, WebRTC, Datei‑Signalisierung.
+  - Räume werden anhand von `room_id` organisiert.
+- (zukünftig) API‑Katalog‑Service
+  - Liefert Liste verfügbarer APIs (Verifikation, Dokumente, KI, etc.).
+  - Bietet Metadaten: `base_url`, Auth‑Typ, Beispiel‑Payload.
+
+---
+
+<h2>2. Datenmodelle</h2>
+
+<h3>2.1 Presence</h3>
+
+In‑Memory (später DB):
+
+```json
+{
+  "thinker_id": "thinker-abc123",
+  "token": "mot-shared-token-v1",
+  "pair_code": "projekt_alpha",
+  "status": "online",
+  "last_seen": 1732350000,
+  "room_id": "room-projekt_alpha-xyz"
+}
+```
+
+Felder:
+- <strong>thinker_id</strong>: stabile Identität eines Users (aus Token abgeleitet oder explizit).
+- <strong>token</strong>: Roh‑Token (z.B. `MOT_ACCESS_TOKEN`).
+- <strong>pair_code</strong>: frei gewähltes Stichwort (z.B. `projekt_alpha`, `familie`).
+- <strong>status</strong>: `"online"` / `"offline"` (später optional `idle`).
+- <strong>last_seen</strong>: Zeitstempel des letzten Heartbeats.
+- <strong>room_id</strong>: zugewiesener Raum (wenn bereits verbunden).
+
+<h3>2.2 Room (Konfiguration)</h3>
+
+```json
+{
+  "type": "video",            // text | video | file | contract
+  "roomId": "post-123",
+  "permissions": {
+    "read": true,
+    "send": true,
+    "sign": false,
+    "upload": true
+  }
+}
+```
+
+In der Portal‑UI werden diese Objekte über das No‑Code‑Formular erzeugt und im JSON‑Format (z.B. `{ "rooms": [...] }`) an das Backend/Signaling weitergegeben.
+
+<h3>2.3 API‑Katalog (Entwurf)</h3>
+
+```json
+{
+  "id": "doc-verify-x",
+  "name": "Dokument-Verifikation X",
+  "category": "verification",
+  "base_url": "https://api.example.com/v1/documents",
+  "auth_type": "bearer",
+  "doc_url": "https://docs.example.com",
+  "example_payload": { "file_id": "123" }
+}
+```
+
+---
+
+<h2>3. Haupt‑Flows (Autopilot)</h2>
+
+<h3>3.1 „Ich gehe online“ – vom Offline‑Manifest ins Portal</h3>
+
+1. User öffnet `manifest-forum.html` (lokal/offline).
+2. Manifest kennt bzw. erzeugt ein Token (`MOT_ACCESS_TOKEN` / lokales Token).
+3. Beim Klick „Portal öffnen (verifiziert)“:
+   - Manifest erzeugt HMAC‑Signatur: `sig = HMAC(token, token + "." + ts)`.
+   - Öffnet `manifest-portal.html#mot=<token>&ts=<timestamp>&sig=<sig>`.
+
+Auf Portalseite:
+1. `tryAutoVerify()` prüft Signatur, aktiviert UI für verifizierte Nutzer.
+2. `autoConnectFromToken()`:
+   - Liest Token aus Hash oder `localStorage.mot_token`.
+   - Ruft `/verify` auf → erhält `{ thinker_id, pair_code? }`.
+   - Startet Heartbeat + Matching.
+
+<h3>3.2 Presence & Matching</h3>
+
+<strong>Heartbeat</strong> (`startPresenceHeartbeat` im Portal):
+- Alle 25s:
+  - `POST /heartbeat { thinker_id, pair_code, status:"online" }`.
+- Bei Seitenverlassen optional:
+  - `status:"offline"` senden.
+
+<strong>Matching</strong> (`startMatchLoop` im Portal):
+- Alle 5s:
+  - `POST /match { thinker_id, pair_code }`.
+  - Backend:
+    - Sucht alle Thinker mit `pair_code`, `status:"online"`, `last_seen` ≤ 60s.
+    - Wenn ≥ 2:
+      - Vergibt/teilt `room_id`.
+      - Antwort: `{ room_id: "room-..." }`.
+- Portal:
+  - Bei neuer `room_id`:
+    - Zeigt Status an (`connectStatus`).
+    - Öffnet `liveRoom` + Info (`liveRoomInfo`).
+    - Übergibt `room_id` an Signaling‑Layer (später).
+
+<h3>3.3 Signaling / Live‑Verbindung (späterer Ausbau)</h3>
+
+1. Portal erhält `room_id`.
+2. Portal ruft `joinRoom(room_id, thinker_id)` am Signaling‑Server auf:
+   - z.B. via WebSocket Nachricht `{ type:"join", room_id, thinker_id }`.
+3. Signaling‑Server:
+   - Hält eine Liste der aktiven Connections je `room_id`.
+   - Vermittelt:
+     - Textnachrichten (`chat`),
+     - WebRTC Signaling (Offer/Answer/ICE),
+     - Datei‑Transfer‑Signalisierung.
+4. Backend‑Orchestrator kann anhand der Room‑Definition (siehe 2.2) entscheiden:
+   - Wer darf senden?
+   - Wer darf unterschreiben?
+   - Wer darf Dateien hochladen?
+
+---
+
+<h2>4. Zustandsmodell (States)</h2>
+
+Für jeden Raum:
+
+- <strong>waiting</strong>  
+  Mindestens 1 Thinker mit `pair_code` online, aber noch kein Match.
+
+- <strong>joining</strong>  
+  Zweiter (oder weitere) Thinker kommt dazu, `room_id` wird vergeben.
+
+- <strong>active</strong>  
+  Raum ist aktiv, mindestens zwei Teilnehmer verbunden; Signaling läuft.
+
+- <strong>closing</strong>  
+  Raum wird geschlossen (z.B. weil alle bis auf einen gegangen sind oder Timeout).
+
+- <strong>closed</strong>  
+  Kein weiterer Traffic; `room_id` kann archiviert/vergessen werden.
+
+Im ersten Schritt wird dieses State‑Modell implizit über `presence` + Zeitfenster abgebildet. Später kann ein eigenes `rooms`‑Modell eingeführt werden, das diese States explizit speichert.
+
+---
+
+<h2>5. Roadmap‑Punkte, die auf dieser Architektur aufbauen</h2>
+
+1. <strong>DB‑Anschluss</strong>  
+   - Präsenz aus dem In‑Memory‑Store in eine echte Datenbank (Supabase/Firebase/Postgres) überführen.
+
+2. <strong>Signaling‑Layer ergänzen</strong>  
+   - Einheitliche Schnittstelle `joinRoom`, `sendMessage`, `onMessage` in einem separaten Modul (`signal-server.js`).
+
+3. <strong>API‑Katalog‑Service</strong>  
+   - Endpunkt `GET /api/catalog/apis`, Integration in Portal‑UI (Dropdown + Auto‑Konfiguration).
+
+4. <strong>Gruppen‑Matching & Rollen</strong>  
+   - Mehr als 2 Teilnehmer, Rollen (Host, Gast, Observer) in Presence/Rooms modellieren.
+
+5. <strong>Monitoring & Fehler‑Autopilot</strong>  
+   - Health‑Checks, Logs, Monitoring‑Dashboard, damit „Autopilot“ bei Fehlern kontrolliert eingreift (z.B. Reconnect‑Strategien).
+
+Dieses Dokument dient als Referenz dafür, wie Manifest‑Offline‑Portal, Online‑Portal, Presence‑API, Signaling und API‑Katalog zu einem Communication Hub zusammenwachsen, der für Endnutzer wie ein Autopilot funktioniert: „Ich gehe online“ genügt – der Rest läuft automatisch.
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

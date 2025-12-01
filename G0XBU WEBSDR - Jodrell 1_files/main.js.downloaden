@@ -1,0 +1,271 @@
+
+	filCutValue={};
+	filCutValue=2400;
+	
+        $(function() {
+    			$(".loFil").dial({
+					'displayPrevious': 'true',
+					'bgColor': '#000',
+					'fgColor': '#26FF26',
+					'inputColor':'#26FF26',
+					'min':0,
+					'max':800,
+					'change':function(e){
+						var loFi = e / 1000;
+						   lo = loFi; 
+						   updbw();
+						}
+                });
+				$(".loFilHi").dial({
+					'displayPrevious': 'true',
+					'bgColor': '#000',
+					'fgColor': '#26FF26',
+					'inputColor':'#26FF26',
+					'min':0,
+					'max':800,
+					'change':function(e){
+						var loFi = e / 1000;
+						   hi = -loFi; 
+						   updbw();
+						}
+                });
+				
+                                 $(".Fil").dial({
+					'displayPrevious': 'true',
+					'bgColor': '#000',
+					'fgColor': '#26FF26',
+					'inputColor':'#26FF26',
+					'min':0,
+					'max':800,
+					'change':function(e){
+						var loFi = e / 1000;
+						   hi = -loFi; 
+						   
+						}
+                });
+
+		function lauchHiFil(){		
+				$(".hiFil").dial({
+					'displayPrevious': 'true',
+					'bgColor': '#000',
+					'fgColor': '#26FF26',
+					'inputColor':'#26FF26',
+					'min':1000,
+					'max':filCutValue,
+					'change':function(f){
+						var hiFi = f / 1000;
+						   hi = hiFi; 
+						   updbw();
+						}
+                });
+		};
+		function lauchHiFilLo(){		
+				$(".hiFilLo").dial({
+					'displayPrevious': 'true',
+					'bgColor': '#000',
+					'fgColor': '#26FF26',
+					'inputColor':'#26FF26',
+					'min':1000,
+					'max':filCutValue,
+					'change':function(f){
+						var hiFi = f / 1000;
+						   lo = -hiFi; 
+						   updbw();
+						}
+                });
+		};		
+		
+		lauchHiFil();
+		lauchHiFilLo();
+		
+		$(".hiFil").val(2400).trigger('change');
+		$(".hiFilLo").val(2400).trigger('change');
+			$('#squelchBox input').click(function(){
+    				var pos = $(this).val();
+					$this = $('.squelchLcd li:contains("'+pos+'")');
+					if ($('.squelchLcd li:contains("'+pos+'")').hasClass('active')) {
+    					$this.removeClass("active");
+						} else {					
+					$('.squelchLcd li:contains("'+pos+'")').addClass('active');
+					};
+			});
+			$('#bandsBox input').click(function(){
+    				var pos = $(this).val();
+    				$('.bandLcd li').removeClass('active');					
+					$('.bandLcd li:contains("'+pos+'")').addClass('active');
+			});
+			$('#modeBox input').click(function(){
+				var pos = $(this).val();
+					$('#filterBox input').attr('checked', false);
+    				$('.modeLcd li').removeClass('active');
+					$('.modeLcd li:contains("'+pos+'")').addClass('active');			
+					if (pos == "AM" || pos == "FM") {
+					$('.filterSet1, .filterSet1b, .filterSet1cut, .filterSet1c, .filterSet1cCut, .filterSet2cut').fadeOut('fast').promise().done(function() {
+							$('.filterSet2').fadeIn('fast');
+							$('.filterSet2cut').fadeIn('fast');
+						
+						});
+											
+					} else if (pos == "LSB" ) {
+						hi=-0.2; lo=-2.9; updbw();
+						$('.filterSet1, .filterSet1cut,.filterSet1c, .filterSet1cCut, .filterSet2').fadeOut('fast').promise().done(function() {
+							$('.filterSet1b').fadeIn('fast');
+							$('.filterSet2cut').fadeIn('fast');
+							
+						});
+					}  else if (pos == "USB" ) {
+						hi=2.9; lo=0.2; updbw();
+						$('.filterSet2, .filterSet2cut, .filterSet1c, .filterSet1cCut, .filterSet1b').fadeOut('fast').promise().done(function() {
+							$('.filterSet1').fadeIn('fast');
+							$('.filterSet1cut').fadeIn('fast');
+							
+						});
+					} else if (pos == "CW" ) {
+						lo=-0.95000; hi=-0.55000; updbw();
+						$('.filterSet2, .filterSet2cut, .filterSet1, .filterSet1cut, .filterSet1b').fadeOut('fast').promise().done(function() {
+							
+							$('.filterSet1cCut').fadeIn('fast');
+							$('.filterSet1c').fadeIn('fast');
+						});
+					}
+				
+			});	
+			$('.filterSet1 input').click(function(){ //USB
+				var filValue = $(this).val();
+				filCutValue = filValue;
+				$('.filterSet2Box').html('');
+				$('.filterSet2Box').html('<input  class="hiFil" data-width="72" data-height="72" data-min=1000 data-max="'+filCutValue+'" data-angleOffset="-125" data-angleArc="250" value="200">');
+				lauchHiFil();
+				$(".hiFil").val(filCutValue).trigger('change');				
+				$(".loFil").val(200).trigger('change');
+				
+			});	
+			$('.filterSet1b input').click(function(){ //LSB
+				var filValue = $(this).val();
+				filCutValue = filValue;
+				$('.filterSet2BoxLsb').html('');
+				$('.filterSet2BoxLsb').html('<input  class="hiFilLo" data-width="72" data-height="72" data-min=1000 data-max="'+filCutValue+'" data-angleOffset="-125" data-angleArc="250" value="">');
+				lauchHiFilLo();
+				$(".hiFilLo").val(filCutValue).trigger('change');				
+				$(".loFilHi").val(200).trigger('change');
+				
+			});
+			$('.filterSet1c input').click(function(){ //CW
+				var filValue = $(this).val();
+				filCutValue = filValue;
+				$('.filterSet2BoxCw').html('');
+				$('.filterSet2BoxCw').html('<input  class="hiFilLo" data-width="72" data-height="72" data-min=1000 data-max="'+filCutValue+'" data-angleOffset="-125" data-angleArc="250" value="">');
+				lauchHiFilLo();
+				$(".hiFil").val(filCutValue).trigger('change');				
+				$(".loFil").val().trigger('change');
+				
+			});
+			
+
+     });
+	 $( document ).ready(function() {
+		 var e = $.Event("keydown", { keyCode: 5}); //"keydown" if that's what you're doing
+						$("body").trigger(e)
+ 				var url = window.location.href;
+//setTimeout(function(){
+//			if (url.search("#80") >= 0) {
+//				$('#mod2, #band4').click();
+//			} else if (url.search("#2") >= 0) {
+//				$('#mod4, #band0').click();
+//			} else if(url.search("#70") >= 0) {
+//				$('#mod4, #band1').click();
+//			} else if(url.search("#CB") >= 0) {
+//				$('#mod4, #band3').click();
+//				} else if(url.search("#446") >= 0) {
+//					$('#mod4, #band2').click();
+//					} else if(url.search("#6") >= 0) {
+//						$('#mod1,#band5').click();
+//						
+//						}, 300);	
+
+
+setTimeout(function(){
+			if (url.search("#80") >= 0) {
+				$('#mod2, #band1').click();
+			} else if (url.search("#40") >= 0) {
+				$('#mod2, #band2').click();
+			} else if(url.search("#20") >= 0) {
+				$('#mod1, #band3').click();
+			} else if(url.search("#11") >= 0) {
+				$('#mod1, #band4').click();
+				} else if(url.search("#10") >= 0) {
+					$('#mod1, #band5').click();
+					} else if(url.search("#144") >= 0) {
+						$('#mod4,#band6').click();
+						} else if(url.search("#430") >= 0) {
+							$('#mod4, #band7').click();
+						};	
+						}, 300);	
+
+});
+
+/*-------------New continue freq code - when pressing and holding up/down freq buttons------------*/
+var intervalId;
+var timeoutId;
+var step;
+
+function adjustFrequency(isUp) {
+    step = parseFloat($('#freqStepSelect').val());
+    freqstepNew(isUp ? step : -step);
+}
+
+$(document).ready(function () {
+    function startHold(isUp) {
+        timeoutId = setTimeout(function () {
+            adjustFrequency(isUp); // first step
+            intervalId = setInterval(function () {
+                adjustFrequency(isUp);
+            }, 150);
+        }, 400); // delay before starting repeat
+    }
+
+    function stopHold() {
+        clearTimeout(timeoutId);
+        clearInterval(intervalId);
+    }
+
+    $("#downF").on("mousedown touchstart", function (e) {
+        e.preventDefault();
+        startHold(false);
+    }).on("mouseup mouseleave touchend touchcancel", function () {
+        stopHold();
+    });
+
+    $("#upF").on("mousedown touchstart", function (e) {
+        e.preventDefault();
+        startHold(true);
+    }).on("mouseup mouseleave touchend touchcancel", function () {
+        stopHold();
+    });
+});
+
+
+
+/*--------------Old Continue Freq code ----------/
+var int;
+var step;
+
+$(".freqDown").mousedown(function() {
+	step = $(this).attr('data-step');
+    int = setInterval(performWhileMouseDown, 100);
+}).mouseup(function() {
+  clearInterval(int); 
+});
+function performWhileMouseDown() {
+    freqstep(-step);
+}
+
+$(".freqUp").mousedown(function() {
+	step = $(this).attr('data-step');
+    int = setInterval(performWhileMouseUp, 100);
+}).mouseup(function() {
+  clearInterval(int);  
+});
+function performWhileMouseUp() {
+    freqstep(+step);
+};*/

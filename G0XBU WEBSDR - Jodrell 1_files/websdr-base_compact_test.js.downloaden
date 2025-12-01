@@ -1,0 +1,3122 @@
+
+// WebSDR JavaScript part
+// Copyright 2007-2014, Pieter-Tjerk de Boer, pa3fwm@websdr.org; all rights reserved.
+// Naturally, distributing this file by the original WebSDR server software to original WebSDR clients is permitted.
+
+
+// variables governing what the user listens to:
+var lo=0.2,hi=2.9;   // edges of passband, in kHz w.r.t. the carrier
+var mode="USB";            // 1 if AM, 0 otherwise (SSB/CW); or text "AM", "FM" etc
+var band=0;            // id of the band we're listening to
+var freq=bandinfo[0].vfo;  // frequency (of the carrier) in kHz
+var memories = [ ];
+
+// used to set larger audio buffer than default
+var buffinit=0;
+
+// variables governing what the user sees:
+var Views={ allbands:0, othersslow:1, oneband:2, blind:3 };
+var view=Views.blind;
+var nwaterfalls=0;
+var waterslowness=4;
+var waterheight=200;
+var watermode=1;
+var scaleheight=14;
+var watercontrast=false;
+var waterbrightness=128;
+var scaleheight=44;
+
+var wfshade=1;
+
+// information about the available "virtual" bands:
+// contains: effsamplerate, effcenterfreq, zoom, start, minzoom, maxzoom, samplerate, centerfreq, vfo, scaleimgs, realband
+var bi = new Array();
+// number of bands:
+var nvbands=nbands;
+
+
+// references to objects on the screen:
+var scaleobj;
+var scaleobjs = new Array();
+var scaleimgs0 = new Array();
+var scaleimgs1 = new Array();
+var passbandobj;
+var edgelowerobj;
+var edgeupperobj;
+var carrierobj;
+var smeterobj;
+var numericalsmeterobj;
+var smeterpeakobj;
+var numericalsmeterpeakobj;
+var waterfallapplet = new Array();
+var soundapplet = null;
+
+// timers:
+var interval_updatesmeter;
+var interval_ajax3;
+var timeout_idle;
+var setfreqif_fut_timer;  // timer for typing in the frequency field
+
+
+// misc
+var serveravailable=-1;  // -1 means yet to be tested, 0 and 1 mean false and true
+var smeterpeaktimer=2;
+var smeterpeak=0;    
+var allloadeddone=false;
+var waitingforwaterfalls=0;  // number of waterfallapplets that are still in the process of starting
+var band_fetchdxtimer=new Array();
+var hidedx=0;
+var usejavawaterfall=1;
+var usejavasound=1;
+var javaerr=0;
+var isTouchDev = false;
+
+
+// derived quantities:
+var khzperpixel=bandinfo[band].samplerate/1024;
+var passbandobjstart=0;    // position (in pixels) of start of passband on frequency axis, w.r.t. location of carrier
+var passbandobjwidth=0;    // width of passband in pixels
+var centerfreq=bandinfo[band].centerfreq;
+
+
+
+
+function debug(a)
+{
+//   console.debug(a);
+}
+
+
+// from http://www.switchonthecode.com/tutorials/javascript-tutorial-the-scroll-wheel
+function cancelEvent(e)
+{
+  e = e ? e : window.event;
+  if(e.stopPropagation) e.stopPropagation();
+  if(e.preventDefault) e.preventDefault();
+  e.cancelBubble = true;
+  e.cancel = true;
+  e.returnValue = false;
+  return false;
+}
+
+
+function timeout_idle_do()
+{
+   try { clearInterval(interval_updatesmeter); } catch (e) {} ;
+   try { clearTimeout(interval_ajax3); } catch (e) {} ;
+   var i;
+   try { for (i=0;i<nwaterfalls;i++) waterfallapplet[i].destroy(); } catch (e) {} ;
+   try { soundapplet.destroy(); } catch (e) {};
+   document.body.innerHTML="Idle time out.\n";
+}
+
+
+function timeout_idle_restart()
+{
+   if (!idletimeout) return;
+   try { clearTimeout(timeout_idle); } catch(e) {};
+   timeout_idle=setTimeout('timeout_idle_do();',idletimeout);
+}
+
+function send_soundsettings_to_server()
+{
+  var m=mode;
+  if (m=="USB") m=0;
+  else if (m=="LSB") m=0;
+  else if (m=="CW") m=0;
+  else if (m=="AM") m=1;
+  else if (m=="FM") m=4;
+  else if (m=="DIG") m=7;
+  else if (m=="FMN") m=6;
+  try {
+     soundapplet.setparam(
+         "f="+freq
+        +"&band="+band
+        +"&lo="+lo
+        +"&hi="+hi
+        +"&mode="+m
+        +"&name="+encodeURIComponent(document.usernameform.username.value)+"%20"+(+freq).toFixed(2) 
+        );
+  } catch (e) {};
+  try {soundapplet.modeinfo(mode);} catch (e) {};
+  timeout_idle_restart()
+}
+
+function setSquelch(value)
+{
+   var squelchLevel = Number(value); //ensure the value is treated as a number
+   
+   soundapplet.setparam("squelch="+ squelchLevel);
+}
+
+function setsquelch(a)
+{
+   a=Number(a);
+   soundapplet.setparam("squelch="+a);
+}
+
+function setautonotch(a)
+{
+   a=Number(a);
+   soundapplet.setparam("autonotch="+a);
+}
+
+function setnotch2(a)
+{
+   a=Number(a);
+   soundapplet.setnotch2(a);
+}
+
+function setlmsnr(a)
+{
+   a=Number(a);
+   soundapplet.setlmsnr(a);
+}
+
+function sethighboost(a)
+{
+   a=Number(a);
+   soundapplet.sethighboost(a);
+}
+
+function setmute(a)
+{
+   a=Number(a);
+   soundapplet.setparam("mute="+a);
+}
+
+
+function draw_passband()
+{
+   passbandobjstart=Math.round((lo-0.045)/khzperpixel);
+   passbandobjwidth=Math.round((hi+0.045)/khzperpixel)-passbandobjstart;
+   if (passbandobjwidth == 0) passbandobjwidth = 1;
+   passbandobj.style.width=passbandobjwidth+"px";
+   if (!scaleobj) return;
+
+   var x=(freq-centerfreq)/khzperpixel+512;
+   var maxx = parseInt(scaleobj.style.width);
+   if (isTouchDev && x > maxx) x = maxx;
+   var y=scaleobj.offsetTop+15;
+   passbandobj.style.top=y+"px";
+   edgelowerobj.style.top=y+"px";
+   edgeupperobj.style.top=y+"px";
+   carrierobj.style.top=y+"px";
+   carrierobj.style.left=x+"px";
+   x=x+passbandobjstart;
+   passbandobj.style.left=x+"px";
+   edgelowerobj.style.left=(x-11)+"px";
+   edgeupperobj.style.left=(x+passbandobjwidth)+"px";
+}
+
+
+function iscw()
+{
+   return hi-lo < 1.0;
+}
+
+function nominalfreq()
+{
+   //if (iscw()) return freq+(hi+lo)/2;
+   return freq;
+}
+
+function freq2x(f,b)
+{
+   return (f-bi[b].effcenterfreq)*1024/bi[b].effsamplerate+512;
+}
+
+function setwaterfall(b,f)
+// adjust waterfall so passband is visible
+{
+   if (waitingforwaterfalls>0) return;
+   var x = freq2x(f,b);
+   if (x<0 || x>=1024) wfset_freq(b, bi[b].zoom, f);
+}
+
+
+function dx(freq,mode,text)
+// called by updates fetched from the server
+{
+   dxs.push( { freq:freq, mode:mode, text:text } );
+}
+
+function setfreqm(b,f,mo)
+{
+   setband(b);
+   set_mode(mo);
+   if (iscw()) f-=(hi+lo)/2;
+   setfreq(f);
+   $('.modeLcd li').removeClass('active');
+   $('.bandLcd li').removeClass('active');		
+   $('#filterBox input').attr('checked', true);
+   if (mo == "USB" || mo == "usb"){$('#mod1').click();};
+   if (mo == "LSB" || mo == "lsb"){$('#mod2').click();};
+   if (mo == "AM" || mo == "am"){$('#mod3').click();};
+   if (mo == "FM" || mo == "fm"){$('#mod4').click();};
+   if (mo == "CW" || mo == "cw"){$('#mod5').click();};
+   if (mo == "DIG" || mo == "dig"){$('#mod7').click();};
+   if (mo == "FMN" || mo == "fmn"){$('#mod6').click();};
+}
+
+function resetFil(){	
+		$('#filterBox input').attr('checked', false);
+};
+
+function showdx(b)
+{
+   var s='';
+   if (!hidedx) {
+      var mems=memories.slice();
+      for (i=0;i<mems.length;i++) mems[i].nr=i;
+      mems.sort(function(a,b){return a.nomfreq-b.nomfreq});
+      for (i=0;i<dxs.length;i++) {
+         var x = freq2x(dxs[i].freq,b);
+         var nextx;
+         if (x>1024) break;
+         if (i<dxs.length-1) nextx=freq2x(dxs[i+1].freq,b);
+         else nextx=1024;
+         if (nextx>=1024) nextx=1280;
+         if (x<0) continue;
+         var fr=dxs[i].freq;
+         var mo=dxs[i].mode;
+         s+='<div title="" class="statinfo2" onclick="resetFil()" style="max-width:'+(nextx-x)+'px;left:'+(x-6)+'px;top:'+(44-scaleheight)+'px;">';
+         s+='<div class="statinfo1"><div class="statinfo0" onclick="setfreqm(b,'+fr+','+"'"+mo+"'"+');">'+dxs[i].text+'<\/div><\/div><\/div>';
+         s+='<div title="" class="statinfol" style="width:1px;height:44px;position:absolute;left:'+x+'px;top:-'+scaleheight+'px;"><\/div>';
+      }
+      for (i=0;i<mems.length;i++) if (mems[i].band==b) {
+         var x=freq2x(mems[i].nomfreq,b);
+         var nextx;
+         if (x>1024) break;
+         if (i<mems.length-1) nextx=freq2x(mems[i+1].nomfreq,b);
+         else nextx=1024;
+         if (nextx>=1024) nextx=1280;
+         if (x<0) continue;
+         var fr=mems[i].freq;
+         var mo=mems[i].mode;
+         s+='<div title="" class="statinfo2l" style="max-width:'+(nextx-x)+'px;left:'+(x-6)+'px;top:'+(64-scaleheight)+'px;">';
+         var l=mems[i].label;
+         if (!l || l=='') l='mem '+mems[i].nr;
+         s+='<div class="statinfo1l"><div class="statinfo0l" onclick="setfreqm(b,'+fr+','+"'"+mo+"'"+');">'+l+'<\/div><\/div><\/div>';
+         s+='<div title="" class="statinfoll" style="width:1px;height:64px;position:absolute;left:'+x+'px;top:-'+scaleheight+'px;"><\/div>';
+      }
+   }
+   document.getElementById('blackbar'+band2id(b)).innerHTML=s;
+   if (s!='') {
+      document.getElementById('blackbar'+band2id(b)).style.height='64px';
+   } else {
+      document.getElementById('blackbar'+band2id(b)).style.height='30px';
+   }
+}
+
+
+
+
+function fetchdx(b)
+{
+  var xmlHttp;
+  try { xmlHttp=new XMLHttpRequest(); }
+    catch (e) { try { xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); }
+      catch (e) { try { xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+        catch (e) { alert("Your browser does not support AJAX!"); return false; } } }
+  xmlHttp.onreadystatechange=function()
+    {
+    if(xmlHttp.readyState==4)
+      {
+        if (xmlHttp.responseText!="") {
+          eval(xmlHttp.responseText);
+          showdx(b);
+        }
+      }
+    }
+  var url="/~~fetchdx?min="+(bi[b].effcenterfreq-bi[b].effsamplerate/2)+"&max="+(bi[b].effcenterfreq+bi[b].effsamplerate/2);
+  xmlHttp.open("GET",url,true);
+  xmlHttp.send(null);
+}
+
+
+function setscaleimgs(b,id)
+{
+   var e=bi[b];
+   var st=e.start>>(e.maxzoom-e.zoom);
+   if (st<0) scaleimgs0[id].src="scaleblack.png";
+   else scaleimgs0[id].src = e.scaleimgs[e.zoom][st>>10];
+   if (e.scaleimgs[e.zoom][1+(st>>10)]) scaleimgs1[id].src = e.scaleimgs[e.zoom][1+(st>>10)];
+   else scaleimgs1[id].src="scaleblack.png";
+   st+=1024;
+   scaleimgs0[id].style.left = (-(st%1024))+"px";
+   scaleimgs1[id].style.left = (1024-(st%1024))+"px";
+}
+
+
+// this function is called from java when the scrollwheel is moved to change the zoom
+function zoomchange(id,zoom,start)
+{
+   var b=id2band(id);
+   var e=bi[b];
+   var oldzoom=e.zoom;
+   e.effsamplerate = e.samplerate/(1<<zoom);
+   e.effcenterfreq = e.centerfreq - e.samplerate/2 + (start*(e.samplerate/(1<<e.maxzoom))/1024) + e.effsamplerate/2;
+   e.zoom=zoom;
+   e.start=start;
+   setscaleimgs(b,id);
+   if (b==band) {
+      khzperpixel = bi[band].effsamplerate/1024;
+      centerfreq = bi[band].effcenterfreq;
+      updbw();
+   }
+   if (!hidedx) {
+      clearTimeout(band_fetchdxtimer[b]);
+      if (zoom!=oldzoom) {
+         dxs=[]; document.getElementById('blackbar'+id).innerHTML=""; 
+         fetchdx(b);
+      } else {
+         {
+            showdx(b);
+            band_fetchdxtimer[b] = setTimeout('dxs=[]; fetchdx('+b+');',400);
+         }
+      }
+   }
+}
+
+
+var dont_update_textual_frequency=false;
+
+function setfreq(f)
+{
+   try { clearTimeout(setfreqif_fut_timer); } catch (e) {} ;
+   freq=f;
+   document.getElementById("dummyforie").style.display = 'none'; document.getElementById("dummyforie").style.display = 'block';  // utter nonsense, but forces IE8 to update the screen :(
+   send_soundsettings_to_server();
+   if (view!=Views.blind) draw_passband();
+   if (dont_update_textual_frequency) return;
+   var nomfreq=nominalfreq();
+   if (freq.toFixed) document.freqform.frequency.value=nomfreq.toFixed(2);
+   else document.freqform.frequency.value=nomfreq+" kHz";
+}
+
+function setfreqb(f)
+// sets frequency but also autoselects band
+{
+   //if (iscw()) f-=(hi+lo)/2;
+   var e=bi[band];
+   if (f>e.centerfreq-e.samplerate/2-4 && f<e.centerfreq+e.samplerate/2+4) {
+      // new frequency is in the current band
+      setwaterfall(band,f);
+      setfreq(f);
+      return;
+   }
+   // new frequency is not in the current band: then search through all bands until we find the right one (if any)
+   for (i=0;i<nvbands;i++) {
+      e=bi[i];
+      c=e.centerfreq;
+      w=e.samplerate/2+4;
+      if (f>c-w && f<c+w) {
+         e.vfo=f;
+         setband(i);
+         return;
+      } 
+   }
+}
+
+
+
+function setfreqif(str)
+// called when frequency is entered textually
+{
+   f=parseFloat(str);
+   if (!(f>0)) return;
+   dont_update_textual_frequency=true;
+   setfreqb(f);
+   dont_update_textual_frequency=false;
+   document.freqform.frequency.value=str;
+}
+
+function setfreqif_fut(str)
+// called when typing in the frequency field; schedules a frequency update in the future, in case no more key presses follow soon
+{
+   try { clearTimeout(setfreqif_fut_timer); } catch (e) {} ;
+   setfreqif_fut_timer = setTimeout('setfreqif('+str+')',1000);
+}
+
+
+function setmf(m, l, h)   // "set mode and filter"
+{
+   mode=m.toUpperCase();
+   lo=l;
+   hi=h;
+   updbw();
+}
+
+function set_mode(m)      // ...with appropriate filter
+{
+   switch (m.toUpperCase()) {
+      case "USB": setmf("usb", 0.2, 2.51); break;
+      case "LSB": setmf("lsb", -2.51, -0.2); break;
+      case "AM":  setmf("am", -3,  3); break;
+      case "CW":  setmf("cw", -0.95,  -0.55); break;
+      case "FM":  setmf("fm", -5,  5); break;
+      case "FMN":  setmf("fmn", -3.1,  3.1); break;
+      case "DIG":  setmf("dig", 0.1, 3.01); break;
+   }
+}
+
+function freqstepNew(step) {
+    // Obtain the current nominal frequency
+    var f = nominalfreq();
+
+    // Adjust the frequency by the specified step
+    f += step;
+
+    // If in CW mode, adjust the frequency further
+    //if (iscw()) {
+    //    f -= (hi + lo) / 2;
+   // }
+
+    // Set the new frequency
+    setfreq(f);
+}
+
+function freqstep(st)
+// do a frequency step, suitable for the current mode
+// sign of st indicates direction
+// magnitude of st is 1,2 or 3 for small, medium, or large step, with large being one channel (where applicable)
+{
+   var f=nominalfreq();
+if (st == "9") {
+  if(mode=="CW") {
+   f = Math.round(f);
+   setfreq(f-(hi+lo)/2);
+   }
+   else  {
+   f = Math.round(f);
+   setfreq(f);
+   }
+ }
+   else {
+   var steps_ssb= [0.01, 1, 5 ];
+   var steps_am5= [0.1, 1, 5];
+   var steps_am9= [0.1, 1, 9];
+   var steps_fm= [1, 5, 12.5 ];
+   var steps=steps_ssb;
+   var grid=false;
+   var i=Math.abs(st)-1;   
+   if (mode=="AM") {
+      if (freq<1800) steps=steps_am9; else steps=steps_am5;
+      if (i>=1) grid=true;
+   }
+   if (mode=="FM") {
+      steps=steps_fm;
+      if (i>=1) grid=true;
+   }
+   var d=steps[i];
+   var f=(st>0)?f:-f;
+   if (!grid) f=f+d;
+   else f=d*Math.ceil(f/d+0.1);
+   f=(st>0)?f:-f;
+   if (iscw()) f-=(hi+lo)/2;
+   setfreq(f);
+}
+
+function setfreqtune(s)
+{
+   var param = new RegExp("([0-9.]*)([^&#]*)").exec(s);
+   if (!param[1]) return;
+   if (param[2]) set_mode(param[2]);
+   setfreqif(param[1]);
+}
+
+}
+
+
+
+
+function mem_recall(i)
+{
+   setband(memories[i].band);
+   mode=memories[i].mode;
+   lo=memories[i].lo;
+   hi=memories[i].hi;
+   updbw();
+   setfreq(memories[i].freq);
+   setwaterfall(band,memories[i].freq);
+}
+
+function mem_erase(i)
+{
+   var b=memories[i].band;
+   memories.splice(i,1);
+   mem_show();
+   showdx(b);
+   try { localStorage.setItem('memories',JSON.stringify(memories)); } catch (e) {};
+}
+
+function mem_store(i)
+{
+   var nomf=nominalfreq();
+   var l;
+   try { l=memories[i].label;} catch(e){ l=''; };
+   memories[i]={freq:freq, nomfreq:nomf, band:band, mode:mode, lo:lo, hi:hi, label:l };
+   mem_show();
+   showdx(memories[i].band);
+   try { localStorage.setItem('memories',JSON.stringify(memories)); } catch (e) {};
+}
+
+function mem_label(i,nw)
+{
+   memories[i].label=nw;
+   showdx(memories[i].band);
+   try { localStorage.setItem('memories',JSON.stringify(memories)); } catch (e) {};
+}
+
+function mem_show()
+{
+   var i;
+   var s="";
+   for (i=0;i<memories.length;i++) {
+      var m="";
+      m=memories[i].mode;
+      s+='<tr>';
+      s+='<td><input type="button" title="recall" value="go" onclick="mem_recall('+i+')"><input type="button" title="erase" value="del" onclick="mem_erase('+i+')"><input type="button" title="store" value="save" onclick="mem_store('+i+')"></td>';
+      s+='<td>'+memories[i].nomfreq.toFixed(2)+' kHz '+m+'</td>';
+      s+='<td><input title="label for this memory location" type="text" size=6 onchange="mem_label('+i+',this.value)" value="'+memories[i].label+'"></td>';
+      s+='</tr>';
+   }
+   s+='<tr>';
+   s+='<td><input type="button" disabled title="recall" value="go" onclick="mem_recall('+i+')"><input type="button" disabled title="erase" value="del" onclick="mem_erase('+i+')"><input type="button" title="click save to store current freq" value="save" onclick="mem_store('+i+')"></td>';
+   s+='<td>Click "SAVE" to add cuurent freq/mode to memory</td>';
+   s+='</tr>';
+   document.getElementById('memories').innerHTML='<table>'+s+'</table>';
+}
+
+
+
+function wfset_freq(b, zoom, f)
+{
+   // set waterfall for band 'b' to given zoomlevel and centerfrequency
+   var id=band2id(b);
+   var e=bi[b];
+   var effsamplerate = e.samplerate/(1<<zoom);
+   var start = ( f - e.centerfreq + e.samplerate/2 - effsamplerate/2 )*1024/(e.samplerate/(1<<e.maxzoom));
+   waterfallapplet[id].setzoom(zoom, start);
+   timeout_idle_restart()
+}
+
+function wfset(cmd)
+{
+   var b=band;
+   var e=bi[b];
+   var id=band2id(b);
+   timeout_idle_restart()
+   if (cmd==0) {
+      // zoom in
+      var x=(freq-centerfreq)/khzperpixel+512;
+      //var x=512;
+      waterfallapplet[id].setzoom(-2, x);
+      return;
+   }
+   if (cmd==1) {
+      // zoom out
+      var x=(freq-centerfreq)/khzperpixel+512;
+      //var x=512;
+      waterfallapplet[id].setzoom(-1, x);
+      return;
+   }
+   if (cmd==2) {
+      // zoom in full with current listening frequency centered
+      wfset_freq(b, e.maxzoom, freq);
+   }
+   if (cmd==3) {
+      // rx to center
+      //var x=(freq-centerfreq)/khzperpixel+512;
+      var x=512;
+      wfset_freq(b, e.zoom, freq);
+      waterfallapplet[id].setzoom(-2, x);     
+   }
+
+   if (cmd==4) {
+      // zoom fully out
+      waterfallapplet[id].setzoom(0, 0);
+   }
+}
+
+
+function setview(v)
+{
+   timeout_idle_restart()
+   if ((v==Views.allbands && view==Views.othersslow) || (view==Views.allbands && v==Views.othersslow)) {
+      // no need to restart the applets in this case
+      view=v;   
+      createCookie("view",view,3652);
+      waterfallspeed(waterslowness);
+      return;
+   }
+
+   if (view==Views.blind) {
+      var els = document.getElementsByTagName('*');
+      for (i=0; i<els.length; i++) {
+         if (els[i].className=="hideblind") els[i].style.display="inline";
+         if (els[i].className=="showblind") els[i].style.display="none";
+      }
+   }
+   for (i=0;i<nwaterfalls;i++) waterfallapplet[i].destroy();
+
+   view=v;   
+   createCookie("view",view,3652);
+
+   document_waterfalls();  // (re)start the waterfall applets
+
+   if (view==Views.blind) {
+      var els = document.getElementsByTagName('*');
+      for (i=0; i<els.length; i++) {
+         if (els[i].className=="showblind") els[i].style.display="inline";
+         if (els[i].className=="hideblind") els[i].style.display="none";
+      }
+      return;
+   }
+
+   sethidedx(hidedx);
+
+}
+
+function islsbband(b)
+{
+   // returns true if default SSB mode for this band should be LSB
+   var e=bi[b];
+   if (e.centerfreq>3500 && e.centerfreq<4000) return 1;
+   if (e.centerfreq>1800 && e.centerfreq<2000) return 1;
+   if (e.centerfreq>7000 && e.centerfreq<7400) return 1;
+   return 0;
+}
+
+function setband(b)
+{
+   if (b<0 || b>=nvbands) return;
+   bi[band].vfo=freq;
+  
+   if (islsbband(band)!=islsbband(b)) {
+      // if needed, exchange LSB/USB 
+      var tmp=hi;
+      hi=-lo;
+      lo=-tmp;
+      if (mode=="USB") mode="LSB";
+      else if (mode=="LSB") mode="USB";
+   }
+
+   band=b;
+   var e=bi[b];
+   if (nbands>1) document.freqform.group0[band].checked=true;
+   if (view==Views.allbands || view==Views.othersslow) {
+      scaleobj = scaleobjs[b];
+   } else if (view==Views.oneband) {
+      scaleobj = scaleobjs[0];
+      setscaleimgs(b,0);
+      if (waitingforwaterfalls==0) waterfallapplet[0].setband(b, e.maxzoom, e.zoom, e.start);
+    if (waitingforwaterfalls == 0 && waterfallapplet[0]) {
+  waterfallapplet[0].b = e.zoom;
+  waterfallapplet[0].c = e.start;
+}
+
+      if (!hidedx) {
+         clearTimeout(band_fetchdxtimer[b]);
+         dxs=[]; document.getElementById('blackbar0').innerHTML=""; 
+         fetchdx(b);
+       }
+   }
+   setwaterfall(b,e.vfo);
+   centerfreq = e.effcenterfreq;
+   khzperpixel = e.effsamplerate/1024;
+   setfreq(e.vfo);
+    
+   waterfallspeed(waterslowness);
+
+   // 🔁 Re-sync spectrum clone to waterfall after band switch
+   setTimeout(() => {
+     for (let i = 0; i < nwaterfalls; i++) {
+       //syncSpectrumToWaterfall(0);
+     }
+   }, 200);
+}
+
+
+
+function sethidedx(h)
+{
+   hidedx=h;
+   if (view==Views.oneband) {
+      if (hidedx) {
+         dxs=[]; document.getElementById('blackbar0').innerHTML=""; 
+         clearTimeout(band_fetchdxtimer[band]);
+         document.getElementById('blackbar0').style.height='30px';
+      } else {
+         showdx(band);
+         fetchdx(band);
+      }
+   } else {
+      for (b=0;b<nvbands;b++) {
+         if (hidedx) {
+            dxs=[]; document.getElementById('blackbar'+band2id(b)).innerHTML=""; 
+            clearTimeout(band_fetchdxtimer[b]);
+            document.getElementById('blackbar'+band2id(b)).style.height='30px';
+         } else {
+            showdx(b);
+            fetchdx(b);
+         }
+      }
+   }
+}
+
+
+function test_serverbusy()
+{
+   try { soundapplet.app.l=1; } catch (e) {};
+   try { serveravailable=soundapplet.getid(); } catch (e) {};
+   if (serveravailable==0) {
+      try { clearInterval(interval_updatesmeter); } catch (e) {} ;
+      try { clearTimeout(interval_ajax3); } catch (e) {} ;
+      var i;
+      try { for (i=0;i<nwaterfalls;i++) waterfallapplet[i].destroy(); } catch (e) {} ;
+      try { soundapplet.destroy(); } catch (e) {};
+      document.body.innerHTML="Sorry, the WebSDR server has reached its max user limit; please try again later.\n";
+   }
+}
+
+
+var sgraph={
+   prevt: 0,
+   e0: 80,     // current lower end of scale
+   e1: -190,   // current upper end of scale
+   d0: 80,     // current estimate of lowest value of interest
+   d1: -190,   // current estimate of highest value of interest
+   width: 200,
+   cnt: 0
+};
+
+function s2y(s)
+{
+   return sgraph.cv.height-(s-sgraph.e0)/(sgraph.e1-sgraph.e0)*sgraph.cv.height;
+}
+
+function set_buffer1(toggle)
+{
+//   if (toggle) soundapplet.setdelay1(4000);
+//   else soundapplet.setdelay1(1000);
+       if(toggle==1) soundapplet.setdelay1(2000)
+	else if(toggle==2) soundapplet.setdelay1(4000);
+       else if(toggle==3) soundapplet.setdelay1(8000);
+       else if(toggle==4) soundapplet.setdelay1(16000);
+       else soundapplet.setdelay1(1000);		// original value
+}
+
+function updatesmeter()
+{
+
+   // Force more buffering than default
+   //
+   if(buffinit<1){	// Let it go through a cycle or two before changing buffer
+     buffinit++;
+   }
+   else if(buffinit<3) {   // Change the buffer size once
+     set_buffer1(1);		// reinit for buffer size of 2000
+     buffinit++;
+   }
+
+   if (!allloadeddone) return;
+
+   
+
+   try {
+      var s=soundapplet.smeter();
+
+	// Offset of S-meter on a per-band basis (values at top of file) to allow waterfall brightness adjustment - KA7OEI 20180313
+	//if(band==0) s=s+band0_smeter_offset;
+	//else if(band==1) s=s+band1_smeter_offset;
+	//else if(band==2) s=s+band2_smeter_offset;
+	//else if(band==3) s=s+band3_smeter_offset;
+	//else if(band==4) s=s+band4_smeter_offset;
+	//else if(band==5) s=s+band5_smeter_offset;
+	//else if(band==6) s=s+band6_smeter_offset;
+	//else if(band==7) s=s+band7_smeter_offset;
+
+   } catch (e) { s=0; };
+   var c=''+(s/100.0-127).toFixed(1);
+   if (c.length<10) c='&nbsp;&nbsp;'+c;
+
+   try {
+      var s=soundapplet.smeter();
+   } catch (e) { s=0; };
+   var c=''+(s/100.0-127).toFixed(1);
+   if (c.length<10) c= -c;
+   var sig;
+	   // Conversion from dbm to signal strengh
+ if (c > 121.0) {  sig='S0'; } 
+else if (c <= 121.0 && c > 115.0) { sig='S1'; } 
+else if (c <= 115.0 && c > 109.0) { sig='S2'; } 
+else if (c <= 109.0 && c > 103.0) {  sig='S3'; } 
+else if (c <= 103.0 && c > 97.0) { sig='S4'; } 
+else if (c <= 97.0 && c > 91.0) {  sig='S5'; } 
+else if (c <= 91.0 && c > 85.0) {  sig='S6'; } 
+else if (c <= 85.0 && c > 79.0) { sig='S7'; } 
+else if (c <= 79.0 && c > 73.0) { sig='S8'; } 
+else if (c <= 73.0 && c > 65.0) { sig='S9'; } 
+else if (c <= 65.0 && c > 53.0) { sig='S9 +10'; } 
+else if (c <= 53.0 && c > 43.0) { sig='S9 +20'; } 
+else if (c <= 43.0 && c > 36.0) { sig='S9 +30'; } 
+else if (c <= 36.0 && c > 23.0) { sig='S9 +40'; } 
+else if (c <= 23.0 && c > 13.0) { sig='S9 +50'; } 
+else if (c <= 13.0) { sig='OVERLOAD'; } 
+else {sig ='OVERLOAD'};
+   
+   numericalsmeterobj.innerHTML = '<span style="color:#CCC;font-weight:normal!important;">SIGNAL:</span> '+sig;
+   
+   
+   if (s>=0) smeterobj.style.width= (s*0.0191667)*1.01+"px";
+   else smeterobj.style.width="0px";
+
+//
+// Variable rate S-meter peak decay - 20181216 KA7OEI
+//
+   smeterpeaktimer--;		// decay acceleration timer
+   //
+   if ((smeterpeak<s-0.1) || (smeterpeaktimer<=0)) {
+      smeterpeak=s;
+      smeterpeaktimer=10;
+      if (smeterpeak>=0) smeterpeakobj.style.width= (smeterpeak*0.0191667)*1.01 +"px";
+      else smeterpeakobj.style.width="0px";
+      var c=+(s/100.0-127).toFixed(1); sig=Number(c);
+
+//getnoise();
+
+   if (c.length<6) c='&nbsp;&nbsp;'+c;
+      //numericalsmeterpeakobj.innerHTML = c;
+      numericalsmeterpeakobj.innerHTML = '<span style="color:#CCC;  font-weight:normal!important">dBm:</span>'+c;
+   
+   }
+   if (serveravailable<0) test_serverbusy();
+
+   
+  // rest of this function is for drawing the signal strength plot
+
+  var v=1 //document.getElementById('sgraphchoice').value;
+  if (!(v>0)) {
+     if (sgraph.cv) {
+        sgraph.ct.clearRect(0,0,sgraph.cv.width, sgraph.cv.height);
+        sgraph.cv.style.display='none';
+        sgraph.cv=null;
+        sgraph.e0=80;
+        sgraph.e1=-190;
+     }
+     return;
+  }
+
+  if (!sgraph.cv) {
+     sgraph.cv=document.getElementById('sgraph');
+     sgraph.cv.style.display='';
+     sgraph.ct=sgraph.cv.getContext("2d");
+  }
+  var cv=sgraph.cv;
+  var ct=sgraph.ct;
+  sgraph.width=cv.width-50;
+
+  s=s/100.0-127;
+  // try to estimate the useful range of values, without storing all datapoints, and rescale the plot if needed
+  if (sgraph.d0>s) sgraph.d0=s; else sgraph.d0+=0.1/v;
+  if (sgraph.d1<s) sgraph.d1=s; else sgraph.d1-=0.1/v;
+  var redrawaxis=0;
+  if (sgraph.d0>sgraph.e0+15 || sgraph.d0<sgraph.e0) { 
+     var e0=10*Math.floor(sgraph.d0/10)-5;
+     if (e0>sgraph.e0) ct.drawImage(cv, 0,0, sgraph.width,cv.height*(sgraph.e1-e0)/(sgraph.e1-sgraph.e0), 0,0,sgraph.width,cv.height);
+     else {
+        var f=(sgraph.e1-sgraph.e0)/(sgraph.e1-e0);
+        ct.drawImage(cv, 0,0, sgraph.width,cv.height, 0,0,sgraph.width,cv.height*f);
+        ct.fillStyle="black";
+        ct.fillRect(0,Math.floor(cv.height*f),sgraph.width,cv.height*(1-f)+1);
+     }
+     sgraph.e0=e0;
+     redrawaxis=1;
+  }
+  if (sgraph.d1>sgraph.e1 || sgraph.d1<sgraph.e1-15) {
+     var e1=10*Math.ceil(sgraph.d1/10)+5;
+     if (e1<sgraph.e1) {
+        var f=(e1-sgraph.e0)/(sgraph.e1-sgraph.e0);
+        if (f<0) f=0;
+        ct.drawImage(cv, 0,cv.height*(1-f), sgraph.width,cv.height*f, 0,0,sgraph.width,cv.height);
+     } else {
+        var f=(sgraph.e1-sgraph.e0)/(e1-sgraph.e0);
+        if (f<0) f=0;
+        ct.drawImage(cv, 0,0, sgraph.width,cv.height, 0,cv.height*(1-f),sgraph.width,cv.height*f);
+        ct.fillStyle="black";
+        ct.fillRect(0,0,sgraph.width,Math.ceil(cv.height*(1-f)));
+     }
+     sgraph.e1=e1;
+     redrawaxis=1;
+  }
+  if (redrawaxis) {
+     ct.clearRect(sgraph.width,0,cv.width-sgraph.width,cv.height);
+     var w=sgraph.e0;
+     ct.fillStyle="white";
+     ct.font="10px Verdana";
+     while ((w=10*Math.ceil(w/10))<=sgraph.e1) {
+        var y=s2y(w);
+        ct.fillText(w+" dB",sgraph.width+2,y+4,cv.width-sgraph.width);
+        w+=1;
+     }
+  }
+
+  sgraph.cnt++;
+  if (sgraph.cnt>=v) {
+     sgraph.cnt=0;
+     ct.drawImage(cv, 1,0,sgraph.width-1,cv.height, 0,0,sgraph.width-1,cv.height);  // move the plot one pixel to the left
+     var t=new Date().getTime();
+     if (v>=10) v=60;
+     if (Math.floor(t/1000/v)!=Math.floor(sgraph.prevt/1000/v)) {
+        // draw grey vertical line as time marker
+        ct.fillStyle="black";
+        ct.fillRect(sgraph.width-1,0,1,cv.height);
+        sgraph.prevt=t;
+     } else {
+        // draw white vertical line with grey dB scale markers
+        ct.fillStyle="black";
+        ct.fillRect(sgraph.width-1,0,1,cv.height);
+        ct.fillStyle="grey";
+        var w=sgraph.e0;
+        while ((w=10*Math.ceil(w/10))<=sgraph.e1) {
+           var y=s2y(w);
+           ct.fillRect(sgraph.width-1,y,1,1);
+           w+=1;
+        }
+     }
+  }
+
+  // plot the actual data point
+  ct.fillStyle="#00ff00";
+  ct.fillRect(sgraph.width-1,s2y(s),1,5);
+}
+
+
+
+
+
+var uu_names=new Array();
+var uu_bands=new Array();
+var uu_freqs=new Array();
+var others_colours=[ "#ff4040", "#ffa000", "#a0a000", "#80ff00", "#00ff00", "#00a0a0", "#0080ff", "#ff40ff"];
+
+var dxs=[];
+
+function uu(i, username, band, freq)
+// called by updates fetched from the server
+{
+   uu_names[i]=username;
+   uu_bands[i]=band;
+   uu_freqs[i]=freq;
+}
+
+var uu_compactview=false;
+function douu()
+// draw the diagram that shows the other listeners
+
+{
+   s='';
+   total=0;
+   for (b=0;b<nbands;b++) {
+      if (!uu_compactview) {
+         s+="<p><div  style='width:1024px; background-color:black;'><div class=others>";
+         for (i=0;i<uu_names.length;i++) if (uu_bands[i]==b && uu_names[i]!="") {
+            cbandfreq=(bandinfo[b].centerfreq-(bandinfo[b].samplerate/2)-((hi+lo)/2));
+	    if (uu_names[i]=="(WebSDR)") {
+              s+='<div id="user'+i+'" align="center" style="position:relative;left:'+(uu_freqs[i]*1024-250)+'px;width:500px; color:#ff3333;">';
+              s+='<button type="button" class="userbtn" onclick="setfreqb('+(uu_freqs[i]*bandinfo[b].samplerate+cbandfreq).toFixed(2)+');" title="Operator" style="cursor: pointer;margin:0; padding:0 5px; color:#ff3333;">'+uu_names[i]+'</button>';
+              s+='</div>';
+              total++;
+ 	    }
+	    else {
+              s+='<div id="user'+i+'" align="center" style="position:relative;left:'+(uu_freqs[i]*1024-250)+'px;width:500px; color:'+others_colours[i%8]+';">';
+              s+='<button type="button" class="userbtn" onclick="setfreqb('+(uu_freqs[i]*bandinfo[b].samplerate+cbandfreq).toFixed(2)+');" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:'+others_colours[i%8]+';">'+uu_names[i]+'</button>';
+              s+='</div>';
+              total++;
+            }
+         }
+         s+="<img src="+bi[b].scaleimgs[0][0]+"></div></div></p>";
+      } else {
+         s+="<p><div align='left' style='width:1024px;height:13px;position:relative; background-color:black;'>";
+         for (i=0;i<uu_names.length;i++) if (uu_bands[i]==b && uu_names[i]!="") {
+	    if (uu_names[i]=="(WebSDR)") {
+              s+="<div id='user"+i+"' style='position:absolute;top:1px;left:"+
+                   (uu_freqs[i]*1024)
+                   +"px;width:1px;height:10px; background-color:#ff3333;'></div>";
+              total++;
+            }
+	    else {
+              s+="<div id='user"+i+"' style='position:absolute;top:1px;left:"+
+                   (uu_freqs[i]*1024)
+                   +"px;width:1px;height:13px; background-color:"+others_colours[i%8]+";'></div>";
+              total++;
+            }
+         }
+         s+="</div><div><img src="+bi[b].scaleimgs[0][0]+"></div></p>";
+      }
+   }
+   usersobj.innerHTML=s;
+   numusers1obj.innerHTML=total;
+}
+
+//old user view code
+//{
+   //s='';
+   //total=0;
+   //for (b=0;b<nbands;b++) {
+   //   if (!uu_compactview) {
+   //      s+="<p><div align='left' style='width:1024px; background-color:black;'><div class=others>";
+   //      for (i=0;i<uu_names.length;i++) if (uu_bands[i]==b && uu_names[i]!="") {
+   //         s+="<div id='user"+i+"' align='center' style='position:relative;left:"+
+   //              (uu_freqs[i]*1024-250)
+   //              +"px;width:500px; color:"+others_colours[i%8]+";'><b>"+uu_names[i]+"</b></div>";
+   //         total++;
+   //      }
+   //      s+="<img src="+bi[b].scaleimgs[0][0]+"></div></div></p>";
+   //   } else {
+   //      s+="<p><div align='left' style='width:1024px;height:15px;position:relative; background-color:black;'>";
+   //      for (i=0;i<uu_names.length;i++) if (uu_bands[i]==b && uu_names[i]!="") {
+   //         s+="<div id='user"+i+"' style='position:absolute;top:1px;left:"+
+   //              (uu_freqs[i]*1024)
+   //              +"px;width:1px;height:13px; background-color:"+others_colours[i%8]+";'></div>";
+   //         total++;
+   //      }
+   //      s+="</div><div><img src="+bi[b].scaleimgs[0][0]+"></div></p>";
+   //   }
+   //}
+   //usersobj.innerHTML=s;
+   //numusersobj.innerHTML=total;
+//}
+
+function setcompactview(c)
+{
+   uu_compactview=c;
+   douu();
+}
+
+
+function ajaxFunction3()
+{
+  var xmlHttp;
+  try { xmlHttp=new XMLHttpRequest(); }
+    catch (e) { try { xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); }
+      catch (e) { try { xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+        catch (e) { alert("Your browser does not support AJAX!"); return false; } } }
+  xmlHttp.onreadystatechange=function()
+    {
+    if(xmlHttp.readyState==4)
+      {
+        if (xmlHttp.status==200 && xmlHttp.responseText!="") {
+          eval(xmlHttp.responseText);
+          douu();
+        }
+        clearTimeout(interval_ajax3);
+        interval_ajax3 = setTimeout('ajaxFunction3()',1000);
+      }
+    }
+  interval_ajax3 = setTimeout('ajaxFunction3()',120000);
+  var url="/~~othersjj?chseq="+chseq;
+  xmlHttp.open("GET",url,true);
+  xmlHttp.send(null);
+}
+
+
+
+function javatest()
+{
+   var javaversion;
+   try {
+      javaversion = soundapplet.javaversion();
+   } catch(err) {
+      javaerr=1;
+      if (!usejavasound) return;
+      document.getElementById("javawarning").style.display= "block";
+      javaversion="999";
+      setTimeout('javatest()',1000); // in case loading java was simply taking too long
+   }
+   if (javaversion<"1.4.2") {
+      document.getElementById("javawarning").innerHTML='Your Java version is '+javaversion+', which is too old for the WebSDR. Please install version 1.4.2 or newer, e.g. from <a href="http://www.java.com">http://www.java.com</a> if you hear no sound.';
+      document.getElementById("javawarning").style.display= "block";
+   }
+}
+
+
+
+function updbw()
+{
+   if (lo>hi) {
+      if (document.onmousemove == useMouseXYloweredge || touchingLower) lo=hi;
+      else hi=lo;
+   }
+   var maxf=(mode=="FM") ? 15 : (bandinfo[band].maxlinbw*0.95);
+   if (lo<-maxf) lo=-maxf;
+   if (hi>maxf) hi=maxf;
+   var x5=document.getElementById('numericalbandwidth5');
+   var x6=document.getElementById('numericalbandwidth6');
+   var x60=document.getElementById('numericalbandwidth60');
+   var x7=document.getElementById('numericalbandwidth7');
+   x5.innerHTML=(hi-lo).toFixed(1);
+   x6.innerHTML=(hi).toFixed(1);
+   x60.innerHTML=(lo).toFixed(1);
+   x7.innerHTML=(hi-lo).toFixed(1);
+   setfreq(freq);
+}
+
+
+// from http://www.quirksmode.org/js/cookies.html
+function createCookie(name,value,days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+
+function id2band(id)
+{
+   if (view == Views.oneband) return band; else return id;
+}
+
+function band2id(b)
+{
+   if (view == Views.oneband) return 0; else return b;
+}
+
+function waterfallspeed(sp)
+{
+   waterslowness=sp;
+   if (waitingforwaterfalls>0) return;
+   var done=0;
+   if (view==Views.othersslow) {
+      for (i=0;i<nwaterfalls;i++)
+         if (i==band) waterfallapplet[i].setslow(sp);
+         else waterfallapplet[i].setslow(100);
+   } else {
+      for (i=0;i<nwaterfalls;i++)
+         waterfallapplet[i].setslow(sp);
+   }
+}
+
+function waterfallheight(si)
+{
+   waterheight=si;
+   waterheight=parseInt(waterheight,8);
+   if (waitingforwaterfalls>0) return;
+   for (i=0;i<nwaterfalls;i++) {
+      waterfallapplet[i].setSize(1024,si);
+   }
+   stretch_waterfalls();
+   var y=scaleobj.offsetTop+15;
+//   passbandobj.style.top=y+"px";
+   passbandobj.style.top=(y-waterheight-15)+"px";
+   passbandobj.style.height=(waterheight+4)+"px";
+   passbandlineobj.style.top=(waterheight+16)+"px";
+   edgelowerobj.style.top=y+"px";
+   edgeupperobj.style.top=y+"px";
+   carrierobj.style.top=(y-15)+"px";
+}
+
+
+//function waterfallspeed(sp)
+//{
+//   waterslowness=sp;
+//   if (waitingforwaterfalls>0) return;
+//   var done=0;
+//   if (view==Views.othersslow) {
+//      for (i=0;i<nwaterfalls;i++)
+//         if (i==band) waterfallapplet[i].setslow(sp);
+//         else waterfallapplet[i].setslow(100);
+//   } else {
+//     for (i=0;i<nwaterfalls;i++)
+//        waterfallapplet[i].setslow(sp);
+// }
+//}
+
+//function waterfallheight(si)
+//{
+//   waterheight=si;
+//   if (waitingforwaterfalls>0) return;
+//   for (i=0;i<nwaterfalls;i++) {
+//      waterfallapplet[i].setSize(1024,si);
+//   }
+
+//   var y=scaleobj.offsetTop+15;
+//  passbandobj.style.top=y+"px";
+//   edgelowerobj.style.top=y+"px";
+//   edgeupperobj.style.top=y+"px";
+//   carrierobj.style.top=y+"px";
+//}
+
+function waterfallmode(m)
+{
+   watermode=m;
+   if (waitingforwaterfalls>0) return;
+   for (i=0;i<nwaterfalls;i++) {
+      waterfallapplet[i].setmode(m);
+   }
+}
+
+function waterfallrange()
+{
+   if (waitingforwaterfalls>0) return;
+   var w=128;
+   if (watercontrast) w=64;
+   var dmin=255-waterbrightness-w;
+   if (dmin<0) dmin=0;
+   var dmax=255-waterbrightness+w;
+   if (dmax>255) dmax=255;
+   for (i=0;i<nwaterfalls;i++) {
+      waterfallapplet[i].setdminmax(dmin,dmax);
+   }
+}
+
+function waterfall_contrast(yes)
+{
+   watercontrast=yes;
+   waterfallrange();
+}
+
+function waterfall_brightness(v)
+{
+   waterbrightness=v;
+   waterfallrange();
+}
+
+
+function stretch_waterfalls()
+{
+   setTimeout(stretch_waterfalls_do, 1);  // (hopefully?) make sure this gets done after the div's have gotten their final size
+   
+}
+
+function waterPos() { //positions waterfall for when clicking superzoom button (this has to be placed before the stretch waterfalls function during onclick otherwise it will be ignored due to the 'return;' of the stretch waterfalls function)
+  var checkBox = document.getElementById("wfwidecheckbox");
+  
+  if (checkBox.checked == true){
+    document.getElementById("wfcontainer1").style.marginTop = "75px";
+    document.getElementById("wfcontainer1").style.marginBottom = "85px";
+    
+  } else {
+     document.getElementById("wfcontainer1").style.marginTop = "0px";
+     document.getElementById("wfcontainer1").style.marginBottom = "0px";
+     
+  }
+}
+
+function stretch_waterfalls_do() {
+    var wfc = document.getElementById('wfcontainer1');//ID of div to be scaled
+    var wfcc = document.getElementById('buttonsbox'); // ID of the div above the scaled div
+    var wfwideCheckbox = document.getElementById('wfwidecheckbox');
+
+    if (!wfwideCheckbox.checked || usejavawaterfall) {
+        // Standard 1024px wide waterfall
+        wfc.style.transform = "";
+        wfc.style.left = "0px";
+        wfc.style.width = "";
+        wfc.style.height = "";
+        wfc.style.top = "";
+        wfcc.style.height = "";
+        wfscalex = 1;
+        console.log("Standard waterfall configuration applied.");
+        return;
+    }
+
+    // Calculate the maximum scale factor based on the height of the div above
+    var maxHeight = wfcc.getBoundingClientRect().height;
+
+    console.log("Max height of div above:", maxHeight);
+
+    // Use style.transform to horizontally stretch the waterfall; also cover up the body's margin, so the waterfall really fills the window
+    var w = document.body.offsetWidth || window.innerWidth;
+    var style = document.body.currentStyle || window.getComputedStyle(document.body);
+    var marginleft = parseFloat(style.marginLeft);
+    var marginright = parseFloat(style.marginRight);
+
+    console.log("Window width:", w);
+    console.log("Left margin:", marginleft);
+    console.log("Right margin:", marginright);
+
+    w += marginleft + marginright;
+    var wd = w;
+    if (w > 1024) wd = 1024;
+    if (w < 1024) w = 1024;
+    var scaleFactor = w / 1024;
+
+    console.log("Scale factor before adjustment:", scaleFactor);
+
+    // Limit the scale factor to prevent overlapping the div above
+if (scaleFactor * maxHeight > maxHeight) {
+    console.log("Condition for adjusting scale factor met.");
+    scaleFactor = 1.5;
+    console.log("Adjusted scale factor:", scaleFactor);
+}
+
+    wfscalex = scaleFactor;
+    wfc.style.transform = "scale(" + scaleFactor + ")";
+    wfc.style.left = (-marginleft) + "px";
+    wfc.style.width = wd + "px";
+
+    // Set waterfall container's height such that the scaled waterfall block fits vertically
+    wfcc.style.height = (maxHeight * scaleFactor) + "px";
+}
+
+
+window.addEventListener('resize', stretch_waterfalls, false);
+
+
+function soundappletstarted()
+{
+   if (usejavasound && javaerr) {
+      javaerr=0;
+      document.getElementById("javawarning").style.display= "none";
+   }
+   setTimeout('soundappletstarted2()',100);
+}
+
+function soundappletstarted2()
+{
+   allloadeddone=true;
+
+   soundapplet.setvolume(Math.pow(10, document.getElementById('volumecontrol2').value /10.));
+
+   if (bi[0]) {
+      setfreqif(freq);
+      updbw();
+   }
+
+   try { setmute(document.getElementById('mutecheckbox').checked) } catch(e){};
+   try { setsquelch(document.getElementById('squelchcheckbox').checked) } catch(e){};
+   try { setautonotch(document.getElementById('autonotchcheckbox').checked) } catch(e){};
+
+   test_serverbusy();
+}
+
+
+function waterfallappletstarted(id)
+{
+   // this function is called when a waterfall applet becomes active
+   waitingforwaterfalls--;
+   if (waitingforwaterfalls<0) waitingforwaterfalls=0; // shouldn't happen...
+   if (waitingforwaterfalls!=0) return;
+   setTimeout('allwaterfallappletsstarted()',100);
+}
+
+function allwaterfallappletsstarted() 
+{
+   var i;
+
+   waterfallspeed(waterslowness);
+   waterfallmode(watermode);
+   waterfallrange();
+   for (i=0;i<nwaterfalls;i++) {
+      var e=bi[i];
+      waterfallapplet[i].setband(e.realband, e.maxzoom, e.zoom, e.start);
+   }
+   if (view==Views.oneband) {
+      var e=bi[band];
+      waterfallapplet[0].setband(band, e.maxzoom, e.zoom, e.start);
+   }
+
+   // and when the applets run, we can also be sure that the HTML elements for the frequency scale have been rendered:
+   for (i=0;i<nwaterfalls;i++) {
+     scaleobjs[i] = document.getElementById('clipscale'+i);
+     scaleimgs0[i] = document.images["s0cale"+i];
+     scaleimgs1[i] = document.images["s1cale"+i];
+   }
+   if (view==Views.oneband) {
+      setscaleimgs(band,0);
+      scaleobj = scaleobjs[0];
+   } else {
+      for (i=0;i<nwaterfalls;i++) setscaleimgs(i,i);
+      scaleobj=scaleobjs[band];
+   }
+   draw_passband();
+}
+
+var sup_socket = !!window.WebSocket && !!WebSocket.CLOSING;   // the CLOSING test excludes browsers with an old version of the websocket protocol, in particular Safari 5
+var sup_canvas = !!window.CanvasRenderingContext2D;
+var sup_webaudio = window.AudioContext || window.webkitAudioContext;
+var sup_mozaudio = false;
+try { if (typeof(Audio)==='function' && typeof(new Audio().mozSetup)=='function') sup_mozaudio = true; } catch (e) {};
+
+function html5javawarn()
+{ 
+   // show warning regarding support for HTML5 or Java if needed
+   document.getElementById("javawarning").style.display= (usejavasound && javaerr) ? "block" : "none";
+   document.getElementById("html5warning").style.display= (!usejavasound && !sup_webaudio && !sup_mozaudio) ? "block" : "none";
+}
+
+
+function html5orjava(item,usejava)
+{
+   if (item==0) {
+      // waterfall
+      if (usejavawaterfall==usejava) return;
+      usejavawaterfall=usejava;
+      var s=(usejavawaterfall?"y":"n")+(usejavasound?"y":"n");
+      createCookie("usejava",s,3652);
+      var i;
+      try { for (i=0;i<nwaterfalls;i++) waterfallapplet[i].destroy(); } catch (e) {} ;
+      document_waterfalls();
+   }
+   if (item==1) {
+      // sound
+      if (usejavasound==usejava) return;
+      usejavasound=usejava;
+      var s=(usejavawaterfall?"y":"n")+(usejavasound?"y":"n");
+      createCookie("usejava",s,3652);
+      try { soundapplet.destroy(); } catch (e) {};
+      document_soundapplet();
+      document.getElementById('record_span').style.display= usejavasound ? "none" : "inline";
+      html5javawarn();
+   }
+}
+
+function checkjava()
+{
+   try {
+      if (navigator.javaEnabled && navigator.javaEnabled()) return "green";
+   } catch(e) {};
+   try {
+      var m=navigator.mimeTypes;
+      for (i=0;i<m.length;i++)
+         if (m[i].type.match(/^application\/x-java-applet/)) return "green";
+      return "red"; 
+   } catch(e) {};
+   return "black";
+}
+
+function chrome_audio_start() {
+    if (!document.ct) {
+        document.ct = window.AudioContext ? new AudioContext() : new webkitAudioContext();
+    }
+    var s = document.ct.createBufferSource();
+    s.connect(document.ct.destination);
+    document.ct.resume(); // This might be sufficient without the s.start() or s.noteOn(), but keep it if necessary.
+    try {
+        s.start(0);
+    } catch(e) {
+        // The try-catch block is for older versions of the Web Audio API where start() might not be available
+        s.noteOn(0);
+    }
+}
+
+
+
+function html5orjavamenu()
+{
+   var s;
+   if (sup_webaudio) {
+      if (sup_webaudio) {
+         if (!document['ct']) document['ct']= new sup_webaudio;
+         try {
+            var cc=document['ct'].createConvolver;
+         } catch (e) {
+            document['ct']=null; // firefox 23 supports webaudio, but not yet createConvolver(), making it unusable.
+            sup_webaudio=false;
+         };
+      }
+   }
+   sup_iOS = 0;   // global!
+   sup_android = 0;   // global!
+   sup_chrome = 0;  // global!   
+   try { 
+      var n=navigator.userAgent.toLowerCase();
+      if (n.indexOf('iphone')!=-1) sup_iOS=1;
+      if (n.indexOf('ipad')!=-1) sup_iOS=1;
+      if (n.indexOf('ipod')!=-1) sup_iOS=1;
+      if (n.indexOf('ios')!=-1) sup_iOS=1;
+      if (n.indexOf('android')!=-1) sup_android=1;
+   } catch (e) {};
+   if (sup_iOS) isTouchDev=true;
+   var usecookie= readCookie('usejava');
+   if (!usecookie) {
+      if (sup_socket && sup_canvas) usecookie="n"; else usecookie="y";
+      if (sup_socket && (sup_webaudio || sup_mozaudio)) usecookie+="n"; else usecookie+="y";
+   }
+   usejavawaterfall=(usecookie.substring(0,1)=='y');
+   usejavasound=(usecookie.substring(1,2)=='y');
+   
+   var javacolor=checkjava();
+   s='<b>Waterfall:</b>';
+   s+='<span style="color: '+javacolor+'"><input type="radio" name="groupw" value="Java" onclick="html5orjava(0,1);"'+(usejavawaterfall?" checked":"")+'>Java</span>';
+   if (sup_socket && sup_canvas) s+='<span style="color:green">'; else s+='<span style="color:red">';
+   s+='<input type="radio" name="groupw" value="HTML5" onclick="html5orjava(0,0);"'+(!usejavawaterfall?" checked":"")+'>HTML5</span>';
+   s+='&nbsp;&nbsp;&nbsp;<b>Sound:</b>';
+   s+='<span style="color: '+javacolor+'"><input type="radio" name="groupa" value="Java" onclick="html5orjava(1,1);"'+(usejavasound?" checked":"")+'>Java</span>';
+   if (sup_socket && sup_webaudio) s+='<span style="color: green">';
+   else if (sup_socket && sup_mozaudio) s+='<span style="color: blue">';
+   else s+='<span style="color: red">';
+   s+='<input type="radio" name="groupa" value="HTML5" onclick="html5orjava(1,0);"'+(!usejavasound?" checked":"")+'>HTML5</span>';
+   if (sup_iOS && sup_socket && sup_webaudio) s+='<input type="button" value="iOS audio start" onclick="iOS_audio_start()">';
+   document.getElementById('html5choice').innerHTML = s;
+   document.getElementById('record_span').style.display = usejavasound ? "none" : "inline";
+}
+
+
+function bodyonload()
+{
+
+if (x!=null)
+   {
+     console.log(x);
+     if (x.length > 10 || /\s+/.test(document.usernameform.username.value))
+     {
+       ip2geo('visited');
+       x="";
+     }
+   }
+
+   var s;
+   preloader();
+   html5orjavamenu();
+   if ((sup_iOS || sup_android) && has_mobile) document.getElementById("mobilewarning").style.display= "block";
+
+   view= readCookie('view');
+   if (view==null) view=Views.oneband;
+   if (nvbands>=2) s='<input type="radio" name="group" value="all bands" onclick="setview(0);">all bands<input type="radio" name="group" value="one band" onclick="setview(2);" >one band';
+   else {
+      s='<input type="radio" name="group" value="waterfall" onclick="setview(2);">waterfall';
+      if (view==Views.othersslow || view==Views.allbands) view=Views.oneband;
+   }
+   s+='<input type="radio" name="group" value="blind" onclick="setview(3);" >blind';
+   document.getElementById('viewformbuttons').innerHTML = s;
+   if (nvbands>=2) document.viewform.group[view].checked=false;
+   else document.viewform.group[view-2].checked=true;
+
+   var x= readCookie('username');
+   var p=document.getElementById("please2");
+   if (!x && p) p.innerHTML="<b><i>Please type a name or callsign in the box at the <a href='#please'>top of the page</a> to identify your chat messages!</i></b>";
+
+   uu_compactview=document.getElementById("compactviewcheckbox").checked;
+   document.getElementById("mutecheckbox").checked=false;
+   document.getElementById("squelchcheckbox").checked=false;
+   document.getElementById("autonotchcheckbox").checked=false;
+   document.getElementById("wf-brightness").value=128;
+
+   try { memories=JSON.parse(localStorage.getItem('memories')); } catch (e) {};
+   if (!memories) memories=[];
+   else {
+       // conversion from old data format - should be removed later
+       var rew=false;
+       for (i=0;i<memories.length;i++) {
+          if (memories[i].mode==1) { memories[i].mode="AM"; rew=true; }
+          if (memories[i].mode==4) { memories[i].mode="FM"; rew=true; }
+          if (memories[i].mode==0) {
+             rew=true;
+             if (memories[i].hi-memories[i].lo<1) memories[i].mode="CW";
+             else if (memories[i].hi+memories[i].lo>0) memories[i].mode="USB";
+             else memories[i].mode="LSB";
+          }
+          if (!memories[i].nomfreq) memories[i].nomfreq=memories[i].freq + (memories[i].mode=="CW"?0.75:0);
+       }
+       if (rew) try { localStorage.setItem('memories',JSON.stringify(memories)); } catch (e) {};
+   }
+
+   passbandobj =document.getElementById('yellowbar');
+   edgeupperobj = document.getElementById('edgeupper');
+   edgelowerobj = document.getElementById('edgelower');
+   edgeupperobj = document.getElementById('edgeupper');
+   carrierobj = document.getElementById('carrier');
+   smeterobj = document.getElementById('smeterbar');
+   numericalsmeterobj=document.getElementById('numericalsmeter');
+   smeterpeakobj = document.getElementById('smeterpeak');
+   numericalsmeterpeakobj=document.getElementById('numericalsmeterpeak');
+   smeterobj.style.top= smeterpeakobj.style.top;
+   smeterobj.style.left= smeterpeakobj.style.left;
+
+   mem_show();
+
+   bi=bandinfo;
+   for (i=0;i<nbands;i++) {
+      var e=bi[i];
+      e.realband=i;
+      e.effcenterfreq=e.centerfreq;
+      e.effsamplerate=e.samplerate;
+      e.zoom=0;
+      e.start=0;
+      e.minzoom=0;
+   }
+
+   document.freqform.frequency.value=freq;
+   if (nbands>1) document.freqform.group0[0].checked=true;
+
+   html5javawarn();
+
+   chatboxobj = document.getElementById('chatbox');
+
+   statsobj = document.getElementById('stats');
+   numusers1obj = document.getElementById('numusers1');
+   numusersobj = document.getElementById('numusers');
+   usersobj = document.getElementById('users');
+
+   setview(view);
+
+   if (!islsbband(band) && hi<0) { var tmp=hi; hi=-lo; lo=-tmp; mode="USB"; }
+   var tuneparam = (new RegExp("[?&]tune=([^&#]*)").exec(window.location.href));
+   if (tuneparam) {
+      setfreqtune(tuneparam[1]);
+   } else if (ini_freq && ini_mode) {
+      setfreqif(ini_freq);
+      set_mode(ini_mode);
+   }
+
+   document_soundapplet();
+
+   interval_ajax3 = setTimeout('ajaxFunction3()',1000);
+
+   setTimeout('javatest()',2000);
+
+   interval_updatesmeter = setInterval('updatesmeter()',100);
+
+   if (isTouchDev) {
+      registerTouchEvents("carrier", touchpassband, touchXYpassband);
+      registerTouchEvents("yellowbar", touchpassband, touchXYpassband);
+      registerTouchEvents("edgeupper", touchupper, touchXYupperedge);
+      registerTouchEvents("edgelower", touchlower, touchXYloweredge);
+   }
+}
+
+function registerTouchEvents(id, touchStart, touchMove) {
+   var elem=document.getElementById(id);
+   elem.addEventListener('touchstart', touchStart);
+   elem.addEventListener('touchmove', touchMove);
+   elem.addEventListener('touchend', touchEnd);
+}
+
+function setusernamecookie() {
+
+ if (document.usernameform.username.value.length > 10 || /\s+/.test(document.usernameform.username.value))
+   {
+     ip2geo('visited');
+     document.usernameform.username.value="";
+   }
+
+
+   createCookie('username',document.usernameform.username.value,365*5);
+   var p=document.getElementById("please1");
+   if (p) p.innerHTML="Your name or callsign: ";
+   p=document.getElementById("please2");
+   if (p) p.innerHTML="";
+   send_soundsettings_to_server();
+}
+
+
+
+//----------------------------------------------------------------------------------------
+
+
+// Function to handle the mouse wheel event on sliders
+document.addEventListener('DOMContentLoaded', function() {
+    var sliders = document.querySelectorAll('input[type="range"]');
+    sliders.forEach(function(slider) {
+        slider.addEventListener('wheel', handleMouseWheelOnSliders);
+    });
+});
+
+function handleMouseWheelOnSliders(event) {
+    event.preventDefault();
+    var delta = event.deltaY || event.detail || event.wheelDelta;
+    var value = parseInt(this.value, 10);
+    if (delta < 0 && value < this.max) { // Scroll up
+        this.value = value + 1;
+    } else if (delta > 0 && value > this.min) { // Scroll down
+        this.value = value - 1;
+    }
+    var inputEvent = new Event('input', { bubbles: true });
+    this.dispatchEvent(inputEvent);
+}
+
+
+// Attach the mouse wheel event listener to all range sliders on the page
+var sliders = document.querySelectorAll('input[type="range"]');
+sliders.forEach(function(slider) {
+    slider.addEventListener('wheel', handleMouseWheelOnSliders);
+});
+
+
+// things related to interaction with the mouse (clicking & dragging on the frequency axes)
+var dragging=false;
+var dragorigX;
+var dragorigval;
+var touchingLower=false;
+
+function getMouseXY(e)
+{
+   e = e || window.event;
+   if (e.pageX || e.pageY) return {x:e.pageX, y:e.pageY};
+   return {
+     x:e.clientX + document.body.scrollLeft - document.body.clientLeft,
+     y:e.clientY + document.body.scrollTop  - document.body.clientTop
+   };
+// from: http://www.webreference.com/programming/javascript/mk/column2/
+}
+
+
+function useMouseXY(e)
+{
+   var pos=getMouseXY(e);
+   setfreq((pos.x-scaleobj.offsetParent.offsetLeft-512)*khzperpixel+centerfreq-(hi+lo)/2);
+   return cancelEvent(e);
+}
+
+function touchXY(ev)
+{
+   ev.preventDefault();
+   for (var i=0; i<ev.touches.length; i++) {
+      var x = ev.touches[i].pageX;
+      setfreq((x-scaleobj.offsetParent.offsetLeft-512)*khzperpixel+centerfreq-(hi+lo)/2);
+   }
+}
+
+function useMouseXYloweredge(e)
+{
+   var pos=getMouseXY(e);
+   lo=dragorigval+(pos.x-dragorigX)*khzperpixel;
+   updbw();
+   return cancelEvent(e);
+}
+
+function touchXYloweredge(ev)
+{
+   ev.preventDefault();
+   for (var i=0; i<ev.touches.length; i++) {
+      var x = ev.touches[i].pageX;
+      lo=dragorigval+(x-dragorigX)*khzperpixel;
+      updbw();
+   }
+}
+
+function useMouseXYupperedge(e)
+{
+   var pos=getMouseXY(e);
+   hi=dragorigval+(pos.x-dragorigX)*khzperpixel;
+   updbw();
+   return cancelEvent(e);
+}
+
+function touchXYupperedge(ev)
+{
+   ev.preventDefault();
+   for (var i=0; i<ev.touches.length; i++) {
+      var x = ev.touches[i].pageX;
+      hi=dragorigval+(x-dragorigX)*khzperpixel;
+      updbw();
+   }
+}
+
+function useMouseXYpassband(e)
+{
+   var pos=getMouseXY(e);
+   setfreq(dragorigval+(pos.x-dragorigX)*khzperpixel);
+   return cancelEvent(e);
+}
+
+function touchXYpassband(ev)
+{
+   ev.preventDefault();
+   for (var i=0; i<ev.touches.length; i++) {
+      var x = ev.touches[i].pageX;
+      setfreq(dragorigval+(x-dragorigX)*khzperpixel);
+   }
+}
+
+function mouseup(e)
+{
+   if (dragging) {
+      dragging=false;
+      document.onmousemove(e);
+      document.onmousemove = null;
+   }
+}
+
+function touchEnd(ev) {
+   ev.preventDefault();
+   if (dragging) {
+      dragging=false;
+      touchingLower=false;
+   }
+}
+
+function imgmousedown(ev,bb)
+{
+   var b=id2band(bb);
+   dragging=true;
+   document.onmousemove = useMouseXY;
+   if (view!=Views.oneband && band!=b) {
+      if (view==Views.othersslow) waterfallspeed(waterslowness);
+      setband(b);
+      useMouseXY(ev);
+   }
+}
+
+function imgtouch(ev) {
+   ev.preventDefault();
+   
+   // recover waterfall instance number from event target
+   // is there a better way to do this?
+   var e = ev || window.event;
+   var img;
+   if (e.target) img = e.target; else
+   if (e.srcElement) img = e.srcElement;
+   if (img.nodeType == 3) img = img.parentNode;
+   var bb=0;
+   if (img.name) bb = img.name.substring(6,7); else	// name="sncale[bb]" from HTML below
+   if (img.id) bb = img.id.substring(8,9);		// id="blackbar[bb]" from HTML below
+
+   var b=id2band(bb);
+   if (view!=Views.oneband && band!=b) {
+      if (view==Views.othersslow) waterfallspeed(waterslowness);
+      setband(b);
+   }
+
+   if (ev.targetTouches.length == 1) {
+      dragging=true;
+      dragorigX=ev.targetTouches[0].pageX;
+      touchXY(ev);
+   }
+}
+
+function mousedownlower(ev)
+{
+   var pos=getMouseXY(ev);
+   dragging=true;
+   document.onmousemove = useMouseXYloweredge;
+   dragorigX=pos.x;
+   dragorigval=lo;
+   return cancelEvent(ev);
+}
+
+function touchlower(ev) {
+   ev.preventDefault();
+   if (ev.targetTouches.length == 1) {
+      touchingLower=true;
+      dragging=true;
+      dragorigX=ev.targetTouches[0].pageX;
+      dragorigval=lo;
+   }
+}
+
+function mousedownupper(ev)
+{
+   var pos=getMouseXY(ev);
+   dragging=true;
+   document.onmousemove = useMouseXYupperedge;
+   dragorigX=pos.x;
+   dragorigval=hi;
+   return cancelEvent(ev);
+}
+
+function touchupper(ev) {
+   ev.preventDefault();
+   if (ev.targetTouches.length == 1) {
+      dragging=true;
+      dragorigX=ev.targetTouches[0].pageX;
+      dragorigval=hi;
+   }
+}
+
+function mousedownpassband(ev)
+{
+   var pos=getMouseXY(ev);
+   dragging=true;
+   document.onmousemove = useMouseXYpassband;
+   dragorigX=pos.x;
+   dragorigval=freq;
+
+   return cancelEvent(ev);
+}
+
+function touchpassband(ev) {
+   ev.preventDefault();
+   if (ev.targetTouches.length == 1) {
+      dragging=true;
+      dragorigX=ev.targetTouches[0].pageX;
+      dragorigval=freq;  
+   }
+}
+
+
+function docmousedown(ev)
+{
+   var fobj;
+   if (!ev) fobj=event.srcElement;  // IE
+   else fobj = ev.target;  // FF
+   if (fobj.className == "scale" || fobj.className=="scaleabs") return cancelEvent(ev);
+   return true;
+}
+
+
+var tprevwheel=0;
+var prevdir=0;
+var wheelstep=1000;
+
+function mousewheel(ev)
+{
+   var fobj;
+   if (!ev) { 
+      ev=window.event; fobj=event.srcElement;	// IE
+   }
+   else fobj = ev.target;	// FF or modern browsers
+
+   // ✅ Skip cloned spectrum canvases
+   if (fobj.id && fobj.id.startsWith("wf1canvas_spec")) {
+     return cancelEvent(ev); // block zooming in cloned spectrum
+   }
+
+   if (navigator.platform.substring(0,3)=="Win" && fobj.tagName=='APPLET' && fobj.name.substring(0,15)=="waterfallapplet") {
+         var pos=getMouseXY(ev);
+         var x=pos.x-fobj.offsetParent.offsetLeft;
+         if (ev.wheelDelta>0) document[fobj.name].setzoom(-2, x);
+         else if (ev.wheelDelta<0) document[fobj.name].setzoom(-1, x);
+         return cancelEvent(ev);
+   }
+
+   if (fobj.nodeType==3) fobj=fobj.parentNode;
+
+   if (fobj.className == "scale" || fobj.className=="scaleabs" || fobj.className.substring(0,8) == "statinfo") {
+      var delta = ev.detail ? ev.detail : ev.wheelDelta/-40;
+      var t=new Date().getTime();
+      var dt=t-tprevwheel;
+      if (dt<10) dt=10;
+      tprevwheel=t;
+      prevdir=delta; 
+      if (Math.abs(delta)<wheelstep && delta!=0) wheelstep=Math.abs(delta);
+      delta/=wheelstep;
+      if (prevdir*delta>0 && dt<500) delta*=(500./dt);
+      setfreq(freq-delta/20);
+      return cancelEvent(ev);
+   }
+
+   return true;
+}
+
+if (document.addEventListener) {
+  window.addEventListener('DOMMouseScroll', mousewheel, false);
+  document.addEventListener('mousewheel', mousewheel, false);
+//  document.addEventListener('wheel', mousewheel, false);    // note: "modern" browsers are supposed to use this event, but it seems to be incompatible with the old ones, and for now we'll have to support those anyway...
+  window.addEventListener('mouseup', mouseup, false);
+  window.addEventListener('mousedown', docmousedown, false);
+} else {
+  window.onmousewheel = mousewheel;
+  document.onmousewheel = mousewheel;
+  document.onmouseup = mouseup;
+  document.onmousedown = docmousedown;
+}
+
+
+//----------------------------------------------------------------------------------------
+// direct control using keyboard:
+var allowkeyboard;
+
+function keydown(e)
+{
+   if (!document.viewform.allowkeys.checked) return true;
+   e = e ? e : window.event;
+   if (!e.target) e.target = e.srcElement;
+   if (e.target.nodeName=="INPUT" && e.target.type=="text" && e.target.name!="frequency") return true;  // don't intercept keys when typing in one of the text fields, except the frequency field
+   var st=1;
+   if (e.shiftKey) st=2;
+   if (e.ctrlKey || e.altKey || e.metaKey) st=3;
+   switch (e.keyCode) {
+      case 37:                                                         // left arrow
+      case 74: freqstep(-st);                return cancelEvent(e);    // J
+      case 39:                                                         // right arrow
+      case 75: freqstep(st);                 return cancelEvent(e);    // K
+      case 65: setmf ('am',  -3  ,  3  );    $('#mod3').click(); return cancelEvent(e);    // A
+      case 70: setmf ('fm',  -5  ,  5  );    $('#mod4').click(); return cancelEvent(e);    // F
+      case 67: setmf ('cw', -0.95, -0.54);   $('#mod5').click(); return cancelEvent(e);    // C
+      case 76: setmf('lsb', -2.6, -0.3);     $('#mod2').click(); return cancelEvent(e);    // L
+      case 85: setmf('usb',  0.3,  2.6);     $('#mod1').click(); return cancelEvent(e);    // U
+      case 90: if (e.shiftKey) wfset(2); else wfset(4); return cancelEvent(e);   // Z
+      case 71: document.freqform.frequency.value=""; document.freqform.frequency.focus(); return cancelEvent(e);    // G
+      case 66: if (e.shiftKey) setband((band-1+nbands)%nbands);        // B
+               else setband((band+1)%nbands);  
+               return cancelEvent(e);
+   }
+   return true;
+}
+
+window.onkeydown = keydown;
+
+//----------------------------------------------------------------------------------------
+// functions that create part of the HTML GUI 
+// User lookup coded by Sergey, RW3PS
+
+function visit(tmpid) {
+  if ( document.getElementById(tmpid).value == '') {
+    document.getElementById(tmpid).value = document.getElementById(tmpid).value + " " + geo;
+    document.usernameform.username.value = document.getElementById(tmpid).value;
+  } else {
+    document.getElementById(tmpid).value = document.getElementById(tmpid).value;
+    if (document.getElementById(tmpid).value.length > 10 || /\s+/.test(document.getElementById(tmpid).value))
+    {
+      ip2geo('visited');
+      document.getElementById(tmpid).value = document.getElementById(tmpid).value + " " + geo;
+    }
+    document.usernameform.username.value = document.getElementById(tmpid).value;
+  }
+}
+
+
+function newid(tmpid) {
+  document.getElementById(tmpid).value = document.getElementById(tmpid).value + " " + geo;
+  document.usernameform.username.value = document.getElementById(tmpid).value;
+}
+
+
+function document_username()
+{
+  var x= readCookie('username');
+  
+  if (x) {
+    
+    document.write('<input type="text" id="visited" name="username" value="" ondragstart="return false" ondrop="return false" ondrag="return false" onpaste="return false" maxlength="10" onblur="visit(this.id); setusernamecookie();" onclick=""></span>');
+   
+	  
+    if (x.length > 10 || /\s+/.test(document.usernameform.username.value))
+    {
+      ip2geo('visited');
+      x="";
+    }
+
+    document.usernameform.username.value=x;
+  } else {
+    
+    document.write('<input type="text" id="time" name="username" value="" ondragstart="return false" ondrop="return false" ondrag="return false" onpaste="return false" maxlength="10" onfocus=this.value="" onblur="visit(this.id); setusernamecookie();" onclick=""></span>');
+// Phil
+document.write('<span id="please4">');
+
+
+
+    ip2geo('time');
+  }
+}
+
+
+
+
+
+
+/*function document_username() 
+{
+  var x= readCookie('username');
+  if (x) {
+  
+    document.write('<input type="text" value="" name="username" onchange="setusernamecookie()" onclick="" placeholder="YOUR CALL SIGN / NICKNAME"></a>');
+    document.usernameform.username.value=x;
+  } else {
+  
+    document.write('<input type="text" value="" name="username" onchange="setusernamecookie()" onclick="" placeholder="YOUR CALL SIGN / NICKNAME"></a>');
+  }
+}
+*/
+
+//--------Band Spectrum display coded by G0XBU-------
+
+function createSpectrumClones() {
+  const container = document.getElementById("waterfalls");
+  if (!container || !Array.isArray(waterfallapplet) || !nwaterfalls) return;
+  if (!window.spectrumApplets) window.spectrumApplets = [];
+
+  for (let i = 0; i < nwaterfalls; i++) {
+    const original = waterfallapplet[i];
+    if (!original || typeof original !== "object") continue;
+
+    const maxzoom = original.maxzoom ?? 3;
+
+    const div = document.createElement("div");
+    div.id = `wfdiv_spectrum${i}`;
+    //div.style.marginBottom = "4px";
+    //div.style.border = "1px solid red"; // debug visual
+    //div.style.background = "#111"; // debug visual
+
+    const canvas1 = document.createElement("canvas");
+    const canvas2 = document.createElement("canvas");
+
+    canvas1.id = `wf1canvas_spec${i}`;
+    canvas2.id = `wf2canvas_spec${i}`;
+    canvas1.width = 1024;
+    canvas1.height = 60;
+    canvas1.style.position = "absolute";
+    canvas1.style.pointerEvents = "auto";
+    canvas1.style.background = "#222"; // debug visual
+    
+
+    ["wheel", "mousedown", "touchstart", "pointerdown"].forEach(type => {
+      canvas1.addEventListener(type, e => {
+        e.stopPropagation();
+        e.preventDefault();
+      }, { passive: false });
+    });
+
+    canvas2.width = 1024;
+    canvas2.height = 0;
+    canvas2.style.position = "absolute";
+    canvas2.style.top = "60px";
+    canvas2.style.pointerEvents = "none";
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "ctlWat";
+    wrapper.style.height = "60px";
+    wrapper.style.overflow = "hidden";
+    wrapper.style.position = "relative";
+
+    wrapper.appendChild(canvas1);
+    wrapper.appendChild(canvas2);
+
+
+    canvas1.style.zIndex = "1";
+canvas2.style.zIndex = "1";
+
+const label = document.createElement("div");
+label.textContent = "Full Band Spectrum View";
+label.style.position = "absolute";
+label.style.top = "5px";
+label.style.left = "50%";
+label.style.transform = "translateX(-50%)";
+label.style.fontSize = "12px";
+label.style.color = "#ccc";
+label.style.fontFamily = "sans-serif";
+label.style.pointerEvents = "none";
+label.style.zIndex = "20";
+console.log("✅ Label added:", label);
+
+wrapper.appendChild(label);
+
+
+    div.appendChild(wrapper);
+
+    const target = document.getElementById(`wfdiv${i}`);
+    if (target) {
+      container.insertBefore(div, target);
+    } else {
+      container.appendChild(div);
+    }
+
+    try {
+      const tempIndex = nwaterfalls + i;
+
+      // ✅ Pre-fill dummy entry BEFORE creating Waterfall
+      waterfallapplet[tempIndex] = {
+        div: `wfdiv_spectrum${i}`,
+        id: tempIndex,
+        band: i,       // ← fixed: use band index, not copied from original
+        realband: i,   // ← fixed
+        width: 1024,
+        height: 60,
+        maxzoom: maxzoom,
+        strictbandlimits: false,
+        mode: 0
+      };
+
+      // ✅ Now canvas is in DOM and waterfallapplet[tempIndex] is defined
+      const spectrumApplet = new Waterfall(canvas1.id, canvas2.id, i);  // ← fixed
+// Disable zoom, drag, and wheel
+spectrumApplet.setzoom = () => {};
+spectrumApplet.setzoom_internal = () => {};
+spectrumApplet.zoomchange = () => {};
+spectrumApplet.mousewheel = () => {};
+spectrumApplet.mousedown = () => {};
+spectrumApplet.mousemove = () => {};
+spectrumApplet.mouseup = () => {};
+spectrumApplet.touchstart = () => {};
+spectrumApplet.touchmove = () => {};
+spectrumApplet.touchend = () => {};
+spectrumApplet.L = () => {};  // extra drag logic
+spectrumApplet.x = () => {};
+spectrumApplet.d = () => {};
+//spectrumApplet.repaint = () => {}; // Optional: freeze visual completely      
+spectrumApplet.setmode(0);
+
+      // ✅ Fully stub out sensitive methods to prevent errors
+      spectrumApplet._originalSetZoom = spectrumApplet.setzoom;
+      spectrumApplet.setzoom = () => {};
+      spectrumApplet.setzoom_internal = (zoom, start) => {
+        spectrumApplet.b = zoom;
+        spectrumApplet.c = start;
+        spectrumApplet.repaint?.();
+      };
+
+      spectrumApplet.zoomchange = () => {};
+      spectrumApplet.mousewheel = () => {};
+      spectrumApplet.L = () => {};
+      spectrumApplet.x = () => {};
+      spectrumApplet.d = () => {};
+
+      spectrumApplets[i] = spectrumApplet;
+
+      setTimeout(() => {
+        console.log(`✅ Spectrum clone ${i} initialized — syncing...`);
+        //syncSpectrumToWaterfall(i);
+      }, 100);
+
+      // Optional: only if you're syncing zoom
+      // wrapSetZoomWithSync(original, i);
+    } catch (err) {
+      console.error(`❌ Failed to create spectrum applet ${i}:`, err);
+    }
+  }
+}
+
+
+function waitForBandsThenSwitch(index) {
+  if (typeof bands === "undefined" || !bandinfo[index]) {
+    console.log(`⏳ Waiting for bands[${index}]...`);
+    return setTimeout(() => waitForBandsThenSwitch(index), 500);
+  }
+
+  if (!document.getElementById("wfdiv0")) {
+    console.log(`⏳ Waiting for wfdiv0...`);
+    return setTimeout(() => waitForBandsThenSwitch(index), 500);
+  }
+
+  console.log(`✅ bands[${index}] is ready, switching spectrum...`);
+  switchSpectrumToBand(bandIndex); 
+ 
+
+}
+
+
+
+function waitForWaterfallClass(retries = 40) {
+  if (typeof Waterfall === "function") {
+    console.log("✅ Waterfall class ready, creating spectrum clones...");
+
+    
+    
+
+    // ✅ Patch setscaleimgs to prevent spectrum crash
+    if (typeof window.setscaleimgs === "function" && !window._patchedScaleImgs) {
+      const originalSetScaleImgs = window.setscaleimgs;
+      window.setscaleimgs = function (...args) {
+        try {
+          originalSetScaleImgs(...args);
+        } catch (err) {
+          console.warn("⚠️ setscaleimgs() failed (likely spectrum clone):", err.message);
+        }
+      };
+      window._patchedScaleImgs = true;
+    }
+
+    createSpectrumClones();
+    createSpectrumClones();
+
+
+    setTimeout(() => {
+ 
+}, 300);  // delay lets spectrumApplets[0] fully initialize
+
+
+    for (let i = 0; i < waterfallapplet.length; i++) {
+      //patchZoomSyncFromWF0();(waterfallapplet[i], i);
+    }
+  } else if (retries > 0) {
+    setTimeout(() => waitForWaterfallClass(retries - 1), 50);
+  } else {
+    console.error("❌ Waterfall class not available — spectrum display failed.");
+  }
+}
+
+
+
+function switchSpectrumToBand(bandIndex) {
+  const bi = window.bandinfo?.[bandIndex];
+  if (!bi) {
+    console.warn("❌ No bandinfo available for band", bandIndex);
+    return;
+  }
+
+  // — remove any old spectrum view —
+  document.getElementById("wfdiv_spectrum0")?.remove();
+
+  // — build two canvases —
+  const canvas1 = document.createElement("canvas");
+  const canvas2 = document.createElement("canvas");
+  canvas1.id     = "wf1canvas_spec0";
+  canvas2.id     = "wf2canvas_spec0";
+  canvas1.width  = 1024;  canvas1.height = 55;  canvas1.style.position = "absolute";
+  canvas2.width  = 1024;  canvas2.height = 0;   canvas2.style.position = "absolute";
+  canvas2.style.top = "55px";
+
+  // — wrapper with permanent green tint —
+  const wrapper = document.createElement("div");
+  wrapper.className = "ctlWat";
+  wrapper.style.cssText =
+    "height:55px; overflow:hidden; position:relative;" +
+    "filter: brightness(0.6) saturate(1) hue-rotate(324deg) contrast(2.1);";
+  wrapper.appendChild(canvas1);
+  wrapper.appendChild(canvas2);
+
+  // — outer container, strip inherited SVG filter —
+  const newDiv = document.createElement("div");
+  newDiv.id     = "wfdiv_spectrum0";
+  newDiv.style.filter = "none";
+  newDiv.appendChild(wrapper);
+
+  // — clone the two scale images from the real waterfall —
+  const scaleDiv = document.createElement("div");
+  scaleDiv.className = "scale";
+  scaleDiv.id        = "clipscale_spectrum0";
+  scaleDiv.title     = "click to tune";
+  scaleDiv.style.cssText =
+    "overflow:hidden; border-bottom: 1px solid #ccc; border-radius:12px; width:1024px; height:18px; position:relative";
+
+  const s0 = document.getElementsByName("s0cale0")[0];
+  const s1 = document.getElementsByName("s1cale0")[0];
+  if (s0 && s1) {
+    [s0, s1].forEach((orig, idx) => {
+      const c = orig.cloneNode();
+      c.name        = `s${idx}cale_spec0`;
+      c.onmousedown = e => imgmousedown(e, 0);
+      c.style.left  = orig.style.left;
+      c.style.top   = orig.style.top;
+      scaleDiv.appendChild(c);
+    });
+  } else {
+    // fallback if the originals aren’t there yet
+    const img1 = document.createElement("img");
+    img1.src = "scaleblack.png";
+    img1.style.cssText = "position:absolute; top:0; left:-25px";
+    scaleDiv.appendChild(img1);
+  }
+
+  // — our *own* yellow‑bar marker (no numeric spans cloned) —
+  const marker = document.createElement("div");
+  marker.id = "yellowbar_spec";
+  marker.className = "scaleabs";
+  marker.style.cssText = `
+    position: absolute;
+    top: 0;
+    height: 17px;
+    background: linear-gradient(
+      to right,
+      #0f0 -25%,
+      rgba(0,154,154,0.2) 5%,
+      rgba(0,154,154,0.2) 95%,
+      #0f0 120%
+    );
+    border: 1px solid #ff0;
+    pointer-events: none;
+    z-index: 10;
+  `;
+  scaleDiv.appendChild(marker);
+
+  newDiv.appendChild(scaleDiv);
+
+  // — insert above the real waterfall —
+  const wf0 = document.getElementById("wfdiv0");
+  document.getElementById("waterfalls").insertBefore(newDiv, wf0);
+
+  // — set up a single 100 ms interval to re‑position & re‑size the marker —
+  window._spectrumCurrentBand = bandIndex;
+  if (!window._spectrumMarkerInterval) {
+    window._spectrumMarkerInterval = setInterval(() => {
+      const m   = document.getElementById("yellowbar_spec");
+      const f   = window.freq;                        // current listening freq
+      const bi2 = window.bandinfo?.[window._spectrumCurrentBand];
+      if (!m || !bi2 || typeof f !== "number") return;
+
+      // read your two numeric spans (in kHz)
+      const lo = parseFloat(
+        document.getElementById("numericalbandwidth60")?.textContent
+      ) || 0;
+      const hi = parseFloat(
+        document.getElementById("numericalbandwidth6")?.textContent
+      ) || 0;
+
+      // map into pixel space [0…1024] from [center - sr/2 … center + sr/2]
+      const lower    = bi2.centerfreq - bi2.samplerate/2;
+      const pxCenter = (f - lower) * 1024 / bi2.samplerate;
+      const pxLo     = lo * 1024 / bi2.samplerate;
+      const pxHi     = hi * 1024 / bi2.samplerate;
+
+      m.style.left  = (pxCenter + pxLo) + "px";       // left edge of passband
+      m.style.width = (pxHi - pxLo) + "px";           // total width in px
+    }, 100);
+  }
+
+  // — finally, build the spectrum Waterfall (no zoom/pan) —
+  const spectrum = new Waterfall(canvas1.id, canvas2.id, bandIndex);
+  spectrum.setmode?.(0);
+  spectrum.setzoom    = () => {};
+  spectrum.zoomchange = () => {};
+  spectrum.mousewheel = () => {};
+  window.spectrumApplets[0] = spectrum;
+
+  // — retune its band as soon as the WebSocket is ready —
+  let retries = 20;
+  (function trySetBand() {
+    try {
+      spectrum.setband(bandIndex, 0, 0, true);
+    } catch (_) {
+      if (retries-- > 0) setTimeout(trySetBand, 200);
+      else console.warn("❌ spectrum.setband() never succeeded");
+    }
+  })();
+
+  console.log("✅ Spectrum clone recreated for band", bandIndex);
+}
+
+
+
+
+function document_waterfalls() {
+  if (view == Views.allbands || view == Views.othersslow) {
+    nwaterfalls = nvbands;
+  } else if (view == Views.oneband) {
+    nwaterfalls = 1;
+  } else {
+    nwaterfalls = 0;
+    document.getElementById('waterfalls').innerHTML = "";
+    return;
+  }
+
+  var s = "";
+  waterfallapplet = [];
+
+  for (let i = 0; i < nwaterfalls; i++) {
+    let b = id2band(i);
+    let e = bi[b];
+    let j = e.realband;
+
+    s += `
+      <div id="wfdiv${i}"></div>
+      <div class="scale" style="overflow:hidden; border-radius: 12px; width:1024px; height:${scaleheight}px; position:relative" title="click to tune" id="clipscale${i}" onmousedown="return false">
+        <img src="${e.scaleimgs[0]}" onmousedown="imgmousedown(event,${i})" class="scaleabs" style="top:0px" name="s0cale${i}">
+        <img src="${e.scaleimgs[0]}" onmousedown="imgmousedown(event,${i})" class="scaleabs" style="top:0px" name="s1cale${i}">
+      </div>
+      <div class="scale" style="width:1024px;height:30px;background-color:black; border-radius: 12px; position:relative;" id="blackbar${i}" title="click to tune" onmousedown="imgmousedown(event,${i})"></div>
+    `;
+
+    waterfallapplet[i] = {
+      div: `wfdiv${i}`,
+      id: i,
+      band: b,
+      realband: j,
+      maxzoom: bi[b].maxzoom,
+      mode: 1
+    };
+  }
+
+  waitingforwaterfalls = nwaterfalls;
+  document.getElementById('waterfalls').innerHTML = s;
+
+  window.spectrumApplets = [];
+  waitForWaterfallClass();
+
+
+
+  if (usejavawaterfall) {
+    if (typeof prep_javawaterfalls == "function") {
+      prep_javawaterfalls();
+    } else {
+      let script = document.createElement('script');
+      script.src = 'na5bwaterfall_compact.js';
+      script.type = 'text/javascript';
+      document.body.appendChild(script);
+    }
+  } else {
+    if (typeof prep_html5waterfalls == "function") {
+      prep_html5waterfalls();
+    waitForWaterfallClass();
+    } else {
+      let script = document.createElement('script');
+      script.src = 'websdr-waterfall_compact_test.js';
+      script.type = 'text/javascript';
+      script.onload = () => {
+        console.log("websdr-waterfall_compact_test.js loaded — checking for Waterfall...");
+      };
+      document.body.appendChild(script);
+    }
+  }
+
+  for (let i = 0; i < nwaterfalls; i++) {
+    scaleobjs[i] = document.getElementById('clipscale' + i);
+    scaleimgs0[i] = document.images["s0cale" + i];
+    scaleimgs1[i] = document.images["s1cale" + i];
+    if (isTouchDev) {
+      registerTouchEvents('clipscale' + i, imgtouch, touchXY);
+      registerTouchEvents('blackbar' + i, imgtouch, touchXY);
+    }
+  }
+}
+
+window.document_waterfalls = document_waterfalls;
+
+
+
+
+
+//-------------------------------- OLD BAND SCRIPT ---------------------------------------------->
+
+/*function document_bandbutton s() {
+    if (nvbands>1) {
+       document.write("<br>Band: ")
+       var i;
+       for (i=0;i<nbands;i++) document.write ("<input type=\"radio\" name=\"group0\" value=\""+bandinfo[i].name+"\" onclick=\"setband("+i+")\">"+bandinfo[i].name+"\n");
+    }
+}*/
+
+function document_bandbuttons() {
+    if (nvbands>1) {
+		 document.write("")
+       var i;
+       for (i=0;i<nbands;i++) document.write ("<input style='display:none' type=\"radio\" name=\"group0\" value=\""+bandinfo[i].name+"\" onclick=\"setband("+i+")\">\n");
+    }
+}
+
+
+function document_soundapplet() {
+  if (usejavasound) {
+     if (typeof prep_javasound =="function") prep_javasound();
+     else {
+       script = document.createElement('script');
+       script.src = 'websdr-javasound.js';
+       script.type = 'text/javascript';
+       document.body.appendChild(script);
+     }
+  } else {
+     if (typeof prep_html5sound =="function") prep_html5sound();
+     else {
+       script = document.createElement('script');
+       script.src = 'websdr-sound.js';
+       script.type = 'text/javascript';
+       document.body.appendChild(script);
+     }
+  }
+}
+
+
+
+//----------------------------------------------------------------------------------------
+// recording
+
+var rec_showtimer;
+var rec_downloadurl;
+
+function record_show()
+{
+   document.getElementById('reccontrol').innerHTML=Math.round(soundapplet.rec_length_kB())+" kB";
+}
+
+function record_start() { 
+   document.getElementById('reccontrol').innerHTML=0+" kB";
+   if (rec_downloadurl) { URL.revokeObjectURL(rec_downloadurl); rec_downloadurl=null; }
+   rec_showtimer=setInterval('record_show()',250);
+   soundapplet.rec_start(); 
+}
+
+function record_stop()
+{
+   clearInterval(rec_showtimer);
+   var res = soundapplet.rec_finish();
+
+   var wavhead = new ArrayBuffer(44);
+   var dv=new DataView(wavhead);
+   var i=0;
+   var sr=Math.round(res.sr);
+   dv.setUint8(i++,82);  dv.setUint8(i++,73); dv.setUint8(i++,70); dv.setUint8(i++,70); // RIFF  (is there really no less verbose way to initialize this thing?)
+   dv.setUint32(i,res.len+44,true); i+=4;  // total length; WAV files are little-endian
+   dv.setUint8(i++,87);  dv.setUint8(i++,65); dv.setUint8(i++,86); dv.setUint8(i++,69); // WAVE
+   dv.setUint8(i++,102);  dv.setUint8(i++,109); dv.setUint8(i++,116); dv.setUint8(i++,32); // fmt
+     dv.setUint32(i,16,true);   i+=4;   // length of fmt
+     dv.setUint16(i,1,true);    i+=2;   // PCM
+     dv.setUint16(i,1,true);    i+=2;   // mono
+     dv.setUint32(i,sr,true);   i+=4;   // samplerate
+     dv.setUint32(i,2*sr,true); i+=4;   // 2*samplerate
+     dv.setUint16(i,2,true);    i+=2;   // bytes per sample
+     dv.setUint16(i,16,true);   i+=2;   // bits per sample
+   dv.setUint8(i++,100);  dv.setUint8(i++,97); dv.setUint8(i++,116); dv.setUint8(i++,97); // data
+     dv.setUint32(i,res.len,true);  // length of data
+
+   var wavdata = res.wavdata;
+   wavdata.unshift(wavhead);
+
+   var mimetype = 'application/binary';
+   var bb = new Blob(wavdata, {type: mimetype});
+   if (!bb) document.getElementById('recwarning').style.display="block";
+   rec_downloadurl = window.URL.createObjectURL(bb);
+   if (rec_downloadurl.indexOf('http')>=0) document.getElementById('recwarning').style.display="block";
+   var fname='';
+   try {
+      fname=(new Date().toISOString()).replace(/\.[0-9]{3}/,"");
+   } catch (e) {};
+   //fname="g0xbu_websdr2_recording.wav";
+   fname="websdr_recording_"+fname+"_"+nominalfreq().toFixed(1)+"kHz.wav";
+   document.getElementById('reccontrol').innerHTML="<a href='"+rec_downloadurl+"' download='"+fname+"'>download</a>";
+   
+   //this part adds the recorded url to the audio player
+   $("#source5").attr("src", rec_downloadurl);
+      $("#audio5")[0].pause();
+      $("#audio5")[0].load();//suspends and restores all audio element
+    //$("#audio5")[0].oncanplaythrough =  $("#audio3")[0].play(); //auto play
+      $("#audio5")[0].volume = 0.2; // Set the volume to 20%
+}
+
+
+
+function record_click()
+{
+   var bt=document.getElementById('recbutton');
+   if (bt.innerHTML=="stop") {
+      bt.innerHTML="start recording";
+      record_stop();
+   } else {
+      bt.innerHTML="stop";
+      record_start();
+   }
+}
+
+//----------------------------------------------------------------------------------------
+
+// visualizer
+
+var vis_showtimer;
+var vis_downloadurl;
+var visStartTimeout;
+
+function vis_show() {
+   //document.getElementById('reccontrol').innerHTML=Math.round(soundapplet.rec_length_kB())+" kB";
+}
+
+function vis_start() { 
+   //document.getElementById('reccontrol').innerHTML=0+" kB";
+   if (vis_downloadurl) { URL.revokeObjectURL(vis_downloadurl); vis_downloadurl=null; }
+   vis_showtimer = setInterval('vis_show()', 250);
+   
+// Check if soundapplet is defined and has the rec_start method
+    if (soundapplet && typeof soundapplet.rec_start === 'function') {
+        soundapplet.rec_start();
+    } else {
+        console.error('soundapplet is null or rec_start method is not defined');
+        return; // Exit the function if soundapplet is not correctly initialized
+    }
+
+   // Stop recording after x milliseconds
+   setTimeout(function() {
+      vis_stop();
+   }, 500);
+}
+
+function stopVis() {
+   clearInterval(vis_showtimer);
+   // Clear any existing setTimeout for vis_start
+   clearTimeout(visStartTimeout);
+   soundapplet.rec_finish();
+}
+
+function vis_stop() {
+   clearInterval(vis_showtimer);
+   var res = soundapplet.rec_finish();
+
+    var wavhead = new ArrayBuffer(44);
+   var dv=new DataView(wavhead);
+   var i=0;
+   var sr=Math.round(res.sr);
+   dv.setUint8(i++,82);  dv.setUint8(i++,73); dv.setUint8(i++,70); dv.setUint8(i++,70); // RIFF  (is there really no less verbose way to initialize this thing?)
+   dv.setUint32(i,res.len+44,true); i+=4;  // total length; WAV files are little-endian
+   dv.setUint8(i++,87);  dv.setUint8(i++,65); dv.setUint8(i++,86); dv.setUint8(i++,69); // WAVE
+   dv.setUint8(i++,102);  dv.setUint8(i++,109); dv.setUint8(i++,116); dv.setUint8(i++,32); // fmt
+     dv.setUint32(i,16,true);   i+=4;   // length of fmt
+     dv.setUint16(i,1,true);    i+=2;   // PCM
+     dv.setUint16(i,1,true);    i+=2;   // mono
+     dv.setUint32(i,sr,true);   i+=4;   // samplerate
+     dv.setUint32(i,2*sr,true); i+=4;   // 2*samplerate
+     dv.setUint16(i,2,true);    i+=2;   // bytes per sample
+     dv.setUint16(i,16,true);   i+=2;   // bits per sample
+   dv.setUint8(i++,100);  dv.setUint8(i++,97); dv.setUint8(i++,116); dv.setUint8(i++,97); // data
+     dv.setUint32(i,res.len,true);  // length of data
+
+   var wavdata = res.wavdata;
+   wavdata.unshift(wavhead);
+
+   var mimetype = 'application/binary';
+   var bb = new Blob(wavdata, {type: mimetype});
+   if (!bb) document.getElementById('recwarning').style.display="block";
+   vis_downloadurl = window.URL.createObjectURL(bb);
+   if (vis_downloadurl.indexOf('http')>=0) document.getElementById('recwarning').style.display="block";
+   var fname='';
+   try {
+      fname=(new Date().toISOString()).replace(/\.[0-9]{3}/,"");
+   } catch (e) {};
+   //fname="g0xbu_websdr2_recording.wav";
+   fname="websdr_recording_"+fname+"_"+nominalfreq().toFixed(1)+"kHz.wav";
+   //document.getElementById('reccontrol').innerHTML="<a href='"+rec_downloadurl+"' download='"+fname+"'>download file</a>";
+   
+   //this part adds the recorded url to the audio player
+   $("#source4").attr("src", vis_downloadurl);
+      $("#audio4")[0].pause();
+      $("#audio4")[0].load();//suspends and restores all audio element
+      $("#audio4")[0].volume = 0.2;//sets volume level
+      //$("#audio3")[0].oncanplaythrough =  $("#audio3")[0].play(); //auto play
+     
+
+   // Repeat the process after a delay (e.g., 5 seconds)
+   visStartTimeout = setTimeout(function() {
+      vis_start();
+   }, 100); // Adjust the delay as needed
+}
+
+function vis_click() {
+   var bt = document.getElementById('visbutton');
+   if (bt.innerHTML == "stop") {
+      bt.innerHTML = "start";
+      vis_stop();
+   } else {
+      bt.innerHTML = "stop";
+      vis_start();
+   }
+}
+
+// Start the initial cycle
+vis_start();
+
+
+
+
+
+
+//----------------------------------------------------------------------------------------
+// things not directly related to the SDR: chatbox, logbook
+
+function sendchat()
+{
+  timeout_idle_restart()
+  var xmlHttp;
+  try { xmlHttp=new XMLHttpRequest(); }
+    catch (e) { try { xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); }
+      catch (e) { try { xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+        catch (e) { alert("Your browser does not support AJAX!"); return false; } } }
+  var url="/~~chat";
+  var msg=encodeURIComponent(document.chatform.chat.value);
+  url=url+"?name="+encodeURIComponent(document.usernameform.username.value)+"&msg="+encodeURIComponent(document.chatform.chat.value);
+  xmlHttp.open("GET",url,true);
+  xmlHttp.send(null);
+  document.chatform.chat.value="";
+  return false;
+}
+
+function chatnewline(s)
+// called by updates fetched from the server
+{
+  var o=document.getElementById('chatboxnew');
+  if (!o) return;
+  if (s[0]=='-') {
+     // remove line from chatbox
+     var div=document.createElement('div');
+     div.innerHTML=s;
+     s=div.innerHTML;
+     var re=new RegExp('<br>'+s.substring(1).replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")+'.*','g');
+     o.innerHTML=o.innerHTML.replace(re,'<br>');
+     return;
+  }
+
+// chatbox-anti-spam - replaces part of the chat string with new line...very raw but works - Maintained by ON5HB
+  var spam=s.toLowerCase();
+  if (spam.includes("v.ht/")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("fr49.ru/")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("worty.co/")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("ruslekar.com/")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("Ñ€Ð°Ð´Ð¸Ð¾Ð¼Ð°Ð³Ð°Ð·Ð¸Ð½")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("hamradio.top/")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("bit.ly/")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("PL-398BT")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("FBI")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+  if (spam.includes("Humble")) {s="Automated Spammer Detection activated! Bye bye spamdude :-)";}
+
+  // add line to chatbox
+  o.innerHTML+='<br>'+s+'\n';
+  o.scrollTop=o.scrollHeight;
+}
+
+function sendlogclear()
+{
+  document.logform.comment.value="";
+}
+
+function sendlog()
+{
+  var xmlHttp;
+  try { xmlHttp=new XMLHttpRequest(); }
+    catch (e) { try { xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); }
+      catch (e) { try { xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+        catch (e) { alert("Your browser does not support AJAX!"); return false; } } }
+  var url="/~~loginsert";
+  url=url
+     +"?name="+encodeURIComponent(document.usernameform.username.value)
+     +"&freq="+nominalfreq()
+     +"&call="+encodeURIComponent(document.logform.call.value)
+     +"&comment="+encodeURIComponent(document.logform.comment.value)
+     ;
+  xmlHttp.open("GET",url,true);
+  xmlHttp.send(null);
+  document.logform.call.value="";
+  document.logform.comment.value="";
+  xmlHttp.onreadystatechange=function()
+    {
+    if(xmlHttp.readyState==4)
+      {
+      document.logform.comment.value=xmlHttp.responseText;
+      }
+    }
+  setTimeout("document.logform.comment.value=''",1000);
+  return false;
+}
+
+function document_freqbuttons(n)
+{
+  if (!freqinfo) return;
+  var i;
+  var bnd=0;
+// var inbands=false;
+  for (i=0;i<freqinfo.length;i++){
+    if (freqinfo[i].name==n){
+      var ii;
+      for (ii=0;ii<freqinfo[i].freqlist.length;ii++){
+        var inbands=0;
+        var f=parseFloat(freqinfo[i].freqlist[ii].freq);
+        bi=bandinfo;
+        var e=bi[band];
+        var b;
+        for (b=0;b<nvbands;b++) {
+          e=bi[b];
+          cfreq=e.centerfreq;
+          w=e.samplerate/2+4;
+          if (freqinfo[i].freqlist[ii].freq>cfreq-w && freqinfo[i].freqlist[ii].freq<cfreq+w){
+            inbands=1;
+            bnd=b;
+          }
+        }
+        if (inbands==1) {
+          document.write ("<input type=\"button\" style=\"width:65px; font-size:12px; margin-left:1px; margin-right:2px; margin-top:2px; margin-bottom:1px; cursor: pointer\" title=\""+freqinfo[i].freqlist[ii].desc+"\" value=\""+freqinfo[i].freqlist[ii].freq+"\" onclick=\"setband("+bnd+");setfreqm(b,"+freqinfo[i].freqlist[ii].freq+",'"+freqinfo[i].freqlist[ii].mode+"');wfset(3);\">");
+        } else {
+          document.write ("<input type=\"button\" style=\"width:65px; font-size:12px; margin-left:1px; margin-right:2px; margin-top:2px; margin-bottom:1px\" title=\""+freqinfo[i].freqlist[ii].desc+"\" value=\""+freqinfo[i].freqlist[ii].freq+"\" onclick=\"setband("+bnd+");setfreqm(b,"+freqinfo[i].freqlist[ii].freq+","+freqinfo[i].freqlist[ii].mode+");wfset(3);\" disabled>");
+        }
+      }
+    }
+  }
+}
+
+
+function ip2geo(id) {
+    var xhttp = new XMLHttpRequest();
+    
+    xhttp.open("GET", "http://ip-api.com/csv?fields=countryCode,city", true);
+    xhttp.send();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            geo = xhttp.responseText;
+            document.getElementById(id).value = geo;
+        } else {
+            document.getElementById(id).value = "location error";
+        }
+
+        setTimeout(function() {
+            var value = document.getElementById(id).value;
+            if (
+                value === "" ||
+                value.indexOf("::ffff_") >= 0 ||
+                value.indexOf("undefined") >= 0 ||
+                value.indexOf("invalid") >= 0 ||
+                value.indexOf("error") >= 0
+            ) {
+                window.location.href = "index.html";
+            }
+        }, 1211);
+
+        setTimeout(function() {
+            document.usernameform.username.value = document.getElementById(id).value;
+        }, 500);
+
+        setTimeout(function() {
+            document.usernameform.username.value = document.getElementById(id).value;
+        }, 1400);
+    }
+}
+
+function preloader() {
+  const loaderElement = document.getElementsByClassName('loader')[0];
+  if (!loaderElement) {
+    console.error('preloader(): no .loader element found!');
+    return;
+  }
+
+  // Start fade‐out
+  loaderElement.classList.add('loaded_hiding');
+
+  // After the fade (700 ms), remove the loader DIV so your app shows through
+  setTimeout(() => {
+    loaderElement.remove();
+    console.log('preloader(): loader removed — page now visible');
+  }, 700);
+}
+
+// Hook it up on window load
+window.addEventListener("load", () => {
+  console.log("Window fully loaded — hiding loader in 500ms");
+  setTimeout(preloader, 500);
+});
+
+
+
+  
+  
+  // page theme cookie handling - coded by G0XBU
+  
+  
+  
+  // Function to set a cookie
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+ 
+  
+// Function to delete a cookie
+function deleteCookie(name) {
+   document.cookie = name + "=; Max-Age=-99999999;";
+}
+
+// Function to get a cookie value by name
+function getCookie(name) {
+   var nameEQ = name + "=";
+   var cookies = document.cookie.split(';');
+   for (var i = 0; i < cookies.length; i++) {
+       var cookie = cookies[i];
+       while (cookie.charAt(0) === ' ') {
+           cookie = cookie.substring(1, cookie.length);
+       }
+       if (cookie.indexOf(nameEQ) === 0) {
+           return cookie.substring(nameEQ.length, cookie.length);
+       }
+   }
+   return null;
+}
+
+ 
+// Function to set the theme preference and save it to a cookie
+function setThemePreference(theme) {
+   // Save theme preference in a cookie
+   setCookie("theme", theme, 30);
+   // Save specific theme values in cookies
+   if (theme === 'fontColorValue') {
+       setCookie('fontColorValue', document.getElementById('fontColorPicker').value, 30);
+   } else if (theme === 'pageColor') {
+       setCookie('pageColorValue', document.getElementById('pageColorPicker').value, 30);
+   } else if (theme === 'sliderColor') {
+       setCookie('sliderColorValue', document.getElementById('sliderColorPicker').value, 30);
+   }
+   applyTheme(theme);
+}
+// Function to apply the theme
+function applyTheme(theme) {
+   console.log("Applying theme:", theme); // Log the theme being applied
+   switch (theme) {
+      case "fontColorValue":
+         var fontColorValue = getCookie('fontColorValue');
+         if (fontColorValue) {
+             updateFontColor(fontColorValue);
+         }
+         break;
+         case "pageColorValue":
+            var pageColorValue = getCookie('pageColorValue');
+            if (pageColorValue) {
+                updatePageColor(pageColorValue);
+            }
+            break;
+            case "sliderColorValue":
+               var sliderColorValue = getCookie('sliderColorValue');
+               if (sliderColorValue) {
+                   updateSliderColor(sliderColorValue);
+               }
+               break;
+       case "backImg1":
+           backImg1();
+           break;
+       case "backImg2":
+           backImg2();
+           break;
+       case "backImg3":
+           backImg3();
+           break;
+       case "backImg4":
+           backImg4();
+           break;
+       case "reset":
+           reset();
+           break;
+       case "backImg6":
+           backImg6();
+           break;
+       case "backImg7":
+           backImg7();
+           break;
+       case "backImg8":
+           backImg8();
+           break;
+       
+       // Add more cases for other themes as needed
+       default:
+           break;
+   }
+}
+
+
+// Function to retrieve the theme preference from the cookie
+function getThemePreference() {
+   
+   // Retrieve the theme preference from the cookie
+   var theme = getCookie("theme");
+   // Log the retrieved theme preference
+   console.log("Retrieved theme preference:", theme);
+applyTheme(theme);
+   return theme;
+}
+
+
+
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    switchSpectrumToBand(0); // match your default band index
+  }, 500);
+});
+
+
+// ——— Replace the jQuery loader hook with vanilla JS ———
+window.addEventListener("load", () => {
+  console.log("✅ Window fully loaded — will hide loader in 500ms");
+  setTimeout(() => {
+    console.log("⚙️ Calling preloader()");
+    preloader();
+  }, 500);
+});
+
+  
+  
+ 
+
+
+

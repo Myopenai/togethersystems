@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IMPLEMENTIERUNGS-ANLEITUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>📋 IMPLEMENTIERUNGS-ANLEITUNG</h1>
+
+<h2>Schritt 1: Portal-Einstiegs-Hinweis integrieren</h2>
+
+<h3>In `index.html` einbinden:</h3>
+
+```html
+<head>
+  <link rel="stylesheet" href="./portal-entry-notice/css/style.css">
+</head>
+<body>
+  <!-- Portal-Inhalt -->
+  
+  <script src="./portal-entry-notice/js/config.js"></script>
+  <script src="./portal-entry-notice/js/entryNotice.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      PortalEntryNotice.init();
+    });
+  </script>
+</body>
+```
+
+<h3>In `manifest-portal.html` einbinden:</h3>
+
+Gleiche Integration wie oben.
+
+---
+
+<h2>Schritt 2: Backup-System erweitern</h2>
+
+<h3>In `manifest-forum.html` oder `admin.html`:</h3>
+
+```html
+<button id="ts-backup-export" class="btn">Lokale Daten sichern (.json)</button>
+<script src="./backup-restore-enhanced.js"></script>
+```
+
+---
+
+<h2>Schritt 3: Datenbank-Schema anwenden</h2>
+
+<h3>Cloudflare D1:</h3>
+
+```bash
+<h1>Schema anwenden</h1>
+wrangler d1 execute togethersystems-db --file=./d1-schema-cms.sql
+
+<h1>Mikro-Sites-Migration</h1>
+wrangler d1 execute togethersystems-db --file=./migrations/003_microsite_support.sql
+
+<h1>Standard-Block-Typen</h1>
+wrangler d1 execute togethersystems-db --file=./migrations/004_default_block_types.sql
+```
+
+---
+
+<h2>Schritt 4: API-Endpoints testen</h2>
+
+<h3>Mikro-Site erstellen:</h3>
+
+```bash
+curl -X POST https://your-domain.com/api/microsite/create \
+  -H "Content-Type: application/json" \
+  -H "X-TS-APIKEY: YOUR_KEY" \
+  -d '{"userId": "user123", "name": "Meine Website"}'
+```
+
+<h3>Public-Rendering testen:</h3>
+
+```
+https://your-domain.com/microsite/T,user123.
+```
+
+---
+
+<h2>✅ FERTIG!</h2>
+
+Nach diesen Schritten sind alle Systeme aktiv und einsatzbereit.
+
+
+---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+</body>
+</html>

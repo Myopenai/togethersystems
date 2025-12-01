@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ULTRA-SOCIAL-MEDIA-ANALYSE-UND-PLAN</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🔍 ULTRA-SOCIAL-MEDIA SYSTEM - ANALYSE & PLAN</h1>
+
+<strong>Datum:</strong> $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")  
+<strong>Status:</strong> ANALYSE & PLANUNG (KEIN CODING)
+
+---
+
+<h2>📋 INHALTSVERZEICHNIS</h2>
+
+1. <a href="#1-analyse-bestehender-features">Analyse Bestehender Features</a>
+2. <a href="#2-duplikate-identifizierung">Duplikate Identifizierung</a>
+3. <a href="#3-gap-analyse-was-fehlt">Gap-Analyse: Was fehlt?</a>
+4. <a href="#4-ultra-social-media-konzept">Ultra-Social-Media Konzept</a>
+5. <a href="#5-unternehmensnetzwerk-modul">Unternehmensnetzwerk-Modul</a>
+6. <a href="#6-chamäleon-system">Chamäleon-System (Template-Auto-Generator)</a>
+7. <a href="#7-verbesserungsvorschläge">Verbesserungsvorschläge</a>
+8. <a href="#8-implementierungs-roadmap">Implementierungs-Roadmap</a>
+
+---
+
+<h2>1. ANALYSE BESTEHENDER FEATURES</h2>
+
+<h3>✅ Bereits implementiert:</h3>
+
+<h4>1.1 <strong>Manifest-Verifikation System</strong></h4>
+- <strong>Datei:</strong> `manifest-forum.html`, `manifest-portal.html`
+- <strong>Funktion:</strong> 
+  - Offline-Manifest mit LocalStorage
+  - HMAC-basierte Token-Verifikation
+  - Automatische Portal-Öffnung mit verifiziertem Token
+- <strong>Status:</strong> ✅ VOLL FUNKTIONAL
+
+<h4>1.2 <strong>Presence & Matching System</strong></h4>
+- <strong>Dateien:</strong> `functions/api/presence/*.js`, `manifest-portal.html`
+- <strong>Funktion:</strong>
+  - `/verify` - Identität klären
+  - `/heartbeat` - Präsenz melden (alle 25s)
+  - `/match` - Passende Partner finden (pair_code)
+- <strong>Status:</strong> ✅ VOLL FUNKTIONAL
+
+<h4>1.3 <strong>WebSocket Live-Chat</strong></h4>
+- <strong>Datei:</strong> `functions/ws.js`, `manifest-portal.html`
+- <strong>Funktion:</strong>
+  - Räume-Verwaltung
+  - Broadcast-Messages
+  - Live-Chat im Portal
+- <strong>Status:</strong> ✅ VOLL FUNKTIONAL
+
+<h4>1.4 <strong>Nachrichten-System</strong></h4>
+- <strong>Dateien:</strong> `functions/api/messages/*.js`, `messages-portal.js`
+- <strong>Funktion:</strong>
+  - User-zu-User Messaging
+  - Offline-Speicherung (LocalStorage)
+  - Online-Synchronisation
+- <strong>Status:</strong> ✅ VOLL FUNKTIONAL
+
+<h4>1.5 <strong>Gleichgewichts-Börse</strong></h4>
+- <strong>Dateien:</strong> `functions/api/real/*.js`, `balanced-exchange-portal.js`
+- <strong>Funktion:</strong>
+  - Real-Bilanz System
+  - Instrumente-Handel
+  - Waage-Visualisierung
+- <strong>Status:</strong> ✅ VOLL FUNKTIONAL
+
+<h4>1.6 <strong>AI Gateway</strong></h4>
+- <strong>Dateien:</strong> `functions/api/ai/gateway.js`, `neural-network-console.html`
+- <strong>Funktion:</strong>
+  - OpenAI/Claude/DeepL Integration
+  - Manifest-Assist
+  - Übersetzung, Zusammenfassung, Moderation
+- <strong>Status:</strong> ✅ VOLL FUNKTIONAL
+
+<h4>1.7 <strong>Voucher & Buchungen</strong></h4>
+- <strong>Dateien:</strong> `functions/api/voucher/*.js`
+- <strong>Funktion:</strong>
+  - Voucher erstellen/buchen/stornieren
+  - Slots-Management
+  - D1-Datenbank-Integration
+- <strong>Status:</strong> ✅ VOLL FUNKTIONAL
+
+<h3>⚠️ <strong>Teilweise implementiert:</strong></h3>
+
+<h4>1.8 <strong>Feed-Ansicht</strong></h4>
+- <strong>Datei:</strong> `manifest-portal.html`
+- <strong>Funktion:</strong> Zeigt Manifest-Einträge
+- <strong>Lücke:</strong> Keine Timeline, keine Netzwerk-Features, keine Social-Media-Funktionen
+- <strong>Status:</strong> ⚠️ BASIC
+
+<h4>1.9 <strong>Einladungs-System</strong></h4>
+- <strong>Lücke:</strong> ❌ NICHT VORHANDEN
+- <strong>Bedarf:</strong> Automatische Einladung über Manifest-Portal
+
+<h4>1.10 <strong>Timeline/Feed-System</strong></h4>
+- <strong>Lücke:</strong> ❌ NICHT VORHANDEN
+- <strong>Bedarf:</strong> Timeline wie LinkedIn/Facebook
+
+<h4>1.11 <strong>Netzwerk-Bildung</strong></h4>
+- <strong>Lücke:</strong> ❌ NICHT VORHANDEN
+- <strong>Bedarf:</strong> Automatische Netzwerk-Verbindungen ohne Account
+
+<h4>1.12 <strong>Unternehmensnetzwerk</strong></h4>
+- <strong>Lücke:</strong> ❌ NICHT VORHANDEN
+- <strong>Bedarf:</strong> Chamäleon-System für Unternehmen
+
+---
+
+<h2>2. DUPLIKATE IDENTIFIZIERUNG</h2>
+
+<h3>🔍 Analyse-Ergebnis:</h3>
+
+<h4>2.1 <strong>Verifikation/Identität</strong></h4>
+- ✅ <strong>EINHEITLICH:</strong> `manifest-forum.html` → `manifest-portal.html` (HMAC-Token)
+- ✅ <strong>KEIN DUPLIKAT:</strong> Einheitliches System
+
+<h4>2.2 <strong>Messaging</strong></h4>
+- ✅ <strong>EINHEITLICH:</strong> 
+  - User-zu-User: `messages-portal.js`
+  - Room-Chat: `functions/ws.js`
+- ⚠️ <strong>MÖGLICHE ÜBERLAPPUNG:</strong> Zwei separate Systeme, aber unterschiedliche Zwecke
+- <strong>Empfehlung:</strong> Beide beibehalten, klar trennen (DM vs. Room-Chat)
+
+<h4>2.3 <strong>Presence-System</strong></h4>
+- ✅ <strong>EINHEITLICH:</strong> Nur in `functions/api/presence/*.js`
+- ✅ <strong>KEIN DUPLIKAT</strong>
+
+<h4>2.4 <strong>Feed/Dashboard</strong></h4>
+- ⚠️ <strong>MEHRFACH VORHANDEN:</strong>
+  - `manifest-portal.html` - Feed-Ansicht
+  - `production-dashboard.html` - System-Dashboard
+  - `admin-monitoring.html` - Admin-Dashboard
+- <strong>Status:</strong> ✅ KEIN DUPLIKAT - Unterschiedliche Zwecke
+
+<h3>✅ <strong>FAZIT DUPLIKATE:</strong></h3>
+<strong>KEINE KRITISCHEN DUPLIKATE GEFUNDEN</strong> - Alle Systeme haben klare, unterschiedliche Zwecke.
+
+---
+
+<h2>3. GAP-ANALYSE: WAS FEHLT?</h2>
+
+<h3>❌ <strong>Fehlende Core-Features:</strong></h3>
+
+<h4>3.1 <strong>Ultra-Social-Media Features</strong></h4>
+- ❌ Timeline/Feed (wie LinkedIn/Facebook)
+- ❌ Like/Comment/Share (Reaktionen)
+- ❌ Netzwerk-Graph (Verbindungen)
+- ❌ Gruppen/Communities
+- ❌ Hashtags/Trends
+- ❌ Stories/Ephemeral Content
+
+<h4>3.2 <strong>Netzwerk-Bildung</strong></h4>
+- ❌ Automatische Einladung über Manifest
+- ❌ Einladungs-Link-System
+- ❌ Automatische Verbindung bei Einladung
+- ❌ Netzwerk-Visualisierung
+- ❌ Netzwerk-Fusion (Mehrere Netzwerke zusammenführen)
+
+<h4>3.3 <strong>Account-System</strong></h4>
+- ✅ <strong>BEREITS VORHANDEN:</strong> Manifest-basierte Verifikation
+- ✅ <strong>BEREITS VORHANDEN:</strong> Kein Account nötig (Token-basiert)
+- ⚠️ <strong>FEHLT:</strong> Profil-Verwaltung (optional)
+
+<h4>3.4 <strong>Unternehmensnetzwerk</strong></h4>
+- ❌ Unternehmens-Profile
+- ❌ Mitarbeiter-Verwaltung
+- ❌ Projekt-Management (Pinboard)
+- ❌ Chamäleon-System (Template-Generator)
+- ❌ Automatische Fusion von Unternehmen
+- ❌ Business-Verifikation
+
+<h4>3.5 <strong>Mobile/PWA</strong></h4>
+- ⚠️ <strong>TEILWEISE:</strong> Responsive Design vorhanden
+- ❌ <strong>FEHLT:</strong> PWA-Manifest optimiert
+- ❌ <strong>FEHLT:</strong> Installierbares Icon
+- ❌ <strong>FEHLT:</strong> Offline-First optimiert
+
+---
+
+<h2>4. ULTRA-SOCIAL-MEDIA KONZEPT</h2>
+
+<h3>🎯 <strong>Vision:</strong></h3>
+Ein Social-Media-System, das <strong>LinkedIn + Facebook + WhatsApp + Reddit + Discord</strong> kombiniert, aber <strong>vollautomatisiert</strong> und <strong>manifest-basiert</strong> (keine Accounts nötig).
+
+<h3>4.1 <strong>Kern-Features:</strong></h3>
+
+<h4><strong>4.1.1 Timeline/Feed</strong></h4>
+```
+┌─────────────────────────────────────────┐
+│  Timeline (Automatisch aggregiert)      │
+├─────────────────────────────────────────┤
+│  • Posts aus Manifest-Netzwerk           │
+│  • Kommentare, Reaktionen                │
+│  • Geteilte Inhalte                     │
+│  • Veranstaltungen                      │
+│  • Netzwerk-Updates                     │
+└─────────────────────────────────────────┘
+```
+
+<strong>Technische Umsetzung:</strong>
+- <strong>Frontend:</strong> Neue Timeline-Komponente in `manifest-portal.html`
+- <strong>Backend:</strong> Aggregation aus D1-DB (posts, comments, reactions)
+- <strong>Datenquelle:</strong> Manifest-Einträge + Netzwerk-Verbindungen
+
+<h4><strong>4.1.2 Netzwerk-Bildung (Einladung)</strong></h4>
+```
+Flow:
+1. User A öffnet Manifest-Portal (verifiziert)
+2. User A klickt "Netzwerk erweitern" → Generiert Einladungs-Link
+3. Link: manifest-portal.html#invite=USER_A_TOKEN&network=NETWORK_ID
+4. User B öffnet Link → Automatische Verbindung
+5. User B wird zu User A's Netzwerk hinzugefügt (ohne Account!)
+```
+
+<strong>Technische Umsetzung:</strong>
+- <strong>Frontend:</strong> Einladungs-Generator in `manifest-portal.html`
+- <strong>Backend:</strong> `functions/api/network/invite.js` - Einladung verarbeiten
+- <strong>Datenbank:</strong> Neue Tabelle `network_connections`
+
+<h4><strong>4.1.3 Reaktionen & Interaktionen</strong></h4>
+```
+Features:
+- 👍 Like (automatisch gespeichert)
+- 💬 Kommentar (mit Thread)
+- 🔄 Teilen (in Netzwerk)
+- 📌 Speichern (lokal)
+```
+
+<strong>Technische Umsetzung:</strong>
+- <strong>Frontend:</strong> Reaktions-Buttons in Timeline
+- <strong>Backend:</strong> `functions/api/social/reactions.js`
+- <strong>Datenbank:</strong> Tabelle `reactions`, `comments`
+
+<h4><strong>4.1.4 Gruppen/Communities</strong></h4>
+```
+Features:
+- Gruppen erstellen (ohne Account)
+- Mitglieder einladen (über Manifest)
+- Gruppen-Posts
+- Gruppen-Chat
+```
+
+<strong>Technische Umsetzung:</strong>
+- <strong>Frontend:</strong> Gruppen-UI in `manifest-portal.html`
+- <strong>Backend:</strong> `functions/api/groups/*.js`
+- <strong>Datenbank:</strong> Tabelle `groups`, `group_members`
+
+---
+
+<h2>5. UNTERNEHMENSNETZWERK-MODUL</h2>
+
+<h3>🎯 <strong>Vision:</strong></h3>
+Ein flexibles, <strong>Chamäleon-System</strong>, das sich automatisch an jede Unternehmensform anpasst - <strong>ohne vorbereitete Templates</strong>.
+
+<h3>5.1 <strong>Chamäleon-System (Auto-Template-Generator)</strong></h3>
+
+<h4><strong>5.1.1 Funktionsweise:</strong></h4>
+```
+Input:
+- Unternehmensbeschreibung (Text)
+- Unternehmenstyp (optional)
+- Branche (optional)
+- Größe (optional)
+
+Prozess:
+1. AI-Analyse der Beschreibung (AI Gateway)
+2. Automatische Feld-Erkennung
+3. Template-Generierung im Hintergrund
+4. Anpassung der UI-Struktur
+
+Output:
+- Individuelles Unternehmens-Portal
+- Automatische Rollen & Berechtigungen
+- Projekt-Management-Struktur
+- Kommunikations-Channels
+```
+
+<h4><strong>5.1.2 Beispiel-Durchlauf:</strong></h4>
+
+<strong>Input:</strong>
+```
+"Wir sind ein 10-Personen-Startup, das KI-basierte 
+Marketing-Tools entwickelt. Wir haben Remote-Mitarbeiter 
+und brauchen Projektverwaltung und Team-Kommunikation."
+```
+
+<strong>AI-Analyse:</strong>
+- Unternehmenstyp: `startup`
+- Größe: `10 employees`
+- Branche: `tech/marketing`
+- Bedarf: `project_management`, `team_communication`, `remote_collaboration`
+
+<strong>Generiertes Template:</strong>
+```json
+{
+  "companyProfile": {
+    "type": "startup",
+    "size": "small",
+    "industry": "tech/marketing",
+    "structure": {
+      "departments": ["Development", "Marketing", "Management"],
+      "roles": ["Developer", "Marketer", "Manager", "CEO"],
+      "features": ["project_board", "team_chat", "file_sharing", "time_tracking"]
+    }
+  },
+  "uiComponents": {
+    "dashboard": "kanban_board",
+    "communication": "team_chat",
+    "projects": "project_list",
+    "files": "file_manager"
+  }
+}
+```
+
+<strong>Resultat:</strong>
+- <strong>Dashboard:</strong> Kanban-Board für Projekte
+- <strong>Kommunikation:</strong> Team-Chat (WebSocket)
+- <strong>Projekte:</strong> Projekt-Liste mit Status
+- <strong>Dateien:</strong> Datei-Manager (R2 Storage)
+
+<h3>5.2 <strong>Unternehmens-Fusion</strong></h3>
+
+<h4><strong>5.2.1 Automatische Fusion:</strong></h4>
+```
+Flow:
+1. Unternehmen A möchte mit Unternehmen B fusionieren
+2. AI-Analyse: Überschneidungen finden
+3. Neues "Fusion-Netzwerk" erstellen (unabhängig von beiden)
+4. Beide Unternehmen behalten ihre Original-Struktur
+5. Fusion-Netzwerk = Überlappungs-Bereich
+```
+
+<strong>Technische Umsetzung:</strong>
+- <strong>Backend:</strong> `functions/api/enterprise/fusion.js`
+- <strong>Datenbank:</strong> Tabelle `enterprise_networks`, `enterprise_fusions`
+- <strong>AI:</strong> Überschneidungs-Analyse via AI Gateway
+
+---
+
+<h2>6. CHAMÄLEON-SYSTEM (DETAILIERT)</h2>
+
+<h3>6.1 <strong>Architektur:</strong></h3>
+
+```
+┌─────────────────────────────────────────────┐
+│  USER INPUT (Unternehmensbeschreibung)      │
+└─────────────────┬───────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────┐
+│  AI GATEWAY (Analyse & Feld-Erkennung)      │
+│  - OpenAI GPT-4                             │
+│  - Claude (Alternative)                     │
+└─────────────────┬───────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────┐
+│  TEMPLATE COMPOSER (Automatische Gen.)      │
+│  - Felder extrahieren                       │
+│  - UI-Struktur generieren                   │
+│  - Rollen & Berechtigungen                  │
+└─────────────────┬───────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────┐
+│  DYNAMIC UI RENDERER                        │
+│  - Adaptives Layout                         │
+│  - Feature-Aktivierung                      │
+│  - Rollen-basierte Ansichten                │
+└─────────────────────────────────────────────┘
+```
+
+<h3>6.2 <strong>Template-Felder (Dynamisch generiert):</strong></h3>
+
+<h4><strong>Standard-Felder (immer vorhanden):</strong></h4>
+- `company_name` - Unternehmensname
+- `description` - Beschreibung
+- `industry` - Branche (AI-erkennung)
+- `size` - Größe (AI-erkennung)
+- `structure` - Struktur (AI-erkennung)
+
+<h4><strong>Dynamische Felder (AI-generiert):</strong></h4>
+- `departments` - Abteilungen (aus Beschreibung)
+- `roles` - Rollen (aus Beschreibung)
+- `features` - Features (aus Beschreibung)
+- `workflows` - Workflows (aus Beschreibung)
+
+<h3>6.3 <strong>Beispiel-Output:</strong></h3>
+
+<strong>Unternehmen: "Bäckerei mit 5 Filialen"</strong>
+```json
+{
+  "companyProfile": {
+    "type": "retail",
+    "size": "medium",
+    "industry": "food/retail",
+    "structure": {
+      "locations": 5,
+      "departments": ["Production", "Sales", "Management"],
+      "roles": ["Baker", "Salesperson", "Manager"],
+      "features": ["inventory", "sales_tracking", "shift_planning"]
+    }
+  }
+}
+```
+
+<strong>Unternehmen: "Software-Unternehmen, 50 Mitarbeiter, Remote"</strong>
+```json
+{
+  "companyProfile": {
+    "type": "tech",
+    "size": "medium",
+    "industry": "software",
+    "structure": {
+      "departments": ["Engineering", "Product", "Sales", "HR"],
+      "roles": ["Developer", "Product Manager", "Sales Rep", "HR Manager"],
+      "features": ["project_management", "code_review", "team_chat", "hr_portal"]
+    }
+  }
+}
+```
+
+---
+
+<h2>7. VERBESSERUNGSVORSCHLÄGE</h2>
+
+<h3>💡 <strong>Vorschläge VOR Implementierung:</strong></h3>
+
+<h4>7.1 <strong>Architektur-Vorschläge:</strong></h4>
+
+##### <strong>7.1.1 Modularer Aufbau</strong>
+- ✅ <strong>Bereits gut:</strong> Separate Functions für verschiedene Features
+- 💡 <strong>Verbesserung:</strong> Micro-Frontend-Architektur
+  - Timeline als separate Komponente
+  - Netzwerk als separate Komponente
+  - Unternehmensnetzwerk als separates Modul
+- <strong>Vorteil:</strong> Wartbarkeit, Testbarkeit, Erweiterbarkeit
+
+##### <strong>7.1.2 Datenbank-Optimierung</strong>
+- ⚠️ <strong>Aktuell:</strong> D1 (SQLite) - gut für Start
+- 💡 <strong>Langfristig:</strong> Option für Postgres/Supabase
+- <strong>Empfehlung:</strong> Hybrid-Ansatz (D1 für kleine Daten, Supabase für große)
+
+##### <strong>7.1.3 Caching-Strategie</strong>
+- 💡 <strong>Vorschlag:</strong> 
+  - LocalStorage für Offline-Daten
+  - IndexedDB für größere Datenmengen
+  - Service Worker für Offline-First
+
+<h4>7.2 <strong>UX/UI-Vorschläge:</strong></h4>
+
+##### <strong>7.2.1 Ein-Klick-Interaktionen</strong>
+- ✅ <strong>Bereits vorhanden:</strong> Button-Klicks funktionieren
+- 💡 <strong>Verbesserung:</strong> 
+  - Kontext-Menü (Rechtsklick) für erweiterte Funktionen
+  - Linke Maustaste = Hauptaktion
+  - Rechtsklick = Optionen-Menü
+
+##### <strong>7.2.2 Mobile-First</strong>
+- ⚠️ <strong>Aktuell:</strong> Responsive, aber nicht optimiert
+- 💡 <strong>Verbesserung:</strong>
+  - PWA-Manifest optimieren
+  - Touch-Gesten
+  - Mobile-Navigation (Bottom-Bar)
+
+##### <strong>7.2.3 Offline-First</strong>
+- ✅ <strong>Bereits vorhanden:</strong> LocalStorage
+- 💡 <strong>Verbesserung:</strong>
+  - Service Worker optimieren
+  - Background-Sync
+  - Conflict-Resolution
+
+<h4>7.3 <strong>Funktionalitäts-Vorschläge:</strong></h4>
+
+##### <strong>7.3.1 Netzwerk-Visualisierung</strong>
+- 💡 <strong>Vorschlag:</strong> Graph-Visualisierung (D3.js / vis.js)
+  - Netzwerk-Graph zeigen
+  - Verbindungen visualisieren
+  - Fusionen darstellen
+
+##### <strong>7.3.2 Intelligente Empfehlungen</strong>
+- 💡 <strong>Vorschlag:</strong> AI-basierte Empfehlungen
+  - Ähnliche Netzwerke finden
+  - Fusion-Vorschläge
+  - Content-Empfehlungen
+
+##### <strong>7.3.3 Privacy-First</strong>
+- ✅ <strong>Bereits vorhanden:</strong> Lokale Datenverarbeitung
+- 💡 <strong>Verbesserung:</strong>
+  - Ende-zu-Ende-Verschlüsselung für Nachrichten
+  - Optionale Daten-Synchronisation
+  - User-kontrollierte Datenfreigabe
+
+---
+
+<h2>8. IMPLEMENTIERUNGS-ROADMAP</h2>
+
+<h3>📅 <strong>Phase 1: Ultra-Social-Media Foundation (Woche 1-2)</strong></h3>
+
+<h4><strong>8.1 Timeline/Feed System</strong></h4>
+- [ ] Timeline-Komponente erstellen (`timeline-portal.js`)
+- [ ] Feed-Aggregation Backend (`functions/api/social/feed.js`)
+- [ ] Datenbank: `posts`, `comments`, `reactions` Tabellen
+- [ ] Integration in `manifest-portal.html`
+
+<h4><strong>8.2 Netzwerk-Bildung</strong></h4>
+- [ ] Einladungs-Generator (`network-invite-portal.js`)
+- [ ] Backend: `functions/api/network/invite.js`
+- [ ] Datenbank: `network_connections` Tabelle
+- [ ] Automatische Verbindung bei Einladung
+
+<h4><strong>8.3 Reaktionen & Interaktionen</strong></h4>
+- [ ] Reaktions-Buttons (Like/Comment/Share)
+- [ ] Backend: `functions/api/social/reactions.js`
+- [ ] Datenbank: `reactions`, `comments` Tabellen
+- [ ] Real-time Updates (WebSocket)
+
+<h3>📅 <strong>Phase 2: Unternehmensnetzwerk (Woche 3-4)</strong></h3>
+
+<h4><strong>8.4 Chamäleon-System</strong></h4>
+- [ ] AI-Analyse für Unternehmensbeschreibung
+- [ ] Template-Composer (`template-composer.js`)
+- [ ] Dynamischer UI-Renderer
+- [ ] Backend: `functions/api/enterprise/profile.js`
+
+<h4><strong>8.5 Unternehmens-Portal</strong></h4>
+- [ ] Unternehmens-Dashboard
+- [ ] Projekt-Pinboard
+- [ ] Mitarbeiter-Verwaltung
+- [ ] Rollen & Berechtigungen
+
+<h4><strong>8.6 Fusion-System</strong></h4>
+- [ ] Fusion-Request-System
+- [ ] AI-Überschneidungs-Analyse
+- [ ] Fusion-Netzwerk-Erstellung
+- [ ] Backend: `functions/api/enterprise/fusion.js`
+
+<h3>📅 <strong>Phase 3: Mobile & PWA (Woche 5)</strong></h3>
+
+<h4><strong>8.7 PWA-Optimierung</strong></h4>
+- [ ] PWA-Manifest optimieren
+- [ ] Service Worker erweitern
+- [ ] Installierbares Icon
+- [ ] Offline-First optimieren
+
+<h4><strong>8.8 Mobile-UI</strong></h4>
+- [ ] Mobile-Navigation
+- [ ] Touch-Gesten
+- [ ] Responsive Timeline
+- [ ] Mobile-spezifische Features
+
+<h3>📅 <strong>Phase 4: Advanced Features (Woche 6+)</strong></h3>
+
+<h4><strong>8.9 Gruppen/Communities</strong></h4>
+- [ ] Gruppen-Erstellung
+- [ ] Gruppen-Chat
+- [ ] Gruppen-Posts
+- [ ] Mitglieder-Verwaltung
+
+<h4><strong>8.10 Netzwerk-Visualisierung</strong></h4>
+- [ ] Graph-Visualisierung
+- [ ] Netzwerk-Analyse
+- [ ] Fusion-Visualisierung
+
+<h4><strong>8.11 Intelligente Empfehlungen</strong></h4>
+- [ ] AI-Empfehlungen
+- [ ] Ähnliche Netzwerke
+- [ ] Content-Empfehlungen
+
+---
+
+<h2>9. DATENBANK-SCHEMA (ERWEITERT)</h2>
+
+<h3>9.1 <strong>Social-Media Tabellen:</strong></h3>
+
+```sql
+-- Posts (Timeline)
+CREATE TABLE posts (
+  id TEXT PRIMARY KEY,
+  author_id TEXT NOT NULL,
+  content TEXT NOT NULL,
+  media_url TEXT, -- Optional: Bild/Video
+  network_id TEXT, -- Zu welchem Netzwerk gehört der Post
+  parent_id TEXT, -- Wenn Reply/Share
+  visibility TEXT DEFAULT 'network', -- 'network', 'public', 'private'
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+-- Reaktionen (Like, etc.)
+CREATE TABLE reactions (
+  id TEXT PRIMARY KEY,
+  post_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  reaction_type TEXT NOT NULL, -- 'like', 'love', 'share', etc.
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (post_id) REFERENCES posts(id)
+);
+
+-- Kommentare
+CREATE TABLE comments (
+  id TEXT PRIMARY KEY,
+  post_id TEXT NOT NULL,
+  author_id TEXT NOT NULL,
+  content TEXT NOT NULL,
+  parent_id TEXT, -- Für Threads
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (post_id) REFERENCES posts(id)
+);
+
+-- Netzwerk-Verbindungen
+CREATE TABLE network_connections (
+  id TEXT PRIMARY KEY,
+  network_id TEXT NOT NULL,
+  user_a_id TEXT NOT NULL,
+  user_b_id TEXT NOT NULL,
+  connection_type TEXT DEFAULT 'invited', -- 'invited', 'connected', 'blocked'
+  invited_by TEXT, -- Wer hat eingeladen
+  created_at TEXT NOT NULL
+);
+
+-- Netzwerke
+CREATE TABLE networks (
+  id TEXT PRIMARY KEY,
+  name TEXT,
+  description TEXT,
+  owner_id TEXT NOT NULL,
+  visibility TEXT DEFAULT 'private',
+  created_at TEXT NOT NULL
+);
+```
+
+<h3>9.2 <strong>Unternehmensnetzwerk Tabellen:</strong></h3>
+
+```sql
+-- Unternehmen
+CREATE TABLE enterprises (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  industry TEXT,
+  size TEXT, -- 'startup', 'small', 'medium', 'large'
+  structure JSON, -- Chamäleon-generierte Struktur
+  owner_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+-- Unternehmens-Mitarbeiter
+CREATE TABLE enterprise_members (
+  id TEXT PRIMARY KEY,
+  enterprise_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  role TEXT NOT NULL,
+  department TEXT,
+  permissions JSON,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (enterprise_id) REFERENCES enterprises(id)
+);
+
+-- Unternehmens-Projekte (Pinboard)
+CREATE TABLE enterprise_projects (
+  id TEXT PRIMARY KEY,
+  enterprise_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  status TEXT DEFAULT 'active',
+  assigned_to TEXT, -- user_id
+  due_date TEXT,
+  meta JSON,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (enterprise_id) REFERENCES enterprises(id)
+);
+
+-- Unternehmens-Fusionen
+CREATE TABLE enterprise_fusions (
+  id TEXT PRIMARY KEY,
+  fusion_network_id TEXT NOT NULL, -- Neues Fusion-Netzwerk
+  enterprise_a_id TEXT NOT NULL,
+  enterprise_b_id TEXT NOT NULL,
+  overlap_analysis JSON, -- AI-Analyse der Überschneidungen
+  status TEXT DEFAULT 'pending', -- 'pending', 'active', 'rejected'
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (enterprise_a_id) REFERENCES enterprises(id),
+  FOREIGN KEY (enterprise_b_id) REFERENCES enterprises(id)
+);
+```
+
+---
+
+<h2>10. TECHNISCHE ARCHITEKTUR</h2>
+
+<h3>10.1 <strong>Frontend-Architektur:</strong></h3>
+
+```
+manifest-portal.html
+├── timeline-component.js       (Timeline/Feed)
+├── network-component.js        (Netzwerk-Bildung)
+├── enterprise-component.js     (Unternehmensnetzwerk)
+├── chamaeleon-renderer.js      (Dynamisches UI)
+└── pwa-service-worker.js       (PWA-Funktionen)
+```
+
+<h3>10.2 <strong>Backend-Architektur:</strong></h3>
+
+```
+functions/api/
+├── social/
+│   ├── feed.js                 (Timeline-Aggregation)
+│   ├── posts.js                (Post-Erstellung)
+│   ├── reactions.js            (Like/Comment)
+│   └── comments.js             (Kommentar-System)
+├── network/
+│   ├── invite.js               (Einladungs-System)
+│   ├── connections.js          (Verbindungen)
+│   └── fusion.js               (Netzwerk-Fusion)
+└── enterprise/
+    ├── profile.js              (Unternehmens-Profil)
+    ├── template.js             (Template-Generator)
+    ├── projects.js             (Projekt-Pinboard)
+    └── fusion.js               (Unternehmens-Fusion)
+```
+
+---
+
+<h2>11. VERBESSERUNGSVORSCHLÄGE (DETAILLIERT)</h2>
+
+<h3>💡 <strong>Vor Implementierung zu besprechen:</strong></h3>
+
+<h4>11.1 <strong>Performance:</strong></h4>
+- <strong>Vorschlag:</strong> Lazy-Loading für Timeline
+- <strong>Vorschlag:</strong> Virtual Scrolling für große Listen
+- <strong>Vorschlag:</strong> CDN für statische Assets
+
+<h4>11.2 <strong>Skalierbarkeit:</strong></h4>
+- <strong>Vorschlag:</strong> Caching-Strategie (Redis für große Netzwerke)
+- <strong>Vorschlag:</strong> Sharding für große Datenmengen
+- <strong>Vorschlag:</strong> Edge-Computing für schnelle Antwortzeiten
+
+<h4>11.3 <strong>Security:</strong></h4>
+- <strong>Vorschlag:</strong> Rate-Limiting erweitern
+- <strong>Vorschlag:</strong> Input-Validierung verschärfen
+- <strong>Vorschlag:</strong> CSRF-Schutz
+
+<h4>11.4 <strong>UX:</strong></h4>
+- <strong>Vorschlag:</strong> Keyboard-Shortcuts
+- <strong>Vorschlag:</strong> Drag & Drop für Dateien
+- <strong>Vorschlag:</strong> Rich-Text-Editor für Posts
+
+---
+
+<h2>12. FAZIT & NÄCHSTE SCHRITTE</h2>
+
+<h3>✅ <strong>Was bereits vorhanden ist:</strong></h3>
+- Manifest-Verifikation ✅
+- Presence & Matching ✅
+- WebSocket Chat ✅
+- Nachrichten-System ✅
+- AI Gateway ✅
+
+<h3>❌ <strong>Was fehlt:</strong></h3>
+- Timeline/Feed System
+- Netzwerk-Bildung
+- Unternehmensnetzwerk
+- Chamäleon-System
+- PWA-Optimierung
+
+<h3>📋 <strong>Nächste Schritte:</strong></h3>
+1. <strong>Diskussion:</strong> Diesen Plan durchgehen, Verbesserungen besprechen
+2. <strong>Priorisierung:</strong> Welche Features zuerst?
+3. <strong>Prototyping:</strong> Erste Komponenten testen
+4. <strong>Implementierung:</strong> Schrittweise Umsetzung
+
+---
+
+<strong>Motto:</strong> "Wir bewegen die Welt. Die Welt bewegt uns. Ihnen kostet das Geld. Uns ist das egal."
+
+<strong>Status:</strong> ✅ PLAN ERSTELLT - BEREIT FÜR DISKUSSION
+
+
+---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+</body>
+</html>

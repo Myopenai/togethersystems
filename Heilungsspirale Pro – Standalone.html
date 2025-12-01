@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)file:///D:/Productions/CHARM/charm3d/index.html -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Heilungsspirale Pro – Standalone</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --bg: #020617;
+        --panel: rgba(15, 23, 42, 0.78);
+        --border: rgba(71, 85, 105, 0.6);
+        --accent: #10b981;
+        --accent-2: #7c3aed;
+        --text: #e2e8f0;
+        --text-muted: rgba(226, 232, 240, 0.7);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header,
+      footer {
+        border-color: var(--border);
+      }
+      header {
+        border-bottom: 1px solid;
+        padding: 0.85rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(1.1rem, 2vw + 0.2rem, 1.65rem);
+        font-weight: 700;
+      }
+      h1 span {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-left: 0.45rem;
+      }
+      main {
+        flex: 1;
+        width: min(1100px, calc(100% - 1.5rem));
+        margin: 0 auto;
+        padding: 1.25rem 0;
+        display: grid;
+        gap: 1.25rem;
+      }
+      @media (min-width: 860px) {
+        main {
+          grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        }
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: clamp(0.75rem, 1vw + 0.5rem, 1.25rem);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35);
+      }
+      .viewer {
+        min-height: clamp(360px, 50vw, 540px);
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+        padding: 0.65rem;
+      }
+      canvas,
+      .three-host {
+        border-radius: 18px;
+        width: 100%;
+        height: 100%;
+        display: block;
+        background: radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.25), transparent 55%),
+          radial-gradient(circle at 70% 70%, rgba(6, 182, 212, 0.25), transparent 60%),
+          var(--bg);
+      }
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        border-radius: 14px;
+        padding: 0.65rem 1.1rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      }
+      button svg {
+        width: 18px;
+        height: 18px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
+        color: #0f172a;
+        box-shadow: 0 12px 30px rgba(16, 185, 129, 0.35);
+      }
+      .btn-secondary {
+        background: rgba(148, 163, 184, 0.15);
+        color: #f8fafc;
+        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.25);
+      }
+      button:hover {
+        transform: translateY(-2px);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      .toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .toggle button {
+        width: 54px;
+        height: 28px;
+        padding: 0;
+        border-radius: 999px;
+        position: relative;
+        background: rgba(148, 163, 184, 0.4);
+        box-shadow: inset 0 2px 8px rgba(15, 23, 42, 0.35);
+      }
+      .toggle button[data-on="true"] {
+        background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+      }
+      .toggle button span {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #0f172a;
+        transition: transform 0.2s ease;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
+      }
+      .toggle button[data-on="true"] span {
+        transform: translateX(26px);
+        background: #f8fafc;
+      }
+      .slider {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .slider label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.5rem;
+        font-weight: 500;
+      }
+      .slider output {
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+        font-size: 0.75rem;
+        color: rgba(148, 163, 184, 0.9);
+      }
+      input[type="range"] {
+        width: 100%;
+        appearance: none;
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(51, 65, 85, 0.7);
+        outline: none;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+        box-shadow: 0 8px 16px rgba(124, 58, 237, 0.45);
+        cursor: pointer;
+        border: none;
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+        box-shadow: 0 8px 16px rgba(124, 58, 237, 0.45);
+        cursor: pointer;
+        border: none;
+      }
+      .signature h2 {
+        margin: 0;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+      .signature p {
+        margin: 0.35rem 0 0;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+      .signature canvas {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px dashed rgba(148, 163, 184, 0.5);
+        border-radius: 14px;
+        width: 100%;
+        height: 140px;
+        touch-action: none;
+      }
+      footer {
+        text-align: center;
+        font-size: 0.65rem;
+        color: rgba(148, 163, 184, 0.65);
+        border-top: 1px solid;
+        padding: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .icon {
+        display: inline-flex;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Heilungsspirale Dr. Tel <span>Debug-stabile Version</span></h1>
+      <div class="button-row">
+        <button class="btn-primary" data-action="toggle-play">
+          <span class="icon hidden" data-icon="play">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+          </span>
+          <span class="icon" data-icon="pause">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"></path></svg>
+          </span>
+          <span data-label="play-text">Pause</span>
+        </button>
+        <button class="btn-secondary" data-action="reset">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6V3L8 7l4 4V8c2.8 0 5 2.2 5 5a5 5 0 1 1-10 0H4a8 8 0 1 0 8-7Z"></path></svg>
+          </span>
+          Reset
+        </button>
+      </div>
+    </header>
+    <main>
+      <section class="panel viewer">
+        <canvas id="spiral-2d" aria-label="Spiral Visualisierung 2D" width="873" height="675" class="hidden"></canvas>
+        <div id="spiral-3d" class="three-host" aria-label="Spiral Visualisierung 3D"><canvas data-engine="three.js r161" width="872" height="675" style="display: block; width: 698px; height: 540px;"></canvas></div>
+      </section>
+      <aside class="controls">
+        <div class="panel">
+          <div class="toggle">
+            <span>3D-Modus</span>
+            <button type="button" data-toggle="3d" data-on="true" aria-pressed="true"><span></span></button>
+          </div>
+          <div class="slider">
+            <label for="arms">Arme <output id="arms-value">9</output></label>
+            <input type="range" id="arms" data-param="arms" min="1" max="12" step="1">
+          </div>
+          <div class="slider">
+            <label for="turns">Drehungen <output id="turns-value">7</output></label>
+            <input type="range" id="turns" data-param="turns" min="1" max="24" step="1">
+          </div>
+          <div class="slider">
+            <label for="density">Dichte <output id="density-value">0.60</output></label>
+            <input type="range" id="density" data-param="density" min="0.1" max="1" step="0.05">
+          </div>
+          <div class="slider">
+            <label for="radius">Radius <output id="radius-value">180</output></label>
+            <input type="range" id="radius" data-param="radius" min="60" max="320" step="5">
+          </div>
+          <div class="slider">
+            <label for="thickness">Dicke <output id="thickness-value">3</output></label>
+            <input type="range" id="thickness" data-param="thickness" min="1" max="12" step="0.5">
+          </div>
+          <div class="slider">
+            <label for="twist">Twist <output id="twist-value">0.20</output></label>
+            <input type="range" id="twist" data-param="twist" min="0" max="1" step="0.02">
+          </div>
+          <div class="slider">
+            <label for="noiseAmp">Morph-Intensität <output id="noiseAmp-value">0.15</output></label>
+            <input type="range" id="noiseAmp" data-param="noiseAmp" min="0" max="0.8" step="0.02">
+          </div>
+        </div>
+        <div class="panel signature">
+          <h2>
+            <span class="icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 5h-3.2l-1.6-2H8.8L7.2 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm-8 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"></path>
+              </svg>
+            </span>
+            Signaturfeld (einfach)
+          </h2>
+          <canvas id="signature" width="396" height="173"></canvas>
+          <p id="signature-info" hidden="">Signatur erfasst.</p>
+        </div>
+      </aside>
+    </main>
+    <footer>Wiedersehen, Herr Pfeffer. Sieg erfreut. Alles berechnen.</footer>
+
+    <script type="module">
+      (() => {
+        const defaultParams = {
+          arms: 3,
+          turns: 7,
+          density: 0.6,
+          radius: 180,
+          thickness: 3,
+          twist: 0.2,
+          noiseAmp: 0.15,
+          color1: "#7c3aed",
+          color2: "#06b6d4",
+          background: "#020617",
+          mode3D: false
+        };
+
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+        const storageKey = "hs_params_min_standalone";
+        const loadParams = () => {
+          try {
+            const raw = localStorage.getItem(storageKey);
+            if (!raw) return { ...defaultParams };
+            const parsed = JSON.parse(raw);
+            return { ...defaultParams, ...parsed };
+          } catch {
+            return { ...defaultParams };
+          }
+        };
+        const saveParams = (params) => {
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(params));
+          } catch {
+            /* ignore */
+          }
+        };
+
+        const state = {
+          params: loadParams(),
+          playing: true,
+          morphT: 0,
+          rafId: null,
+          lastFrame: performance.now(),
+          threeCtx: null,
+          signatureData: null
+        };
+
+        const ui = {
+          playBtn: document.querySelector('[data-action="toggle-play"]'),
+          playIcon: document.querySelector('[data-icon="play"]'),
+          pauseIcon: document.querySelector('[data-icon="pause"]'),
+          playLabel: document.querySelector('[data-label="play-text"]'),
+          resetBtn: document.querySelector('[data-action="reset"]'),
+          toggle3dBtn: document.querySelector('[data-toggle="3d"]'),
+          sliderRanges: document.querySelectorAll('input[type="range"][data-param]'),
+          outputs: {
+            arms: document.getElementById("arms-value"),
+            turns: document.getElementById("turns-value"),
+            density: document.getElementById("density-value"),
+            radius: document.getElementById("radius-value"),
+            thickness: document.getElementById("thickness-value"),
+            twist: document.getElementById("twist-value"),
+            noiseAmp: document.getElementById("noiseAmp-value")
+          },
+          canvas2d: document.getElementById("spiral-2d"),
+          host3d: document.getElementById("spiral-3d"),
+          signatureCanvas: document.getElementById("signature"),
+          signatureInfo: document.getElementById("signature-info")
+        };
+
+        const ctx2d = ui.canvas2d.getContext("2d");
+
+        const ensureCanvasSize = () => {
+          const dpr = window.devicePixelRatio || 1;
+          const w = ui.canvas2d.clientWidth;
+          const h = ui.canvas2d.clientHeight;
+          if (ui.canvas2d.width !== Math.round(w * dpr) || ui.canvas2d.height !== Math.round(h * dpr)) {
+            ui.canvas2d.width = Math.round(w * dpr);
+            ui.canvas2d.height = Math.round(h * dpr);
+            ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+          }
+        };
+
+        const draw2d = () => {
+          ensureCanvasSize();
+          const { params, morphT } = state;
+          const { width, height } = ui.canvas2d;
+          const dpr = window.devicePixelRatio || 1;
+          const W = width / dpr;
+          const H = height / dpr;
+          ctx2d.fillStyle = params.background;
+          ctx2d.fillRect(0, 0, W, H);
+          ctx2d.save();
+          ctx2d.translate(W / 2, H / 2);
+          ctx2d.lineCap = "round";
+          const arms = Math.max(1, Math.round(params.arms));
+          const total = Math.max(60, Math.floor(params.density * 2000));
+          const twoPi = Math.PI * 2;
+          for (let a = 0; a < arms; a++) {
+            ctx2d.beginPath();
+            for (let i = 0; i <= total; i++) {
+              const t = i / total;
+              const theta = t * params.turns * twoPi + (a * twoPi) / arms + params.twist * t * twoPi;
+              const growth = t;
+              const r = params.radius * growth * (1 + params.noiseAmp * Math.sin(theta + morphT));
+              const x = r * Math.cos(theta);
+              const y = r * Math.sin(theta);
+              if (i === 0) ctx2d.moveTo(x, y);
+              else ctx2d.lineTo(x, y);
+            }
+            const gradient = ctx2d.createLinearGradient(-params.radius, -params.radius, params.radius, params.radius);
+            gradient.addColorStop(0, params.color1);
+            gradient.addColorStop(1, params.color2);
+            ctx2d.strokeStyle = gradient;
+            ctx2d.lineWidth = params.thickness;
+            ctx2d.stroke();
+          }
+          ctx2d.restore();
+        };
+
+        const setupThreeScene = async () => {
+          if (state.threeCtx) return state.threeCtx;
+          let THREE;
+          try {
+            THREE = await import("https://unpkg.com/three@0.161.0/build/three.module.js");
+          } catch (error) {
+            console.warn("three konnte nicht geladen werden, 3D wird deaktiviert.", error);
+            toggle3d(false);
+            return null;
+          }
+          const container = ui.host3d;
+          container.innerHTML = "";
+          const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          const dpr = window.devicePixelRatio || 1;
+          renderer.setPixelRatio(Math.max(1, dpr));
+          renderer.setSize(container.clientWidth, container.clientHeight);
+          container.appendChild(renderer.domElement);
+          const scene = new THREE.Scene();
+          const camera = new THREE.PerspectiveCamera(
+            45,
+            container.clientWidth / container.clientHeight,
+            0.1,
+            2000
+          );
+          camera.position.set(0, 0, 220);
+          const geometry = new THREE.BufferGeometry();
+          const material = new THREE.LineBasicMaterial({ color: parseInt(state.params.color1.slice(1), 16) });
+          const line = new THREE.Line(geometry, material);
+          scene.add(line);
+          const ctx = {
+            THREE,
+            renderer,
+            scene,
+            camera,
+            geometry,
+            material,
+            line,
+            resizeHandler: null
+          };
+          state.threeCtx = ctx;
+          const onResize = () => {
+            const { clientWidth, clientHeight } = container;
+            renderer.setSize(clientWidth, clientHeight);
+            camera.aspect = clientWidth / clientHeight;
+            camera.updateProjectionMatrix();
+          };
+          ctx.resizeHandler = onResize;
+          window.addEventListener("resize", onResize);
+          return ctx;
+        };
+
+        const disposeThree = () => {
+          if (!state.threeCtx) return;
+          const { renderer, geometry, material, line, scene, resizeHandler } = state.threeCtx;
+          if (resizeHandler) window.removeEventListener("resize", resizeHandler);
+          if (renderer) renderer.dispose();
+          if (geometry) geometry.dispose();
+          if (material) material.dispose();
+          if (line && scene) scene.remove(line);
+          ui.host3d.innerHTML = "";
+          state.threeCtx = null;
+        };
+
+        const updateThreeGeometry = () => {
+          const ctx = state.threeCtx;
+          if (!ctx) return;
+          const { THREE, geometry, material } = ctx;
+          const { params, morphT } = state;
+          const arms = Math.max(1, Math.round(params.arms));
+          const total = 1200;
+          const twoPi = Math.PI * 2;
+          const pts = [];
+          for (let a = 0; a < arms; a++) {
+            for (let i = 0; i <= total; i++) {
+              const t = i / total;
+              const theta = t * params.turns * twoPi + (a * twoPi) / arms + params.twist * t * twoPi;
+              const growth = t;
+              const radius = params.radius * growth * (1 + params.noiseAmp * Math.sin(theta + morphT));
+              const x = radius * Math.cos(theta);
+              const y = radius * Math.sin(theta);
+              const z = Math.sin(theta * 0.5 + morphT) * params.radius * 0.15;
+              pts.push(x, y, z);
+            }
+          }
+          const arr = new Float32Array(pts);
+          geometry.setAttribute("position", new ctx.THREE.Float32BufferAttribute(arr, 3));
+          geometry.computeBoundingSphere();
+          material.color.setHex(parseInt(params.color1.slice(1), 16));
+        };
+
+        const renderThree = () => {
+          const ctx = state.threeCtx;
+          if (!ctx) return;
+          const { renderer, scene, camera } = ctx;
+          const t = performance.now() / 1000;
+          camera.position.x = 260 * Math.cos(t * 0.3);
+          camera.position.y = 180 * Math.sin(t * 0.2);
+          camera.position.z = 200 * Math.sin(t * 0.4);
+          camera.lookAt(0, 0, 0);
+          renderer.render(scene, camera);
+        };
+
+        const updateOutputs = () => {
+          Object.entries(ui.outputs).forEach(([key, output]) => {
+            const value = state.params[key];
+            if (!output) return;
+            const displayValue =
+              typeof value === "number" ? (Number.isInteger(value) ? value : value.toFixed(2)) : value;
+            output.textContent = displayValue;
+          });
+        };
+
+        const syncSliders = () => {
+          ui.sliderRanges.forEach((slider) => {
+            const key = slider.dataset.param;
+            if (!key || !(key in state.params)) return;
+            slider.value = state.params[key];
+          });
+          updateOutputs();
+        };
+
+        const syncPlayButton = () => {
+          ui.playLabel.textContent = state.playing ? "Pause" : "Play";
+          ui.playIcon.classList.toggle("hidden", state.playing);
+          ui.pauseIcon.classList.toggle("hidden", !state.playing);
+        };
+
+        const togglePlay = () => {
+          state.playing = !state.playing;
+          syncPlayButton();
+        };
+
+        const resetParams = () => {
+          state.params = { ...defaultParams, mode3D: state.params.mode3D };
+          saveParams(state.params);
+          syncSliders();
+          if (state.params.mode3D) {
+            updateThreeGeometry();
+          } else {
+            draw2d();
+          }
+        };
+
+        const toggle3d = async (enabled) => {
+          state.params.mode3D = enabled;
+          saveParams(state.params);
+          ui.toggle3dBtn.dataset.on = String(enabled);
+          ui.toggle3dBtn.setAttribute("aria-pressed", String(enabled));
+          ui.canvas2d.classList.toggle("hidden", enabled);
+          ui.host3d.classList.toggle("hidden", !enabled);
+          if (enabled) {
+            const ctx = await setupThreeScene();
+            if (!ctx) return;
+            updateThreeGeometry();
+            renderThree();
+          } else {
+            disposeThree();
+            draw2d();
+          }
+        };
+
+        const onSliderInput = (event) => {
+          const slider = event.target;
+          const key = slider.dataset.param;
+          if (!key) return;
+          const rawValue = parseFloat(slider.value);
+          state.params[key] = rawValue;
+          if (key !== "mode3D") {
+            saveParams(state.params);
+          }
+          updateOutputs();
+          if (state.params.mode3D) {
+            updateThreeGeometry();
+          } else {
+            draw2d();
+          }
+        };
+
+        ui.playBtn.addEventListener("click", () => togglePlay());
+        ui.resetBtn.addEventListener("click", () => resetParams());
+        ui.toggle3dBtn.addEventListener("click", () => toggle3d(!state.params.mode3D));
+        ui.sliderRanges.forEach((slider) => slider.addEventListener("input", onSliderInput));
+
+        const pointerState = { drawing: false };
+        const signatureCtx = ui.signatureCanvas.getContext("2d");
+        const resetSignatureCanvas = () => {
+          signatureCtx.fillStyle = "#f8fafc";
+          signatureCtx.fillRect(0, 0, ui.signatureCanvas.width, ui.signatureCanvas.height);
+        };
+        const syncSignatureSize = () => {
+          const dpr = window.devicePixelRatio || 1;
+          const w = ui.signatureCanvas.clientWidth;
+          const h = ui.signatureCanvas.clientHeight;
+          ui.signatureCanvas.width = Math.round(w * dpr);
+          ui.signatureCanvas.height = Math.round(h * dpr);
+          signatureCtx.scale(dpr, dpr);
+          resetSignatureCanvas();
+        };
+        const getPoint = (evt) => {
+          const rect = ui.signatureCanvas.getBoundingClientRect();
+          if (evt.touches && evt.touches[0]) {
+            return {
+              x: evt.touches[0].clientX - rect.left,
+              y: evt.touches[0].clientY - rect.top
+            };
+          }
+          return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+          };
+        };
+        const startDraw = (evt) => {
+          evt.preventDefault();
+          pointerState.drawing = true;
+          const { x, y } = getPoint(evt);
+          signatureCtx.lineWidth = 2;
+          signatureCtx.strokeStyle = "#0f172a";
+          signatureCtx.lineCap = "round";
+          signatureCtx.beginPath();
+          signatureCtx.moveTo(x, y);
+        };
+        const draw = (evt) => {
+          if (!pointerState.drawing) return;
+          evt.preventDefault();
+          const { x, y } = getPoint(evt);
+          signatureCtx.lineTo(x, y);
+          signatureCtx.stroke();
+        };
+        const endDraw = () => {
+          if (!pointerState.drawing) return;
+          pointerState.drawing = false;
+          state.signatureData = ui.signatureCanvas.toDataURL("image/png");
+          ui.signatureInfo.hidden = false;
+          ui.signatureInfo.textContent = `Signatur erfasst (Länge Daten-URL: ${state.signatureData.length}).`;
+        };
+        syncSignatureSize();
+        window.addEventListener("resize", () => {
+          syncSignatureSize();
+          if (!state.params.mode3D) {
+            draw2d();
+          } else if (state.threeCtx) {
+            updateThreeGeometry();
+          }
+        });
+
+        ui.signatureCanvas.addEventListener("mousedown", startDraw);
+        ui.signatureCanvas.addEventListener("mousemove", draw);
+        window.addEventListener("mouseup", endDraw);
+        ui.signatureCanvas.addEventListener("touchstart", startDraw, { passive: false });
+        ui.signatureCanvas.addEventListener("touchmove", draw, { passive: false });
+        window.addEventListener("touchend", endDraw);
+
+        const animate = (timestamp) => {
+          const delta = Math.min(64, timestamp - state.lastFrame);
+          state.lastFrame = timestamp;
+          if (state.playing) {
+            state.morphT += 0.6 * (delta / 1000) * 60;
+            if (state.params.mode3D) {
+              updateThreeGeometry();
+              renderThree();
+            } else {
+              draw2d();
+            }
+          }
+          state.rafId = requestAnimationFrame(animate);
+        };
+
+        const init = () => {
+          syncSliders();
+          syncPlayButton();
+          const { arms, radius } = state.params;
+          console.assert(radius > 0, "Radius > 0");
+          console.assert(arms >= 1, "Arme >= 1");
+          draw2d();
+          if (state.params.mode3D) {
+            toggle3d(true);
+          }
+          state.rafId = requestAnimationFrame(animate);
+        };
+
+        init();
+      })();
+    </script>
+  
+
+</body></html>

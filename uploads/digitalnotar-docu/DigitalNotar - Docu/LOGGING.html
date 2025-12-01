@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LOGGING</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>📊 Logging-System - Digitales Notariat</h1>
+
+<h2>🔍 Übersicht</h2>
+
+Das Digitales Notariat verfügt über ein umfassendes Logging-System, das kontinuierlich alle Systemaktivitäten überwacht und protokolliert.
+
+---
+
+<h2>🚀 Installation & Start</h2>
+
+<h3>One-Click Installation</h3>
+```bash
+<h1>Windows</h1>
+install.bat
+
+<h1>Linux/macOS</h1>
+chmod +x install.sh
+./install.sh
+```
+
+<h3>Manuelle Installation</h3>
+```bash
+<h1>Abhängigkeiten installieren</h1>
+pnpm install
+
+<h1>Entwicklungsserver starten</h1>
+pnpm run dev
+```
+
+---
+
+<h2>📁 Log-Struktur</h2>
+
+<h3>Verzeichnisstruktur</h3>
+```
+Notar/
+├── logs/                          # Log-Verzeichnis
+│   ├── notariat-2025-01-02.log   # Tages-Logs
+│   ├── notariat-2025-01-03.log   # Tages-Logs
+│   └── ...                        # Weitere Log-Dateien
+├── logger.js                      # Logging-System
+├── install.bat                    # Windows Install-Skript
+├── install.sh                     # Linux/macOS Install-Skript
+└── LOGGING.md                     # Diese Dokumentation
+```
+
+<h3>Log-Datei Format</h3>
+```json
+{
+  "timestamp": "2025-01-02T10:30:00.000Z",
+  "level": "INFO",
+  "message": "System Status",
+  "data": {
+    "memory": {
+      "rss": 12345678,
+      "heapTotal": 9876543,
+      "heapUsed": 5432109
+    },
+    "uptime": 3600,
+    "pid": 1234,
+    "nodeVersion": "v18.17.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "pid": 1234,
+  "memory": {...},
+  "uptime": 3600
+}
+```
+
+---
+
+<h2>🔧 Logging-Funktionen</h2>
+
+<h3>Log-Level</h3>
+- <strong>INFO</strong> (Blau): Allgemeine Informationen
+- <strong>SUCCESS</strong> (Grün): Erfolgreiche Operationen
+- <strong>WARNING</strong> (Gelb): Warnungen
+- <strong>ERROR</strong> (Rot): Fehler
+- <strong>DEBUG</strong> (Cyan): Debug-Informationen
+
+<h3>Spezielle Logging-Funktionen</h3>
+
+<h4>System-Monitoring</h4>
+```javascript
+logger.logSystemStatus();
+// Loggt: Memory, Uptime, PID, Node.js Version, Platform, etc.
+```
+
+<h4>Performance-Monitoring</h4>
+```javascript
+logger.logPerformance('database_query', 150, { 
+  table: 'clients', 
+  records: 1000 
+});
+```
+
+<h4>Security-Logging</h4>
+```javascript
+logger.logSecurity('login_attempt', {
+  ip: '192.168.1.100',
+  userAgent: 'Mozilla/5.0...',
+  success: false
+});
+```
+
+<h4>Database-Logging</h4>
+```javascript
+logger.logDatabase('insert_record', {
+  table: 'notarial_records',
+  recordId: 'abc123',
+  type: 'identity_verification'
+});
+```
+
+<h4>Backup-Logging</h4>
+```javascript
+logger.logBackup('automatic', {
+  records: 1500,
+  size: '2.5MB',
+  checksum: 'abc123def456'
+});
+```
+
+<h4>2FA-Logging</h4>
+```javascript
+logger.log2FA('verification_success', {
+  action: 'document_notarization',
+  ip: '192.168.1.100'
+});
+```
+
+---
+
+<h2>📊 Log-Management</h2>
+
+<h3>Automatische Log-Rotation</h3>
+- <strong>Maximale Log-Datei Größe</strong>: 10MB
+- <strong>Maximale Anzahl Log-Dateien</strong>: 30 Tage
+- <strong>Automatische Bereinigung</strong>: Alte Logs werden automatisch gelöscht
+
+<h3>Log-Statistiken abrufen</h3>
+```javascript
+const stats = logger.getLogStats();
+console.log(stats);
+// Output: { lines: 1500, size: 2048576, errors: 5, warnings: 12, info: 1200, success: 283 }
+```
+
+<h3>Log-Export</h3>
+```javascript
+const logs = logger.exportLogs('2025-01-01', '2025-01-31');
+// Exportiert alle Logs zwischen den angegebenen Daten
+```
+
+---
+
+<h2>🔍 Log-Analyse</h2>
+
+<h3>Häufige Log-Einträge</h3>
+
+<h4>System-Start</h4>
+```json
+{
+  "timestamp": "2025-01-02T09:00:00.000Z",
+  "level": "SUCCESS",
+  "message": "Installation abgeschlossen!",
+  "data": null
+}
+```
+
+<h4>2FA-Aktivierung</h4>
+```json
+{
+  "timestamp": "2025-01-02T10:15:30.000Z",
+  "level": "INFO",
+  "message": "2FA: verification_success",
+  "data": {
+    "action": "identity_verification",
+    "ip": "192.168.1.100"
+  }
+}
+```
+
+<h4>Backup-Erstellung</h4>
+```json
+{
+  "timestamp": "2025-01-02T12:00:00.000Z",
+  "level": "INFO",
+  "message": "Backup: automatic",
+  "data": {
+    "records": 1500,
+    "size": "2.5MB",
+    "checksum": "abc123def456"
+  }
+}
+```
+
+<h4>Performance-Warnung</h4>
+```json
+{
+  "timestamp": "2025-01-02T14:30:00.000Z",
+  "level": "WARNING",
+  "message": "Performance: database_query",
+  "data": {
+    "operation": "database_query",
+    "duration": 2500,
+    "table": "clients",
+    "records": 50000
+  }
+}
+```
+
+---
+
+<h2>🛠️ Konfiguration</h2>
+
+<h3>Log-Verzeichnis ändern</h3>
+```javascript
+// In logger.js
+this.logDir = path.join(__dirname, 'custom_logs');
+```
+
+<h3>Log-Datei Größe anpassen</h3>
+```javascript
+// In logger.js
+this.maxLogSize = 20 <em> 1024 </em> 1024; // 20MB
+```
+
+<h3>Log-Retention anpassen</h3>
+```javascript
+// In logger.js
+this.maxLogFiles = 60; // 60 Tage
+```
+
+---
+
+<h2>📈 Monitoring & Alerting</h2>
+
+<h3>Automatisches System-Monitoring</h3>
+- <strong>Intervall</strong>: Alle 5 Minuten
+- <strong>Überwachte Metriken</strong>: Memory, Uptime, PID, Platform
+- <strong>Log-Eintrag</strong>: Automatischer System-Status
+
+<h3>Performance-Thresholds</h3>
+```javascript
+// Beispiel: Warnung bei langsamen Datenbankabfragen
+if (duration > 2000) {
+  logger.warning('Slow database query detected', { duration, operation });
+}
+```
+
+<h3>Security-Monitoring</h3>
+```javascript
+// Beispiel: Warnung bei verdächtigen Login-Versuchen
+if (failedAttempts > 5) {
+  logger.error('Multiple failed login attempts', { ip, attempts: failedAttempts });
+}
+```
+
+---
+
+<h2>🔒 Sicherheit</h2>
+
+<h3>Log-Verschlüsselung</h3>
+- Log-Dateien werden im Klartext gespeichert
+- Sensible Daten werden automatisch maskiert
+- Log-Verzeichnis sollte entsprechend geschützt werden
+
+<h3>Zugriffskontrolle</h3>
+```bash
+<h1>Log-Verzeichnis schützen (Linux/macOS)</h1>
+chmod 750 logs/
+chown notary:notary logs/
+```
+
+<h3>Log-Rotation</h3>
+- Automatische Rotation bei 10MB
+- Alte Logs werden nach 30 Tagen gelöscht
+- Manuelle Rotation möglich
+
+---
+
+<h2>🚨 Troubleshooting</h2>
+
+<h3>Häufige Probleme</h3>
+
+<h4>Log-Datei zu groß</h4>
+```bash
+<h1>Manuelle Rotation</h1>
+mv logs/notariat-2025-01-02.log logs/notariat-2025-01-02-archive.log
+```
+
+<h4>Keine Schreibberechtigung</h4>
+```bash
+<h1>Berechtigungen prüfen</h1>
+ls -la logs/
+chmod 755 logs/
+```
+
+<h4>Log-Verzeichnis nicht gefunden</h4>
+```bash
+<h1>Verzeichnis erstellen</h1>
+mkdir -p logs/
+chmod 755 logs/
+```
+
+<h3>Log-Analyse-Tools</h3>
+
+<h4>Log-Filterung</h4>
+```bash
+<h1>Nur Fehler anzeigen</h1>
+grep '"level":"ERROR"' logs/notariat-2025-01-02.log
+
+<h1>Nur 2FA-Events anzeigen</h1>
+grep '2FA:' logs/notariat-2025-01-02.log
+
+<h1>Performance-Probleme finden</h1>
+grep '"level":"WARNING"' logs/notariat-2025-01-02.log | grep "Performance"
+```
+
+<h4>Log-Statistiken</h4>
+```bash
+<h1>Anzahl Log-Einträge pro Level</h1>
+grep -o '"level":"[^"]*"' logs/notariat-2025-01-02.log | sort | uniq -c
+```
+
+---
+
+<h2>📞 Support</h2>
+
+Bei Problemen mit dem Logging-System:
+
+1. <strong>Log-Dateien prüfen</strong>: `logs/notariat-YYYY-MM-DD.log`
+2. <strong>System-Status</strong>: Automatische Logs alle 5 Minuten
+3. <strong>Performance-Probleme</strong>: Suche nach WARNING/ERROR Einträgen
+4. <strong>Security-Events</strong>: Suche nach "Security Event" Einträgen
+
+<h3>Kontakt</h3>
+- <strong>E-Mail</strong>: support@digitales-notariat.de
+- <strong>Dokumentation</strong>: Vollständige Dokumentation im Projekt
+- <strong>Issues</strong>: GitHub Issues für Bug-Reports
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

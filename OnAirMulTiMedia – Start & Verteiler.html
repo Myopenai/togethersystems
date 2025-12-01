@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)https://onairmultimedia.web.app/ -->
+<html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OnAirMulTiMedia – Start & Verteiler</title>
+  <meta name="description" content="OnAirMulTiMedia – Zentrale Landingpage mit App‑Verteiler und eingebettetem Info‑Dashboard.">
+  <!-- Keine Redirects! Diese Seite ist der Hub und hostet info.html im Inlay. -->
+  
+  <!-- Content Security Policy mit WebTrit-Integration -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src &#39;self&#39;;
+    script-src &#39;self&#39; &#39;unsafe-inline&#39; https://cdn.jsdelivr.net;
+    style-src &#39;self&#39; &#39;unsafe-inline&#39;;
+    img-src &#39;self&#39; data: https:;
+    font-src &#39;self&#39; https://fonts.gstatic.com;
+    connect-src &#39;self&#39; https://api.github.com https://webtrit.example.com wss://webtrit.example.com;
+    media-src &#39;self&#39; blob:;
+    object-src &#39;none&#39;;
+    base-uri &#39;self&#39;;
+    form-action &#39;self&#39;;
+    frame-ancestors &#39;self&#39; https://viewunitysystem.github.io https://onairmultimedia.web.app;
+  ">
+
+  <!-- Basistypo: Systemschriften für Geschwindigkeit -->
+  <style>
+    :root{
+      --bg-dark:#0b0f17; --glass:rgba(8,12,20,.4); --glass-strong:rgba(8,12,20,.7);
+      --fg:#eaf0ff; --muted:#a6b0c9; --accent:#7dd3fc; --accent-2:#f472b6;
+      --card:#0f172a; --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
+    }
+    
+    /* Start/Exit Animation */
+    .app-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-dark);
+      pointer-events: none;
+    }
+    
+    .app-animation.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    }
+    
+    .icon-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .main-icon {
+      width: clamp(48px, 8vw, 128px);
+      height: clamp(48px, 8vw, 128px);
+      background-image: url('./icon.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(0 0 20px var(--accent));
+      animation: iconGrow 2s ease-out forwards;
+    }
+    
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    .star {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      opacity: 0;
+      animation: starExplode 1.5s ease-out forwards;
+    }
+    
+    .star:nth-child(odd) {
+      background: var(--accent-2);
+    }
+    
+    .bigbang {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(125, 211, 252, 0.8) 0%, rgba(244, 114, 182, 0.6) 50%, transparent 100%);
+      opacity: 0;
+      animation: bigbangExplode 1s ease-out 2s forwards;
+    }
+    
+    @keyframes iconGrow {
+      0% {
+        transform: scale(0.1);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes starExplode {
+      0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes bigbangExplode {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3);
+        opacity: 0;
+      }
+    }
+    
+    /* Exit Animation (umgekehrt) */
+    .app-animation.exit .main-icon {
+      animation: iconShrink 1.5s ease-in forwards;
+    }
+    
+    .app-animation.exit .star {
+      animation: starImplode 1s ease-in forwards;
+    }
+    
+    .app-animation.exit .bigbang {
+      animation: bigbangImplode 1s ease-in 0.5s forwards;
+    }
+    
+    @keyframes iconShrink {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.1);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes starImplode {
+      0% {
+        transform: scale(1) rotate(360deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes bigbangImplode {
+      0% {
+        transform: scale(3);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg-dark);color:var(--fg);font:400 16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:inherit;text-decoration:none}
+    a.btn{display:inline-block;padding:.8rem 1.1rem;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#001020;font-weight:700}
+    a.btn.secondary{background:transparent;border:1px solid #5b6b87;color:var(--fg)}
+
+    /* Background video */
+    .bg{position:fixed;inset:0;z-index:-2;overflow:hidden}
+    .bg video, .bg iframe{position:absolute;min-width:100%;min-height:100%;top:50%;left:50%;transform:translate(-50%,-50%);filter:brightness(.4) saturate(1.1)}
+    .bg .fallback{position:absolute;inset:0;background:radial-gradient(1000px 600px at 10% 10%, #1f3a8a, transparent 60%),radial-gradient(1000px 600px at 90% 90%, #831843, transparent 60%),linear-gradient(#0b0f17,#0b0f17)}
+
+    header{position:sticky;top:0;backdrop-filter:saturate(180%) blur(8px);background:linear-gradient(to bottom, var(--glass-strong), transparent);z-index:10}
+    .nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:1rem;padding:1rem}
+    .brand{display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:.3px}
+    .badge{font-size:.75rem;opacity:.7;border:1px solid #5b6b87;border-radius:999px;padding:.15rem .5rem}
+    .spacer{flex:1}
+
+    main{max-width:1200px;margin:0 auto;padding:clamp(16px,2.5vw,32px)}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:2rem;align-items:center;padding:2rem 0}
+    .hero h1{font-size:clamp(28px,4.2vw,52px);line-height:1.05;margin:.2rem 0 .6rem}
+    .hero p{color:var(--muted);max-width:60ch;margin:0 0 1rem}
+    .cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.5rem}
+
+    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2rem}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:1rem;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;transition:.2s box-shadow,.2s transform}
+    .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+    .card h3{margin:.2rem 0 .2rem;font-size:1.05rem}
+    .card p{margin:0;color:var(--muted);font-size:.92rem}
+    .tag{display:inline-block;margin-top:.6rem;font-size:.72rem;color:#0b0f17;background:#a5f3fc;border-radius:999px;padding:.15rem .5rem;font-weight:700}
+    .tag.warn{background:#fed7aa}
+    .tag.ok{background:#bbf7d0}
+
+    /* Info-Embed Panel */
+    .panel{margin-top:3rem;background:rgba(3,6,15,.55);border:1px solid rgba(255,255,255,.08);border-radius:18px;overflow:hidden}
+    .panel header{position:relative;background:transparent}
+    .panel .bar{display:flex;align-items:center;gap:.8rem;padding:1rem}
+    .panel .bar h2{font-size:1.1rem;margin:0}
+    .panel .bar .actions{margin-left:auto;display:flex;gap:.6rem}
+    .panel iframe{display:block;width:100%;height:min(80vh,900px);border:0;background:#0a0f1a}
+
+    footer{opacity:.9;color:var(--muted);text-align:center;padding:3rem 1rem}
+
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .cards{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:580px){
+      .cards{grid-template-columns:1fr}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .bg video, .bg iframe{display:none}
+    }
+      /* Matrix.org Server Discovery UI */
+      .matrix-server {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px;
+        margin: 8px 0;
+        backdrop-filter: blur(10px);
+      }
+      
+      .matrix-server.online {
+        border-color: #4ade80;
+        background: rgba(74, 222, 128, 0.1);
+      }
+      
+      .matrix-server.offline {
+        border-color: #f87171;
+        background: rgba(248, 113, 113, 0.1);
+      }
+      
+      .server-name {
+        font-weight: 600;
+        color: white;
+        margin-bottom: 4px;
+      }
+      
+      .server-status {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 4px;
+      }
+      
+      .server-capabilities {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* PeerLink Tools UI */
+      .peerlink-tool {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px;
+        margin: 8px 0;
+        backdrop-filter: blur(10px);
+      }
+      
+      .peerlink-tool.available {
+        border-color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+      }
+      
+      .tool-name {
+        font-weight: 600;
+        color: white;
+        margin-bottom: 4px;
+      }
+      
+      .tool-type {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 4px;
+      }
+      
+      .tool-capabilities {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 8px;
+      }
+      
+      .upgrade-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .upgrade-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Upgrade Notifications */
+      .upgrade-success {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+        color: white;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(74, 222, 128, 0.3);
+        z-index: 1000;
+        max-width: 300px;
+        animation: slideInRight 0.3s ease;
+      }
+      
+      .upgrade-error {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+        color: white;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(248, 113, 113, 0.3);
+        z-index: 1000;
+        max-width: 300px;
+        animation: slideInRight 0.3s ease;
+      }
+      
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+</head>
+<body data-swipe="">
+  <!-- Start/Exit Animation -->
+  <div id="appAnimation" class="app-animation hidden" style="display: none;">
+    <div class="icon-container">
+      <div class="main-icon"></div>
+      <div class="stars" id="starsContainer"><div class="star" style="left: calc(50% + 38.2655px); top: calc(50% + 0px); animation-delay: 0.172434s;"></div><div class="star" style="left: calc(50% + 48.4851px); top: calc(50% + 15.7538px); animation-delay: 0.0058084s;"></div><div class="star" style="left: calc(50% + 50.6962px); top: calc(50% + 36.8329px); animation-delay: 0.026207s;"></div><div class="star" style="left: calc(50% + 30.1365px); top: calc(50% + 41.4793px); animation-delay: 0.189196s;"></div><div class="star" style="left: calc(50% + 13.9458px); top: calc(50% + 42.9208px); animation-delay: 0.432966s;"></div><div class="star" style="left: calc(50% + 2.97242e-15px); top: calc(50% + 48.5433px); animation-delay: 0.0868377s;"></div><div class="star" style="left: calc(50% - 10.1758px); top: calc(50% + 31.3178px); animation-delay: 0.230085s;"></div><div class="star" style="left: calc(50% - 21.3971px); top: calc(50% + 29.4506px); animation-delay: 0.199119s;"></div><div class="star" style="left: calc(50% - 32.6761px); top: calc(50% + 23.7406px); animation-delay: 0.44193s;"></div><div class="star" style="left: calc(50% - 50.8675px); top: calc(50% + 16.5279px); animation-delay: 0.481255s;"></div><div class="star" style="left: calc(50% - 34.3818px); top: calc(50% + 4.21055e-15px); animation-delay: 0.019776s;"></div><div class="star" style="left: calc(50% - 66.1455px); top: calc(50% - 21.492px); animation-delay: 0.0753732s;"></div><div class="star" style="left: calc(50% - 51.3714px); top: calc(50% - 37.3235px); animation-delay: 0.37735s;"></div><div class="star" style="left: calc(50% - 34.5627px); top: calc(50% - 47.5714px); animation-delay: 0.0614905s;"></div><div class="star" style="left: calc(50% - 20.4506px); top: calc(50% - 62.9405px); animation-delay: 0.0716648s;"></div><div class="star" style="left: calc(50% - 7.06464e-15px); top: calc(50% - 38.4581px); animation-delay: 0.355593s;"></div><div class="star" style="left: calc(50% + 10.7292px); top: calc(50% - 33.0212px); animation-delay: 0.260273s;"></div><div class="star" style="left: calc(50% + 40.0457px); top: calc(50% - 55.1181px); animation-delay: 0.0282012s;"></div><div class="star" style="left: calc(50% + 28.8759px); top: calc(50% - 20.9796px); animation-delay: 0.171356s;"></div><div class="star" style="left: calc(50% + 29.7422px); top: calc(50% - 9.66384px); animation-delay: 0.0450596s;"></div></div>
+      <div class="bigbang"></div>
+    </div>
+  </div>
+
+  <a href="https://onairmultimedia.web.app/#apps" style="position:absolute;left:-999px;top:auto;width:1px;height:1px;overflow:hidden">Zum Inhalt springen</a>
+
+  <!-- Background layer -->
+  <div class="bg" aria-hidden="true">
+    <div class="fallback"></div>
+    <!-- YouTube-Video als Hintergrund -->
+    <iframe id="bgVideo" src="./OnAirMulTiMedia – Start & Verteiler_files/ryuS7tFFn2g.html" title="Aurora Background Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="" style="position: absolute; min-width: 100%; min-height: 100%; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: brightness(0.4) saturate(1.1); z-index: -1;">
+    </iframe>
+  </div>
+
+  <header>
+    <nav class="nav">
+      <div class="brand" aria-label="OnAirMulTiMedia">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#7dd3fc" stroke-width="2"></circle><path d="M6 12h12M12 6v12" stroke="#f472b6" stroke-width="2"></path></svg>
+        <span>OnAirMulTiMedia</span>
+        <span class="badge">24/7 · Live · On‑Demand</span>
+      </div>
+      <div class="spacer"></div>
+      <a class="btn secondary" href="https://onairmultimedia.web.app/#info">Info‑Dashboard</a>
+      <a class="btn" href="https://onairmultimedia.web.app/#apps">Apps öffnen</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero / USP -->
+    <section class="hero" id="top">
+      <div>
+        <h1>Alle Apps. Ein Hub. <br>Live, On‑Air & On‑Demand.</h1>
+        <p>
+          Diese Startseite ist der zentrale Verteiler für die Hauptanwendung, Module und Tools.
+          Das <strong>Info‑Dashboard</strong> ist direkt eingebettet – ohne Weiterleitungen.
+          Video‑Hintergrund für maximale Bühne, barrierearm und performant umgesetzt.
+        </p>
+        <div class="cta">
+          <a class="btn" href="https://onairmultimedia.web.app/#apps">Zum App‑Verteiler</a>
+          <a class="btn secondary" href="https://onairmultimedia.web.app/#info">Info‑Dashboard anzeigen</a>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="min-height:220px">
+          <h3>Status</h3>
+          <p>Dieser Hub ersetzt Weiterleitungen. <br>`info.html` wird im Inlay geladen.</p>
+          <span class="tag ok">Start‑Routine aktiv</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- App‑Verteiler -->
+    <section id="apps" aria-label="App‑Verteiler">
+      <h2 style="margin:.5rem 0 1rem">Apps & Bereiche</h2>
+      <div class="cards">
+        <a class="card" href="https://onairmultimedia.web.app/dashboard.html">
+          <div>
+            <h3>Live Dashboard</h3>
+            <p>Echtzeit-Statistiken und Visualisierungen aller 38 Tools.</p>
+          </div>
+          <span class="tag">live</span>
+        </a>
+        <a class="card" href="https://onairmultimedia.web.app/test.html">
+          <div>
+            <h3>Test‑Client</h3>
+            <p>Interaktive Demos & Prüfwerkzeuge.</p>
+          </div>
+          <span class="tag">tool</span>
+        </a>
+        <a class="card" href="https://github.com/ViewunitySystem/OnAirMulTiMedia" target="_blank" rel="noopener">
+          <div>
+            <h3>Repository</h3>
+            <p>Quellcode, Issues, Releases, Docs.</p>
+          </div>
+          <span class="tag">extern</span>
+        </a>
+        <a class="card" href="https://onairmultimedia.web.app/docs/index.html">
+          <div>
+            <h3>Dokumentation</h3>
+            <p>Blueprints, Regulatory, Audit‑Trail.</p>
+          </div>
+          <span class="tag warn">optional</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Info‑Dashboard Inlay (iframe) -->
+    <section id="info" class="panel" aria-label="Info‑Dashboard eingebettet">
+      <header class="bar">
+        <h2>Info‑Dashboard</h2>
+        <div class="actions">
+          <a class="btn secondary" href="https://onairmultimedia.web.app/info.html" target="_blank" rel="noopener">In neuem Tab</a>
+          <button id="reload" class="btn secondary" type="button" aria-label="Info neu laden">Neu laden</button>
+        </div>
+      </header>
+      <iframe id="inlay" name="inlay" src="./OnAirMulTiMedia – Start & Verteiler_files/info.html" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen"></iframe>
+      <noscript>
+        JavaScript ist deaktiviert – <a href="./info.html">hier Info‑Dashboard öffnen</a>.
+      </noscript>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="y">2025</span> OnAirMulTiMedia • Ohne Tracking‑Cookies • Barrierearm • Performance‑optimiert
+  </footer>
+
+  <!-- WebTrit Swipe Technology -->
+  <script src="./OnAirMulTiMedia – Start & Verteiler_files/webtrit-swipe.js.downloaden"></script>
+  
+  <script>
+    // Jahr im Footer
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Query-Param Router: ?view=info oder Hash #info
+    (function(){
+      const params = new URLSearchParams(location.search);
+      if(params.get('view') === 'info') location.hash = '#info';
+    })();
+
+    // Neu laden Button für das Inlay
+    document.getElementById('reload')?.addEventListener('click', ()=>{
+      const f = document.getElementById('inlay');
+      if (f && f.tagName === 'IFRAME') { f.src = f.src.split('#')[0].split('?')[0] + '?t=' + Date.now(); }
+    });
+
+    // Background-Video Stabilität: YouTube iframe-Video
+    (function(){
+      const v = document.getElementById('bgVideo');
+      if(!v) return;
+      
+      // YouTube iframe lädt asynchron - keine Play/Pause-Kontrolle nötig
+      console.log('YouTube Background Video geladen');
+      
+      // Fallback für reduzierte Bewegung
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        v.style.display = 'none';
+      }
+    })();
+
+    // Start/Exit Animation System
+    class AppAnimation {
+      constructor() {
+        this.animationElement = document.getElementById('appAnimation');
+        this.starsContainer = document.getElementById('starsContainer');
+        this.isAnimating = false;
+        this.init();
+      }
+
+      init() {
+        // Start-Animation beim Laden der Seite
+        this.startAnimation();
+        
+        // Exit-Animation beim Verlassen der Seite
+        window.addEventListener('beforeunload', () => {
+          this.exitAnimation();
+        });
+
+        // Exit-Animation bei bestimmten Aktionen (optional)
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !this.isAnimating) {
+            this.exitAnimation();
+          }
+        });
+      }
+
+      createStars() {
+        const starCount = 20;
+        const containerRect = this.starsContainer.getBoundingClientRect();
+        
+        for (let i = 0; i < starCount; i++) {
+          const star = document.createElement('div');
+          star.className = 'star';
+          
+          // Zufällige Position um das Icon
+          const angle = (i / starCount) * Math.PI * 2;
+          const distance = 30 + Math.random() * 40;
+          const x = Math.cos(angle) * distance;
+          const y = Math.sin(angle) * distance;
+          
+          star.style.left = `calc(50% + ${x}px)`;
+          star.style.top = `calc(50% + ${y}px)`;
+          star.style.animationDelay = `${Math.random() * 0.5}s`;
+          
+          this.starsContainer.appendChild(star);
+        }
+      }
+
+      // Öffentliche Methode für manuelle Exit-Animation
+      triggerExit() {
+        this.exitAnimation();
+      }
+
+      startAnimation() {
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+        
+        // Sterne erstellen
+        this.createStars();
+        
+        // Animation nach 3 Sekunden ausblenden
+        setTimeout(() => {
+          this.animationElement.classList.add('hidden');
+          setTimeout(() => {
+            this.animationElement.style.display = 'none';
+            this.isAnimating = false;
+          }, 500);
+        }, 3000);
+      }
+
+      exitAnimation() {
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+        
+        // Animation wieder anzeigen
+        this.animationElement.style.display = 'flex';
+        this.animationElement.classList.remove('hidden');
+        this.animationElement.classList.add('exit');
+        
+        // Sterne neu erstellen für Exit-Animation
+        this.starsContainer.innerHTML = '';
+        this.createStars();
+        
+        // Nach Animation Seite verlassen
+        setTimeout(() => {
+          // Hier könnte die Seite geschlossen oder weitergeleitet werden
+          console.log('Exit-Animation abgeschlossen');
+        }, 2500);
+      }
+    }
+
+    // Animation starten wenn Seite geladen ist
+    let appAnimationInstance;
+    window.addEventListener('load', () => {
+      appAnimationInstance = new AppAnimation();
+      
+      // Globale Funktion für Exit-Animation
+      window.exitApp = () => {
+        if (appAnimationInstance) {
+          appAnimationInstance.triggerExit();
+        }
+      };
+    });
+  </script>
+
+  <!-- Service Worker für Offline-Funktionalität -->
+  <script>
+    if('serviceWorker' in navigator){
+      window.addEventListener('load',()=>{
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => {
+            console.log('✅ Service Worker registriert:', registration.scope);
+          })
+          .catch(error => {
+            console.log('❌ Service Worker Registrierung fehlgeschlagen:', error);
+          });
+      });
+    }
+  </script>
+
+  <!-- WebTrit SwipeCommsDock Integration -->
+  <script>
+    // Feature-Flag-Service für WebTrit-Integration
+    class FeatureFlagService {
+      constructor() {
+        this.flags = new Map();
+        this.loadFlags();
+      }
+
+      loadFlags() {
+        // Environment-basierte Flags (simuliert)
+        this.flags.set('comms_enabled', this.getEnvFlag('OAMTM_COMMS_ENABLED', 'false') === 'true');
+        this.flags.set('webtrit_enabled', !!this.getEnvFlag('WEBTRIT_SERVER_URL'));
+        
+        // URL-Parameter-basierte Flags
+        const urlParams = new URLSearchParams(window.location.search);
+        this.flags.set('comms_url_flag', urlParams.get('comms') === '1');
+        
+        // LocalStorage-basierte Flags (für Testing)
+        const localFlags = localStorage.getItem('oamtm:feature-flags');
+        if (localFlags) {
+          try {
+            const parsed = JSON.parse(localFlags);
+            Object.entries(parsed).forEach(([key, value]) => {
+              this.flags.set(`local_${key}`, value);
+            });
+          } catch (e) {
+            console.warn('Invalid feature flags in localStorage');
+          }
+        }
+      }
+
+      getEnvFlag(name, defaultValue = '') {
+        // Simuliert Environment-Variablen basierend auf Domain
+        if (window.location.hostname.includes('github.io')) {
+          return defaultValue; // Production: aus
+        } else if (window.location.hostname.includes('web.app')) {
+          return 'true'; // Staging: an
+        } else {
+          return 'true'; // Development: an
+        }
+      }
+
+      isEnabled(flagName) {
+        // Priorität: URL > LocalStorage > Environment
+        if (this.flags.has(`local_${flagName}`)) {
+          return this.flags.get(`local_${flagName}`);
+        }
+        
+        if (this.flags.has(`${flagName}_url_flag`)) {
+          return this.flags.get(`${flagName}_url_flag`);
+        }
+        
+        return this.flags.get(flagName) || false;
+      }
+
+      setFlag(flagName, value) {
+        this.flags.set(`local_${flagName}`, value);
+        
+        // In LocalStorage persistieren
+        const localFlags = JSON.parse(localStorage.getItem('oamtm:feature-flags') || '{}');
+        localFlags[flagName] = value;
+        localStorage.setItem('oamtm:feature-flags', JSON.stringify(localFlags));
+        
+        // Event emittieren für CSP-Update
+        window.dispatchEvent(new CustomEvent('oamtm:comms:toggle', {
+          detail: { flag: flagName, value }
+        }));
+      }
+    }
+
+    // SwipeCommsDock Component (vereinfacht für HTML-Integration)
+    class SwipeCommsDock {
+      constructor() {
+        this.featureFlags = new FeatureFlagService();
+        this.open = false;
+        this.ready = false;
+        this.expanded = false;
+        this.start = { x: 0, y: 0, t: 0 };
+        
+        this.init();
+      }
+
+      init() {
+        if (!this.featureFlags.isEnabled('comms_enabled')) {
+          console.log('Comms feature disabled');
+          return;
+        }
+
+        this.createDock();
+        this.setupSwipeDetection();
+        this.setupTouchHandling();
+      }
+
+      createDock() {
+        const dockHTML = `
+          <div id="swipe-comms-dock" class="fixed inset-x-0 bottom-0 z-40 pointer-events-none" style="display: none;">
+            <div class="mx-auto max-w-3xl p-2">
+              <div class="pointer-events-auto rounded-2xl shadow-xl border bg-white/90 backdrop-blur">
+                <div class="flex items-center justify-between p-2">
+                  <button id="comms-toggle" class="px-3 py-1.5 text-xs rounded-full bg-gray-900 text-white">
+                    Comms
+                  </button>
+                  <div class="text-xs text-gray-600">Swipe ↑ am rechten Rand zum Öffnen</div>
+                  <button id="comms-expand" class="px-2 py-1 text-xs">+</button>
+                </div>
+                <div id="comms-content" class="p-3 border-t" style="display: none;">
+                  <div id="comms-status" class="text-xs text-gray-500 pb-2">Initialisiere Kommunikation …</div>
+                  <div id="webtrit-widget" class="w-full h-56 flex items-center justify-center text-sm text-gray-600">
+                    WebTrit lädt … (wird nur bei Bedarf nachgeladen)
+                  </div>
+                  <div class="mt-2 grid grid-cols-3 gap-2">
+                    <button class="rounded-lg border p-2 text-xs" onclick="window.swipeCommsDock.emitCallAudit('DIAL', 'voice')">Anrufen</button>
+                    <button class="rounded-lg border p-2 text-xs" onclick="window.swipeCommsDock.emitCallAudit('VIDEO', 'video')">Video</button>
+                    <button class="rounded-lg border p-2 text-xs" onclick="window.swipeCommsDock.emitCallAudit('MSG', 'im')">Nachricht</button>
+                  </div>
+                  
+                  <!-- Matrix.org Server Discovery -->
+                  <div id="matrix-servers" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🔗 Matrix.org Servers</h4>
+                    <div id="matrix-server-list">
+                      <!-- Matrix servers werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <!-- Matrix Rooms -->
+                  <div id="matrix-rooms" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🏠 Matrix Rooms</h4>
+                    <div id="matrix-room-list">
+                      <!-- Matrix rooms werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <!-- Matrix Bridges -->
+                  <div id="matrix-bridges" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🌉 Matrix Bridges</h4>
+                    <div id="matrix-bridge-list">
+                      <!-- Matrix bridges werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <!-- PeerLink Tools -->
+                  <div id="peerlink-tools" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🎵 PeerLink Tools</h4>
+                    <div id="peerlink-tool-list">
+                      <!-- PeerLink tools werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <div id="comms-expanded" class="mt-3 text-[11px] text-gray-500" style="display: none;">
+                    <p>Audit aktiv · Lizenz wird vor dem Medienaufbau geprüft · Keine Änderung am bestehenden Navigations‑Flow.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pointer-events-auto fixed right-0 bottom-20 w-8 h-24 flex items-center justify-center">
+              <div class="rounded-l-xl bg-gray-900 text-white text-[10px] leading-tight px-2 py-3 opacity-80">
+                Swipe ↑<br>Comms
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', dockHTML);
+        this.dock = document.getElementById('swipe-comms-dock');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        document.getElementById('comms-toggle').addEventListener('click', () => {
+          this.toggle();
+        });
+
+        document.getElementById('comms-expand').addEventListener('click', () => {
+          this.expanded = !this.expanded;
+          document.getElementById('comms-expanded').style.display = this.expanded ? 'block' : 'none';
+          document.getElementById('comms-expand').textContent = this.expanded ? '−' : '+';
+        });
+
+        // Simuliere WebTrit-Loading
+        setTimeout(() => {
+          this.ready = true;
+          document.getElementById('comms-status').textContent = 'WebTrit bereit';
+          this.emitAudit('COMMS_PROVIDER_READY', { provider: 'webtrit' });
+        }, 1000);
+      }
+
+      setupSwipeDetection() {
+        document.addEventListener('touchstart', (e) => {
+          const t = e.touches?.[0];
+          if (!t) return;
+          this.start = { x: t.clientX, y: t.clientY, t: Date.now() };
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+          const t = e.changedTouches?.[0];
+          if (!t) return;
+          
+          const dx = t.clientX - this.start.x;
+          const dy = t.clientY - this.start.y;
+          const dt = Date.now() - this.start.t;
+          
+          // Swipe nur im rechten 64px-Rand
+          const vw = window.innerWidth;
+          if (vw - t.clientX < 64 && dt < 800 && Math.abs(dy) > 56 && Math.abs(dy) > Math.abs(dx)) {
+            if (dy < 0) {
+              this.openDock();
+            } else {
+              this.closeDock();
+            }
+          }
+        }, { passive: true });
+      }
+
+      setupTouchHandling() {
+        document.addEventListener('touchstart', (e) => {
+          const t = e.touches?.[0];
+          if (!t) return;
+          const vw = window.innerWidth;
+          if (vw - t.clientX < 64) {
+            localStorage.setItem('oamtm:comms:armed', '1');
+          } else {
+            localStorage.removeItem('oamtm:comms:armed');
+          }
+        }, { passive: true });
+      }
+
+      toggle() {
+        this.open = !this.open;
+        this.dock.style.display = this.open ? 'block' : 'none';
+        document.getElementById('comms-content').style.display = this.open ? 'block' : 'none';
+        this.emitAudit(this.open ? 'COMMS_DOCK_TOGGLE_ON' : 'COMMS_DOCK_TOGGLE_OFF', { reason: 'tap' });
+      }
+
+      openDock() {
+        this.open = true;
+        this.dock.style.display = 'block';
+        document.getElementById('comms-content').style.display = 'block';
+        this.emitAudit('COMMS_DOCK_OPEN', { reason: 'swipe_up' });
+      }
+
+      closeDock() {
+        this.open = false;
+        this.dock.style.display = 'none';
+        document.getElementById('comms-content').style.display = 'none';
+        this.emitAudit('COMMS_DOCK_CLOSE', { reason: 'swipe_down' });
+      }
+
+      emitAudit(event, metadata = {}) {
+        try {
+          const auditEvent = {
+            event,
+            timestamp: new Date().toISOString(),
+            metadata: {
+              ...metadata,
+              swipe_enhanced: true,
+              webtrit_integration: true
+            }
+          };
+          
+          console.debug('AUDIT_EVENT:', JSON.stringify(auditEvent));
+          
+          // In Production: an /api/audit posten
+          // fetch('/api/audit', { 
+          //   method: 'POST', 
+          //   body: JSON.stringify(auditEvent), 
+          //   headers: { 'content-type': 'application/json' } 
+          // });
+          
+        } catch (e) {
+          console.warn('Audit emission failed:', e);
+        }
+      }
+
+      emitCallAudit(eventType, mode) {
+        this.emitAudit(`WEBTRIT_CALL_${eventType}`, { 
+          provider: 'webtrit', 
+          mode,
+          swipe_initiated: true 
+        });
+      }
+    }
+
+    // Collaborative Communication System
+    class CollaborativeCommSystem {
+      constructor() {
+        this.carriers = new Map();
+        this.simInfo = null;
+        this.collaborationMode = 'hybrid'; // parallel, failover, hybrid
+        this.performanceOptimizer = new SwipePerformanceOptimizer();
+      }
+
+      async initializeAllCarriers() {
+        // Alle Carrier parallel initialisieren
+        const carriers = ['webtrit', 'huawei', 'vodafone', 'sim'];
+        
+        for (const carrierId of carriers) {
+          try {
+            const carrier = await this.initializeCarrier(carrierId);
+            this.carriers.set(carrierId, carrier);
+            this.emitAudit('CARRIER_INITIALIZED', { carrier: carrierId });
+          } catch (error) {
+            this.emitAudit('CARRIER_INIT_FAILED', { carrier: carrierId, error: error.message });
+          }
+        }
+
+        // SIM-Info parallel abrufen
+        await this.detectSIMInfo();
+        
+        this.emitAudit('COLLABORATIVE_SYSTEM_READY', {
+          active_carriers: Array.from(this.carriers.keys()),
+          collaboration_mode: this.collaborationMode
+        });
+      }
+
+      async initializeCarrier(carrierId) {
+        switch (carrierId) {
+          case 'webtrit':
+            return { type: 'webtrit', capabilities: ['voice', 'video', 'im'], status: 'ready' };
+          case 'huawei':
+            return { type: 'huawei', capabilities: ['voice', 'video', 'conference'], status: 'ready' };
+          case 'vodafone':
+            return { type: 'vodafone', capabilities: ['voice', 'sms', 'emergency'], status: 'ready' };
+          case 'sim':
+            return { type: 'sim', capabilities: ['voice', 'sms', 'data'], status: 'ready' };
+          default:
+            throw new Error(`Unknown carrier: ${carrierId}`);
+        }
+      }
+
+      async detectSIMInfo() {
+        try {
+          if ('connection' in navigator) {
+            const connection = navigator.connection;
+            this.simInfo = {
+              operator: connection.effectiveType || 'unknown',
+              carrier: connection.downlink || 'unknown',
+              signal: connection.rtt || 0
+            };
+            this.emitAudit('SIM_DETECTED', this.simInfo);
+          }
+        } catch (error) {
+          console.warn('SIM detection failed:', error);
+        }
+      }
+
+      async collaborativeCall(phoneNumber, callType, swipeData) {
+        const callId = `collab-call-${Date.now()}`;
+        
+        // Swipe-Performance-Optimierung anwenden
+        const optimization = this.performanceOptimizer.analyzeSwipePattern(swipeData);
+        
+        this.emitAudit('COLLABORATIVE_CALL_INITIATED', {
+          call_id: callId,
+          phone_number: phoneNumber,
+          call_type: callType,
+          swipe_optimization: optimization,
+          collaboration_mode: this.collaborationMode
+        });
+
+        // Carrier-Auswahl basierend auf Swipe-Pattern
+        const selectedCarriers = this.selectCarriersForCall(callType, optimization);
+        
+        // Kollaborative Calls starten
+        const callPromises = selectedCarriers.map(carrierId => 
+          this.makeCallWithCarrier(carrierId, callId, phoneNumber, callType, optimization)
+        );
+
+        const results = await Promise.allSettled(callPromises);
+        const successfulCalls = results
+          .filter(r => r.status === 'fulfilled')
+          .map(r => r.value);
+
+        this.emitAudit('COLLABORATIVE_CALL_COMPLETED', {
+          call_id: callId,
+          successful_calls: successfulCalls.length,
+          carriers_used: successfulCalls.map(c => c.carrier)
+        });
+
+        return {
+          callId,
+          calls: successfulCalls,
+          mode: this.collaborationMode,
+          optimization
+        };
+      }
+
+      selectCarriersForCall(callType, optimization) {
+        const availableCarriers = Array.from(this.carriers.entries())
+          .filter(([id, carrier]) => carrier.capabilities.includes(callType))
+          .map(([id]) => id);
+
+        // Swipe-basierte Carrier-Auswahl
+        switch (optimization.pattern.gesture) {
+          case 'swipe-up': // Hohe Qualität - alle Carrier
+            return availableCarriers;
+          case 'swipe-down': // Niedrige Latenz - WebTrit + SIM
+            return availableCarriers.filter(id => ['webtrit', 'sim'].includes(id));
+          case 'swipe-left': // Bandbreite-sparend - nur SIM
+            return availableCarriers.filter(id => id === 'sim');
+          case 'swipe-right': // Ausgewogen - WebTrit + Vodafone
+            return availableCarriers.filter(id => ['webtrit', 'vodafone'].includes(id));
+          case 'hold': // Maximale Qualität - alle Carrier
+            return availableCarriers;
+          default: // Tap - schnell - nur WebTrit
+            return availableCarriers.filter(id => id === 'webtrit');
+        }
+      }
+
+      async makeCallWithCarrier(carrierId, callId, phoneNumber, callType, optimization) {
+        const carrier = this.carriers.get(carrierId);
+        if (!carrier) throw new Error(`Carrier ${carrierId} not available`);
+
+        // Carrier-spezifische Call-Implementierung
+        const call = {
+          carrier: carrierId,
+          callId,
+          destination: phoneNumber,
+          type: callType,
+          optimization: optimization.optimization,
+          capabilities: carrier.capabilities
+        };
+
+        this.emitAudit('CARRIER_CALL_STARTED', {
+          carrier: carrierId,
+          call_id: callId,
+          optimization_applied: optimization.optimization
+        });
+
+        return call;
+      }
+
+      emitAudit(event, metadata = {}) {
+        const auditEvent = {
+          event,
+          timestamp: new Date().toISOString(),
+          metadata: {
+            ...metadata,
+            collaborative_system: true,
+            sim_detected: !!this.simInfo,
+            active_carriers_count: this.carriers.size
+          }
+        };
+        
+        console.debug('COLLABORATIVE_AUDIT:', JSON.stringify(auditEvent));
+      }
+    }
+
+    // SwipePerformanceOptimizer (vereinfacht für HTML)
+    class SwipePerformanceOptimizer {
+      constructor() {
+        this.optimizationRules = {
+          'swipe-up': { quality: 'high', bandwidth: 'high', features: ['voice', 'video', 'conference'] },
+          'swipe-down': { quality: 'medium', bandwidth: 'low', features: ['voice', 'im'] },
+          'swipe-left': { quality: 'low', bandwidth: 'minimal', features: ['voice', 'sms'] },
+          'swipe-right': { quality: 'medium', bandwidth: 'medium', features: ['voice', 'video'] },
+          'hold': { quality: 'ultra-high', bandwidth: 'maximum', features: ['voice', 'video', 'conference', 'recording'] },
+          'tap': { quality: 'low', bandwidth: 'minimal', features: ['voice'] }
+        };
+      }
+
+      analyzeSwipePattern(swipeData) {
+        const pattern = {
+          gesture: swipeData.gesture,
+          intensity: swipeData.intensity,
+          duration: swipeData.duration,
+          hash: `${swipeData.gesture}-${Math.round(swipeData.intensity * 10)}`
+        };
+
+        const optimization = this.getOptimizationForPattern(pattern);
+        
+        return {
+          pattern,
+          optimization,
+          timestamp: new Date().toISOString()
+        };
+      }
+
+      getOptimizationForPattern(pattern) {
+        const baseOptimization = this.optimizationRules[pattern.gesture] || this.optimizationRules['tap'];
+        
+        return {
+          ...baseOptimization,
+          intensity: pattern.intensity,
+          duration: pattern.duration,
+          bandwidth: this.adjustBandwidth(baseOptimization.bandwidth, pattern.intensity),
+          quality: this.adjustQuality(baseOptimization.quality, pattern.intensity)
+        };
+      }
+
+      adjustBandwidth(baseBandwidth, intensity) {
+        const multipliers = { 'minimal': 0.5, 'low': 0.7, 'medium': 1.0, 'high': 1.5, 'maximum': 2.0 };
+        const multiplier = multipliers[baseBandwidth] * (0.5 + intensity * 1.5);
+        
+        if (multiplier <= 0.7) return 'minimal';
+        if (multiplier <= 1.0) return 'low';
+        if (multiplier <= 1.5) return 'medium';
+        if (multiplier <= 2.0) return 'high';
+        return 'maximum';
+      }
+
+      adjustQuality(baseQuality, intensity) {
+        const levels = ['low', 'medium', 'high', 'ultra-high'];
+        const baseIndex = levels.indexOf(baseQuality);
+        const adjustment = Math.round(intensity * 2);
+        const newIndex = Math.min(baseIndex + adjustment, levels.length - 1);
+        return levels[newIndex];
+      }
+    }
+
+    // SwipeCommsDock erweitern für Collaborative System + Matrix.org + PeerLink
+    class EnhancedSwipeCommsDock extends SwipeCommsDock {
+      constructor() {
+        super();
+        this.collaborativeComm = new CollaborativeCommSystem();
+        this.performanceOptimizer = new SwipePerformanceOptimizer();
+        this.matrixServers = new Map();
+        this.peerLinkTools = new Map();
+        this.initializeCollaborativeSystem();
+        this.initializeMatrixDiscovery();
+        this.initializePeerLinkTools();
+        this.initializeMatrixRooms();
+        this.initializeMatrixBridges();
+      }
+
+      async initializeCollaborativeSystem() {
+        try {
+          await this.collaborativeComm.initializeAllCarriers();
+          console.log('Collaborative Communication System ready');
+        } catch (error) {
+          console.error('Failed to initialize collaborative system:', error);
+        }
+      }
+
+      async initializeMatrixDiscovery() {
+        try {
+          const results = await this.collaborativeComm.discoverMatrixServers();
+          this.matrixServers = this.collaborativeComm.matrixServers;
+          console.log('Matrix Servers discovered:', results);
+          this.updateMatrixUI();
+        } catch (error) {
+          console.error('Matrix discovery failed:', error);
+        }
+      }
+
+      async initializeMatrixRooms() {
+        try {
+          const rooms = await this.collaborativeComm.initializeMatrixRooms();
+          console.log('Matrix Rooms initialized:', Array.from(rooms.keys()));
+          this.updateMatrixRoomsUI();
+        } catch (error) {
+          console.error('Matrix Rooms initialization failed:', error);
+        }
+      }
+
+      async initializeMatrixBridges() {
+        try {
+          const bridges = await this.collaborativeComm.initializeMatrixBridges();
+          console.log('Matrix Bridges initialized:', Array.from(bridges.keys()));
+          this.updateMatrixBridgesUI();
+        } catch (error) {
+          console.error('Matrix Bridges initialization failed:', error);
+        }
+      }
+
+      updateMatrixRoomsUI() {
+        const roomsSection = document.getElementById('matrix-room-list');
+        if (roomsSection) {
+          roomsSection.innerHTML = '';
+          const rooms = this.collaborativeComm.getAllMatrixRooms();
+          for (const room of rooms) {
+            const roomDiv = document.createElement('div');
+            roomDiv.className = `matrix-room ${room.status} p-2 mb-2 rounded border`;
+            roomDiv.innerHTML = `
+              <div class="room-name text-sm font-semibold">${room.name}</div>
+              <div class="room-topic text-xs text-gray-600">${room.topic}</div>
+              <div class="room-members text-xs text-gray-500">${room.memberCount} members</div>
+              <div class="room-bridges text-xs text-gray-500">Bridges: ${room.bridges?.join(', ') || 'None'}</div>
+            `;
+            roomsSection.appendChild(roomDiv);
+          }
+        }
+      }
+
+      updateMatrixBridgesUI() {
+        const bridgesSection = document.getElementById('matrix-bridge-list');
+        if (bridgesSection) {
+          bridgesSection.innerHTML = '';
+          const bridges = this.collaborativeComm.getAllMatrixBridges();
+          for (const bridge of bridges) {
+            const bridgeDiv = document.createElement('div');
+            bridgeDiv.className = `matrix-bridge ${bridge.status} p-2 mb-2 rounded border`;
+            bridgeDiv.innerHTML = `
+              <div class="bridge-name text-sm font-semibold">${bridge.name}</div>
+              <div class="bridge-type text-xs text-gray-600">${bridge.type}</div>
+              <div class="bridge-status text-xs text-gray-500">Status: ${bridge.status}</div>
+              <div class="bridge-health text-xs text-gray-500">Health: ${bridge.health}</div>
+            `;
+            bridgesSection.appendChild(bridgeDiv);
+          }
+        }
+      }
+
+      updateMatrixUI() {
+        const matrixSection = document.getElementById('matrix-server-list');
+        if (matrixSection) {
+          matrixSection.innerHTML = '';
+          for (const [server, info] of this.matrixServers) {
+            const serverDiv = document.createElement('div');
+            serverDiv.className = `matrix-server ${info.status} p-2 mb-2 rounded border`;
+            serverDiv.innerHTML = `
+              <div class="server-name text-sm font-semibold">${info.name}</div>
+              <div class="server-status text-xs text-gray-600">${info.status}</div>
+              <div class="server-capabilities text-xs text-gray-500">${info.capabilities?.join(', ') || 'Standard'}</div>
+            `;
+            matrixSection.appendChild(serverDiv);
+          }
+        }
+      }
+
+      updatePeerLinkUI() {
+        const peerLinkSection = document.getElementById('peerlink-tool-list');
+        if (peerLinkSection) {
+          peerLinkSection.innerHTML = '';
+          for (const [toolId, tool] of this.peerLinkTools) {
+            const toolDiv = document.createElement('div');
+            toolDiv.className = `peerlink-tool ${tool.status} p-2 mb-2 rounded border`;
+            toolDiv.innerHTML = `
+              <div class="tool-name text-sm font-semibold">${tool.name}</div>
+              <div class="tool-type text-xs text-gray-600">${tool.type}</div>
+              <div class="tool-capabilities text-xs text-gray-500 mb-2">${tool.capabilities.join(', ')}</div>
+              <button class="upgrade-btn text-xs px-2 py-1 rounded bg-blue-500 text-white" onclick="window.swipeCommsDock.upgradeTool('${toolId}')">Upgrade</button>
+            `;
+            peerLinkSection.appendChild(toolDiv);
+          }
+        }
+      }
+
+      async upgradeTool(toolId) {
+        try {
+          if (toolId === 'jamsession') {
+            const result = await this.collaborativeComm.upgradeJamsession();
+            console.log('Tool upgraded:', result);
+            this.showUpgradeSuccess(toolId, result);
+          } else {
+            console.log(`Upgrade for ${toolId} not implemented yet`);
+          }
+        } catch (error) {
+          console.error(`Upgrade failed for ${toolId}:`, error);
+          this.showUpgradeError(toolId, error);
+        }
+      }
+
+      showUpgradeSuccess(toolId, result) {
+        const notification = document.createElement('div');
+        notification.className = 'upgrade-success';
+        notification.innerHTML = `
+          <h3>✅ ${toolId} erfolgreich upgraded!</h3>
+          <p>Status: ${result.status}</p>
+          <p>Tests: ${result.testResults.overallStatus}</p>
+          <p>Swipe-Integration: ${result.swipeIntegration.integrationStatus}</p>
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 5000);
+      }
+
+      showUpgradeError(toolId, error) {
+        const notification = document.createElement('div');
+        notification.className = 'upgrade-error';
+        notification.innerHTML = `
+          <h3>❌ Upgrade fehlgeschlagen für ${toolId}</h3>
+          <p>Fehler: ${error.message}</p>
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 5000);
+      }
+
+      async makeCollaborativeCall(phoneNumber, callType, swipeData) {
+        try {
+          const result = await this.collaborativeComm.collaborativeCall(
+            phoneNumber, 
+            callType, 
+            swipeData
+          );
+          
+          this.emitAudit('COLLABORATIVE_CALL_SUCCESS', {
+            call_id: result.callId,
+            carriers_used: result.calls.map(c => c.carrier),
+            optimization: result.optimization
+          });
+          
+          return result;
+        } catch (error) {
+          this.emitAudit('COLLABORATIVE_CALL_FAILED', { error: error.message });
+          throw error;
+        }
+      }
+
+      emitCallAudit(eventType, mode) {
+        // Swipe-Daten für Performance-Optimierung sammeln
+        const swipeData = {
+          gesture: 'tap', // Vereinfacht für Demo
+          intensity: 0.5,
+          duration: 100,
+          position: { x: 0, y: 0 }
+        };
+
+        // Kollaborativen Call starten
+        this.makeCollaborativeCall('+49123456789', mode, swipeData)
+          .then(result => {
+            this.emitAudit(`WEBTRIT_CALL_${eventType}`, { 
+              provider: 'collaborative', 
+              mode,
+              swipe_initiated: true,
+              carriers: result.calls.map(c => c.carrier),
+              optimization: result.optimization
+            });
+          })
+          .catch(error => {
+            this.emitAudit(`WEBTRIT_CALL_${eventType}_FAILED`, { 
+              provider: 'collaborative', 
+              mode,
+              error: error.message
+            });
+          });
+      }
+    }
+
+    // Enhanced SwipeCommsDock initialisieren
+    window.addEventListener('load', () => {
+      window.swipeCommsDock = new EnhancedSwipeCommsDock();
+      
+      // Service Worker registrieren für 404/Offline-Fallback
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/public/sw.js').catch(()=>{});
+      }
+    });
+  </script>
+
+  <!-- Security‑Meta als Ergänzung (harte Header besser via Firebase/Proxy)
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self';"> -->
+
+<div id="thunderbit-crx-side-bar" style="display:block;opacity:1;pointer-events:all;top:0;right:0;z-index:9007199254740991;position:fixed;pointer-events:none;user-select:none;"><template shadowrootmode="open"><div id="#react-app-root"><div id="#react-app-slot" style="display:flex"></div></div></template></div><button id="open-side-panel" style="width:0;height:0;opacity:0;user-select:none;pointer-events:all;position:absolute;bottom:0;right:0;padding:0;border:0;outline:none;"></button>
+          <div id="swipe-comms-dock" class="fixed inset-x-0 bottom-0 z-40 pointer-events-none" style="display: none;">
+            <div class="mx-auto max-w-3xl p-2">
+              <div class="pointer-events-auto rounded-2xl shadow-xl border bg-white/90 backdrop-blur">
+                <div class="flex items-center justify-between p-2">
+                  <button id="comms-toggle" class="px-3 py-1.5 text-xs rounded-full bg-gray-900 text-white">
+                    Comms
+                  </button>
+                  <div class="text-xs text-gray-600">Swipe ↑ am rechten Rand zum Öffnen</div>
+                  <button id="comms-expand" class="px-2 py-1 text-xs">+</button>
+                </div>
+                <div id="comms-content" class="p-3 border-t" style="display: none;">
+                  <div id="comms-status" class="text-xs text-gray-500 pb-2">WebTrit bereit</div>
+                  <div id="webtrit-widget" class="w-full h-56 flex items-center justify-center text-sm text-gray-600">
+                    WebTrit lädt … (wird nur bei Bedarf nachgeladen)
+                  </div>
+                  <div class="mt-2 grid grid-cols-3 gap-2">
+                    <button class="rounded-lg border p-2 text-xs" onclick="window.swipeCommsDock.emitCallAudit(&#39;DIAL&#39;, &#39;voice&#39;)">Anrufen</button>
+                    <button class="rounded-lg border p-2 text-xs" onclick="window.swipeCommsDock.emitCallAudit(&#39;VIDEO&#39;, &#39;video&#39;)">Video</button>
+                    <button class="rounded-lg border p-2 text-xs" onclick="window.swipeCommsDock.emitCallAudit(&#39;MSG&#39;, &#39;im&#39;)">Nachricht</button>
+                  </div>
+                  
+                  <!-- Matrix.org Server Discovery -->
+                  <div id="matrix-servers" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🔗 Matrix.org Servers</h4>
+                    <div id="matrix-server-list">
+                      <!-- Matrix servers werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <!-- Matrix Rooms -->
+                  <div id="matrix-rooms" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🏠 Matrix Rooms</h4>
+                    <div id="matrix-room-list">
+                      <!-- Matrix rooms werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <!-- Matrix Bridges -->
+                  <div id="matrix-bridges" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🌉 Matrix Bridges</h4>
+                    <div id="matrix-bridge-list">
+                      <!-- Matrix bridges werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <!-- PeerLink Tools -->
+                  <div id="peerlink-tools" class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-800 mb-2">🎵 PeerLink Tools</h4>
+                    <div id="peerlink-tool-list">
+                      <!-- PeerLink tools werden hier dynamisch eingefügt -->
+                    </div>
+                  </div>
+                  
+                  <div id="comms-expanded" class="mt-3 text-[11px] text-gray-500" style="display: none;">
+                    <p>Audit aktiv · Lizenz wird vor dem Medienaufbau geprüft · Keine Änderung am bestehenden Navigations‑Flow.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pointer-events-auto fixed right-0 bottom-20 w-8 h-24 flex items-center justify-center">
+              <div class="rounded-l-xl bg-gray-900 text-white text-[10px] leading-tight px-2 py-3 opacity-80">
+                Swipe ↑<br>Comms
+              </div>
+            </div>
+          </div>
+        </body></html>

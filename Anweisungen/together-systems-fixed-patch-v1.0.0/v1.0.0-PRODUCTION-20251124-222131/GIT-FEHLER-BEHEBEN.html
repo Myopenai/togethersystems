@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GIT-FEHLER-BEHEBEN</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🔧 GIT-FEHLER BEHEBEN - "rejected" Fehler</h1>
+
+<h2>❌ Problem:</h2>
+```
+! [rejected]        main -> main (fetch first)
+error: failed to push some refs
+```
+
+<strong>Ursache:</strong> Remote-Repository hat bereits Dateien, die lokal nicht vorhanden sind.
+
+---
+
+<h2>✅ LÖSUNG A: Remote-Änderungen holen und mergen (EMPFOHLEN)</h2>
+
+```powershell
+<h1>Remote-Änderungen holen und mit lokalen mergen</h1>
+git pull origin main --allow-unrelated-histories
+
+<h1>Falls Konflikte auftreten:</h1>
+<h1>- Öffne die konfliktbehafteten Dateien</h1>
+<h1>- Löse Konflikte manuell</h1>
+<h1>- Dann:</h1>
+git add .
+git commit -m "Merge remote changes with local"
+
+<h1>Dann pushen</h1>
+git push -u origin main
+```
+
+---
+
+<h2>✅ LÖSUNG B: Force Push (NUR wenn Remote-Dateien unwichtig sind!)</h2>
+
+<strong>⚠️ WARNUNG:</strong> Force Push <strong>löscht alle Dateien</strong> im Remote-Repository!
+
+```powershell
+<h1>Force Push (überschreibt Remote komplett)</h1>
+git push -u origin main --force
+```
+
+<strong>Nur verwenden wenn:</strong>
+- Remote-Dateien sind unwichtig
+- Du willst deine lokale Version komplett überschreiben
+- Du bist sicher, dass du alles Remote löschen willst
+
+---
+
+<h2>✅ LÖSUNG C: Direkt über GitHub Web-UI (EINFACHSTE METHODE)</h2>
+
+<strong>Keine Git-Befehle nötig!</strong>
+
+1. Gehe zu: <strong>https://github.com/myopenai/togethersystems</strong>
+2. Klicke <strong>"Add file"</strong> → <strong>"Upload files"</strong>
+3. <strong>Drag & Drop:</strong> Ziehe den gesamten Ordner in den Browser
+4. <strong>Commit message:</strong> "Initial commit: TogetherSystems Portal"
+5. Klicke <strong>"Commit changes"</strong>
+
+<strong>Fertig!</strong> Alle Dateien sind auf GitHub.
+
+---
+
+<h2>🎯 EMPFEHLUNG</h2>
+
+<strong>Für dich am einfachsten:</strong>
+- ✅ <strong>Lösung C: GitHub Web-UI</strong> (keine Git-Befehle, funktioniert sofort)
+
+<strong>Falls du Git verwenden willst:</strong>
+- ✅ <strong>Lösung A: Pull & Merge</strong> (sicherer, behält beide Versionen)
+- ⚠️ <strong>Lösung B: Force Push</strong> (nur wenn Remote unwichtig)
+
+---
+
+<strong>Nächster Schritt:</strong> Wähle eine Lösung aus!
+</body>
+</html>

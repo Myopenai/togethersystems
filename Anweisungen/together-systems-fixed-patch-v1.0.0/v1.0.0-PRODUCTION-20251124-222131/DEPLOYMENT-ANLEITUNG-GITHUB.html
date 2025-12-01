@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DEPLOYMENT-ANLEITUNG-GITHUB</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🚀 DEPLOYMENT-ANLEITUNG - GitHub + Cloudflare Pages</h1>
+
+<h2>✅ GitHub Deployment eingerichtet</h2>
+
+<strong>Datei:</strong> `.github/workflows/deploy.yml`
+
+---
+
+<h2>📋 ZWEI DEPLOYMENT-OPTIONEN</h2>
+
+<h3>Option 1: Direkt via Wrangler (aktuell)</h3>
+
+```powershell
+wrangler pages deploy . --project-name ts-portal
+```
+
+<h3>Option 2: Automatisch via GitHub (NEU)</h3>
+
+<strong>Vorteile:</strong>
+- ✅ Automatisches Deployment bei jedem Push
+- ✅ Keine manuellen Befehle nötig
+- ✅ Versionierung über Git
+
+<strong>Setup:</strong>
+1. Repository auf GitHub pushen
+2. GitHub Secrets konfigurieren:
+   - `CLOUDFLARE_API_TOKEN` (aus Cloudflare Dashboard)
+   - `CLOUDFLARE_ACCOUNT_ID` (aus Cloudflare Dashboard)
+3. Bei jedem Push zu `main`/`master` wird automatisch deployed
+
+---
+
+<h2>🔧 GITHUB SECRETS EINRICHTEN</h2>
+
+1. <strong>Cloudflare API Token erstellen:</strong>
+   - Cloudflare Dashboard → My Profile → API Tokens
+   - "Create Token" → "Edit Cloudflare Workers" Template
+   - Account ID kopieren
+   - Token kopieren
+
+2. <strong>GitHub Secrets hinzufügen:</strong>
+   - Repository → Settings → Secrets and variables → Actions
+   - "New repository secret" für:
+     - `CLOUDFLARE_API_TOKEN`
+     - `CLOUDFLARE_ACCOUNT_ID`
+
+---
+
+<h2>✅ STATUS</h2>
+
+- ✅ GitHub Workflow erstellt (`.github/workflows/deploy.yml`)
+- ✅ Automatisches Deployment bei Push
+- ✅ Direktes Deployment via Wrangler weiterhin möglich
+
+<strong>Beide Optionen funktionieren!</strong>
+</body>
+</html>

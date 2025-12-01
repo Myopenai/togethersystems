@@ -1,0 +1,4130 @@
+<!DOCTYPE html>
+<!-- saved from url=(0033)http://g0xbuwebsdr.ddns.net:8901/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>.pac-container{background-color:#fff;position:absolute!important;z-index:1000;border-radius:2px;border-top:1px solid #d9d9d9;font-family:Arial,sans-serif;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.3);box-shadow:0 2px 6px rgba(0,0,0,.3);-webkit-box-sizing:border-box;box-sizing:border-box;overflow:hidden}.pac-logo:after{content:"";padding:1px 1px 1px 0;height:18px;-webkit-box-sizing:border-box;box-sizing:border-box;text-align:right;display:block;background-image:url(https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white3.png);background-position:right;background-repeat:no-repeat;-webkit-background-size:120px 14px;background-size:120px 14px}.hdpi.pac-logo:after{background-image:url(https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white3_hdpi.png)}.pac-item{cursor:default;padding:0 4px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;line-height:30px;text-align:left;border-top:1px solid #e6e6e6;font-size:11px;color:#515151}.pac-item:hover{background-color:#fafafa}.pac-item-selected,.pac-item-selected:hover{background-color:#ebf2fe}.pac-matched{font-weight:700}.pac-item-query{font-size:13px;padding-right:3px;color:#000}.pac-icon{width:15px;height:20px;margin-right:7px;margin-top:6px;display:inline-block;vertical-align:top;background-image:url(https://maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons.png);-webkit-background-size:34px 34px;background-size:34px}.hdpi .pac-icon{background-image:url(https://maps.gstatic.com/mapfiles/api-3/images/autocomplete-icons_hdpi.png)}.pac-icon-search{background-position:-1px -1px}.pac-item-selected .pac-icon-search{background-position:-18px -1px}.pac-icon-marker{background-position:-1px -161px}.pac-item-selected .pac-icon-marker{background-position:-18px -161px}.pac-placeholder{color:gray}sentinel{}
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes">
+
+<title>G0XBU WEBSDR - Jodrell 1</title>
+<!--------------- FAVICON --------------------->
+
+<!--<link rel="icon" type="image/x-icon" href="websdr/pub/favicon.ico">
+<link rel="manifest" href="icons/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">-->
+
+<!---------------   SDR  HOME SCRIPTS ---------------->
+
+<script src="./G0XBU WEBSDR - Jodrell 1_files/bandinfo.js.downloaden" type="text/javascript"></script>
+<script src="./G0XBU WEBSDR - Jodrell 1_files/jquery-3.6.0.min.js.downloaden"></script>
+
+<script src="./G0XBU WEBSDR - Jodrell 1_files/jquery.min.js.downloaden"></script>
+<script src="./G0XBU WEBSDR - Jodrell 1_files/bootstrap.min.js.downloaden"></script>
+<script src="./G0XBU WEBSDR - Jodrell 1_files/jquery.kontrol.js.downloaden"></script>
+<script src="./G0XBU WEBSDR - Jodrell 1_files/websdr-base_compact_test.js.downloaden" type="text/javascript"></script>
+
+<script>
+function setmode(y) {
+		if (y == 'usb') {
+				$('#mod1').click();
+			} else if (y == 'lsb') {
+				$('#mod2').click();
+			} else if (y == 'am') {
+				$('#mod3').click();
+			} else if (y == 'fm') {
+				$('#mod4').click();
+			} else if (y == 'cw') {
+				$('#mod5').click();
+			} else if (y == 'dig') {
+				$('#mod6').click();
+			}
+	};
+</script>
+
+    
+<!---------------   SDR  HOME STYLES ---------------->
+<link href="./G0XBU WEBSDR - Jodrell 1_files/compact.css" rel="stylesheet" type="text/css">
+
+
+
+
+<style>
+.alert {
+  padding: 10px;
+  background-color: red;
+  color: white;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+
+.loader {
+  display: flex;
+  color: #ccc;
+  font-size: 3em;
+  font-family: 'Trade';
+  justify-content: center;
+  align-items: center;
+  background: #383838;
+  z-index: 1001;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+
+}
+</style>
+
+
+<script type="text/javascript" charset="UTF-8" src="./G0XBU WEBSDR - Jodrell 1_files/common.js.downloaden"></script><script type="text/javascript" charset="UTF-8" src="./G0XBU WEBSDR - Jodrell 1_files/util.js.downloaden"></script><script type="text/javascript" charset="UTF-8" src="./G0XBU WEBSDR - Jodrell 1_files/map.js.downloaden"></script><script type="text/javascript" charset="UTF-8" src="./G0XBU WEBSDR - Jodrell 1_files/marker.js.downloaden"></script><script type="text/javascript" charset="UTF-8" src="./G0XBU WEBSDR - Jodrell 1_files/controls.js.downloaden"></script><script type="text/javascript" charset="UTF-8" src="./G0XBU WEBSDR - Jodrell 1_files/places_impl.js.downloaden"></script></head>
+
+<body onload="bodyonload()">
+
+<!-------------Loader splash screen--------------->
+<div class="notify"><span id="notifyType" class=""></span></div>
+ 
+
+<!------------------------------------------------>
+<div class="sdrMain">
+    <div class="sdrBody">
+  	  <div class="header">
+
+    <span class="nickname">                     
+        <span>
+
+        <form name="usernameform" action="http://g0xbuwebsdr.ddns.net:8901/#" id="chatUser">
+        <a style="margin-left: 627px; font-family: &#39;Trade&#39;; color: #999">Enter Callsign / Username:</a>    
+    <script type="text/javascript">
+        document_username();
+        </script><input type="text" id="time" name="username" value="" ondragstart="return false" ondrop="return false" ondrag="return false" onpaste="return false" maxlength="10" onfocus="this.value=&quot;&quot;" onblur="visit(this.id); setusernamecookie();" onclick="" fdprocessedid="v55kad"><span id="please4">
+       
+         
+ <input type="text" size="1" name="dummytopreventsubmissiononenter" style="display:none" onclick="">
+
+        </span></form> 
+<a style="font-family: trade; font-size: 38px; margin-top: -42px; margin-left: 56px; position: absolute; text-shadow: 1px -1px 0px #ccc">
+WebSDR - Jodrell 1</a>
+    </span>
+
+     <span class="user" style="color:#999; font-size:18px">
+
+     <span id="numusers1" style="color:#FFF; font-size:24px" ;="">8</span>&nbsp;USERS&nbsp;ONLINE</span>
+
+</span></div>
+<!-- Dummy element -->
+<div id="dummyforie" style="display: block;"></div>
+
+<!-- Keep this for layout reasons, but hide on mobile -->
+<a href="http://g0xbuwebsdr.ddns.net:8901/m.html" id="mobilewarningLink">
+  <div id="mobilewarning" class="warning" style="min-height:45px; text-align:center; vertical-align:middle; font-size:24px;">
+    MOBILE DEVICE DETECTED: Click here for the mobile friendly site
+  </div>
+</a>
+
+<!-- Other warnings -->
+<div id="javawarning" class="warning" style="display: none;"></div>
+<div id="html5warning" class="warning" style="display: none;"></div>
+
+<!-- Mobile popup modal -->
+<div id="mobileWarningModal" style="
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(2px);
+  color: white;
+  font-family: sans-serif;
+  text-align: center;
+  padding-top: 100px;
+">
+  <div style="
+    background: #222;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+  ">
+    <h2>📱 Mobile Device Detected</h2>
+    <p>This WebSDR works best on desktop devices.</p>
+    <p><a href="http://g0xbuwebsdr.ddns.net:8901/m.html" style="color: #4dc9ff; font-weight: bold;">Go to the mobile-friendly site</a></p>
+    <button onclick="document.getElementById(&#39;mobileWarningModal&#39;).style.display=&#39;none&#39;" style="
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    ">Continue Anyway</button>
+  </div>
+</div>
+
+<script>
+function isMobileDevice() {
+  return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+}
+
+if (isMobileDevice()) {
+  // Show popup modal
+  document.getElementById('mobileWarningModal').style.display = 'block';
+
+  // Hide banner-style warning to prevent duplication or layout conflict
+  const banner = document.getElementById('mobilewarning');
+  if (banner) banner.style.display = 'none';
+
+  const link = document.getElementById('mobilewarningLink');
+  if (link) link.style.display = 'none';
+}
+</script>
+
+
+
+
+<script>
+var sup_android=false;
+var sup_iOS=false;
+try { 
+   var n=navigator.userAgent.toLowerCase();
+   if (n.indexOf('android')!=-1) sup_android=true;
+   if (n.indexOf('iphone')!=-1) sup_iOS=true;
+   if (n.indexOf('ipad')!=-1) sup_iOS=true;
+   if (n.indexOf('ipod')!=-1) sup_iOS=true;
+   if (n.indexOf('ios')!=-1) sup_iOS=true;
+} catch (e) {};
+if (sup_iOS) document.write('<div id="iOSstart"  style="width: 100%; text-align: center;"><button onclick="iOS_audio_start()">iOS audio start</button><br></div>');
+
+</script>
+
+<!----Top notice banner------
+<div class="alert" display="none">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  <strong>NOTICE!</strong> Antennas will remain lowered for the next few days due to forecasted high winds, sorry for any inconvenience.
+
+</div>
+
+<!--Top notice banner------>
+
+
+
+<script>
+// Function to update font color
+function updateFontColor(value) {
+    // Set the body font color to the selected color
+    document.body.style.color = value;
+    // Set the LCD font color to the selected color (assuming 'LCD' is the element ID)
+    document.getElementById("LCD").style.color = value;
+    // Save the font color value in a cookie
+    setCookie('fontColorValue', value, 30);
+    deleteCookie("theme");
+}
+
+
+function backImg1() {
+  document.body.style.backgroundImage = "url('img/jodrell3.jpg')";
+  document.body.style.color = "#fff";
+  document.getElementById("LCD").style.color = "#fff";
+  sliderColorWhite();
+  deleteCookie("fontColorValue");
+  deleteCookie("pageColorValue");
+  deleteCookie("sliderColorValue");
+}
+function backImg2() {
+  document.body.style.backgroundImage = "url('img/pattern3.jpg')";
+  document.body.style.color = "#63de30";
+  document.getElementById("LCD").style.color = "#63de30";
+  sliderColorReset();
+  deleteCookie("fontColorValue");
+  deleteCookie("pageColorValue");
+  deleteCookie("sliderColorValue");
+  
+}
+function backImg3() {
+  deleteCookie("fontColorValue");
+  deleteCookie("pageColorValue");
+  deleteCookie("sliderColorValue");
+  document.body.style.backgroundImage = "url('img/pattern.png')";
+  document.body.style.color = "orange";
+  document.getElementById("LCD").style.color = "orange";
+  sliderColorOrange();
+  
+}
+function backImg4() {
+  document.body.style.backgroundImage = "url('img/pattern2.jpg')";
+  document.body.style.color = "#376c34";
+  document.getElementById("LCD").style.color = "#376c34";
+  sliderColorReset();
+  deleteCookie("fontColorValue");
+  deleteCookie("pageColorValue");
+  deleteCookie("sliderColorValue");
+}
+function backImg8() {
+  document.body.style.backgroundImage = "none";
+  document.body.style.backgroundColor = "black";
+  document.body.style.color = "grey";
+  document.getElementById("LCD").style.color = "grey";
+  sliderColorReset();
+  deleteCookie("fontColorValue");
+  deleteCookie("pageColorValue");
+  deleteCookie("sliderColorValue");
+
+}
+function reset() {
+  // Delete theme-related cookies
+    deleteCookie("theme");
+    deleteCookie("fontColorValue");
+    deleteCookie("pageColorValue");
+    deleteCookie("sliderColorValue");
+  // Clear any other reset-related cookies if present
+  //deleteCookie("reset");
+    // Reset other styles
+    document.body.style.backgroundImage = "url('img/pattern5.jpg')";
+    document.body.style.color = "#fff"; 
+    document.getElementById("LCD").style.fontStyle = "normal";
+    document.getElementById("LCD").style.fontWeight = "normal";
+    document.getElementById("LCD").style.color = "#fff";
+  
+    // Reset slider colors
+    sliderColorReset();
+}
+function backImg6() {
+  document.body.style.backgroundImage = "url('img/space.jpg')";
+  document.body.style.color = "#e9be2c";
+  document.getElementById("LCD").style.color = "#e9be2c";
+  sliderColorOrange();
+  deleteCookie("fontColorValue");
+  deleteCookie("pageColorValue");
+  deleteCookie("sliderColorValue");
+}
+
+function backImg7() {
+  document.body.style.backgroundImage = "url('img/world.jpg')";
+  document.body.style.color = "#7fb610";
+  document.getElementById("LCD").style.color = "#7fb610";
+  sliderColorReset();
+  deleteCookie("fontColorValue");
+  deleteCookie("pageColorValue");
+  deleteCookie("sliderColorValue");
+}
+
+// Function to update page color
+function updatePageColor(value) {
+    // Remove any existing background image
+    document.body.style.backgroundImage = "none";
+    // Set the body background color to the selected color
+    document.body.style.backgroundColor = value;
+    // Save the page color value in a cookie
+    setCookie('pageColorValue', value, 30);
+    deleteCookie("theme");
+}
+
+
+
+
+function lcdItalic() {
+  document.getElementById("LCD").style.fontStyle = "italic";
+  document.getElementById("LCD").style.fontWeight = "500";
+}
+
+function lcdColour() {
+  const randomColor = Math.floor(Math.random()*16777216).toString(16);
+  document.getElementById("LCD").style.fontStyle = "#" + randomColor;  
+}
+
+function butColour() {
+  // Convert the value to a hexadecimal color code
+  const color = "#" + parseInt(value, 10).toString(16).padStart(6, '0');
+  document.getElementById("mod1").style.fontStyle = color;  
+}
+
+function sliderColorOrange() {
+  // 1) Grab the sliders
+  const sliders = document.querySelectorAll(
+    "#slider1, #slider2, #slider3, #slider4, " +
+    "#slider5, #slider6, #slider7, #slider8"
+  );
+
+  // 2) Apply the orange accent and set a cookie
+  sliders.forEach(slider => {
+    // Color it
+    slider.style.accentColor = "orange";
+  });
+
+  // 3) Persist that choice for 30 days
+  // (Assumes your setCookie(name, value, days) helper is in scope)
+  setCookie("sliderAccentColor", "orange", 30);
+}
+
+
+
+function sliderColorReset() {
+  // Select all slider elements
+  var sliders = document.querySelectorAll("#slider1, #slider2, #slider3, #slider4, #slider5, #slider6, #slider7, #slider8"); 
+
+  // Log the sliders array
+  console.log(sliders);
+
+  // Set the accentColor for each slider
+  sliders.forEach(slider => {
+    slider.style.accentColor = "#63de30";
+  });
+}
+
+
+function sliderColorOrange() {
+  var sliders = document.querySelectorAll("#slider1, #slider2, #slider3, #slider4, #slider5, #slider6, #slider7, #slider8"); //selects all ID's
+  console.log(sliders); //Stores those ID's in an array
+  sliders[0].style.accentColor = "orange" ; 
+  sliders[1].style.accentColor = "orange" ;
+  sliders[2].style.accentColor = "orange" ;
+  sliders[3].style.accentColor = "orange" ;
+  sliders[4].style.accentColor = "orange" ;
+  sliders[5].style.accentColor = "orange" ;
+  sliders[6].style.accentColor = "orange" ;
+  sliders[7].style.accentColor = "orange" ;
+}
+
+function sliderColorWhite() {
+  var sliders = document.querySelectorAll("#slider1, #slider2, #slider3, #slider4, #slider5, #slider6, #slider7, #slider8"); //selects all ID's
+  console.log(sliders); //Stores those ID's in an array
+  sliders[0].style.accentColor = "#fff" ; 
+  sliders[1].style.accentColor = "#fff" ;
+  sliders[2].style.accentColor = "#fff" ;
+  sliders[3].style.accentColor = "#fff" ;
+  sliders[4].style.accentColor = "#fff" ;
+  sliders[5].style.accentColor = "#fff" ;
+  sliders[6].style.accentColor = "#fff" ;
+  sliders[7].style.accentColor = "#fff" ;
+}
+
+</script>
+
+
+
+<!-------------------- S-METER BOX ---------------->
+<div class="ctl" id="buttons" style="margin-top: 10px;">
+  <div class="showblinding">
+  <span id="numericalsmeter" style="position:absolute; display: block; color: #3F0; background: black; border: 1px solid #939393; border-radius: 5px; padding: 1px; font-size:16px;letter-spacing:1px; margin:7px 0 0 30px; font-weight:bold;font-family: &#39;Trade&#39;;"><span style="color:#CCC;font-weight:normal!important;">SIGNAL:</span> S5</span>
+  <span id="numericalsmeterpeak" style="position:absolute; display: block; color: #f30b07; background: black; border: 1px solid #939393; border-radius: 5px; padding: 1px; font-size:16px;letter-spacing:1px; margin:7px 0 0 193px; width: 83px; font-weight:bold;font-family: &#39;Trade&#39;; @-moz-document url-prefix() {
+selector {
+margin-left:-820px;
+}
+}"><span style="color:#CCC;  font-weight:normal!important">dBm:</span>-96.2</span>
+    <div class="ctl" style="width:291px; height:77px; padding: 14px 0px 0px 20px; border:1px solid #fff; border-radius:12px;">
+    <br>
+    
+    <!------- S-meter ------->
+
+<div class="ctl" style="border: 1px solid; margin-left: 8px; border-color: grey; border-radius: 6px; background-color: black">
+<div class="clear:both">
+
+
+<!--<div id="smetermin" class="smetermin" style="width: 0px; transition: width 0.1s ease 0s;">-->
+  <div style="position:absolute;height:0px;"></div>
+</div> 
+             
+      <div id="smeterpeak" class="smeterpeak" style="width: 59.6238px; z-index: 10; transition: width 0.1s;">
+
+
+<div style="position:absolute;width:0px;height:0px;"></div>
+</div>
+
+       <div id="smeterbar" class="smeterbar" style="width: 59.6238px;">
+          <div class="EQ" id="smeterbarnew" style="width:0px;">
+    <div class="EQ-column" data-volume="5"></div>
+    <table style="margin-top: -8px; margin-left: -8px; position:relative;width: 180px;height: 15px;border-spacing: 0px;" class="smetertable"><tbody><tr>
+<td></td>   
+<td></td>
+ <td></td><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td><td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td><td></td>
+<td></td><td></td>
+<td></td><td></td>
+
+<td></td><td></td>
+
+<td></td><td></td>
+
+<td></td><td></td>
+
+<td></td><td></td>
+<td></td><td></td>
+<td></td><td></td>
+<td></td><td></td>
+<td></td><td></td>
+<td></td><td></td>
+
+
+
+
+            
+    </tr></tbody></table>
+   </div>
+      <div class="mask pattern-3 flex-center"></div>
+
+<div style="position: left; width: 0px; height: 0px; background-color: #FFCC66; border: 1px none #000000;"></div>
+</div>
+
+<img src="./G0XBU WEBSDR - Jodrell 1_files/smeter4.png" style="width:250px" alt="[scale]" title="S-meter">
+
+</div>
+</div>
+<!------- end of S-meter -------->
+
+
+   <!---- <div id="smeterback" style="width:268px;height:20px;background-color:#20202F;position:absolute;">
+    <div id="smeterpeak" style="width:268px;height:20px;background-color:#ff8000;position:absolute;">
+      <div style="position:absolute;width:0px;height:0px;"></div>
+    </div>
+    <div id="smeterbar" style="width:268px;height:20px;background-color:#00ff00;position:absolute;">
+      <div style="position:absolute;width:0px;height:0px;"></div>
+    </div>
+    <br>
+    <img src="smeter4.png" alt="[scale]" style="margin-top:5px; margin-left:-11px;">
+    <br>
+    </div>
+  </div>-->
+
+</div>
+
+<!------------------- VFO & FQ BOX ----------------->
+<div class="ctl" style="color: green; margin-right: 4px;">
+<form name="freqform" action="http://g0xbuwebsdr.ddns.net:8901/#" onsubmit="setfreqif(this.frequency.value); return false;">
+
+
+<!------------------- LCD BOX FREQUENCY ----------------->
+<span class="showblinding" style="margin-left:-18px;">
+
+<ul class="bandLcd">
+    <li class="active">20m</li>    
+    <li>CB</li>
+    <li>10m</li>
+    <li>80m</li>
+    <li>4m</li>
+    <li>6m</li>
+    <li class="active">RX</li>
+    <li onclick="style.color= &#39;red&#39;">TX</li>
+</ul>
+
+<ul class="modeLcd">
+    <li class="active">USB</li>
+    <li>LSB</li>
+    <li>AM</li>
+    <li>FM</li>
+    <li>CW</li>
+    <li>DIG</li>
+</ul>
+
+<ul class="squelchLcd">
+    <li>MUTE</li>
+    <li>SQUELCH</li>
+    <li>NOTCH</li>
+</ul>
+
+<div class="filterLcd">
+<img style="display: none" "src="img/filterIcon.png" height="12"> 
+<a style="color: #ccc" "="">FILTER:</a>
+<span id="numericalbandwidth7">2.7</span> Khz</div>
+
+  <input class="lcdScreen" id="LCD" style="font-style: normal; color: #fff" type="text" size="10" name="frequency" onkeyup="setfreqif_fut(this.value);" fdprocessedid="uxhkh">
+  <input type="submit" style="position:absolute; left:-999px" value="submit" fdprocessedid="ik1p7">  
+
+</span>
+
+  <span class="hideblinding">
+      <input id="freqstepm3" type="button" value="---" onclick="freqstep(-3)">
+  </span>
+
+<!-------------FREQ STEP------------->
+  <span class="showblinding" style="margin-left:6px; text-align: center; width: 80px; height: 90px; border: 1px solid white; border-radius: 10px">
+      <a style="font-family: &#39;trade&#39;; font-size: 10px; color: #ccc">Freq Adjust</a>
+<br>
+       <select id="freqStepSelect" style="border-radius: 12px; margin-top: 5px; background: black; color: #fff" fdprocessedid="bitmqr">
+        <option value="0.01">10Hz</option>
+        <option value="0.05">50Hz</option>
+        <option value="1" selected="">1KHz</option>
+        <option value="5">5KHz</option>
+        <option value="10">10KHz</option>
+        <option value="12.5">12.5KHz</option>
+       </select>
+<br>
+      <button class="downF" id="downF" style="border-radius: 12px; font-size: 16px; width: 33px; background:linear-gradient(0deg, rgb(80 82 81) 50%, rgba(255, 255, 255, 1) 123%, rgba(0, 212, 255, 1) 100%); color: #fff " fdprocessedid="bbb7l">-</button>
+      <button class="upF" id="upF" style="border-radius: 12px; font-size: 16px; width: 33px; margin-left: 4px; background:linear-gradient(0deg, rgb(80 82 81) 50%, rgba(255, 255, 255, 1) 123%, rgba(0, 212, 255, 1) 100%); color: #fff " fdprocessedid="2nbec">+</button>
+      
+<br>
+ <button onclick="freqstep(9)" style="border-radius: 12px; font-size: 10px; background:linear-gradient(0deg, rgb(80 82 81) 50%, rgba(255, 255, 255, 1) 123%, rgba(0, 212, 255, 1) 100%); color: #fff " fdprocessedid="qsymfl">ROUND</button>
+
+<div class="knobContainer" style="position: absolute; width: 100px; height: 100px; margin-left: 83px; margin-top: -88px">
+    <!-- SVG Knob -->
+    <svg id="knobSVG" width="100" height="100">
+<defs>
+    <lineargradient id="aluminumGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#020202; stop-opacity:1"></stop>
+      <stop offset="100%" style="stop-color:#8d8c8c; stop-opacity:1"></stop>
+    </lineargradient>
+    <pattern id="knobPattern" patternUnits="userSpaceOnUse" width="100" height="100">
+      <image xlink:href="img/knob7.png" x="0" y="-5" width="100" height="100"></image>
+    </pattern>
+  </defs>
+    <!-- Larger circle for visual reference (optional, can be removed) -->
+    <circle cx="100" cy="100" r="120" fill="url(#knobPattern)" stroke="" stroke-width="1"></circle>
+    <!-- Draggable knob -->
+    <circle id="knob" cx="50" cy="30" r="10" fill="url(#aluminumGradient)" stroke="#ccc" stroke-width="1"></circle>
+  <!-- Text inside the circle -->
+        <text id="knobText" x="50" y="95" fill="#ccc" text-anchor="middle" font-size="11" font-family="trade" dy=".3em">FINE TUNE </text>
+     
+
+    
+</svg>
+
+</div>
+<script>
+$(document).ready(function() {
+    let isDragging = false;
+    let lastAngleDegrees = null; // Track the last angle in degrees
+    const knob = $('#knob');
+    const center = { x: 50, y: 50 }; // Assuming the center of the knob's circular path is at (50,50)
+    const radius = 20; // Adjust this to control how far from the center the knob moves, ensuring it stays within the circular path
+
+    function setInitialKnobPosition() {
+        // Set the initial angle for the knob here
+        // 0 degrees would place it at the top, adjust as needed
+        const initialAngleDegrees = 0;
+        const initialAngleRadians = (initialAngleDegrees - 90) * (Math.PI / 180); // Convert to radians, adjusting for the coordinate system
+
+        const newX = center.x + radius * Math.cos(initialAngleRadians);
+        const newY = center.y + radius * Math.sin(initialAngleRadians);
+
+        knob.attr('cx', newX).attr('cy', newY);
+    }
+
+    function startDrag(e) {
+        e.preventDefault(); // Prevent default drag behavior
+        isDragging = true;
+        lastAngleDegrees = null; // Reset last angle on new drag
+    }
+
+    function doDrag(e) {
+        if (!isDragging) return;
+
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+        const rect = knob.parent()[0].getBoundingClientRect();
+        const dx = clientX - (rect.left + center.x);
+        const dy = clientY - (rect.top + center.y);
+        let angleRadians = Math.atan2(dy, dx);
+        let angleDegrees = angleRadians * (180 / Math.PI) + 90; // Convert radians to degrees, adjust so 0 is at the top
+        angleDegrees = (angleDegrees < 0) ? 360 + angleDegrees : angleDegrees; // Normalize degrees to 0-360
+
+        const newX = center.x + radius * Math.cos(angleRadians);
+        const newY = center.y + radius * Math.sin(angleRadians);
+
+        knob.attr('cx', newX).attr('cy', newY);
+
+        if (lastAngleDegrees !== null) {
+            let angleDifference = angleDegrees - lastAngleDegrees;
+            
+            if (angleDifference < -180) angleDifference += 360;
+            else if (angleDifference > 180) angleDifference -= 360;
+
+            const freqAdjustmentFactor = 0.01;
+            const freqStep = angleDifference * freqAdjustmentFactor;
+            freqstepNew(freqStep); // Implement this function based on your needs
+        }
+
+        lastAngleDegrees = angleDegrees; // Update last angle for next calculation
+    }
+
+    function endDrag() {
+        if (isDragging) {
+            isDragging = false;
+        }
+    }
+
+    // Initialize knob position
+    setInitialKnobPosition();
+
+    // Mouse events
+    knob.on('mousedown', startDrag);
+    $(document).on('mousemove', doDrag);
+    $(document).on('mouseup', endDrag);
+
+    // Touch events
+    knob.on('touchstart', startDrag);
+    $(document).on('touchmove', doDrag);
+    $(document).on('touchend', endDrag);
+});
+
+
+
+$(document).ready(function() {
+    $('#freqSlider').on('input', function() {
+        // Adjust the frequency based on the slider's direction
+        freqstepNew(Math.sign(this.value));
+
+        // Reset the slider back to 0
+        this.value = 0;
+    });
+});
+
+
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#upF').click(function() {
+        var step = parseFloat($('#freqStepSelect').val());
+        freqstepNew(step); // Adjust frequency up
+    });
+
+    $('#downF').click(function() {
+        var step = parseFloat($('#freqStepSelect').val());
+        freqstepNew(-step); // Adjust frequency down
+    });
+});
+</script>
+
+<script type="text/javascript"> document_bandbuttons(); </script><input style="display:none" type="radio" name="group0" value="20m" onclick="setband(0)">
+<input style="display:none" type="radio" name="group0" value="CB/10m" onclick="setband(1)">
+<input style="display:none" type="radio" name="group0" value="80m" onclick="setband(2)">
+<input style="display:none" type="radio" name="group0" value="4m" onclick="setband(3)">
+<input style="display:none" type="radio" name="group0" value="6m" onclick="setband(4)">
+
+
+
+</span></form></div>
+<!-------------------- Buttons BOX ---------------->
+<div class="ctl" id="buttonsbox" style="margin-top: 10px;">
+  <div class="showblinding">
+  
+    <div style="margin-top: -102px; margin-left: 831px; width: 210px; height:88px; padding: 0px 0px 0px 0px; border-radius:10px;">
+    
+    
+<!--------------MODE---------------->
+
+<div id="modeBox" style="display: contents">
+
+    
+   
+<label class="butPos"><input id="mod1" type="radio" name="modes" value="USB" data-list="modeLcd" onclick="setmf (&#39;usb&#39;, 0.2,  2.9);" checked=""><span>USB</span></label>
+        <label class="butPos"><input id="mod2" type="radio" name="modes" value="LSB" data-list="modeLcd" onclick="setmf (&#39;lsb&#39;, -2.9, -0.2);"><span>LSB</span></label>
+        <label class="butPos"><input id="mod3" type="radio" name="modes" value="AM" data-list="modeLcd" onclick="setmf (&#39;am&#39;,  -3  ,  3  );"><span>AM</span></label>
+        <label class="butPos"><input id="mod4" type="radio" name="modes" value="FM" data-list="modeLcd" onclick="setmf (&#39;fm&#39;,  -5  ,  5  );"><span>FM</span></label>
+        <label class="butPos"><input id="mod5" type="radio" name="modes" value="CW" data-list="modeLcd" onclick="setmf (&#39;cw&#39;, -0.95, -0.55);"><span>CW</span></label>
+        <label class="butPos"><input id="mod7" type="radio" name="modes" value="DIG" data-list="modeLcd" onclick="setmf (&#39;usb&#39;, 0,  3.0);"><span>DIG</span></label>
+   
+
+  
+</div>
+<!-------------BAND------------------>
+<div id="bandsBox" style="display: contents">
+
+
+<label class="butPos" title="13.9 - 14.4MHZ"><input id="band0" type="radio" name="group0" value="20m" onclick="setband(0); setmode(&#39;usb&#39;); setfreq(14200); switchSpectrumToBand(0)" checked=""><span>20m</span></label>
+
+<label class="butPos" title="26.9 - 28.7MHZ"><input id="band1" type="radio" name="group0" value="CB" onclick="setband(1); setmode(&#39;usb&#39;);setfreq(27555); switchSpectrumToBand(1)"><span>CB</span></label> 
+<label class="butPos" title="26.9 - 28.7MHZ"><input id="b1" type="radio" name="group0" value="10m" onclick="setband(1); setmode(&#39;usb&#39;); setfreq(28450); switchSpectrumToBand(1)"><span>10m</span></label>   
+      
+<label class="butPos" title="3.5 - 5.4MHZ"><input id="band2" type="radio" name="group0" value="80m" onclick="setband(2); setmode(&#39;lsb&#39;); setfreq(3700); switchSpectrumToBand(2)"><span style="font-size:14px">80/60</span></label>
+
+<label class="butPos" title="70 - 72MHZ"><input id="band3" type="radio" name="group0" value="4m" onclick="setband(3); setmode(&#39;usb&#39;);setfreq(70200); switchSpectrumToBand(3)"><span>4m</span></label>
+
+<label class="butPos" title="50 - 52MHZ"><input id="band5" type="radio" name="group0" value="6m" onclick="setband(4); setmode(&#39;usb&#39;); setfreq(50150); switchSpectrumToBand(4)"><span>6m</span></label> 
+<label class="butPos" style="color:#0f0" title="Marine 156MHz - now on my OWRX server instead"><input id="band4" type="radio" name="group0" value="RX" onclick="window.open(&#39;http://g0xbuwebsdrowrx.ddns.net&#39;,&#39;_blank&#39;);"><span>SEA</span></label>
+
+<label class="butPos" style="color:#0f0" title="Takes you to the other server"><input type="radio" name="group0" value="RX" onclick="window.open(&#39;http://g0xbuwebsdr.ddns.net:8902&#39;,&#39;_blank&#39;);"><span>2m</span></label> 
+<label class="butPos" style="color:#0f0" title="Takes you to the other server"><input type="radio" name="group0" value="RX" onclick="window.open(&#39;http://g0xbuwebsdr.ddns.net:8902&#39;,&#39;_blank&#39;);"><span>70cm</span></label> 
+<label class="butPos" style="color:#0f0" title="Takes you to the other"><input type="radio" name="group0" value="RX" onclick="window.open(&#39;http://g0xbuwebsdr.ddns.net:8902&#39;,&#39;_blank&#39;);"><span>446</span></label> 
+ 
+<label class="butPos" style="color:#0f0" title="Takes you to the other server"><input type="radio" name="group0" value="RX" onclick="window.open(&#39;http://g0xbuwebsdr.ddns.net:8902&#39;,&#39;_blank&#39;);"><span>AIR1</span></label> 
+<label class="butPos" style="color:#0f0" title="Takes you to the other server"><input type="radio" name="group0" value="RX" onclick="window.open(&#39;http://g0xbuwebsdr.ddns.net:8902&#39;,&#39;_blank&#39;);"><span>AIR2</span></label>
+ </div>
+
+
+
+</div> <!-----end of ctl div (smeter,lcd and controls)---->
+
+
+
+<style>
+
+/* Style the tab */
+.tab {
+  background-color: inherit;
+  border-radius: 12px;
+  display: block;
+  
+  
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: #0ba100;
+  outline: none;
+  cursor: pointer;
+  padding: 3px 2px;
+  transition: 0.3s;
+  font-family: 'trade';
+  font-size: 15px;
+  border-radius: 8px;
+  margin-left: -5px;
+  color: #000;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 15px 12px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  min-height: 135px;
+  background-color: #3333337a;
+  min-width: 1003px;
+}
+.topright {
+  float: right;
+  cursor: pointer;
+  font-size: 28px;
+}
+</style>
+
+<script> 
+function openControls(evt, Name) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(Name).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+
+
+
+ 
+
+<div class="ctlWat" id="wfcontainer1">
+<div class="clear" id="wfcontainer2">
+
+
+<div id="waterfalls" style="border: 1px solid #fff; border-radius: 12px;">
+      <div id="wfdiv_spectrum0"><div id="wfcdiv3" style="height:60px;overflow:hidden;position:relative;filter:sepia(.4)invert(.03)brightness(105%)contrast(105%)grayscale(.1)hue-rotate(0deg)url(#svgGradientMap)"><canvas class="html5waterfall" id="wf1canvas3" width="1024" height="60" style="position: absolute; top: 0px;">test</canvas><canvas class="html5waterfall" id="wf2canvas3" width="1024" height="0" style="position: absolute; top: 60px;">test</canvas><svg><filter id="svgGradientMap"><fecolormatrix type="saturate" values="0"></fecolormatrix><fecomponenttransfer color-interpolation-filters="sRGB"><fefuncr type="table" tableValues="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.06,0.11,0.17,0.22,0.28,0.33,0.39,0.44,0.5,0.56,0.61,0.67,0.72,0.78,0.83,0.89,0.94,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.99,0.99,0.98,0.98,0.97,0.97,0.96,0.96,0.96"></fefuncr><fefuncg type="table" tableValues="0,0.01,0.02,0.04,0.05,0.06,0.07,0.08,0.09,0.11,0.12,0.13,0.14,0.15,0.16,0.18,0.19,0.2,0.21,0.22,0.24,0.25,0.26,0.27,0.28,0.32,0.35,0.39,0.42,0.46,0.49,0.53,0.56,0.6,0.64,0.67,0.71,0.74,0.78,0.81,0.85,0.88,0.92,0.9,0.88,0.86,0.84,0.82,0.8,0.78,0.76,0.75,0.73,0.71,0.69,0.67,0.65,0.63,0.61,0.59,0.57,0.55,0.54,0.52,0.5,0.48,0.46,0.44,0.42,0.4,0.38,0.36,0.34,0.32,0.31,0.29,0.27,0.25,0.23,0.21,0.19,0.17,0.15,0.13,0.11,0.1,0.08,0.06,0.04,0.02,0,0.14,0.27,0.41,0.55,0.69,0.82,0.96,0.96,0.96"></fefuncg><fefuncb type="table" tableValues="0,0.04,0.08,0.13,0.17,0.21,0.25,0.29,0.33,0.38,0.42,0.46,0.5,0.54,0.58,0.63,0.67,0.71,0.75,0.79,0.83,0.88,0.92,0.96,1,0.94,0.89,0.83,0.78,0.72,0.67,0.61,0.56,0.5,0.44,0.39,0.33,0.28,0.22,0.17,0.11,0.06,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.14,0.27,0.41,0.55,0.69,0.82,0.96,0.96,0.96"></fefuncb></fecomponenttransfer></filter></svg></div></div><div id="wfdiv_spectrum0" style="filter: none;"><div class="ctlWat" style="height: 55px; overflow: hidden; position: relative; filter: brightness(0.6) saturate(1) hue-rotate(324deg) contrast(2.1);"><canvas id="wf1canvas_spec0" width="1024" height="55" style="position: absolute;"></canvas><canvas id="wf2canvas_spec0" width="1024" height="0" style="position: absolute; top: 55px;"></canvas></div><div class="scale" id="clipscale_spectrum0" title="click to tune" style="overflow: hidden; border-bottom: 1px solid rgb(204, 204, 204); border-radius: 12px; width: 1024px; height: 18px; position: relative;"><img src="./G0XBU WEBSDR - Jodrell 1_files/1759076664-b0z0i0.png" onmousedown="imgmousedown(event,0)" class="scaleabs" style="top: 0px; left: 0px;" name="s0cale_spec0"><img src="./G0XBU WEBSDR - Jodrell 1_files/scaleblack.png" onmousedown="imgmousedown(event,0)" class="scaleabs" style="top: 0px; left: 1024px;" name="s1cale_spec0"><div id="yellowbar_spec" class="scaleabs" style="position: absolute; top: 0px; height: 17px; background: linear-gradient(to right, rgb(0, 255, 0) -25%, rgba(0, 154, 154, 0.2) 5%, rgba(0, 154, 154, 0.2) 95%, rgb(0, 255, 0) 120%); border: 1px solid rgb(255, 255, 0); pointer-events: none; z-index: 10; left: 532.4px; width: 5.4px;"></div></div></div><div id="wfdiv0"><div id="wfcdiv0" style="height:200px;overflow:hidden;position:relative;filter:sepia(.4)invert(.03)brightness(105%)contrast(105%)grayscale(.1)hue-rotate(0deg)url(#svgGradientMap)"><canvas class="html5waterfall" id="wf1canvas0" width="1024" height="200" style="position:absolute">test</canvas><canvas class="html5waterfall" id="wf2canvas0" width="1024" height="0" style="position:absolute">test</canvas><svg><filter id="svgGradientMap"><fecolormatrix type="saturate" values="0"></fecolormatrix><fecomponenttransfer color-interpolation-filters="sRGB"><fefuncr type="table" tableValues="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.06,0.11,0.17,0.22,0.28,0.33,0.39,0.44,0.5,0.56,0.61,0.67,0.72,0.78,0.83,0.89,0.94,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.99,0.99,0.98,0.98,0.97,0.97,0.96,0.96,0.96"></fefuncr><fefuncg type="table" tableValues="0,0.01,0.02,0.04,0.05,0.06,0.07,0.08,0.09,0.11,0.12,0.13,0.14,0.15,0.16,0.18,0.19,0.2,0.21,0.22,0.24,0.25,0.26,0.27,0.28,0.32,0.35,0.39,0.42,0.46,0.49,0.53,0.56,0.6,0.64,0.67,0.71,0.74,0.78,0.81,0.85,0.88,0.92,0.9,0.88,0.86,0.84,0.82,0.8,0.78,0.76,0.75,0.73,0.71,0.69,0.67,0.65,0.63,0.61,0.59,0.57,0.55,0.54,0.52,0.5,0.48,0.46,0.44,0.42,0.4,0.38,0.36,0.34,0.32,0.31,0.29,0.27,0.25,0.23,0.21,0.19,0.17,0.15,0.13,0.11,0.1,0.08,0.06,0.04,0.02,0,0.14,0.27,0.41,0.55,0.69,0.82,0.96,0.96,0.96"></fefuncg><fefuncb type="table" tableValues="0,0.04,0.08,0.13,0.17,0.21,0.25,0.29,0.33,0.38,0.42,0.46,0.5,0.54,0.58,0.63,0.67,0.71,0.75,0.79,0.83,0.88,0.92,0.96,1,0.94,0.89,0.83,0.78,0.72,0.67,0.61,0.56,0.5,0.44,0.39,0.33,0.28,0.22,0.17,0.11,0.06,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.14,0.27,0.41,0.55,0.69,0.82,0.96,0.96,0.96"></fefuncb></fecomponenttransfer></filter></svg></div></div>
+      <div class="scale" style="overflow:hidden; border-radius: 12px; width:1024px; height:44px; position:relative" title="click to tune" id="clipscale0" onmousedown="return false">
+        <img src="./G0XBU WEBSDR - Jodrell 1_files/1759076664-b0z0i0.png" onmousedown="imgmousedown(event,0)" class="scaleabs" style="top: 0px; left: 0px;" name="s0cale0">
+        <img src="./G0XBU WEBSDR - Jodrell 1_files/scaleblack.png" onmousedown="imgmousedown(event,0)" class="scaleabs" style="top: 0px; left: 1024px;" name="s1cale0">
+      </div>
+      <div class="scale" style="width: 1024px; height: 64px; background-color: black; border-radius: 12px; position: relative;" id="blackbar0" title="click to tune" onmousedown="imgmousedown(event,0)"><div title="" class="statinfo2" onclick="resetFil()" style="max-width:148px;left:156px;top:0px;"><div class="statinfo1"><div class="statinfo0" onclick="setfreqm(b,14000,&#39;usb&#39;);"> &lt;20m Ham</div></div></div><div title="" class="statinfol" style="width:1px;height:44px;position:absolute;left:162px;top:-44px;"></div><div title="" class="statinfo2" onclick="resetFil()" style="max-width:12px;left:304px;top:0px;"><div class="statinfo1"><div class="statinfo0" onclick="setfreqm(b,14074,&#39;dig&#39;);"> FT8</div></div></div><div title="" class="statinfol" style="width:1px;height:44px;position:absolute;left:310px;top:-44px;"></div><div title="" class="statinfo2" onclick="resetFil()" style="max-width:40px;left:316px;top:0px;"><div class="statinfo1"><div class="statinfo0" onclick="setfreqm(b,14080,&#39;dig&#39;);"> FT4</div></div></div><div title="" class="statinfol" style="width:1px;height:44px;position:absolute;left:322px;top:-44px;"></div><div title="" class="statinfo2" onclick="resetFil()" style="max-width:500px;left:356px;top:0px;"><div class="statinfo1"><div class="statinfo0" onclick="setfreqm(b,14100,&#39;cw&#39;);"> IARU Beacons</div></div></div><div title="" class="statinfol" style="width:1px;height:44px;position:absolute;left:362px;top:-44px;"></div><div title="" class="statinfo2" onclick="resetFil()" style="max-width:418px;left:856px;top:0px;"><div class="statinfo1"><div class="statinfo0" onclick="setfreqm(b,14350,&#39;usb&#39;);"> 20m Ham&gt;</div></div></div><div title="" class="statinfol" style="width:1px;height:44px;position:absolute;left:862px;top:-44px;"></div></div>
+    </div>
+
+
+  <!----<img src="img/watBackBot.jpg" height="18" /> ---->
+
+<!----VERTICAL LINES from NA5B WebSDR, help from W3 Schools and G8HXT----->
+<style>
+.vl {
+  
+  position: absolute;
+  width:100%; 
+  height:200px; 
+  top:-216px; 
+  z-index: 2; 
+  background-image: linear-gradient(to right, rgb(147, 147, 147) 8%, rgba(224, 251, 0, 0) 2%, rgba(234, 249, 0, 0) 92%, rgb(147, 147, 147) 91%);
+
+}
+
+
+</style>
+
+   <div class="hideblind">
+    <img src="./G0XBU WEBSDR - Jodrell 1_files/edgelower.png" title="drag to change filter" id="edgelower" onmousedown="mousedownlower(event)" class="scaleabs" alt="" style="top: 310px; left: 521px;">
+    <img src="./G0XBU WEBSDR - Jodrell 1_files/edgeupper.png" title="drag to change filter" id="edgeupper" onmousedown="mousedownupper(event)" class="scaleabs" alt="" style="top: 310px; left: 538px;">
+ 
+
+<div id="yellowbara"></div>
+
+<span id="yellowbar" title="drag to tune" class="scaleabs" style="width: 6px; height: 70px; top: 310px; z-index: 2; background-color: rgba(241, 238, 238, 0); left: 532px;" onmousedown="mousedownpassband(event)">
+
+<!---background-image: linear-gradient(to right, rgb(0, 255, 0) -25%, rgba(0, 154, 154, 0.2) 5%, rgba(0, 154, 154, 0.2) 95%, rgb(0, 255, 0) 120%)---->
+
+
+   <div id="yellowbarr" class="scaleabs" style="position:relative;left:0px;top: 2px;">
+
+    
+<div class="scaleabs" style="position: absolute; width: 0px; height: 20px; top: 117px;"></div>
+ 
+</div>
+<span class="vl">
+<a style="color: #ffe500; font-size: 8px; font-family: &#39;trade&#39;; bottom:-32px; left: -23px; position: absolute">
+<span style="color: #ffe500" id="numericalbandwidth60">0.2</span></a>  
+<a style="color: #ffe500; font-size: 8px; font-family: &#39;trade&#39;; bottom:-32px; right: -20px; position: absolute"><span style="color: #ffe500" id="numericalbandwidth6">2.9</span></a>
+</span>   
+</span></div>
+
+ <img src="./G0XBU WEBSDR - Jodrell 1_files/carrier.png" title="drag to tune" id="carrier" onmousedown="mousedownpassband(event)" class="scaleabs" style="z-index: 2; height: 15px; top: 310px; left: 532px;" alt="">
+
+
+  
+
+</div>
+
+
+
+
+
+</div> <!-----End of ctlWat Div----->
+
+ <div class="tab" id="tabs">
+
+
+<button class="tablinks" onclick="openControls(event, &#39;Audio&#39;)" fdprocessedid="3321vb">AUDIO</button>
+<button class="tablinks" onclick="openControls(event, &#39;WATER&#39;)" fdprocessedid="w2d59">WATERFALL</button>
+<button class="tablinks" onclick="openControls(event, &#39;DSP&#39;)" fdprocessedid="ferk5o">DSP</button>
+<button class="tablinks" onclick="openControls(event, &#39;FILTER&#39;)" fdprocessedid="3d4ein">FILTER</button>
+<button class="tablinks" onclick="openControls(event, &#39;MEM&#39;)" fdprocessedid="fg0twl">MEMORIES</button>
+<button class="tablinks" onclick="openControls(event, &#39;REC&#39;)" fdprocessedid="1a2ucn">RECORDING</button>
+<button class="tablinks" onclick="openControls(event, &#39;INFO&#39;)" fdprocessedid="rixxq">INFO</button>
+<button class="tablinks" onclick="openControls(event, &#39;PAGE&#39;)" fdprocessedid="ejr28p">PAGE LAYOUT</button>
+<button class="tablinks" onclick="openControls(event, &#39;USER&#39;)" fdprocessedid="9yb0t">USERS</button>
+<button class="tablinks" onclick="openControls(event, &#39;CHAT&#39;)" fdprocessedid="l5jlqn">CHAT</button>
+<button class="tablinks" onclick="openControls(event, &#39;LOG&#39;)" fdprocessedid="ptr2x9">LOGBOOK</button>
+<button class="tablinks" onclick="openControls(event, &#39;CB&#39;)" fdprocessedid="mwh96">CB CODES</button>
+<button class="tablinks" onclick="openControls(event, &#39;WRX&#39;)" fdprocessedid="i214m">OWRX/Kiwi</button>
+<button class="tablinks" onclick="openControls(event, &#39;IARU&#39;); BeaconClock();" fdprocessedid="bi87i">IARU BEACONS</button>
+<button class="tablinks" onclick="openControls(event, &#39;CALL&#39;);" fdprocessedid="jer5f">CALLSIGN SEARCH</button>
+<button class="tablinks" onclick="openControls(event, &#39;WX&#39;);" fdprocessedid="825w1">XBU WEATHER</button>
+<button class="tablinks" onclick="openControls(event, &#39;FT8&#39;);" fdprocessedid="jto2s">FT8</button>
+<button class="tablinks" onclick="openControls(event, &#39;Admin&#39;);" fdprocessedid="wjt12b">Admin</button>
+
+
+<!--------Audio Tab---------->
+ <div id="Audio" class="tabcontent" style="display: block">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+ 
+ 
+ 
+  
+ <div class="visAnimation" id="anim" style="position: absolute; margin-left: 480px; border-radius:12px;">
+    <button onclick="vis_start();" style="font-size:12px; margin-left: 3px; background: #f90; " fdprocessedid="20ay5a">START Audio Visualizer</button>
+    <button onclick="stopVis();" style="font-size:11px" fdprocessedid="gufm4r">STOP (keep pressing rapidly!)</button>
+    
+    <input id="smetercheckbox" type="checkbox" value="SmeterPlot" onclick="smeterPlot();"><span style="font-family: &#39;Trade&#39;; color: #0cf; font-size: 13px; ">SmeterPlot</span>
+    
+    
+    <div class="animation4" id="anim4" style="float: right; margin-top: -20px; margin-left: 328px; display: none">
+      <select id="sgraphchoice" style="display: none">
+        <option value="1">fast</option>
+        <option value="10">slow</option>
+        <option value="0">none</option>    
+      </select>
+      <canvas id="sgraph" style="width:100%"></canvas>
+    </div>
+    
+    <audio id="audio4" controls="" autoplay="" style="margin-top: 10px; margin-left:10px; display: none">
+              <source id="source4" src="" type="audio/ogg">
+          </audio>
+
+<div class="custom-select-wrapper">
+  <label for="vizSelect"></label>
+  <select id="vizSelect" fdprocessedid="w4qrea">
+    <option value="bars">Spectrum Bars</option>
+    <option value="waveform">Waveform</option>
+    <option value="spectrogram">Spectrogram</option>
+  </select>
+</div>
+<div id="freqHoverReadout" style="color: lime; font-family: monospace; padding-top: 4px;"></div>
+
+<!-- Spectrum Bars Container -->
+<div id="barsContainer" class="vizContainer" style="display: block;">
+  <div class="visualizer-container2"><div id="bar2_0" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_1" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_2" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_3" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_4" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_5" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_6" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_7" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_8" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_9" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_10" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_11" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_12" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_13" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_14" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_15" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_16" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_17" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_18" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_19" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_20" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_21" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_22" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_23" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_24" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_25" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_26" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_27" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_28" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_29" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_30" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_31" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_32" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_33" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_34" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_35" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_36" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_37" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_38" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_39" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_40" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_41" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_42" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_43" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_44" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_45" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_46" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_47" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_48" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_49" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_50" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_51" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_52" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_53" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_54" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_55" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_56" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_57" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_58" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_59" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_60" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_61" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_62" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_63" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_64" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_65" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_66" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_67" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_68" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_69" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_70" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_71" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_72" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_73" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_74" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_75" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_76" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_77" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_78" class="visualizer-container__bar2" style="height: 1.33333px;"></div><div id="bar2_79" class="visualizer-container__bar2" style="height: 1.33333px;"></div></div>
+  <div class="frequency-text-container" style="font-family:&#39;trade&#39;; font-size:11px;"><div id="frequencyText_0" class="frequency-text">234 Hz</div><div id="frequencyText_1" class="frequency-text"></div><div id="frequencyText_2" class="frequency-text"></div><div id="frequencyText_3" class="frequency-text"></div><div id="frequencyText_4" class="frequency-text"></div><div id="frequencyText_5" class="frequency-text"></div><div id="frequencyText_6" class="frequency-text"></div><div id="frequencyText_7" class="frequency-text"></div><div id="frequencyText_8" class="frequency-text"></div><div id="frequencyText_9" class="frequency-text"></div><div id="frequencyText_10" class="frequency-text"></div><div id="frequencyText_11" class="frequency-text"></div><div id="frequencyText_12" class="frequency-text"></div><div id="frequencyText_13" class="frequency-text"></div><div id="frequencyText_14" class="frequency-text"></div><div id="frequencyText_15" class="frequency-text"></div><div id="frequencyText_16" class="frequency-text"></div><div id="frequencyText_17" class="frequency-text"></div><div id="frequencyText_18" class="frequency-text"></div><div id="frequencyText_19" class="frequency-text"></div><div id="frequencyText_20" class="frequency-text">703 Hz</div><div id="frequencyText_21" class="frequency-text"></div><div id="frequencyText_22" class="frequency-text"></div><div id="frequencyText_23" class="frequency-text"></div><div id="frequencyText_24" class="frequency-text"></div><div id="frequencyText_25" class="frequency-text"></div><div id="frequencyText_26" class="frequency-text"></div><div id="frequencyText_27" class="frequency-text"></div><div id="frequencyText_28" class="frequency-text"></div><div id="frequencyText_29" class="frequency-text"></div><div id="frequencyText_30" class="frequency-text"></div><div id="frequencyText_31" class="frequency-text"></div><div id="frequencyText_32" class="frequency-text"></div><div id="frequencyText_33" class="frequency-text"></div><div id="frequencyText_34" class="frequency-text"></div><div id="frequencyText_35" class="frequency-text"></div><div id="frequencyText_36" class="frequency-text"></div><div id="frequencyText_37" class="frequency-text"></div><div id="frequencyText_38" class="frequency-text"></div><div id="frequencyText_39" class="frequency-text"></div><div id="frequencyText_40" class="frequency-text">1172 Hz</div><div id="frequencyText_41" class="frequency-text"></div><div id="frequencyText_42" class="frequency-text"></div><div id="frequencyText_43" class="frequency-text"></div><div id="frequencyText_44" class="frequency-text"></div><div id="frequencyText_45" class="frequency-text"></div><div id="frequencyText_46" class="frequency-text"></div><div id="frequencyText_47" class="frequency-text"></div><div id="frequencyText_48" class="frequency-text"></div><div id="frequencyText_49" class="frequency-text"></div><div id="frequencyText_50" class="frequency-text"></div><div id="frequencyText_51" class="frequency-text"></div><div id="frequencyText_52" class="frequency-text"></div><div id="frequencyText_53" class="frequency-text"></div><div id="frequencyText_54" class="frequency-text"></div><div id="frequencyText_55" class="frequency-text"></div><div id="frequencyText_56" class="frequency-text"></div><div id="frequencyText_57" class="frequency-text"></div><div id="frequencyText_58" class="frequency-text"></div><div id="frequencyText_59" class="frequency-text"></div><div id="frequencyText_60" class="frequency-text">1641 Hz</div><div id="frequencyText_61" class="frequency-text"></div><div id="frequencyText_62" class="frequency-text"></div><div id="frequencyText_63" class="frequency-text"></div><div id="frequencyText_64" class="frequency-text"></div><div id="frequencyText_65" class="frequency-text"></div><div id="frequencyText_66" class="frequency-text"></div><div id="frequencyText_67" class="frequency-text"></div><div id="frequencyText_68" class="frequency-text"></div><div id="frequencyText_69" class="frequency-text"></div><div id="frequencyText_70" class="frequency-text"></div><div id="frequencyText_71" class="frequency-text"></div><div id="frequencyText_72" class="frequency-text"></div><div id="frequencyText_73" class="frequency-text"></div><div id="frequencyText_74" class="frequency-text"></div><div id="frequencyText_75" class="frequency-text"></div><div id="frequencyText_76" class="frequency-text"></div><div id="frequencyText_77" class="frequency-text"></div><div id="frequencyText_78" class="frequency-text"></div><div id="frequencyText_79" class="frequency-text">2086 Hz</div></div>
+  <div id="highestFrequencyText" style="font-family:&#39;trade&#39;; font-size:11px; position:absolute; margin-top:10px; margin-left:5px; color:#f90; background:black">Peak Audio Frequency (Hz) = 0</div>
+</div>
+
+<!-- Waveform Container -->
+<div id="waveformContainer" class="vizContainer" style="display:none;">
+  <canvas id="waveformCanvas" width="600" height="100"></canvas>
+</div>
+
+<!-- Spectrogram Container -->
+<div id="spectrogramContainer" class="vizContainer" style="display:none;">
+  <canvas id="specCanvas" width="500" height="200" style="width: 1024px; height: 150px"></canvas>
+</div>
+    <div class="visualizer-container2"></div>
+     <div class="frequency-text-container" style="font-family: &#39;trade&#39;; font-size: 11px;"></div>
+    <div id="highestFrequencyText" style="font-family: &#39;trade&#39;; font-size: 11px; position: absolute; margin-top: 10px; margin-left: 5px; color: #f90; background: black"></div>
+    </div>  
+
+ <div id="audioControls" style="background: linear-gradient(45deg, #000, transparent); border: 1px solid white; width: 30%; border-radius: 12px">
+    <div id="squelchBox">    
+          
+        <label class="sdrButton squelch" title="disable sound">
+        <input id="mutecheckbox" type="checkbox" value="MUTE" onclick="setmute(this.checked);"><span>MUTE</span>
+        </label>
+        
+         <label class="sdrButton squelch leftC" title="block noise if no signal">
+         <input id="squelchcheckbox" type="checkbox" value="SQUELCH" onclick="setsquelch(this.checked);"><span>SQUELCH</span>
+         <input type="range" min="-10" max="30" id="squelchlevel" value="0" step=".1" style="width: 90px; color: inherit; top: 672px; display: none" onchange="if (soundapplet) soundapplet.setparam(&#39;squelchlevel=&#39;+Math.pow(10,this.value/10))" oninput="if (soundapplet) soundapplet.setparam(&#39;squelchlevel&#39;+Math.pow(10,this.value/10))">
+            </label>
+         
+         <label class="sdrButton squelch leftC" title="Formerley Autonotch - automatically filter out interfering carrier (beep/whistle) can prevent desense on strong signals">
+         <input id="autonotchcheckbox" type="checkbox" value="NOTCH" onclick="setautonotch(this.checked);"><span>NOTCH1</span>
+         </label>
+
+         <div id="audioButtons" style="width: 153px; margin-left: 300px; position: absolute; background: linear-gradient(45deg, #000, transparent); height: 169px; border: 1px solid #ccc; border-radius: 12px">
+       
+            <button id="audiostart" style="margin-left: 0px; color: #ccc; background: blue; width: 150px; height: 30px" onclick="chrome_audio_start(); soundapplet.audioresume();" fdprocessedid="ztbajd"><span>CLICK TO START AUDIO</span></button>  
+            <button id="donate" style="margin-left: 0px; color: blue; background: #b9b900; width: 150px; height: 30px" onclick="window.open(&#39;https://www.paypal.me/g0xbu&#39;,&#39;_blank&#39;);" fdprocessedid="1mzsk6s"><span>Donate</span></button>
+            <button id="g0xbuWebsite" style="margin-left: 0px; color: #ccc; background: green; width: 150px; height: 30px" onclick="window.open(&#39;http://www.g0xbu.co.uk&#39;,&#39;_blank&#39;);" fdprocessedid="y73uoq"><span>G0XBU Website</span></button>
+            <button id="youtube" style="margin-left: 0px; color: #ccc; background: #ec0909; width: 150px; height: 30px" onclick="window.open(&#39;https://www.youtube.com/@ianxbu5091/videos&#39;,&#39;_blank&#39;);" fdprocessedid="6lvava"><span>G0XBU Youtube</span></button>
+            <button id="otherServer" style="margin-left: 0px; color: #ccc; background: #530075; width: 150px; height: 30px" onclick="window.open(&#39;http://g0xbuwebsdr.ddns.net:8902&#39;,&#39;_blank&#39;);" fdprocessedid="ifaqu2r"><span>Server 2</span></button>
+                 
+            </div>    
+      </div>
+   
+    <div class="volumeBox" title="master volume control - can use mousewheel to adjust" id="slider1"> 
+           <span style="margin:0 68px 0 14px">Volume</span> <input type="range" min="-20" max="20" step="1" id="volumecontrol2" name="volume" list="tickmarksVol" value="-5" style="color:inherit; width: 130px" oninput="soundapplet.setvolume(Math.pow(10,this.value/10.))" onchange="soundapplet.setvolume(Math.pow(10,this.value/10.))">
+          <datalist id="tickmarksVol" style="width: 43%; margin-left: 140px">
+          <option value="-20" label="Min"></option>
+          <option value="-18" label=""></option>
+          <option value="-16" label=""></option>
+          <option value="-14" label=""></option>
+          <option value="-12" label=""></option>
+          <option value="-10" label=""></option>
+          <option value="-8" label=""></option>
+          <option value="-6" label=""></option>
+          <option value="-4" label=""></option>
+          <option value="-2" label=""></option>
+	  <option value="0" label=""></option>
+          <option value="2" label=""></option>
+          <option value="4" label=""></option>
+          <option value="6" label=""></option>
+          <option value="8" label=""></option>
+          <option value="10" label=""></option>
+          <option value="12" label=""></option>
+          <option value="14" label=""></option>
+          <option value="16" label=""></option>
+          <option value="18" label=""></option>
+          <option value="20" label="Max"></option>
+        </datalist>   
+        </div>
+        
+       
+
+      <div class="volumeBox" title="Audio buffer to add audio delay (helps with stuttering audio on jittery connections) Options are: 0.125, 0.25, 0.5, 1, 2 Seconds" id="slider3"> 
+           <span style="margin:0 33px 0 14px">Audio Buffer</span> <input type="range" min="0" max="4" id="audiobuf1" value="2" list="tickmarksBuf" step="1" style="color: inherit; width: 130px" oninput="set_buffer1(this.value)" onchange="set_buffer1(this.value)">
+
+         <datalist id="tickmarksBuf" style="margin-left: 140px; width: 43%">
+        <option value="0" label="0.125"></option>
+        <option value="1" label="0.25"></option>
+        <option value="2" label="0.5"></option>
+        <option value="3" label="1"></option>
+        <option value="4" label="2"></option>
+      </datalist>    
+       </div>
+       <div class="volumeBox">
+       <span style="margin:0 45px 0 14px">Speakers</span>
+       <input type="range" id="balanceControl" name="balance" min="-1" max="1" step="1" value="0" list="stereo" onchange="setSpeakerBalance(this.value)" ;="" oninput="setSpeakerBalance(this.value)" style="width: 130px; -webkit-appearance: none; appearance: none; accent-color: #009900; width: 50%; height: 22px; background: transparent; outline: none; border: 1px solid white; border-radius: 12px;">
+       <datalist id="stereo" style="margin-left: 140px; margin-top: -10px; width: 43%">
+         <option value="-1" label="LEFT"></option>
+         <option value="0" label="BOTH"></option>
+         <option value="1" label="RIGHT"></option>
+       </datalist>
+       </div>
+       <div class="label-container" style="display: none">
+         <span>Left</span>
+         <span>Stereo</span>
+         <span>Right</span>
+       </div>
+
+<div class="volumeBox" style="display:none"> 
+           <span style="margin:0 13px 0 14px">WF Contrast</span> <input type="range" min="-10" max="200" id="wf-brightness" value="" list="tickmarks" step="1" oninput="wfctrst();" onchange="wfctrst();">
+            
+       </div>
+       
+       
+     
+
+
+</div>
+       <script>
+       function setSpeakerBalance(value) {
+           // Convert the string value to a float
+           const balanceValue = parseFloat(value);
+       
+           // Here, adjust the logic to fit the unique mapping
+           // -1 represents both speakers, 0 is left, and 1 is right
+           let adjustedValue;
+           if (balanceValue === -1) {
+               adjustedValue = 0; // Left speaker
+           } else if (balanceValue === 0) {
+               adjustedValue = -1; // both speakers
+           } else {
+               adjustedValue = balanceValue; // Right speaker remains as is
+           }
+       
+           // Now pass the adjustedValue to your soundapplet's setstereo method
+           if (window.soundapplet) {
+               window.soundapplet.setstereo(adjustedValue);
+           }
+       }
+       </script>
+
+
+    
+      <style>
+      datalist {
+        display: flex;
+        justify-content: space-between;
+        color: inherit;
+        width: 155px;
+        font-size: 8px;
+        margin-top: -13px;
+        margin-left: 152px;
+      }
+      
+      
+      </style>
+
+
+<script>
+function smeterPlot() {
+  var checkBox = document.getElementById("smetercheckbox");
+  
+  if (checkBox.checked == true){
+    document.getElementById("anim4").style.display = "inline-block";
+  } else {
+     document.getElementById("anim4").style.display = "none";
+  }
+}
+</script>
+
+<style>
+@keyframes move{
+
+	0%
+	{
+		background-position: 0 0;
+	}
+
+	100%
+	{
+		background-position: -100px 0;
+	}
+
+}
+
+.visAnimation
+{
+  display: inline-block;
+  vertical-align: middle;
+	position: relative;
+	height: 169px;
+	width: 495px;
+	border-radius: 0%;
+        border: 1px solid #fff;
+	overflow: hidden;
+	background: black;
+	background-size: 200px 100px;
+	background-position: 0 0;
+	background-repeat: repeat-x;
+	/*animation: move 1.9s linear infinite;*/
+}
+.animation2
+{
+  display: inline-block;
+  vertical-align: middle;
+	height: 100px;
+	width: 400px;
+	border-radius: 0%;
+        border: 1px solid #fff;
+	overflow: hidden;
+	background: url(img/sinewave.gif);
+	background-size: 200px 95px;
+	background-position: 0 0;
+	background-repeat: repeat-x;
+	/*animation: move 1.1s linear infinite;*/
+}
+
+.animation4
+{
+  display: inline-block;
+  vertical-align: middle;
+	height: 70px;
+	width: 170px;
+	border-radius: 0%;
+    /*border: 1px solid #fff;*/
+	overflow: hidden;
+	background: black;
+	background-size: 200px 95px;
+	background-position: 0 0;
+	background-repeat: repeat-x;
+	/*animation: move 1.1s linear infinite;*/
+}
+
+.animation5
+{
+  display: inline-block;
+  vertical-align: middle;
+	height: 100px;
+	width: 200px;
+	border-radius: 0%;
+        border: 1px solid #fff;
+	overflow: hidden;
+	background: black;
+	background-size: 200px 95px;
+	background-position: 0 0;
+	background-repeat: repeat-x;
+	/*animation: move 1.1s linear infinite;*/
+}
+#frequencyText_0 {
+    left: 3px;
+    bottom: 0;
+    position: absolute;
+    color: #0cf;
+}
+#frequencyText_20 {
+    left: 115px;
+    bottom: 0;
+    position: absolute;
+    color: #0cf;
+}
+#frequencyText_40 {
+    left: 230px;
+    bottom: 0;
+    position: absolute;
+    color: #0cf;
+}
+#frequencyText_60 {
+    right: 100px;
+    bottom: 0;
+    position: absolute;
+    color: #0cf;
+}
+#frequencyText_79 {
+    right: 3px;
+    bottom: 0;
+    position: absolute;
+    color: #0cf;
+}
+</style>
+
+ <!----------------------------start of audio tab visualizer------------------------->
+ <style>
+
+                    
+      .background {
+          position: absolute;
+
+          top: -50px;
+          right: -50px;
+          bottom: -50px;
+          left: -50px;
+
+          background-color: black;
+          background-position: center center;
+          background-size: cover;
+
+          filter: blur(15px);
+
+      }
+
+      .track-title {
+
+          position: absolute;
+
+          top: 200px;
+          right: 0;
+          left: 0;
+
+          color: white;
+          font-family: Calibri;
+          font-size: 100px;
+          text-align: center;
+
+      }
+
+      .visualizer-container2 {
+          
+          position: absolute;
+          bottom: 12px;
+          right: 0;
+          left: 0px;
+          /*max-height: 100%;*/
+          
+        
+
+          text-align: center;
+      }
+
+      
+      .visualizer-container__bar2 {
+
+          display: inline-block;
+          background: linear-gradient(0deg, rgb(1,97,1) 90%, rgba(204, 204, 204) 90%);
+          /*background: green;*/
+          margin: 0 2px;
+          width: 2px;
+          
+
+      }
+      
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100px;
+}
+
+#vizSelect {
+  /*width: 100%;*/
+  padding: 3px;
+  padding-right: 28px; /* enough space for arrow */
+  font-size: 11px;
+  color: #fff;
+  background-color: #222;
+  border: 1px solid #555;
+  border-radius: 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+.custom-select-wrapper::after {
+  content: "▼";
+  position: absolute;
+  top: 50%;
+  right: 10px; /* ✅ This now works */
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #0f0;
+  font-size: 14px;
+}
+
+
+  </style>   
+<script>
+(() => {
+  const RECORD_MS   = 5000;
+  const LOOP_DELAY  = 100;
+  const NBR_OF_BARS = 80;
+  const WAVE_GAIN   = 6;  // ← amplify the waveform
+
+  // DOM refs
+  const audioEl       = document.getElementById("audio4");
+  const sourceEl      = document.getElementById("source4");
+  const selectEl      = document.getElementById("vizSelect");
+  const barsContainer = document.getElementById("barsContainer");
+  const waveContainer = document.getElementById("waveformContainer");
+  const specContainer = document.getElementById("spectrogramContainer");
+  const waveCanvas    = document.getElementById("waveformCanvas");
+  const specCanvas    = document.getElementById("specCanvas");
+  const peakTextEl    = document.getElementById("highestFrequencyText");
+
+  // Web Audio setup
+  const ctx      = new (window.AudioContext || window.webkitAudioContext)();
+  const srcNode  = ctx.createMediaElementSource(audioEl);
+  const analyser = ctx.createAnalyser();
+analyser.fftSize = 4096;
+
+  srcNode.connect(analyser);
+
+  // Data arrays
+  const freqData = new Uint8Array(analyser.frequencyBinCount);
+  // fftSize defaults to 2048, so half-length for time-domain
+  const timeData = new Uint8Array(analyser.fftSize);
+
+  // Build bars + labels
+  const barContainer2 = barsContainer.querySelector(".visualizer-container2");
+  const textContainer = barsContainer.querySelector(".frequency-text-container");
+  for (let i = 0; i < NBR_OF_BARS; i++) {
+    const bar = document.createElement("div");
+    bar.id = `bar2_${i}`;
+    bar.className = "visualizer-container__bar2";
+    barContainer2.appendChild(bar);
+
+    const lbl = document.createElement("div");
+    lbl.id = `frequencyText_${i}`;
+    lbl.className = "frequency-text";
+    textContainer.appendChild(lbl);
+  }
+
+  // Mode switch
+  let currentMode = selectEl.value;
+  function updateMode() {
+    barsContainer.style.display      = currentMode === 'bars'        ? 'block' : 'none';
+    waveContainer.style.display      = currentMode === 'waveform'    ? 'block' : 'none';
+    specContainer.style.display      = currentMode === 'spectrogram' ? 'block' : 'none';
+  }
+  selectEl.addEventListener('change', e => {
+    currentMode = e.target.value;
+    updateMode();
+  });
+  updateMode();
+
+  // Draw: Bars
+  function drawBars() {
+    analyser.getByteFrequencyData(freqData);
+    let maxVal = 0, maxIdx = 0;
+    for (let i = 0; i < NBR_OF_BARS; i++) {
+      const idx = (i + 10) * 2;
+      const val = freqData[idx] || 0;
+      document.getElementById(`bar2_${i}`)
+              .style.height = `${Math.max(4, val) / 3}px`;
+      if (val > maxVal) { maxVal = val; maxIdx = idx; }
+
+      const lbl = document.getElementById(`frequencyText_${i}`);
+      if ([0,20,40,60,NBR_OF_BARS-1].includes(i)) {
+        lbl.textContent = `${Math.round((idx * ctx.sampleRate) / (2 * freqData.length))} Hz`;
+      } else {
+        lbl.textContent = '';
+      }
+    }
+    peakTextEl.textContent =
+      `Peak Audio Frequency (Hz) = ${Math.round((maxIdx * ctx.sampleRate) / (2 * freqData.length))}`;
+  }
+
+  // Draw: Waveform
+  function drawWaveform() {
+    analyser.getByteTimeDomainData(timeData);
+    const g = waveCanvas.getContext('2d');
+    const w = waveCanvas.width, h = waveCanvas.height;
+    g.clearRect(0, 0, w, h);
+    g.strokeStyle = 'lime';
+    g.lineWidth   = 1;
+    g.beginPath();
+
+    const sliceWidth = w / timeData.length;
+    let x = 0;
+    for (let i = 0; i < timeData.length; i++) {
+      // convert 0–255 to -1…+1
+      const norm = (timeData[i] / 128.0) - 1;
+      // apply gain and clamp
+      const yPos = (h / 2) + Math.max(-1, Math.min(1, norm * WAVE_GAIN)) * (h / 2);
+      if (i === 0) g.moveTo(x, yPos);
+      else         g.lineTo(x, yPos);
+      x += sliceWidth;
+    }
+    g.lineTo(w, h / 2);
+    g.stroke();
+  }
+
+  // Draw: Spectrogram
+ function drawSpectrogram() {
+  const BIN_GROUP = 1;
+  const FREQ_START_HZ = 2000;
+  const FREQ_END_HZ = 5000;
+
+  const g = specCanvas.getContext('2d');
+  const w = specCanvas.width;
+  const h = specCanvas.height;
+  g.imageSmoothingEnabled = false;
+
+  analyser.getByteFrequencyData(freqData);
+
+  const nyquist = ctx.sampleRate / 2;
+  const binCount = analyser.frequencyBinCount;
+  const binWidthHz = nyquist / binCount;
+
+  const startBin = Math.floor(FREQ_START_HZ / binWidthHz);
+  const endBin   = Math.floor(FREQ_END_HZ / binWidthHz);
+  const zoomBins = endBin - startBin;
+  const groupCount = Math.floor(zoomBins / BIN_GROUP);
+  const barWidth = Math.floor(w / groupCount);
+
+  // Scroll up and fade
+  g.globalAlpha = 0.9;
+  const img = g.getImageData(0, 1, w, h - 1);
+  g.putImageData(img, 0, 0);
+  g.globalAlpha = 1.0;
+
+  // Draw new row for zoomed band
+  for (let i = 0; i < groupCount; i++) {
+    let sum = 0;
+    for (let j = 0; j < BIN_GROUP; j++) {
+      sum += freqData[startBin + i * BIN_GROUP + j];
+    }
+    const avg = sum / BIN_GROUP;
+    const hue = (1 - avg / 255) * 240;
+    g.fillStyle = `hsl(${hue}, 70%, 30%)`;
+    g.fillRect(i * barWidth, h - 1, barWidth, 1);
+  }
+}
+
+
+specCanvas.addEventListener("mousemove", (e) => {
+  const rect = specCanvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+
+  const maxFreqHz = 8000;
+  const freq = (x / specCanvas.width) * maxFreqHz;
+  document.getElementById("freqHoverReadout").textContent =
+    `Mouse Frequency: ${freq.toFixed(1)} Hz`;
+});
+
+specCanvas.addEventListener("mouseleave", () => {
+  document.getElementById("freqHoverReadout").textContent = '';
+});
+
+
+  // Main loop
+  function renderFrame() {
+    if (currentMode === 'bars')         drawBars();
+    else if (currentMode === 'waveform') drawWaveform();
+    else if (currentMode === 'spectrogram') drawSpectrogram();
+    requestAnimationFrame(renderFrame);
+  }
+  renderFrame();
+
+  // Recording loop
+  let lastURL = null;
+  async function vis_start() {
+    if (lastURL) {
+      URL.revokeObjectURL(lastURL);
+      lastURL = null;
+    }
+    soundapplet.rec_start();
+    setTimeout(vis_stop, RECORD_MS);
+  }
+  async function vis_stop() {
+    const res = await soundapplet.rec_finish();
+    const sr  = Math.round(res.sr);
+
+    // WAV header
+    const header = new ArrayBuffer(44);
+    const dv     = new DataView(header);
+    let off = 0;
+    // RIFF
+    dv.setUint8(off++,82); dv.setUint8(off++,73); dv.setUint8(off++,70); dv.setUint8(off++,70);
+    dv.setUint32(off, res.len + 44, true); off += 4;
+    // WAVE fmt 
+    dv.setUint8(off++,87); dv.setUint8(off++,65); dv.setUint8(off++,86); dv.setUint8(off++,69);
+    dv.setUint8(off++,102); dv.setUint8(off++,109); dv.setUint8(off++,116); dv.setUint8(off++,32);
+    dv.setUint32(off,16,true); off += 4;
+    dv.setUint16(off,1,true); off += 2; dv.setUint16(off,1,true); off += 2;
+    dv.setUint32(off, sr, true); off += 4; dv.setUint32(off,2*sr,true); off += 4;
+    dv.setUint16(off,2,true); off += 2; dv.setUint16(off,16,true); off += 2;
+    // data
+    dv.setUint8(off++,100); dv.setUint8(off++,97); dv.setUint8(off++,116); dv.setUint8(off++,97);
+    dv.setUint32(off, res.len, true);
+
+    const wavBlob = new Blob([header, ...res.wavdata], { type: 'audio/wav' });
+    lastURL = URL.createObjectURL(wavBlob);
+
+    sourceEl.src = lastURL;
+    audioEl.load(); audioEl.volume = 0.2;
+    audioEl.play().catch(()=>{});
+
+    setTimeout(vis_start, LOOP_DELAY);
+  }
+
+  // Kick off
+  vis_start();
+
+})();
+</script>
+
+
+
+   </div>
+</div>
+<!-------DSP TAB--------------->
+ 
+<div class="tab">
+
+  <div id="DSP" class="tabcontent">
+  <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+        <div style="margin: 12px 12px 12px" class="volumeBox" title="sets DSP Level in 4 steps, left is off" id="slider2"> 
+           <span style="margin:0 35px 0 14px">DSP Level</span> <input type="range" style="color:inherit" list="tickmarksDsp" min="0" max="4" id="nrcheckbox" name="DSP" value="0" step="1" oninput="setlmsnr(this.value)" onchange="setlmsnr(this.value)">
+            <datalist id="tickmarksDsp" style="margin-left: 143px">
+              <option value="0" label="OFF"></option>
+              <option value="1" label="LOW"></option>
+              <option value="2" label="MED"></option>
+              <option value="3" label="HIGH"></option>
+              <option value="4" label="MAX"></option>
+            </datalist>
+       </div>
+<p style="font-family: &#39;Trade&#39;">Signal Enhancements:</p>
+    <label class="sdrButton size" title="audio-only notch: can handle multiple tones but will not prevent desense">
+      <input id="notch2checkbox" type="checkbox" value="4" onclick="setnotch2(this.checked);"><span>Notch2</span>
+      </label>
+      
+       <label class="sdrButton size leftA" title="6db high frequency boost centred at 1500hz to improve speech">
+       <input id="highboostcheckbox" type="checkbox" value="4" onclick="sethighboost(this.checked);"><span>AUDIO BOOST</span>
+       </label>
+       
+       <label class="sdrButton size leftA" title="this is a one click (FM only) weak signal enhancer (adds DSP, high boost and narrow Bandwidth filter). Note: BW Filter will need manually adjusting back after pressing this)">
+       <input id="nrcheckbox" type="checkbox" value="4" onclick="setlmsnr(this.checked); lo=-2.00000; hi=2.00000;  updbw(this.checked); sethighboost(this.checked);"><span>FM</span>
+       </label>
+<label class="sdrButton size leftA" title="USB Signal Enhancer, reduces filter and enables high frequency audio boost">
+       <input type="checkbox" value="4" onclick="setlmsnr(this.checked); lo=0.30000; hi=2.50000;  updbw(this.checked); sethighboost(this.checked);"><span>USB</span>
+       </label>
+<label class="sdrButton size leftA" title="LSB Signal Enhancer, reduces filter and enables high frequency audio boost">
+       <input type="checkbox" value="4" onclick="setlmsnr(this.checked); lo=-2.50000; hi=-0.30000;  updbw(this.checked); sethighboost(this.checked);"><span>LSB</span>
+       </label>
+<div class="animation2" id="anim" style="margin-top: -90px; margin-left: 161px">  
+
+</div>
+</div>
+</div>
+
+<!-------------------Filter Tab------------->
+<div class="tab">
+ 
+  <div id="FILTER" class="tabcontent">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+        <!------------------- FILTER ----------------->
+     <div id="filterBox" title="sets receiver bandwidth"> 
+     
+              <div>
+			
+	            <a style="color: #939393; font-size: 15px; font-family: &#39;trade&#39;">Current Filter Width:
+                <span style="color: #0cf" id="numericalbandwidth5">2.7</span>KHz</a>
+               <br>
+                
+            </div>
+<label class="sdrButton filter leftD" style="width:30px"><input type="radio" name="BW" title="reduces bandwidth each click" value="RX" onclick="lo+=0.03125; hi-=0.03125; updbw();"><span>-</span></label> 
+<label class="sdrButton filter leftD" style="width:30px"><input type="radio" name="BW" title="increases bandwidth each click" value="RX" onclick="lo-=0.03125; hi+=0.03125; updbw();"><span>+</span></label>
+        
+ <div class="filterSet2" style="display:none">        
+       <label class="sdrButton filter leftD"><input type="radio" name="fil" value="6" onclick="lo=-3.0000; hi=3.0000; updbw();"><span>6 Khz</span></label>
+      <label class="sdrButton filter leftD"><input type="radio" name="fil" value="8000" onclick="lo=-4.00000; hi=4.00000;  updbw();"><span>8 Khz</span></label>
+      <label class="sdrButton filter leftD"><input type="radio" name="fil" value="12000" onclick="lo=-6.00000; hi=6.00000; updbw();"><span>12 Khz</span></label>
+      <label class="sdrButton filter leftD"><input type="radio" name="fil" value="16000" onclick="lo=-8.00000; hi=8.00000; updbw();"><span>16 Khz</span></label>
+</div>       
+  
+         <!--USB-->   
+<div class="filterSet1">        
+       <label class="sdrButton filter leftD"><input type="radio" name="fil" value="2400" onclick="lo=0.20000; hi=2.5; updbw();" checked=""><span>2.3 Khz</span></label>
+<label class="sdrButton filter leftD"><input type="radio" name="fil" value="2700" onclick="lo=0.20000; hi=2.8; updbw();"><span>2.6 Khz</span></label>
+      <label class="sdrButton filter leftD"><input type="radio" name="fil" value="3000" onclick="lo=0.2; hi=3.1;  updbw();"><span>2.9 Khz</span></label>
+      <label class="sdrButton filter leftD"><input type="radio" name="fil" value="4000" onclick="lo=0.2; hi=4.2; updbw();"><span>4.0 Khz</span></label>
+      
+</div>
+        <!--LSB-->
+<div class="filterSet1b" style="display:none">        
+       <label class="sdrButton filter leftD"><input type="radio" name="fil" value="2400" onclick="hi=-0.2; lo=-2.5; updbw();" checked=""><span>2.3 Khz</span></label>
+<label class="sdrButton filter leftD"><input type="radio" name="fil" value="2700" onclick="hi=-0.2; lo=-2.8; updbw();"><span>2.6 Khz</span></label>
+      <label class="sdrButton filter leftD"><input type="radio" name="fil" value="3000" onclick="hi=-0.2; lo=-3.1;  updbw();"><span>2.9 Khz</span></label>
+      <label class="sdrButton filter leftD"><input type="radio" name="fil" value="4000" onclick="hi=-0.2; lo=-4.2; updbw();"><span>4.0 Khz</span></label>
+      
+</div>
+<!--CW-->
+<div class="filterSet1c" style="display:none">        
+  <label class="sdrButton filter leftD"><input type="radio" name="fil" value="2400" onclick="hi=-0.64000; lo=-0.95000; updbw();" checked=""><span>0.3 Khz</span></label>
+<label class="sdrButton filter leftD"><input type="radio" name="fil" value="2700" onclick="hi=-0.44000; lo=-0.95000; updbw();"><span>0.5 Khz</span></label>
+ <label class="sdrButton filter leftD"><input type="radio" name="fil" value="3000" onclick="hi=-0.14000; lo=-0.95000;  updbw();"><span>0.8 Khz</span></label>
+ <label class="sdrButton filter leftD"><input type="radio" name="fil" value="4000" onclick="hi=-0.04000; lo=-0.95000; updbw();"><span>1.0 Khz</span></label>
+ 
+</div>
+
+
+<!-----Filter graphics------->
+
+
+
+<div class="filterSet1cut">    
+    <div class="cutFilBox">
+        LO / WIDTH<br>
+        <div style="display:inline;width:72px;height:72px;"><canvas width="72" height="72px"></canvas><input class="loFil" data-width="72" data-height="72" data-min="0" data-max="800" data-angleoffset="-125" data-anglearc="250" value="200" style="width: 40px; height: 24px; position: absolute; vertical-align: middle; margin-top: 24px; margin-left: -56px; border: 0px; background: none; font: bold 14px Arial; text-align: center; color: rgb(38, 255, 38); padding: 0px; appearance: none;"></div>
+        </div>
+    
+    <div class="cutFilBox">
+        HI / SHIFT<br>
+        <div class="filterSet2Box"><div style="display:inline;width:72px;height:72px;"><canvas width="72" height="72px"></canvas><input class="hiFil" data-width="72" data-height="72" data-min="1000" data-max="2400" data-angleoffset="-125" data-anglearc="250" value="" style="width: 40px; height: 24px; position: absolute; vertical-align: middle; margin-top: 24px; margin-left: -56px; border: 0px; background: none; font: bold 12px Arial; text-align: center; color: rgb(38, 255, 38); padding: 0px; appearance: none;"></div></div>
+    </div>
+</div>
+
+<div class="filterSet2cut" style="display:none">
+    <div class="cutFilBox">
+        LO / WIDTH<br>
+        <div style="display:inline;width:72px;height:72px;"><canvas width="72" height="72px"></canvas><input class="loFilHi" data-width="72" data-height="72" data-min="0" data-max="800" data-angleoffset="-125" data-anglearc="250" value="200" style="width: 40px; height: 24px; position: absolute; vertical-align: middle; margin-top: 24px; margin-left: -56px; border: 0px; background: none; font: bold 14px Arial; text-align: center; color: rgb(38, 255, 38); padding: 0px; appearance: none;"></div>
+    </div>    
+  <div class="cutFilBox">
+        HI / SHIFT<br>
+     <div class="filterSet2BoxLsb"><div style="display:inline;width:72px;height:72px;"><canvas width="72" height="72px"></canvas><input class="hiFilLo" data-width="72" data-height="72" data-min="0" data-max="2400" data-angleoffset="-125" data-anglearc="250" value="" style="width: 40px; height: 24px; position: absolute; vertical-align: middle; margin-top: 24px; margin-left: -56px; border: 0px; background: none; font: bold 12px Arial; text-align: center; color: rgb(38, 255, 38); padding: 0px; appearance: none;"></div>
+     </div>
+
+  </div> 
+</div>     
+
+  <div class="cutFilBox">
+        Adjuster 1<br>
+        <div style="display:inline;width:72px;height:72px;"><canvas width="72" height="72px"></canvas><input class="Fil" id="some_element1" data-width="72" data-height="72" data-min="0" data-max="10" data-angleoffset="-125" data-anglearc="250" value="4" style="width: 40px; height: 24px; position: absolute; vertical-align: middle; margin-top: 24px; margin-left: -56px; border: 0px; background: none; font: bold 14px Arial; text-align: center; color: rgb(38, 255, 38); padding: 0px; appearance: none;"></div>
+  </div>
+
+</div>
+  <div class="cutFilBox">
+        Adjuster 2<br>
+        <div style="display:inline;width:72px;height:72px;"><canvas width="72" height="72px"></canvas><input class="Fil" data-width="72" data-height="72" data-min="0" data-max="800" data-angleoffset="-125" data-anglearc="250" value="200" style="width: 40px; height: 24px; position: absolute; vertical-align: middle; margin-top: 24px; margin-left: -56px; border: 0px; background: none; font: bold 14px Arial; text-align: center; color: rgb(38, 255, 38); padding: 0px; appearance: none;"></div>
+  </div>
+
+</div> 
+</div>
+  
+<!---------------Waterfall Tab------------->
+
+
+<div class="tab">
+
+    <div id="WATER" class="tabcontent">
+    <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+  <span id="wfall" style="border: 2px solid #6e6c6c; padding: 5px 0px 4px; border-radius: 12px; font-family: &#39;trade&#39;">TYPE
+          <label class="sdrButton size"><input type="radio" name="viewScope" value="RX" title="shows standard waterfall colours" onclick="waterfallmode(1);" checked=""><span>WATERFALL</span></label>  
+          <label class="sdrButton size"><input type="radio" name="viewScope" value="RX" onclick="waterfallmode(0);"><span>SPECTRUM</span></label>
+<label class="sdrButton size"><input type="radio" name="viewScope" value="RX" onclick="toggleSpectrum();"><span>Toggle Band Spectrum</span></label>
+        </span>
+
+          
+  
+  <span style="margin-left: 31px; border: 2px solid #6e6c6c; padding: 5px 0px 4px; border-radius: 12px; font-family: &#39;trade&#39;">DISPLAY
+  <!--<label class="sdrButton size leftB" title="displays all bands"> <input type="radio" name="group" value="all bands" onclick="setview(0);"><span>ALL BANDS</span></label>
+       <label class="sdrButton size" id="oneBand" title="displays only currently selected band"> <input id="oneBand" type="radio" name="group" value="one band" onclick="setview(2);"><span>1 BAND</span></label>-->
+  
+       <label class="sdrButton size" title="turns off DX labels"><input type="checkbox" name="group" value="blind" onclick="sethidedx(this.checked);"><span> LABELS OFF</span></label> 
+  
+  <label class="sdrButton size" title="moves RX signal to center of waterfall"><input type="checkbox" name="group" value="blind" onclick="wfset(3);"><span> Center RX</span></label>  
+  <label class="sdrButton size" title="turns off waterfall display to help with resources"><input type="checkbox" id="displayoff" name="group" value="blind" onclick="displayOff();"><span> Display Off</span></label> 
+  </span>
+  <br><br>
+  <div class="volumeBox" title="changes waterfall height" id="slider4"> 
+    <span style="margin:0 69px 0 0px">Waterfall Size</span> <input type="range" min="50" max="500" id="wf-size" value="200" step="10" oninput="waterfallheight(this.value);" onchange="waterfallheight(this.value);">
+  <label class="sdrButton size"><input id="reset3" type="checkbox" name="viewScope" value="" onclick="waterfallheight(200);"><span>Reset</span></label>
+  </div>
+  <div class="volumeBox" title="changes waterfall zoom" id="slider5"> 
+    <span id="zoom" style="margin:0 57px 0 0px">Waterfall Zoom</span> <input type="range" min="0" max="4" id="wf-zoom" value="0" step="1" oninput="wfset(this.value);" onchange="wfset(this.value);">
+     <label class="sdrButton size"><input type="radio" name="Zoom" value="RX" onclick="wfset(0);"><span>ZOOM+</span></label>
+     <label class="sdrButton size"><input type="radio" name="Zoom" value="RX" onclick="wfset(1);"><span>ZOOM-</span></label>
+     <label class="sdrButton size"><input type="radio" name="Zoom" value="RX" onclick="wfset(2);"><span>MAX</span></label>
+     <label class="sdrButton size"><input type="radio" name="Zoom" value="RX" onclick="wfset(4);"><span>MIN</span></label>
+     <label class="sdrButton size" title="magnifies waterfall display"><input id="wfwidecheckbox" type="checkbox" name="group" value="" onclick="waterPos(); stretch_waterfalls(); settings_store();"><span> Super Zoom</span></label> 
+  
+  </div>
+   <div class="volumeBox" title="changes waterfall brightness" id="slider6"> 
+             <span style="margin:0 13px 0 0px">Waterfall Brightness</span> <input type="range" min="-10" max="500" id="wf-brightness2" value="" step="1" oninput="wfbright();" onchange="wfbright();">
+         <label class="sdrButton size"><input id="contrast" type="checkbox" name="viewScope" value="RX" data-list="bandLcd" onclick="toggleContrast();"><span>More Contrast</span></label>
+  </div>
+  
+  </div>
+    
+  </div>
+
+<script>
+
+function toggleSpectrum() {
+  const elems = document.querySelectorAll('#wfdiv_spectrum0');
+  if (!elems.length) {
+    console.warn("❌ No wfdiv_spectrum0 elements found");
+    return;
+  }
+
+  // Check the first one’s current visibility
+  const isVisible = window.getComputedStyle(elems[0]).display !== 'none';
+  const displayValue = isVisible ? 'none' : 'block';
+
+  // Apply to all
+  elems.forEach(el => {
+    el.style.display = displayValue;
+  });
+
+  console.log(`🔁 All wfdiv_spectrum0 now ${isVisible ? 'hidden' : 'visible'}`);
+}
+
+function displayOff() {
+  var checkBox = document.getElementById("displayoff");
+  
+  if (checkBox.checked == true){
+    document.getElementById("wfcontainer1").style.display = "none";
+  } else {
+      document.getElementById("wfcontainer1").style.display = "block";
+  }
+}
+
+function toggleContrast() {
+  var checkBox = document.getElementById("contrast");
+  
+  if (checkBox.checked == true){
+    waterfallmode(2);
+  } else {
+     waterfallmode(1);
+  }
+}
+</script>
+
+<!------------Memories------------------->
+<div class="tab">
+
+  <div id="MEM" class="tabcontent">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button---> 
+
+<div class="" style="margin-left:10px"> 
+
+   <div class="filterBox">
+
+  
+  <div id="memories" class="memories"><table><tbody><tr><td><input type="button" disabled="" title="recall" value="go" onclick="mem_recall(0)"><input type="button" disabled="" title="erase" value="del" onclick="mem_erase(0)"><input type="button" title="click save to store current freq" value="save" onclick="mem_store(0)"></td><td>Click "SAVE" to add cuurent freq/mode to memory</td></tr></tbody></table></div>
+  </div>
+
+   </div>
+  
+   </div>
+</div>
+<!-------------------end of memories------------------------>
+
+<!------------------- RECORDING -----------------> 
+<div class="tab">
+
+  <div id="REC" class="tabcontent">
+  <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+<a style="margin-left: 20px; font-family: trade">ENSURE AUDIO VISUALIZER (on audio tab) HAS BEEN STOPPED FIRST</a> 
+
+      
+      <div class="recordingBox"> 
+       	 <div id="record_span" style="display: inline;">
+    <button id="recbutton" title="start audio recording" onclick="record_click(); return false">start recording</button>
+            <span id="reccontrol"></span>
+            <br>
+            <div id="recwarning" style="width:300px; display:none; font-size:1px; color:red"></div>
+            <label class="sdrButton squelch" title="disable live sound">
+              <input id="mute" type="checkbox" value="MUTE" onclick="setmute(this.checked);"><span>Mute Live Audio</span>
+              </label>
+             
+          </div>
+          <div class="animation5" id="anim5" style="margin-top: -183px; position: relative; margin-left: 312px; width: 600px">
+         <audio id="audio5" controls="" style="margin-top: -16px; margin-left: 153px">
+          <source id="source5" src="" type="audio/ogg">
+      </audio> 
+      <div class="visualizer-container"><div id="bar0" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar1" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar2" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar3" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar4" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar5" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar6" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar7" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar8" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar9" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar10" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar11" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar12" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar13" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar14" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar15" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar16" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar17" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar18" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar19" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar20" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar21" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar22" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar23" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar24" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar25" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar26" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar27" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar28" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar29" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar30" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar31" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar32" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar33" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar34" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar35" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar36" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar37" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar38" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar39" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar40" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar41" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar42" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar43" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar44" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar45" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar46" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar47" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar48" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar49" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar50" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar51" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar52" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar53" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar54" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar55" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar56" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar57" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar58" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar59" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar60" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar61" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar62" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar63" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar64" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar65" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar66" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar67" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar68" class="visualizer-container__bar" style="height: 1.33333px;"></div><div id="bar69" class="visualizer-container__bar" style="height: 1.33333px;"></div></div>
+          </div>  
+      
+      
+    </div>
+    <!---------------Audio Visualizer record tab----------------------->
+    <style>
+
+                    
+      .background {
+          position: absolute;
+
+          top: -50px;
+          right: -50px;
+          bottom: -50px;
+          left: -50px;
+
+          background-color: black;
+          background-position: center center;
+          background-size: cover;
+
+          filter: blur(15px);
+
+      }
+
+      .track-title {
+
+          position: absolute;
+
+          top: 200px;
+          right: 0;
+          left: 0;
+
+          color: white;
+          font-family: Calibri;
+          font-size: 100px;
+          text-align: center;
+
+      }
+
+      .visualizer-container {
+          
+          position: absolute;
+          bottom: -17px;
+          right: 0;
+          left: 0;
+          /*max-height: 100%;*/
+          
+        
+
+          text-align: center;
+      }
+
+      
+      .visualizer-container__bar {
+
+          display: inline-block;
+          background: linear-gradient(0deg, rgb(7, 161, 0) 0%, rgba(147,41,0) 100%);
+          /*background: green;*/
+          margin: 0 2px;
+          width: 4px;
+	  font-size: 6px;
+          
+
+      }
+      
+
+  </style>   
+    <script>
+    
+      (function () {
+    
+          // The number of bars that should be displayed
+          const NBR_OF_BARS = 70;
+    
+          // Get the audio element tag
+          const audio = document.querySelector("#audio5");
+    
+          // Create an audio context
+          //var audioContext = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AudioContext();
+    
+          // Create an audio source
+          const audioSource = ctx.createMediaElementSource(audio);
+          //const audioSource = ctx.createBufferSource();
+          //audioSource.buffer = buffer;
+          
+          
+    
+          // Create an audio analyzer
+          const analyzer = ctx.createAnalyser();
+    
+          // Connect the source, to the analyzer, and then back to the context's destination
+          audioSource.connect(analyzer);
+          audioSource.connect(ctx.destination); //so user hears audio
+          //audioSource.noteOn(0);
+    
+          // Print the analyze frequencies
+          const frequencyData = new Uint8Array(analyzer.frequencyBinCount);
+          analyzer.getByteFrequencyData(frequencyData);
+          console.log("frequencyData", frequencyData);
+    
+          // Get the visualizer container
+          const visualizerContainer = document.querySelector(".visualizer-container");
+    
+          // Create a set of pre-defined bars
+          for( let i = 0; i < NBR_OF_BARS; i++ ) {
+    
+              const bar = document.createElement("DIV");
+              bar.setAttribute("id", "bar" + i);
+              bar.setAttribute("class", "visualizer-container__bar");
+              visualizerContainer.appendChild(bar);
+    
+          }
+    
+   
+// This function has the task to adjust the bar heights according to the frequency data
+function renderFrame() {
+    analyzer.getByteFrequencyData(frequencyData);
+
+    for (let i = 0; i < NBR_OF_BARS; i++) {
+        const index = (i + 10) * 2;
+        const fd = frequencyData[index];
+        const bar = document.querySelector("#bar" + i);
+
+        if (!bar) {
+            continue;
+        }
+
+        const barHeight = Math.max(4, fd || 0) / 3;
+        bar.style.height = barHeight + "px";
+
+  // Display frequency text only on the first and last bars
+        
+         //if (i === 0 || i === NBR_OF_BARS ) {
+           // bar.textContent = index;
+        //} else {
+  // Clear frequency text on other bars
+          //  bar.textContent = "";
+        //}
+    }
+
+    window.requestAnimationFrame(renderFrame);
+}
+
+
+
+// Start the visualization
+renderFrame();
+
+
+  
+
+    })();
+    </script>
+    
+    <!----------------------------End of audio visualizer-------------------------> 
+ 
+ 
+        
+    </div>
+    
+      
+    </div>
+  
+
+
+<!----------end of recording tab----------------------------->
+
+<!---------------------Info--------------------------->      
+
+<div class="tab">
+
+  <div id="INFO" class="tabcontent">
+  <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+ <div>
+
+
+<input type="button" value="WebSDR info page" title="Click for info about this WebSDR" onclick="window.open(&#39;http://www.g0xbu.co.uk/websdr&#39;,&#39;_blank&#39;);" style="background:blue; font-weight: bold">
+
+<!--<input type="button" value="CLICK TO START AUDIO" title="click here to start audio (chrome browsers)" onclick="chrome_audio_start()" style="background:#88ff88; font-weight: bold"> --->
+
+<input type="button" value="QRZ search" onclick="window.open(&#39;http://www.qrz.com&#39;,&#39;_blank&#39;);" style="background:#6699cc;  font-weight: bold; color: black">
+
+<input type="button" value="Lightning Map" onclick="window.open(&#39;https://www.lightningmaps.org/?lang=en#m=oss;t=3;s=0;o=0;b=;ts=0;&#39;,&#39;_blank&#39;);" style="background:black;  font-weight: bold; color: yellow">  
+
+<!--<input type="button" value="CB Country Codes" title="opens a new window showing CB codes" onclick="window.open('http://81.174.147.103:8901/cbcountrycodes.html','_blank');" style="background:green;  font-weight: bold; color: black"> --->
+
+<input type="button" value="Weather Station" onclick="window.open(&#39;https://www.wunderground.com/dashboard/pws/ICREWE42&#39;,&#39;_blank&#39;);" style="background:cyan;  font-weight: bold; color: black">
+
+<input type="button" style="background-color: gold; color: #0609cf; font-size: 20px; border-radius: 12px" value="DONATE HERE via PayPal" onclick="window.open(&#39;https://www.paypal.me/g0xbu&#39;,&#39;_blank&#39;);">  
+<br><br>
+<span style="font-size:20px; width: 100%; height:15px; line-height:20px">Check my youtube channel here: <a style="color:#0800ff" href="https://www.youtube.com/channel/UCh_VE12PTM93S8vTxdNRW4w" target="_blank">IanXBU Youtube</a> 
+
+<img src="./G0XBU WEBSDR - Jodrell 1_files/line.jpg" width="1000px" height="4">
+<br>
+<div style="font-size:18px; text-align:left;">
+<b><u>KEYBOARD CONTROLS</u></b><br>
+</div>
+<div style="font-size:18px; text-align:left;">
+<a style="color:green">J K ← →: </a> freq down/up (+shift/ctrl/alt = faster)
+<br>
+<div style="font-size:18px; text-align:left;">
+<a style="color:green">U L C A F: </a> USB, LSB, CW, AM, FM
+<br>
+<div style="font-size:18px; text-align:left;">
+<a style="color:green">z Z: </a> center/zoom waterfall
+<br>
+<div style="font-size:18px; text-align:left;">
+<a style="color:green">G: </a> enter frequency
+<br>
+
+<img src="./G0XBU WEBSDR - Jodrell 1_files/line.jpg" width="1000px" height="4">
+
+<div style="font-size:18px; text-align:left;">
+<b><u>CREDITS</u></b><br>
+</div>
+<!--code to hide email from bots-->
+<style>
+  .hidden-email {
+      cursor: pointer;
+  }
+</style>
+
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">Not affiliated with Jodrell Bank in any way, just close to it! This WebSDR is owned and operated by Ian, G0XBU. </span>
+<br>
+Email:
+<span class="hidden-email" style="color:#0800ff" data-user="enquiries" data-domain="g0xbu.co.uk">Hover to see email</span>
+
+Website: 
+<a style="color:#0800ff" href="http://www.g0xbu.co.uk/websdrs">g0xbu.co.uk/websdr</a>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const emailElement = document.querySelector('.hidden-email');
+      emailElement.addEventListener('mouseover', function() {
+          const user = emailElement.getAttribute('data-user');
+          const domain = emailElement.getAttribute('data-domain');
+          emailElement.textContent = `${user}@${domain}`;
+      });
+      emailElement.addEventListener('mouseout', function() {
+          emailElement.textContent = 'Hover to see email';
+      });
+  });
+</script>
+<br>
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">This SDR supports the Pocket RXTX app by Dan YO3GGX: <a style="color:#0800ff" href="http://play.google.com/store/apps/details?id=ro.yo3ggx.rxtx">Download HERE</a>
+<br>
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">Thanks to ROMA WebSDR for use of some features for this interface. Link to their SDR <a style="color:#0800ff" href="http://roma4.ddns.net/">HERE</a>
+<br>
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">Thanks to the guys at Utah WebSDR for their help with Chrome audio and DSP filtering. Here is their site: <a style="color:#0800ff" href="http://sdrutah.org/">Utah WebSDR</a>
+<br>
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">Thanks to Pieter, PA3FWM for making the original WebSDR software. More details here:  <a style="color:#0800ff" href="http://websdr.org/">websdr.org</a>
+</span></span></span></span></div>
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">Thanks to Bas, ON5HB for his help with setting up the RSP1A and his excellent work with drivers (and troubleshooting support!). His SDR here:  <a style="color:#0800ff" href="http://heppen.be:8901/">ON5HB Websdr</a>
+</span></div>
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">Thanks to NA5B for his help with adding the vertical waterfall lines and the waterfall colours. His SDR here:  <a style="color:#0800ff" href="http://na5b.com:8901/">NA5B Websdr</a>
+<span style="font-size:18px; right:0; width:100%; height:15px; line-height:15px">Thanks to Fred AA7BQ (QRZ.com founder) for his help in setting up the QRZ lookup feature. His website here:  <a style="color:#0800ff" href="http://qrz.com/">QRZ.com</a>
+</span></span></div>
+
+<br style="clear:both">
+
+
+
+<!-----------------Updates------------------------------>
+<img src="./G0XBU WEBSDR - Jodrell 1_files/line.jpg" width="1000px" height="4">
+
+<div style="font-size:18px; text-align:left;">
+<b><u>UPDATES</u></b><br>
+</div>
+<a style="color:green">20 July 25</a> - Now added a band spectrum display. This is not adjustable and shows the full band you are on. Toggle on and off within the 'Waterfall' tab.
+<br>
+<a style="color:green">27 April 25</a> - Modified the callsign lookup page. Map now shows distance of callsign lookup from this websdr and made some improvements to how displayed data is shown.
+<br>
+<a style="color:green">13 April 25</a> - Updated the logic that controls the freq adjust buttons as it was jumping two increments, now fixed
+<br>
+<a style="color:green">24 July 24</a> - Fixed the issue with tuning dial not functioning correctly when in CW mode.
+<br>
+<a style="color:green">6 June 24</a> - added a cookie that saves the page theme so your choice will be remembered on your next visit.
+<br>
+<a style="color:green">3 June 24</a> - Updates to the callsign lookup feature to enable it to display properly when users have missing info in their qrz page.
+<br>
+<a style="color:green">22 Jan 24</a> - Changed the frequency adjuster so you can now select your desired frequency step and adjust frequency based on that selection. For instance, use 10khz for CB FM, 1khz for HF SSB/LSB etc.
+<br>
+<a style="color:green">21 Jan 24</a> - Added a 'Round' button next to frequency readout which when clicked rounds the frequency to the nearest whole value.
+<br>
+<a style="color:green">11 Jan 24</a> - New realtime Audio visualizer added which also displays approx frequency of the audio peak. The only Websdr in the world to have this feature. Coded by me G0XBU.
+<br>
+<a style="color:green">9 Nov 23</a> - Callsign Lookup Tab improvements. User image now displayed (if available).
+<br>
+<a style="color:green">12 Oct 23</a> - User IP address replaced with approximate location lookup on the user tab. Replace this with your own callsign/username in the input box at the top of the page.
+<br>
+<a style="color:green">15 July 23</a> - AIR2 moved over to server 1 as it has a better antenna. Also added an HF KiwiSDR using a Wellbrook Loop. Thanks to Gerry M0VAA who has loaned it. Click the OWRX/Kiwi tab.
+<br>
+<a style="color:green">5 May 23</a> - XBU Weather API added to view my local weather station (basic info) within the weather tab.
+<br>
+<a style="color:green">3 May 23</a> - Callsign lookup tab now features a locator lookup and google map display.
+<br>
+<a style="color:green">23 Apr 23</a> - Callsign lookup feature added to a new tab.
+<br>
+<a style="color:green">6 Jan 23</a> - New Server installed as the old one kept crashing. This one is a Dell Optiplex 3070, Intel i5 running Linux Mint.
+<br>
+<a style="color:green">30 Dec 22</a> - Added a new style of S meter. Much more responsive and neater looking.
+<br>
+<a style="color:green">3 Nov 22</a> - Added an audio visualizer for playback of recorded files in the recording tab.
+<br>
+<a style="color:green">31 Oct 22</a> - Added the s graph plot to the audio tab to show signal graph.
+<br>
+<a style="color:green">23 Oct 22</a> - Added the ability to play recorded audio files within the websdr as well as download them. See the recording tab.
+<br>
+<a style="color:green">13 Oct 22</a> - Added the ability to change audio channels. Also added labels to the volume and Buffer range sliders
+<br>
+<a style="color:green">22 Sep 22</a> - Added a 'Beacons' tab which displays a realtime transmission schedule of the IARU Beacons.
+<br>
+<a style="color:green">3 Aug 22</a> - Added CW Filter change options. They automatically appear in the 'Filter Controls' tab when you select CW mode.
+<br>
+<a style="color:green">3 Aug 22</a> - Added DIG mode which sets USB at 3KHz and is enabled when you click on a data label such as FT8.
+<br>
+<a style="color:green">1 Aug 22</a> - Added a 'Loading Waterfalls' Splash page which waits for the page to load before displaying the Websdr and stops the page from looking half loaded!
+<br>
+<a style="color:green">6 Jul 22</a> - Lots of little adjustments to functionality: Added Display Off button, fixed the SuperZoom so the waterfall positions correctly, added a 'more contrast' button to help bring weak signals brighter, added a tab to go to my OpenWebRX server, Added a tab for quick access to the CB codes (i find this useful myself!), added links to the other server bands directly, plus other stuff behind the scenes for page layout!
+<br>
+<a style="color:green">23 Jun 22</a> - Major user interface update. New fresher look. The original is still available if you prefer, just go to the page layout tab to select
+<br>
+<a style="color:green">14 Jun 22</a> - Added a waterfall expander feature which enlarges the waterfall and fits it to the full screen.
+<br>
+<a style="color:green">8 Jun 22</a> - Added ON5HB/PA0SIM latest RSP1A drivers which now incorporate noise shaping giving a better dynamic range on the RSP devices (20m, CB and 80m) but it means edges of the band are lost.
+<br>
+<a style="color:green">7 Jun 22</a> - Finally fixed the random server crashes (thanks to Bas, ON5HB). Turns out the max bandwidth that can be safely used in the entire websdr is 8mb. We were using 10mb (total of all the bands added together). I've had to reduce some bands to make it in tolerance and more reliable.
+<br>
+<a style="color:green">6 Jun 22</a> - Added waterfall contrast/brightness control and a filter over the waterfalls to create colour (thanks to NA5B for this).
+<br>
+<a style="color:green">14 Feb 22</a> - Fixed the squelch when using AM mode (by reducing the bandwidth to 6khz instead of 8khz).
+<br>
+<a style="color:green">13 Feb 22</a> - Added the ability to make the main LCD display italic and also aligned it with the colour change when selecting different font colours in the "Colours" menu.
+<br>
+<a style="color:green">13 Feb 22</a> - Added a second airband as promised. This can be moved in freq depending on demand. Currently set to a center freq of 121.2MHz.
+<br>
+<a style="color:green">31 Jan 22</a> - Added a new theme based on a Yaesu FTdx101D. Try it via the 'Colours' tab. Its still a work in progress.
+<br>
+<a style="color:green">31 Jan 22</a> - Updated the mobile version of the site with correct bands etc
+<br>
+<a style="color:green">10 Jan 22</a> - Made some minor layout chages to better align buttons on the page and when changing web browser zoom levels to fit onto the screen better.
+<br>
+<a style="color:green">20 Dec 21</a> - Added a new drop down menu called 'Colours' which enables you to change font colours and background image to personalize the webpage. It will reset to default if you refresh the page.
+<br>
+<a style="color:green">19 Dec 21</a> - Raised CB and 4m antenna to 7.5m AGL. Doubt you'll notice that extra height though.
+<br>
+<a style="color:green">17 Sep 21</a> - Added buttons to enhance USB and LSB signals aswell as the original FM boost. These, when clicked, reduce the filter bandwidth and enable audio high boost. To revert, uncheck the buttons and reclick the USB or LSB mode button to default to original settings)
+<br>
+<a style="color:green">10 Sep 21</a> - Antenna position tab added. Click this to open a new window which displays current beam heading (relies on the PstRotator web server being open on my laptop so may come and go!)
+<br>
+<a style="color:green">21 Aug 21</a> - fixed the LCD band indicators so they correctly match the band you have selected
+<br>
+<a style="color:green">20 Aug 21</a> - Added an audio buffer control to increase audio delay to help with stuttering audio. Use the slider to adjust.
+<br>
+<a style="color:green">6 June 21</a> - Shortened the 80m band so it covers just 80 to try and reduce some QRM from strong out of band signals. Unfortunately means we lost 60m and some Aero stuff. Will see how it goes. Let me know what you think
+<br>
+<a style="color:green">28 April 21</a> - Added a new SDR Play RSP1a receiver to the CB Band. So using 3 in total now; 2m, 80m, CB
+<br>
+<a style="color:green">10 April 21</a> - Added new RSP drivers for the SDR play devices from Bas, ON5HB. Better AGC settings which enable hearing weaker stations while strong signals are present. Only caveat is the waterfall colours change alot while it adjusts itself.
+<br>
+<a style="color:green">March 21</a> - Lost the Upconverter on 80m (It didnt like 400w TX near it) so had to borrow the RSP1A from CB band and put a spare RTL on CB (RTL's dont go low enough for 80m).
+<br>
+<a style="color:green"> Jan 21</a> - X Phase QRM eliminator added to the CB band
+<br>
+
+<br><br>
+
+</div>
+
+<center>
+<a href="http://www.hamqsl.com/solar.html" title="Click to add Solar-Terrestrial Data to your website!"><img src="./G0XBU WEBSDR - Jodrell 1_files/solar101vhf.php"></a>
+</center>
+<br><br> 
+<div class="stats" style="display: inline; border: 1px solid #fff; border-radius: 12px">
+Statistics: <span id="stats">Past 10 seconds: CPUload=32.7%, 7.11 users; audio 285.9 kb/s, waterfall 490.0 kb/s, http 1696.7 kb/s</span>
+</div>
+<div id="soundappletdiv"><div onclick="var e=document.getElementById(&#39;soundappletdebug&#39;); e.style.display=(e.style.display==&#39;none&#39;)?&#39;block&#39;:&#39;none&#39;;" style="max-width:400px; min-height:50px; border-style:solid; border-color:black; background-color:#cccccc; color:black; border-width:1px; margin:2px; padding:2px; /*font-family:sans-serif;*/ font-size:85%;">WebSDR HTML5 sound - Copyright 2007-2018, P.T. de Boer, pa3fwm@websdr.org<br><span id="soundappletdebug" style="display:none">-27120 2000 -22575 -2000<br>8000 0 48000 WebAudio<br><br>0 suspended</span></div><span id="debug2"></span></div>
+
+<script src="./G0XBU WEBSDR - Jodrell 1_files/main.js.downloaden"></script>
+    
+    </span></div>
+  </div>
+</div>
+<!-------------------Page layout--------------------------------->
+
+<div class="tab">
+
+  <div id="PAGE" class="tabcontent">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+ <div class="volumeBox2" style="background: none; font-family: &#39;Trade&#39;;"> <!--Removes background image inherited from volumeBox class-->
+  <span style="margin:0 3px 0 30px">Page Colour</span>
+<input type="color" id="pageColorPicker" name="pageColor" onchange="updatePageColor(this.value)">
+
+
+       <span style="margin:0 3px 0 30px">Font Colour</span>
+       <input type="color" id="fontColorPicker" name="fontColor" onchange="updateFontColor(this.value)">
+       
+
+
+
+              <span style="margin:0 3px 0 30px">Slider Colour (in progress!)</span>
+              <input type="color" id="sliderColorPicker" name="sliderColor" onchange="updateSliderColor(this.value)">
+<input type="range" id="slider8" name"slider8"="">
+
+
+  
+<br>
+<span style="font-size: 17px">Theme Options (stored in a cookie):</span>
+<br>
+	<span> 
+      
+	<input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Theme 1" onclick="setThemePreference(&#39;backImg2&#39;)">
+	<input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Theme 2" onclick="setThemePreference(&#39;backImg3&#39;)">
+	<input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Theme 3" onclick="setThemePreference(&#39;backImg4&#39;)">
+    <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Jodrell Theme" onclick="setThemePreference(&#39;backImg1&#39;)">
+	<input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Space Theme" onclick="setThemePreference(&#39;backImg6&#39;)">
+	<input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="World Theme" onclick="setThemePreference(&#39;backImg7&#39;)">
+    <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Yaesu FTDX101D Theme" onclick="window.open(&#39;radio.html&#39;,&#39;_blank&#39;);">
+    <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Dark Theme" onclick="setThemePreference(&#39;backImg8&#39;)">
+        </span>
+<br>
+<span style="margin-left: 148px">
+        <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="LCD italics" onclick="lcdItalic()">
+        <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Go to original GUI" onclick="window.open(&#39;index1.html&#39;,&#39;_blank&#39;);">
+        <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Full Screen ON" onclick="openFullscreen()">
+        <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="Full Screen OFF" onclick="closeFullscreen()">
+        <input style="background-color: #0ba100; border-radius: 12px; font-family: &#39;trade&#39;; font-size: 16px" type="button" value="RESET (also clears theme cookies)" onclick="setThemePreference(&#39;reset&#39;)">
+
+</span>
+</div>
+</div>
+</div>
+
+<script>
+  var elem = document.documentElement;
+  function openFullscreen() {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      elem.msRequestFullscreen();
+    }
+  }
+  
+  function closeFullscreen() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { /* Safari */
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE11 */
+      document.msExitFullscreen();
+    }
+  }
+  </script>
+     
+
+
+<!---------------------USERS--------------------------->      
+
+<div class="tab">
+
+  <div id="USER" class="tabcontent" style="max-width: 1036px">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+
+
+<!-------user form------->
+ <form name="form1" action="http://g0xbuwebsdr.ddns.net:8901/#" style="margin-top: -12px; margin-bottom: -13px; margin-left: -12px">
+<input style="display:none" id="compactviewcheckbox" type="checkbox" name="compactview" value="" onclick="setcompactview(this.checked)">
+<a style="font-family: &#39;Trade&#39;; margin-left: 38%">Click on the users below to go to their frequency</a>
+<div id="users"><p></p><div style="width:1024px; background-color:black;"><div class="others"><div id="user1" align="center" style="position:relative;left:374.687104px;width:500px; color:#ffa000;"><button type="button" class="userbtn" onclick="setfreqb(14229.79);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#ffa000;">EA4HOS 14230.00</button></div><div id="user2" align="center" style="position:relative;left:285.093248px;width:500px; color:#a0a000;"><button type="button" class="userbtn" onclick="setfreqb(14185.00);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#a0a000;">SE,Västerås 14185.00</button></div><div id="user5" align="center" style="position:relative;left:285.093248px;width:500px; color:#00a0a0;"><button type="button" class="userbtn" onclick="setfreqb(14185.00);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#00a0a0;">GB,Aberystwyth 14185.00</button></div><div id="user7" align="center" style="position:relative;left:285.093248px;width:500px; color:#ff40ff;"><button type="button" class="userbtn" onclick="setfreqb(14185.00);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#ff40ff;">NL,Utrecht 14185.00</button></div><img src="./G0XBU WEBSDR - Jodrell 1_files/1759076664-b0z0i0.png"></div></div><p></p><p></p><div style="width:1024px; background-color:black;"><div class="others"><div id="user0" align="center" style="position:relative;left:147.773824px;width:500px; color:#ff4040;"><button type="button" class="userbtn" onclick="setfreqb(27570.00);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#ff4040;">AR,Lanús 27570.00</button></div><div id="user3" align="center" style="position:relative;left:140.27302400000002px;width:500px; color:#80ff00;"><button type="button" class="userbtn" onclick="setfreqb(27555.00);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#80ff00;">HU,Budapest 27555.00</button></div><div id="user4" align="center" style="position:relative;left:-61.98643200000001px;width:500px; color:#00ff00;"><button type="button" class="userbtn" onclick="setfreqb(27150.48);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#00ff00;">GB,Newcastle upon Tyne 27150.48</button></div><div id="user6" align="center" style="position:relative;left:342.249856px;width:500px; color:#0080ff;"><button type="button" class="userbtn" onclick="setfreqb(27958.95);" style="cursor: pointer; background-color: black; margin:0; padding:0 5px; color:#0080ff;">mobile/Android</button></div><img src="./G0XBU WEBSDR - Jodrell 1_files/1759076664-b1z0i0.png"></div></div><p></p><p></p><div style="width:1024px; background-color:black;"><div class="others"><img src="./G0XBU WEBSDR - Jodrell 1_files/1759076664-b2z0i0.png"></div></div><p></p><p></p><div style="width:1024px; background-color:black;"><div class="others"><img src="./G0XBU WEBSDR - Jodrell 1_files/1759076664-b3z0i0.png"></div></div><p></p><p></p><div style="width:1024px; background-color:black;"><div class="others"><img src="./G0XBU WEBSDR - Jodrell 1_files/1759076664-b4z0i0.png"></div></div><p></p></div>
+</form>
+<br>
+
+<a href="https://info.flagcounter.com/pJAx"><img src="./G0XBU WEBSDR - Jodrell 1_files/saved_resource" alt="Flag Counter" border="0"></a>
+<br>
+
+<span style="font-size:18px; width:100%; height:15px; line-height:15px">
+<a style="font-family: &#39;Trade&#39;">Flag counter added: 18th August 2020</a>
+<br>
+
+  </span></div>
+</div>
+
+
+<!----------------Chatbox tab------------------->
+<div class="tab">
+
+  <div id="CHAT" class="tabcontent" style="max-width: 1036px">
+  <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+ <input type="hidden" id="user-ip" value="">
+
+    <div id="chatboxspan">
+         <b>CHAT WINDOW:  (I suggest not clicking on any links! and please NO ABUSE!)</b><br>
+<div id="chatboxnew"><br>1553z CA,Calgary: berthurstcalgary
+<br>29 Sep 1459z GB,Gateshead: 4m and 6m just keeps freezing for me :-(
+<br>01 Oct 1407z GB,Middlesbrough: HY FROM THE UK
+<br>1407z ::ffff:82.16.75.217: HOPE EVERY1 IS DOIN OK
+<br>18 Oct 0105z GB,Birmingham: <a href="javascript:setfreqb(14300.00)">14300</a> sounds demonic, scary 😨 
+<br>0108z ::ffff:148.252.149.92: 🫨
+<br>23 Oct 1226z g6sga: Hello, what mode is usually used for VOICE on 6m FM/LSB/USB etc - new here
+<br>24 Oct 1618z IU2SVI: 24 Oct 2025 Listen 5/9 OM4AIM from IU2SVI
+<br>1630z g0xbu: on 6m its either USB or FM
+<br>25 Oct 1358z AdUrWife84: needs adjustable squelch - have to listen to constant noise for no reason way too low
+<br>1359z AdUrWife84: messaged owner all forums zero reply.
+<br>26 Oct 1924z US,Rochester: The band spectrum display seems to a little off on the CB section.
+<br>28 Oct 1908z DE,Munich: cornuti
+<br>1908z DE,Munich: cu cu
+<br>07 Nov 1236z FR,Gonesse: 14hs300 north france :; 73's to all 
+<br>14 Nov 0846z dude: any good cb?
+<br>16 Nov 2126z GB,Croydon: Loud and clear skegness
+<br>27 Nov 2105z GB,City of London: Hi Bob hope u r enjoying this
+<br>2108z GI5CEO: cant see you here
+<br>2109z Weekender: no poker tonight
+</div>
+<br>
+<form name="chatform" onsubmit="return sendchat()" action="http://g0xbuwebsdr.ddns.net:8901/#">
+<input class="chatSubmit" type="text" size="80" name="chat" onclick="">
+<input class="sdrButton chat" type="button" value="chatbox submit" onclick="return sendchat()">
+</form>
+<br>
+</div>  
+     
+    </div>
+  </div>
+<!------------logbook tab---------->
+<div class="tab">
+
+  <div id="LOG" class="tabcontent" style="max-width: 1036px">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+
+<!-------logbook------->
+
+ <form name="logform" action="http://g0xbuwebsdr.ddns.net:8901/#">
+  Call of station that you hear: <input type="text" size="12" name="call" onclick="">
+  <br>
+  Comments, if any: <input type="text" size="30" name="comment" onclick="">
+  <input type="button" value="submit" onclick="return sendlog()">
+  </form>
+  
+<span style="font-size:80%; display:none">
+    Note: time, frequency, your name/call, and DXCC information are added automatically.
+    <br>
+    View the <a href="http://g0xbuwebsdr.ddns.net:8901/~~logbook?nr=20" style="color:#333fff;">last 20 lines of the logbook</a>,
+    or the <a href="http://g0xbuwebsdr.ddns.net:8901/logbook.txt" style="color:#333fff;">entire logbook</a> (ctrl-click for new tab/window).
+  </span>
+
+<script>
+function refreshiframe() {
+  document.getElementById('frame1').src = document.getElementById('frame1').src
+ }
+</script>
+
+
+<button onclick="refreshiframe();" style="color: #fff">CLICK TO REFRESH</button>
+<iframe id="frame1" src="./G0XBU WEBSDR - Jodrell 1_files/_~logbook.html" title="last 20 lines of logbook" style="width: 100%; background-color: #fff" runat="server">
+
+</iframe>
+  </div>
+</div>
+
+<!--------CB codes Tab------>
+<div class="tab">
+
+  <div id="CB" class="tabcontent" style="max-width: 1036px; font-family: &#39;trade&#39;">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+<label for="searchInput">Enter a Country or Code to search:</label>
+    <input type="text" id="searchInput" onkeyup="searchCountryOrCode()" size="8" style=" background-color: #000; color: #0f0; border-style: groove; border-color: grey">
+      
+     <div id="searchResult" style="font-family: &#39;trade&#39;; color: #0cf; "></div>
+     
+  <br><br>
+ 
+ 
+  
+    
+      
+  
+  
+  
+
+<p style="position:left; text-align: left; font-size:18px; font-family: &#39;trade&#39;; letter-spacing:1px; margin:2px 0 0 30px; max-width: 50em;" <div="" class="section1">
+
+<style>
+.section1 {
+	column-count: 3;
+	column-gap: 5px;
+	}
+</style>
+
+     1 - ITALY<br>
+     2 - UNITED STATES OF AMERICA<br>
+     3 - BRAZIL<br>
+     4 - ARGENTINA<br>
+     5 - VENEZUELA<br>
+     6 - COLUMBIA<br>
+     7 - NETHERLANDS ANTILLES<br>
+     8 - PERU<br>
+     9 - CANADA<br>
+    10 - MEXICO<br>
+    11 - PUERTO RICO<br>
+    12 - URUGUAY<br>
+    13 - GERMANY<br>
+    14 - FRANCE<br>
+    15 - SWITZERLAND<br>
+    16 - BELGIUM<br>
+    17 - HAWAIIAN ISLANDS<br>
+    18 - GREECE<br>
+    19 - NETHERLANDS<br>
+    20 - NORWAY<br>
+    21 - SWEDEN<br>
+    22 - FRENCH GUYANA<br>
+    23 - JAMAICA<br>
+    24 - PANAMA<br>
+    25 - JAPAN<br>
+    26 - ENGLAND<br>
+    27 - ICELAND<br>
+    28 - HONDURAS<br>
+    29 - IRELAND<br>
+    30 - SPAIN<br>
+    31 - PORTUGAL<br>
+    32 - CHILE<br>
+    33 - ALASKA<br>
+    34 - CANARY ISLANDS<br>
+    35 - AUSTRIA<br>
+    36 - SAN MARINO<br>
+    37 - DOMINICAN REPUBLIC<br>
+    38 - GREENLAND<br>
+    39 - ANGOLA<br>
+    40 - LIECHTENSTIEN<br>
+    41 - NEW ZEALAND<br>
+    42 - LIBERIA<br>
+    43 - AUSTRALIA<br>
+    44 - SOUTH AFRICA<br>
+    45 - YUGOSLAVIA<br>
+    46 - EAST GERMANY<br>
+    47 - DENMARK<br>
+    48 - SAUDIA ARABIA<br>
+    49 - BALEARIC ISLANDS<br>
+    50 - EUROPEAN RUSSIA<br>
+    51 - ANDORRA<br>
+    52 - FAROER ISLANDS<br>
+    53 - EL SALVADOR<br>
+    54 - LUXEMBOURG<br>
+    55 - GIBRALTAR<br>
+    56 - FINLAND<br>
+    57 - INDIA<br>
+    58 - EAST MALASYSIA<br>
+    59 - DODE CANESE<br>
+    60 - HONG KONG<br>
+    61 - EQUADOR<br>
+    62 - GUAM ISLAND<br>
+    63 - ST. HELENA ISLAND<br>
+    64 - SENEGAL REPUBLIC<br>
+    65 - SIERRA LEONE<br>
+    66 - MAURITANIA<br>
+    67 - PARAGUAY<br>
+    68 - NORTHERN IRELAND<br>
+    69 - COSTA RICA<br>
+    70 - AMERICAN SAMOA ISLANDS<br>
+    71 - MIDWAY ISLANDS<br>
+    72 - GUATEMALA<br>
+    73 - SURINAME<br>
+    74 - NAMIBIA<br>
+    75 - AZORES ISLANDS<br>
+    76 - MOROCCO<br>
+    77 - GHANA<br>
+    78 - ZAMBIA<br>
+    79 - PHILIPPENE ISLANDS<br>
+    80 - BOLIVIA<br>
+    81 - SAN ANDRES &amp; PROVIDENCIA ISLANDS<br>
+    82 - GUANTANAMO BAY<br>
+    83 - TANZANIA<br>
+    84 - IVORY COAST<br>
+    85 - ZIMBABWE<br>
+    86 - NEPAL<br>
+    87 - YEMEN<br>
+    88 - CUBA<br>
+    89 - NIGERIA<br>
+    90 - CRETE ISLAND<br>
+    91 - INDONESIA<br>
+    92 - LIBYA<br>
+    93 - MALTA<br>
+    94 - UNITED ARAB EMIRATES<br>
+    95 - MONGOLIA<br>
+    96 - TONGA ISLANDS<br>
+    97 - ISRAEL<br>
+    98 - SINGAPORE<br>
+    99 - FIJI ISLANDS<br>
+    100 - KOREA<br>
+    101 - PAPAU-NEWGUINEA<br> 
+    102 - KUWAIT<br>
+    103 - HAITI<br>
+    104 - CORSICA<br>
+    105 - BOTSWANA<br>
+    106 - CEUTA &amp; MELILLA<br>
+    107 - MONACO<br>
+    108 - SCOTLAND<br>
+    109 - HUNGARY<br>
+    110 - CYPRA<br>
+    111 - JORDAN<br>
+    112 - LEBANON<br>
+    113 - WEST MALAYSIA<br>
+    114 - PAKISTAN<br>
+    115 - QATAR<br>
+    116 - TURKEY<br>
+    117 - EYGPT<br>
+    118 - THE GAMBIA<br>
+    119 - MADERIA ISLAND<br>
+    120 - ANTIGUA &amp; BARBUDA ISLANDS<br>
+    121 - THE BAHAMAS<br>
+    122 - BARBADOS ISLAND<br>
+    123 - BERMUDA ISLAND<br>
+    124 - NEW AMSTERDAM &amp; ST. PAUL ISLANDS<br>
+    125 - CAYMAN ISLANDS<br>
+    126 - NICARAGUA<br>
+    127 - VIRGIN ISLANDS<br>
+    128 - BRITISH VIRGIN ISLANDS<br>
+    129 - MACQUARIE ISLANDS<br>
+    130 - NORFOLK ISLAND<br>
+    131 - GUYANA<br>
+    132 - MARSHALL ISLANDS<br>
+    133 - NORTH MARIANAS ISLANDS<br>
+    134 - REPUBLIC OF BELAU<br>
+    135 - SOLOMON ISLANDS<br>
+    136 - MARTINIQUE ISLAND<br>
+    137 - ISLE OF MAN<br>
+    138 - VATICAN CITY STATE<br>
+    139 - SOUTHERN YEMEN<br>
+    140 - ANTARTICA<br>
+    141 - ST. PIERRE &amp; MIQUELON IS.<br>
+    142 - LESOTHO<br>
+    143 - ST. LUCIA ISLAND<br>
+    144 - EASTER ISLAND<br>
+    145 - GALAPAGOS ISLAND<br>
+    146 - ALGERIA<br>
+    147 - TUNISIA<br>
+    148 - ASCENSION ISLAND<br>
+    149 - LACCADIVE ISLANDS<br>
+    150 - BARAIN<br>
+    151 - IRAQ<br>
+    152 - MALDIVE ISLANDS<br>
+    153 - THAILAND<br>
+    154 - IRAN<br>
+    155 - TAIWAN<br>
+    156 - CAMEROON<br>
+    157 - MONTSERRAT ISLAND<br>
+    158 - TRINIDAD &amp; TOBAGO ISLANDS<br>
+    159 - SOMALT REPUBLIC<br>
+    160 - SUDAN<br>
+    161 - POLAND<br>
+    162 - REPUBLIC OF ZAIRE<br>
+    163 - WALES<br>
+    164 - TOGO REPUBLIC<br>
+    165 - SARDINIA ISLAND<br>
+    166 - SINT MAARTEN, SABA, &amp; ST. EU-STATIUS<br>
+    167 - JERSEY ISLAND<br>
+    168 - MAURITIS ISLANDS<br>
+    169 - GUERNSEY ISLAND &amp; DEPENDENCIES<br>
+    170 - BURKINA FASO<br>
+    171 - SVALBARD ISLANDS<br>
+    172 - NEW CALEDONIA<br>
+    173 - REUNION ISLAND<br>
+    174 - UGANDA<br>
+    175 - CHAD REPUBLIC<br>
+    176 - CENTRAL AFRICAN REPUBLIC<br>
+    177 - SRI LANKA<br>
+    178 - BULGARIA<br>
+    179 - CZECHOSLOVAKIA<br>
+    180 - OMAN<br>
+    181 - SYRIA<br>
+    182 - REPUBLIC OF GUINEA<br>
+    183 - BENIN<br>
+    184 - BURUNDI<br>
+    185 - COMOROS ISLANDS<br>
+    186 - DIJIBOUTI<br>
+    187 - KENYA<br>
+    188 - MALAGASY REPUBLIC<br>
+    189 - MAYOTTE ISLAND<br>
+    190 - SEYCHELLES ISLANDS<br>
+    191 - SWAZILAND<br>
+    192 - COCOS ISLAND<br>
+    193 - COCOS-KEELING ISLANDS<br>
+    194 - DOMINICA ISLAND<br>
+    195 - GRENADA ISLAND<br>
+    196 - GUADALUPE ISLAND<br>
+    197 - VANUATA<br>
+    198 - FALKLAND ISLANDS<br>
+    199 - EQUATORIAL GUINEA<br>
+    200 - SOUTH SHETLAND ISLAND<br>
+    201 - FRENCH POLYNESIA<br>
+    202 - BHUTAN<br>
+    203 - CHINA<br>
+    204 - MOZAMBIQUE<br>
+    205 - CAPE VERDE ISLANDS<br>
+    206 - ETHIOPIA<br>
+    207 - ST. MARTIN ISLAND<br>
+    208 - GLORIEUSES ISLANDS<br>
+    209 - JUAN DE NOVA &amp; EUROPA ISLAND<br>
+    210 - WALLIS &amp; FUTUNA ISLANDS<br>
+    211 - JAN MAYEN ISLAND<br>
+    212 - ALAND ISLAND<br>
+    213 - MARKET REEF<br>
+    214 - CONGO REPUBLIC<br>
+    215 - GABON REPUBLIC<br>
+    216 - MALI REPUBLIC<br>
+    217 - CHRISTMAS ISLAND<br>
+    218 - BELIZE<br>
+    219 - ANGUILLA ISLAND<br>
+    220 - ST. VINCENT ISLAND &amp; DEPENDECIES<br>
+    221 - SOUTH ORKNEY<br>
+    222 - SOUTH SANDWICH ISLANDS<br>
+    223 - WESTERN SAMOA ISLANDS<br>
+    224 - WESTERN KIRIBATI<br>
+    225 - BRUNEI<br>
+    226 - MALAWI<br>
+    227 - RWANDA<br>
+    228 - CHAGOS<br>
+    229 - HEARD ISLAND VK0H<br>
+    230 - MICRONESIA<br>
+    231 - ST. PETER &amp; ST. PAUL ROCKS<br>
+    232 - ARUBA<br>
+    233 - ROMANIA<br>
+    234 - AFGHANISTAN<br>
+    235 - ITU GENEVA<br>
+    236 - BANGLADESH<br>
+    237 - UNION OF MYANMAR<br>
+    238 - KAMPUCHEA<br>
+    239 - LAOS<br>
+    240 - MACAO<br>
+    241 - SPRATLY ISLANDS<br>
+    242 - VIETNAM<br>
+    243 - AGALEGA &amp; ST. BRANDON IS<br>
+    244 - ANNOBAN ISLAND<br>
+    245 - NIGER REPUBLIC<br>
+    246 - SAO TOMES &amp; PRINCIPE ISLANDS<br>
+    247 - NAVASSA ISLAND<br>
+    248 - TURKS &amp; CAICOS ISLANDS<br>
+    249 - NORTHERN COOK ISLANDS<br>
+    250 - SOUTHERN COOK ISLANDS<br>
+    251 - ALBANIA<br>
+    252 - REVILLAGIGEDO ISLANDS<br>
+    253 - ANDAMAN &amp; NICOBAR ISLANDS<br>
+    254 - MOUNT ATHOS<br>
+    255 - KERGUELAN ISLANDS<br>
+    256 - PRINCE EDWARD &amp; MARION ISLS<br>
+    257 - RODRIGUEZ ISLAND<br>
+    258 - TRISTAN DA CUNHA &amp; GOUGH IS<br>
+    259 - TROMELIN ISLAND<br>
+    260 - BAKER &amp; HOWLAND ISLANDS<br>
+    261 - CHATHAM ISLANDS<br>
+    262 - JOHNSTON ISLAND<br>
+    263 - KERMADEE ISLANDS<br>
+    264 - KINGMAN REEF<br>
+    265 - CENTRAL KIRIBATI<br>
+    266 - EASTERN KIRIBATI<br>
+    267 - KURE ISLANDS<br>
+    268 - LORD HOWE ISLAND<br>
+    269 - MELLISH REEF<br>
+    270 - MINAMI TORISHIMA ISLAND<br>
+    271 - REPUBLIC OF NAURU<br>
+    272 - NIVE ISLAND<br>
+    273 - JARVIS &amp; PDS<br>
+    274 - PITCAIRN ISLAND<br>
+    275 - TOKELAU ISLANDS<br>
+    276 - TUVALU ISLANDS<br>
+    277 - SABLE ISLAND<br>
+    278 - WAKE ISLAND<br>
+    279 - WILLIS ISLETS<br>
+    280 - AVES ISLAND<br>
+    281 - OGASAWARA ISLANDS<br>
+    282 - AUCKLAND &amp; CAMPBELL ISL<br>
+    283 - ST. KITTS &amp; NEVIS ISLAND<br>
+    284 - ST. PAUL ISLAND<br>
+    285 - FERNANDO DE NORONHA ISLA<br>
+    286 - JUAN FERNANDEZ ISLANDS<br>
+    287 - MALPELO ISLAND HK0<br>
+    288 - SAN FELIX &amp; SAN AMBROSIO<br>
+    289 - SOUTH GEORGIA ISLANDS<br>
+    290 - TRINDADE &amp; MARTIM VAZ IS<br>
+    291 - DHEKELIA &amp; AKROTIRI<br>
+    292 - ABU-AIL &amp; JABAL-AT-TAIR<br>
+    293 - GUINEA BISSAU<br>
+    294 - PETER 1'st ISLAND<br>
+    295 - SOUTHERN SUDAN<br>
+    296 - CLIPPERTON ISLAND<br>
+    297 - BOUVET ISLAND<br>
+    298 - CROZET ISLANDS<br>
+    299 - DESEECHEO ISLAND<br>
+    300 - WESTERN SAHARA<br>
+    301 - ARMENIA<br>
+    302 - ASIATIC RUSSIA<br>
+    303 - AZERBAIJAN<br>
+    304 - ESTONIA<br>
+    305 - FRANZ JOSEF LAND<br>
+    306 - GEORGIA<br>
+    307 - KALININGRADSK<br>
+    308 - KAZAKH<br>
+    309 - KIRGHIZ<br>
+    310 - LATVIA<br>
+    311 - LITHUANIA<br>
+    312 - MOLDAVIA<br>
+    313 - TADZHIK<br>
+    314 - TURKOMAN<br>
+    315 - UKRAINE<br>
+    316 - UZBEK<br>
+    317 - WHITE RUSSIA<br>
+    318 - SOVEREIGN OF MALTA<br>
+    319 - UNITED NATIONS NEW YORK<br>
+    320 - BANABA ISLAND<br>
+    321 - CONWAY REEF<br>
+    322 - WALVIS BAY<br>
+    323 - YEMEN REPUBLIC<br>
+    324 - PENGUIN ISLANDS<br>
+    325 - ROTUNA ISLAND<br>
+    326 - MALYJ VYSOTSKJ ISLAND<br>
+    327 - SLOVENIA<br>
+    328 - CROATIA<br>
+    329 - CZECH REPUBLIC<br>
+    330 - SLOVAK REPUBLIC<br>
+    331 - BOSNIA HERCEGOVINIA<br>
+    332 - MACEDONIA<br>
+    333 - ERITREA<br>
+    334 - NORTH KOREA<br>
+    335 - SCARBOROUGH REEF<br>
+    336 - PRATOS ISLAND<br>
+    337 - AUSTRAL ISLANDS<br>
+    338 - MARQUESAS ISLANDS<br>
+    339 - TEMOTU<br>
+    340 - PALESTINA<br>
+    341 - EAST TIMOR<br>
+    342 - CHESTERFIELDS ISLANDS<br>
+    343 - DUCIE ISLAND<br>
+    344 - REPUBLIC OF MONTENEGRO<br>
+    345 - SWAIN`S ISLAND<br>
+    346 - ST BARTHELEMY ISLAND<br>
+    347 - CURACAO<br>
+    348 - ST. MAARTEN<br>
+    349 - SABA and ST EUSTATIUS<br>
+    350 - BONAIRE
+
+<script>
+const countries = {
+
+     1: "ITALY",
+     2: "UNITED STATES OF AMERICA",
+     3: "BRAZIL",
+     4: "ARGENTINA",
+     5: "VENEZUELA",
+     6: "COLUMBIA",
+     7: "NETHERLANDS ANTILLES",
+     8: "PERU",
+     9: "CANADA",
+    10: "MEXICO",
+    11: "PUERTO RICO",
+    12: "URUGUAY",
+    13: "GERMANY",
+    14: "FRANCE",
+    15: "SWITZERLAND",
+    16: "BELGIUM",
+    17: "HAWAIIAN ISLANDS",
+    18: "GREECE",
+    19: "NETHERLANDS",
+    20 : " NORWAY",
+    21 : " SWEDEN",
+    22 : " FRENCH GUYANA",
+    23 : " JAMAICA",
+    24 : " PANAMA",
+    25 : " JAPAN",
+    26 : " ENGLAND",
+    27 : " ICELAND",
+    28 : " HONDURAS",
+    29 : " IRELAND",
+    30 : " SPAIN",
+    31 : " PORTUGAL",
+    32 : " CHILE",
+    33 : " ALASKA",
+    34 : " CANARY ISLANDS",
+    35 : " AUSTRIA",
+    36 : " SAN MARINO",
+    37 : " DOMINICAN REPUBLIC",
+    38 : " GREENLAND",
+    39 : " ANGOLA",
+    40 : " LIECHTENSTIEN",
+    41 : " NEW ZEALAND",
+    42 : " LIBERIA",
+    43 : " AUSTRALIA",
+    44 : " SOUTH AFRICA",
+    45 : " YUGOSLAVIA",
+    46 : " EAST GERMANY",
+    47 : " DENMARK",
+    48 : " SAUDIA ARABIA",
+    49 : " BALEARIC ISLANDS",
+    50 : " EUROPEAN RUSSIA",
+    51 : " ANDORRA",
+    52 : " FAROER ISLANDS",
+    53 : " EL SALVADOR",
+    54 : " LUXEMBOURG",
+    55 : " GIBRALTAR",
+    56 : " FINLAND",
+    57 : " INDIA",
+    58 : " EAST MALASYSIA",
+    59 : " DODE CANESE",
+    60 : " HONG KONG",
+    61 : " EQUADOR",
+    62 : " GUAM ISLAND",
+    63 : " ST. HELENA ISLAND",
+    64 : " SENEGAL REPUBLIC",
+    65 : " SIERRA LEONE",
+    66 : " MAURITANIA",
+    67 : " PARAGUAY",
+    68 : " NORTHERN IRELAND",
+    69 : " COSTA RICA",
+    70 : " AMERICAN SAMOA ISLANDS",
+    71 : " MIDWAY ISLANDS",
+    72 : " GUATEMALA",
+    73 : " SURINAME",
+    74 : " NAMIBIA",
+    75 : " AZORES ISLANDS",
+    76 : " MOROCCO",
+    77 : " GHANA",
+    78 : " ZAMBIA",
+    79 : " PHILIPPENE ISLANDS",
+    80 : " BOLIVIA",
+    81 : " SAN ANDRES & PROVIDENCIA ISLANDS",
+    82 : " GUANTANAMO BAY",
+    83 : " TANZANIA",
+    84 : " IVORY COAST",
+    85 : " ZIMBABWE",
+    86 : " NEPAL",
+    87 : " YEMEN",
+    88 : " CUBA",
+    89 : " NIGERIA",
+    90 : " CRETE ISLAND",
+    91 : " INDONESIA",
+    92 : " LIBYA",
+    93 : " MALTA",
+    94 : " UNITED ARAB EMIRATES",
+    95 : " MONGOLIA",
+    96 : " TONGA ISLANDS",
+    97 : " ISRAEL",
+    98 : " SINGAPORE",
+    99 : " FIJI ISLANDS",
+    100 : " KOREA",
+    101 : " PAPAU-NEWGUINEA",
+    102 : " KUWAIT",
+    103 : " HAITI",
+    104 : " CORSICA",
+    105 : " BOTSWANA",
+    106 : " CEUTA & MELILLA",
+    107 : " MONACO",
+    108 : " SCOTLAND",
+    109 : " HUNGARY",
+    110 : " CYPRA",
+    111 : " JORDAN",
+    112 : " LEBANON",
+    113 : " WEST MALAYSIA",
+    114 : " PAKISTAN",
+    115 : " QATAR",
+    116 : " TURKEY",
+    117 : " EYGPT",
+    118 : " THE GAMBIA",
+    119 : " MADERIA ISLAND",
+    120 : " ANTIGUA & BARBUDA ISLANDS",
+    121 : " THE BAHAMAS",
+    122 : " BARBADOS ISLAND",
+    123 : " BERMUDA ISLAND",
+    124 : " NEW AMSTERDAM & ST. PAUL ISLANDS",
+    125 : " CAYMAN ISLANDS",
+    126 : " NICARAGUA",
+    127 : " VIRGIN ISLANDS",
+    128 : " BRITISH VIRGIN ISLANDS",
+    129 : " MACQUARIE ISLANDS",
+    130 : " NORFOLK ISLAND",
+    131 : " GUYANA",
+    132 : " MARSHALL ISLANDS",
+    133 : " NORTH MARIANAS ISLANDS",
+    134 : " REPUBLIC OF BELAU",
+    135 : " SOLOMON ISLANDS",
+    136 : " MARTINIQUE ISLAND",
+    137 : " ISLE OF MAN",
+    138 : " VATICAN CITY STATE",
+    139 : " SOUTHERN YEMEN",
+    140 : " ANTARTICA",
+    141 : " ST. PIERRE & MIQUELON IS.",
+    142 : " LESOTHO",
+    143 : " ST. LUCIA ISLAND",
+    144 : " EASTER ISLAND",
+    145 : " GALAPAGOS ISLAND",
+    146 : " ALGERIA",
+    147 : " TUNISIA",
+    148 : " ASCENSION ISLAND",
+    149 : " LACCADIVE ISLANDS",
+    150 : " BARAIN",
+    151 : " IRAQ",
+    152 : " MALDIVE ISLANDS",
+    153 : " THAILAND",
+    154 : " IRAN",
+    155 : " TAIWAN",
+    156 : " CAMEROON",
+    157 : " MONTSERRAT ISLAND",
+    158 : " TRINIDAD & TOBAGO ISLANDS",
+    159 : " SOMALT REPUBLIC",
+    160 : " SUDAN",
+    161 : " POLAND",
+    162 : " REPUBLIC OF ZAIRE",
+    163 : " WALES",
+    164 : " TOGO REPUBLIC",
+    165 : " SARDINIA ISLAND",
+    166 : " SINT MAARTEN, SABA, & ST. EU-STATIUS",
+    167 : " JERSEY ISLAND",
+    168 : " MAURITIS ISLANDS",
+    169 : " GUERNSEY ISLAND & DEPENDENCIES",
+    170 : " BURKINA FASO",
+    171 : " SVALBARD ISLANDS",
+    172 : " NEW CALEDONIA",
+    173 : " REUNION ISLAND",
+    174 : " UGANDA",
+    175 : " CHAD REPUBLIC",
+    176 : " CENTRAL AFRICAN REPUBLIC",
+    177 : " SRI LANKA",
+    178 : " BULGARIA",
+    179 : " CZECHOSLOVAKIA",
+    180 : " OMAN",
+    181 : " SYRIA",
+    182 : " REPUBLIC OF GUINEA",
+    183 : " BENIN",
+    184 : " BURUNDI",
+    185 : " COMOROS ISLANDS",
+    186 : " DIJIBOUTI",
+    187 : " KENYA",
+    188 : " MALAGASY REPUBLIC",
+    189 : " MAYOTTE ISLAND",
+    190 : " SEYCHELLES ISLANDS",
+    191 : " SWAZILAND",
+    192 : " COCOS ISLAND",
+    193 : " COCOS-KEELING ISLANDS",
+    194 : " DOMINICA ISLAND",
+    195 : " GRENADA ISLAND",
+    196 : " GUADALUPE ISLAND",
+    197 : " VANUATA",
+    198 : " FALKLAND ISLANDS",
+    199 : " EQUATORIAL GUINEA",
+    200 : " SOUTH SHETLAND ISLAND",
+    201 : " FRENCH POLYNESIA",
+    202 : " BHUTAN",
+    203 : " CHINA",
+    204 : " MOZAMBIQUE",
+    205 : " CAPE VERDE ISLANDS",
+    206 : " ETHIOPIA",
+    207 : " ST. MARTIN ISLAND",
+    208 : " GLORIEUSES ISLANDS",
+    209 : " JUAN DE NOVA & EUROPA ISLAND",
+    210 : " WALLIS & FUTUNA ISLANDS",
+    211 : " JAN MAYEN ISLAND",
+    212 : " ALAND ISLAND",
+    213 : " MARKET REEF",
+    214 : " CONGO REPUBLIC",
+    215 : " GABON REPUBLIC",
+    216 : " MALI REPUBLIC",
+    217 : " CHRISTMAS ISLAND",
+    218 : " BELIZE",
+    219 : " ANGUILLA ISLAND",
+    220 : " ST. VINCENT ISLAND & DEPENDECIES",
+    221 : " SOUTH ORKNEY",
+    222 : " SOUTH SANDWICH ISLANDS",
+    223 : " WESTERN SAMOA ISLANDS",
+    224 : " WESTERN KIRIBATI",
+    225 : " BRUNEI",
+    226 : " MALAWI",
+    227 : " RWANDA",
+    228 : " CHAGOS",
+    229 : " HEARD ISLAND VK0H",
+    230 : " MICRONESIA",
+    231 : " ST. PETER & ST. PAUL ROCKS",
+    232 : " ARUBA",
+    233 : " ROMANIA",
+    234 : " AFGHANISTAN",
+    235 : " ITU GENEVA",
+    236 : " BANGLADESH",
+    237 : " UNION OF MYANMAR",
+    238 : " KAMPUCHEA",
+    239 : " LAOS",
+    240 : " MACAO",
+    241 : " SPRATLY ISLANDS",
+    242 : " VIETNAM",
+    243 : " AGALEGA & ST. BRANDON IS",
+    244 : " ANNOBAN ISLAND",
+    245 : " NIGER REPUBLIC",
+    246 : " SAO TOMES & PRINCIPE ISLANDS",
+    247 : " NAVASSA ISLAND",
+    248 : " TURKS & CAICOS ISLANDS",
+    249 : " NORTHERN COOK ISLANDS",
+    250 : " SOUTHERN COOK ISLANDS",
+    251 : " ALBANIA",
+    252 : " REVILLAGIGEDO ISLANDS",
+    253 : " ANDAMAN & NICOBAR ISLANDS",
+    254 : " MOUNT ATHOS",
+    255 : " KERGUELAN ISLANDS",
+    256 : " PRINCE EDWARD & MARION ISLS",
+    257 : " RODRIGUEZ ISLAND",
+    258 : " TRISTAN DA CUNHA & GOUGH IS",
+    259 : " TROMELIN ISLAND",
+    260 : " BAKER & HOWLAND ISLANDS",
+    261 : " CHATHAM ISLANDS",
+    262 : " JOHNSTON ISLAND",
+    263 : " KERMADEE ISLANDS",
+    264 : " KINGMAN REEF",
+    265 : " CENTRAL KIRIBATI",
+    266 : " EASTERN KIRIBATI",
+    267 : " KURE ISLANDS",
+    268 : " LORD HOWE ISLAND",
+    269 : " MELLISH REEF",
+    270 : " MINAMI TORISHIMA ISLAND",
+    271 : " REPUBLIC OF NAURU",
+    272 : " NIVE ISLAND",
+    273 : " JARVIS & PDS",
+    274 : " PITCAIRN ISLAND",
+    275 : " TOKELAU ISLANDS",
+    276 : " TUVALU ISLANDS",
+    277 : " SABLE ISLAND",
+    278 : " WAKE ISLAND",
+    279 : " WILLIS ISLETS",
+    280 : " AVES ISLAND",
+    281 : " OGASAWARA ISLANDS",
+    282 : " AUCKLAND & CAMPBELL ISL",
+    283 : " ST. KITTS & NEVIS ISLAND",
+    284 : " ST. PAUL ISLAND",
+    285 : " FERNANDO DE NORONHA ISLA",
+    286 : " JUAN FERNANDEZ ISLANDS",
+    287 : " MALPELO ISLAND HK0",
+    288 : " SAN FELIX & SAN AMBROSIO",
+    289 : " SOUTH GEORGIA ISLANDS",
+    290 : " TRINDADE & MARTIM VAZ IS",
+    291 : " DHEKELIA & AKROTIRI",
+    292 : " ABU-AIL & JABAL-AT-TAIR",
+    293 : " GUINEA BISSAU",
+    294 : " PETER 1'st ISLAND",
+    295 : " SOUTHERN SUDAN",
+    296 : " CLIPPERTON ISLAND",
+    297 : " BOUVET ISLAND",
+    298 : " CROZET ISLANDS",
+    299 : " DESEECHEO ISLAND",
+    300 : " WESTERN SAHARA",
+    301 : " ARMENIA",
+    302 : " ASIATIC RUSSIA",
+    303 : " AZERBAIJAN",
+    304 : " ESTONIA",
+    305 : " FRANZ JOSEF LAND",
+    306 : " GEORGIA",
+    307 : " KALININGRADSK",
+    308 : " KAZAKH",
+    309 : " KIRGHIZ",
+    310 : " LATVIA",
+    311 : " LITHUANIA",
+    312 : " MOLDAVIA",
+    313 : " TADZHIK",
+    314 : " TURKOMAN",
+    315 : " UKRAINE",
+    316 : " UZBEK",
+    317 : " WHITE RUSSIA",
+    318 : " SOVEREIGN OF MALTA",
+    319 : " UNITED NATIONS NEW YORK",
+    320 : " BANABA ISLAND",
+    321 : " CONWAY REEF",
+    322 : " WALVIS BAY",
+    323 : " YEMEN REPUBLIC",
+    324 : " PENGUIN ISLANDS",
+    325 : " ROTUNA ISLAND",
+    326 : " MALYJ VYSOTSKJ ISLAND",
+    327 : " SLOVENIA",
+    328 : " CROATIA",
+    329 : " CZECH REPUBLIC",
+    330 : " SLOVAK REPUBLIC",
+    331 : " BOSNIA HERCEGOVINIA",
+    332 : " MACEDONIA",
+    333 : " ERITREA",
+    334 : " NORTH KOREA",
+    335 : " SCARBOROUGH REEF",
+    336 : " PRATOS ISLAND",
+    337 : " AUSTRAL ISLANDS",
+    338 : " MARQUESAS ISLANDS",
+    339 : " TEMOTU",
+    340 : " PALESTINA",
+    341 : " EAST TIMOR",
+    342 : " CHESTERFIELDS ISLANDS",
+    343 : " DUCIE ISLAND",
+    344 : " REPUBLIC OF MONTENEGRO",
+    345 : " SWAIN`S ISLAND",
+    346 : " ST BARTHELEMY ISLAND",
+    347 : " CURACAO",
+    348 : " ST. MAARTEN",
+    349 : " SABA and ST EUSTATIUS",
+    350: " BONAIRE"
+
+
+ 
+};
+
+function searchCountryOrCode() {
+    const input = document.getElementById("searchInput").value.toUpperCase();
+    const resultDiv = document.getElementById("searchResult");
+    
+    // Clear previous results
+    resultDiv.innerHTML = "";
+
+    // Search by country name or code
+    const foundKey = Object.keys(countries).find(key => 
+        countries[key].toUpperCase().includes(input) || key === input
+    );
+
+    if (foundKey) {
+        const p = document.createElement("p");
+        p.textContent = `${foundKey} : ${countries[foundKey]}`;
+        resultDiv.appendChild(p);
+    } else {
+        resultDiv.innerHTML = "No matching country or code found.";
+    }
+}
+</script>
+
+</p></div>
+
+
+  </div>
+
+
+<!------------openwebrx tab---------->
+<div class="tab">
+
+  <div id="WRX" class="tabcontent" style="max-width: 1036px">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+
+ 
+<button onclick="window.open(&#39;http://g0xbuwebsdrowrx.ddns.net&#39;,&#39;_blank&#39;);" style="margin-left: 6px; margin-top: 30px; color: rgb(3, 3, 3); background:#6699cc">CLICK HERE TO OPEN MY OPENWEBRX SERVER IN A NEW WINDOW</button>
+
+<!--<img src="img/openwebrx1.png" style="width: 50%" onclick="window.open('http://g0xbuwebsdrowrx.ddns.net','_blank');">-->
+
+
+<button onclick="window.open(&#39;http://g0xbuwebsdrkiwi.ddns.net&#39;,&#39;_blank&#39;);" style="margin-left: 10px; color: rgb(3, 3, 3); background: green">CLICK HERE TO OPEN MY KIWI SDR SERVER IN A NEW WINDOW</button>
+<!--<img src="img/Kiwisdr_image.png" style="width: 40%" onclick="window.open('http://g0xbuwebsdrkiwi.ddns.net','_blank');">-->
+
+
+
+  </div>
+</div>
+<!-------------end of openwebrx tab------------>
+
+<!-----------Beacon tab---------->
+
+<style>
+th, td {
+  border: 1px solid;
+  padding: 3px;
+}
+</style>
+<div class="tab">
+
+  <div id="IARU" class="tabcontent" style="max-width: 1036px">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+
+ <script src="./G0XBU WEBSDR - Jodrell 1_files/BeaconClock.js.downloaden"></script> <!---with thanks to VE3SUN--->
+
+ 
+  
+<img src="./G0XBU WEBSDR - Jodrell 1_files/IARUBeaconsMap_resized.jpg" alt="beacons map" width="500" height="300" style="float: right; border-radius: 12px">
+
+<a style="color: white; font-family: &#39;trade&#39;">Tables update every 10 seconds.</a>
+<br>
+        <button onclick="window.open(&#39;https://www.ncdxf.org/beacon/index.html&#39;,&#39;_blank&#39;);" style="margin-top: 0px; font-size: 12px; color: rgb(3, 3, 3); background:#6699cc">CLICK FOR VE3SUN BEACON INFO SITE</button>
+<div class="row row-indent">
+    <div class="col-sm-6" style="margin-top: 0px;width: 70px; margin-left: 216px">
+      <table id="frequencies" class="table table-bordered table-striped wide" style="width: auto; margin-top: -567px">
+      <tbody><tr><th>Frequency</th><th>Beacon</th></tr>
+      <tr><td colspan="2">Javascript Required</td></tr>
+      </tbody></table>
+
+      <div class="well" style="display:none; margin-left: 635px; margin-top: -197px">
+        <p class="center">
+        Clock compensation:
+        &nbsp;
+      <button type="button" class="btn btn-info" title="Adjust clock backward by 1 second" onclick="retard()">-</button>
+         &nbsp; 
+      <button type="button" class="btn btn-info" title="Press to reset to server time" id="delta" onclick="BeaconClock()">0</button>
+         &nbsp;
+      <button type="button" class="btn btn-info" title="Adjust clock forward by 1 second" onclick="advance()">+</button>
+        </p>
+      <p class="center" style="margin-top: -40px">
+      <button type="button" class="btn btn-info" id="clock" style="margin-left: 220px">12:12:12 UTC</button>
+      </p>
+        </div>
+        
+  
+        
+      </div>
+      <div class="col-sm-6" style="width: 250px; margin-top: -175px;">
+        <table id="beacons" class="table table-bordered table-striped wide">
+        <tbody><tr><th>Beacon</th><th>Frequency</th></tr>
+        <tr><td colspan="2">Javascript Required</td></tr>     
+        </tbody></table>
+      </div>
+    </div> <!--row-->
+
+
+ </div>
+</div>
+<!-------------end of beacons tab------------>
+
+<!-------callsign lookup tab---------->
+
+<style>
+table,th,td {
+  
+  border-collapse: collapse;
+  text-align: center;
+  font-family: 'Trade';
+}
+th {
+  padding: 5px;
+  color: #0f0;
+}
+</style>
+<div class="tab">
+
+  <div id="CALL" class="tabcontent" style="max-width: 1036px">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+
+
+
+<a style="font-family: Trade">Enter callsign and click 'Quick Lookup' to view basic data here, or click 'Show on QRZ.com' to go to that QRZ page, pressing return also goes to QRZ</a><br><br>
+<form method="post" target="_blank" action="https://www.qrz.com/lookup"> 
+    Callsign:<input type="text" id="123" name="callsign" size="8" style=" background-color: #000; color: #0f0; border-style: groove; border-color: grey" onclick="">&nbsp;&nbsp;&nbsp;
+    <input class="myButton" type="button" title="displays basic data here" style="background-color: #0ba100" value="Quick Lookup" onclick="getKey();">
+    <input class="myButton" type="submit" title="opens new window qrz.com" style="background-color: #6699cc" value="Show on QRZ.com" onclick="this.form.callsign.select();this.form.callsign.focus()">
+<br><br> 
+ <a style="font-family: Trade">Tip: Map coordinates are at the center of locator square</a>
+<div id="distance-display" style="margin-top:10px;font-weight:bold; font-family: &#39;Trade&#39;; color: #0f0; text-align: center; background: black; border-radius: 12px; width: 65%"></div>
+  
+<div id="container" style="display: flex; justify-content: space-between;">
+
+<div id="map" style="width: 100%; height: 350px; margin-left: 0px; margin-top: 0px; border: 1px solid; border-radius: 12px; padding: 36px"><div style="height: 100%; width: 100%;"><div style="overflow: hidden;"></div></div></div>
+
+<table id="xml" style="width: 60%"></table>
+
+    
+
+
+
+<br>
+</div></form>
+<!--<tr>
+
+<td><form  method="get" target="_blank" action="http://www.k7fry.com/grid/" style="display:none;">
+	Locator:<input type="text" id="locator" name="qth" value="" size="8" style=" background-color: #000; color: #0f0; border-style: groove; border-color: grey" onClick="this.form.qth.select();this.form.qth.focus()">
+	<input type="hidden" name="t" value="n" >&nbsp;&nbsp;
+	<input class="myButton" type="button" title="Show on embedded map" style="background-color: #009900" onclick="initMap()" value="Show" clear="all">
+	<input class="myButton" type="submit" title="opens new window k7fry.com" style="background-color: #009900" value="Search on K7FRY.com" clear="all">
+</form>
+</td>
+</tr>-->
+
+
+
+
+<a style="font-family: Trade">Enter locator and click 'Convert'</a>
+<br><br>
+<form name="form1" method="get" action="http://g0xbuwebsdr.ddns.net:8901/">
+<b>Locator:</b>
+<input type="text" id="locator" name="expr" size="10" style="background-color: #000; color: #0f0; border-style: groove; border-color: grey; margin-left:11px; width: 128px">
+<input type="hidden" name="t" value="n">&nbsp;&nbsp;
+<input type="button" value="Convert" onclick="latLong(this.form); copyValue(); ">
+<input type="reset" value="RESET">
+<br>
+Latitude:
+<input type="text" id="latitude" name="latitude" size="15" style="background-color: #000; color: #0f0; border-style: groove; border-color: grey; margin-left:12px; width: 128px" onchange="copyValue()">
+<br>
+ Longitude:
+<input type="text" id="longitude" name="longitude" size="15" style="background-color: #000; color: #0f0; border-style: groove; border-color: grey; width: 128px" onchange="copyValue()">
+<br><br>
+
+</form>
+<input id="pac-input" class="controls pac-target-input" type="text" placeholder="Search Box" onchange="" autocomplete="off">
+
+
+
+
+<style>
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 0px;
+}
+
+.card {
+  background-color: #000;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.card-header {
+  background-color: #009900;
+  color: #fff;
+  padding: 10px;
+  font-size: 1.25em;
+  text-align: center;
+}
+
+.card-body {
+  padding: 1px;
+}
+
+.card-img {
+  display: block;
+  margin: 10px auto;
+  width: 80%;
+  border-radius: 10px;
+}
+ .card-body p strong {
+  color: #009900; /* Blue color for titles */
+}
+
+    
+</style>
+
+<script> 
+
+function copyValue(){   // by G0XBU - copies value from one form input to another
+    let updateValue = document.getElementById("latitude").value + ', ' + document.getElementById("longitude").value;
+    document.getElementById("pac-input").value = updateValue;
+
+    document.getElementById("pac-input").focus(); // <--- Focus the map search box after updating it
+
+    simulateEnter(); // Then simulate Enter keypress to trigger search
+}
+
+
+function copyLocator() { //coded by G0XBU and AI!
+    let element = document.getElementById("xml");
+    let cards = element.getElementsByClassName('card'); // Get all card divs
+
+    console.log('Found cards:', cards.length); // Debug log to check if cards are found
+
+    // Loop through each card to extract the grid square
+    for (let i = 0; i < cards.length; i++) {
+        console.log('Card HTML:', cards[i].innerHTML); // Log the card content
+
+        // Find all paragraphs inside the card
+        let paragraphs = cards[i].getElementsByTagName('p'); 
+
+        // Loop through each paragraph to find "Locator:"
+        for (let j = 0; j < paragraphs.length; j++) {
+            let paragraphText = paragraphs[j].innerText;
+
+            if (paragraphText.includes("Locator:")) {
+                let gridSquare = paragraphText.split("Locator:")[1].trim(); // Extract the grid square after "Locator:"
+                console.log('Found grid square:', gridSquare); // Debug log to check grid square
+
+                // Set the grid value in the locator field
+                document.getElementById("locator").value = gridSquare;
+
+                // Click the Convert button
+                document.querySelector('input[value="Convert"]').click();
+                return; // Exit after the first match
+            }
+        }
+    }
+}
+
+
+
+
+function simulateEnter() { //simulates an enter key press
+
+const event = new KeyboardEvent('keydown' , {
+    key: 'Enter',
+    code: 'Enter', 
+    which: 13,
+    keyCode: 13,
+    });
+document.getElementById("pac-input").focus();               //move focus to the map input box
+document.getElementById("pac-input").dispatchEvent(event);  //execute enter key press
+
+}
+</script>
+<script>
+//By G0XBU, with help from Fred, AA7BQ (QRZ founder) and W3 Schools
+//gets QRZ api key then takes callsign input from form and sends it as a URL to qrz.com, returned XML data is then displayed in table format
+
+function getKey(){
+      var xhttp = new XMLHttpRequest();
+      var url = "https://xmldata.qrz.com/xml/current/?username=g0xbu;password=EnterYourPasswordHere!;agent=q5.0";
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          getCall(this);
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.send();
+
+      function getCall(xml) {
+        var xmlDoc = xml.responseXML;
+        var x = xmlDoc.getElementsByTagName('Key')[0];
+        var y = x.childNodes[0];
+        var s = y.nodeValue;
+        var xhttp = new XMLHttpRequest();
+        var url = "https://xmldata.qrz.com/xml/current/";
+        var c = document.getElementById("123").value;
+        var qry = url + '?s=' + s + ';callsign=' + c;
+        
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("xml").innerHTML = "<a style='color: #0f0'>ERROR: User data fields incomplete on QRZ.com</a>" + "<br>" + this.responseText;
+            drawTable(this);
+
+            // Now that the table is built, THEN copy locator
+            setTimeout(function() {
+                copyLocator();
+                
+            }, 100); // tiny delay just to ensure DOM update
+          }
+        };
+        xhttp.open("GET", qry, true);
+        xhttp.send();
+      }
+    }
+
+    // Convert returned XML into table format and display on page
+    function drawTable(xml) {
+  var i;
+  var xmlDoc = xml.responseXML;
+  
+  var cardsContainer = "<div class='cards-container'>";
+  var x = xmlDoc.getElementsByTagName("Callsign");
+
+  for (i = 0; i < x.length; i++) {
+    var call = x[i].getElementsByTagName("call")[0]?.childNodes[0]?.nodeValue || "N/A";
+    var fname = x[i].getElementsByTagName("fname")[0]?.childNodes[0]?.nodeValue || "N/A";
+    var name = x[i].getElementsByTagName("name")[0]?.childNodes[0]?.nodeValue || "N/A";
+    var addr1 = x[i].getElementsByTagName("addr1")[0]?.childNodes[0]?.nodeValue || "N/A";
+    var addr2 = x[i].getElementsByTagName("addr2")[0]?.childNodes[0]?.nodeValue || "N/A";
+    var country = x[i].getElementsByTagName("country")[0]?.childNodes[0]?.nodeValue || "N/A";
+    var grid = x[i].getElementsByTagName("grid")[0]?.childNodes[0]?.nodeValue || "N/A";
+    var image = x[i].getElementsByTagName("image")[0]?.childNodes[0]?.nodeValue || "";
+
+    cardsContainer += "<div class='card'>";
+    cardsContainer += "<div class='card-header'>" + call + "</div>";
+    cardsContainer += "<div class='card-body'>";
+    cardsContainer += "<p><strong>Name:</strong> " + fname + " " + name + "</p>";
+    cardsContainer += "<p><strong>Address:</strong> " + addr1 + ", " + addr2 + "</p>";
+    cardsContainer += "<p><strong>Country:</strong> " + country + "</p>";
+    cardsContainer += "<p><strong>Locator:</strong> " + grid + "</p>";
+    
+    if (image) {
+      cardsContainer += "<img class='card-img' src='" + image + "' alt='User Image'>";
+    } else {
+      cardsContainer += "<img class='card-img' src='placeholder.jpg' alt='User has no image'>";
+    }
+
+    cardsContainer += "</div>";
+    cardsContainer += "</div>"; // Close card
+  }
+
+  cardsContainer += "</div>"; // Close cards-container
+
+  document.getElementById("xml").innerHTML = cardsContainer;
+  copyLocator();
+}
+
+
+</script>
+
+<br><br>
+
+<script src="./G0XBU WEBSDR - Jodrell 1_files/js" defer=""></script>
+
+
+<script src="./G0XBU WEBSDR - Jodrell 1_files/polyfill.min.js.downloaden"></script>
+<script>
+// Initialize and add the map, from google API tutorials: https://developers.google.com/maps/documentation/javascript/adding-a-google-map#maps_add_map-javascript
+// This example adds a search box to a map, using the Google Place Autocomplete
+// feature. People can enter geographical searches. The search box will return a
+// pick list containing a mix of places and predicted search terms.
+// This example requires the Places library. Include the libraries=places
+// parameter when you first load the API. For example:
+// <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+function initAutocomplete() {
+  const map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 53.23, lng: -2.30 },
+    zoom: 13,
+    mapTypeId: "terrain",
+    zoomControl: true,  // Enable zoom controls
+    zoomControlOptions: {
+    position: google.maps.ControlPosition.LEFT_BOTTOM,  // Position of zoom buttons (you can change this to other positions like LEFT_BOTTOM, RIGHT_TOP, etc.)
+    },
+  });
+
+  // Your home location
+  const myLocation = { lat: 53.23, lng: -2.30 };
+
+  // Create the home marker
+  const homeMarker = new google.maps.Marker({
+    position: myLocation,
+    map: map,
+    title: "Home",
+    icon: {
+      url: "/radioDishIcon.png",  // Replace with the URL to your home icon
+      scaledSize: new google.maps.Size(30, 30),  // Adjust size as necessary
+      anchor: new google.maps.Point(15, 15),  // Adjust the anchor to be at the bottom center of the icon
+
+    },
+  });
+
+  // Create the search box and link it to the UI element.
+  const input = document.getElementById("pac-input");
+  const searchBox = new google.maps.places.SearchBox(input);
+
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  // Bias the SearchBox results towards current map's viewport.
+  map.addListener("bounds_changed", () => {
+    searchBox.setBounds(map.getBounds());
+  });
+
+  let markers = [];
+
+  // Update icon size based on zoom level
+  function updateIconSize() {
+    const zoomLevel = map.getZoom();
+    let iconSize;
+
+    // Define the size based on zoom level
+    if (zoomLevel < 10) {
+      // For zoomed-out view, use a smaller icon
+      iconSize = new google.maps.Size(15, 15);
+    } else if (zoomLevel >= 10 && zoomLevel <= 15) {
+      // For moderate zoom levels, use a medium-sized icon
+      iconSize = new google.maps.Size(25, 25);
+    } else {
+      // For zoomed-in view, use a larger icon
+      iconSize = new google.maps.Size(40, 40);
+    }
+
+    // Update all markers with the new size
+    markers.forEach((marker) => {
+      marker.setIcon({
+        url: marker.getIcon().url,
+        scaledSize: iconSize
+      });
+    });
+    // Update home marker icon size as well
+    homeMarker.setIcon({
+      url: homeMarker.getIcon().url,
+      scaledSize: iconSize
+    });
+  }
+
+  // Listen for zoom level changes and update marker size accordingly
+  map.addListener('zoom_changed', updateIconSize);
+
+  // Listen for the event fired when the user selects a prediction and retrieve
+  // more details for that place.
+  searchBox.addListener("places_changed", () => {
+    const places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+
+    // Clear out the old markers.
+    markers.forEach((marker) => {
+      marker.setMap(null);
+    });
+    markers = [];
+
+    // Clear old polyline if any
+    if (window.line) {
+      window.line.setMap(null);
+    }
+
+    const bounds = new google.maps.LatLngBounds();
+    // Extend bounds to include your home location
+    bounds.extend(myLocation);
+
+    places.forEach((place) => {
+      if (!place.geometry || !place.geometry.location) {
+        console.log("Returned place contains no geometry");
+        return;
+      }
+
+      const icon = {
+        url: place.icon,
+        size: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(0, 0),
+        scaledSize: new google.maps.Size(15, 15),  // Initial size
+      };
+
+      // Create a marker for the place
+      const marker = new google.maps.Marker({
+        map,
+        icon,
+        title: place.name,
+        position: place.geometry.location,
+      });
+      markers.push(marker);
+
+      // Draw a line between your location and the searched place
+      window.line = new google.maps.Polyline({
+        path: [myLocation, place.geometry.location],
+        geodesic: true,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+      });
+      window.line.setMap(map);
+
+      // Calculate the distance (Haversine formula)
+      const distance = haversineDistance(
+        [myLocation.lat, myLocation.lng],
+        [place.geometry.location.lat(), place.geometry.location.lng()]
+      );
+      console.log("Distance from this WebSDR: " + distance.toFixed(2) + " km");
+
+      // Optionally, you could show this distance on the page too
+      const distDisplay = document.getElementById("distance-display");
+      if (distDisplay) {
+        distDisplay.innerText = "Distance from this WebSDR: " + distance.toFixed(2) + " km";
+      }
+
+      if (place.geometry.viewport) {
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
+    });
+    map.fitBounds(bounds);
+  });
+
+  // Initial icon size update to apply scaling when map is first loaded
+  updateIconSize();
+}
+
+window.initAutocomplete = initAutocomplete;
+
+
+function haversineDistance(coords1, coords2) {
+    function toRad(x) {
+        return (x * Math.PI) / 180;
+    }
+
+    const R = 6371; // Earth's radius in km
+    const dLat = toRad(coords2[0] - coords1[0]);
+    const dLon = toRad(coords2[1] - coords1[1]);
+    const lat1 = toRad(coords1[0]);
+    const lat2 = toRad(coords2[0]);
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}
+
+</script>
+
+<script>
+//locator convert to latLong, from https://www.wireantennas.co.uk/iaru-lat-long-converter
+
+
+
+function MakeArray(n) {
+	this.length = n;
+	for(var i = 1; i <= n; i++) {
+		this[i] = 0;
+	}
+	return this;
+}
+
+//document.onmouseup=click;
+function latLong(form) {
+    var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    p = new MakeArray(6);
+    var locator = form.expr.value.toUpperCase();
+    if (locator.length != 6) {
+        alert("Invalid Entry");
+        return;
+    }
+
+    var temp = locator.charAt(0);
+    p[1] = alpha.indexOf(temp);
+    temp = locator.charAt(1);
+    p[2] = alpha.indexOf(temp);
+    temp = locator.charAt(4);
+    p[5] = alpha.indexOf(temp);
+    temp = locator.charAt(5);
+    p[6] = alpha.indexOf(temp);
+    p[3] = parseInt(locator.charAt(2));
+    p[4] = parseInt(locator.charAt(3));
+
+    longitude = ((p[1] * 20) + (p[3] * 2) + ((p[5] + 0.5) / 12) - 180);
+    longitude = parseInt(longitude * 100) / 100;
+
+    latitude = ((p[2] * 10) + p[4] + ((p[6] + 0.5) / 24) - 90);
+    latitude = parseInt(latitude * 100) / 100;
+
+    // Output the correct lat/long format without N, S, E, W
+    form.longitude.value = longitude.toFixed(5);
+    form.latitude.value = latitude.toFixed(5);
+
+    // Use Google Maps expected decimal format
+    var latLng = new google.maps.LatLng(latitude, longitude);
+
+  
+}
+
+
+</script>
+
+
+  </div>
+</div>
+
+  
+  
+  <!-------XBU Weather tab---------->
+
+
+  <div class="tab">
+  
+    <div id="WX" class="tabcontent" style="max-width: 1036px">
+   <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button--->
+  
+   <center>
+    <a style="font-family: &#39;trade&#39;">Click buttons to display realtime weather locally or go to Wunderground web display</a>
+    <br><br>
+    <button onclick="getWeather()">Show XBU Weather</button> 
+    <button onclick="window.open(&#39;https://www.wunderground.com/dashboard/pws/ICREWE42&#39;,&#39;_blank&#39;);" style="margin-left: 20px">Open in a new window</button>
+    
+    <br><br>
+    <table id="weather" style="font-family: &#39;trade&#39;; font-size: 20px; text-align: center"></table>
+    </center>
+
+    <script>
+function getWeather() { 
+    // By G0XBU - Calls weather data from Weather.com using a personal weather station
+
+    var xmlhttp = new XMLHttpRequest();
+    var url = "https://api.weather.com/v2/pws/observations/current?stationId=ICREWE42&format=json&units=h&apiKey=f562babf230d4f87a2babf230ddf87bc";
+
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            var obj = JSON.parse(xmlhttp.responseText);
+
+            // Update the weather table with the received data
+            document.getElementById("weather").innerHTML = 
+                "<tr><th>Temp (°C)</th><th>Humidity (%)</th><th>Wind Speed (mph)</th><th>Wind Dir</th><th>Wind Gust (mph)</th><th>Pressure (mB)</th><th>Elevation (ft)</th><th>Rainfall (mm)</th></tr>" +
+                "<tr>" +
+                "<td id='one'>" + obj.observations[0].uk_hybrid.temp + "</td>" + 
+                "<td id='two'>" + obj.observations[0].humidity + "</td>" +
+                "<td id='three'>" + obj.observations[0].uk_hybrid.windSpeed + "</td>" +
+                "<td id='four'>" + obj.observations[0].winddir + "</td>" +
+                "<td id='five'>" + obj.observations[0].uk_hybrid.windGust + "</td>" +
+                "<td id='six'>" + obj.observations[0].uk_hybrid.pressure + "</td>" +
+                "<td id='seven'>" + obj.observations[0].uk_hybrid.elev + "</td>" +
+                "<td id='eight'>" + obj.observations[0].uk_hybrid.precipTotal + "</td>" +
+                "</tr>";
+
+            // Apply color changes based on the data
+            colorTemp();            
+            colorWind();
+        }
+    };
+
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
+
+</script>
+<script>
+function colorTemp() { //by G0XBU - This is to change table data font colours depending on value. i.e higher temperature shows as red
+
+var temp = document.getElementById("one");
+
+
+    
+    if (temp.innerHTML >= "15" && temp.innerHTML <= "20") {
+        temp.style.color = "orange"; 
+    }
+    else if (temp.innerHTML >= "21" && temp.innerHTML <= "40")  {
+        temp.style.color = "red";
+    }   
+
+
+      }
+</script>
+<script>
+function colorWind() {
+    // By G0XBU - This function changes table data font colors depending on wind speed and gust value
+
+    var wspd = document.getElementById("three"); 
+    var gust = document.getElementById("five");
+    var wspdValue = parseInt(wspd.innerHTML, 10);
+    var gustValue = parseInt(gust.innerHTML, 10);
+
+    // Apply color based on wind speed
+    if (wspdValue >= 19) {
+        wspd.style.color = "red"; // High wind speed
+    } else if (wspdValue >= 13) {
+        wspd.style.color = "orange"; // Moderate wind speed
+    } else {
+        wspd.style.color = "#fff"; // Low wind speed
+    }
+
+    // Apply color based on gust speed
+    if (gustValue >= 19) {
+        gust.style.color = "red"; // Very high gust speed
+    } else if (gustValue >= 13) {
+        gust.style.color = "orange"; // Moderate gust speed
+    } else {
+        gust.style.color = "#fff"; // Low gust speed
+    }
+}
+
+
+</script>
+  
+  
+    </div>
+  </div>
+  
+  <!-- FT8 tab -->
+<div class="tab">
+  <div id="FT8" class="tabcontent" style="max-width: 1036px">
+    <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span>
+
+    <center>
+      <p style="font-family: &#39;trade&#39;">WORK IN PROGRESS...</p>
+      <p style="font-family: &#39;trade&#39;">
+        Select FT8 frequency then click Start FT8 button to display decoded messages.
+        (Since this function uses the recorder, you cannot use the visualizer or record function at the same time)
+      </p>
+
+     <h2>FT8 WebAssembly Decoder</h2>
+  <p>Select a 15-second WAV file (mono, 8kHz or 12kHz):</p>
+
+<input type="file" id="ft8file" accept=".wav" disabled="">
+<pre id="ft8results"></pre>
+
+</center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</div>
+
+
+<!---Admin tab------>
+
+
+<div class="tab">
+
+  <div id="Admin" class="tabcontent" style="max-width: 1036px">
+ <span onclick="this.parentElement.style.display=&#39;none&#39;" class="topright">×</span><!--close button-->
+<button style="font-family: Trade" onclick="showIframe()">G0XBU Shack Status Page (work in progress!)</button> 
+<br>
+
+<div id="adminDiv" style="transform: scale(0.70);"></div>
+<!--<iframe id="status" src="http://192.168.1.74:1880/ui#/0" title="Status Page" style="width: 100%; height: 950px; background-color: #fff" allow-scripts></iframe>-->
+
+<script>
+function showIframe() {
+document.getElementById('adminDiv').innerHTML= '<iframe id="status" src="http://192.168.1.130:1880/ui#/0" title="Status Page" style="width: 144%; height: 674px; margin-top: -118px; margin-left: -221px; border-radius: 12px; background-color: #fff"; allow-scripts></iframe>';
+
+}
+</script>
+
+<button id="toggleLogButton" onclick="toggleBlockedLog()">Show Blocked Messages Log</button>
+<div id="blockedLog" style="display: none; border: 1px solid red; border-radius: 12px; padding: 10px; max-height: 200px; overflow-y: auto;">
+    <h4>Blocked Messages Log</h4>
+<div style="color: red;">Blocked message from IP 203.0.113.0: "This is a test blocked message"</div></div>
+ <script>
+        function logBlockedMessage(message, ip) {
+            var logContainer = document.getElementById("blockedLog");
+            if (!logContainer) return; // Exit if log container is missing
+
+            // Create a new log entry
+            var logEntry = document.createElement("div");
+            logEntry.textContent = `Blocked message from IP ${ip}: "${message}"`;
+            logEntry.style.color = "red"; // Optional: Style for better visibility
+
+            // Append the log entry to the log container
+            logContainer.appendChild(logEntry);
+
+            // Scroll to the bottom of the log container
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function toggleBlockedLog() {
+            var logContainer = document.getElementById("blockedLog");
+            var toggleButton = document.getElementById("toggleLogButton");
+
+            if (logContainer.style.display === "none") {
+                logContainer.style.display = "block"; // Show the log
+                toggleButton.textContent = "Hide Blocked Messages Log"; // Update button text
+            } else {
+                logContainer.style.display = "none"; // Hide the log
+                toggleButton.textContent = "Show Blocked Messages Log"; // Update button text
+            }
+        }
+
+        // Example of usage
+        logBlockedMessage("This is a test blocked message", "203.0.113.0");
+       
+    </script>
+
+  </div>
+</div>
+
+
+
+
+</div><!----tab content end of div--->
+
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+</div><!-----SDR Body DIV end---->
+<!-----SDR Main DIV end----->
+
+<!------------------- LEFT TOP BOX ----------------->
+
+<div class="showblinding" style="margin-top: 10px; display: none;">
+
+<script>
+function wfctrst() {
+  var wfdiv = document.querySelectorAll("#wfcdiv0, #wfcdiv1, #wfcdiv2, #wfcdiv3, #wfcdiv4, #wfcdiv5, #wfcdiv6, #wfcdiv7, #wfcdiv13, #wfcdiv14"); //selects all ID's
+  console.log(wfdiv); //Stores those ID's in an array
+  
+  var br = document.getElementById("wf-brightness");
+  
+ wfdiv[0].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[1].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[2].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[3].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[4].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[5].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[6].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[7].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[8].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[9].style.filter = "contrast(" + br.value + "%) sepia(.4) invert(.03) brightness(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ 
+}
+
+function wfbright() {
+  var wfdiv = document.querySelectorAll("#wfcdiv0, #wfcdiv1, #wfcdiv2, #wfcdiv3, #wfcdiv4, #wfcdiv5, #wfcdiv6, #wfcdiv7, #wfcdiv13, #wfcdiv14"); //selects all ID's
+  console.log(wfdiv); //Stores those ID's in an array
+  
+  var br = document.getElementById("wf-brightness2");
+  
+ wfdiv[0].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[1].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[2].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[3].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[4].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[5].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[6].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[7].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[8].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ wfdiv[9].style.filter = "brightness(" + br.value + "%) sepia(.4) invert(.03) contrast(105%) grayscale(.1) hue-rotate(0deg) url(#svgGradientMap)";
+ 
+}
+
+</script>
+
+
+ 
+
+    
+
+  
+
+
+
+
+
+<!-------------------HTML choice form----------------->
+
+<form name="html5choiceform" action="http://g0xbuwebsdr.ddns.net:8901/#" style="float:right">
+<div class="ctl" style="display:none">
+<div id="html5choice"><b>Waterfall:</b><span style="color: red"><input type="radio" name="groupw" value="Java" onclick="html5orjava(0,1);">Java</span><span style="color:green"><input type="radio" name="groupw" value="HTML5" onclick="html5orjava(0,0);" checked="">HTML5</span>&nbsp;&nbsp;&nbsp;<b>Sound:</b><span style="color: red"><input type="radio" name="groupa" value="Java" onclick="html5orjava(1,1);">Java</span><span style="color: green"><input type="radio" name="groupa" value="HTML5" onclick="html5orjava(1,0);" checked="">HTML5</span></div>
+</div>
+<br style="clear:both">
+</form>
+
+<div style="position:relative" class="clear">
+<div id="test"></div>
+
+
+
+
+
+
+
+<!---------------------------------------------------- WATERFALL ------------------------------------------------>
+
+
+
+<div class="ctlWat" id="">
+  <form name="viewform" action="http://g0xbuwebsdr.ddns.net:8901/#">
+  <input type="checkbox" name="allowkeys" value="" checked="" style="display:none">
+
+  <div id="waterBox">
+
+   
+   </div>
+
+<span id="viewformbuttons" style="display:none"><input type="radio" name="group" value="all bands" onclick="setview(0);">all bands<input type="radio" name="group" value="one band" onclick="setview(2);">one band<input type="radio" name="group" value="blind" onclick="setview(3);">blind</span>
+</form>
+
+
+</div>
+<script>
+// Apply saved theme and specific values on page load
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM content loaded"); // Log a message to indicate that the DOM content is loaded
+    var savedTheme = getThemePreference();
+    console.log("Saved theme:", savedTheme); // Log the retrieved theme preference
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    }
+
+    // Retrieve and set font color value
+var fontColorValue = getCookie('fontColorValue');
+if (fontColorValue) {
+    // Set the color picker value to the stored color
+    document.getElementById('fontColorPicker').value = fontColorValue;
+    // Update the page color with the stored value
+    updateFontColor(fontColorValue);
+}
+
+
+    // Retrieve and set page color value
+var pageColorValue = getCookie('pageColorValue');
+if (pageColorValue) {
+    // Set the color picker value to the stored color
+    document.getElementById('pageColorPicker').value = pageColorValue;
+    // Update the page color with the stored value
+    updatePageColor(pageColorValue);
+}
+    // Retrieve and set slider color value
+    var sliderColorValue = getCookie('sliderColorValue');
+    if (sliderColorValue) {
+        document.getElementById('sliderColorPicker').value = sliderColorValue;
+        updateSliderColor(sliderColorValue);
+    }
+});
+</script>
+
+
+
+
+</div></div><div class="pac-container pac-logo hdpi" style="display: none;"></div><div id="thunderbit-crx-side-bar" style="display:block;opacity:1;pointer-events:all;top:0;right:0;z-index:9007199254740991;position:fixed;pointer-events:none;user-select:none;"><template shadowrootmode="open"><div id="#react-app-root"><div id="#react-app-slot" style="display:flex"></div></div></template></div><button id="open-side-panel" style="width:0;height:0;opacity:0;user-select:none;pointer-events:all;position:absolute;bottom:0;right:0;padding:0;border:0;outline:none;"></button><script src="./G0XBU WEBSDR - Jodrell 1_files/websdr-waterfall_compact_test.js.downloaden" type="text/javascript"></script><script src="./G0XBU WEBSDR - Jodrell 1_files/websdr-sound.js.downloaden" type="text/javascript"></script></body></html>

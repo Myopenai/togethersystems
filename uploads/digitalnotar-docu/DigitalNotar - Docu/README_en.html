@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>README_en</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>📘 Digital Notary – User Guide (English)</h1>
+<p>Welcome to <strong>Digital Notary</strong> – a modern tool for supporting notarial procedures.  
+It also includes powerful browser tools for everyday use.</p>
+<p>---</p>
+<h2>🧰 Features Overview</h2>
+<h3>🏛️ Notarial Functions</h3>
+| Function | Description |
+|----------|-------------|
+| ✅ Identity Verification | Verification of personal data and documents (front and back) |
+| 📄 Document Notarization | Digital notarization and certification with blockchain hash |
+| ✍️ Signature Authentication | Qualified electronic signatures (encrypted) |
+| 📦 Digital Archive | Secure storage of all documents with AES-256 |
+| 📤 Export & Reports | Data export for authorities (PDF, XML, JSON, Audit-Log) |
+| 🔐 Two-Factor Authentication | TOTP-based security for critical actions |
+| 💾 Automatic Backups | 24h backups with checksum validation |
+| 👥 Client Management | Support for 100,000+ clients with indexing |
+| 📊 Performance Monitoring | Real-time system performance monitoring |
+<h3>🌐 Browser Tools</h3>
+| Function | Description |
+|----------|-------------|
+| 🔐 Password Manager | Management of login data, locally stored |
+| 🚫 Ad Blocker | Blocks tracking and advertising scripts |
+| 📸 Screenshot Tool | Takes screenshots of the website |
+| 📊 SEO Checker | Checks page structure (title, meta, headings) |
+| ⚙️ Autofill Engine | Automatically fills out forms |
+| 📤 File Upload | Supports file selection & display |
+<p>---</p>
+<h2>🚀 One-Click Installation</h2>
+<h3>Windows (install.bat)</h3>
+<pre><code>@echo off
+echo ========================================
+echo    Digital Notary - Installation
+echo ========================================
+echo.
+echo [INFO] Starting installation...
+echo [INFO] Checking Node.js installation...
+node --version >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Node.js not found! Please install Node.js from https://nodejs.org
+    pause
+    exit /b 1
+)
+echo [SUCCESS] Node.js found!
+echo.
+echo [INFO] Installing dependencies...
+call pnpm install
+if errorlevel 1 (
+    echo [ERROR] Installation failed!
+    pause
+    exit /b 1
+)
+echo [SUCCESS] Dependencies installed!
+echo.
+echo [INFO] Starting development server...
+echo [INFO] Browser will open automatically...
+echo [INFO] Server running on: http://localhost:5173
+echo.
+echo [SUCCESS] Installation completed!
+echo [INFO] Press CTRL+C to stop
+echo.
+call pnpm run dev
+</code></pre>
+<h3>Linux/macOS (install.sh)</h3>
+<pre><code>#!/bin/bash
+<p>echo "========================================"
+echo "   Digital Notary - Installation"
+echo "========================================"
+echo</p>
+<h1>Colors for logging</h1>
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+<h1>Log function</h1>
+log() {
+    local level=$1
+    local message=$2
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    
+    case $level in
+        "INFO")
+            echo -e "${BLUE}[${timestamp}] [INFO]${NC} $message"
+            ;;
+        "SUCCESS")
+            echo -e "${GREEN}[${timestamp}] [SUCCESS]${NC} $message"
+            ;;
+        "WARNING")
+            echo -e "${YELLOW}[${timestamp}] [WARNING]${NC} $message"
+            ;;
+        "ERROR")
+            echo -e "${RED}[${timestamp}] [ERROR]${NC} $message"
+            ;;
+    esac
+}
+<p>log "INFO" "Starting installation..."</p>
+<h1>Check Node.js</h1>
+log "INFO" "Checking Node.js installation..."
+if ! command -v node &> /dev/null; then
+    log "ERROR" "Node.js not found! Please install Node.js from https://nodejs.org"
+    exit 1
+fi
+<p>log "SUCCESS" "Node.js found! Version: $(node --version)"</p>
+<h1>Check pnpm</h1>
+log "INFO" "Checking pnpm installation..."
+if ! command -v pnpm &> /dev/null; then
+    log "WARNING" "pnpm not found! Installing pnpm..."
+    npm install -g pnpm
+    if [ $? -ne 0 ]; then
+        log "ERROR" "pnpm installation failed!"
+        exit 1
+    fi
+fi
+<p>log "SUCCESS" "pnpm found! Version: $(pnpm --version)"</p>
+<h1>Install dependencies</h1>
+log "INFO" "Installing dependencies..."
+pnpm install
+if [ $? -ne 0 ]; then
+    log "ERROR" "Installation failed!"
+    exit 1
+fi
+<p>log "SUCCESS" "Dependencies installed!"</p>
+<h1>Start development server</h1>
+log "INFO" "Starting development server..."
+log "INFO" "Browser will open automatically..."
+log "INFO" "Server running on: http://localhost:5173"
+log "SUCCESS" "Installation completed!"
+log "INFO" "Press CTRL+C to stop"
+echo
+<p>pnpm run dev
+</code></pre></p>
+<p>---</p>
+<h2>🖥️ Desktop App Usage (Electron for Windows/macOS/Linux)</h2>
+<h3>Prerequisites:</h3>
+- <a href="https://nodejs.org">Install Node.js</a> (recommended version 18 or higher)
+- <a href="https://pnpm.io/installation">Install pnpm</a> (will be installed automatically)
+<h3>1. Installation</h3>
+- <strong>Windows</strong>: Double-click `install.bat`
+- <strong>Mac/Linux</strong>: Open terminal and enter:
+<pre><code>chmod +x install.sh
+./install.sh
+</code></pre>
+<h3>2. Start application</h3>
+After installation, the main window opens automatically.
+<p>---</p>
+<h2>🌐 Browser Extension Usage</h2>
+<h3>For Google Chrome:</h3>
+1. Open `chrome://extensions/`
+2. Enable "Developer mode"
+3. "Load unpacked extension"
+4. Select folder `DigitalNotary_InstallerReady`
+<h3>For Firefox:</h3>
+1. Open `about:debugging#/runtime/this-firefox`
+2. "Load temporary add-on"
+3. Select `manifest.json` in project folder
+<p>---</p>
+<h2>🔐 Security Features</h2>
+<h3>Two-Factor Authentication (2FA)</h3>
+- <strong>TOTP-based</strong> - Compatible with Google Authenticator, Authy
+- <strong>Critical actions protected</strong>: Identity verification, document notarization, signatures, export, deletions
+- <strong>One-time verification</strong> - Session remains active until browser closure
+- <strong>Demo codes</strong>: 6-digit codes ending with "123" (e.g., 000123)
+<h3>Automatic Backups</h3>
+- <strong>24-hour interval</strong> - Automatic backups every 24 hours
+- <strong>Manual backups</strong> - Immediate backup creation on demand
+- <strong>JSON format</strong> - Complete data exports with metadata
+- <strong>Checksum validation</strong> - Data integrity verification
+- <strong>Timestamp</strong> - Backup history with date/time
+<h3>Encrypted Data Storage</h3>
+- <strong>AES-256 encryption</strong> - Military-grade encryption for all data
+- <strong>Encrypted signatures</strong> - Digital signatures are additionally encrypted
+- <strong>Salt-based encryption</strong> - Enhanced security through salt generation
+- <strong>Local storage</strong> - All data remains on your system
+<p>---</p>
+<h2>👥 Client Management</h2>
+<h3>Scalability</h3>
+- <strong>100,000+ clients</strong> - Support for large notary offices
+- <strong>Client indexing</strong> - Fast search and filtering
+- <strong>Performance optimization</strong> - Automatic database optimization
+- <strong>Priority management</strong> - Categorize clients by priority
+<h3>Advanced Features</h3>
+- <strong>Client search</strong> - Full-text search in all client data
+- <strong>Priority filters</strong> - Filter by urgency (low, medium, high, urgent)
+- <strong>Appointment management</strong> - Overview of upcoming appointments
+- <strong>Notary assignment</strong> - Assign clients to specific notaries
+<p>---</p>
+<h2>📊 Performance Monitoring</h2>
+<h3>System Status</h3>
+- <strong>Real-time monitoring</strong> - Live status of all system components
+- <strong>Performance metrics</strong> - Search times, filter times, storage size
+- <strong>Optimization recommendations</strong> - Automatic improvement suggestions
+- <strong>Database statistics</strong> - Detailed database performance analysis
+<h3>Compliance</h3>
+- <strong>GDPR compliant</strong> - Full GDPR compliance
+- <strong>eIDAS regulation</strong> - Fulfillment of eIDAS requirements
+- <strong>Notary regulations</strong> - Compliance with German notary regulations
+<p>---</p>
+<h2>🌐 Browser Tools</h2>
+<p>The application also includes powerful browser tools:</p>
+<h3>🔐 Password Manager</h3>
+- Secure local storage of login data
+- Automatic password generation
+- Search function and categorization
+- Encrypted data storage
+<h3>🚫 Ad Blocker</h3>
+- Blocks tracking and advertising scripts
+- Real-time statistics on blocked requests
+- Customizable blocking rules
+- Protection against malware and phishing
+<h3>📸 Screenshot Tool</h3>
+- Complete page screenshots
+- Various formats (PNG, JPEG, WebP)
+- Responsive views (Desktop, Tablet, Mobile)
+- Automatic download
+<h3>📊 SEO Checker</h3>
+- Page structure analysis
+- Meta tags and headings verification
+- Performance evaluation
+- Accessibility checks
+<h3>⚙️ Autofill Engine</h3>
+- Intelligent form recognition
+- Multiple user profiles
+- Automatic contact data filling
+- Credit card data support
+<h3>📤 File Upload</h3>
+- Drag & Drop support
+- Multiple file formats (PDF, images, documents)
+- Preview and validation
+- Progress indicator
+<p>---</p>
+<h2>🔧 Technical Details</h2>
+<h3>System Requirements</h3>
+- <strong>Node.js</strong>: Version 18 or higher
+- <strong>pnpm</strong>: Version 8 or higher
+- <strong>Browser</strong>: Chrome 90+, Firefox 88+, Safari 14+
+- <strong>Operating System</strong>: Windows 10+, macOS 10.15+, Linux (Ubuntu 20.04+)
+<h3>Architecture</h3>
+- <strong>Frontend</strong>: React 18 with TypeScript
+- <strong>Backend</strong>: Node.js with Express
+- <strong>Database</strong>: Local SQLite with encryption
+- <strong>Encryption</strong>: AES-256 with Salt
+- <strong>Authentication</strong>: TOTP-based 2FA
+<h3>Security</h3>
+- <strong>Encryption</strong>: AES-256 for all sensitive data
+- <strong>Authentication</strong>: Two-factor authentication
+- <strong>Backups</strong>: Automatic encrypted backups
+- <strong>Compliance</strong>: GDPR, eIDAS, Notary regulations
+<p>---</p>
+<h2>📞 Support</h2>
+<p>For questions or issues:
+- <strong>Email</strong>: support@digital-notary.com
+- <strong>Documentation</strong>: Complete documentation in project
+- <strong>Issues</strong>: GitHub Issues for bug reports</p>
+<p>---</p>
+<h2>📄 License</h2>
+<p>This project is licensed under the MIT License. See LICENSE file for details.</p>
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

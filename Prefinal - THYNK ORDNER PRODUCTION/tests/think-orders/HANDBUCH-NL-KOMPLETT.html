@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HANDBUCH-NL-KOMPLETT</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>📚 Think Orders - Volledig Handboek voor Beginners (Nederlands)</h1>
+
+<h2>🎯 Voor complete beginners - Stap voor stap</h2>
+
+Dit handboek legt <strong>alles vanaf het begin</strong> uit - ook als u nog nooit een terminal of test-suite heeft gezien.
+
+---
+
+<h2>📋 Inhoudsopgave</h2>
+
+1. <a href="#1-wat-is-een-terminal">Wat is een Terminal?</a>
+2. <a href="#2-terminal-openen-stap-voor-stap">Terminal openen - Stap voor stap</a>
+3. <a href="#3-basis-terminal-commando">Basis Terminal Commando's</a>
+4. <a href="#4-tests-installeren-stap-voor-stap">Tests installeren - Stap voor stap</a>
+5. <a href="#5-tests-uitvoeren-stap-voor-stap">Tests uitvoeren - Stap voor stap</a>
+6. <a href="#6-test-resultaten-begrijpen">Test-resultaten begrijpen</a>
+7. <a href="#7-eigen-tests-toevoegen">Eigen tests toevoegen</a>
+8. <a href="#8-uitbreidingsmogelijkheden">Uitbreidingsmogelijkheden</a>
+9. <a href="#9-probleemoplossing">Probleemoplossing</a>
+10. <a href="#10-verder-leren">Verder leren</a>
+
+---
+
+<h2>1. Wat is een Terminal?</h2>
+
+<h3>Eenvoudig uitgelegd</h3>
+
+Een <strong>Terminal</strong> is een <strong>tekst-interface</strong> naar uw computer. In plaats van klikken, typt u <strong>commando's als tekst</strong>.
+
+<strong>Vergelijking:</strong>
+- <strong>Grafische interface (GUI)</strong>: U klikt met de muis op iconen
+- <strong>Terminal (CLI)</strong>: U typt commando's in
+
+<h3>Waarom Terminal?</h3>
+
+- ✅ <strong>Sneller</strong> - Directe commando's
+- ✅ <strong>Preciezer</strong> - Exacte controle
+- ✅ <strong>Automatiseerbaar</strong> - Herhaalbare stappen
+- ✅ <strong>Professioneel</strong> - Standaard bij ontwikkelaars
+
+---
+
+<h2>2. Terminal openen - Stap voor stap</h2>
+
+<h3>Windows</h3>
+
+<h4>Methode 1: PowerShell (Aanbevolen)</h4>
+
+1. <strong>Windows-toets indrukken</strong> (toets met Windows-logo)
+2. <strong>"PowerShell"</strong> typen
+3. <strong>"Windows PowerShell"</strong> klikken
+4. <strong>Klaar!</strong> Zwart venster opent
+
+<h4>Methode 2: CMD (Command Prompt)</h4>
+
+1. <strong>Windows-toets + R</strong> indrukken
+2. <strong>"cmd"</strong> invoeren
+3. <strong>Enter</strong> indrukken
+4. <strong>Klaar!</strong>
+
+<h4>Methode 3: Via Verkenner</h4>
+
+1. <strong>Verkenner</strong> openen
+2. Navigeer naar map: `THYNK ORDNER PRODUCTION`
+3. <strong>Adresbalk aanklikken</strong> (waar het pad staat)
+4. <strong>"powershell"</strong> invoeren
+5. <strong>Enter</strong> indrukken
+6. <strong>Klaar!</strong>
+
+<h3>Wat ziet u?</h3>
+
+```
+PS D:\busineshuboffline CHATGTP\TOGETHERSYSTEMS- GITHUB\Nieuwe map (3)\THYNK ORDNER PRODUCTION>
+```
+
+<strong>Uitleg:</strong>
+- `PS` = PowerShell (soort terminal)
+- De lange tekst daarna = <strong>Uw huidige map</strong> (Working Directory)
+- `>` = Klaar voor commando's
+
+<h3>⚠️ BELANGRIJK: Pad met spaties</h3>
+
+Als uw pad <strong>spaties</strong> bevat (zoals `THYNK ORDNER PRODUCTION`), moet u <strong>aanhalingstekens</strong> gebruiken:
+
+```powershell
+cd "THYNK ORDNER PRODUCTION"
+```
+
+<strong>NIET zo:</strong>
+```powershell
+cd THYNK ORDNER PRODUCTION  ❌ FOUT!
+```
+
+<strong>Maar zo:</strong>
+```powershell
+cd "THYNK ORDNER PRODUCTION"  ✅ GOED!
+```
+
+---
+
+<h2>3. Basis Terminal Commando's</h2>
+
+<h3>cd - Map wisselen</h3>
+
+<strong>Betekenis:</strong> Change Directory (map wisselen)
+
+<strong>Voorbeeld:</strong>
+```powershell
+cd "tests\think-orders"
+```
+
+<strong>Wat gebeurt er:</strong> U gaat naar de map `tests\think-orders`
+
+<strong>Tip:</strong> Tab-toets indrukken voor automatisch aanvullen!
+
+<h3>ls / dir - Bestanden tonen</h3>
+
+<strong>Windows PowerShell:</strong>
+```powershell
+ls
+```
+of
+```powershell
+dir
+```
+
+<strong>Wat gebeurt er:</strong> U ziet alle bestanden en mappen in de huidige map
+
+<strong>Voorbeeld-uitvoer:</strong>
+```
+    Directory: D:\...\tests\think-orders
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        15.01.2024     10:00                helpers
+-a----        15.01.2024     10:00            1234 package.json
+-a----        15.01.2024     10:00            5678 playwright.config.ts
+```
+
+<h3>cd .. - Een map terug</h3>
+
+```powershell
+cd ..
+```
+
+<strong>Wat gebeurt er:</strong> U gaat een map terug (naar boven)
+
+<strong>Voorbeeld:</strong>
+- U bent in: `tests\think-orders`
+- Na `cd ..`: U bent in `tests`
+- Na `cd ..` nogmaals: U bent in `THYNK ORDNER PRODUCTION`
+
+<h3>pwd - Huidige map tonen</h3>
+
+<strong>Windows PowerShell:</strong>
+```powershell
+pwd
+```
+of
+```powershell
+Get-Location
+```
+
+<strong>Wat gebeurt er:</strong> U ziet uw huidige pad
+
+<strong>Voorbeeld-uitvoer:</strong>
+```
+Path
+----
+D:\busineshuboffline CHATGTP\TOGETHERSYSTEMS- GITHUB\Nieuwe map (3)\THYNK ORDNER PRODUCTION\tests\think-orders
+```
+
+<h3>cls / Clear-Host - Scherm wissen</h3>
+
+```powershell
+cls
+```
+of
+```powershell
+Clear-Host
+```
+
+<strong>Wat gebeurt er:</strong> Terminal-scherm wordt leeg (alle vorige uitvoer verdwijnt)
+
+<h3>Tip: Automatisch aanvullen met Tab</h3>
+
+1. <strong>Beginletters typen</strong> (bijv. `cd te`)
+2. <strong>Tab-toets indrukken</strong>
+3. <strong>Terminal vult automatisch aan</strong> (bijv. naar `cd tests`)
+
+<strong>Meerdere keren Tab indrukken</strong> = Wisselt tussen mogelijkheden
+
+---
+
+<h2>4. Tests installeren - Stap voor stap</h2>
+
+<h3>Stap 1: Node.js installeren</h3>
+
+<strong>BELANGRIJK:</strong> Node.js moet geïnstalleerd zijn!
+
+<h4>Controleren of Node.js geïnstalleerd is:</h4>
+
+```powershell
+node --version
+```
+
+<strong>Als wordt getoond:</strong> `v20.10.0` (of vergelijkbaar)
+✅ <strong>Node.js is geïnstalleerd!</strong>
+
+<strong>Als wordt getoond:</strong> `'node' wordt niet herkend...`
+❌ <strong>Node.js moet geïnstalleerd worden!</strong>
+
+<h4>Node.js installeren:</h4>
+
+1. <strong>Browser openen</strong>
+2. Ga naar: <strong>https://nodejs.org/</strong>
+3. <strong>Download-knop klikken</strong> (LTS versie aanbevolen)
+4. <strong>Installatiebestand downloaden</strong>
+5. <strong>Installatie uitvoeren:</strong>
+   - Dubbelklik op `.msi` bestand
+   - "Next" klikken (meerdere keren)
+   - "Install" klikken
+   - Wachten tot klaar
+   - "Finish" klikken
+6. <strong>Terminal OPNIEUW starten</strong> (belangrijk!)
+7. Controleren: `node --version`
+
+<h4>NPM controleren:</h4>
+
+```powershell
+npm --version
+```
+
+<strong>Als wordt getoond:</strong> `10.2.3` (of vergelijkbaar)
+✅ <strong>NPM is geïnstalleerd!</strong>
+
+<h3>Stap 2: Naar test-map gaan</h3>
+
+```powershell
+cd "D:\busineshuboffline CHATGTP\TOGETHERSYSTEMS- GITHUB\Nieuwe map (3)\THYNK ORDNER PRODUCTION\tests\think-orders"
+```
+
+<strong>OF stap voor stap:</strong>
+
+```powershell
+cd "THYNK ORDNER PRODUCTION"
+cd tests
+cd think-orders
+```
+
+<h3>Stap 3: Controleren of u in de juiste map bent</h3>
+
+```powershell
+ls
+```
+
+<strong>U zou moeten zien:</strong>
+- `package.json`
+- `playwright.config.ts`
+- `think-orders.spec.ts`
+- `helpers/` (map)
+- `README.md`
+
+<h3>Stap 4: Dependencies installeren</h3>
+
+```powershell
+npm install
+```
+
+<strong>Wat gebeurt er:</strong>
+- Terminal downloadt automatisch alle benodigde programma's
+- Dit kan <strong>2-5 minuten</strong> duren
+- U ziet veel regels met downloads
+
+<strong>Wacht tot u ziet:</strong>
+```
+added 123 packages, and audited 124 packages in 2m
+```
+
+<strong>✅ Klaar!</strong> Dependencies zijn geïnstalleerd.
+
+<h3>Stap 5: Browsers installeren</h3>
+
+```powershell
+npx playwright install
+```
+
+<strong>Wat gebeurt er:</strong>
+- Playwright installeert automatisch browsers (Chromium, Firefox, WebKit)
+- Dit kan <strong>5-10 minuten</strong> duren
+- U ziet voortgangsindicatoren
+
+<strong>Wacht tot u ziet:</strong>
+```
+✓ Successfully installed Chromium
+✓ Successfully installed Firefox
+✓ Successfully installed WebKit
+```
+
+<strong>✅ Klaar!</strong> Browsers zijn geïnstalleerd.
+
+---
+
+<h2>5. Tests uitvoeren - Stap voor stap</h2>
+
+<h3>Eenvoudigste methode: Alle tests</h3>
+
+```powershell
+npm test
+```
+
+<strong>Wat gebeurt er:</strong>
+- Alle tests worden één voor één uitgevoerd
+- Terminal toont voortgang
+- Aan het einde ziet u een samenvatting
+
+<strong>Voorbeeld-uitvoer:</strong>
+```
+Running 30 tests using 5 workers
+
+  ✓ tests/think-orders/think-orders.spec.ts:12:3 › Navigation › Home-Seite sollte laden (2.1s)
+  ✓ tests/think-orders/think-orders.spec.ts:15:3 › Navigation › Navigation zu User Center (1.8s)
+  ...
+  
+  30 passed (120s)
+```
+
+<strong>✅ Alle tests geslaagd!</strong>
+
+<h3>Met browser zichtbaar (headed mode)</h3>
+
+```powershell
+npm run test:headed
+```
+
+<strong>Wat gebeurt er:</strong>
+- Browser-vensters openen automatisch
+- U <strong>ziet</strong> hoe tests worden uitgevoerd
+- Goed voor begrip en debugging
+
+<h3>Alleen bepaalde browser</h3>
+
+```powershell
+npm run test:chromium    # Alleen Google Chrome
+npm run test:firefox     # Alleen Firefox
+npm run test:webkit      # Alleen Safari
+npm run test:mobile      # Alleen Mobile tests
+```
+
+<h3>Debug-modus (Langzaam, stap voor stap)</h3>
+
+```powershell
+npm run test:debug
+```
+
+<strong>Wat gebeurt er:</strong>
+- Browser opent
+- Test loopt <strong>stap voor stap</strong>
+- U kunt elke stap observeren
+- Goed voor beginners om te begrijpen
+
+<strong>Om door te gaan:</strong> Klik op "Resume" in debug-console of druk op `F8`
+
+<h3>UI-modus (Visueel)</h3>
+
+```powershell
+npm run test:ui
+```
+
+<strong>Wat gebeurt er:</strong>
+- Browser opent met <strong>visuele interface</strong>
+- U ziet alle tests in een lijst
+- U kunt tests individueel selecteren
+- Zeer gebruiksvriendelijk!
+
+---
+
+<h2>6. Test-resultaten begrijpen</h2>
+
+<h3>Geslaagde tests</h3>
+
+```
+✓ Navigation › Home-Seite sollte laden (2.1s)
+```
+
+<strong>Betekenis:</strong>
+- `✓` = Test <strong>geslaagd</strong>
+- `Navigation › Home-Seite sollte laden` = Test-naam
+- `(2.1s)` = Duur in seconden
+
+<h3>Gefaalde tests</h3>
+
+```
+✗ Orders › Order erstellen sollte funktionieren (5.3s)
+   Error: expect(received).toBeVisible()
+   Expected: visible
+   Received: hidden
+```
+
+<strong>Betekenis:</strong>
+- `✗` = Test <strong>gefaald</strong>
+- `Error:` = Foutmelding
+- `Expected: visible` = Verwacht was: zichtbaar
+- `Received: hidden` = Werkelijk was: verborgen
+
+<h3>Samenvatting</h3>
+
+Aan het einde ziet u:
+
+```
+  30 passed (120s)
+```
+
+<strong>Betekenis:</strong>
+- `30` = Aantal geslaagde tests
+- `passed` = alle geslaagd
+- `(120s)` = Totale duur: 2 minuten
+
+<h3>Test-rapport bekijken</h3>
+
+```powershell
+npm run test:report
+```
+
+<strong>Wat gebeurt er:</strong>
+- Browser opent automatisch
+- U ziet een <strong>HTML-rapport</strong>
+- Met screenshots bij fouten
+- Met video's bij fouten
+- Met gedetailleerde informatie
+
+---
+
+<h2>7. Eigen tests toevoegen</h2>
+
+<h3>Stap 1: Bestand openen</h3>
+
+Open met een <strong>teksteditor</strong> (Notepad++, VS Code, etc.):
+
+```
+tests\think-orders\think-orders.spec.ts
+```
+
+<h3>Stap 2: Test toevoegen</h3>
+
+Voeg aan het einde van het bestand toe:
+
+```typescript
+test.describe('Mijn nieuwe tests', () => {
+  test('Mijn eerste test', async ({ page }) => {
+    // Test-code hier
+  });
+});
+```
+
+<h3>Stap 3: Test uitvoeren</h3>
+
+```powershell
+npm test
+```
+
+<strong>Zie `ERWEITERUNGS-ANLEITUNG.md` voor gedetailleerde voorbeelden!</strong>
+
+---
+
+<h2>8. Uitbreidingsmogelijkheden</h2>
+
+<h3>A) Nieuwe features testen</h3>
+
+Als u nieuwe features aan de app toevoegt, voeg ook tests toe.
+
+<strong>Voorbeeld:</strong> Nieuwe pagina "Rapporten"
+→ Nieuw test-blok in `think-orders.spec.ts`
+
+<h3>B) Performance-tests</h3>
+
+Testen hoe snel de app is:
+
+```typescript
+test('Pagina laadt snel', async ({ page }) => {
+  const startTime = Date.now();
+  await page.goto(...);
+  const loadTime = Date.now() - startTime;
+  expect(loadTime).toBeLessThan(2000); // Onder 2 seconden
+});
+```
+
+<h3>C) Accessibility-tests</h3>
+
+Testen of de app toegankelijk is voor iedereen:
+
+```typescript
+import { injectAxe, checkA11y } from 'axe-playwright';
+
+test('Pagina is toegankelijk', async ({ page }) => {
+  await injectAxe(page);
+  await checkA11y(page);
+});
+```
+
+<strong>→ Zie `ERWEITERUNGS-ANLEITUNG.md` voor meer!</strong>
+
+---
+
+<h2>9. Probleemoplossing</h2>
+
+<h3>Probleem: "node wordt niet herkend"</h3>
+
+<strong>Oplossing:</strong>
+1. Node.js installeren: https://nodejs.org/
+2. Terminal <strong>OPNIEUW starten</strong>
+3. Opnieuw proberen
+
+<h3>Probleem: "npm wordt niet herkend"</h3>
+
+<strong>Oplossing:</strong>
+1. NPM is onderdeel van Node.js
+2. Node.js volledig opnieuw installeren
+3. Terminal OPNIEUW starten
+
+<h3>Probleem: Tests falen</h3>
+
+<strong>Oplossing:</strong>
+1. Controleren of HTML-bestand bestaat:
+   ```powershell
+   ls "..\..\THYNK-ORDERS-COMPLETE-ALL-PAGES.html"
+   ```
+2. Browsers installeren:
+   ```powershell
+   npx playwright install
+   ```
+3. Met `--headed` uitvoeren om te zien wat er gebeurt:
+   ```powershell
+   npm run test:headed
+   ```
+
+<h3>Probleem: "CORS-fouten"</h3>
+
+<strong>Oplossing:</strong>
+- Tests werken met `file://` protocol
+- Als fouten optreden, HTML-bestand controleren
+
+<h3>Probleem: Tests lopen te langzaam</h3>
+
+<strong>Oplossing:</strong>
+- Normaal: 30 tests = 2-5 minuten
+- Als veel langzamer: Internetverbinding controleren
+
+---
+
+<h2>10. Verder leren</h2>
+
+<h3>Officiële documentatie</h3>
+
+- <strong>Playwright:</strong> https://playwright.dev/
+  - Volledige documentatie
+  - Voorbeelden
+  - API-referentie
+
+<h3>Leermiddelen</h3>
+
+- <strong>MDN Web Docs:</strong> https://developer.mozilla.org/
+  - Web-technologieën leren
+  - JavaScript-basis
+
+- <strong>W3Schools:</strong> https://www.w3schools.com/
+  - HTML, CSS, JavaScript tutorials
+  - Stap-voor-stap handleidingen
+
+<h3>Terminal leren</h3>
+
+- <strong>Windows PowerShell documentatie:</strong>
+  https://learn.microsoft.com/powershell/
+
+- <strong>Command Line Crash Course:</strong>
+  https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Command_line
+
+<h3>Test-automatisering</h3>
+
+- <strong>Test Automation University:</strong>
+  https://testautomationu.applitools.com/
+
+- <strong>Playwright Learning Path:</strong>
+  https://playwright.dev/docs/intro
+
+<h3>Community & Ondersteuning</h3>
+
+- <strong>Playwright Discord:</strong>
+  https://discord.gg/playwright
+
+- <strong>Stack Overflow:</strong>
+  https://stackoverflow.com/questions/tagged/playwright
+
+<h3>Wetenschappelijke bronnen</h3>
+
+- <strong>IEEE Software Testing:</strong>
+  https://www.computer.org/csdl/journal/st
+
+- <strong>ACM Digital Library - Testing:</strong>
+  https://dl.acm.org/topic/ccs2012/10003552
+
+<h3>Overheid & Standaarden</h3>
+
+- <strong>NIST - Software Testing:</strong>
+  https://www.nist.gov/software-quality-group
+
+- <strong>ISO/IEC Standards:</strong>
+  https://www.iso.org/standard/45142.html
+
+<h3>Onderwijsinstellingen</h3>
+
+- <strong>MIT OpenCourseWare - Software Engineering:</strong>
+  https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/
+
+- <strong>Stanford CS Cursussen:</strong>
+  https://cs.stanford.edu/
+
+- <strong>Harvard CS50:</strong>
+  https://cs50.harvard.edu/
+
+---
+
+<h2>✅ Checklist voor beginners</h2>
+
+- [ ] Terminal geopend
+- [ ] Node.js geïnstalleerd (`node --version`)
+- [ ] NPM geïnstalleerd (`npm --version`)
+- [ ] In juiste map (`ls` toont `package.json`)
+- [ ] Dependencies geïnstalleerd (`npm install`)
+- [ ] Browsers geïnstalleerd (`npx playwright install`)
+- [ ] Eerste test uitgevoerd (`npm test`)
+- [ ] Test-rapport bekeken (`npm run test:report`)
+
+---
+
+<h2>🎓 Volgende stappen</h2>
+
+1. ✅ <strong>Basis begrijpen</strong> (u bent hier!)
+2. ✅ <strong>Tests uitvoeren</strong> (`npm test`)
+3. ✅ <strong>Uitbreidingshandleiding lezen</strong> (`ERWEITERUNGS-ANLEITUNG.md`)
+4. ✅ <strong>Eigen tests schrijven</strong>
+5. ✅ <strong>Ervaring opdoen</strong>
+
+---
+
+<strong>Veel succes! 🚀</strong>
+
+<strong>Bij vragen:</strong> Lees `ERWEITERUNGS-ANLEITUNG.md` of de verdergaande bronnen hierboven.
+</body>
+</html>

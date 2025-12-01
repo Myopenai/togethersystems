@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>together-systems-meta-transaktionsportal-report</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Together Systems – Meta-Transaktionsportal</h1>
+<h2>Gesamtbericht: Architektur, Beispiel-Flow Hypothekenmarkt & Geschäftsmodell</h2>
+<p>---</p>
+<h2>Inhaltsübersicht</h2>
+<p>1. Zielbild & Architektur von Together Systems
+   - Identität ohne klassische Accounts
+   - Komponenten-Überblick (Frontend, Core, Backend)
+   - Auth-/Identitätsfluss im Detail
+2. Beispielbereich: Hypotheken- & Immobilienfinanzierung
+   - Rollen & Akteure
+   - Endkunden-Flow (vom ersten Besuch bis zum Deal)
+   - JSON-Strukturen (Voucher & weitere Objekte)
+   - REST-API-Endpunkte
+   - Wabenräume & Raum-IDs
+   - Gebührenmodell für diesen Use Case
+3. Business Model Canvas – Together Systems als Meta-Transaktionsportal
+   - Customer Segments
+   - Value Proposition
+   - Channels
+   - Customer Relationships
+   - Revenue Streams
+   - Key Resources
+   - Key Activities
+   - Key Partners
+   - Cost Structure
+4. Erweiterbarkeit auf weitere Verticals
+5. Fazit</p>
+<p>---</p>
+<h2>1. Zielbild & Architektur von Together Systems</h2>
+<h3>1.1. Zielbild</h3>
+<p>Together Systems ist ein <strong>Meta-Transaktionsportal</strong>, in dem Nutzer:</p>
+<p>- <strong>ohne klassische Registrierung</strong> (kein E-Mail-Login, kein Passwort)
+- mit <strong>automatischer Identifizierung pro Browser/Manifest</strong>
+- in <strong>Räumen (Waben)</strong> miteinander in Kontakt treten,
+- <strong>Verträge und Vouchers</strong> als JSON-Objekte austauschen und
+- über angebundene <strong>APIs und Signaling-Server</strong> echte Geschäfte abwickeln können.</p>
+<p>Dabei gilt:</p>
+<p>- Die <strong>Offline-Manifest-Datei</strong> ist der „heilige Startpunkt“ und liefert die erste Verifikation.
+- Das <strong>Online-Portal</strong> erkennt den Browser automatisch wieder.
+- Die <strong>Wabenräume</strong> bilden die Raumlogik (Treffpunkte, Verhandlungsräume, Live-Sessions).
+- Der <strong>Legal-Hub</strong> verknüpft Verträge, AGBs, Signaturen und archivierte Dokumente.</p>
+<p>Ziel ist ein vollautomatisiertes System, in dem:</p>
+<p>- `userId` einmalig lokal erzeugt wird,
+- der Verifizierungsstatus durch das Offline-Manifest bestätigt wird,
+- alle Links / Räume / API-Calls / WSS-Verbindungen <strong>automatisch</strong> die Identität mitführen,
+- der User <strong>nur noch kommuniziert und Entscheidungen trifft</strong> – keine manuellen Registrierungen.</p>
+<p>---</p>
+<h3>1.2. Komponenten-Überblick</h3>
+<h4>Frontend (alles im Browser)</h4>
+<p>- <strong>Portal-Start.html</strong>  
+  Einstieg, Dashboard, Daten-Übersicht, Berichte.</p>
+<p>- <strong>manifest-forum.html (Offline Manifest / Beiträge)</strong>  
+  Offline-Datenbank im Browser (localStorage), zum Erstellen von Beiträgen, Verträgen, Definitionsobjekten (z. B. Voucher-Typen, Produktbeschreibungen).</p>
+<p>- <strong>manifest-portal.html (Online-Portal)</strong>  
+  Online-Ansicht mit Feed, Live-Funktionen, Voucher- und Termindarstellung, Anbindung an APIs.</p>
+<p>- <strong>honeycomb.html (Wabenräume)</strong>  
+  Visuelle Raumlogik (A-1, B-2, …), jeder Raum kann einer Transaktion, einem Product-Cluster, einer Immobilie oder einem Event zugeordnet werden.</p>
+<p>- <strong>legal-hub.html (optional)</strong>  
+  Visualisiert Verträge, Signaturen, archivierte Vereinbarungen, Standardvertrags-Templates.</p>
+<h4>Shared Frontend-Core: `mot-core.js`</h4>
+<p>Dieses Modul wird in alle oben genannten HTML-Seiten eingebunden und stellt zentrale Funktionen bereit:</p>
+<p>- <strong>User-Identität</strong>
+  - `localStorage.mot_user_id_v1` – zufällig generierte, stabile User-ID pro Browser.
+  - Option: `mot_device_keypair` (Public/Private-Key für Signaturen).</p>
+<p>- <strong>Verifikationslogik</strong>
+  - Auswertung des URL-Hashes `#mot=...&uid=...&ts=...&sig=...`.
+  - Vergleich der HMAC-Signatur mit dem Shared Secret.
+  - Persistenz des Verifizierungsstatus in `localStorage.mot_verified_v1`.</p>
+<p>- <strong>Hilfsfunktionen</strong>
+  - `getUserContext()` → `{ uid, verified }`.
+  - `parseHashParams()` → Hash-Parameter aus URL.
+  - Hilfen zum Erzeugen verifizierter Links (z. B. `#wabe=cell-7&uid=...`).
+  - Optionale API- & WSS-Helfer für einheitliches Anhängen von `uid`.</p>
+<h4>Backend-Komponenten</h4>
+<p>- <strong>Manifest API (REST)</strong>
+  - `GET /api/manifest/list` – Beiträge/Objekte (z. B. Posts, Voucher, Verträge) laden.
+  - `POST /api/manifest/submit` – Beiträge/Objekte aus dem Offline-Manifest ins Backend übertragen.</p>
+<p>- <strong>Domänenspezifische APIs</strong>
+  - z. B. `POST /api/voucher/issue`, `GET /api/voucher/list`, `POST /api/hypotheken/anfrage` usw.</p>
+<p>- <strong>Signaling-Server (WSS)</strong>
+  - z. B. `wss://signaling.deine-seite.tld`.
+  - Rooms: `honeycomb:cell-7`, `deal:XYZ`, `mortgage:HOUSE-123`, etc.
+  - Verteilt Nachrichten (Chat, WebRTC-Signaling, Event-Updates) an alle Clients im gleichen Raum.</p>
+<p>- <strong>Optional: File Storage</strong>
+  - S3-/MinIO-kompatible Speicher für PDFs, gescannte Dokumente, signierte Verträge.</p>
+<h4>Identität</h4>
+<p>- Keine klassischen Accounts
+  - Keine E-Mail-Verifikation, kein Passwort-Login.</p>
+<p>- Identität = Kombination aus:
+  - `localStorage.mot_user_id_v1` (zufällige, stabile ID pro Browser),
+  - optionalem `mot_device_keypair` (für kryptografische Signaturen),
+  - HMAC-Verifikation über das Offline-Manifest (einmalige „Einführung“ ins System).</p>
+<p>---</p>
+<h3>1.3. Auth-/Identitätsfluss</h3>
+<h4>1.3.1. Erste Benutzung (Offline-Manifest)</h4>
+<p>1. User öffnet `manifest-forum.html` lokal.
+2. Script prüft: existiert `localStorage.mot_user_id_v1`?
+   - Wenn <strong>nein</strong> → neue `userId` generieren (z. B. 128-Bit Random, Base62/Base58 codiert).
+   - Optional: zusätzlich Schlüsselpaar (Public/Private Key) erzeugen und lokal speichern.
+3. User ist damit <strong>lokal eindeutig bekannt</strong>, aber noch nicht im Online-Portal verifiziert.</p>
+<h4>1.3.2. „Portal öffnen (verifiziert)“</h4>
+<p>Beim Klick auf einen Button im Offline-Manifest:</p>
+<p>- Das Manifest kennt einen gemeinsamen Token `MOT_ACCESS_TOKEN`.
+- Es erzeugt einen signierten Link:</p>
+<pre><code>ts   = Date.now()
+mot  = MOT_ACCESS_TOKEN
+uid  = mot_user_id_v1
+base = mot + "." + uid + "." + ts
+sig  = HMAC-SHA256(base, MOT_SHARED_SECRET)
+<p>URL: manifest-portal.html#mot=...&uid=...&ts=...&sig=...
+</code></pre></p>
+<h4>1.3.3. Online-Portal: Verifikation</h4>
+<p>Beim Laden von `manifest-portal.html`:</p>
+<p>1. Hash-Parameter `mot`, `uid`, `ts`, `sig` werden ausgelesen.
+2. Überprüfung:
+   - `ts` ist nicht älter als z. B. 5 Minuten.
+   - `sig == HMAC-SHA256(mot + "." + uid + "." + ts, MOT_SHARED_SECRET)`.
+3. Wenn gültig:
+   - `localStorage.mot_user_id_v1 = uid` (falls nicht vorhanden).
+   - `localStorage.mot_verified_v1 = { mot, uid, ts, sig }`.
+   - interner Zustand: `verified = true`.</p>
+<h4>1.3.4. Spätere Besuche ohne Hash</h4>
+<p>Kommt der User später erneut ins Online-Portal (ohne Hash):</p>
+<p>- Das Portal liest `localStorage.mot_verified_v1` und `mot_user_id_v1`.
+- Wenn vorhanden und akzeptabel (z. B. nicht abgelaufen oder per Policy gültig):
+  - `verified = true`.</p>
+<p>Ergebnis:</p>
+<p>- Das <strong>Offline-Manifest</strong> ist der einzige Ort, an dem die initiale Verifikation stattfindet.
+- Danach läuft alles über <strong>localStorage + HMAC-Signatur</strong> vollautomatisiert.</p>
+<p>---</p>
+<h2>2. Beispielbereich: Hypotheken- & Immobilienfinanzierung</h2>
+<p>Wir wählen den Bereich <strong>Hypothekenmarkt / Immobilienfinanzierung</strong> als Beispiel und bauen darauf:</p>
+<p>- einen <strong>kompletten Flow</strong>,
+- konkrete <strong>JSON-Strukturen (Voucher & Objekte)</strong>,
+- <strong>API-Endpunkte</strong>,
+- <strong>Wabenräume</strong>,
+- ein <strong>Gebührenmodell</strong>.</p>
+<h3>2.1. Rollen & Akteure</h3>
+<p>- <strong>Kreditnehmer (Borrower)</strong>
+  - Privatperson oder Unternehmen, das eine Immobilie finanzieren will.</p>
+<p>- <strong>Kreditgeber / Bank / FinTech (Lender)</strong>
+  - Stellt Hypothekenangebote, prüft Bonität, schließt Kreditverträge.</p>
+<p>- <strong>Investoren</strong> (optional)
+  - Kaufen Anteile an Hypotheken (Tranches) oder Refinanzierungspapieren.</p>
+<p>- <strong>Gutachter / Makler / Notare / Legal</strong>
+  - Beteiligt an der Wertermittlung, Vertragsgestaltung, Beurkundung.</p>
+<p>- <strong>Together Systems Portal</strong>
+  - Meta-Ebene: Identität, Räume, Kommunikation, Dokumentation.
+  - Kein zwingender Kreditgeber – kann aber White-Label-Technologie für Banken sein.</p>
+<p>---</p>
+<h3>2.2. Endkunden-Flow (Borrower) – vom ersten Besuch bis zum Deal</h3>
+<p>1. <strong>Erstkontakt</strong>
+   - User öffnet das Portal (z. B. `Portal-Start.html` oder `manifest-portal.html`).
+   - Wenn er über das Offline-Manifest kommt → verifizierte Sitzung.</p>
+<p>2. <strong>Objekt-Erfassung</strong>
+   - User erfasst Daten zu Immobilie und Bedarf:
+     - Adresse, Typ (Haus, Wohnung, etc.), Kaufpreis, Eigenkapital, gewünschte Laufzeit, etc.
+   - Diese Daten werden zunächst <strong>lokal im Manifest</strong> gespeichert.</p>
+<p>3. <strong>Anfrage als Voucher/Objekt</strong>
+   - Aus den lokalen Daten erzeugt das Manifest ein <strong>Hypothekenanfrage-Objekt</strong> (`MortgageApplication`) und optional einen <strong>Anfrage-Voucher</strong> („Recht auf Angebote zu erhalten“).
+   - Dieses Objekt wird über `POST /api/hypotheken/anfrage` an die API gesendet.</p>
+<p>4. <strong>Banken/FinTechs antworten mit Angeboten</strong>
+   - Kreditgeber erhalten die Anfrage (intern via Matching/Rules).
+   - Sie erstellen <strong>Hypothekenangebot-Voucher</strong> (`MortgageOfferVoucher`) mit Konditionen.
+   - Diese werden über `POST /api/hypotheken/angebot` im System registriert und dem Borrower zugeordnet.</p>
+<p>5. <strong>Vergleich & Verhandlung</strong>
+   - Im Portal sieht der Borrower alle Angebote strukturiert:
+     - Zins, Tilgung, Laufzeit, Nebenkosten.
+   - Zu jedem Angebot existiert ein <strong>Wabenraum</strong> – z. B. `mortgage:offer:O-2025-0001` – für Nachfragen, Chat, Video, Dokumentenaustausch.</p>
+<p>6. <strong>Auswahl & Vorvertrag</strong>
+   - Borrower wählt ein Angebot aus und akzeptiert den <strong>Offer-Voucher</strong>.
+   - Zustand wechselt zu `accepted`, ein <strong>Vertrags-Voucher</strong> (z. B. `MortgageContractVoucher`) wird generiert.
+   - In einem weiteren Wabenraum (z. B. `mortgage:contract:HOUSE-123`) werden Vertragsdetails finalisiert.</p>
+<p>7. <strong>Bonitäts- & Identprüfung</strong> (KYC/AML)
+   - Technisch läuft dies über weitere Dokumente/Prozesse im gleichen Portal/Wabenraum.
+   - Formal (rechtlich) liegt Verantwortung bei Bank/FinTech; Together Systems stellt nur die Infrastruktur.</p>
+<p>8. <strong>Finale Beurkundung / Notar</strong>
+   - Rechtlich verbindliche Unterzeichnung erfolgt ggf. beim Notar oder über qualifizierte eSign-Dienste.
+   - Legal-Hub verknüpft Dokumente, Protokolle, Wabenraum-ID und Voucher-ID.</p>
+<p>9. <strong>Nachlauf / Service</strong>
+   - Spätere Änderungen (Sondertilgung, Umschuldung) können wieder über Voucher und Wabenräume gemanagt werden.</p>
+<p>---</p>
+<h3>2.3. JSON-Strukturen</h3>
+<p>Im Folgenden exemplarische JSON-Strukturen. Sie sind bewusst generisch, damit sie auf unterschiedliche Rechtsräume adaptierbar sind.</p>
+<h4>2.3.1. Objekt: Immobilie (`Property`)</h4>
+<pre><code>{
+  "propertyId": "house-123",
+  "ownerUid": "user-abc",        
+  "type": "single-family-house", 
+  "address": {
+    "street": "Musterstraße 1",
+    "zip": "12345",
+    "city": "Musterstadt",
+    "country": "DE"
+  },
+  "purchasePrice": {
+    "amount": 45000000,
+    "currency": "EUR"
+  },
+  "ownCapital": {
+    "amount": 9000000,
+    "currency": "EUR"
+  },
+  "meta": {
+    "livingAreaSqm": 140,
+    "plotSizeSqm": 380,
+    "yearBuilt": 1998
+  }
+}
+</code></pre>
+<h4>2.3.2. Objekt: Hypothekenanfrage (`MortgageApplication`)</h4>
+<pre><code>{
+  "applicationId": "app-2025-0001",
+  "borrowerUid": "user-abc",
+  "propertyId": "house-123",
+  "desiredLoan": {
+    "amount": 36000000,
+    "currency": "EUR"
+  },
+  "desiredDurationYears": 20,
+  "desiredRateType": "fixed",
+  "maxInterestRate": 0.04,
+  "submissionTs": "2025-02-01T10:15:00Z",
+  "status": "open",               
+  "visibility": "private",        
+  "meta": {
+    "employmentStatus": "employee",
+    "netIncomeMonthly": 380000,
+    "otherLoans": []
+  }
+}
+</code></pre>
+<h4>2.3.3. Voucher: Hypothekenangebot (`MortgageOfferVoucher`)</h4>
+<pre><code>{
+  "voucherId": "mort-offer-2025-0001",
+  "type": "mortgage-offer",
+  "applicationId": "app-2025-0001",
+  "issuerId": "bank-xyz",      
+  "holderUid": "user-abc",     
+  "status": "offered",
+<p>"loan": {
+    "amount": 36000000,
+    "currency": "EUR"
+  },
+  "interest": {
+    "nominalRate": 0.032,
+    "effectiveRate": 0.0335,
+    "fixedYears": 15
+  },
+  "repayment": {
+    "initialRate": 0.02,
+    "specialPaymentsAllowed": true,
+    "specialPaymentMaxPerYear": 500000
+  },
+  "fees": {
+    "processingFee": 60000,
+    "valuationFee": 30000,
+    "otherFees": []
+  },</p>
+<p>"validity": {
+    "validFrom": "2025-02-01T12:00:00Z",
+    "validUntil": "2025-02-10T23:59:59Z"
+  },</p>
+<p>"termsRef": "https://bank-xyz.de/terms/mortgage-standard-v1.pdf",</p>
+<p>"roomRefs": {
+    "negotiationRoomId": "mortgage:offer:mort-offer-2025-0001",
+    "contractRoomId": null
+  }
+}
+</code></pre></p>
+<h4>2.3.4. Optional: Hypotheken-Tranche für Investoren (`MortgageTrancheVoucher`)</h4>
+<pre><code>{
+  "voucherId": "mort-tranche-2025-0001-A",
+  "type": "mortgage-tranche",
+  "underlyingOfferId": "mort-offer-2025-0001",
+  "issuerId": "bank-xyz",
+  "holderUid": null,
+  "status": "offered",
+<p>"nominalAmount": {
+    "amount": 1000000,
+    "currency": "EUR"
+  },
+  "expectedYield": 0.028,
+  "riskClass": "A",
+  "durationYears": 10,</p>
+<p>"validity": {
+    "validFrom": "2025-02-02T00:00:00Z",
+    "validUntil": "2025-03-01T23:59:59Z"
+  },</p>
+<p>"roomRefs": {
+    "investorRoomId": "mortgage:tranche:mort-tranche-2025-0001-A"
+  }
+}
+</code></pre></p>
+<h4>2.3.5. Vertrags-Voucher (`MortgageContractVoucher`)</h4>
+<pre><code>{
+  "voucherId": "mort-contract-2025-0001",
+  "type": "mortgage-contract",
+  "applicationId": "app-2025-0001",
+  "offerVoucherId": "mort-offer-2025-0001",
+  "lenderId": "bank-xyz",
+  "borrowerUid": "user-abc",
+<p>"status": "draft",           
+  "signedByBorrower": false,
+  "signedByLender": false,
+  "signedByNotary": false,</p>
+<p>"documentRefs": {
+    "draftPdf": "s3://contracts/drafts/mort-contract-2025-0001.pdf",
+    "signedPdf": null
+  },</p>
+<p>"roomRefs": {
+    "contractRoomId": "mortgage:contract:mort-contract-2025-0001"
+  }
+}
+</code></pre></p>
+<p>---</p>
+<h3>2.4. REST-API-Endpunkte (Beispiel-Design)</h3>
+<p>Die folgenden Endpunkte illustrieren, wie das Backend mit dem Frontend (Manifest & Portal) spricht.</p>
+<h4>2.4.1. Hypothekenanfrage anlegen</h4>
+<p>`POST /api/hypotheken/anfrage`</p>
+<p>- <strong>Headers</strong>: `X-MOT-User: <uid>`
+- <strong>Body</strong>: `MortgageApplication`</p>
+<strong>Response (vereinfacht)</strong>
+<pre><code>{
+  "ok": true,
+  "applicationId": "app-2025-0001"
+}
+</code></pre>
+<h4>2.4.2. Hypothekenanfragen des Borrowers abrufen</h4>
+<p>`GET /api/hypotheken/anfrage/list?role=borrower`</p>
+<p>- liest `X-MOT-User` und liefert alle Anfragen dieses Nutzers.</p>
+<pre><code>{
+  "applications": [
+    { "applicationId": "app-2025-0001", "status": "open", ... }
+  ]
+}
+</code></pre>
+<h4>2.4.3. Angebote (Vouchers) für eine Anfrage anlegen (Bank-Seite)</h4>
+<p>`POST /api/hypotheken/angebot`</p>
+<p>- <strong>Headers</strong>: `X-MOT-User: bank-xyz`
+- <strong>Body</strong>: `MortgageOfferVoucher`</p>
+<pre><code>{
+  "ok": true,
+  "voucherId": "mort-offer-2025-0001"
+}
+</code></pre>
+<h4>2.4.4. Angebote für einen Borrower auflisten</h4>
+<p>`GET /api/hypotheken/angebot/list?applicationId=app-2025-0001`</p>
+<pre><code>{
+  "offers": [
+    { "voucherId": "mort-offer-2025-0001", "status": "offered", ... }
+  ]
+}
+</code></pre>
+<h4>2.4.5. Angebot annehmen (Offer-Voucher → Contract-Voucher)</h4>
+<p>`POST /api/hypotheken/angebot/accept`</p>
+<strong>Body</strong>
+<pre><code>{
+  "voucherId": "mort-offer-2025-0001"
+}
+</code></pre>
+<strong>Server-Logik</strong>
+<p>- Prüft:
+  - noch gültig (`validUntil` nicht überschritten),
+  - Status = `offered`,
+  - gehört zu diesem Borrower.
+- Erzeugt `MortgageContractVoucher` mit Status `draft`.</p>
+<strong>Response</strong>
+<pre><code>{
+  "ok": true,
+  "contractVoucherId": "mort-contract-2025-0001"
+}
+</code></pre>
+<h4>2.4.6. Vertragsstatus aktualisieren (Signatur-Events)</h4>
+<p>`POST /api/hypotheken/vertrag/update-status`</p>
+<pre><code>{
+  "contractVoucherId": "mort-contract-2025-0001",
+  "action": "signed-by-borrower"
+}
+</code></pre>
+<p>Der Server setzt intern Flags (`signedByBorrower`, `signedByLender`, etc.) und speichert ggf. signierte PDFs.</p>
+<h4>2.4.7. Tranche-Voucher für Investoren bereitstellen (optional)</h4>
+<p>`POST /api/hypotheken/tranche/issue`</p>
+<pre><code>{
+  "underlyingOfferId": "mort-offer-2025-0001",
+  "nominalAmount": { "amount": 1000000, "currency": "EUR" },
+  "expectedYield": 0.028,
+  "riskClass": "A",
+  "durationYears": 10
+}
+</code></pre>
+<p>Response mit `voucherId` etc. Analog: `GET /api/hypotheken/tranche/list`.</p>
+<p>---</p>
+<h3>2.5. Wabenräume & Raum-IDs</h3>
+<p>Die Wabenräume sind die <strong>visuelle und logische Klammer</strong> um alle Transaktionsschritte.</p>
+<h4>2.5.1. Raumkonventionen</h4>
+<p>- <strong>Property-Raum</strong>: `mortgage:property:<propertyId>`
+  - Nutzung: allgemeine Infos, Exposé, Rückfragen, Besichtigungsorganisation.</p>
+<p>- <strong>Anfrage-Raum</strong>: `mortgage:application:<applicationId>`
+  - Nutzung: Rückfragen der Bank, Upload von Unterlagen, Live-Call zwischen Borrower & Bank.</p>
+<p>- <strong>Angebots-Raum</strong>: `mortgage:offer:<voucherId>`
+  - Pro konkretem Angebot; Detailverhandlungen, Feintuning.</p>
+<p>- <strong>Vertrags-Raum</strong>: `mortgage:contract:<contractVoucherId>`
+  - Letzte Abstimmungen, Vertragslesung, Signatur-Prozess, Notar-Terminkoordination.</p>
+<p>- <strong>Investor-Raum</strong> (optional): `mortgage:tranche:<trancheVoucherId>`
+  - Diskussion zwischen Bank und Investoren über die Konditionen der Tranche.</p>
+<p>Jeder dieser Räume kann physisch auf <strong>honeycomb.html</strong> abgebildet werden:</p>
+<p>- Entweder per 
+  - fixer Zuordnung: eine bestimmte Wabe (A-1, A-2, …) steht für eine Immobilie,
+  - oder dynamisch: Waben werden pro Deal zugewiesen.</p>
+<p>Die Links sehen dann z. B. so aus:</p>
+<pre><code>https://portal.together-systems.com/honeycomb.html#wabe=A-2&roomId=mortgage:offer:mort-offer-2025-0001&uid=<borrowerUid>
+</code></pre>
+<p>Das JavaScript in `honeycomb.html` liest `roomId` und `uid` aus dem Hash, markiert die Wabe, stellt per WSS die Verbindung her und zeigt Chat/Video/Signaling an.</p>
+<p>---</p>
+<h3>2.6. Gebührenmodell für den Hypotheken-Use-Case</h3>
+<p>Ziel: <strong>Endnutzer (Borrower) zahlen nichts</strong>, Einnahmen kommen überwiegend von Banken/Investoren und ggf. Dienstleistern.</p>
+<p>Mögliche Komponenten:</p>
+<p>1. <strong>Plattformgebühr pro abgeschlossenem Kredit</strong>
+   - z. B. <strong>0,2–1,0 %</strong> des Kreditvolumens,
+   - wird von der Bank an Together Systems gezahlt.</p>
+<p>2. <strong>Gebühr pro Investor-Tranche (optional)</strong>
+   - pro platzierter Tranche eine kleine Fee (z. B. 0,1–0,3 % des Nominalbetrags).</p>
+<p>3. <strong>White-Label-Lizenzen</strong>
+   - Banken/FinTechs, die die gesamte Plattform unter eigener Marke nutzen, zahlen
+     - Setup-Gebühr,
+     - monatliche SaaS-Lizenz,
+     - optional Support & SLA.</p>
+<p>4. <strong>Premium-Funktionen</strong>
+   - Erweiterte Reporting- & Analytics-Funktionen für Banken und Investoren:
+     - Dashboard für Konversionsraten,
+     - Pipeline-Management,
+     - Risiko-Heatmaps.</p>
+<p>5. <strong>Partner-Fees</strong>
+   - Makler, Notare, Gutachter können über die Plattform angebunden werden.
+   - Bei erfolgreichen Vermittlungen erhält Together Systems eine Vermittlungsgebühr.</p>
+<p>---</p>
+<h2>3. Business Model Canvas – Together Systems als Meta-Transaktionsportal</h2>
+<p>In diesem Abschnitt beschreiben wir Together Systems mit den klassischen 9 Bausteinen des Business Model Canvas.</p>
+<h3>3.1. Customer Segments (Kundensegmente)</h3>
+<p>1. <strong>B2B – Finanzinstitute & FinTechs</strong>
+   - Banken, Versicherer, Hypothekenvermittler, Leasinggesellschaften.
+   - Nutzen das Portal als <strong>Frontdoor</strong> für Beratungen, Angebote und Vertragsabschlüsse.</p>
+<p>2. <strong>B2B – Dienstleister & lokale Geschäfte</strong>
+   - Coaches, Berater, Ärzte, Handwerker, Werkstätten, Agenturen, Kanzleien.
+   - Nutzen das System für Termin-Geschäfte, Paketangebote und laufende Betreuung.</p>
+<p>3. <strong>B2B – Plattformen & Online-Shops</strong>
+   - Große Marktplätze, E-Commerce-Händler, SaaS-Anbieter.
+   - Nutzen Together Systems als <strong>Meta-Layer</strong> für Verhandlungen, B2B-Deals, Sammelbestellungen.</p>
+<p>4. <strong>B2B – Industriekunden & Logistiker</strong>
+   - Produktionsunternehmen, Speditionen, Maschinenverleiher.
+   - Nutzen das System als Kapazitäts- und Zeitbörsen (Maschinenzeit, Lager, Transport).</p>
+<p>5. <strong>Endnutzer / Prosumer</strong>
+   - Privatpersonen, die Hypotheken, Beratung, Services, Produkte anfragen.
+   - Profitieren von <strong>accountloser Nutzung</strong> und einem zentralen Kommunikations- & Vertragsraum.</p>
+<p>---</p>
+<h3>3.2. Value Proposition (Werteversprechen)</h3>
+<p>1. <strong>Accountlose Nutzung – „einfach Browser öffnen und loslegen“</strong>
+   - Keine Registrierungshürde.
+   - Identität kommt aus dem Offline-Manifest + Browser.</p>
+<p>2. <strong>Einheitliche Transaktionslogik über alle Branchen</strong>
+   - Voucher + Räume + Legal-Hub bilden ein universelles Muster:
+     - Zeitbasierte Leistungen,
+     - finanzielle Verpflichtungen,
+     - Lieferrechte,
+     - Lizenzrechte.</p>
+<p>3. <strong>Local-first Datenhaltung & Transparenz</strong>
+   - Nutzer behalten Kontrolle über ihre Daten.
+   - Nichts wird heimlich synchronisiert.
+   - Export/Backup als JSON/HTML/PDF jederzeit möglich.</p>
+<p>4. <strong>Nahtlose Verbindung von Kommunikation & Vertrag</strong>
+   - Wabenräume (= Kommunikationsräume) sind direkt mit Vouchers/Verträgen verknüpft.
+   - Keine Trennung zwischen „Chat hier“ und „Vertrag irgendwo im E-Mail-Anhang“.</p>
+<p>5. <strong>White-Label-fähige Infrastruktur</strong>
+   - Unternehmen können das System mit eigenem Branding nutzen.
+   - Integration in bestehende Backends/Signaling-Server/APIs.</p>
+<p>6. <strong>Skalierbarer Geschäftsmodell-Baukasten</strong>
+   - Von Hypotheken bis Maschinenzeit, von Coaching bis Großhandel – alles auf denselben Grundbausteinen.</p>
+<p>---</p>
+<h3>3.3. Channels (Kanäle)</h3>
+<p>1. <strong>Direkter Zugriff über Web</strong>
+   - Portal-Startseite, Manifest-Forum, Honeycomb.</p>
+<p>2. <strong>White-Label-Portale</strong>
+   - Banken, Plattformen, Händler bekommen eigene Domains/Frontends auf derselben Engine.</p>
+<p>3. <strong>Integrationen & APIs</strong>
+   - REST-APIs und WSS für Einbindung in bestehende Systeme (CRM, ERP, Banking-Backends).</p>
+<p>4. <strong>Partnernetzwerk</strong>
+   - Kooperationen mit FinTechs, Payment-Anbietern, Marktplätzen.</p>
+<p>5. <strong>Developer-Ökosystem</strong>
+   - Dokumentation & SDKs für Dritte, die eigene Verticals/Flows auf Together Systems bauen wollen.</p>
+<p>---</p>
+<h3>3.4. Customer Relationships (Kundenbeziehungen)</h3>
+<p>1. <strong>Self-Service für Endnutzer</strong>
+   - Klarer, intuitiver Einstieg über Offline-Manifest & Portal-Start.
+   - Hilfetexte, Wizard-ähnliche Flows (z. B. Hypotheken-Assistent, Termin-Assistent).</p>
+<p>2. <strong>Account-Management & Support für B2B-Kunden</strong>
+   - Persönliche Ansprechpartner für Banken, Plattformen, große Händler.
+   - Onboarding-Workshops, Integrationssupport.</p>
+<p>3. <strong>Community & Feedback-Kanäle</strong>
+   - Feedbackräume als Waben für Power-User & Partner.</p>
+<p>4. <strong>SLAs & Premium-Support</strong>
+   - Für große B2B-Kunden garantierte Reaktionszeiten, Betriebs-SLAs, eigene Staging-Umgebungen.</p>
+<p>---</p>
+<h3>3.5. Revenue Streams (Einnahmequellen)</h3>
+<p>1. <strong>Transaktionsgebühren (B2B)</strong>
+   - z. B. pro vermitteltem Kredit, abgeschlossener Versicherung, verkaufter Tranche, gebuchtem Kapazitätsslot.</p>
+<p>2. <strong>SaaS-Lizenzen (White-Label)</strong>
+   - Monatliche Gebühren pro Organisation/Marke/Instanz.
+   - Preisstaffel je nach Useranzahl, Transaktionsvolumen oder Feature-Set.</p>
+<p>3. <strong>Premium-Module</strong>
+   - Analytics-Modul,
+   - Export-/Integrationsmodule (z. B. Buchhaltung, CRM, BI),
+   - erweiterte Sicherheits- und Compliance-Funktionen.</p>
+<p>4. <strong>Partner- & Referral-Fees</strong>
+   - Umsatzbeteiligung durch angebundene Payment-, KYC-, Signatur- und Plattformpartner.</p>
+<p>5. <strong>Custom Projects & Consulting</strong>
+   - Implementierung spezieller Workflows für große Kunden,
+   - Migrationsprojekte von bestehenden Legacy-Systemen auf Together Systems.</p>
+<p>---</p>
+<h3>3.6. Key Resources (Schlüsselressourcen)</h3>
+<p>1. <strong>Technologische Plattform</strong>
+   - Frontend-Module (Manifest, Portal, Honeycomb, Legal-Hub).
+   - Shared Core (`mot-core.js`) für Identität, Verifikation, API/WSS-Integration.
+   - Backend-Services (APIs, Signaling, Storage).</p>
+<p>2. <strong>Architektur-Know-how</strong>
+   - Design von generischen Vouchern, Raumlogiken, Vertragsworkflows.</p>
+<p>3. <strong>Rechtliches & Compliance-Wissen</strong>
+   - Gestaltung der Schnittstellen zu regulierten Partnern (Banken, Versicherern).</p>
+<p>4. <strong>Partnernetzwerk</strong>
+   - FinTechs, Payment-Provider, Notare, Kanzleien, Marktplätze.</p>
+<p>5. <strong>Marke & Community</strong>
+   - Vertrauen in „Together Systems“ als faire, offene und möglichst neutrale Meta-Plattform.</p>
+<p>---</p>
+<h3>3.7. Key Activities (Schlüsselaktivitäten)</h3>
+<p>1. <strong>Plattform-Entwicklung & Betrieb</strong>
+   - Weiterentwicklung der Frontend-Module, APIs, Signaling-Infrastruktur.
+   - Betrieb, Monitoring, Skalierung.</p>
+<p>2. <strong>Domänenspezifische Template-Entwicklung</strong>
+   - Hypotheken-Templates,
+   - Termin-/Voucher-Templates für Services,
+   - Maschinen-/Kapazitäts-Templates etc.</p>
+<p>3. <strong>Partner-Integration & Support</strong>
+   - Anbindung neuer Banken, Shops, Plattformen.
+   - Integrationstests, Zertifizierungen.</p>
+<p>4. <strong>Sicherheit & Datenschutz</strong>
+   - Hardening, Verschlüsselung, Auditing, Datenschutzkonzepte.</p>
+<p>5. <strong>Business Development</strong>
+   - Identifikation neuer Verticals, Go-to-Market-Strategien, Kooperationsmodelle.</p>
+<p>---</p>
+<h3>3.8. Key Partners (Schlüsselpartner)</h3>
+<p>1. <strong>Finanzinstitute & FinTechs</strong>
+   - Banken, Versicherer, Hypothekenvermittler, Trading-Plattformen.</p>
+<p>2. <strong>Technologie-Partner</strong>
+   - Cloud-Anbieter (Hosting, Storage),
+   - Payment-Provider,
+   - WebRTC/Signaling-Plattformen.</p>
+<p>3. <strong>Juristische Partner</strong>
+   - Kanzleien, Notare, Legal-Tech-Anbieter.</p>
+<p>4. <strong>Branchen-Plattformen & Verbände</strong>
+   - Immobilienverbände, Händlerverbände, SaaS-Communities.</p>
+<p>5. <strong>Implementierungspartner</strong>
+   - Agenturen, Integratoren, Systemhäuser, die Together Systems beim Kunden einführen.</p>
+<p>---</p>
+<h3>3.9. Cost Structure (Kostenstruktur)</h3>
+<p>1. <strong>Technologie & Infrastruktur</strong>
+   - Serverkosten (APIs, WSS, Storage),
+   - Entwicklungs- und Testumgebungen,
+   - Monitoring & Logging.</p>
+<p>2. <strong>Personal</strong>
+   - Entwicklung (Frontend, Backend, DevOps),
+   - Produkt & UX,
+   - Vertrieb, Partner-Management,
+   - Support & Operations.</p>
+<p>3. <strong>Compliance & Rechtliches</strong>
+   - Rechtsberatung, Gutachten, Zertifizierungen.</p>
+<p>4. <strong>Marketing & Vertrieb</strong>
+   - Website, Content, Konferenzen, Partnerprogramme.</p>
+<p>5. <strong>Allgemeine Verwaltungskosten</strong>
+   - Office, Tools, Versicherungen, Buchhaltung.</p>
+<p>---</p>
+<h2>4. Erweiterbarkeit auf weitere Verticals</h2>
+<p>Die gewählte Architektur – <strong>Identität + Voucher + Wabenräume + Legal-Hub</strong> – ist bewusst generisch.</p>
+<p>Das bedeutet:</p>
+<p>- Ein Hypothekenvoucher kann durch einen <strong>Fahrzeugfinanzierungs-Voucher</strong> ersetzt werden, ohne die Core-Logik zu ändern.
+- Ein Termin-Voucher für einen <strong>Coaching-Call</strong> funktioniert technisch identisch wie ein Slot-Voucher für eine <strong>CNC-Maschine</strong>.
+- Ein Lizenz-Voucher für <strong>Software/Content/IP</strong> kann denselben Lebenszyklus haben wie ein Ticket-Voucher für ein <strong>Event</strong>.</p>
+<p>Beispiele für weitere Verticals, die auf derselben Struktur aufsetzen:</p>
+<p>- Fahrzeug-Ankauf & Finanzierung
+- Maschinen- und Kapazitätsbörsen
+- Beratungs- & Coaching-Plattformen
+- B2B-Beschaffung & Sammelbestellungen (Demand Aggregation)
+- Events & Memberships
+- Notar-ähnliche Vertrags-Workflows und Legal-Tech-Angebote</p>
+<p>Jeder neue Bereich benötigt primär:</p>
+<p>1. Ein <strong>JSON-Schema für den jeweiligen Voucher-Typ</strong>.
+2. Eine Handvoll <strong>spezifischer API-Endpunkte</strong>.
+3. Eine sinnvolle <strong>Wabenraum-Topologie</strong> (z. B. pro Deal, pro Objekt, pro Event).
+4. Ein eigenes <strong>Preis-/Gebührenmodell</strong>.</p>
+<p>Alles andere – Identität, Verifikation, Speicher, Live-Kommunikation – ist bereits durch Together Systems abgedeckt.</p>
+<p>---</p>
+<h2>5. Fazit</h2>
+<p>Dieser Bericht fasst Together Systems als <strong>Meta-Transaktionsportal</strong> zusammen, das:</p>
+<p>- ohne klassische Accounts auskommt,
+- Identität und Verifikation über das Offline-Manifest und `mot-core.js` organisiert,
+- mit Wabenräumen eine intuitive Raumlogik für Kommunikation und Transaktionen bereitstellt,
+- mit Vouchern & JSON-Strukturen ein universelles Muster für Geschäfte (Zeit, Geld, Rechte) bildet,
+- über APIs & WSS sowohl Offline- als auch Online-Komponenten miteinander verbindet,
+- sich auf unterschiedliche Branchen skalieren lässt – vom Hypothekenmarkt bis zum Maschinenbau.</p>
+<p>Der detaillierte Hypotheken-Flow zeigt exemplarisch, wie aus diesen Bausteinen ein vollständiges, marktreifes Geschäftsmodell entstehen kann – inklusive:</p>
+<p>- klarer JSON-Datenmodelle,
+- konkreter API-Endpunkte,
+- definierter Wabenräume,
+- sowie eines monetarisierbaren Gebührenmodells.</p>
+<p>Das Business Model Canvas ordnet diese technische Architektur in einen betriebswirtschaftlichen Rahmen ein und zeigt, wie Together Systems als <strong>Kern-Infrastruktur für zahlreiche digitale Geschäftsmodelle</strong> dienen kann – mit freiem Zugang für Endnutzer, starker B2B-Monetarisierung und hoher Flexibilität für zukünftige Verticals.</p>
+</body>
+</html>

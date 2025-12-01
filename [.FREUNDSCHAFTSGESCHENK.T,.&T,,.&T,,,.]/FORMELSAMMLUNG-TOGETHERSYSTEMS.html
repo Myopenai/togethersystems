@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FORMELSAMMLUNG-TOGETHERSYSTEMS</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>FORMELSAMMLUNG TOGETHER SYSTEMS</h1>
+<h2>Komplette Logik als mathematische/algorithmische Formeln</h2>
+
+<strong>Status:</strong> Unverschlüsselt, unversioniert, voll zugänglich  
+<strong>Zweck:</strong> Freundschaftsgeschenk für die Welt  
+<strong>Branding:</strong> `.{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.`
+
+---
+
+<h2>INHALTSVERZEICHNIS</h2>
+
+1. <a href="#1-identity--verification-system">IDENTITY & VERIFICATION SYSTEM</a>
+2. <a href="#2-voucher-system">VOUCHER SYSTEM</a>
+3. <a href="#3-honeycomb-rooms-system">HONEYCOMB ROOMS SYSTEM</a>
+4. <a href="#4-settings-os-kernel">SETTINGS-OS KERNEL</a>
+5. <a href="#5-dimensional-engine">DIMENSIONAL ENGINE</a>
+6. <a href="#6-multi-layer-validation">MULTI-LAYER VALIDATION</a>
+7. <a href="#7-graph-loader">GRAPH LOADER</a>
+8. <a href="#8-http-resource-monitor">HTTP RESOURCE MONITOR</a>
+9. <a href="#9-fortress-guard-system">FORTRESS GUARD SYSTEM</a>
+10. <a href="#10-telbank-system">TELBANK SYSTEM</a>
+11. <a href="#11-industrial-fabrication-routine">INDUSTRIAL FABRICATION ROUTINE</a>
+12. <a href="#12-chain-system-matrix">CHAIN-SYSTEM MATRIX</a>
+13. <a href="#13-katapult-shield-system">KATAPULT-SHIELD SYSTEM</a>
+14. <a href="#14-pre-code-verification-system">PRE-CODE-VERIFICATION SYSTEM</a>
+
+---
+
+<h2>1. IDENTITY & VERIFICATION SYSTEM</h2>
+
+<h3>1.1 User-ID Generation</h3>
+
+```
+userId = Base62(Entropy(128 bits))
+```
+
+<strong>Formel:</strong>
+```
+userId = f_entropy(128) → Base62
+```
+
+<strong>Detailliert:</strong>
+```
+Entropy(n) = Σ(i=0 to n-1) random_bit(i) × 2^i
+Base62(x) = Σ(i=0 to ⌊log_62(x)⌋) char_62(x ÷ 62^i mod 62) × 62^i
+```
+
+<h3>1.2 Token Generation</h3>
+
+```
+token = HMAC-SHA256(userId || timestamp, SECRET_KEY)
+```
+
+<strong>Formel:</strong>
+```
+token = H(userId || ts, K_secret)
+```
+
+<strong>Detailliert:</strong>
+```
+H(m, k) = SHA256(HMAC(m, k))
+token = H(userId || timestamp, SECRET_KEY)
+```
+
+<h3>1.3 HMAC Signature Verification</h3>
+
+```
+base = token || "." || userId || "." || timestamp
+signature = HMAC-SHA256(base, SHARED_SECRET)
+valid = (signature === received_signature) ∧ (|timestamp - now| < 5 min)
+```
+
+<strong>Formel:</strong>
+```
+sig = H(token || "." || uid || "." || ts, K_shared)
+valid = (sig == sig_received) ∧ (|ts - t_now| < 300s)
+```
+
+<h3>1.4 Thinker-ID Derivation</h3>
+
+```
+thinker_id = "thinker-" || substr(HASH(token || SECRET), 0, 12)
+```
+
+<strong>Formel:</strong>
+```
+thinker_id = "thinker-" || substr(H(token || K_secret), 0, 12)
+```
+
+<strong>Detailliert:</strong>
+```
+HASH(x) = SHA256(x)
+thinker_id = "thinker-" || hex(HASH(token || SECRET))[0:12]
+```
+
+---
+
+<h2>2. VOUCHER SYSTEM</h2>
+
+<h3>2.1 Voucher Creation</h3>
+
+```
+voucher = {
+  id: generateId('v'),
+  issuer_uid: issuerId,
+  holder_uid: null | holderId,
+  service_type: serviceType,
+  duration_minutes: duration,
+  valid_from: t_start,
+  valid_until: t_end,
+  price: { amount, currency } | null,
+  status: 'issued' | 'booked' | 'consumed' | 'cancelled' | 'expired',
+  transferable: boolean
+}
+```
+
+<strong>Formel:</strong>
+```
+V = { id, issuer, holder, service, duration, valid_from, valid_until, price, status, transferable }
+id = f_generateId('v')
+status ∈ { 'issued', 'booked', 'consumed', 'cancelled', 'expired' }
+```
+
+<h3>2.2 Voucher Booking</h3>
+
+```
+booking = {
+  id: generateId('b'),
+  voucher_id: voucherId,
+  issuer_uid: issuerId,
+  holder_uid: holderId,
+  slot_start: t_start,
+  slot_end: t_start + duration,
+  status: 'booked' | 'cancelled'
+}
+```
+
+<strong>Formel:</strong>
+```
+B = { id, voucher_id, issuer, holder, slot_start, slot_end, status }
+id = f_generateId('b')
+slot_end = slot_start + duration
+status ∈ { 'booked', 'cancelled' }
+```
+
+<h3>2.3 Voucher State Transition</h3>
+
+```
+transition(voucher, action) = {
+  'issue' → status = 'issued',
+  'book' → status = 'booked' ∧ holder = holderId,
+  'consume' → status = 'consumed',
+  'cancel' → status = 'cancelled',
+  'expire' → (now > valid_until) → status = 'expired'
+}
+```
+
+<strong>Formel:</strong>
+```
+T(V, a) = {
+  if a == 'issue': V.status = 'issued'
+  if a == 'book': V.status = 'booked' ∧ V.holder = h
+  if a == 'consume': V.status = 'consumed'
+  if a == 'cancel': V.status = 'cancelled'
+  if a == 'expire' ∧ now > V.valid_until: V.status = 'expired'
+}
+```
+
+<h3>2.4 Voucher Validation</h3>
+
+```
+valid(voucher) = (
+  voucher.status ≠ 'expired' ∧
+  voucher.status ≠ 'cancelled' ∧
+  now ≥ voucher.valid_from ∧
+  now ≤ voucher.valid_until
+)
+```
+
+<strong>Formel:</strong>
+```
+valid(V) = (V.status ∉ {'expired', 'cancelled'}) ∧ (t_now ≥ V.valid_from) ∧ (t_now ≤ V.valid_until)
+```
+
+---
+
+<h2>3. HONEYCOMB ROOMS SYSTEM</h2>
+
+<h3>3.1 Room ID Generation</h3>
+
+```
+room_id = roomType || ":" || identifier
+```
+
+<strong>Formel:</strong>
+```
+room_id = type || ":" || id
+```
+
+<strong>Beispiele:</strong>
+```
+room_id = "mortgage:offer:" || offerId
+room_id = "honeycomb:cell-" || cellId
+room_id = "deal:" || dealId
+```
+
+<h3>3.2 Room State Machine</h3>
+
+```
+state(room) = {
+  'waiting' → (count(online_thinkers) ≥ 1) ∧ (count(online_thinkers) < 2),
+  'joining' → (count(online_thinkers) ≥ 2) ∧ (room_id == null),
+  'active' → (count(online_thinkers) ≥ 2) ∧ (room_id ≠ null),
+  'closing' → (count(online_thinkers) < 2) ∧ (room_id ≠ null),
+  'closed' → (count(online_thinkers) == 0) ∧ (timeout > threshold)
+}
+```
+
+<strong>Formel:</strong>
+```
+S(R) = {
+  if |T_online| ≥ 1 ∧ |T_online| < 2: 'waiting'
+  if |T_online| ≥ 2 ∧ R.room_id == null: 'joining'
+  if |T_online| ≥ 2 ∧ R.room_id ≠ null: 'active'
+  if |T_online| < 2 ∧ R.room_id ≠ null: 'closing'
+  if |T_online| == 0 ∧ timeout > θ: 'closed'
+}
+```
+
+<h3>3.3 Presence Matching</h3>
+
+```
+match(thinker_id, pair_code) = {
+  candidates = filter(presence, p.pair_code == pair_code ∧ p.status == 'online' ∧ |p.last_seen - now| < 60s)
+  if |candidates| ≥ 2:
+    room_id = generateRoomId(pair_code)
+    assignRoomId(candidates, room_id)
+    return room_id
+  else:
+    return null
+}
+```
+
+<strong>Formel:</strong>
+```
+match(t_id, p_code) = {
+  C = { p ∈ P | p.pair_code == p_code ∧ p.status == 'online' ∧ |p.last_seen - t_now| < 60s }
+  if |C| ≥ 2:
+    r_id = generateRoomId(p_code)
+    ∀c ∈ C: c.room_id = r_id
+    return r_id
+  else:
+    return null
+}
+```
+
+<h3>3.4 Heartbeat Update</h3>
+
+```
+heartbeat(thinker_id, status) = {
+  presence[thinker_id].last_seen = now
+  presence[thinker_id].status = status
+}
+```
+
+<strong>Formel:</strong>
+```
+heartbeat(t_id, s) = {
+  P[t_id].last_seen = t_now
+  P[t_id].status = s
+}
+```
+
+---
+
+<h2>4. SETTINGS-OS KERNEL</h2>
+
+<h3>4.1 Settings Graph Structure</h3>
+
+```
+G = (N, E, M)
+```
+
+<strong>Formel:</strong>
+```
+G = (N, E, M)
+```
+
+<strong>Detailliert:</strong>
+```
+N = { n | n ∈ SettingsNode }
+E = { (n_i, n_j) | n_i depends_on n_j }
+M = SettingsManifest
+```
+
+<h3>4.2 Node Loading</h3>
+
+```
+loadNode(nodeId, projectId, environment) = {
+  path = resolvePath(nodeId, projectId, environment)
+  node = parseJSON(loadFile(path))
+  validateNode(node)
+  return node
+}
+```
+
+<strong>Formel:</strong>
+```
+loadNode(n_id, p_id, env) = {
+  path = resolve(n_id, p_id, env)
+  n = parse(load(path))
+  validate(n)
+  return n
+}
+```
+
+<h3>4.3 Dependency Resolution</h3>
+
+```
+resolveDependencies(graph) = {
+  for each node in graph.nodes:
+    for each dep in node.dependencies:
+      if not loaded(dep):
+        loadNode(dep)
+      addEdge(node, dep)
+}
+```
+
+<strong>Formel:</strong>
+```
+resolve(G) = {
+  ∀n ∈ G.N:
+    ∀d ∈ n.deps:
+      if ¬loaded(d):
+        loadNode(d)
+      E = E ∪ {(n, d)}
+}
+```
+
+<h3>4.4 Settings Cache</h3>
+
+```
+cache(nodeId, node) = {
+  cache[nodeId] = node
+  cache[nodeId].timestamp = now
+}
+```
+
+<strong>Formel:</strong>
+```
+cache(n_id, n) = {
+  C[n_id] = n
+  C[n_id].ts = t_now
+}
+```
+
+---
+
+<h2>5. DIMENSIONAL ENGINE</h2>
+
+<h3>5.1 Unit Conversion</h3>
+
+```
+convert(value, targetUnit) = {
+  canonical = convertToCanonical(value)
+  targetFactor = getFactor(targetUnit)
+  sourceFactor = getFactor(value.unit)
+  return {
+    value: canonical.value × (sourceFactor / targetFactor),
+    unit: targetUnit,
+    dimension: canonical.dimension
+  }
+}
+```
+
+<strong>Formel:</strong>
+```
+convert(v, u_target) = {
+  v_canon = toCanonical(v)
+  f_target = factor(u_target)
+  f_source = factor(v.unit)
+  return {
+    value: v_canon.value × (f_source / f_target),
+    unit: u_target,
+    dimension: v_canon.dimension
+  }
+}
+```
+
+<h3>5.2 Canonical Unit Conversion</h3>
+
+```
+convertToCanonical(value) = {
+  rule = getUnitRule(value.unit)
+  canonicalUnit = getCanonicalUnit(rule.dimension)
+  if value.unit == canonicalUnit:
+    return value
+  else:
+    return {
+      value: value.value × rule.factor,
+      unit: canonicalUnit,
+      dimension: rule.dimension
+    }
+}
+```
+
+<strong>Formel:</strong>
+```
+toCanonical(v) = {
+  r = rule(v.unit)
+  u_canon = canonical(r.dimension)
+  if v.unit == u_canon:
+    return v
+  else:
+    return {
+      value: v.value × r.factor,
+      unit: u_canon,
+      dimension: r.dimension
+    }
+}
+```
+
+<h3>5.3 Dimensional Validation</h3>
+
+```
+validateDimensions(value1, value2) = {
+  return getDimension(value1.unit) == getDimension(value2.unit)
+}
+```
+
+<strong>Formel:</strong>
+```
+validateDim(v1, v2) = (dimension(v1.unit) == dimension(v2.unit))
+```
+
+---
+
+<h2>6. MULTI-LAYER VALIDATION</h2>
+
+<h3>6.1 Validation Pipeline</h3>
+
+```
+validate(node) = {
+  result = {
+    valid: true,
+    errors: [],
+    warnings: []
+  }
+  
+  // Layer 1: Schema
+  schemaResult = validateSchema(node)
+  result.errors.push(...schemaResult.errors)
+  result.warnings.push(...schemaResult.warnings)
+  
+  // Layer 2: Dimensional
+  if node.dimensions:
+    dimResult = validateDimensional(node.dimensions)
+    result.errors.push(...dimResult.errors)
+    result.warnings.push(...dimResult.warnings)
+  
+  // Layer 3: Semantic
+  semResult = validateSemantic(node)
+  result.errors.push(...semResult.errors)
+  result.warnings.push(...semResult.warnings)
+  
+  // Layer 4: Compliance
+  compResult = validateCompliance(node)
+  result.errors.push(...compResult.errors)
+  result.warnings.push(...compResult.warnings)
+  
+  result.valid = (result.errors.length == 0)
+  return result
+}
+```
+
+<strong>Formel:</strong>
+```
+validate(n) = {
+  R = { valid: true, errors: [], warnings: [] }
+  
+  R.errors ∪= validateSchema(n).errors
+  R.warnings ∪= validateSchema(n).warnings
+  
+  if n.dimensions:
+    R.errors ∪= validateDimensional(n.dimensions).errors
+    R.warnings ∪= validateDimensional(n.dimensions).warnings
+  
+  R.errors ∪= validateSemantic(n).errors
+  R.warnings ∪= validateSemantic(n).warnings
+  
+  R.errors ∪= validateCompliance(n).errors
+  R.warnings ∪= validateCompliance(n).warnings
+  
+  R.valid = (|R.errors| == 0)
+  return R
+}
+```
+
+<h3>6.2 Schema Validation</h3>
+
+```
+validateSchema(node) = {
+  schema = loadSchema(node.type)
+  return validateAgainstSchema(node, schema)
+}
+```
+
+<strong>Formel:</strong>
+```
+validateSchema(n) = {
+  s = loadSchema(n.type)
+  return validate(n, s)
+}
+```
+
+<h3>6.3 Dimensional Validation</h3>
+
+```
+validateDimensional(dimensions) = {
+  for each dimension in dimensions:
+    if not isValidDimension(dimension):
+      errors.push("Invalid dimension: " + dimension)
+    if not isValidUnit(dimension.unit):
+      errors.push("Invalid unit: " + dimension.unit)
+}
+```
+
+<strong>Formel:</strong>
+```
+validateDimensional(D) = {
+  ∀d ∈ D:
+    if ¬validDim(d):
+      errors += "Invalid dimension: " + d
+    if ¬validUnit(d.unit):
+      errors += "Invalid unit: " + d.unit
+}
+```
+
+<h3>6.4 Semantic Validation</h3>
+
+```
+validateSemantic(node) = {
+  if node.type == 'runtime.profile':
+    if not node.cpu or not node.memory:
+      errors.push("Runtime profile missing CPU or memory")
+  // ... more semantic rules
+}
+```
+
+<strong>Formel:</strong>
+```
+validateSemantic(n) = {
+  if n.type == 'runtime.profile':
+    if ¬n.cpu ∨ ¬n.memory:
+      errors += "Runtime profile missing CPU or memory"
+  // ... weitere semantische Regeln
+}
+```
+
+<h3>6.5 Compliance Validation</h3>
+
+```
+validateCompliance(node) = {
+  policies = loadCompliancePolicies()
+  for each policy in policies:
+    if not policy.check(node):
+      errors.push("Compliance violation: " + policy.name)
+}
+```
+
+<strong>Formel:</strong>
+```
+validateCompliance(n) = {
+  P = loadPolicies()
+  ∀p ∈ P:
+    if ¬p.check(n):
+      errors += "Compliance violation: " + p.name
+}
+```
+
+---
+
+<h2>7. GRAPH LOADER</h2>
+
+<h3>7.1 Graph Construction</h3>
+
+```
+buildGraph(manifest, projectId, environment) = {
+  graph = { nodes: Map(), edges: Map(), manifest: manifest }
+  
+  for each nodeType in manifest.indexes.types:
+    nodes = loadNodesOfType(nodeType, projectId, environment)
+    for each node in nodes:
+      graph.nodes.set(node.id, node)
+  
+  resolveDependencies(graph)
+  return graph
+}
+```
+
+<strong>Formel:</strong>
+```
+buildGraph(M, p_id, env) = {
+  G = { N: Map(), E: Map(), M: M }
+  
+  ∀t ∈ M.indexes.types:
+    N_t = loadNodes(t, p_id, env)
+    ∀n ∈ N_t:
+      G.N[n.id] = n
+  
+  resolve(G)
+  return G
+}
+```
+
+<h3>7.2 Lazy Loading</h3>
+
+```
+loadNodeLazy(nodeId) = {
+  if cache.has(nodeId):
+    return cache.get(nodeId)
+  else:
+    node = loadNode(nodeId)
+    cache.set(nodeId, node)
+    return node
+}
+```
+
+<strong>Formel:</strong>
+```
+loadLazy(n_id) = {
+  if n_id ∈ C:
+    return C[n_id]
+  else:
+    n = loadNode(n_id)
+    C[n_id] = n
+    return n
+}
+```
+
+---
+
+<h2>8. HTTP RESOURCE MONITOR</h2>
+
+<h3>8.1 Fetch Request Monitoring</h3>
+
+```
+monitorFetch(request) = {
+  response = await fetch(request)
+  if response.status == 404:
+    logError({
+      url: request.url,
+      status: 404,
+      timestamp: now,
+      type: 'fetch'
+    })
+  return response
+}
+```
+
+<strong>Formel:</strong>
+```
+monitorFetch(r) = {
+  res = await fetch(r)
+  if res.status == 404:
+    logError({ url: r.url, status: 404, ts: t_now, type: 'fetch' })
+  return res
+}
+```
+
+<h3>8.2 Resource Error Detection</h3>
+
+```
+detectResourceError(event) = {
+  if event.target.tagName in ['SCRIPT', 'LINK', 'IMG', 'FONT']:
+    if event.target.src or event.target.href:
+      checkResource(event.target.src || event.target.href)
+}
+```
+
+<strong>Formel:</strong>
+```
+detectResourceError(e) = {
+  if e.target.tagName ∈ {'SCRIPT', 'LINK', 'IMG', 'FONT'}:
+    url = e.target.src ∨ e.target.href
+    if url:
+      checkResource(url)
+}
+```
+
+<h3>8.3 Error Tracking</h3>
+
+```
+trackError(error) = {
+  errorStore[error.url] = {
+    count: (errorStore[error.url]?.count || 0) + 1,
+    firstSeen: errorStore[error.url]?.firstSeen || now,
+    lastSeen: now,
+    priority: calculatePriority(error)
+  }
+}
+```
+
+<strong>Formel:</strong>
+```
+trackError(e) = {
+  E[e.url] = {
+    count: (E[e.url]?.count || 0) + 1,
+    firstSeen: E[e.url]?.firstSeen || t_now,
+    lastSeen: t_now,
+    priority: priority(e)
+  }
+}
+```
+
+<h3>8.4 Priority Calculation</h3>
+
+```
+calculatePriority(error) = {
+  if error.count > 10: return 'critical'
+  if error.count > 5: return 'high'
+  if error.count > 2: return 'medium'
+  return 'low'
+}
+```
+
+<strong>Formel:</strong>
+```
+priority(e) = {
+  if e.count > 10: return 'critical'
+  if e.count > 5: return 'high'
+  if e.count > 2: return 'medium'
+  return 'low'
+}
+```
+
+---
+
+<h2>9. FORTRESS GUARD SYSTEM</h2>
+
+<h3>9.1 Master Guard Function</h3>
+
+```
+runWithFortressGuard(actionName, context, action) = {
+  // 1. Heart Check
+  if not fixboxHeartMonitor.isHealthy():
+    return { status: 'blocked', reason: 'heart_not_healthy' }
+  
+  // 2. Load Settings
+  settings = await settingsLoader.loadAll()
+  
+  // 3. Katapult Shield
+  if not katapultShieldSystem.allow(context):
+    katapultShieldSystem.reinforceFromAttack(context)
+    return { status: 'blocked', reason: 'katapult_attack_neutralized' }
+  
+  // 4. Pre-Code-Verification
+  if context.code and not preCodeVerificationSystem.verify(context.code):
+    chainSystem.handleBrokenChain(context)
+    return { status: 'blocked', reason: 'pre_code_verification_failed' }
+  
+  // 5. Chain-System
+  if not chainSystem.isValid(actionName, context):
+    return { status: 'blocked', reason: 'chain_violation' }
+  
+  // 6. Execute Action
+  try:
+    result = await action()
+    return { status: 'ok', result: result }
+  catch error:
+    autofixEngine.fromError(error, context)
+    return { status: 'error', error: error }
+  finally:
+    fixboxHeartMonitor.checkAfterAction()
+}
+```
+
+<strong>Formel:</strong>
+```
+guard(action, ctx, fn) = {
+  if ¬heart.isHealthy():
+    return { status: 'blocked', reason: 'heart_not_healthy' }
+  
+  S = loadSettings()
+  
+  if ¬shield.allow(ctx):
+    shield.reinforce(ctx)
+    return { status: 'blocked', reason: 'katapult_attack' }
+  
+  if ctx.code ∧ ¬preVerify(ctx.code):
+    chain.handleBroken(ctx)
+    return { status: 'blocked', reason: 'pre_verification_failed' }
+  
+  if ¬chain.isValid(action, ctx):
+    return { status: 'blocked', reason: 'chain_violation' }
+  
+  try:
+    r = await fn()
+    return { status: 'ok', result: r }
+  catch e:
+    autofix(e, ctx)
+    return { status: 'error', error: e }
+  finally:
+    heart.checkAfter()
+}
+```
+
+<h3>9.2 Katapult Shield</h3>
+
+```
+katapultShield.allow(context) = {
+  // Layer 1: Input Sanitization
+  if not sanitizeInput(context):
+    return false
+  
+  // Layer 2: Pattern Detection
+  if detectMaliciousPattern(context):
+    return false
+  
+  // Layer 3: Morality Check
+  if not passesMoralPolicy(context):
+    return false
+  
+  // Layer 4: Dimensional Compatibility
+  if not withinSafeDimensions(context):
+    return false
+  
+  return true
+}
+```
+
+<strong>Formel:</strong>
+```
+shield.allow(ctx) = {
+  if ¬sanitize(ctx): return false
+  if detectMalicious(ctx): return false
+  if ¬moralCheck(ctx): return false
+  if ¬safeDimensions(ctx): return false
+  return true
+}
+```
+
+<h3>9.3 Chain System Validation</h3>
+
+```
+chainSystem.isValid(actionName, context) = {
+  prevState = getPreviousState(context)
+  nextState = predictNextState(context)
+  
+  if not prevState or not nextState:
+    return false
+  
+  if not isConnected(prevState, context, nextState):
+    return false
+  
+  return true
+}
+```
+
+<strong>Formel:</strong>
+```
+chain.isValid(a, ctx) = {
+  s_prev = getPrevious(ctx)
+  s_next = predictNext(ctx)
+  
+  if ¬s_prev ∨ ¬s_next:
+    return false
+  
+  if ¬connected(s_prev, ctx, s_next):
+    return false
+  
+  return true
+}
+```
+
+---
+
+<h2>10. TELBANK SYSTEM</h2>
+
+<h3>10.1 Transfer Forward (Fiat → Krypto → Wallet)</h3>
+
+```
+transferForward(fiatAmount, fiatCurrency) = {
+  // Step 1: Fiat → Krypto on Exchange
+  cryptoAmount = exchange.convert(fiatAmount, fiatCurrency, 'ETH')
+  
+  // Step 2: Krypto → TPGA Wallet
+  walletAddress = getTPGAWalletAddress()
+  transaction = sendCrypto(cryptoAmount, walletAddress)
+  
+  return {
+    direction: 'forward',
+    fiatAmount: fiatAmount,
+    fiatCurrency: fiatCurrency,
+    cryptoAmount: cryptoAmount,
+    cryptoSymbol: 'ETH',
+    transaction: transaction
+  }
+}
+```
+
+<strong>Formel:</strong>
+```
+transferForward(a_fiat, c_fiat) = {
+  a_crypto = exchange.convert(a_fiat, c_fiat, 'ETH')
+  addr = getWallet()
+  tx = send(a_crypto, addr)
+  
+  return {
+    direction: 'forward',
+    fiat: { amount: a_fiat, currency: c_fiat },
+    crypto: { amount: a_crypto, symbol: 'ETH' },
+    transaction: tx
+  }
+}
+```
+
+<h3>10.2 Transfer Backward (Wallet → Krypto → Fiat)</h3>
+
+```
+transferBackward(cryptoAmount, cryptoSymbol) = {
+  // Step 1: Wallet → Exchange
+  walletAddress = getTPGAWalletAddress()
+  transaction = sendFromWallet(cryptoAmount, exchangeAddress)
+  
+  // Step 2: Krypto → Fiat on Exchange
+  fiatAmount = exchange.convert(cryptoAmount, cryptoSymbol, 'EUR')
+  
+  // Step 3: Fiat → Bank/Skrill
+  bankTransfer = sendFiat(fiatAmount, 'EUR', bankAccount)
+  
+  return {
+    direction: 'backward',
+    cryptoAmount: cryptoAmount,
+    cryptoSymbol: cryptoSymbol,
+    fiatAmount: fiatAmount,
+    fiatCurrency: 'EUR',
+    transaction: transaction,
+    bankTransfer: bankTransfer
+  }
+}
+```
+
+<strong>Formel:</strong>
+```
+transferBackward(a_crypto, s_crypto) = {
+  addr_wallet = getWallet()
+  addr_exchange = getExchange()
+  tx = sendFromWallet(a_crypto, addr_exchange)
+  
+  a_fiat = exchange.convert(a_crypto, s_crypto, 'EUR')
+  bank = sendFiat(a_fiat, 'EUR', bankAccount)
+  
+  return {
+    direction: 'backward',
+    crypto: { amount: a_crypto, symbol: s_crypto },
+    fiat: { amount: a_fiat, currency: 'EUR' },
+    transaction: tx,
+    bankTransfer: bank
+  }
+}
+```
+
+---
+
+<h2>11. INDUSTRIAL FABRICATION ROUTINE</h2>
+
+<h3>11.1 Pre-Action Workflow</h3>
+
+```
+preActionWorkflow() = {
+  // Step 1: Load Settings
+  settings = loadSettingsManifest()
+  
+  // Step 2: Activate Console Monitoring
+  consoleMonitor.activate()
+  
+  // Step 3: Pre-Code-Verification
+  preCodeVerification.activate()
+  
+  // Step 4: Activate All MCPs
+  mcp.playwright.activate()
+  mcp.codebaseSearch.activate()
+  mcp.fileOperations.activate()
+  mcp.terminal.activate()
+  mcp.webSearch.activate()
+  
+  // Step 5: Neuronal Dimensional Catalyzer
+  neuronalCatalyzer.activate()
+}
+```
+
+<strong>Formel:</strong>
+```
+preAction() = {
+  S = loadSettings()
+  console.activate()
+  preVerify.activate()
+  ∀m ∈ MCP: m.activate()
+  neuronal.activate()
+}
+```
+
+<h3>11.2 During-Action Workflow</h3>
+
+```
+duringActionWorkflow(code) = {
+  // Step 1: Character-by-Character Verification
+  for each char in code:
+    if not verifyCharacter(char):
+      return { valid: false, error: 'Invalid character at position ' + i }
+  
+  // Step 2: Chain-System Validation
+  if not chainSystem.validate(code):
+    return { valid: false, error: 'Chain violation' }
+  
+  // Step 3: Real-Time Error Detection
+  if detectHighRisk(code):
+    return { valid: false, error: 'High risk detected', quarantine: true }
+  
+  return { valid: true }
+}
+```
+
+<strong>Formel:</strong>
+```
+duringAction(code) = {
+  ∀i, c ∈ code:
+    if ¬verifyChar(c):
+      return { valid: false, error: 'Invalid char at ' + i }
+  
+  if ¬chain.validate(code):
+    return { valid: false, error: 'Chain violation' }
+  
+  if highRisk(code):
+    return { valid: false, error: 'High risk', quarantine: true }
+  
+  return { valid: true }
+}
+```
+
+<h3>11.3 Post-Action Workflow</h3>
+
+```
+postActionWorkflow() = {
+  // Step 1: Post-Code-Verification
+  runFullTestSuite()
+  runPostCodeConsistencyChecks()
+  
+  // Step 2: Error Prevention Update
+  if errors:
+    extractErrorPatterns()
+    storeErrorPatterns()
+    updateNeuronalModel()
+  
+  // Step 3: Console Heart Check
+  consoleHeart.check()
+}
+```
+
+<strong>Formel:</strong>
+```
+postAction() = {
+  runTests()
+  runConsistency()
+  
+  if errors:
+    patterns = extract(errors)
+    store(patterns)
+    updateNeuronal(patterns)
+  
+  heart.check()
+}
+```
+
+---
+
+<h2>12. CHAIN-SYSTEM MATRIX</h2>
+
+<h3>12.1 Chain Validation</h3>
+
+```
+chainValidation(action, context) = {
+  // T1: Syntax & Types
+  if not validateSyntax(action):
+    return false
+  
+  // T2: Architecture Conformity
+  if not validateArchitecture(action):
+    return false
+  
+  // T3: Runtime Risk Heuristic
+  if not validateRuntimeRisk(action):
+    return false
+  
+  // T∞: NDA/Error Pattern
+  if not validateErrorPattern(action):
+    return false
+  
+  return true
+}
+```
+
+<strong>Formel:</strong>
+```
+chainValidate(a, ctx) = {
+  if ¬T1.syntax(a): return false
+  if ¬T2.architecture(a): return false
+  if ¬T3.runtimeRisk(a): return false
+  if ¬T∞.errorPattern(a): return false
+  return true
+}
+```
+
+<h3>12.2 Chain Gear System</h3>
+
+```
+gearSystem = {
+  chain: { symbol: 'T,.', interlock: 'T,,.' },
+  gear: { symbol: 'T,,.', interlock: ['T,.', 'T,,,.,'] },
+  sprocket: { symbol: 'T,,,.,', interlock: 'T,,.' }
+}
+```
+
+<strong>Formel:</strong>
+```
+G = {
+  chain: { symbol: 'T,.', interlock: 'T,,.' },
+  gear: { symbol: 'T,,.', interlock: {'T,.', 'T,,,.,'} },
+  sprocket: { symbol: 'T,,,.,', interlock: 'T,,.' }
+}
+```
+
+---
+
+<h2>13. KATAPULT-SHIELD SYSTEM</h2>
+
+<h3>13.1 Input Sanitization</h3>
+
+```
+sanitizeInput(input) = {
+  // Character Whitelist
+  allowedChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,;:-_()[]{}<>!?@#$%^&*+=/\\|`~"\''
+  
+  for each char in input:
+    if char not in allowedChars:
+      return false
+  
+  // Length Limits
+  if length(input) > MAX_LENGTH:
+    return false
+  
+  // Encoding Validation
+  if not isValidEncoding(input):
+    return false
+  
+  return true
+}
+```
+
+<strong>Formel:</strong>
+```
+sanitize(i) = {
+  A = allowedChars
+  ∀c ∈ i:
+    if c ∉ A: return false
+  
+  if |i| > MAX_LENGTH: return false
+  if ¬validEncoding(i): return false
+  
+  return true
+}
+```
+
+<h3>13.2 Pattern Detection</h3>
+
+```
+detectMaliciousPattern(input) = {
+  patterns = loadAttackPatterns()
+  
+  for each pattern in patterns:
+    if matches(input, pattern):
+      return true
+  
+  return false
+}
+```
+
+<strong>Formel:</strong>
+```
+detectMalicious(i) = {
+  P = loadPatterns()
+  ∀p ∈ P:
+    if matches(i, p): return true
+  return false
+}
+```
+
+<h3>13.3 Neutralize and Learn</h3>
+
+```
+neutralizeAndLearn(attack) = {
+  // Block execution
+  blockExecution(attack)
+  
+  // Log to console
+  logToConsole(attack)
+  
+  // Store for training
+  storeForTraining(attack)
+  
+  // Reinforce shield
+  reinforceShield(attack)
+}
+```
+
+<strong>Formel:</strong>
+```
+neutralize(a) = {
+  block(a)
+  log(a)
+  store(a)
+  reinforce(a)
+}
+```
+
+---
+
+<h2>14. PRE-CODE-VERIFICATION SYSTEM</h2>
+
+<h3>14.1 Character-by-Character Verification</h3>
+
+```
+verifyCharacterByCharacter(code) = {
+  allowList = loadCharacterAllowList()
+  
+  for i = 0 to length(code) - 1:
+    char = code[i]
+    if char not in allowList:
+      return { valid: false, error: 'Invalid character at position ' + i, char: char }
+  
+  return { valid: true }
+}
+```
+
+<strong>Formel:</strong>
+```
+verifyCharByChar(code) = {
+  A = loadAllowList()
+  ∀i, c ∈ code:
+    if c ∉ A:
+      return { valid: false, error: 'Invalid char at ' + i, char: c }
+  return { valid: true }
+}
+```
+
+<h3>14.2 Harmonization with Architecture</h3>
+
+```
+harmonizeWithArchitecture(code) = {
+  architecture = loadArchitecture()
+  
+  for each statement in parse(code):
+    if not conformsToArchitecture(statement, architecture):
+      return { valid: false, error: 'Architecture violation: ' + statement }
+  
+  return { valid: true }
+}
+```
+
+<strong>Formel:</strong>
+```
+harmonize(code) = {
+  A = loadArchitecture()
+  ∀s ∈ parse(code):
+    if ¬conforms(s, A):
+      return { valid: false, error: 'Architecture violation: ' + s }
+  return { valid: true }
+}
+```
+
+---
+
+<h2>SCHLUSSBEMERKUNG</h2>
+
+Diese Formelsammlung bildet die komplette Logik von Together Systems als mathematische/algorithmische Formeln ab. Jede Formel kann in ein Programm umgewandelt werden. Die Formeln sind unabhängig vom Original-Code, spiegeln aber die gesamte Architektur wider.
+
+<strong>Branding:</strong> `.{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.`
+
+<strong>Status:</strong> Unverschlüsselt, unversioniert, voll zugänglich - Freundschaftsgeschenk für die Welt
+</body>
+</html>

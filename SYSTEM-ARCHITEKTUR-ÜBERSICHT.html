@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SYSTEM-ARCHITEKTUR-ÜBERSICHT</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>System-Architektur-Übersicht – Together Systems</h1>
+
+<strong>LOGO:</strong> `T,.&T,,.&T,,,.(C)TEL1.NL`  
+<strong>BRANDING:</strong> Together Systems – International TTT  
+<strong>VERSION:</strong> 1.0.0  
+<strong>DATUM:</strong> 2025-01-15
+
+---
+
+<h2>🏗️ GESAMTARCHITEKTUR</h2>
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    FRONTEND LAYER                            │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │  Portal  │  │ Manifest │  │Dashboard │  │  SUOS     │  │
+│  │          │  │  Forum   │  │          │  │  System   │  │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
+│                                                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │ Telbank  │  │  Source  │  │Laboratory│  │  Legal   │  │
+│  │          │  │  Code    │  │          │  │  Hub     │  │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    API LAYER                                │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │ Presence │  │ Telbank  │  │ Manifest │  │  Auth    │  │
+│  │   API    │  │   API    │  │   API    │  │  API     │  │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  BACKEND LAYER                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │Cloudflare│  │Cloudflare│  │Cloudflare│  │Cloudflare│  │
+│  │ Workers  │  │    D1    │  │    R2    │  │   CDN    │  │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│              VERSCHLÜSSELUNGS-LAYER                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
+│  │AES-256- │  │ Ed25519  │  │HMAC-SHA256│  │  PBKDF2  │  │
+│  │  GCM    │  │          │  │           │  │          │  │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+<h2>📦 KOMPONENTEN-ÜBERSICHT</h2>
+
+<h3>Frontend-Komponenten</h3>
+```javascript
+{
+  "portal": {
+    "file": "index.html",
+    "purpose": "Hauptportal",
+    "features": ["Navigation", "Übersicht", "Links"]
+  },
+  "manifest-forum": {
+    "file": "manifest-forum.html",
+    "purpose": "Offline Forum",
+    "features": ["Lokale Speicherung", "Export/Import", "Rich Media"]
+  },
+  "manifest-portal": {
+    "file": "manifest-portal.html",
+    "purpose": "Online Portal",
+    "features": ["API-Integration", "Live-Updates", "Verifikation"]
+  },
+  "encryption-dashboard": {
+    "file": "encryption-dashboard.html",
+    "purpose": "Verschlüsselungs-Verwaltung",
+    "features": ["Versionierung", "Supermarktleistungsschlüssel", "Statistiken"]
+  },
+  "suos-system": {
+    "file": "suos-braintext-system.html",
+    "purpose": "SUOS-offene Code-Bereitstellung",
+    "features": ["Ein-Schlüssel-Freischaltung", "Entschlüsselung", "Quittung"]
+  },
+  "source-code-fach": {
+    "file": "source-code-fach.html",
+    "purpose": "Producer-Zugriff",
+    "features": ["Code-Anzeige", "Download", "Verifikation"]
+  },
+  "laboratory": {
+    "file": "encryption-laboratory.html",
+    "purpose": "Forschungs-Labor",
+    "features": ["Experimentelle Verschlüsselungen", "Zugang-Anfrage"]
+  },
+  "telbank": {
+    "file": "TELBANK/index.html",
+    "purpose": "TPGA Telbank",
+    "features": ["MetaMask-Integration", "Transfers", "Liquiditäts-Management"]
+  }
+}
+```
+
+<h3>Backend-Komponenten</h3>
+```javascript
+{
+  "presence-api": {
+    "file": "functions/api/presence/verify.js",
+    "endpoint": "/api/presence/verify",
+    "method": "POST",
+    "purpose": "Token-Verifikation",
+    "features": ["HMAC-SHA256", "Thinker-ID-Generierung", "Presence-Update"]
+  },
+  "telbank-api": {
+    "file": "functions/api/telbank/transfers.js",
+    "endpoint": "/api/telbank/transfers",
+    "methods": ["GET", "POST"],
+    "purpose": "Transfer-Verwaltung",
+    "features": ["Transfer-Erstellung", "Transfer-Liste", "Status-Updates"]
+  }
+}
+```
+
+<h3>Datenbank-Komponenten</h3>
+```sql
+{
+  "presence": {
+    "table": "presence",
+    "columns": ["thinker_id", "token", "pair_code", "status", "last_seen", "room_id"],
+    "purpose": "User-Präsenz",
+    "indexes": ["thinker_id (PRIMARY)", "token"]
+  },
+  "transfers": {
+    "table": "transfers",
+    "columns": ["id", "flow", "amount", "currency", "from_address", "to_address", "status", "created_at", "updated_at"],
+    "purpose": "Telbank-Transfers",
+    "indexes": ["id (PRIMARY)", "created_at"]
+  },
+  "manifest_posts": {
+    "table": "manifest_posts",
+    "columns": ["id", "user_id", "title", "content", "media_urls", "created_at", "updated_at"],
+    "purpose": "Manifest-Beiträge",
+    "indexes": ["id (PRIMARY)", "user_id", "created_at"]
+  }
+}
+```
+
+---
+
+<h2>🔄 DATENFLUSS</h2>
+
+<h3>User-Authentifizierung</h3>
+```
+User → Token generieren → HMAC-SHA256 → API → Verifikation → Thinker-ID → Presence Update
+```
+
+<h3>Verschlüsselung</h3>
+```
+User-Key → PBKDF2 → AES-Key → AES-256-GCM → Verschlüsseltes Modul → Manifest → Signatur (Ed25519)
+```
+
+<h3>Entschlüsselung</h3>
+```
+User-Key → PBKDF2 → AES-Key → Manifest laden → Signatur prüfen → AES-256-GCM → Entschlüsseltes Modul
+```
+
+<h3>Transfer-Prozess</h3>
+```
+User → Transfer-Formular → API → Datenbank → Status Update → Response
+```
+
+---
+
+<h2>🔐 SICHERHEITS-ARCHITEKTUR</h2>
+
+<h3>Verschlüsselungs-Ebenen</h3>
+```
+Layer 1: User-Key (Input)
+    ↓
+Layer 2: PBKDF2 Key Derivation (200.000 Iterationen)
+    ↓
+Layer 3: AES-256-GCM Verschlüsselung
+    ↓
+Layer 4: Ed25519 Signatur (Producer)
+    ↓
+Layer 5: Manifest (Metadaten + Signatur)
+```
+
+<h3>Authentifizierungs-Ebenen</h3>
+```
+Layer 1: Token-Generierung (localStorage)
+    ↓
+Layer 2: HMAC-SHA256 Signatur
+    ↓
+Layer 3: API-Verifikation
+    ↓
+Layer 4: Thinker-ID-Generierung
+    ↓
+Layer 5: Presence-Update
+```
+
+---
+
+<h2>📊 STORAGE-ARCHITEKTUR</h2>
+
+<h3>LocalStorage-Struktur</h3>
+```javascript
+{
+  "mot_user_id_v1": "user-id-string",
+  "mot_device_keypair": "ed25519-keypair (optional)",
+  "activationReceipt": "receipt-json",
+  "supermarketKey": "key-json",
+  "console-logs": "logs-array"
+}
+```
+
+<h3>Datenbank-Struktur</h3>
+```sql
+-- Presence
+presence (thinker_id PRIMARY KEY, token, pair_code, status, last_seen, room_id)
+
+-- Transfers
+transfers (id PRIMARY KEY, flow, amount, currency, from_address, to_address, status, created_at, updated_at)
+
+-- Manifest Posts
+manifest_posts (id PRIMARY KEY, user_id, title, content, media_urls, created_at, updated_at)
+```
+
+<h3>Cloudflare R2 (Object Storage)</h3>
+```
+bucket: together-systems-assets
+structure:
+  /encrypted-modules/
+    /v1.0.0/
+      module.enc
+      manifest.json
+  /signatures/
+    /producer.pub
+  /backups/
+    /YYYY-MM-DD/
+      backup.json
+```
+
+---
+
+<h2>🌐 NETZWERK-ARCHITEKTUR</h2>
+
+<h3>CDN-Struktur</h3>
+```
+User Request
+    ↓
+Cloudflare CDN (Global)
+    ↓
+GitHub Pages (Origin)
+    ↓
+Response (Cached/Origin)
+```
+
+<h3>API-Struktur</h3>
+```
+User Request
+    ↓
+Cloudflare Workers (Edge)
+    ↓
+Cloudflare D1 (Database)
+    ↓
+Cloudflare R2 (Storage)
+    ↓
+Response
+```
+
+---
+
+<h2>🔧 KONFIGURATIONS-ARCHITEKTUR</h2>
+
+<h3>Settings-Ordner-Struktur</h3>
+```
+settings/
+├── settings-manifest.json          # Hauptmanifest
+├── config/
+│   ├── encryption-config.json      # Verschlüsselungs-Config
+│   ├── encryption-versioning.json  # Verschlüsselungs-Versionierung
+│   └── deployment-config.json      # Deployment-Config
+├── schemas/
+│   └── encryption.policy.json     # Verschlüsselungs-Policy
+└── CONSOLE-MONITORING-SYSTEM.json  # Konsole-Monitoring
+```
+
+<h3>Konfigurations-Hierarchie</h3>
+```
+1. Settings-Manifest (Root)
+    ↓
+2. Config-Files (Spezifisch)
+    ↓
+3. Schema-Files (Validierung)
+    ↓
+4. Runtime-Config (Dynamisch)
+```
+
+---
+
+<h2>🚀 DEPLOYMENT-ARCHITEKTUR</h2>
+
+<h3>Frontend-Deployment</h3>
+```
+Local Development
+    ↓
+Git Commit & Push
+    ↓
+GitHub Repository
+    ↓
+GitHub Pages (Auto-Deploy)
+    ↓
+Cloudflare CDN (Propagation)
+    ↓
+User (Global)
+```
+
+<h3>Backend-Deployment</h3>
+```
+Local Development
+    ↓
+Wrangler Build
+    ↓
+Cloudflare Workers Deploy
+    ↓
+Cloudflare Edge Network
+    ↓
+User (Global)
+```
+
+---
+
+<h2>📈 MONITORING-ARCHITEKTUR</h2>
+
+<h3>Monitoring-Layer</h3>
+```
+Application Layer
+    ↓
+Console-Monitoring (Client)
+    ↓
+Error-Detection
+    ↓
+Settings-Ordner (Lösungen)
+    ↓
+Auto-Fix (wenn möglich)
+    ↓
+Logging (localStorage + Server)
+```
+
+<h3>Error-Flow</h3>
+```
+Error Occurs
+    ↓
+Error-Detection
+    ↓
+Pattern-Matching
+    ↓
+Known Error? → Yes → Auto-Fix
+    ↓ No
+Settings-Ordner konsultieren
+    ↓
+Solution Generation
+    ↓
+Manual Fix
+    ↓
+Pattern Store Update
+```
+
+---
+
+<h2>🔗 INTEGRATIONS-ARCHITEKTUR</h2>
+
+<h3>Externe Integrationen</h3>
+```
+Together Systems
+    ├── ORCID (Identitätsverifikation)
+    ├── WhatsApp (Kommunikation)
+    ├── GoFundMe (Finanzierung)
+    ├── GitHub (Code-Hosting)
+    ├── Cloudflare (Infrastruktur)
+    └── MetaMask (Krypto-Wallet, geplant)
+```
+
+<h3>API-Integrationen</h3>
+```
+Frontend
+    ├── Presence API → Cloudflare Workers
+    ├── Telbank API → Cloudflare Workers
+    ├── Manifest API → Cloudflare Workers
+    └── External APIs → Direct (ORCID, etc.)
+```
+
+---
+
+<strong>Erstellt:</strong> 2025-01-15  
+<strong>Version:</strong> 1.0.0  
+<strong>Producer:</strong> Raymond Demitrio Tel
+</body>
+</html>
