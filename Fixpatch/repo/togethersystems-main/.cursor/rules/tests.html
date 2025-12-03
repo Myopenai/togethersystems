@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>tests</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>E2E-Test- und Automations-Regeln für TogetherSystems Portal</h1>
+
+<h2>1. Test-Suite (Playwright)</h2>
+
+- <strong>Framework</strong>: Playwright (`@playwright/test`)
+- <strong>Testprojekt</strong>: `businessconnecthub-playwright-tests-full`
+- <strong>Konfigurationsdatei</strong>: `businessconnecthub-playwright-tests-full/playwright.config.ts`
+- <strong>Testverzeichnis</strong>: `businessconnecthub-playwright-tests-full/tests`
+
+<h3>1.1 Standard-Befehle</h3>
+
+- <strong>Vom Projekt-Root aus</strong> (empfohlen):
+  - `npm run test:e2e`  
+    → führt die Chromium-Tests im Unterordner `businessconnecthub-playwright-tests-full` aus.
+- <strong>Direkt im Test-Ordner</strong>:
+  - `cd businessconnecthub-playwright-tests-full`
+  - `npx playwright test --project=Chromium`
+
+<h3>1.2 Basis-URL / Server</h3>
+
+- <strong>Lokal (Default in Config)</strong>:
+  - Basis-URL: `http://localhost:9323`
+  - Vor den Tests MUSS im Projekt-Root laufen:
+    - `python -m http.server 9323`
+- <strong>Gegen Cloudflare Pages (ohne lokalen Server)</strong>:
+  - `PLAYWRIGHT_BASE_URL="https://ts-portal.pages.dev" npm run test:e2e`
+
+<h2>2. Wann Tests automatisch ausführen</h2>
+
+Cursor / der Agent soll nach <strong>größeren Änderungen</strong> an diesen Dateien IMMER `npm run test:e2e` ausführen:
+
+- `index.html`
+- `manifest-forum.html`
+- `manifest-portal.html`
+- `admin.html`
+- `admin-monitoring.html`
+- `business-admin.html`
+- `honeycomb.html`
+- `legal-hub.html`
+- `TELBANK/<em></em>`
+- `functions/api/<em></em>`
+- `functions/ws.js`
+- `mot-core.js`
+- alle Dateien unter `businessconnecthub-playwright-tests-full/tests/<em></em>`
+
+Regel:
+
+1. Code ändern.
+2. `npm run test:e2e` ausführen.
+3. Testergebnisse auswerten.
+4. Fehler im Code beheben, bis alle relevanten Tests grün sind.
+
+<h2>3. Playwright MCP / Tools</h2>
+
+- Playwright kann zusätzlich als <strong>MCP-Tool</strong> in Cursor konfiguriert werden (z. B. für interaktive Browser-Steuerung).
+- Diese Konfiguration erfolgt <strong>in Cursor selbst</strong>, nicht im Repo.  
+  Dieses Projekt liefert dafür:
+  - klare Test-Kommandos (`npm run test:e2e`),
+  - eine vollständige Test-Suite,
+  - und eine definierte lokale Basis-URL (`http://localhost:9323`).
+
+Empfehlung für Agent/YOLO-Modus:
+
+- Nach relevanten Code-Änderungen:
+  - `npm run test:e2e` ausführen.
+  - Bei Fehlschlägen die Fehlerursachen im Code suchen und beheben.
+  - Erst dann neue Änderungen vorschlagen oder deployen.
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

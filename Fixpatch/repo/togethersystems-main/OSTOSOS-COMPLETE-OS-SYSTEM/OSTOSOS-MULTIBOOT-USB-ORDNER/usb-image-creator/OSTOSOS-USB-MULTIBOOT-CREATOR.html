@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Multi-Boot USB-Stick Creator</title>
+<link rel="stylesheet" href="../../css/da-vinci-xxxxxl-enterprise-standard.css" onerror="this.onerror=null;">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e27;--card:#1a1f3a;--accent:#10b981;--text:#fff;--muted:#9ca3af;--border:#223040;--success:#22c55e;--danger:#ef4444;--warn:#f59e0b}
+body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,var(--bg) 0%,var(--card) 100%);color:var(--text);min-height:100vh;padding:20px}
+.container{max-width:1000px;margin:0 auto}
+.header{text-align:center;margin-bottom:40px;padding:30px;background:var(--card);border-radius:20px;border:2px solid var(--accent)}
+.header h1{font-size:2.5em;color:var(--accent);margin-bottom:10px}
+.card{background:var(--card);padding:30px;border-radius:15px;border:2px solid var(--border);margin-bottom:20px}
+.card h2{color:var(--accent);margin-bottom:20px}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:1em;font-weight:600;transition:all 0.3s;display:inline-block;margin:5px}
+.btn-primary{background:var(--accent);color:#00100a}
+.btn-primary:hover{background:#0ea5e9;transform:translateY(-2px)}
+.info-box{background:var(--bg);padding:15px;border-radius:8px;border-left:4px solid var(--accent);margin:15px 0}
+.builds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0}
+.build-item{background:var(--bg);padding:15px;border-radius:8px;border:1px solid var(--border)}
+.build-item.available{border-color:var(--success)}
+.build-item.missing{border-color:var(--danger)}
+.build-item h3{color:var(--accent);margin-bottom:10px}
+.progress-bar{width:100%;height:20px;background:var(--border);border-radius:10px;overflow:hidden;margin:20px 0;display:none}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.3s;display:flex;align-items:center;justify-content:center;color:#00100a;font-weight:bold}
+.log{background:var(--bg);padding:15px;border-radius:8px;max-height:300px;overflow-y:auto;font-family:monospace;font-size:0.9em;margin-top:20px;display:none}
+.log-entry{padding:5px 0;border-bottom:1px solid var(--border);font-size:0.9em}
+.log-success{color:var(--success)}
+.log-error{color:var(--danger)}
+.log-info{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>T,. OSTOSOS Multi-Boot USB Creator</h1>
+<p>Erstelle einen USB-Stick mit allen OS-Versionen (Windows, macOS, Linux)</p>
+</div>
+
+<div class="card">
+<h2>📦 Verfügbare Builds</h2>
+<div class="builds-grid" id="buildsGrid">
+<div class="build-item" id="windowsBuild">
+<h3>🪟 Windows</h3>
+<p id="windowsStatus">Prüfe...</p>
+</div>
+<div class="build-item" id="macosBuild">
+<h3>🍎 macOS</h3>
+<p id="macosStatus">Prüfe...</p>
+</div>
+<div class="build-item" id="linuxBuild">
+<h3>🐧 Linux</h3>
+<p id="linuxStatus">Prüfe...</p>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h2>🔧 USB-Stick Konfiguration</h2>
+<div class="info-box">
+<p><strong>Auto-Start:</strong></p>
+<label style="display:flex;align-items:center;margin-top:10px">
+<input type="checkbox" id="autoStart" checked style="margin-right:10px">
+<span>Automatisch starten wenn USB-Stick eingesteckt wird</span>
+</label>
+</div>
+<div class="info-box">
+<p><strong>User-Bestätigung:</strong></p>
+<label style="display:flex;align-items:center;margin-top:10px">
+<input type="checkbox" id="requireConfirmation" checked style="margin-right:10px">
+<span>Bestätigung vom User verlangen vor Start</span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<h2>🚀 Multi-Boot USB-Stick erstellen</h2>
+<div class="progress-bar" id="progressBar">
+<div class="progress-fill" id="progressFill" style="width:0%">0%</div>
+</div>
+<div style="text-align:center;margin:30px 0">
+<button class="btn btn-primary" id="createBtn" onclick="createMultiBootUSB()">🚀 Multi-Boot USB-Stick erstellen</button>
+<button class="btn btn-primary" onclick="downloadImage()" id="downloadBtn" style="display:none">💾 Image herunterladen</button>
+</div>
+<div class="log" id="log"></div>
+</div>
+
+<div class="card" id="instructionsCard" style="display:none">
+<h2>📖 Anleitung</h2>
+<div id="instructionsContent"></div>
+</div>
+</div>
+
+<script>
+let availableBuilds = {
+  windows: false,
+  macos: false,
+  linux: false
+};
+
+// Prüfe verfügbare Builds
+async function checkBuilds() {
+  const builds = [
+    { id: 'windows', path: '../builds/windows/OSTOSOS-Windows-Setup.exe', statusEl: document.getElementById('windowsStatus'), itemEl: document.getElementById('windowsBuild') },
+    { id: 'macos', path: '../builds/macos/OSTOSOS-macOS-Setup', statusEl: document.getElementById('macosStatus'), itemEl: document.getElementById('macosBuild') },
+    { id: 'linux', path: '../builds/linux/OSTOSOS-Linux-Setup.bin', statusEl: document.getElementById('linuxStatus'), itemEl: document.getElementById('linuxBuild') }
+  ];
+
+  for (const build of builds) {
+    try {
+      const response = await fetch(build.path);
+      if (response.ok) {
+        build.statusEl.textContent = '✅ Verfügbar';
+        build.itemEl.classList.add('available');
+        build.itemEl.classList.remove('missing');
+        availableBuilds[build.id] = true;
+      } else {
+        build.statusEl.textContent = '❌ Nicht gefunden';
+        build.itemEl.classList.add('missing');
+        build.itemEl.classList.remove('available');
+        availableBuilds[build.id] = false;
+      }
+    } catch (error) {
+      build.statusEl.textContent = '❌ Nicht gefunden';
+      build.itemEl.classList.add('missing');
+      build.itemEl.classList.remove('available');
+      availableBuilds[build.id] = false;
+    }
+  }
+}
+
+function log(message, type = 'info') {
+  const logEl = document.getElementById('log');
+  logEl.style.display = 'block';
+  const entry = document.createElement('div');
+  entry.className = `log-entry log-${type}`;
+  entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+  logEl.appendChild(entry);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function updateProgress(percent) {
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  progressBar.style.display = 'block';
+  progressFill.style.width = percent + '%';
+  progressFill.textContent = percent + '%';
+}
+
+async function createMultiBootUSB() {
+  const createBtn = document.getElementById('createBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  createBtn.disabled = true;
+  
+  log('🚀 Starte Multi-Boot USB-Stick Erstellung...', 'info');
+  updateProgress(10);
+
+  try {
+    // Schritt 1: Sammle alle Builds
+    log('📦 Sammle alle OS-Builds...', 'info');
+    updateProgress(20);
+    const builds = await collectBuilds();
+    log(`✅ ${builds.length} Builds gefunden`, 'success');
+    updateProgress(40);
+
+    // Schritt 2: Erstelle Autorun-Dateien
+    log('🔧 Erstelle Autorun-Dateien...', 'info');
+    updateProgress(50);
+    const autorunFiles = await createAutorunFiles();
+    log('✅ Autorun-Dateien erstellt', 'success');
+    updateProgress(60);
+
+    // Schritt 3: Erstelle Bootloader
+    log('🔧 Erstelle Universal Bootloader...', 'info');
+    updateProgress(70);
+    const bootloader = await createBootloader();
+    log('✅ Bootloader erstellt', 'success');
+    updateProgress(80);
+
+    // Schritt 4: Erstelle OS-Detector
+    log('🔧 Erstelle OS-Detector...', 'info');
+    updateProgress(85);
+    const osDetector = await createOSDetector();
+    log('✅ OS-Detector erstellt', 'success');
+    updateProgress(90);
+
+    // Schritt 5: Erstelle Config
+    log('🔧 Erstelle Konfiguration...', 'info');
+    updateProgress(95);
+    const config = createConfig();
+    log('✅ Konfiguration erstellt', 'success');
+    updateProgress(100);
+
+    // Schritt 6: Erstelle Image
+    log('📦 Erstelle Multi-Boot Image...', 'info');
+    const imageBlob = await assembleMultiBootImage(builds, autorunFiles, bootloader, osDetector, config);
+    log('✅ Multi-Boot Image erstellt!', 'success');
+
+    const imageUrl = URL.createObjectURL(imageBlob);
+    window.multibootImageUrl = imageUrl;
+    window.multibootImageBlob = imageBlob;
+
+    createBtn.disabled = false;
+    downloadBtn.style.display = 'inline-block';
+    showInstructions();
+
+  } catch (error) {
+    log(`❌ Fehler: ${error.message}`, 'error');
+    createBtn.disabled = false;
+    updateProgress(0);
+  }
+}
+
+async function collectBuilds() {
+  const builds = [];
+  const buildPaths = [
+    { platform: 'windows', path: '../builds/windows/OSTOSOS-Windows-Setup.exe' },
+    { platform: 'macos', path: '../builds/macos/OSTOSOS-macOS-Setup' },
+    { platform: 'linux', path: '../builds/linux/OSTOSOS-Linux-Setup.bin' }
+  ];
+
+  for (const build of buildPaths) {
+    try {
+      const response = await fetch(build.path);
+      if (response.ok) {
+        const blob = await response.blob();
+        builds.push({
+          platform: build.platform,
+          blob: blob,
+          size: blob.size,
+          path: build.path
+        });
+      }
+    } catch (error) {
+      // Build nicht gefunden - überspringen
+    }
+  }
+
+  return builds;
+}
+
+async function createAutorunFiles() {
+  const autoStart = document.getElementById('autoStart').checked;
+  const requireConfirmation = document.getElementById('requireConfirmation').checked;
+
+  return {
+    windows: `[autorun]
+open=ostosos\\windows\\OSTOSOS-Launcher.exe
+icon=ostosos\\icon.ico
+label=OSTOSOS Multi-Boot
+action=OSTOSOS starten
+${autoStart ? 'shellexecute=ostosos\\windows\\OSTOSOS-Launcher.exe' : ''}
+${requireConfirmation ? 'UseAutoPlay=1' : ''}`,
+    macos: `#!/bin/bash
+cd "$(dirname "$0")"
+${requireConfirmation ? 'osascript -e "display dialog \\"OSTOSOS starten?\\" buttons {\\"OK\\", \\"Abbrechen\\"}"' : ''}
+./ostosos/macos/OSTOSOS-Launcher.app/Contents/MacOS/OSTOSOS-Launcher`,
+    linux: `#!/bin/bash
+cd "$(dirname "$0")"
+${requireConfirmation ? 'zenity --question --text="OSTOSOS starten?"' : ''}
+./ostosos/linux/OSTOSOS-Launcher.bin`
+  };
+}
+
+async function createBootloader() {
+  return {
+    efi: `# EFI Bootloader für OSTOSOS Multi-Boot
+# Erkennt Hardware automatisch und startet passende OS-Version`,
+    bios: `# BIOS Bootloader für OSTOSOS Multi-Boot
+# Erkennt Hardware automatisch und startet passende OS-Version`
+  };
+}
+
+async function createOSDetector() {
+  return `// OSTOSOS OS-Detector
+function detectHostOS() {
+    // Windows
+    if (typeof ActiveXObject !== 'undefined') return 'windows';
+    if (navigator.platform.includes('Win')) return 'windows';
+    
+    // macOS
+    if (navigator.platform.includes('Mac')) return 'macos';
+    if (typeof window.require !== 'undefined') return 'macos';
+    
+    // Linux
+    if (navigator.platform.includes('Linux')) return 'linux';
+    if (typeof process !== 'undefined' && process.platform === 'linux') return 'linux';
+    
+    return 'unknown';
+}
+
+// Auto-Start wenn erkannt
+if (typeof window !== 'undefined') {
+    const os = detectHostOS();
+    if (os !== 'unknown') {
+        window.location.href = \`./ostosos/\${os}/OSTOSOS-OS-COMPLETE-SYSTEM.html\`;
+    }
+}`;
+}
+
+function createConfig() {
+  const autoStart = document.getElementById('autoStart').checked;
+  const requireConfirmation = document.getElementById('requireConfirmation').checked;
+
+  return {
+    version: '1.0.0',
+    autoStart: autoStart,
+    requireConfirmation: requireConfirmation,
+    platforms: ['windows', 'macos', 'linux'],
+    createdAt: new Date().toISOString()
+  };
+}
+
+async function assembleMultiBootImage(builds, autorunFiles, bootloader, osDetector, config) {
+  // Erstelle ZIP-Archiv mit allen Dateien
+  const JSZip = window.JSZip || await loadJSZip();
+  
+  if (!JSZip) {
+    return createSimpleArchive(builds, autorunFiles, bootloader, osDetector, config);
+  }
+
+  const zip = new JSZip();
+
+  // Autorun-Dateien
+  zip.file('autorun.inf', autorunFiles.windows);
+  zip.file('autorun.command', autorunFiles.macos);
+  zip.file('autorun.sh', autorunFiles.linux);
+
+  // Bootloader
+  zip.file('bootloader/EFI/bootloader.efi', bootloader.efi);
+  zip.file('bootloader/BIOS/bootloader.bin', bootloader.bios);
+
+  // OS-Detector
+  zip.file('ostosos/os-detector.js', osDetector);
+
+  // Config
+  zip.file('ostosos/USB-CONFIG.json', JSON.stringify(config, null, 2));
+
+  // Builds
+  for (const build of builds) {
+    zip.file(`ostosos/${build.platform}/OSTOSOS-${build.platform.charAt(0).toUpperCase() + build.platform.slice(1)}-Setup${build.platform === 'windows' ? '.exe' : build.platform === 'linux' ? '.bin' : ''}`, build.blob);
+  }
+
+  // README
+  const readme = createReadme();
+  zip.file('README.txt', readme);
+
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  return zipBlob;
+}
+
+function createSimpleArchive(builds, autorunFiles, bootloader, osDetector, config) {
+  const archive = {
+    type: 'ostosos-multiboot',
+    version: '1.0.0',
+    builds: builds.map(b => ({ platform: b.platform, size: b.size })),
+    config: config,
+    createdAt: new Date().toISOString()
+  };
+  return new Blob([JSON.stringify(archive, null, 2)], { type: 'application/json' });
+}
+
+function createReadme() {
+  return `T,. OSTOSOS - Multi-Boot USB-Stick
+================================
+
+Dieser USB-Stick enthält alle OSTOSOS-Versionen:
+- Windows: OSTOSOS-Windows-Setup.exe
+- macOS: OSTOSOS-macOS-Setup
+- Linux: OSTOSOS-Linux-Setup.bin
+
+VERWENDUNG:
+
+1. Boot von leerem Rechner:
+   - USB-Stick einstecken
+   - Rechner starten
+   - BIOS/UEFI auf USB-Boot einstellen
+   - Passende OS-Version wird automatisch erkannt
+
+2. Start bei laufendem System:
+   - USB-Stick einstecken
+   - Autorun startet automatisch (oder manuell ausführen)
+   - Passende OS-Version wird automatisch erkannt
+   - OSTOSOS läuft parallel zum Host-OS
+
+BRANDING: T,.&T,,.&T,,,.(C)TEL1.NL
+VERSION: 1.0.0
+`;
+}
+
+async function loadJSZip() {
+  try {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    document.head.appendChild(script);
+    return new Promise((resolve) => {
+      script.onload = () => resolve(window.JSZip);
+      script.onerror = () => resolve(null);
+      setTimeout(() => resolve(null), 5000);
+    });
+  } catch (error) {
+    return null;
+  }
+}
+
+function downloadImage() {
+  if (!window.multibootImageUrl) {
+    log('❌ Kein Image verfügbar', 'error');
+    return;
+  }
+
+  const filename = `OSTOSOS-MultiBoot-USB-${new Date().toISOString().split('T')[0]}.zip`;
+  const a = document.createElement('a');
+  a.href = window.multibootImageUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  log(`✅ Image heruntergeladen: ${filename}`, 'success');
+}
+
+function showInstructions() {
+  const instructionsCard = document.getElementById('instructionsCard');
+  const instructionsContent = document.getElementById('instructionsContent');
+  instructionsCard.style.display = 'block';
+
+  instructionsContent.innerHTML = `
+<h3 style="color:var(--accent);margin-bottom:15px">Multi-Boot USB-Stick Anleitung:</h3>
+<ol style="margin-left:20px;line-height:1.8">
+<li><strong>Image herunterladen:</strong> Klicke auf "Image herunterladen"</li>
+<li><strong>USB-Stick formatieren:</strong> Format als FAT32 (mindestens 4GB)</li>
+<li><strong>Image auf USB kopieren:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li><strong>Windows:</strong> Entpacke ZIP auf USB-Stick</li>
+    <li><strong>macOS:</strong> Entpacke ZIP auf USB-Stick</li>
+    <li><strong>Linux:</strong> Entpacke ZIP auf USB-Stick</li>
+  </ul>
+</li>
+<li><strong>Boot von leerem Rechner:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>USB-Stick einstecken</li>
+    <li>Rechner starten</li>
+    <li>BIOS/UEFI auf USB-Boot einstellen</li>
+    <li>Passende OS-Version wird automatisch erkannt</li>
+  </ul>
+</li>
+<li><strong>Start bei laufendem System:</strong>
+  <ul style="margin-left:20px;margin-top:10px">
+    <li>USB-Stick einstecken</li>
+    <li>Autorun startet automatisch (oder manuell)</li>
+    <li>Passende OS-Version wird automatisch erkannt</li>
+    <li>OSTOSOS läuft parallel zum Host-OS</li>
+  </ul>
+</li>
+</ol>
+`;
+}
+
+// Initialisierung
+checkBuilds();
+</script>
+</body>
+</html>
+

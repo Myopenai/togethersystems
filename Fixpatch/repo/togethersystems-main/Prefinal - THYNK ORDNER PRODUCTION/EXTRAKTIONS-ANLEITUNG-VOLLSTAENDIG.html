@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EXTRAKTIONS-ANLEITUNG-VOLLSTAENDIG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🔐 THYNK ORDERS - Vollständige 1:1 Daten-Extraktion</h1>
+
+<strong>Quelle:</strong> https://thynkorders.com/#/userCenter  
+<strong>Login:</strong> Gentlyoverdone / WebMaster8/  
+<strong>Ziel:</strong> Alle Daten, Dimensionen, neuronale Netzwerke, DB komplett sichern
+
+---
+
+<h2>🚀 SCHNELLSTART (3 SCHRITTE)</h2>
+
+<h3>✅ Schritt 1: Einloggen</h3>
+
+1. Öffnen Sie: <strong>https://thynkorders.com/#/sign-in</strong>
+2. <strong>Username:</strong> `Gentlyoverdone`
+3. <strong>Password:</strong> `WebMaster8/`
+4. <strong>Captcha:</strong> Geben Sie das Captcha ein
+5. Klicken Sie auf <strong>Login</strong>
+
+<h3>✅ Schritt 2: Browser-Konsole öffnen</h3>
+
+1. Drücken Sie <strong>F12</strong> (Developer Tools)
+2. Gehen Sie zum Tab <strong>"Console"</strong>
+
+<h3>✅ Schritt 3: Extraktions-Script ausführen</h3>
+
+<strong>Option A: Komplett automatisch</strong>
+
+1. Öffnen Sie die Datei: <strong>`scripts/browser-extraction-script.js`</strong>
+2. Kopieren Sie den <strong>gesamten Inhalt</strong>
+3. Fügen Sie in die Browser-Konsole ein
+4. Drücken Sie <strong>Enter</strong>
+5. Führen Sie aus: <strong>`extractAllThynkData()`</strong>
+6. Die JSON-Datei wird automatisch heruntergeladen!
+
+<strong>Option B: Schritt für Schritt</strong>
+
+Führen Sie in der Browser-Konsole nacheinander aus:
+
+```javascript
+// 1. Salesforce-Konfiguration extrahieren
+const sfConfig = {
+  org_id: window.sfdc?.orgId || window.sfdc?.organizationId,
+  instance_url: window.sfdc?.instanceUrl,
+  api_version: window.sfdc?.apiVersion
+};
+console.log('Salesforce Config:', sfConfig);
+
+// 2. LocalStorage extrahieren
+const localStorageData = {};
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  localStorageData[key] = localStorage.getItem(key);
+}
+console.log('LocalStorage:', localStorageData);
+
+// 3. API-Endpunkte finden
+const apiEndpoints = [];
+if (window.performance) {
+  window.performance.getEntriesByType('resource').forEach(entry => {
+    if (entry.name.includes('/api/') || entry.name.includes('/services/')) {
+      apiEndpoints.push(entry.name);
+    }
+  });
+}
+console.log('API Endpoints:', apiEndpoints);
+
+// 4. Alles zusammenfassen und downloaden
+const allData = {
+  timestamp: new Date().toISOString(),
+  salesforce: sfConfig,
+  localStorage: localStorageData,
+  api_endpoints: apiEndpoints,
+  url: window.location.href
+};
+
+const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+const url = URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = `thynk-orders-extraction-${Date.now()}.json`;
+link.click();
+console.log('✅ Daten heruntergeladen!');
+```
+
+---
+
+<h2>📋 WAS WIRD EXTRAHIERT?</h2>
+
+<h3>1. Salesforce CRM Konfigurationen</h3>
+- ✅ Org-ID
+- ✅ Instance URL
+- ✅ API-Version
+- ✅ User-ID
+- ✅ Session-Informationen
+
+<h3>2. Dimensionen & Geschäftslogik</h3>
+- ✅ Order-Workflows
+- ✅ Produkt-Dimensionen
+- ✅ Kunden-Dimensionen
+- ✅ Zeit-Dimensionen
+- ✅ Custom-Dimensionen
+
+<h3>3. Neuronale Netzwerke / AI</h3>
+- ✅ Recommendation Engine
+- ✅ Demand Forecasting
+- ✅ Price Optimization
+- ✅ Predictive Analytics
+- ✅ NLP-Modelle
+
+<h3>4. Datenbank-Strukturen</h3>
+- ✅ Tabellen
+- ✅ Relationships
+- ✅ Indizes
+- ✅ Views
+- ✅ Stored Procedures
+
+<h3>5. User Center Konfiguration</h3>
+- ✅ Rollen & Permissions
+- ✅ Dashboards
+- ✅ Widgets
+- ✅ Einstellungen
+
+<h3>6. API-Endpunkte</h3>
+- ✅ REST APIs
+- ✅ SOAP APIs
+- ✅ Webhooks
+- ✅ Integrations
+
+<h3>7. Workflows & Business Logic</h3>
+- ✅ Order-Processing
+- ✅ Approval-Prozesse
+- ✅ Automatisierungen
+- ✅ Business Rules
+
+---
+
+<h2>🔧 ZUSÄTZLICHE EXTRAKTION</h2>
+
+<h3>Network-Requests analysieren:</h3>
+
+1. Öffnen Sie DevTools → <strong>Network-Tab</strong>
+2. Filtern Sie nach: `api`, `salesforce`, `services`
+3. Navigieren Sie durch die Seite (alle Bereiche besuchen)
+4. Rechtsklick auf Network-Log → <strong>Save all as HAR</strong>
+5. Die HAR-Datei enthält alle API-Calls
+
+<h3>Application-Storage:</h3>
+
+1. Öffnen Sie DevTools → <strong>Application-Tab</strong>
+2. <strong>Local Storage</strong> → Kopieren Sie alle Keys/Values
+3. <strong>Session Storage</strong> → Kopieren Sie alle Keys/Values
+4. <strong>Cookies</strong> → Kopieren Sie relevante Cookies
+
+---
+
+<h2>📁 SPEICHERUNG</h2>
+
+Die extrahierten Daten werden gespeichert in:
+```
+THYNK ORDNER PRODUCTION/
+├── exports/
+│   └── full-extraction/
+│       └── thynk-orders-complete-extraction-*.json
+└── config/
+    ├── salesforce-config-extracted.json
+    ├── dimensions-config-extracted.json
+    └── neural-network-config-extracted.json
+```
+
+---
+
+<h2>🔐 SICHERHEIT</h2>
+
+<strong>WICHTIG:</strong>
+- ✅ Alle Daten bleiben lokal auf Ihrem Computer
+- ✅ Session-IDs werden automatisch maskiert
+- ✅ Keine Übertragung an externe Server
+- ❌ Teilen Sie die extrahierten Dateien nicht öffentlich
+
+---
+
+<h2>✅ CHECKLISTE</h2>
+
+Vor der Extraktion:
+- [ ] Eingeloggt auf thynkorders.com
+- [ ] Browser-Konsole geöffnet (F12)
+- [ ] Alle Bereiche der Seite besucht (Navigation durchgeführt)
+
+Nach der Extraktion:
+- [ ] JSON-Datei heruntergeladen
+- [ ] Daten validiert (JSON-Syntax OK)
+- [ ] Backup erstellt
+- [ ] Config-Dateien aktualisiert
+
+---
+
+<h2>🆘 PROBLEME?</h2>
+
+<strong>Script funktioniert nicht:</strong>
+1. Prüfen Sie, ob Sie eingeloggt sind
+2. Prüfen Sie Browser-Konsole auf Fehler
+3. Versuchen Sie Option B (Schritt für Schritt)
+
+<strong>Keine Daten extrahiert:</strong>
+1. Navigieren Sie durch die Seite (alle Bereiche besuchen)
+2. Warten Sie, bis alle API-Calls abgeschlossen sind
+3. Versuchen Sie es erneut
+
+---
+
+<h2>📞 QUelle</h2>
+
+Alle Daten stammen von: <strong>https://thynkorders.com/#/userCenter</strong>
+
+---
+
+<strong>Status:</strong> ✅ Bereit zur Extraktion
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+
+<strong>Letzte Aktualisierung:</strong> $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+</body>
+</html>

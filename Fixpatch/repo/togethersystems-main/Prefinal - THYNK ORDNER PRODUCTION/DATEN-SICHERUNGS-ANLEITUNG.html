@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DATEN-SICHERUNGS-ANLEITUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>THYNK ORDERS - Daten & Konfigurationen 1:1 Sicherung</h1>
+
+<strong>Quelle:</strong> https://thynkorders.com/#/userCenter  
+<strong>Zweck:</strong> Vollständige technische Absicherung aller Firmen-Daten
+
+---
+
+<h2>🔐 WICHTIG</h2>
+
+Diese Anleitung beschreibt, wie Sie <strong>alle Daten, Konfigurationen, Dimensionen und neuronalen Netzwerke</strong> von THYNK ORDERS <strong>1:1 technisch sichern</strong>.
+
+---
+
+<h2>📋 ZU SICHERNDE BEREICHE</h2>
+
+<h3>1. ✅ Salesforce CRM Integration</h3>
+- API-Konfigurationen
+- Authentifizierung (OAuth, JWT)
+- Datenmodelle (Objects, Fields)
+- Webhooks
+
+<strong>Datei:</strong> `config/salesforce-config.json`
+
+<h3>2. ✅ Dimensionen & Geschäftslogik</h3>
+- Hospitality-Workflows
+- Bestellprozesse
+- Produktkategorien
+- Kunden-Segmente
+
+<strong>Datei:</strong> `config/dimensions-config.json`
+
+<h3>3. ✅ Neuronale Netzwerke / AI</h3>
+- Recommendation Engine
+- Demand Forecasting
+- Price Optimization
+- NLP & Computer Vision
+
+<strong>Datei:</strong> `config/neural-network-config.json`
+
+<h3>4. ✅ User Center Konfiguration</h3>
+- Benutzerrollen & Berechtigungen
+- Dashboard-Einstellungen
+- User-Präferenzen
+
+<strong>Datei:</strong> `config/user-center-config.json`
+
+---
+
+<h2>🔧 SICHERUNGSDURCHFÜHRUNG</h2>
+
+<h3>Methode 1: Automatischer Export (Empfohlen)</h3>
+
+1. <strong>Script ausführen:</strong>
+```bash
+cd "THYNK ORDNER PRODUCTION"
+node scripts/export-thynk-config.js
+```
+
+<strong>Voraussetzung:</strong> Authentifizierter Zugriff auf thynkorders.com
+
+<h3>Methode 2: Manuelle Konfiguration</h3>
+
+1. <strong>Öffnen Sie:</strong> https://thynkorders.com/#/userCenter
+2. <strong>Loggen Sie sich ein</strong>
+3. <strong>Füllen Sie die Config-Dateien manuell aus:</strong>
+
+<h4>Salesforce Config:</h4>
+- Öffnen: `config/salesforce-config.json`
+- Tragen Sie ein:
+  - Org-ID
+  - API-Credentials
+  - Object-Namen
+  - Field-Definitionen
+
+<h4>Dimensions Config:</h4>
+- Öffnen: `config/dimensions-config.json`
+- Tragen Sie ein:
+  - Workflow-Definitionen
+  - Geschäftslogik
+  - Datenstrukturen
+
+<h4>Neural Network Config:</h4>
+- Öffnen: `config/neural-network-config.json`
+- Tragen Sie ein:
+  - Model-Architekturen
+  - Training-Parameter
+  - AI-Service-Provider
+
+<h4>User Center Config:</h4>
+- Öffnen: `config/user-center-config.json`
+- Tragen Sie ein:
+  - Rollen & Permissions
+  - Dashboard-Einstellungen
+
+---
+
+<h2>📊 DATEN-STRUKTUR</h2>
+
+<h3>Salesforce Objects (Beispiel):</h3>
+
+```json
+{
+  "Order__c": {
+    "fields": [
+      "Id",
+      "Name",
+      "Order_Number__c",
+      "Status__c",
+      "Total_Amount__c",
+      "Customer__c",
+      "CreatedDate"
+    ]
+  },
+  "Account": {
+    "fields": [
+      "Id",
+      "Name",
+      "Email__c",
+      "Phone",
+      "BillingAddress"
+    ]
+  }
+}
+```
+
+<h3>Dimensionen (Beispiel):</h3>
+
+```json
+{
+  "order_workflow": [
+    "draft",
+    "pending_approval",
+    "approved",
+    "processing",
+    "completed",
+    "cancelled"
+  ],
+  "order_types": [
+    "restaurant",
+    "hotel",
+    "catering",
+    "retail"
+  ]
+}
+```
+
+---
+
+<h2>🔒 SICHERHEIT</h2>
+
+<h3>Wichtige Hinweise:</h3>
+
+1. <strong>API-Keys & Secrets:</strong>
+   - ❌ NIEMALS in Git committen!
+   - ✅ In `.env` Datei speichern
+   - ✅ `.gitignore` konfigurieren
+
+2. <strong>Backups:</strong>
+   - Regelmäßig exportieren
+   - Verschlüsselt speichern
+   - Mehrere Kopien an verschiedenen Orten
+
+3. <strong>Zugriff:</strong>
+   - Nur autorisierte Personen
+   - Audit-Log führen
+   - Regelmäßig überprüfen
+
+---
+
+<h2>📁 DATEISTRUKTUR</h2>
+
+```
+THYNK ORDNER PRODUCTION/
+├── config/
+│   ├── salesforce-config.json
+│   ├── dimensions-config.json
+│   ├── neural-network-config.json
+│   └── user-center-config.json
+├── scripts/
+│   └── export-thynk-config.js
+├── exports/
+│   └── thynk-config-backup-*.json
+└── DATEN-SICHERUNGS-ANLEITUNG.md
+```
+
+---
+
+<h2>✅ CHECKLISTE</h2>
+
+<h3>Vor der Sicherung:</h3>
+- [ ] Zugriff auf thynkorders.com sichergestellt
+- [ ] API-Credentials vorhanden
+- [ ] Backup-Verzeichnis erstellt
+
+<h3>Während der Sicherung:</h3>
+- [ ] Salesforce-Config exportiert
+- [ ] Dimensionen exportiert
+- [ ] Neural Networks exportiert
+- [ ] User Center Config exportiert
+
+<h3>Nach der Sicherung:</h3>
+- [ ] Alle Dateien validiert
+- [ ] Backup erstellt
+- [ ] Sicher gespeichert
+- [ ] Dokumentation aktualisiert
+
+---
+
+<h2>🚨 KRITISCH - ZU BEACHTEN</h2>
+
+1. <strong>1:1 Übernahme:</strong>
+   - Alle Konfigurationen müssen <strong>EXAKT</strong> übernommen werden
+   - Keine Änderungen ohne Genehmigung
+   - Dokumentieren Sie alle Anpassungen
+
+2. <strong>Datenintegrität:</strong>
+   - Validieren Sie alle exportierten Daten
+   - Testen Sie nach Import
+   - Vergleich vor/nach Export
+
+3. <strong>Vollständigkeit:</strong>
+   - Alle Module erfassen
+   - Alle Dimensionen sichern
+   - Alle AI-Modelle dokumentieren
+
+---
+
+<h2>📞 SUPPORT</h2>
+
+Bei Fragen zur Datenübernahme:
+- Prüfen Sie die Dokumentation
+- Kontaktieren Sie den System-Administrator
+- Verwenden Sie das Export-Script
+
+---
+
+<h2>📝 NÄCHSTE SCHRITTE</h2>
+
+1. ✅ Config-Dateien erstellt
+2. ⏳ Daten von thynkorders.com exportieren
+3. ⏳ Config-Dateien ausfüllen
+4. ⏳ Validierung durchführen
+5. ⏳ Backup erstellen
+
+---
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+
+<strong>Letzte Aktualisierung:</strong> $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+</body>
+</html>

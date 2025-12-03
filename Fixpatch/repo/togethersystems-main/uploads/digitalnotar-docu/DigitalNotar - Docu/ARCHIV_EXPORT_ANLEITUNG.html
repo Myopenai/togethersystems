@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARCHIV_EXPORT_ANLEITUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Archiv Export Anleitung - Digital Notariat</h1>
+
+<h2>Übersicht</h2>
+
+Diese Anleitung erklärt, wo exportierte Dateien aus dem Archiv gespeichert werden und wie Sie diese ansehen können.
+
+<h2>Export-Funktionen</h2>
+
+<h3>1. <strong>Einzelner Record Export</strong></h3>
+
+<strong>Wo:</strong> Jeder Datensatz hat einen Export-Button (📤 Download-Icon)
+
+<strong>Was passiert:</strong>
+- ✅ Datensatz wird als JSON-Datei exportiert
+- ✅ Datei wird automatisch heruntergeladen
+- ✅ Dateiname: `notariat_export_[ID]_[DATUM].json`
+
+<h3>2. <strong>Bulk Export (Mehrere Records)</strong></h3>
+
+<strong>Wo:</strong> Archiv → Checkboxen auswählen → "Exportieren" Button
+
+<strong>Was passiert:</strong>
+- ✅ Alle ausgewählten Datensätze werden exportiert
+- ✅ Datei wird automatisch heruntergeladen
+- ✅ Dateiname: `notariat_bulk_export_[ANZAHL]_records_[DATUM].json`
+
+<h2>📁 <strong>Speicherort der exportierten Dateien</strong></h2>
+
+<h3><strong>Standard-Download-Ordner:</strong></h3>
+
+<strong>Windows:</strong>
+```
+C:\Users\[IhrBenutzername]\Downloads\
+```
+
+<strong>Beispiel-Pfad:</strong>
+```
+C:\Users\MaxMustermann\Downloads\notariat_bulk_export_5_records_2024-01-15.json
+```
+
+<h3><strong>Datei finden:</strong></h3>
+
+1. <strong>Windows Explorer öffnen</strong>
+2. <strong>Downloads-Ordner</strong> aufrufen
+3. <strong>Nach Dateinamen</strong> suchen: `notariat_*`
+4. <strong>Nach Datum sortieren</strong> (neueste zuerst)
+
+<h2>📖 <strong>Exportierte Dateien ansehen</strong></h2>
+
+<h3><strong>Option 1: Texteditor (Empfohlen)</strong></h3>
+
+```bash
+<h1>Mit Notepad öffnen</h1>
+notepad "C:\Users\[Benutzername]\Downloads\notariat_export_*.json"
+
+<h1>Mit VS Code öffnen</h1>
+code "C:\Users\[Benutzername]\Downloads\notariat_export_*.json"
+```
+
+<h3><strong>Option 2: Online JSON Viewer</strong></h3>
+
+1. <strong>Datei in Browser ziehen</strong>
+2. <strong>Oder:</strong> <a href="https://jsonviewer.stack.hu/">jsonviewer.stack.hu</a> verwenden
+3. <strong>Datei hochladen</strong> und formatierte Ansicht genießen
+
+<h3><strong>Option 3: Browser</strong></h3>
+
+1. <strong>Datei in Browser ziehen</strong>
+2. <strong>Automatische JSON-Formatierung</strong> wird angezeigt
+
+<h2>📋 <strong>Inhalt der Export-Dateien</strong></h2>
+
+<h3><strong>Einzelner Record Export:</strong></h3>
+```json
+{
+  "id": "record_123",
+  "type": "identity_verification",
+  "status": "completed",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "description": "Identitätsprüfung Max Mustermann",
+  "clientName": "Max Mustermann",
+  "hash": "SHA256:abc123...",
+  "encryptionKey": "AES-256:key123...",
+  "documents": {
+    "front": "ausweis_vorne.jpg",
+    "back": "ausweis_hinten.jpg"
+  }
+}
+```
+
+<h3><strong>Bulk Export:</strong></h3>
+```json
+{
+  "exportInfo": {
+    "timestamp": "2024-01-15T10:30:00.000Z",
+    "totalRecords": 5,
+    "exportType": "bulk_archive_export",
+    "version": "1.0"
+  },
+  "records": [
+    {
+      "id": "record_123",
+      "type": "identity_verification",
+      "status": "completed",
+      "timestamp": "2024-01-15T10:30:00.000Z",
+      "description": "Identitätsprüfung Max Mustermann",
+      "clientName": "Max Mustermann",
+      "isLegallyProtected": true,
+      "legalBasis": "GoBD",
+      "retentionEndDate": "2034-01-15T10:30:00.000Z"
+    }
+    // ... weitere Records
+  ]
+}
+```
+
+<h2>🔍 <strong>Export-Dateien durchsuchen</strong></h2>
+
+<h3><strong>Mit Windows-Suche:</strong></h3>
+1. <strong>Windows-Taste + S</strong>
+2. <strong>"notariat"</strong> eingeben
+3. <strong>Downloads-Ordner</strong> durchsuchen
+
+<h3><strong>Mit PowerShell:</strong></h3>
+```powershell
+<h1>Alle Export-Dateien finden</h1>
+Get-ChildItem -Path "$env:USERPROFILE\Downloads" -Filter "notariat_*.json"
+
+<h1>Nach Datum sortiert</h1>
+Get-ChildItem -Path "$env:USERPROFILE\Downloads" -Filter "notariat_*.json" | Sort-Object LastWriteTime -Descending
+```
+
+<h3><strong>Mit Command Prompt:</strong></h3>
+```cmd
+<h1>Alle Export-Dateien auflisten</h1>
+dir "%USERPROFILE%\Downloads\notariat_*.json"
+
+<h1>Neueste zuerst</h1>
+dir "%USERPROFILE%\Downloads\notariat_*.json" /OD
+```
+
+<h2>📊 <strong>Export-Statistiken anzeigen</strong></h2>
+
+<h3><strong>Datei-Informationen:</strong></h3>
+- <strong>Anzahl Records:</strong> In der Export-Datei unter `exportInfo.totalRecords`
+- <strong>Export-Datum:</strong> In der Export-Datei unter `exportInfo.timestamp`
+- <strong>Dateigröße:</strong> Im Datei-Explorer sichtbar
+
+<h3><strong>Beispiel-Statistik:</strong></h3>
+```
+📊 EXPORT-STATISTIK:
+• Dateiname: notariat_bulk_export_5_records_2024-01-15.json
+• Dateigröße: 2.3 KB
+• Anzahl Records: 5
+• Export-Datum: 15.01.2024 11:30:00
+• Typen: 3 Identitätsprüfungen, 2 Dokumente
+```
+
+<h2>🛡️ <strong>Sicherheitshinweise</strong></h2>
+
+<h3><strong>Datenschutz:</strong></h3>
+- ✅ <strong>Verschlüsselte Daten:</strong> Sensible Informationen sind verschlüsselt
+- ✅ <strong>Hash-Werte:</strong> Integrität wird durch Hash-Werte gewährleistet
+- ✅ <strong>Keine Passwörter:</strong> Passwörter werden nicht exportiert
+
+<h3><strong>Datei-Sicherheit:</strong></h3>
+- 🔒 <strong>Lokale Speicherung:</strong> Dateien werden nur lokal gespeichert
+- 🔒 <strong>Keine Cloud-Upload:</strong> Automatische Cloud-Uploads gibt es nicht
+- 🔒 <strong>Manuelle Kontrolle:</strong> Sie entscheiden, wo die Dateien gespeichert werden
+
+<h2>🔧 <strong>Troubleshooting</strong></h2>
+
+<h3><strong>Problem: Datei wird nicht heruntergeladen</strong></h3>
+
+<strong>Lösungen:</strong>
+1. <strong>Browser-Einstellungen prüfen:</strong> Downloads erlauben
+2. <strong>Antivirus-Software:</strong> Temporär deaktivieren
+3. <strong>Browser-Cache:</strong> Leeren und neu versuchen
+
+<h3><strong>Problem: Datei kann nicht geöffnet werden</strong></h3>
+
+<strong>Lösungen:</strong>
+1. <strong>Rechtsklick → "Öffnen mit" → Notepad</strong>
+2. <strong>Dateiendung prüfen:</strong> Sollte `.json` sein
+3. <strong>Datei-Integrität:</strong> Neu exportieren
+
+<h3><strong>Problem: Datei ist leer</strong></h3>
+
+<strong>Lösungen:</strong>
+1. <strong>Datensätze prüfen:</strong> Sind Records vorhanden?
+2. <strong>Browser-Konsole:</strong> Fehler prüfen (F12)
+3. <strong>Neu exportieren:</strong> Mit anderen Datensätzen versuchen
+
+<h2>📞 <strong>Support</strong></h2>
+
+Bei Problemen mit dem Export:
+
+1. <strong>Browser-Konsole prüfen</strong> (F12 → Console)
+2. <strong>Fehlermeldungen notieren</strong>
+3. <strong>Screenshot erstellen</strong>
+4. <strong>Support kontaktieren</strong> mit Details
+
+<h2>✅ <strong>Zusammenfassung</strong></h2>
+
+<strong>Exportierte Dateien werden gespeichert in:</strong>
+```
+📁 Downloads-Ordner
+📄 Format: JSON
+🔍 Anzeige: Texteditor, Browser, Online-Tools
+🛡️ Sicherheit: Lokal, verschlüsselt, DSGVO-konform
+```
+
+<strong>Die Export-Funktion ist vollständig implementiert und funktionsfähig!</strong>
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

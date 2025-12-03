@@ -1,0 +1,754 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║  TOGETHERSYSTEMS INDUSTRIAL FACTORY MANIFEST                               ║
+# ║  [.TTT T,.&T,,.T,,,.T.] TOGETHERSYSTEMS. INTERNATIONAL TTT                ║
+# ╠═══════════════════════════════════════════════════════════════════════════╣
+# ║  A-Start: Dieses Manifest steuert die gesamte Produktionspipeline         ║
+# ║  Version: 1.0.0 | © 2025 Raymond Demitrio Tel                             ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 1: PROJEKT-METADATEN
+# ═══════════════════════════════════════════════════════════════════════════
+
+project:
+  name: "TogetherSystems"
+  version: "1.0.0"
+  codename: "TEL1-NL-V1.0.0-NUMMER-EINS"
+  branding: "[.TTT T,.&T,,.T,,,.T.]"
+  
+  owner:
+    name: "Raymond Demitrio Tel"
+    alias: "R.D.TEL / Dr. Tel"
+    email: "gentlyoverdone@outlook.com"
+    phone: "+31613803782"
+    orcid: "0009-0003-1328-2430"
+    location: "Nijmegen, Gelderland, NL"
+  
+  copyright: "T,.0031613803782.T,,.(C)R.D.TEL-DR.TEL"
+  license: "MIT"
+  
+  urls:
+    primary: "https://myopenai.github.io/togethersystems/"
+    serverfarm: "https://digitalnotar.in/"
+    portal: "https://tel1.nl"
+    music: "https://gentlyoverdone.com"
+    forum: "https://tel1.boards.net"
+  
+  repositories:
+    - name: "togethersystems"
+      url: "https://github.com/Myopenai/togethersystems"
+      type: "main"
+    - name: "viewunity"
+      url: "https://github.com/viewunity"
+      type: "multimedia"
+    - name: "viewunitysystemsT"
+      url: "https://github.com/viewunitysystemsT"
+      type: "tools"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 2: UMGEBUNGEN & PROFILE
+# ═══════════════════════════════════════════════════════════════════════════
+
+environments:
+  dev:
+    label: "Development"
+    variables:
+      NODE_ENV: "development"
+      DEBUG: "true"
+      API_URL: "http://localhost:8080"
+      CACHE_ENABLED: "false"
+      SERVICE_WORKER: "disabled"
+    features:
+      hot_reload: true
+      source_maps: true
+      verbose_logging: true
+  
+  staging:
+    label: "Staging"
+    variables:
+      NODE_ENV: "staging"
+      DEBUG: "false"
+      API_URL: "https://staging.digitalnotar.in"
+      CACHE_ENABLED: "true"
+      SERVICE_WORKER: "enabled"
+    features:
+      hot_reload: false
+      source_maps: true
+      verbose_logging: true
+  
+  prod:
+    label: "Production"
+    variables:
+      NODE_ENV: "production"
+      DEBUG: "false"
+      API_URL: "https://digitalnotar.in"
+      CACHE_ENABLED: "true"
+      SERVICE_WORKER: "enabled"
+    features:
+      hot_reload: false
+      source_maps: false
+      verbose_logging: false
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 3: TOOLCHAIN KONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+toolchains:
+  web:
+    label: "Web/PWA Toolchain"
+    detect:
+      files: ["package.json", "index.html"]
+      patterns: ["*.html", "*.js", "*.css"]
+    tools:
+      runtime: "node:20-alpine"
+      package_manager: "npm"
+      bundler: "none"  # Static site
+      linter: "eslint"
+      formatter: "prettier"
+    
+  docs:
+    label: "Documentation Toolchain"
+    detect:
+      files: ["*.md", "docs_src/"]
+      patterns: ["**/*.md"]
+    tools:
+      converter: "pandoc"
+      version: "3.1"
+      template_engine: "mustache"
+      output_format: "html5"
+    
+  desktop:
+    label: "Desktop App Toolchain (Tauri)"
+    detect:
+      files: ["src-tauri/tauri.conf.json", "Cargo.toml"]
+    tools:
+      runtime: "rust:1.75"
+      framework: "tauri:2.0"
+      targets:
+        - "windows-x64"
+        - "macos-x64"
+        - "macos-arm64"
+        - "linux-x64"
+    
+  android:
+    label: "Android Toolchain"
+    detect:
+      files: ["android/build.gradle", "AndroidManifest.xml"]
+    tools:
+      sdk: "android-34"
+      gradle: "8.2"
+      kotlin: "1.9"
+      min_sdk: 26
+    
+  unity:
+    label: "Unity/ViewUnity Toolchain"
+    detect:
+      files: ["Assets/", "ProjectSettings/"]
+      patterns: ["*.unity", "*.cs"]
+    tools:
+      version: "2022.3 LTS"
+      platforms:
+        - "WebGL"
+        - "Windows"
+        - "Android"
+      scripting_backend: "IL2CPP"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 4: SERVICES & MODULE
+# ═══════════════════════════════════════════════════════════════════════════
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────
+  # CORE SERVICES
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  portal:
+    label: "TogetherSystems Portal"
+    type: "web"
+    source: "web/"
+    output: "docs_build/"
+    dependencies: []
+    config:
+      apps_count: 87
+      offline_first: true
+      pwa_enabled: true
+    
+  ostos:
+    label: "OSTOS Branding Universe"
+    type: "web"
+    source: "web/shared/ostos/"
+    dependencies: ["portal"]
+    features:
+      - "window_manager"
+      - "taskbar"
+      - "desktop_environment"
+    
+  ososos:
+    label: "OSOSOS Triple-T OS"
+    type: "web"
+    source: "web/shared/ososos/"
+    dependencies: ["ostos"]
+    features:
+      - "self_healing"
+      - "registry"
+      - "auto_install"
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # AI SERVICES
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  prompt_fabrik:
+    label: "Prompt-Fabrik"
+    type: "generator"
+    source: "system/registry/"
+    config:
+      prompts_count: 10
+      formulas_count: 10
+      mixes_count: 5
+    
+  ai_control:
+    label: "AI Control System"
+    type: "service"
+    providers:
+      - name: "ollama"
+        type: "local"
+        models: ["llama3.1", "deepseek-coder", "mistral"]
+      - name: "groq"
+        type: "api"
+        models: ["llama-3.1-70b"]
+      - name: "workers_ai"
+        type: "edge"
+        models: ["@cf/meta/llama-3.1-8b-instruct"]
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # BUSINESS SERVICES
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  telbank:
+    label: "Telbank Financial Services"
+    type: "api"
+    endpoints:
+      - "/api/telbank/balance"
+      - "/api/telbank/transactions"
+      - "/api/telbank/transfer"
+    
+  digitalnotar:
+    label: "Digital Notary"
+    type: "api"
+    endpoints:
+      - "/api/notar/verify"
+      - "/api/nassis/check"
+      - "/api/nassis/register"
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # MULTIMEDIA SERVICES
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  viewunity:
+    label: "ViewUnity Engine"
+    type: "unity"
+    source: "unity/"
+    platforms: ["WebGL", "Windows", "Android"]
+    
+  onair:
+    label: "OnAirMulTiMedia"
+    type: "streaming"
+    protocols:
+      - "RTMP"
+      - "HLS"
+      - "WebRTC"
+    
+  gently_overdone:
+    label: "Gently Overdone Music"
+    type: "media"
+    source: "PRODUCER/"
+    formats: ["mp3", "wav", "flac"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 5: PIPELINE DEFINITION (DAG)
+# ═══════════════════════════════════════════════════════════════════════════
+
+pipelines:
+  # ─────────────────────────────────────────────────────────────────────────
+  # MAIN BUILD PIPELINE
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  main:
+    label: "Main Production Pipeline"
+    trigger:
+      - push: ["main", "develop"]
+      - pull_request: ["main"]
+      - manual: true
+    
+    stages:
+      # Stage 1: Validation
+      - name: "validate"
+        label: "Schema & Policy Validation"
+        parallel: true
+        jobs:
+          - name: "schema_check"
+            command: "./bootstrap/validate_schemas.sh"
+            timeout: "2m"
+          - name: "policy_check"
+            command: "./bootstrap/validate_policies.sh"
+            timeout: "2m"
+          - name: "encoding_check"
+            command: "./scripts/encoding_lint.sh . strict"
+            timeout: "1m"
+        on_failure: "abort"
+      
+      # Stage 2: Build
+      - name: "build"
+        label: "Build All Artifacts"
+        depends_on: ["validate"]
+        parallel: true
+        jobs:
+          - name: "build_docs"
+            command: "make docs"
+            artifacts:
+              - path: "docs_build/"
+                type: "html"
+          - name: "build_portal"
+            command: "./scripts/build_portal.sh"
+            artifacts:
+              - path: "web/"
+                type: "pwa"
+        cache:
+          key: "build-{{ checksum 'package-lock.json' }}"
+          paths:
+            - "node_modules/"
+            - ".cache/"
+      
+      # Stage 3: Test
+      - name: "test"
+        label: "Quality Gates"
+        depends_on: ["build"]
+        parallel: true
+        jobs:
+          - name: "unit_tests"
+            command: "npm test"
+            coverage:
+              minimum: 80
+              format: "lcov"
+          - name: "lint"
+            command: "npm run lint"
+          - name: "link_check"
+            command: "./scripts/validate_links.sh"
+          - name: "accessibility"
+            command: "npm run a11y"
+            allow_failure: true
+        on_failure: "abort"
+      
+      # Stage 4: Security Scan
+      - name: "security"
+        label: "Security Scanning"
+        depends_on: ["test"]
+        jobs:
+          - name: "dependency_scan"
+            command: "npm audit --production"
+            severity_threshold: "high"
+          - name: "sast"
+            command: "./scripts/sast_scan.sh"
+          - name: "secrets_scan"
+            command: "./scripts/secrets_scan.sh"
+        on_failure: "abort"
+      
+      # Stage 5: Package
+      - name: "package"
+        label: "Package & Sign"
+        depends_on: ["security"]
+        jobs:
+          - name: "create_sbom"
+            command: "./scripts/generate_sbom.sh"
+            artifacts:
+              - path: "sbom/sbom.json"
+                type: "sbom"
+          - name: "hash_assets"
+            command: "./scripts/auto_fix.sh ."
+          - name: "sign_artifacts"
+            command: "./scripts/sign_artifacts.sh"
+            requires:
+              - secret: "SIGNING_KEY"
+        artifacts:
+          - path: "dist/"
+            type: "release"
+            retention: "90d"
+      
+      # Stage 6: Deploy
+      - name: "deploy"
+        label: "Deploy to Production"
+        depends_on: ["package"]
+        environment: "prod"
+        jobs:
+          - name: "deploy_github_pages"
+            command: "./scripts/deploy_github.sh"
+            target: "myopenai.github.io/togethersystems"
+          - name: "deploy_hostinger"
+            command: "./scripts/deploy_hostinger.sh"
+            target: "digitalnotar.in"
+            requires:
+              - secret: "HOSTINGER_SSH_KEY"
+          - name: "purge_cdn"
+            command: "./scripts/purge_cloudflare.sh"
+            requires:
+              - secret: "CLOUDFLARE_TOKEN"
+        on_failure: "rollback"
+      
+      # Stage 7: Verify
+      - name: "verify"
+        label: "Post-Deploy Verification"
+        depends_on: ["deploy"]
+        jobs:
+          - name: "smoke_tests"
+            command: "./scripts/smoke_tests.sh"
+            targets:
+              - "https://myopenai.github.io/togethersystems/"
+              - "https://digitalnotar.in/"
+          - name: "health_check"
+            command: "./scripts/health_check.sh"
+          - name: "lighthouse"
+            command: "./scripts/lighthouse_audit.sh"
+            thresholds:
+              performance: 90
+              accessibility: 90
+              seo: 90
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # DESKTOP RELEASE PIPELINE
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  desktop:
+    label: "Desktop Release Pipeline"
+    trigger:
+      - tag: ["v*"]
+    
+    stages:
+      - name: "build_desktop"
+        label: "Build Desktop Apps"
+        matrix:
+          os: ["windows-latest", "macos-latest", "ubuntu-latest"]
+        jobs:
+          - name: "tauri_build"
+            command: "cargo tauri build"
+            artifacts:
+              - path: "src-tauri/target/release/bundle/"
+                type: "installer"
+      
+      - name: "sign_desktop"
+        label: "Sign Installers"
+        depends_on: ["build_desktop"]
+        jobs:
+          - name: "sign_windows"
+            command: "./scripts/sign_windows.sh"
+            requires:
+              - secret: "WINDOWS_CERT"
+          - name: "sign_macos"
+            command: "./scripts/sign_macos.sh"
+            requires:
+              - secret: "APPLE_CERT"
+      
+      - name: "release"
+        label: "Create GitHub Release"
+        depends_on: ["sign_desktop"]
+        jobs:
+          - name: "upload_release"
+            command: "./scripts/create_release.sh"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 6: QUALITY GATES & POLICIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+policies:
+  # ─────────────────────────────────────────────────────────────────────────
+  # CODE QUALITY
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  code_quality:
+    label: "Code Quality Gates"
+    rules:
+      - name: "coverage"
+        minimum: 80
+        enforce: true
+      - name: "complexity"
+        max_cyclomatic: 10
+        enforce: true
+      - name: "duplicates"
+        max_percentage: 3
+        enforce: true
+      - name: "lint_errors"
+        max_count: 0
+        enforce: true
+      - name: "encoding"
+        required: "utf-8"
+        enforce: true
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # SECURITY
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  security:
+    label: "Security Policies"
+    rules:
+      - name: "vulnerability_scan"
+        severity_block: ["critical", "high"]
+        enforce: true
+      - name: "secrets_detection"
+        block_on_detection: true
+        enforce: true
+      - name: "license_check"
+        allowed: ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"]
+        block_unknown: true
+      - name: "dependency_age"
+        max_days: 365
+        warn: true
+  
+  # ─────────────────────────────────────────────────────────────────────────
+  # RELEASE
+  # ─────────────────────────────────────────────────────────────────────────
+  
+  release:
+    label: "Release Policies"
+    rules:
+      - name: "staged_rollout"
+        enabled: true
+        stages:
+          - percentage: 5
+            duration: "1h"
+            auto_proceed: false
+          - percentage: 25
+            duration: "4h"
+            auto_proceed: true
+          - percentage: 100
+            duration: null
+      - name: "rollback"
+        auto_rollback: true
+        conditions:
+          - error_rate: "> 5%"
+          - latency_p99: "> 5000ms"
+      - name: "feature_flags"
+        enabled: true
+        default_state: "off"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 7: HOSTING & DEPLOYMENT TARGETS
+# ═══════════════════════════════════════════════════════════════════════════
+
+deployment:
+  targets:
+    github_pages:
+      label: "GitHub Pages (Primary)"
+      type: "static"
+      url: "https://myopenai.github.io/togethersystems/"
+      branch: "gh-pages"
+      cname: null
+      
+    hostinger:
+      label: "Hostinger (Serverfarm)"
+      type: "ssh"
+      host: "45.87.81.214"
+      port: 65002
+      user: "u972026836"
+      path: "/public_html/"
+      url: "https://digitalnotar.in/"
+      
+    cloudflare:
+      label: "Cloudflare (Edge)"
+      type: "workers"
+      zone_id: "${CLOUDFLARE_ZONE_ID}"
+      routes:
+        - pattern: "api/*"
+          worker: "api-gateway"
+        - pattern: "ai/*"
+          worker: "ai-inference"
+
+  cdn:
+    provider: "cloudflare"
+    cache_rules:
+      - pattern: "*.html"
+        ttl: 0
+        headers:
+          Cache-Control: "no-cache, no-store, must-revalidate"
+      - pattern: "*.{js,css}"
+        ttl: 31536000
+        headers:
+          Cache-Control: "public, max-age=31536000, immutable"
+      - pattern: "*.{png,jpg,svg,webp}"
+        ttl: 31536000
+        headers:
+          Cache-Control: "public, max-age=31536000, immutable"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 8: MONITORING & OBSERVABILITY
+# ═══════════════════════════════════════════════════════════════════════════
+
+observability:
+  health_checks:
+    interval: "30s"
+    timeout: "10s"
+    endpoints:
+      - url: "https://myopenai.github.io/togethersystems/"
+        expected_status: 200
+      - url: "https://digitalnotar.in/"
+        expected_status: 200
+      - url: "https://digitalnotar.in/api/status"
+        expected_status: 200
+        expected_body:
+          status: "healthy"
+  
+  metrics:
+    collectors:
+      - name: "response_time"
+        type: "histogram"
+        buckets: [50, 100, 200, 500, 1000, 5000]
+      - name: "error_rate"
+        type: "counter"
+        labels: ["status_code", "endpoint"]
+      - name: "active_users"
+        type: "gauge"
+  
+  alerts:
+    channels:
+      - type: "email"
+        address: "gentlyoverdone@outlook.com"
+    rules:
+      - name: "high_error_rate"
+        condition: "error_rate > 0.05"
+        severity: "critical"
+        action: "auto_rollback"
+      - name: "slow_response"
+        condition: "p99_latency > 5000"
+        severity: "warning"
+        action: "notify"
+  
+  self_healing:
+    enabled: true
+    actions:
+      - trigger: "error_rate > 0.05"
+        action: "rollback"
+        cooldown: "5m"
+      - trigger: "health_check_fail"
+        action: "restart_service"
+        cooldown: "1m"
+      - trigger: "cache_stale"
+        action: "purge_cdn"
+        cooldown: "10m"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 9: SECRETS & CREDENTIALS
+# ═══════════════════════════════════════════════════════════════════════════
+
+secrets:
+  # Secrets werden NIEMALS im Manifest gespeichert
+  # Sie werden über Umgebungsvariablen oder Secret-Manager injiziert
+  
+  required:
+    - name: "HOSTINGER_SSH_KEY"
+      description: "SSH Private Key für Hostinger Deployment"
+      source: "env"
+    - name: "CLOUDFLARE_TOKEN"
+      description: "Cloudflare API Token"
+      source: "env"
+    - name: "SIGNING_KEY"
+      description: "Code Signing Private Key"
+      source: "vault"
+    - name: "GROQ_API_KEY"
+      description: "Groq API Key für AI"
+      source: "env"
+    - name: "OPENROUTER_API_KEY"
+      description: "OpenRouter API Key"
+      source: "env"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 10: BOOTSTRAPPER KONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+bootstrap:
+  entry_point: "./bootstrap/start.sh"
+  
+  phases:
+    - name: "init"
+      label: "Initialization"
+      actions:
+        - "load_manifest"
+        - "validate_schemas"
+        - "check_prerequisites"
+    
+    - name: "discover"
+      label: "Auto-Discovery"
+      actions:
+        - "scan_sources"
+        - "detect_toolchains"
+        - "resolve_dependencies"
+    
+    - name: "validate"
+      label: "Policy Validation"
+      actions:
+        - "check_policies"
+        - "verify_secrets"
+        - "audit_permissions"
+    
+    - name: "prepare"
+      label: "Environment Preparation"
+      actions:
+        - "setup_toolchains"
+        - "install_dependencies"
+        - "configure_cache"
+    
+    - name: "execute"
+      label: "Pipeline Execution"
+      actions:
+        - "run_pipeline"
+        - "collect_artifacts"
+        - "generate_reports"
+    
+    - name: "finalize"
+      label: "Finalization"
+      actions:
+        - "sign_artifacts"
+        - "create_sbom"
+        - "archive_logs"
+  
+  logging:
+    level: "info"
+    format: "json"
+    output:
+      - type: "stdout"
+      - type: "file"
+        path: "logs/factory-{{ timestamp }}.log"
+    audit:
+      enabled: true
+      path: "audit/factory-{{ timestamp }}.json"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SECTION 11: SBOM & PROVENANCE
+# ═══════════════════════════════════════════════════════════════════════════
+
+sbom:
+  format: "CycloneDX"
+  version: "1.5"
+  include:
+    - "dependencies"
+    - "devDependencies"
+    - "system_packages"
+  output:
+    - path: "sbom/sbom.json"
+      format: "json"
+    - path: "sbom/sbom.xml"
+      format: "xml"
+
+provenance:
+  enabled: true
+  format: "SLSA"
+  level: 2
+  attestations:
+    - type: "build"
+      signer: "${SIGNING_KEY}"
+    - type: "source"
+      signer: "${SIGNING_KEY}"
+  output:
+    path: "provenance/attestation.json"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# END OF MANIFEST
+# ═══════════════════════════════════════════════════════════════════════════
+

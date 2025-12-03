@@ -1,0 +1,237 @@
+# ============================================================================
+# FABRIKAGE.COREPROTOCOLS - NORMKERN
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# Industrielle Softwarefabrik - Zentrale Standards und Normen
+# ============================================================================
+
+version: "1.0.0"
+name: "Fabrikage.CoreProtocols"
+description: "Normkern: Accessibility, Security, Quality, Compliance, Ethics"
+status: "PERMANENT-ACTIVE"
+mandatory: true
+hardCoded: true
+
+# ============================================================================
+# ZELLULEITFOLIE - WERKSNORM
+# ============================================================================
+
+zelluleitfolie:
+  description: "Automatische Einhuellung, Pruefung und Signierung jeder Einheit"
+  principle: "Kein Artefakt verlaesst die Fabrik ohne vollstaendige Verifikation"
+  
+  layers:
+    - name: "accessibility"
+      policy: "policies/accessibility.yaml"
+      enforce: true
+      gates:
+        - wcag_level: "AA"
+        - contrast_min: 4.5
+        - aria_required: true
+        - keyboard_navigation: true
+        - focus_order: true
+    
+    - name: "security"
+      policy: "policies/security.yaml"
+      enforce: true
+      gates:
+        - vulnerability_scan: true
+        - secrets_detection: true
+        - license_check: true
+        - sast_scan: true
+    
+    - name: "quality"
+      policy: "policies/quality.yaml"
+      enforce: true
+      gates:
+        - coverage_min: 80
+        - lint_errors_max: 0
+        - complexity_max: 10
+        - duplication_max: 3
+    
+    - name: "compliance"
+      policy: "policies/compliance.yaml"
+      enforce: true
+      gates:
+        - gdpr: false  # No user data
+        - sbom_required: true
+        - provenance_required: true
+        - signed_artifacts: true
+    
+    - name: "ethics"
+      policy: "policies/ethics.yaml"
+      enforce: true
+      gates:
+        - transparency: true
+        - fairness: true
+        - accessibility: true
+        - privacy: true
+
+# ============================================================================
+# SCHEMATA UND VALIDIERUNG
+# ============================================================================
+
+schemas:
+  manifest: "schemas/manifest.schema.json"
+  policy: "schemas/policy.schema.json"
+  dsl_system: "schemas/dsl.system.schema.json"
+  dsl_device: "schemas/dsl.device.schema.json"
+  build_target: "schemas/build.target.schema.json"
+  deploy_target: "schemas/deploy.target.schema.json"
+  
+validation:
+  strict: true
+  fail_fast: true
+  auto_fix: false  # Nur nach expliziter Policy-Erlaubnis
+  
+# ============================================================================
+# DESIGN TOKENS UND KONTRAST-ENGINE
+# ============================================================================
+
+tokens:
+  palette: "tokens/palette.json"
+  components: "tokens/components/"
+  
+contrast_engine:
+  enabled: true
+  min_ratio_text: 4.5
+  min_ratio_large: 3.0
+  enforce_build_fail: true
+  auto_fix: true
+  
+# ============================================================================
+# GERÄTE-PROTOKOLLE UND STANDARDS
+# ============================================================================
+
+device_protocols:
+  - name: "OPC UA"
+    profile: "profiles/opcua.yaml"
+    security: "Basic256Sha256"
+    
+  - name: "Modbus/TCP"
+    profile: "profiles/modbus.yaml"
+    security: "TCP"
+    
+  - name: "MQTT"
+    profile: "profiles/mqtt.yaml"
+    security: "TLS"
+    
+  - name: "KNX"
+    profile: "profiles/knx.yaml"
+    security: "KNX Secure"
+    
+  - name: "BACnet"
+    profile: "profiles/bacnet.yaml"
+    security: "BACnet Secure Connect"
+    
+  - name: "Zigbee/Z-Wave"
+    profile: "profiles/zigbee.yaml"
+    security: "AES-128"
+    
+  - name: "REST/GraphQL"
+    profile: "profiles/rest.yaml"
+    security: "HTTPS"
+
+# ============================================================================
+# T,.&T,,.&T,,,.T. VERSCHLÜSSELUNGSPRINZIP
+# ============================================================================
+
+encryption:
+  principle: "T,.&T,,.&T,,,.T."
+  description: "Unendliche Ketten, Ritzel, Zahnrad - Verschlüsselung in Schichten"
+  
+  layers:
+    - name: "T,."
+      level: 1
+      algorithm: "AES-256"
+      purpose: "Basis-Verschlüsselung"
+    
+    - name: "T,,."
+      level: 2
+      algorithm: "ChaCha20-Poly1305"
+      purpose: "Erweiterte Verschlüsselung"
+    
+    - name: "T,,,."
+      level: 3
+      algorithm: "RSA-4096"
+      purpose: "Schlüssel-Austausch"
+    
+    - name: "T,,,,."
+      level: 4
+      algorithm: "Elliptic Curve"
+      purpose: "Signatur und Authentifizierung"
+  
+  infinite_chain:
+    enabled: true
+    description: "Unendliche Kette der Verschlüsselung - 8etearnal"
+    principle: "Jede Schicht verschlüsselt die vorherige, unendlich rekursiv"
+
+# ============================================================================
+# ELLIPSOIDISCHE VERSIONIERUNG
+# ============================================================================
+
+versioning:
+  type: "ellipsoid"
+  description: "Multidimensionale Koordinaten statt flacher SemVer"
+  
+  axes:
+    - name: "domain"
+      values: ["core", "ui", "api", "device", "system"]
+    
+    - name: "function"
+      values: ["feature", "fix", "security", "performance", "accessibility"]
+    
+    - name: "region"
+      values: ["global", "eu", "us", "asia", "local"]
+    
+    - name: "time"
+      format: "yyyy-MM-ddTHH:mm:ssZ"
+      precision: "second"
+  
+  overlap_corridor:
+    description: "Experimentier-Zonen (Canary/Blue-Green)"
+    entry_requirements:
+      - slo_guards: true
+      - rollback_ready: true
+      - monitoring_active: true
+
+# ============================================================================
+# UNENDLICHKEITSPRINZIP
+# ============================================================================
+
+infinity:
+  principle: "Unendliche Skalierung ohne Übersichtsverlust"
+  
+  mechanisms:
+    - name: "rekursive_strukturierung"
+      description: "Jede Ebene kann unendlich erweitert werden"
+      pattern: "T,.&T,,.&T,,,.T."
+    
+    - name: "hierarchische_navigation"
+      description: "Übersicht durch klare Hierarchie"
+      max_depth: 10  # Praktisches Limit, theoretisch unendlich
+    
+    - name: "metadaten_index"
+      description: "Vollständige Metadaten für Navigation"
+      required: true
+    
+    - name: "komprimierte_ansicht"
+      description: "Automatische Komprimierung bei großer Tiefe"
+      threshold: 1000
+
+# ============================================================================
+# EINHEITLICHE ZEITQUELLE (AUDIT-CLOCK)
+# ============================================================================
+
+audit_clock:
+  enabled: true
+  source: "ntp"
+  precision: "second"
+  timezone: "UTC"
+  format: "yyyy-MM-ddTHH:mm:ssZ"
+  
+  events:
+    log_path: "logs/audit/events.ndjson"
+    append_only: true
+    trace_ids: true
+    correlation: true
+

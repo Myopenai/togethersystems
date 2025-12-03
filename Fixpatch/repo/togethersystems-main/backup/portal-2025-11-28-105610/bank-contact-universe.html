@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bank Contact Universe – Enterprise-Grade Contact Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0f172a;
+      --card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --radius: 18px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
+      --shadow-inner: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
+      --transition-fast: 180ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: radial-gradient(circle at top, #0b1120 0, #020617 45%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .glow-orbit {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.55;
+      mix-blend-mode: screen;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56, 189, 248, 0.20) 0, transparent 50%),
+        radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.2) 0, transparent 55%),
+        radial-gradient(circle at 50% 70%, rgba(147, 51, 234, 0.18) 0, transparent 60%);
+      z-index: 0;
+    }
+
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 32px auto;
+      padding: 0 16px 32px;
+      width: 100%;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), transparent);
+      color: var(--muted);
+    }
+
+    .subtitle {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .search-box {
+      flex: 1 1 260px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 11px 10px 32px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.96));
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      box-shadow: var(--shadow-inner);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), background 220ms ease-out;
+    }
+
+    .search-box input::placeholder {
+      color: #6b7280;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+      transform: translateY(-1px);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 1), rgba(15, 23, 42, 0.98));
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    select {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      outline: none;
+      min-width: 140px;
+      cursor: pointer;
+      box-shadow: var(--shadow-inner);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), background 220ms ease-out;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+      transform: translateY(-1px);
+      background: rgba(15, 23, 42, 1);
+    }
+
+    .button {
+      border-radius: 999px;
+      border: none;
+      font-size: 0.85rem;
+      padding: 9px 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: #0b1120;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.55);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter 160ms ease-out;
+      white-space: nowrap;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 42px rgba(30, 64, 175, 0.7);
+      filter: brightness(1.02);
+    }
+
+    .button:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.9);
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
+      border-radius: var(--radius);
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      opacity: 0.05;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.8), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.65), transparent 55%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-title {
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e, #15803d);
+      box-shadow: 0 0 16px rgba(34, 197, 94, 0.8);
+    }
+
+    .stats {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.20);
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      color: var(--muted);
+    }
+
+    .stat span.value {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      background: var(--accent-soft);
+      color: #bae6fd;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-top: 4px;
+    }
+
+    .tag-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #22c55e);
+    }
+
+    .filters-group {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-pill {
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(15, 23, 42, 0.95);
+      color: #e5e7eb;
+      cursor: pointer;
+      transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+    }
+
+    .toggle-pill.active {
+      border-color: rgba(56, 189, 248, 0.85);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 1));
+      transform: translateY(-1px);
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .list-header h2 {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #9ca3af;
+    }
+
+    .list-header span.count {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      max-height: 560px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .card {
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
+      padding: 10px 12px 9px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.8);
+      display: grid;
+      grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.6fr);
+      gap: 10px;
+      align-items: start;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background 220ms ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 700px) {
+      .card {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at -10% 0%, rgba(56, 189, 248, 0.4), transparent 55%),
+        radial-gradient(circle at 110% 0%, rgba(59, 130, 246, 0.3), transparent 60%);
+      opacity: 0.12;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 44px rgba(15, 23, 42, 0.98);
+      border-color: rgba(56, 189, 248, 0.6);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.99));
+    }
+
+    .card-main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill-type {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      color: #cbd5f5;
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.75);
+    }
+
+    .card-links {
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .link-out {
+      color: #bfdbfe;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 0;
+    }
+
+    .link-out:hover {
+      text-decoration: underline;
+    }
+
+    .card-contact {
+      position: relative;
+      z-index: 1;
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+
+    .channel-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+
+    .contact-pill {
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.3), rgba(15, 23, 42, 1));
+      color: #e0f2fe;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .meta-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e, #15803d);
+    }
+
+    .no-results {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 28px 12px 18px;
+    }
+  </style>
+</head>
+<body>
+<div class="glow-orbit"></div>
+<div class="app-shell">
+  <header>
+    <div class="title-row">
+      <h1>
+        Bank Contact Universe
+        <span class="badge">Enterprise-Grade Contact Index</span>
+      </h1>
+    </div>
+    <div class="subtitle">
+      Zentrale Übersicht über Banken, Zahlungsanbieter und andere monetäre Systeme mit ihren
+      öffentlichen Kontaktkanälen (E-Mail, Formulare, Webportale) – durchsuchbar und filterbar.
+      <br><strong>Branding:</strong> .{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.
+    </div>
+    <div class="controls">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input id="searchInput" type="text" placeholder="Suche nach Bankname, Ort, Domain oder E-Mail…" />
+      </div>
+      <select id="countryFilter">
+        <option value="">Alle Länder</option>
+      </select>
+      <select id="channelFilter">
+        <option value="">Alle Typen</option>
+        <option value="bank">Bank</option>
+        <option value="payment_provider">Payment Provider</option>
+        <option value="fintech">FinTech</option>
+      </select>
+      <button class="button" id="exportCsv">
+        <span class="icon">⬇️</span> CSV Export
+      </button>
+    </div>
+  </header>
+  <main>
+    <section class="panel">
+      <div class="panel-inner">
+        <div class="panel-title">
+          <span class="panel-title-dot"></span>
+          System-Telemetrie
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="value" id="statTotal">0</span> Einträge
+          </div>
+          <div class="stat">
+            <span class="value" id="statEmail">0</span> mit E-Mail
+          </div>
+          <div class="stat">
+            <span class="value" id="statForm">0</span> mit Formular
+          </div>
+        </div>
+        <div class="tag-pill">
+          <span class="tag-pill-dot"></span>
+          Live Filter Pipeline
+        </div>
+        <div class="filters-group">
+          <div>Interaktive Filterung der erfassten Institute nach Land, Typ und Kontaktkanal.</div>
+          <div class="filter-row">
+            <span>Ansicht:</span>
+            <div class="toggle-group">
+              <button class="toggle-pill active" data-mode="all">Alle</button>
+              <button class="toggle-pill" data-mode="email">Nur E-Mail</button>
+              <button class="toggle-pill" data-mode="form">Nur Formulare</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="panel-inner">
+        <div class="list-header">
+          <h2>Kontakte</h2>
+          <span class="count" id="resultCount">0 Ergebnisse</span>
+        </div>
+        <div class="cards" id="cardsContainer"></div>
+        <div class="no-results" id="noResults" style="display:none;">
+          Keine Einträge passen zu den aktuellen Filtern.
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+  // Lade Daten aus JSON (wird von bank-contact-scraper.py generiert)
+  let data = [];
+  
+  async function loadData() {
+    try {
+      const response = await fetch('./bank_contacts.json');
+      if (response.ok) {
+        const json = await response.json();
+        data = json.banks || [];
+      } else {
+        // Fallback: Beispiel-Daten
+        data = [
+          {
+            bank_id: 1,
+            bank_name: "Musterbank AG",
+            country: "Germany",
+            city: "Berlin",
+            website: "https://www.musterbank.de",
+            contact_email: "service@musterbank.de",
+            contact_form_url: "https://www.musterbank.de/kontakt",
+            phone: "+49 30 123456",
+            channel_type: "bank",
+            verified_at: "2025-11-26"
+          }
+        ];
+      }
+    } catch (e) {
+      console.warn('Konnte bank_contacts.json nicht laden, verwende Beispiel-Daten');
+      data = [];
+    }
+    initFilters();
+    applyFilters();
+  }
+
+  const searchInput = document.getElementById("searchInput");
+  const countryFilter = document.getElementById("countryFilter");
+  const channelFilter = document.getElementById("channelFilter");
+  const cardsContainer = document.getElementById("cardsContainer");
+  const resultCount = document.getElementById("resultCount");
+  const noResults = document.getElementById("noResults");
+  const exportCsvBtn = document.getElementById("exportCsv");
+  const statTotal = document.getElementById("statTotal");
+  const statEmail = document.getElementById("statEmail");
+  const statForm = document.getElementById("statForm");
+  const togglePills = document.querySelectorAll(".toggle-pill");
+
+  let viewMode = "all";
+
+  function initFilters() {
+    const countries = Array.from(new Set(data.map(d => d.country).filter(Boolean))).sort();
+    countries.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      countryFilter.appendChild(opt);
+    });
+
+    statTotal.textContent = data.length;
+    statEmail.textContent = data.filter(d => d.contact_email).length;
+    statForm.textContent = data.filter(d => d.contact_form_url).length;
+  }
+
+  function matchesViewMode(item) {
+    if (viewMode === "email") return !!item.contact_email;
+    if (viewMode === "form") return !!item.contact_form_url;
+    return true;
+  }
+
+  function applyFilters() {
+    const q = (searchInput.value || "").toLowerCase().trim();
+    const country = countryFilter.value;
+    const channel = channelFilter.value;
+
+    let filtered = data.filter(d => matchesViewMode(d));
+
+    if (country) filtered = filtered.filter(d => d.country === country);
+    if (channel) filtered = filtered.filter(d => d.channel_type === channel);
+
+    if (q) {
+      filtered = filtered.filter(d => {
+        const combined = [
+          d.bank_name, d.city, d.country, d.website,
+          d.contact_email, d.contact_form_url
+        ].filter(Boolean).join(" ").toLowerCase();
+        return combined.includes(q);
+      });
+    }
+
+    renderCards(filtered);
+  }
+
+  function renderCards(items) {
+    cardsContainer.innerHTML = "";
+    resultCount.textContent = `${items.length} Ergebnis${items.length === 1 ? "" : "se"}`;
+    noResults.style.display = items.length ? "none" : "block";
+
+    items.forEach(item => {
+      const card = document.createElement("article");
+      card.className = "card";
+
+      const left = document.createElement("div");
+      left.className = "card-main";
+
+      const titleRow = document.createElement("div");
+      titleRow.className = "card-title";
+      titleRow.innerHTML = `
+        <span>${item.bank_name || "Unbenannte Institution"}</span>
+        <span class="pill-type">${(item.channel_type || "unknown").replace("_", " ")}</span>
+      `;
+
+      const meta = document.createElement("div");
+      meta.className = "card-meta";
+      const metaParts = [item.country, item.city, item.website ? new URL(item.website).hostname : null].filter(Boolean);
+      metaParts.forEach((part, i) => {
+        if (i > 0) {
+          const dot = document.createElement("span");
+          dot.className = "dot";
+          meta.appendChild(dot);
+        }
+        meta.appendChild(document.createTextNode(part));
+      });
+
+      const links = document.createElement("div");
+      links.className = "card-links";
+      if (item.website) {
+        const a = document.createElement("a");
+        a.href = item.website;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.className = "link-out";
+        a.innerHTML = '<span class="icon">🌐</span><span>Webseite öffnen</span>';
+        links.appendChild(a);
+      }
+      if (item.contact_form_url) {
+        const a = document.createElement("a");
+        a.href = item.contact_form_url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.className = "link-out";
+        a.innerHTML = '<span class="icon">📝</span><span>Kontaktformular</span>';
+        links.appendChild(a);
+      }
+
+      left.appendChild(titleRow);
+      left.appendChild(meta);
+      left.appendChild(links);
+
+      const right = document.createElement("div");
+      right.className = "card-contact";
+
+      const channelLabel = document.createElement("div");
+      channelLabel.className = "channel-label";
+      channelLabel.textContent = "Kontaktkanal";
+
+      const contactPill = document.createElement("div");
+      contactPill.className = "contact-pill";
+      if (item.contact_email) {
+        contactPill.innerHTML = `<span class="icon">✉️</span>${item.contact_email}`;
+      } else if (item.contact_form_url) {
+        contactPill.innerHTML = `<span class="icon">📝</span>Formular-Link verfügbar`;
+      } else {
+        contactPill.textContent = "Kein spezifischer Kontakt gefunden";
+      }
+
+      const metaFooter = document.createElement("div");
+      metaFooter.className = "meta-footer";
+      metaFooter.innerHTML = `
+        <span class="status-dot"></span>
+        <span>Verifiziert: ${item.verified_at || "Datum unbekannt"}</span>
+      `;
+
+      right.appendChild(channelLabel);
+      right.appendChild(contactPill);
+      right.appendChild(metaFooter);
+
+      card.appendChild(left);
+      card.appendChild(right);
+      cardsContainer.appendChild(card);
+    });
+  }
+
+  function setupEvents() {
+    searchInput.addEventListener("input", applyFilters);
+    countryFilter.addEventListener("change", applyFilters);
+    channelFilter.addEventListener("change", applyFilters);
+
+    togglePills.forEach(btn => {
+      btn.addEventListener("click", () => {
+        togglePills.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        viewMode = btn.dataset.mode || "all";
+        applyFilters();
+      });
+    });
+
+    exportCsvBtn.addEventListener("click", () => {
+      const q = (searchInput.value || "").toLowerCase().trim();
+      const country = countryFilter.value;
+      const channel = channelFilter.value;
+
+      let filtered = data.filter(d => matchesViewMode(d));
+      if (country) filtered = filtered.filter(d => d.country === country);
+      if (channel) filtered = filtered.filter(d => d.channel_type === channel);
+      if (q) {
+        filtered = filtered.filter(d => {
+          const combined = [
+            d.bank_name, d.city, d.country, d.website,
+            d.contact_email, d.contact_form_url
+          ].filter(Boolean).join(" ").toLowerCase();
+          return combined.includes(q);
+        });
+      }
+
+      const header = [
+        "bank_id", "bank_name", "country", "city", "website",
+        "contact_email", "contact_form_url", "phone",
+        "channel_type", "verified_at"
+      ];
+
+      const rows = [header.join(",")];
+      filtered.forEach(d => {
+        const row = header.map(k => {
+          const v = d[k] ?? "";
+          return `"${String(v).replace(/"/g, '""')}"`;
+        });
+        rows.push(row.join(","));
+      });
+
+      const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bank_contacts_filtered.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  setupEvents();
+  loadData();
+</script>
+</body>
+</html>
+

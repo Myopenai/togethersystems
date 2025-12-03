@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. Mail Hub – OSTOSOS</title>
+<link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+.mail-layout{display:grid;grid-template-columns:250px 1fr 1fr;gap:1rem;height:calc(100vh - 200px)}
+.postbox-list{background:var(--davinci-card,#1a1f3a);border-radius:var(--davinci-radius-md,12px);padding:1rem;overflow-y:auto}
+.postbox-item{padding:1rem;margin:0.5rem 0;background:var(--davinci-bg,#0f172a);border-radius:var(--davinci-radius-sm,6px);cursor:pointer;transition:all var(--davinci-transition-fast,0.15s)}
+.postbox-item:hover{background:var(--davinci-border,#223040)}
+.postbox-item.active{border-left:3px solid var(--davinci-accent-primary,#10b981)}
+.mail-view{background:var(--davinci-card,#1a1f3a);border-radius:var(--davinci-radius-md,12px);padding:1rem;overflow-y:auto}
+.mail-item{padding:1rem;margin:0.5rem 0;background:var(--davinci-bg,#0f172a);border-radius:var(--davinci-radius-sm,6px);cursor:pointer}
+.mail-item:hover{background:var(--davinci-border,#223040)}
+.doppelvision{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center}
+.modal-content{background:var(--davinci-card,#1a1f3a);padding:2rem;border-radius:var(--davinci-radius-lg,20px);max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.modal-close{background:none;border:none;color:var(--davinci-text,#ffffff);font-size:1.5em;cursor:pointer}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;margin-bottom:0.5rem;color:var(--davinci-text,#ffffff)}
+.form-input{width:100%;padding:0.75rem;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:var(--davinci-radius-sm,6px);color:var(--davinci-text,#ffffff)}
+.form-textarea{width:100%;padding:0.75rem;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:var(--davinci-radius-sm,6px);color:var(--davinci-text,#ffffff);min-height:200px;resize:vertical}
+.config-section{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--davinci-border,#223040)}
+</style>
+</head>
+<body>
+<div class="davinci-container" style="max-width:1600px;margin:0 auto;padding:2rem">
+<h1 class="davinci-heading-1"><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" style="color:var(--davinci-accent-primary,#10b981);text-decoration:none">T,.&T,,.&T,,,.</a> Mail Hub</h1>
+
+<div class="davinci-card" data-davinci-phosphor-complete>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+<h2 class="davinci-heading-2">Postkästen</h2>
+<button id="composeBtn" class="davinci-btn">✉️ Neue Nachricht</button>
+<button id="configBtn" class="davinci-btn-secondary" style="margin-left:10px">⚙️ E-Mail konfigurieren</button>
+</div>
+
+<div class="mail-layout">
+<div class="postbox-list">
+<div class="postbox-item active" data-postbox="1">
+<strong>📬 Postkasten 1</strong>
+<div class="davinci-text-muted" style="font-size:0.85em;margin-top:0.5rem">0 Nachrichten</div>
+</div>
+<div class="postbox-item" data-postbox="2">
+<strong>📬 Postkasten 2</strong>
+<div class="davinci-text-muted" style="font-size:0.85em;margin-top:0.5rem">0 Nachrichten</div>
+</div>
+<div class="postbox-item" data-postbox="3">
+<strong>📬 Postkasten 3</strong>
+<div class="davinci-text-muted" style="font-size:0.85em;margin-top:0.5rem">0 Nachrichten</div>
+</div>
+<div style="margin-top:2rem;padding-top:1rem;border-top:1px solid var(--davinci-border,#223040)">
+<button id="exportBtn" class="davinci-btn" style="width:100%;margin-bottom:0.5rem">📤 Exportieren</button>
+<button id="importBtn" class="davinci-btn-secondary" style="width:100%">📥 Importieren</button>
+</div>
+</div>
+
+<div class="doppelvision">
+<div class="mail-view" id="mailView1">
+<h3 class="davinci-heading-3">Postkasten 1</h3>
+<div id="mailList1" class="davinci-text-muted">Keine Nachrichten</div>
+</div>
+<div class="mail-view" id="mailView2">
+<h3 class="davinci-heading-3">Postkasten 2</h3>
+<div id="mailList2" class="davinci-text-muted">Keine Nachrichten</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="davinci-card" style="margin-top:2rem">
+<h2 class="davinci-heading-2">Lokale Funktionen</h2>
+<p class="davinci-text">Alle Daten werden lokal in IndexedDB gespeichert. Export/Import für volle Kontrolle.</p>
+<p class="davinci-text-muted" style="margin-top:0.5rem">IMAP/SMTP wird verfügbar, sobald Cloud aktiviert ist.</p>
+</div>
+
+<!-- Compose Modal -->
+<div id="composeModal" class="modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="davinci-heading-2">✉️ Neue Nachricht</h2>
+<button class="modal-close" onclick="closeComposeModal()">&times;</button>
+</div>
+<div class="form-group">
+<label class="form-label">An:</label>
+<input type="email" id="composeTo" class="form-input" placeholder="empfaenger@beispiel.de" required>
+</div>
+<div class="form-group">
+<label class="form-label">Betreff:</label>
+<input type="text" id="composeSubject" class="form-input" placeholder="Betreff der Nachricht" required>
+</div>
+<div class="form-group">
+<label class="form-label">Nachricht:</label>
+<textarea id="composeBody" class="form-textarea" placeholder="Ihre Nachricht..." required></textarea>
+</div>
+<div style="display:flex;gap:10px;margin-top:1rem">
+<button class="davinci-btn" onclick="sendMail()">📤 Senden</button>
+<button class="davinci-btn-secondary" onclick="saveDraft()">💾 Entwurf speichern</button>
+<button class="davinci-btn-secondary" onclick="closeComposeModal()">❌ Abbrechen</button>
+</div>
+</div>
+</div>
+
+<!-- Config Modal -->
+<div id="configModal" class="modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="davinci-heading-2">⚙️ E-Mail konfigurieren</h2>
+<button class="modal-close" onclick="closeConfigModal()">&times;</button>
+</div>
+<div class="form-group">
+<label class="form-label">E-Mail-Adresse:</label>
+<input type="email" id="configEmail" class="form-input" placeholder="ihre@email.de">
+</div>
+<div class="form-group">
+<label class="form-label">POP3 Server:</label>
+<input type="text" id="configPop3" class="form-input" placeholder="pop3.beispiel.de">
+</div>
+<div class="form-group">
+<label class="form-label">POP3 Port:</label>
+<input type="number" id="configPop3Port" class="form-input" placeholder="995" value="995">
+</div>
+<div class="form-group">
+<label class="form-label">SMTP Server:</label>
+<input type="text" id="configSmtp" class="form-input" placeholder="smtp.beispiel.de">
+</div>
+<div class="form-group">
+<label class="form-label">SMTP Port:</label>
+<input type="number" id="configSmtpPort" class="form-input" placeholder="587" value="587">
+</div>
+<div class="form-group">
+<label class="form-label">Benutzername:</label>
+<input type="text" id="configUsername" class="form-input" placeholder="Ihr Benutzername">
+</div>
+<div class="form-group">
+<label class="form-label">Passwort:</label>
+<input type="password" id="configPassword" class="form-input" placeholder="Ihr Passwort">
+</div>
+<div style="display:flex;gap:10px;margin-top:1rem">
+<button class="davinci-btn" onclick="saveConfig()">💾 Speichern</button>
+<button class="davinci-btn-secondary" onclick="closeConfigModal()">❌ Abbrechen</button>
+</div>
+</div>
+</div>
+
+<script src="./css/da-vinci-enterprise-standard-init.js"></script>
+<script>
+let db;
+const DB_NAME='ostosos-mail';
+const DB_VERSION=2;
+
+function initDB(){
+return new Promise((resolve,reject)=>{
+const request=indexedDB.open(DB_NAME,DB_VERSION);
+request.onerror=()=>reject(request.error);
+request.onsuccess=()=>{
+db=request.result;
+resolve(db);
+};
+request.onupgradeneeded=(event)=>{
+const db=event.target.result;
+for(let i=1;i<=3;i++){
+if(!db.objectStoreNames.contains(`postbox${i}`)){
+const store=db.createObjectStore(`postbox${i}`,{keyPath:'id',autoIncrement:true});
+store.createIndex('date','date',{unique:false});
+}
+}
+if(!db.objectStoreNames.contains('config')){
+db.createObjectStore('config');
+}
+if(!db.objectStoreNames.contains('drafts')){
+db.createObjectStore('drafts',{keyPath:'id',autoIncrement:true});
+}
+};
+});
+}
+
+function updatePostboxCounts(){
+for(let i=1;i<=3;i++){
+const store=db.transaction(`postbox${i}`,'readonly').objectStore(`postbox${i}`);
+const countRequest=store.count();
+countRequest.onsuccess=()=>{
+const item=document.querySelector(`[data-postbox="${i}"]`);
+if(item){
+const countEl=item.querySelector('.davinci-text-muted');
+countEl.textContent=`${countRequest.result} Nachrichten`;
+}
+};
+}
+}
+
+function loadMails(postboxNum){
+return new Promise((resolve,reject)=>{
+const store=db.transaction(`postbox${postboxNum}`,'readonly').objectStore(`postbox${postboxNum}`);
+const request=store.getAll();
+request.onsuccess=()=>resolve(request.result);
+request.onerror=()=>reject(request.error);
+});
+}
+
+function displayMails(postboxNum,mails){
+const view=document.getElementById(`mailView${postboxNum}`);
+const list=document.getElementById(`mailList${postboxNum}`);
+if(mails.length===0){
+list.textContent='Keine Nachrichten';
+return;
+}
+list.innerHTML='';
+mails.sort((a,b)=>new Date(b.date)-new Date(a.date));
+mails.forEach(mail=>{
+const item=document.createElement('div');
+item.className='mail-item';
+item.innerHTML=`
+<strong>${mail.subject||'Kein Betreff'}</strong>
+<div class="davinci-text-muted" style="font-size:0.85em;margin-top:0.5rem">
+Von: ${mail.from||'Unbekannt'} | ${new Date(mail.date).toLocaleString('de-DE')}
+</div>
+`;
+item.addEventListener('click',()=>showMailDetail(mail));
+list.appendChild(item);
+});
+}
+
+function showMailDetail(mail){
+const modal=document.createElement('div');
+modal.className='modal';
+modal.style.display='flex';
+modal.innerHTML=`
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="davinci-heading-2">${mail.subject||'Kein Betreff'}</h2>
+<button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+</div>
+<div style="margin-bottom:1rem">
+<strong>Von:</strong> ${mail.from||'Unbekannt'}<br>
+<strong>An:</strong> ${mail.to||'Unbekannt'}<br>
+<strong>Datum:</strong> ${new Date(mail.date).toLocaleString('de-DE')}
+</div>
+<div style="padding:1rem;background:var(--davinci-bg,#0f172a);border-radius:var(--davinci-radius-sm,6px);white-space:pre-wrap">
+${mail.body||''}
+</div>
+</div>
+`;
+document.body.appendChild(modal);
+modal.addEventListener('click',(e)=>{
+if(e.target===modal)modal.remove();
+});
+}
+
+function openComposeModal(){
+document.getElementById('composeModal').style.display='flex';
+loadConfig();
+}
+
+function closeComposeModal(){
+document.getElementById('composeModal').style.display='none';
+document.getElementById('composeTo').value='';
+document.getElementById('composeSubject').value='';
+document.getElementById('composeBody').value='';
+}
+
+function sendMail(){
+const to=document.getElementById('composeTo').value;
+const subject=document.getElementById('composeSubject').value;
+const body=document.getElementById('composeBody').value;
+if(!to||!subject||!body){
+alert('Bitte füllen Sie alle Felder aus.');
+return;
+}
+const config=getConfig();
+const mail={
+subject,
+from:config.email||'Lokal',
+to,
+body,
+date:new Date().toISOString()
+};
+const store=db.transaction('postbox1','readwrite').objectStore('postbox1');
+store.add(mail);
+updatePostboxCounts();
+loadMails(1).then(mails=>displayMails(1,mails));
+closeComposeModal();
+alert('Nachricht gesendet!');
+}
+
+function saveDraft(){
+const to=document.getElementById('composeTo').value;
+const subject=document.getElementById('composeSubject').value;
+const body=document.getElementById('composeBody').value;
+const draft={
+to,
+subject,
+body,
+date:new Date().toISOString()
+};
+const store=db.transaction('drafts','readwrite').objectStore('drafts');
+store.add(draft);
+closeComposeModal();
+alert('Entwurf gespeichert!');
+}
+
+function openConfigModal(){
+document.getElementById('configModal').style.display='flex';
+loadConfig();
+}
+
+function closeConfigModal(){
+document.getElementById('configModal').style.display='none';
+}
+
+function loadConfig(){
+const store=db.transaction('config','readonly').objectStore('config');
+const request=store.get('emailConfig');
+request.onsuccess=()=>{
+const config=request.result||{};
+document.getElementById('configEmail').value=config.email||'';
+document.getElementById('configPop3').value=config.pop3||'';
+document.getElementById('configPop3Port').value=config.pop3Port||995;
+document.getElementById('configSmtp').value=config.smtp||'';
+document.getElementById('configSmtpPort').value=config.smtpPort||587;
+document.getElementById('configUsername').value=config.username||'';
+document.getElementById('configPassword').value=config.password||'';
+};
+}
+
+function getConfig(){
+const store=db.transaction('config','readonly').objectStore('config');
+const request=store.get('emailConfig');
+return new Promise((resolve)=>{
+request.onsuccess=()=>resolve(request.result||{});
+});
+}
+
+function saveConfig(){
+const config={
+email:document.getElementById('configEmail').value,
+pop3:document.getElementById('configPop3').value,
+pop3Port:parseInt(document.getElementById('configPop3Port').value)||995,
+smtp:document.getElementById('configSmtp').value,
+smtpPort:parseInt(document.getElementById('configSmtpPort').value)||587,
+username:document.getElementById('configUsername').value,
+password:document.getElementById('configPassword').value
+};
+const store=db.transaction('config','readwrite').objectStore('config');
+store.put(config,'emailConfig');
+closeConfigModal();
+alert('Konfiguration gespeichert!');
+}
+
+document.querySelectorAll('.postbox-item').forEach(item=>{
+item.addEventListener('click',async()=>{
+document.querySelectorAll('.postbox-item').forEach(i=>i.classList.remove('active'));
+item.classList.add('active');
+const postboxNum=item.dataset.postbox;
+const mails=await loadMails(postboxNum);
+displayMails(postboxNum,mails);
+});
+});
+
+document.getElementById('composeBtn').addEventListener('click',openComposeModal);
+document.getElementById('configBtn').addEventListener('click',openConfigModal);
+
+document.getElementById('exportBtn').addEventListener('click',async()=>{
+const allMails={};
+for(let i=1;i<=3;i++){
+allMails[`postbox${i}`]=await loadMails(i);
+}
+const blob=new Blob([JSON.stringify(allMails,null,2)],{type:'application/json'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');
+a.href=url;
+a.download=`ostosos-mail-export-${new Date().toISOString().split('T')[0]}.json`;
+a.click();
+});
+
+document.getElementById('importBtn').addEventListener('click',()=>{
+const input=document.createElement('input');
+input.type='file';
+input.accept='.json';
+input.onchange=async(e)=>{
+const file=e.target.files[0];
+if(file){
+const text=await file.text();
+const data=JSON.parse(text);
+for(let i=1;i<=3;i++){
+const store=db.transaction(`postbox${i}`,'readwrite').objectStore(`postbox${i}`);
+if(data[`postbox${i}`]){
+data[`postbox${i}`].forEach(mail=>store.add(mail));
+}
+}
+updatePostboxCounts();
+alert('Import erfolgreich!');
+}
+};
+input.click();
+});
+
+initDB().then(()=>{
+updatePostboxCounts();
+loadMails(1).then(mails=>displayMails(1,mails));
+loadMails(2).then(mails=>displayMails(2,mails));
+});
+</script>
+</body>
+</html>

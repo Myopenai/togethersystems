@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>T,. OSTOSOS – One-Click Installer</title>
+
+  <!-- PWA Manifest inlined; will export to manifest.webmanifest on HTTPS -->
+  <script type="application/json" id="ostosos-manifest">
+  {
+    "name": "Together Systems OS",
+    "short_name": "OSTOSOS",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#0f1419",
+    "theme_color": "#0f1419",
+    "icons": [
+      { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
+      { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" }
+    ],
+    "shortcuts": [
+      { "name": "Portal", "url": "./manifest-portal.html" },
+      { "name": "Telbank", "url": "./TELBANK/index.html" },
+      { "name": "Honeycomb", "url": "./honeycomb.html" },
+      { "name": "Legal Hub", "url": "./legal-hub.html" },
+      { "name": "Cloud", "url": "./cloud-hub.html" },
+      { "name": "Mail Hub", "url": "./mail-hub.html" },
+      { "name": "Media Hub", "url": "./media-hub.html" },
+      { "name": "Matrix Games", "url": "./matrix-games.html" }
+    ]
+  }
+  </script>
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css"/>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .installer-main {
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+    #status {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      min-height: 100px;
+    }
+    .progress-steps {
+      text-align: left;
+      margin-top: 1rem;
+    }
+    .progress-step {
+      padding: 0.5rem 0;
+      color: var(--davinci-muted, #9ca3af);
+    }
+    .progress-step.active {
+      color: var(--davinci-accent-primary, #10b981);
+    }
+    .progress-step.complete {
+      color: var(--davinci-success, #22c55e);
+    }
+  </style>
+</head>
+<body>
+  <main class="installer-main davinci-container">
+    <h1 class="davinci-heading-1">T,. OSTOSOS – Ein Klick, alles bereit</h1>
+    <p class="davinci-text">Klick auf „Jetzt installieren" und die komplette Umgebung wird lokal eingerichtet.</p>
+    
+    <button id="install" class="davinci-btn" style="font-size: 1.2em; padding: 1rem 2rem; margin-top: 2rem;">
+      🚀 JETZT INSTALLIEREN
+    </button>
+    
+    <div id="status" class="davinci-card davinci-phosphorescent-flow" style="display: none;">
+      <div class="progress-steps" id="progressSteps"></div>
+    </div>
+  </main>
+
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+  <script>
+    const statusEl = document.getElementById('status');
+    const progressStepsEl = document.getElementById('progressSteps');
+
+    function addStep(text, status = 'active') {
+      const step = document.createElement('div');
+      step.className = `progress-step ${status}`;
+      step.textContent = status === 'complete' ? `✅ ${text}` : status === 'active' ? `⏳ ${text}` : `⏸️ ${text}`;
+      progressStepsEl.appendChild(step);
+      return step;
+    }
+
+    function updateStep(step, status) {
+      step.className = `progress-step ${status}`;
+      const text = step.textContent.replace(/^[✅⏳⏸️] /, '');
+      step.textContent = status === 'complete' ? `✅ ${text}` : status === 'active' ? `⏳ ${text}` : `⏸️ ${text}`;
+    }
+
+    async function writeManifest() {
+      // If running under HTTPS, publish the manifest from inline to a file
+      if (location.protocol.startsWith('http')) {
+        const manifest = document.getElementById('ostosos-manifest').textContent;
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = './manifest.webmanifest';
+        document.head.appendChild(link);
+      }
+    }
+
+    async function registerSW() {
+      if ('serviceWorker' in navigator) {
+        try {
+          const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+          return reg;
+        } catch (e) {
+          console.warn('Service Worker Registrierung fehlgeschlagen (lokal ohne HTTPS ok):', e);
+        }
+      }
+    }
+
+    async function preCacheAssets() {
+      // Minimal offline-first: pre-cache known app shells
+      const essentials = [
+        './index.html', './manifest-portal.html', './manifest-forum.html',
+        './OSTOSOS-OS-COMPLETE-SYSTEM.html',
+        './TELBANK/index.html', './honeycomb.html', './legal-hub.html',
+        './cloud-hub.html', './mail-hub.html', './media-hub.html', './matrix-games.html',
+        './css/da-vinci-xxxxxl-enterprise-standard.css',
+        './css/da-vinci-enterprise-standard-init.js'
+      ];
+      
+      if (navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'PRECACHE', assets: essentials });
+        // Wait a bit for caching
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } else if ('caches' in window) {
+        // Fallback: direct cache API
+        try {
+          const cache = await caches.open('ostosos-shell-v1');
+          await cache.addAll(essentials.filter(url => {
+            try { new URL(url, location.href); return true; } catch { return false; }
+          }));
+        } catch (e) {
+          console.warn('Pre-Caching fehlgeschlagen:', e);
+        }
+      }
+    }
+
+    async function environmentInstall() {
+      // Detect native/container paths as per hybrid strategy
+      const hints = [];
+      if (window.navigator.userAgent.includes('Electron')) {
+        hints.push('Electron-Umgebung erkannt: native Features aktiv.');
+      }
+      return hints.join(' ');
+    }
+
+    async function firstRunPopup() {
+      // One-Pop: a single modal that gathers explicit consent toggles (no auto-analysis), then opens dashboard.
+      const prefs = {
+        syncEnabled: false,
+        cloudEnabled: false,
+        mailEnabled: true,   // local-only default
+        mediaEnabled: true,  // local-only default
+        gamesEnabled: true,  // local-only default
+        firstRun: false,     // Mark as completed
+        installDate: new Date().toISOString()
+      };
+      localStorage.setItem('ostosos.prefs', JSON.stringify(prefs));
+      localStorage.setItem('ostosos.installed', 'true');
+      localStorage.setItem('ostosos.version', '1.0.0');
+    }
+
+    document.getElementById('install').addEventListener('click', async () => {
+      const installBtn = document.getElementById('install');
+      installBtn.disabled = true;
+      statusEl.style.display = 'block';
+      progressStepsEl.innerHTML = '';
+
+      const step1 = addStep('Manifest wird erstellt...', 'active');
+      await writeManifest();
+      updateStep(step1, 'complete');
+
+      const step2 = addStep('Service Worker wird registriert...', 'active');
+      await registerSW();
+      updateStep(step2, 'complete');
+
+      const step3 = addStep('Assets werden gecacht...', 'active');
+      await preCacheAssets();
+      updateStep(step3, 'complete');
+
+      const step4 = addStep('Erstkonfiguration wird durchgeführt...', 'active');
+      await firstRunPopup();
+      updateStep(step4, 'complete');
+
+      const step5 = addStep('Umgebung wird erkannt...', 'active');
+      const env = await environmentInstall();
+      if (env) {
+        const envStep = addStep(env, 'complete');
+      }
+      updateStep(step5, 'complete');
+
+      const step6 = addStep('Installation abgeschlossen!', 'complete');
+      
+      setTimeout(() => {
+        window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+      }, 1000);
+    });
+
+    // Check if already installed
+    window.addEventListener('load', () => {
+      if (localStorage.getItem('ostosos.installed') === 'true') {
+        const installBtn = document.getElementById('install');
+        installBtn.textContent = '✅ Bereits installiert - Zum System öffnen';
+        installBtn.onclick = () => {
+          window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+        };
+      }
+    });
+  </script>
+</body>
+</html>
+

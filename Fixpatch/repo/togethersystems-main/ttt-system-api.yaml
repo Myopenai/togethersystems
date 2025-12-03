@@ -1,0 +1,538 @@
+openapi: 3.0.3
+info:
+  title: T,. / INTERNATIONAL TTT — Full System API
+  version: 0.3.0
+  description: |
+    TogetherSystems Full API:
+    - Manifest, Voucher
+    - Telbank (Wallets, Transactions; Skrill/Krypto)
+    - Legal-Hub (Contracts, Signatures, Archive)
+    - Room (Live/Signaling/P2P Sync)
+    - Business Modules (Real estate, Credit, Events, Machines, Memberships)
+servers:
+  - url: https://api.ttt.example.com
+    description: Production
+  - url: https://api.sandbox.ttt.example.com
+    description: Sandbox
+tags:
+  - name: Manifest
+  - name: Voucher
+  - name: Telbank
+  - name: Legal
+  - name: Room
+  - name: Business
+paths:
+  /manifest/entries:
+    get:
+      tags: [Manifest]
+      summary: List manifest entries
+      parameters:
+        - in: query; name: page; schema: { type: integer, default: 1, minimum: 1 }
+        - in: query; name: pageSize; schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+        - in: query; name: language; schema: { type: string }
+        - in: query; name: tag; schema: { type: string }
+        - in: query; name: since; schema: { type: string, format: date-time }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ManifestEntryPage' } } } }
+    post:
+      tags: [Manifest]
+      summary: Publish manifest entry
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ManifestEntryCreateRequest' } } }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/ManifestEntry' } } } }
+  /manifest/entries/{id}:
+    get:
+      tags: [Manifest]
+      summary: Read one entry
+      parameters: [ { in: path, name: id, required: true, schema: { type: string } } ]
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/ManifestEntry' } } } }
+        '404': { description: Not found }
+    patch:
+      tags: [Manifest]
+      summary: Update entry
+      parameters: [ { in: path, name: id, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ManifestEntryUpdateRequest' } } }
+      responses:
+        '200': { description: Updated, content: { application/json: { schema: { $ref: '#/components/schemas/ManifestEntry' } } } }
+  /voucher/service-types:
+    get:
+      tags: [Voucher]
+      summary: List service types
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/ServiceType' } } } } }
+  /voucher/vouchers:
+    get:
+      tags: [Voucher]
+      summary: List vouchers
+      parameters:
+        - in: query; name: page; schema: { type: integer, default: 1 }
+        - in: query; name: pageSize; schema: { type: integer, default: 20 }
+        - in: query; name: serviceType; schema: { type: string }
+        - in: query; name: status; schema: { type: string, enum: [draft, active, expired, cancelled] }
+        - in: query; name: orgId; schema: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/VoucherPage' } } } }
+    post:
+      tags: [Voucher]
+      summary: Create voucher
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/VoucherCreateRequest' } } }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Voucher' } } } }
+  /voucher/slots:
+    get:
+      tags: [Voucher]
+      summary: Search slots
+      parameters:
+        - in: query; name: serviceType; required: true; schema: { type: string }
+        - in: query; name: from; required: true; schema: { type: string, format: date-time }
+        - in: query; name: to; required: true; schema: { type: string, format: date-time }
+        - in: query; name: orgId; schema: { type: string }
+        - in: query; name: location; schema: { type: string }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Slot' } } } } }
+  /voucher/bookings:
+    get:
+      tags: [Voucher]
+      summary: List bookings
+      parameters:
+        - in: query; name: page; schema: { type: integer, default: 1 }
+        - in: query; name: pageSize; schema: { type: integer, default: 20 }
+        - in: query; name: orgId; schema: { type: string }
+        - in: query; name: customerId; schema: { type: string }
+        - in: query; name: serviceType; schema: { type: string }
+        - in: query; name: status; schema: { type: string, enum: [pending, confirmed, completed, cancelled] }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/BookingPage' } } } }
+    post:
+      tags: [Voucher]
+      summary: Create booking
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/BookingCreateRequest' } } }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Booking' } } } }
+  /telbank/wallets:
+    get:
+      tags: [Telbank]
+      summary: List user wallets
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/WalletPage' } } } }
+    post:
+      tags: [Telbank]
+      summary: Create wallet
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/WalletCreateRequest' } } }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Wallet' } } } }
+  /telbank/transactions:
+    post:
+      tags: [Telbank]
+      summary: Execute transaction (bank/skrill/crypto)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/TransactionCreateRequest' } } }
+      responses:
+        '201': { description: Executed, content: { application/json: { schema: { $ref: '#/components/schemas/Transaction' } } } }
+  /legal/contracts:
+    post:
+      tags: [Legal]
+      summary: Create contract
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ContractCreateRequest' } } }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Contract' } } } }
+  /legal/contracts/{id}/sign:
+    post:
+      tags: [Legal]
+      summary: Sign contract
+      parameters: [ { in: path, name: id, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/SignatureRequest' } } }
+      responses:
+        '200': { description: Signed, content: { application/json: { schema: { $ref: '#/components/schemas/Contract' } } } }
+  /room/create:
+    post:
+      tags: [Room]
+      summary: Create live room
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/RoomCreateRequest' } } }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Room' } } } }
+  /room/{id}/signal:
+    post:
+      tags: [Room]
+      summary: Send signaling message
+      parameters: [ { in: path, name: id, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/SignalMessage' } } }
+      responses:
+        '200': { description: Relayed }
+  /room/{id}/p2p-sync:
+    post:
+      tags: [Room]
+      summary: Sync manifest via P2P
+      parameters: [ { in: path, name: id, required: true, schema: { type: string } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ManifestSyncRequest' } } }
+      responses:
+        '200': { description: Synced }
+  /business/immobilien/anfragen:
+    post:
+      tags: [Business]
+      summary: Real estate inquiry
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/ImmobilienRequest' } } }
+      responses:
+        '201': { description: Saved }
+  /business/kredite/anfragen:
+    post:
+      tags: [Business]
+      summary: Credit inquiry
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/KreditRequest' } } }
+      responses:
+        '201': { description: Saved }
+  /business/events/bookings:
+    post:
+      tags: [Business]
+      summary: Event booking
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/EventBookingRequest' } } }
+      responses:
+        '201': { description: Saved }
+  /business/machines/timeslots:
+    post:
+      tags: [Business]
+      summary: Machine time booking
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/MachineSlotRequest' } } }
+      responses:
+        '201': { description: Saved }
+  /business/memberships/join:
+    post:
+      tags: [Business]
+      summary: Join membership
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/MembershipJoinRequest' } } }
+      responses:
+        '201': { description: Created }
+components:
+  securitySchemes:
+    BearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+    ApiKey: { type: apiKey, in: header, name: X-API-Key }
+  schemas:
+    ManifestEntry:
+      type: object
+      required: [id,title,content,createdAt]
+      properties:
+        id: { type: string }
+        title: { type: string, maxLength: 200 }
+        content: { type: string }
+        language: { type: string }
+        tags: { type: array, items: { type: string } }
+        initials: { type: string }
+        logoUrl: { type: string, format: uri, nullable: true }
+        sourceToken: { type: string }
+        visibility: { type: string, enum: [public, unlisted, private], default: public }
+        flags: { type: array, items: { type: string } }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time, nullable: true }
+        metadata: { type: object, additionalProperties: true }
+    ManifestEntryCreateRequest:
+      type: object
+      required: [title,content]
+      properties:
+        title: { type: string, maxLength: 200 }
+        content: { type: string }
+        language: { type: string }
+        tags: { type: array, items: { type: string } }
+        initials: { type: string }
+        logoUrl: { type: string, format: uri }
+        token: { type: string }
+        signature: { type: string }
+        timestamp: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    ManifestEntryUpdateRequest:
+      type: object
+      properties:
+        title: { type: string }
+        content: { type: string }
+        language: { type: string }
+        tags: { type: array, items: { type: string } }
+        visibility: { type: string, enum: [public, unlisted, private] }
+        flags: { type: array, items: { type: string } }
+        metadata: { type: object, additionalProperties: true }
+    ManifestEntryPage:
+      type: object
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/ManifestEntry' } }
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalItems: { type: integer }
+        totalPages: { type: integer }
+    ServiceType:
+      type: object
+      required: [id,name]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        category: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    Voucher:
+      type: object
+      required: [id,code,serviceType,status]
+      properties:
+        id: { type: string }
+        code: { type: string }
+        serviceType: { type: string }
+        orgId: { type: string }
+        title: { type: string }
+        description: { type: string }
+        status: { type: string, enum: [draft, active, expired, cancelled] }
+        validFrom: { type: string, format: date-time, nullable: true }
+        validUntil: { type: string, format: date-time, nullable: true }
+        totalUnits: { type: number, nullable: true }
+        remainingUnits: { type: number, nullable: true }
+        terms: { type: string }
+        metadata: { type: object, additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time, nullable: true }
+    VoucherCreateRequest:
+      type: object
+      required: [serviceType,orgId,title]
+      properties:
+        serviceType: { type: string }
+        orgId: { type: string }
+        title: { type: string }
+        description: { type: string }
+        code: { type: string }
+        validFrom: { type: string, format: date-time }
+        validUntil: { type: string, format: date-time }
+        totalUnits: { type: number }
+        terms: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    VoucherPage:
+      type: object
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/Voucher' } }
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalItems: { type: integer }
+        totalPages: { type: integer }
+    Slot:
+      type: object
+      required: [id,serviceType,start,end,status]
+      properties:
+        id: { type: string }
+        voucherId: { type: string, nullable: true }
+        serviceType: { type: string }
+        orgId: { type: string }
+        location: { type: string }
+        start: { type: string, format: date-time }
+        end: { type: string, format: date-time }
+        status: { type: string, enum: [available, held, booked, blocked] }
+        capacity: { type: integer, default: 1 }
+        metadata: { type: object, additionalProperties: true }
+    Booking:
+      type: object
+      required: [id,slotId,status]
+      properties:
+        id: { type: string }
+        slotId: { type: string }
+        voucherId: { type: string, nullable: true }
+        orgId: { type: string }
+        customerId: { type: string }
+        customerRef: { type: string }
+        status: { type: string, enum: [pending, confirmed, completed, cancelled] }
+        price: { type: number, format: float }
+        currency: { type: string, example: "EUR" }
+        paymentStatus: { type: string, enum: [unpaid, reserved, paid, refunded] }
+        notes: { type: string }
+        metadata: { type: object, additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time, nullable: true }
+    BookingCreateRequest:
+      type: object
+      required: [slotId]
+      properties:
+        slotId: { type: string }
+        voucherId: { type: string, nullable: true }
+        orgId: { type: string }
+        customerId: { type: string }
+        customerRef: { type: string }
+        price: { type: number, format: float }
+        currency: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    Wallet:
+      type: object
+      required: [id,ownerId,currency,balance]
+      properties:
+        id: { type: string }
+        ownerId: { type: string }
+        currency: { type: string, example: "EUR" }
+        balance: { type: number, format: float }
+        metadata: { type: object, additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+    WalletCreateRequest:
+      type: object
+      required: [currency]
+      properties:
+        currency: { type: string }
+        initialBalance: { type: number, format: float }
+        metadata: { type: object, additionalProperties: true }
+    WalletPage:
+      type: object
+      properties:
+        items: { type: array, items: { $ref: '#/components/schemas/Wallet' } }
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalItems: { type: integer }
+        totalPages: { type: integer }
+    Transaction:
+      type: object
+      required: [id,amount,currency,method,status]
+      properties:
+        id: { type: string }
+        amount: { type: number, format: float }
+        currency: { type: string }
+        method: { type: string, enum: [bank, skrill, crypto] }
+        sourceWalletId: { type: string, nullable: true }
+        targetWalletId: { type: string, nullable: true }
+        externalRef: { type: string, nullable: true }
+        status: { type: string, enum: [initiated, reserved, completed, failed] }
+        audit: { type: object, additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+    TransactionCreateRequest:
+      type: object
+      required: [amount,currency,method]
+      properties:
+        amount: { type: number, format: float }
+        currency: { type: string }
+        method: { type: string, enum: [bank, skrill, crypto] }
+        sourceWalletId: { type: string }
+        targetWalletId: { type: string }
+        externalRef: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    Contract:
+      type: object
+      required: [id,title,status]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        body: { type: string }
+        status: { type: string, enum: [draft, active, archived] }
+        signatures: { type: array, items: { $ref: '#/components/schemas/Signature' } }
+        createdAt: { type: string, format: date-time }
+    ContractCreateRequest:
+      type: object
+      required: [title,body]
+      properties:
+        title: { type: string }
+        body: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    Signature:
+      type: object
+      required: [signerId,signedAt]
+      properties:
+        signerId: { type: string }
+        signedAt: { type: string, format: date-time }
+        method: { type: string, enum: [digital, ink-scan, ttt-mark] }
+        reference: { type: string }
+    SignatureRequest:
+      type: object
+      required: [signerId]
+      properties:
+        signerId: { type: string }
+        method: { type: string, enum: [digital, ttt-mark] }
+        reference: { type: string }
+    Room:
+      type: object
+      required: [id,topic,createdAt]
+      properties:
+        id: { type: string }
+        topic: { type: string }
+        ownerId: { type: string }
+        permissions: { type: array, items: { type: string } }
+        signalingUrl: { type: string }
+        createdAt: { type: string, format: date-time }
+    RoomCreateRequest:
+      type: object
+      required: [topic]
+      properties:
+        topic: { type: string }
+        permissions: { type: array, items: { type: string } }
+        metadata: { type: object, additionalProperties: true }
+    SignalMessage:
+      type: object
+      required: [type,payload]
+      properties:
+        type: { type: string, enum: [offer, answer, ice, text] }
+        payload: { type: object, additionalProperties: true }
+    ManifestSyncRequest:
+      type: object
+      required: [manifestId]
+      properties:
+        manifestId: { type: string }
+        peers: { type: array, items: { type: string } }
+        metadata: { type: object, additionalProperties: true }
+    ImmobilienRequest:
+      type: object
+      required: [customerRef, need]
+      properties:
+        customerRef: { type: string }
+        need: { type: string }
+        budget: { type: number, format: float }
+        location: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    KreditRequest:
+      type: object
+      required: [customerRef, amount, currency]
+      properties:
+        customerRef: { type: string }
+        amount: { type: number, format: float }
+        currency: { type: string }
+        purpose: { type: string }
+        metadata: { type: object, additionalProperties: true }
+    EventBookingRequest:
+      type: object
+      required: [eventId, customerRef]
+      properties:
+        eventId: { type: string }
+        customerRef: { type: string }
+        seats: { type: integer, default: 1 }
+        metadata: { type: object, additionalProperties: true }
+    MachineSlotRequest:
+      type: object
+      required: [machineId, from, to]
+      properties:
+        machineId: { type: string }
+        from: { type: string, format: date-time }
+        to: { type: string, format: date-time }
+        metadata: { type: object, additionalProperties: true }
+    MembershipJoinRequest:
+      type: object
+      required: [memberRef]
+      properties:
+        memberRef: { type: string }
+        plan: { type: string }
+        metadata: { type: object, additionalProperties: true }
+

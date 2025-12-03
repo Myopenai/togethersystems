@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portal – Einsteiger-Hilfe & How-To</title>
+  <link rel="icon" href="./icon.png" type="image/png">
+  <style>
+    :root{
+      --bg:#0f1419;
+      --fg:#e6eef3;
+      --muted:#9fb3c8;
+      --accent:#10b981;
+      --accent-2:#3b82f6;
+      --card:#111827;
+      --border:#1e293b;
+      --radius:14px;
+      --font:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background:radial-gradient(circle at top,#0b1120 0,#020617 32%,#020617 100%);
+      color:var(--fg);
+      font:14px/1.6 var(--font);
+    }
+    a{color:#7dd3fc;text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    .ts-brand-banner{
+      background:linear-gradient(90deg,#020617,#0f172a 50%,#111827);
+      color:#e5e7eb;
+      padding:4px 12px;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-bottom:1px solid rgba(148,163,184,.45);
+    }
+    .ts-brand-banner strong{font-weight:600;}
+    .ts-brand-sub{opacity:.78;display:block;}
+    .ts-brand-links a{
+      color:#a5b4fc;
+      text-decoration:none;
+      font-size:11px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+    .ts-brand-links a:hover{text-decoration:underline;}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:16px;}
+    .hero{
+      background:radial-gradient(600px 200px at 10% 0%,#10b98122,transparent 60%),
+                  radial-gradient(600px 200px at 90% 0%,#3b82f622,transparent 60%),
+                  var(--card);
+      border-radius:20px;
+      border:1px solid var(--border);
+      padding:18px 18px 14px;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      box-shadow:0 18px 45px rgba(0,0,0,.55);
+    }
+    .hero-badge{
+      width:40px;height:40px;border-radius:50%;
+      display:grid;place-items:center;
+      background:var(--accent);
+      color:#00100a;
+      font-weight:800;
+      font-size:18px;
+    }
+    h1{margin:0 0 4px;font-size:20px;}
+    .subtitle{font-size:13px;color:var(--muted);}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.55);
+      font-size:11px;
+      color:#cbd5f5;
+      background:rgba(15,23,42,.85);
+    }
+    .layout{
+      display:grid;
+      grid-template-columns:260px minmax(0,1fr);
+      gap:16px;
+      margin-top:16px;
+    }
+    @media(max-width:900px){
+      .layout{grid-template-columns:1fr;}
+    }
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      box-shadow:0 10px 30px rgba(0,0,0,.45);
+    }
+    .card-pad{padding:14px 16px;}
+    .card h2{margin:0 0 6px;font-size:15px;}
+    .card h3{margin:16px 0 6px;font-size:14px;}
+    .muted{color:var(--muted);}
+    .small{font-size:12px;}
+
+    .nav-list{
+      list-style:none;
+      margin:0;padding:0;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .nav-list a{
+      display:block;
+      padding:8px 10px;
+      border-radius:8px;
+      border:1px solid transparent;
+      color:var(--fg);
+      font-size:13px;
+      background:transparent;
+    }
+    .nav-list a:hover{
+      border-color:var(--accent-2);
+      background:rgba(30,64,175,.25);
+      text-decoration:none;
+    }
+    .nav-list a span{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+    }
+    .section{
+      padding:10px 16px 12px;
+      border-top:1px solid rgba(15,23,42,.9);
+    }
+    .section:first-of-type{border-top:none;}
+    .section h3{display:flex;align-items:center;gap:8px;}
+    .section h3 code{
+      font-size:11px;
+      padding:1px 6px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.6);
+      background:rgba(15,23,42,.9);
+      color:#e5e7eb;
+    }
+    ul{margin:6px 0 6px 18px;padding:0;}
+    li{margin-bottom:3px;}
+    .step{margin:0 0 4px;}
+    .screenshot-box{
+      margin-top:6px;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px dashed rgba(148,163,184,.7);
+      background:rgba(15,23,42,.65);
+      font-size:11px;
+      color:var(--muted);
+    }
+    .code-inline{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:12px;
+      padding:1px 4px;
+      border-radius:4px;
+      background:rgba(15,23,42,.9);
+      border:1px solid rgba(30,64,175,.7);
+      color:#e5e7eb;
+    }
+    .link-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(59,130,246,.7);
+      background:rgba(15,23,42,.8);
+      font-size:11px;
+      margin-right:4px;
+      margin-top:2px;
+    }
+    footer{
+      margin:18px 0 6px;
+      text-align:center;
+      font-size:11px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span class="ts-brand-sub">(+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./help-portal.html">Portal-Hilfe</a>
+      <a href="./manifest-forum.html">Manifest</a>
+      <a href="./help-manifest.html">Manifest-Hilfe</a>
+      <a href="./manifest-portal.html">Online-Portal</a>
+      <a href="./help-online-portal.html">Online-Portal-Hilfe</a>
+      <a href="./honeycomb.html">Wabenräume</a>
+      <a href="./help-honeycomb.html">Wabenräume-Hilfe</a>
+      <a href="./legal-hub.html">Legal-Hub</a>
+      <a href="./help-legal-hub.html">Legal-Hub-Hilfe</a>
+      <a href="TELBANK/index.html">💰 Telbank</a>
+      <a href="./business-admin.html">📊 Business-Admin</a>
+      <a href="./admin-monitoring.html">📈 Monitoring</a>
+      <a href="TsysytemsT/TsysytemsT.html" title="One Network · One Humanity · OPS / OSP">🌐 One&nbsp;Network</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-badge">?</div>
+      <div>
+        <h1>Einsteiger-Hilfe · Portal, Manifest & Tests</h1>
+        <div class="subtitle">
+          Schritt-für-Schritt-Anleitung für Desktop & Mobil:
+          Portal als App installieren, Offline‑Manifest benutzen, Verifizierung ins Online‑Portal,
+          und automatische Tests mit Playwright.
+        </div>
+        <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;">
+          <span class="badge">👶 Für Einsteiger & „Dummies“</span>
+          <span class="badge">📱 Handy & 💻 Desktop</span>
+          <span class="badge">✅ Playwright‑Test‑fähig</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="card">
+        <div class="card-pad">
+          <h2>Navigation</h2>
+          <p class="muted small">Klicke auf einen Abschnitt, um direkt zur passenden Erklärung zu springen.</p>
+        </div>
+        <div class="card-pad" style="border-top:1px solid var(--border);">
+          <ul class="nav-list">
+            <li><a href="#pwa"><strong>1. Portal als App installieren</strong><span>Handy & Desktop, PWA mit Manifest & Service Worker</span></a></li>
+            <li><a href="#offline-manifest"><strong>2. Offline‑Manifest einmalig benutzen</strong><span>Datei speichern, nicht verlieren, immer dieselbe nutzen</span></a></li>
+            <li><a href="#verify-bridge"><strong>3. Verifizierung & Auto‑Connect</strong><span>Token‑Brücke vom Offline‑Manifest ins Online‑Portal</span></a></li>
+            <li><a href="#tests"><strong>4. Tests ausführen (Playwright)</strong><span>Lokaler Server, Test‑Ordner, Chromium‑Checks</span></a></li>
+            <li><a href="#troubleshooting"><strong>5. Häufige Probleme (Desktop & Mobil)</strong><span>„Installieren fehlt“, Verifizierung hängt, Downloads</span></a></li>
+            <li><a href="#glossary"><strong>6. Glossar für Einsteiger</strong><span>Begriffe wie PWA, Service Worker, D1, WebSocket erklärt</span></a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="card">
+        <div id="pwa" class="section">
+          <h3>1. Portal als App installieren <code>index.html · manifest-portal.webmanifest · sw.js</code></h3>
+          <p class="step"><strong>Desktop (Chrome / Edge):</strong></p>
+          <ul>
+            <li>Öffne <span class="code-inline">https://ts-portal.pages.dev/index.html</span>.</li>
+            <li>Achte auf das kleine „Installieren“-Symbol in der Adressleiste oder wähle im Browser‑Menü <strong>„Diese Seite installieren“</strong>.</li>
+            <li>Bestätige die Installation – danach findest du das Portal als eigenes Programm‑Fenster mit Icon.</li>
+          </ul>
+          <p class="step"><strong>Android‑Handy (Chrome):</strong></p>
+          <ul>
+            <li>Öffne dieselbe Adresse im Chrome‑Browser.</li>
+            <li>Über das Menü <strong>„Zum Startbildschirm hinzufügen“ / „App installieren“</strong> auswählen.</li>
+            <li>Es entsteht ein Icon auf dem Homescreen – Start wie eine normale App, inklusive Offline‑Funktion.</li>
+          </ul>
+          <div class="screenshot-box">
+            📸 <strong>Screenshot‑Platzhalter:</strong> Hier kannst du später Bilder einfügen, z. B. „Installieren‑Icon in Chrome“
+            und „Portal‑Icon auf dem Desktop/Homescreen“.
+          </div>
+        </div>
+
+        <div id="offline-manifest" class="section">
+          <h3>2. Offline‑Manifest einmalig benutzen <code>manifest-forum.html</code></h3>
+          <p class="step"><strong>Download aus dem Portal:</strong></p>
+          <ul>
+            <li>Gehe in <span class="code-inline">index.html</span> zum Abschnitt
+              <strong>„Manifest‑Forum: Teilnahme für Einsteiger (Download + Erklärung)”</strong>.</li>
+            <li>Klicke auf den Button <strong>„Manifest‑Forum herunterladen“</strong> – es wird <span class="code-inline">manifest-forum.html</span> gespeichert.</li>
+            <li>Verschiebe diese Datei an einen festen Ort (z. B. Desktop oder einen speziellen Ordner) und benutze immer genau diese Kopie.</li>
+          </ul>
+          <p class="step"><strong>Verwendung:</strong></p>
+          <ul>
+            <li>Doppelklick auf die Datei → Offline‑Forum öffnet sich im Browser.</li>
+            <li>Beiträge erstellen, Reaktionen, Kommentare, Export/Import – alles passiert lokal im Browser‑Speicher.</li>
+            <li>Mit <strong>„Offline‑Kopie speichern“</strong> kannst du eine Sicherung der Datei erstellen.</li>
+          </ul>
+          <div class="screenshot-box">
+            📸 <strong>Screenshot‑Idee:</strong> Ausschnitt des Download‑Bereichs in <span class="code-inline">index.html</span>
+            und Ansicht von <span class="code-inline">manifest-forum.html</span> mit Formular „Beitrag erstellen“.
+          </div>
+        </div>
+
+        <div id="verify-bridge" class="section">
+          <h3>3. Verifizierung & Auto‑Connect <code>manifest-forum.html → manifest-portal.html</code></h3>
+          <p class="step"><strong>Brücke vom Offline‑Forum ins Online‑Portal:</strong></p>
+          <ul>
+            <li>Im Offline‑Forum gibt es (rechts) den Button <strong>„Portal öffnen (verifiziert)“</strong>.</li>
+            <li>Beim Klick wird eine URL wie
+              <span class="code-inline">manifest-portal.html#mot=…&amp;uid=…&amp;ts=…</span>
+              geöffnet – damit übergibt die Datei ein Token an das Online‑Portal.</li>
+            <li>Im Portal liest der Code diesen Hash aus, markiert den Nutzer als „verifiziert“ und kann
+              Präsenz‑ und Matching‑Funktionen starten.</li>
+          </ul>
+          <p class="step"><strong>Was du sehen solltest:</strong></p>
+          <ul>
+            <li>Oben im Portal‑Header: <strong>„Manifest of Thinkers – Portal“</strong>.</li>
+            <li>Im Verifizierungs‑Bereich wird das Token‑Feld ausgefüllt und der Status‑Text wechselt von
+              „Warte auf Verbindungsaufbau …“ zu einer Verifizierungs‑Nachricht (wenn Backend aktiv ist).</li>
+            <li>Im Bereich „Direktverbinden (Auto‑Connect)“ kannst du ein gemeinsames Stichwort (pair code) eingeben,
+              um automatisch mit einem zweiten Thinker in einen Live‑Raum verbunden zu werden.</li>
+          </ul>
+          <p class="step"><strong>Plug‑and‑Play‑Gefühl („Schwimmbad‑Modus“):</strong></p>
+          <ul>
+            <li>Du musst keine Hashes oder Signaturen verstehen – der Bereich „Token‑URL generieren (No‑Code)“ baut die komplette Link‑Adresse für dich.</li>
+            <li>Du kopierst nur die fertige URL oder klickst im Offline‑Manifest auf „Portal öffnen (verifiziert)“ – der Rest passiert automatisch.</li>
+          </ul>
+        </div>
+
+        <div id="tests" class="section">
+          <h3>4. Tests ausführen (Playwright) <code>businessconnecthub-playwright-tests-full</code></h3>
+          <p class="step"><strong>Schritt 1 – Lokalen Webserver starten:</strong></p>
+          <ul>
+            <li>PowerShell öffnen und in den Projekt‑Root wechseln:<br>
+              <span class="code-inline">cd "D:\busineshuboffline CHATGTP\TOGETHERSYSTEMS- GITHUB\Nieuwe map (3)"</span></li>
+            <li>Server starten:<br>
+              <span class="code-inline">python -m http.server 9323</span> (Fenster offen lassen).</li>
+          </ul>
+          <p class="step"><strong>Schritt 2 – Tests im Test‑Ordner ausführen:</strong></p>
+          <ul>
+            <li>Neues PowerShell‑Fenster öffnen und in den Test‑Ordner gehen:<br>
+              <span class="code-inline">cd "...\businessconnecthub-playwright-tests-full"</span></li>
+            <li>Chromium‑Tests laufen lassen:<br>
+              <span class="code-inline">npx playwright test --project=Chromium</span></li>
+            <li>Die Tests prüfen u. a.:
+              <ul>
+                <li>Startseite / Dashboard (`index.html`)</li>
+                <li>Offline‑Forum (`manifest-forum.html`)</li>
+                <li>Online‑Portal & Live‑UI (`manifest-portal.html`)</li>
+                <li>Business‑Admin, Legal‑Hub, Wabenräume, Telbank</li>
+              </ul>
+            </li>
+          </ul>
+          <div class="screenshot-box">
+            📸 <strong>Screenshot‑Vorschlag:</strong> Playwright‑Konsole mit „30 passed, 1 skipped“ und ein Ausschnitt aus
+            <span class="code-inline">TEST-STATUS.md</span>.
+          </div>
+        </div>
+
+        <div id="troubleshooting" class="section">
+          <h3>5. Häufige Probleme (Desktop & Mobil)</h3>
+          <ul>
+            <li><strong>„Installieren“-Dialog erscheint nicht:</strong>
+              <ul>
+                <li>Sicherstellen, dass du <span class="code-inline">/index.html</span> über HTTPS öffnest
+                  (z. B. <span class="code-inline">https://ts-portal.pages.dev/</span>).</li>
+                <li>Im Browser‑Cache alte Versionen von <span class="code-inline">manifest-portal.webmanifest</span> und
+                  <span class="code-inline">sw.js</span> ggf. löschen (Hard‑Reload / Cache leeren).</li>
+              </ul>
+            </li>
+            <li><strong>Verifizierung bleibt hängen:</strong>
+              <ul>
+                <li>Prüfen, ob der Link aus dem Offline‑Manifest wirklich mit <span class="code-inline">#mot=…&amp;ts=…</span>
+                  endet (Adresse oben im Browser ansehen).</li>
+                <li>Wenn das Backend (Cloudflare Functions) nicht läuft, wird der Live‑Status nur teilweise aktualisiert –
+                  das Lesen des Feeds funktioniert aber trotzdem.</li>
+              </ul>
+            </li>
+            <li><strong>Seite landet im Download‑Ordner:</strong>
+              <ul>
+                <li>Das ist beim <span class="code-inline">manifest-forum.html</span> bewusst so – dort bitte nach
+                  dem ersten Download an einen festen Platz verschieben (z. B. Desktop).</li>
+                <li>Für das tägliche Arbeiten ist das Portal als PWA gedacht; dort wird nichts mehr als neue Datei
+                  heruntergeladen.</li>
+              </ul>
+            </li>
+          </ul>
+          <p class="small muted">
+            Weitere technische Hintergrund‑Infos findest du in der Dokumentation im Projekt, z. B.
+            <span class="link-pill">COMMUNICATION-HUB-ARCHITECTURE.md</span> und
+            <span class="link-pill">DEVELOPMENT-GUIDE-TEL-PORTAL.md</span>.
+          </p>
+        </div>
+
+        <div id="glossary" class="section">
+          <h3>6. Glossar für Einsteiger</h3>
+          <ul>
+            <li><strong>PWA (Progressive Web App):</strong> Webseite, die sich wie eine installierbare App verhält
+              (Icon, Vollbild, Offline‑Fähigkeit).</li>
+            <li><strong>Web App Manifest:</strong> Kleine JSON‑Datei (<span class="code-inline">manifest-portal.webmanifest</span>),
+              in der Name, Icons, Start‑URL und Farben der App beschrieben sind.</li>
+            <li><strong>Service Worker:</strong> Hintergrund‑Script (<span class="code-inline">sw.js</span>), das Dateien cacht
+              und Offline‑Betrieb ermöglicht.</li>
+            <li><strong>Offline‑Manifest:</strong> Die Datei <span class="code-inline">manifest-forum.html</span>, die komplett
+              im Browser läuft und Daten lokal speichert.</li>
+            <li><strong>Playwright:</strong> Test‑Werkzeug, das den Browser ferngesteuert bedient (Klicks, Texteingaben, Prüfungen)
+              und so automatisierte End‑to‑End‑Tests ermöglicht.</li>
+          </ul>
+          <p class="small muted">
+            Für mehr technische Tiefe kannst du gezielt nach Wörtern wie „PWA“, „Service Worker“ oder „WebSocket“ suchen –
+            sowohl in dieser Hilfe als auch im restlichen Projekt.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      Einsteiger-Hilfe für TogetherSystems Portal & Manifest · Diese Datei ist bewusst einfach formuliert,
+      damit auch neue Nutzer und „Dummies“ den Einstieg schaffen.
+    </footer>
+  </div>
+  <script type="module" src="./autofix-client.js"></script>
+</body>
+</html>
+
+

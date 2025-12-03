@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ENTWICKLER-DOKUMENTATION</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>TogetherSystems – Entwickler-Dokumentation</h1>
+<h2>Vollständige Anleitung für Entwickler</h2>
+<strong>Version:</strong> 1.0.0  
+<strong>Stand:</strong> 27. November 2025  
+<strong>Branding:</strong> T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)  
+<strong>Kontakt:</strong> (+31) - ( 613 803 782.) | https://tel1.nl | https://orcid.org/0009-0003-1328-2430
+<p>---</p>
+<h2>📚 Inhaltsverzeichnis</h2>
+<p>1. <a href="#überblick">Überblick</a>
+2. <a href="#system-architektur">System-Architektur</a>
+3. <a href="#hauptanwendungen">Hauptanwendungen</a>
+4. <a href="#entwicklungsumgebung">Entwicklungsumgebung</a>
+5. <a href="#api--backend">API & Backend</a>
+6. <a href="#deployment">Deployment</a>
+7. <a href="#testing">Testing</a>
+8. <a href="#beitrag-zum-projekt">Beitrag zum Projekt</a></p>
+<p>---</p>
+<h2>🎯 Überblick</h2>
+<p>TogetherSystems ist ein <strong>Meta-Transaktionsportal</strong> für vollautomatisierte Geschäftsprozesse ohne klassische Registrierung. Das System basiert auf:</p>
+<p>- <strong>Accountless Identity</strong>: Automatische Identifizierung pro Browser/Manifest
+- <strong>Offline-First</strong>: Lokale Datenhaltung mit optionaler Server-Synchronisation
+- <strong>Wabenräume</strong>: Visuelle und logische Räume für Transaktionen
+- <strong>Voucher-System</strong>: Universelle JSON-Strukturen für Geschäftstransaktionen
+- <strong>Social Media UI/UX</strong>: Vereinfachte Bedienung wie LinkedIn, WhatsApp</p>
+<p>---</p>
+<h2>🏗️ System-Architektur</h2>
+<h3>Frontend-Komponenten</h3>
+<h4><strong>1. Portal-Start (`index.html`)</strong></h4>
+- <strong>Zweck</strong>: Haupt-Einstiegspunkt des Systems
+- <strong>Features</strong>:
+  - Dashboard-Übersicht
+  - Daten-Verwaltung
+  - Berichte & Export
+  - Manifest-Forum Download
+  - Offline-Funktionalität
+- <strong>Technologie</strong>: HTML5, CSS3, JavaScript (Vanilla)
+- <strong>Datenhaltung</strong>: localStorage
+<h4><strong>2. Manifest-Forum (`manifest-forum.html`)</strong></h4>
+- <strong>Zweck</strong>: Offline-Forum für Beiträge, Verträge, Definitionsobjekte
+- <strong>Features</strong>:
+  - Beitrag erstellen & bearbeiten
+  - Hyperkommunikation (Text/Audio/Video/Code/Formel/Daten)
+  - Daten Export/Import (JSON/CSV)
+  - Statische Webseite erzeugen
+  - API-Veröffentlichung & Warteschlange
+  - Mesh-Networking (P2P-Sync)
+- <strong>Datenhaltung</strong>: localStorage
+- <strong>Verifizierung</strong>: Hash-basierte Token-Verifikation
+<h4><strong>3. Online-Portal (`manifest-portal.html`)</strong></h4>
+- <strong>Zweck</strong>: Online-Ansicht mit Live-Funktionen
+- <strong>Features</strong>:
+  - Feed-Ansicht (Lesen)
+  - Token-Verifikation (Hash-Parameter)
+  - Auto-Connect (Presence-API, Match-Loop)
+  - Live-Room (WebSocket-Signaling)
+  - Voucher & Termine (inkl. Branch-Templates + Kalender)
+  - Immobilien & Hypotheken
+  - Events & Memberships
+- <strong>APIs</strong>: REST-APIs, WebSocket-Signaling
+<h4><strong>4. Wabenräume (`honeycomb.html`)</strong></h4>
+- <strong>Zweck</strong>: Visuelle Raumlogik für Transaktionen
+- <strong>Features</strong>:
+  - Raum-IDs (A-1, B-2, etc.)
+  - Raum-Verknüpfung mit Vouchers/Events
+  - Bildkarussell für Räume
+  - Raum-Status & Verwaltung
+- <strong>Technologie</strong>: SVG-basierte Visualisierung
+<h4><strong>5. Legal-Hub (`legal-hub.html`)</strong></h4>
+- <strong>Zweck</strong>: Rechtlicher Hub für Verträge & Verifikationen
+- <strong>Features</strong>:
+  - Verträge hochladen & verwalten
+  - Verträge mit Vouchers/Räumen verknüpfen
+  - Signaturen & Archivierung
+  - Standardvertrags-Templates
+- <strong>Datenhaltung</strong>: Lokal + optional Server-Sync
+<h4><strong>6. TELBANK (`TELBANK/index.html`)</strong></h4>
+- <strong>Zweck</strong>: MetaMask Liquidity Console
+- <strong>Features</strong>:
+  - MetaMask-Integration
+  - Transfer-Logging
+  - In/Out-Flows
+  - TPGA Wallet Layer
+- <strong>Technologie</strong>: Web3.js, MetaMask API
+<h4><strong>7. Business-Admin (`business-admin.html`)</strong></h4>
+- <strong>Zweck</strong>: Vouchers & Buchungen verwalten
+- <strong>Features</strong>:
+  - Voucher-Erstellung & -Verwaltung
+  - Buchungsübersicht
+  - Export/Import
+- <strong>Datenhaltung</strong>: localStorage + API
+<h4><strong>8. Admin-Monitoring (`admin-monitoring.html`)</strong></h4>
+- <strong>Zweck</strong>: Monitoring & Events
+- <strong>Features</strong>:
+  - Event-Logging
+  - System-Status
+  - Telemetrie
+- <strong>APIs</strong>: Event-API, Monitoring-API
+<h4><strong>9. Production Dashboard (`production-dashboard.html`)</strong></h4>
+- <strong>Zweck</strong>: Vollständige System-Übersicht
+- <strong>Features</strong>:
+  - System-Status
+  - Performance-Metriken
+  - Fehler-Logging
+  - Deployment-Status
+<h4><strong>10. Neural Network Console (`neural-network-console.html`)</strong></h4>
+- <strong>Zweck</strong>: KI-Orchestrierung
+- <strong>Features</strong>:
+  - Model-Management
+  - Routing-Policies
+  - Performance-Monitoring
+- <strong>APIs</strong>: AI Gateway API
+<h4><strong>11. CMS Dashboard (`cms-dashboard.html`)</strong></h4>
+- <strong>Zweck</strong>: Content Management System
+- <strong>Features</strong>:
+  - Multi-Tenant-Support
+  - Block-basierte Seiten
+  - E-Commerce-Integration
+  - Media-Verwaltung
+- <strong>Datenbank</strong>: D1 (Cloudflare)
+<h4><strong>12. Investoren-Portal (`ostos-branding.html`)</strong></h4>
+- <strong>Zweck</strong>: OSTOS Branding Universe für Investoren & Sponsoren
+- <strong>Features</strong>:
+  - Logo-Upload (SVG bevorzugt)
+  - Sponsor-Integration
+  - Animierte Visualisierung
+  - Branding-Lab mit Live-Kontrolle
+- <strong>Technologie</strong>: SVG, Canvas, CSS-Animationen
+<h4><strong>13. Settings-Graph-Explorer (`settings-graph-explorer.html`)</strong></h4>
+- <strong>Zweck</strong>: Neural Network Config + Provider + Deployment + OS/Hardware-Dimensionen
+- <strong>Features</strong>:
+  - Provider-Wahl (AWS, GCP, TEL1 Cloud)
+  - Dimensionale Analyse (Latenz, Kosten, CPU, Kernel, BIOS, RAM, Storage)
+  - AI-Planungslogik mit Hard/Soft Constraints
+  - Live-Konsole/Fixbox
+- <strong>Technologie</strong>: JavaScript (ES6 Modules)
+<h4><strong>14. YORDY Artist Showcase (`YORDY/yordy-artist-showcase.html`)</strong></h4>
+- <strong>Zweck</strong>: MicroLED Quality Showcase mit Animationen
+- <strong>Features</strong>:
+  - High-Quality Visualisierung
+  - Animierte Effekte
+  - Artist-Informationen
+- <strong>Technologie</strong>: SVG, CSS-Animationen
+<h4><strong>15. Developer Portal (`ultra/ui/developer-portal.html`)</strong></h4>
+- <strong>Zweck</strong>: Entwickler-Onboarding & Community
+- <strong>Features</strong>:
+  - Onboarding-Flow
+  - Community-Zugang
+  - Entwickler-Ressourcen
+- <strong>APIs</strong>: Developer-API
+<h4><strong>16. Beta Portal (`ultra/beta/index.html`)</strong></h4>
+- <strong>Zweck</strong>: Beta-Testing & Entwicklung
+- <strong>Features</strong>:
+  - Beta-Features testen
+  - Feedback-System
+  - Experimentelle Funktionen
+<p>---</p>
+<h2>🔧 Entwicklungsumgebung</h2>
+<h3>Voraussetzungen</h3>
+<p>- <strong>Node.js</strong>: >= 18.0.0
+- <strong>Git</strong>: Für Versionierung
+- <strong>Browser</strong>: Chrome/Edge (für Playwright-Tests)
+- <strong>Python</strong>: Für lokalen HTTP-Server (optional)</p>
+<h3>Lokale Entwicklung</h3>
+<pre><code># 1. Repository klonen
+git clone https://github.com/Myopenai/togethersystems.git
+cd togethersystems
+<h1>2. Lokalen Server starten</h1>
+python -m http.server 9323
+<h1>3. Browser öffnen</h1>
+<h1>http://localhost:9323/index.html</h1>
+</code></pre>
+<h3>Projekt-Struktur</h3>
+<pre><code>togethersystems/
+├── index.html                    # Portal-Start
+├── manifest-forum.html          # Offline-Forum
+├── manifest-portal.html         # Online-Portal
+├── honeycomb.html               # Wabenräume
+├── legal-hub.html               # Legal-Hub
+├── ostos-branding.html          # Investoren-Portal
+├── settings-graph-explorer.html # Settings-Explorer
+├── TELBANK/                     # TELBANK-Konsole
+├── YORDY/                       # YORDY Artist
+├── ultra/                       # Developer & Beta Portals
+├── functions/                   # Cloudflare Pages Functions
+├── businessconnecthub-playwright-tests-full/  # E2E-Tests
+└── assets/                      # Statische Assets
+</code></pre>
+<p>---</p>
+<h2>🌐 API & Backend</h2>
+<h3>Cloudflare Pages Functions</h3>
+<strong>Basis-Pfad</strong>: `/api/`
+<h4><strong>Presence-API</strong></h4>
+- `POST /api/presence/verify` - Token-Verifikation
+- `POST /api/presence/heartbeat` - Präsenz-Update
+- `POST /api/presence/match` - Match-Finding
+- `GET /api/presence/catalog/apis` - API-Katalog
+<h4><strong>TELBANK-API</strong></h4>
+- `POST /api/telbank/transfers` - Transfer-Verarbeitung
+- `GET /api/telbank/transfers` - Transfer-Historie
+<h4><strong>Voucher-API</strong></h4>
+- `GET /api/vouchers` - Voucher-Liste
+- `POST /api/vouchers` - Voucher erstellen
+- `GET /api/vouchers/:id` - Voucher-Details
+<h4><strong>WebSocket-Signaling</strong></h4>
+- `wss://your-domain.com/ws` - Live-Room-Signaling
+<h3>Datenbank (Cloudflare D1)</h3>
+<strong>Schema</strong>: `d1-schema.sql`
+<strong>Tabellen</strong>:
+- `transfers` - TELBANK-Transfers
+- `vouchers` - Voucher-Daten
+- `events` - Event-Logging
+- `users` - User-Daten (optional)
+<p>---</p>
+<h2>🚀 Deployment</h2>
+<h3>GitHub Pages</h3>
+<p>1. Repository auf GitHub erstellen
+2. Dateien ins Root-Verzeichnis kopieren
+3. Commit & Push
+4. Repository Settings → Pages aktivieren
+5. Branch: `main` / `/ (root)`</p>
+<strong>URL-Format</strong>: `https://USERNAME.github.io/togethersystems/`
+<h3>Cloudflare Pages</h3>
+<p>1. Cloudflare-Account erstellen
+2. Pages-Projekt erstellen
+3. GitHub-Repository verbinden
+4. Build-Command: (kein Build nötig, statische Dateien)
+5. Deploy</p>
+<strong>URL-Format</strong>: `https://your-project.pages.dev`
+<p>---</p>
+<h2>🧪 Testing</h2>
+<h3>Playwright-Tests</h3>
+<strong>Pfad</strong>: `businessconnecthub-playwright-tests-full/`
+<pre><code># Tests ausführen
+cd businessconnecthub-playwright-tests-full
+npm install
+npx playwright install --with-deps chromium
+npx playwright test --project=Chromium
+</code></pre>
+<strong>Getestete Bereiche</strong>:
+- Portal-Start (`index.html`)
+- Manifest-Forum (`manifest-forum.html`)
+- Online-Portal (`manifest-portal.html`)
+- Wabenräume (`honeycomb.html`)
+- Legal-Hub (`legal-hub.html`)
+- TELBANK (`TELBANK/index.html`)
+- Business-Admin (`business-admin.html`)
+- Admin-Monitoring (`admin-monitoring.html`)
+<p>---</p>
+<h2>🤝 Beitrag zum Projekt</h2>
+<h3>Entwickler-Onboarding</h3>
+<p>1. <strong>Developer Portal öffnen</strong>: `ultra/ui/developer-portal.html`
+2. <strong>Job-Angebot lesen</strong>: `JOB-ANGEBOT-ENTWICKLER.html`
+3. <strong>Beta Portal testen</strong>: `ultra/beta/index.html`</p>
+<h3>Entwicklungsprozess</h3>
+<p>1. <strong>Feature-Entwicklung</strong>:
+   - Feature-Branch erstellen
+   - Code schreiben
+   - Tests schreiben
+   - Pull Request erstellen</p>
+<p>2. <strong>Code-Standards</strong>:
+   - Vanilla JavaScript (keine Frameworks)
+   - localStorage für Offline-Daten
+   - REST-APIs für Online-Funktionen
+   - WebSocket für Live-Features</p>
+<p>3. <strong>Testing</strong>:
+   - Playwright-Tests für E2E
+   - Manuelle Tests in verschiedenen Browsern
+   - Offline/Online-Szenarien testen</p>
+<p>---</p>
+<h2>📖 Weitere Ressourcen</h2>
+<p>- <strong>Businessplan</strong>: https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf
+- <strong>Forum</strong>: https://tel1.boards.net/
+- <strong>GoFundMe</strong>: https://www.gofundme.com/f/magnitudo
+- <strong>ORCID</strong>: https://orcid.org/0009-0003-1328-2430</p>
+<p>---</p>
+<h2>🎯 Vision</h2>
+<strong>TogetherSystems</strong> ist das erste vollautomatisierte Meta-Transaktionsportal ohne klassische Registrierung. Das System ermöglicht:
+<p>- <strong>Grenzenlose Teilnahme</strong>: Jeder kann mitmachen
+- <strong>Vollautomatisierung</strong>: Keine manuellen Schritte nötig
+- <strong>Offline-First</strong>: Funktioniert auch ohne Internet
+- <strong>Social Media UX</strong>: Einfache Bedienung wie WhatsApp, LinkedIn</p>
+<strong>Unternehmensmotto</strong>: `{T,. - Punkt. - T,,.}`
+<p>---</p>
+<strong>Version:</strong> 1.0.0  
+<strong>Letzte Aktualisierung:</strong> 27. November 2025  
+<strong>Status:</strong> 🟢 Produktionsreif
+</body>
+</html>

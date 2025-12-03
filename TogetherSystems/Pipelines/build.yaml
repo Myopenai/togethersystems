@@ -1,0 +1,209 @@
+# ============================================================================
+# BUILD PIPELINE
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Build-Pipeline für alle Artefakte
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Build Pipeline"
+branding: "T,.&T,,.&T,,,.T."
+
+# ============================================================================
+# STAGES
+# ============================================================================
+
+stages:
+  - name: "validate"
+    description: "T,. Validiert Manifest, Policies, Schemata"
+    steps:
+      - name: "load-manifest"
+        action: "load"
+        target: "factory.manifest.yaml"
+      
+      - name: "validate-schemas"
+        action: "validate"
+        schemas:
+          - "Fabrikage.CoreProtocols/schemas/manifest.schema.json"
+          - "Fabrikage.CoreProtocols/schemas/policy.schema.json"
+      
+      - name: "check-policies"
+        action: "check"
+        policies:
+          - "Fabrikage.CoreProtocols/policies/accessibility.yaml"
+          - "Fabrikage.CoreProtocols/policies/security.yaml"
+          - "Fabrikage.CoreProtocols/policies/quality.yaml"
+          - "Fabrikage.CoreProtocols/policies/compliance.yaml"
+          - "Fabrikage.CoreProtocols/policies/ethics.yaml"
+    
+    gates:
+      - name: "schema-validation"
+        required: true
+        fail_fast: true
+      
+      - name: "policy-compliance"
+        required: true
+        fail_fast: true
+  
+  - name: "generate"
+    description: "T,. Generiert UI, API, Adapter"
+    steps:
+      - name: "generate-ui"
+        action: "generate"
+        generator: "Fabrikage.AutoExecution/generators/ui/"
+        features:
+          - contrast_engine: true
+          - accessibility_checks: true
+          - responsive_design: true
+          - component_library: true
+      
+      - name: "generate-api"
+        action: "generate"
+        generator: "Fabrikage.AutoExecution/generators/api/"
+        features:
+          - openapi_spec: true
+          - validation: true
+          - documentation: true
+          - versioning: true
+      
+      - name: "generate-adapters"
+        action: "generate"
+        generator: "Fabrikage.AutoExecution/generators/adapters/"
+        features:
+          - device_protocols: true
+          - protocol_profiles: true
+          - error_handling: true
+          - retry_logic: true
+    
+    gates:
+      - name: "generation-success"
+        required: true
+        fail_fast: true
+  
+  - name: "build"
+    description: "T,. Baut Artefakte"
+    steps:
+      - name: "compile-code"
+        action: "compile"
+        toolchain: "node@20"
+      
+      - name: "bundle-assets"
+        action: "bundle"
+        toolchain: "webpack"
+      
+      - name: "optimize-assets"
+        action: "optimize"
+        toolchain: "terser"
+    
+    gates:
+      - name: "build-success"
+        required: true
+        fail_fast: true
+  
+  - name: "test"
+    description: "T,. Führt Tests aus"
+    steps:
+      - name: "unit-tests"
+        action: "test"
+        framework: "jest"
+        coverage_min: 80
+      
+      - name: "integration-tests"
+        action: "test"
+        framework: "playwright"
+        coverage_min: 80
+      
+      - name: "accessibility-tests"
+        action: "test"
+        framework: "axe-core"
+        level: "AA"
+    
+    gates:
+      - name: "test-coverage"
+        required: true
+        threshold: 80
+        fail_fast: true
+      
+      - name: "accessibility-compliance"
+        required: true
+        level: "AA"
+        fail_fast: true
+  
+  - name: "scan"
+    description: "T,. Scannt auf Sicherheitslücken"
+    steps:
+      - name: "vulnerability-scan"
+        action: "scan"
+        tool: "npm-audit"
+      
+      - name: "secrets-detection"
+        action: "scan"
+        tool: "trufflehog"
+      
+      - name: "sast-scan"
+        action: "scan"
+        tool: "sonarqube"
+    
+    gates:
+      - name: "no-vulnerabilities"
+        required: true
+        fail_fast: true
+      
+      - name: "no-secrets"
+        required: true
+        fail_fast: true
+  
+  - name: "package"
+    description: "T,. Verpackt Artefakte"
+    steps:
+      - name: "create-package"
+        action: "package"
+        format: "tar.gz"
+      
+      - name: "create-sbom"
+        action: "sbom"
+        format: "cyclonedx"
+        output: "sbom/sbom.json"
+    
+    gates:
+      - name: "package-created"
+        required: true
+        fail_fast: true
+      
+      - name: "sbom-created"
+        required: true
+        fail_fast: true
+  
+  - name: "sign"
+    description: "T,. Signiert Artefakte"
+    steps:
+      - name: "sign-artifacts"
+        action: "sign"
+        algorithm: "RSA-4096"
+        key: "${SIGNING_KEY}"
+        output: "provenance/signatures/"
+      
+      - name: "create-attestations"
+        action: "attest"
+        format: "SLSA"
+        level: 2
+        output: "provenance/attestations/"
+    
+    gates:
+      - name: "signatures-created"
+        required: true
+        fail_fast: true
+      
+      - name: "attestations-created"
+        required: true
+        fail_fast: true
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T14:30:00Z"
+  updated: "2025-01-15T14:30:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

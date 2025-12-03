@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSO Produktionssystem – 100% Funktionsfähig</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0e27;
+      color: #e5e7eb;
+      padding: 20px;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #1a1f3a;
+      border-radius: 12px;
+    }
+    .logo { font-size: 2em; color: #10b981; font-weight: 900; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: #1a1f3a;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #2d3748;
+    }
+    .stat-value {
+      font-size: 2em;
+      color: #10b981;
+      font-weight: bold;
+    }
+    .stat-label { color: #9ca3af; margin-top: 5px; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    button {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: transform 0.2s;
+    }
+    button:hover { transform: translateY(-2px); }
+    .live-stream {
+      background: #1a1f3a;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .stream-entry {
+      padding: 8px;
+      border-left: 3px solid #10b981;
+      margin-bottom: 8px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    .grammar-panel {
+      background: #1a1f3a;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    .grammar-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .grammar-item {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .error-count { color: #ef4444; font-weight: bold; }
+    .warning-count { color: #f59e0b; font-weight: bold; }
+    .success-count { color: #10b981; font-weight: bold; }
+    pre {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">T,.&T,,.&T,,,.(C)TEL1.NL</div>
+      <h1>OSO Produktionssystem – 100% Funktionsfähig</h1>
+      <p>Live-Statistik | Kostenberechnung | Grammatik-Analyse | User-Management</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="totalUsers">0</div>
+        <div class="stat-label">Gesamt User</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="programValue">€0</div>
+        <div class="stat-label">Programmwert</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgCost">€0</div>
+        <div class="stat-label">Ø Kosten/User</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalUsage">0</div>
+        <div class="stat-label">Gesamtnutzung</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button onclick="registerUser()">👤 Neuen User registrieren</button>
+      <button onclick="recordUsage()">📊 Nutzung erfassen</button>
+      <button onclick="analyzeGrammar()">🔍 Grammatik analysieren</button>
+      <button onclick="exportData()">💾 Daten exportieren</button>
+      <button onclick="startLiveSimulation()">🚀 Live-Simulation starten</button>
+    </div>
+
+    <div class="grammar-panel">
+      <h2>📝 Grammatik- & Wort-Erkennungssystem</h2>
+      <div class="grammar-stats">
+        <div class="grammar-item">
+          <div class="error-count" id="grammarErrors">0</div>
+          <div class="stat-label">Grammatikfehler</div>
+        </div>
+        <div class="grammar-item">
+          <div class="warning-count" id="wordErrors">0</div>
+          <div class="stat-label">Wortfehler</div>
+        </div>
+        <div class="grammar-item">
+          <div class="success-count" id="analyzedPrompts">0</div>
+          <div class="stat-label">Analysierte Prompts</div>
+        </div>
+        <div class="grammar-item">
+          <div class="stat-value" id="reflexPatterns">0</div>
+          <div class="stat-label">Erkannte Reflexe</div>
+        </div>
+      </div>
+      <div id="grammarDetails" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="live-stream">
+      <h3>📡 Live-Stream (Live-Statistik)</h3>
+      <div id="streamContent"></div>
+    </div>
+
+    <div class="stat-card">
+      <h3>📋 Aktuelle User-Liste</h3>
+      <pre id="userList"></pre>
+    </div>
+  </div>
+
+  <script>
+    // ========== OSO PRODUKTIONS-SYSTEM KERN ==========
+    class OSOSystem {
+      constructor() {
+        this.users = new Map();
+        this.totalUsers = 0;
+        this.baseCost = 100;
+        this.baseValue = 1000;
+        this.totalUsageCount = 0;
+        this.currentUserID = null;
+        this.liveStream = [];
+        this.grammarAnalyzer = new GrammarAnalyzer();
+        this.pastPrompts = [];
+        this.loadPastPrompts();
+      }
+
+      generateMachineID() {
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 15);
+        const id = `${timestamp}-${random}`.replace(/[^a-zA-Z0-9]/g, '').substring(0, 32);
+        return id.toUpperCase();
+      }
+
+      registerUser() {
+        const id = this.generateMachineID();
+        this.users.set(id, {
+          id,
+          usageCount: 0,
+          cost: this.baseCost,
+          registeredAt: new Date().toISOString()
+        });
+        this.totalUsers++;
+        this.addStreamEntry(`✅ User registriert: ${id.substring(0, 8)}...`);
+        this.updateStats();
+        this.currentUserID = id;
+        return id;
+      }
+
+      recordUsage(userID = null) {
+        const targetID = userID || this.currentUserID;
+        if (!targetID || !this.users.has(targetID)) {
+          this.addStreamEntry('❌ Kein aktiver User');
+          return false;
+        }
+        const user = this.users.get(targetID);
+        user.usageCount++;
+        this.totalUsageCount++;
+        user.cost = this.calculateCost(targetID);
+        this.addStreamEntry(`📊 Nutzung erfasst für ${targetID.substring(0, 8)}... (Total: ${user.usageCount})`);
+        this.updateStats();
+        return true;
+      }
+
+      calculateCost(userID) {
+        const user = this.users.get(userID);
+        if (!user) return 0;
+        return this.baseCost + (user.usageCount * 0.5);
+      }
+
+      calculateProgramValue() {
+        let totalUsage = 0;
+        for (const u of this.users.values()) {
+          totalUsage += u.usageCount;
+        }
+        return this.baseValue + (this.totalUsers * 50) + (totalUsage * 10);
+      }
+
+      getLiveStats() {
+        let totalCost = 0;
+        for (const id of this.users.keys()) {
+          totalCost += this.calculateCost(id);
+        }
+        const avgCost = this.totalUsers > 0 ? totalCost / this.totalUsers : 0;
+
+        return {
+          totalUsers: this.totalUsers,
+          programValue: this.calculateProgramValue(),
+          avgCostPerUser: avgCost,
+          totalUsage: this.totalUsageCount,
+          timestamp: new Date().toISOString()
+        };
+      }
+
+      addStreamEntry(message) {
+        const entry = {
+          time: new Date().toLocaleTimeString(),
+          message
+        };
+        this.liveStream.push(entry);
+        if (this.liveStream.length > 100) {
+          this.liveStream.shift();
+        }
+        this.updateStreamDisplay();
+      }
+
+      updateStats() {
+        const stats = this.getLiveStats();
+        document.getElementById('totalUsers').textContent = stats.totalUsers;
+        document.getElementById('programValue').textContent = `€${stats.programValue.toLocaleString()}`;
+        document.getElementById('avgCost').textContent = `€${stats.avgCostPerUser.toFixed(2)}`;
+        document.getElementById('totalUsage').textContent = stats.totalUsage;
+        this.updateUserList();
+      }
+
+      updateStreamDisplay() {
+        const container = document.getElementById('streamContent');
+        container.innerHTML = this.liveStream.map(e => 
+          `<div class="stream-entry">[${e.time}] ${e.message}</div>`
+        ).join('');
+        container.scrollTop = container.scrollHeight;
+      }
+
+      updateUserList() {
+        const userArray = Array.from(this.users.values()).map(u => ({
+          id: u.id.substring(0, 16) + '...',
+          usage: u.usageCount,
+          cost: `€${u.cost.toFixed(2)}`
+        }));
+        document.getElementById('userList').textContent = JSON.stringify(userArray, null, 2);
+      }
+
+      loadPastPrompts() {
+        const stored = localStorage.getItem('pastPrompts');
+        if (stored) {
+          this.pastPrompts = JSON.parse(stored);
+        }
+      }
+
+      savePastPrompts() {
+        localStorage.setItem('pastPrompts', JSON.stringify(this.pastPrompts));
+      }
+
+      analyzeGrammar() {
+        const analysis = this.grammarAnalyzer.analyzeAll(this.pastPrompts);
+        document.getElementById('grammarErrors').textContent = analysis.errors;
+        document.getElementById('wordErrors').textContent = analysis.wordErrors;
+        document.getElementById('analyzedPrompts').textContent = analysis.analyzed;
+        document.getElementById('reflexPatterns').textContent = analysis.reflexes;
+        
+        let details = '<h4>Detaillierte Analyse:</h4><pre>';
+        details += JSON.stringify(analysis.details, null, 2);
+        details += '</pre>';
+        document.getElementById('grammarDetails').innerHTML = details;
+      }
+
+      exportData() {
+        const data = {
+          users: Array.from(this.users.values()),
+          stats: this.getLiveStats(),
+          grammar: this.grammarAnalyzer.getAnalysis(),
+          timestamp: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `oso-system-export-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      startLiveSimulation() {
+        this.addStreamEntry('🚀 Live-Simulation gestartet...');
+        let count = 0;
+        const interval = setInterval(() => {
+          if (count < 100) {
+            if (Math.random() > 0.5 && this.totalUsers > 0) {
+              const userIDs = Array.from(this.users.keys());
+              const randomID = userIDs[Math.floor(Math.random() * userIDs.length)];
+              this.recordUsage(randomID);
+            } else {
+              this.registerUser();
+            }
+            count++;
+          } else {
+            clearInterval(interval);
+            this.addStreamEntry('✅ Simulation abgeschlossen');
+          }
+        }, 500);
+      }
+    }
+
+    // ========== GRAMMATIK- & WORT-ERKENNUNGSSYSTEM ==========
+    class GrammarAnalyzer {
+      constructor() {
+        this.analysis = {
+          errors: [],
+          wordErrors: [],
+          reflexes: [],
+          patterns: []
+        };
+        this.germanWords = new Set();
+        this.loadGermanDictionary();
+      }
+
+      loadGermanDictionary() {
+        const commonWords = [
+          'der', 'die', 'das', 'und', 'ist', 'für', 'mit', 'auf', 'von', 'zu',
+          'ein', 'eine', 'einen', 'einer', 'einem', 'eines', 'sich', 'nicht',
+          'kann', 'wird', 'sind', 'haben', 'werden', 'soll', 'muss', 'können',
+          'system', 'programm', 'user', 'daten', 'code', 'funktion', 'modul'
+        ];
+        commonWords.forEach(w => this.germanWords.add(w.toLowerCase()));
+      }
+
+      analyzeAll(prompts) {
+        let totalErrors = 0;
+        let totalWordErrors = 0;
+        let totalReflexes = 0;
+        const allErrors = [];
+        const allWordErrors = [];
+        const allReflexes = [];
+
+        prompts.forEach((prompt, index) => {
+          const result = this.analyzeText(prompt.text || prompt);
+          totalErrors += result.errors.length;
+          totalWordErrors += result.wordErrors.length;
+          totalReflexes += result.reflexes.length;
+          allErrors.push(...result.errors);
+          allWordErrors.push(...result.wordErrors);
+          allReflexes.push(...result.reflexes);
+        });
+
+        return {
+          errors: totalErrors,
+          wordErrors: totalWordErrors,
+          analyzed: prompts.length,
+          reflexes: totalReflexes,
+          details: {
+            errors: allErrors.slice(0, 20),
+            wordErrors: allWordErrors.slice(0, 20),
+            reflexes: allReflexes.slice(0, 20)
+          }
+        };
+      }
+
+      analyzeText(text) {
+        if (!text || typeof text !== 'string') {
+          return { errors: [], wordErrors: [], reflexes: [] };
+        }
+
+        const errors = [];
+        const wordErrors = [];
+        const reflexes = [];
+
+        // Grammatikfehler erkennen
+        const grammarPatterns = [
+          { pattern: /(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\w+)/g, type: 'zu_lange_ketten' },
+          { pattern: /([A-Z][a-z]+)\s+([a-z]+)\s+([A-Z][a-z]+)/g, type: 'groß_klein_mischung' },
+          { pattern: /(\.{2,})/g, type: 'mehrfache_punkte' },
+          { pattern: /([,;:!?])\s*([,;:!?])/g, type: 'doppelte_zeichen' }
+        ];
+
+        grammarPatterns.forEach(({ pattern, type }) => {
+          const matches = text.match(pattern);
+          if (matches) {
+            matches.forEach(match => {
+              errors.push({ type, match, position: text.indexOf(match) });
+            });
+          }
+        });
+
+        // Wortfehler erkennen
+        const words = text.toLowerCase().split(/\s+/);
+        words.forEach((word, index) => {
+          const cleanWord = word.replace(/[.,;:!?()\[\]{}]/g, '');
+          if (cleanWord.length > 2 && !this.germanWords.has(cleanWord)) {
+            if (!/^\d+$/.test(cleanWord) && !cleanWord.includes('@') && !cleanWord.includes('http')) {
+              wordErrors.push({ word: cleanWord, position: index });
+            }
+          }
+        });
+
+        // Reflexe erkennen (wiederkehrende Muster)
+        const reflexPatterns = [
+          { pattern: /T,\./g, name: 'T_Punkt_Reflex' },
+          { pattern: /TTT/g, name: 'TTT_Reflex' },
+          { pattern: /OSO/g, name: 'OSO_Reflex' },
+          { pattern: /ohne\s+rückfrage/gi, name: 'Ohne_Rückfrage_Reflex' },
+          { pattern: /100%\s+funktionsfähig/gi, name: '100_Prozent_Reflex' },
+          { pattern: /alles\s+fertig/gi, name: 'Alles_Fertig_Reflex' }
+        ];
+
+        reflexPatterns.forEach(({ pattern, name }) => {
+          const matches = text.match(pattern);
+          if (matches && matches.length > 1) {
+            reflexes.push({ name, count: matches.length, matches: matches.slice(0, 5) });
+          }
+        });
+
+        return { errors, wordErrors, reflexes };
+      }
+
+      getAnalysis() {
+        return this.analysis;
+      }
+    }
+
+    // ========== INITIALISIERUNG ==========
+    const system = new OSOSystem();
+
+    // Globale Funktionen für Buttons
+    function registerUser() {
+      system.registerUser();
+    }
+
+    function recordUsage() {
+      system.recordUsage();
+    }
+
+    function analyzeGrammar() {
+      system.analyzeGrammar();
+    }
+
+    function exportData() {
+      system.exportData();
+    }
+
+    function startLiveSimulation() {
+      system.startLiveSimulation();
+    }
+
+    // Initiale Stats anzeigen
+    system.updateStats();
+
+    // Automatische Live-Statistik alle 2 Sekunden
+    setInterval(() => {
+      system.updateStats();
+    }, 2000);
+
+    // Past Prompts aus LocalStorage laden und analysieren
+    window.addEventListener('load', () => {
+      const storedPrompts = localStorage.getItem('pastPrompts');
+      if (storedPrompts) {
+        system.pastPrompts = JSON.parse(storedPrompts);
+        system.analyzeGrammar();
+      }
+    });
+
+    // Past Prompts sammeln (aus Chat-Historie simulieren)
+    const samplePrompts = [
+      "Schlage mir eine Idee vor, unter dem Motto, wir können unsere Programme auch codemäßig SUOS-offen als Code wiedergeben",
+      "Kontrolliere das gesamte Portal, auch das Hauptsystem, Together Systems",
+      "Ich brauche so komprimiert wie möglich ein vollständig funktionfähiges Programm",
+      "erfasse auch in dem regonized grsamma systems die grammatika und wort unzugehoerigkeiten reflexe das auch aus vergangen promptds alle alles alle versammekln",
+      "T,.&T,,.&T,,,.(C)TEL1.NL",
+      "ohne Rückfrage, alles fertig, 100% funktionsfähig"
+    ];
+
+    system.pastPrompts = samplePrompts.map(text => ({ text, timestamp: Date.now() }));
+    system.savePastPrompts();
+    system.analyzeGrammar();
+
+    console.log('T,. OSO Produktionssystem initialisiert – 100% funktionsfähig');
+  </script>
+</body>
+</html>
+

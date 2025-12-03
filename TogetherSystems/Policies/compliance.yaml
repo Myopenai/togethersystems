@@ -1,0 +1,90 @@
+# ============================================================================
+# COMPLIANCE POLICY
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Compliance-Policy
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Compliance Policy"
+branding: "T,.&T,,.&T,,,.T."
+enforce: true
+fail_fast: true
+
+# ============================================================================
+# REQUIREMENTS
+# ============================================================================
+
+requirements:
+  - name: "gdpr"
+    description: "T,. GDPR-Compliance (nicht anwendbar - keine User-Daten)"
+    applicable: false
+    reason: "Keine User-Daten werden gespeichert"
+  
+  - name: "sbom-required"
+    description: "T,. SBOM ist erforderlich"
+    required: true
+    format: "CycloneDX"
+    version: "1.5"
+    enforce: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "provenance-required"
+    description: "T,. Provenance ist erforderlich"
+    required: true
+    format: "SLSA"
+    level: 2
+    enforce: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "signed-artifacts"
+    description: "T,. Alle Artefakte müssen signiert sein"
+    required: true
+    algorithm: "RSA-4096"
+    enforce: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "license-compliance"
+    description: "T,. Lizenz-Compliance"
+    whitelist: "license-whitelist.json"
+    enforce: true
+    fail_fast: true
+    auto_fix: false
+
+# ============================================================================
+# GATES
+# ============================================================================
+
+gates:
+  - name: "sbom-created"
+    required: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "provenance-created"
+    required: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "artifacts-signed"
+    required: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "license-compliance"
+    required: true
+    fail_fast: true
+    auto_fix: false
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T14:30:00Z"
+  updated: "2025-01-15T14:30:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💎 TPGA Investment Dashboard | Raymond Demitrio Tel</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💎</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-void: #000000;
+            --bg-deep: #050510;
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #101025;
+            --bg-card: #151530;
+            --bg-elevated: #1a1a40;
+            --accent-gold: #ffd700;
+            --accent-platinum: #e5e4e2;
+            --accent-diamond: #b9f2ff;
+            --accent-emerald: #50c878;
+            --accent-ruby: #e0115f;
+            --accent-sapphire: #0f52ba;
+            --accent-purple: #9b30ff;
+            --accent-cyan: #00ffff;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0c0;
+            --text-muted: #606080;
+            --gradient-gold: linear-gradient(135deg, #ffd700, #ffaa00, #ff8c00);
+            --gradient-diamond: linear-gradient(135deg, #b9f2ff, #87ceeb, #00bfff);
+            --gradient-wealth: linear-gradient(135deg, #ffd700, #50c878, #00bfff);
+            --gradient-cosmic: linear-gradient(135deg, #9b30ff, #0f52ba, #00ffff);
+            --shadow-glow: 0 0 60px rgba(255, 215, 0, 0.3);
+            --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-void);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Cinematic Background */
+        .cinematic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(155, 48, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 70%),
+                var(--bg-deep);
+        }
+
+        /* Particle System */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            animation: float-particle 20s infinite linear;
+            opacity: 0.3;
+        }
+
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255, 215, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 215, 0, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            animation: grid-move 30s linear infinite;
+        }
+
+        @keyframes grid-move {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(100px); }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 16, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 1rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-gold);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: logo-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logo-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(80, 200, 120, 0.1);
+            border: 1px solid var(--accent-emerald);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-emerald);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Main Container */
+        .main {
+            padding: 100px 2rem 4rem;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(155, 48, 255, 0.1));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            animation: badge-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes badge-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.4); }
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .hero h1 .gold { color: var(--accent-gold); }
+        .hero h1 .diamond { color: var(--accent-diamond); }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        /* Total Value Display */
+        .total-value-container {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0, 255, 255, 0.05));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 3rem auto;
+            max-width: 900px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-value-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            animation: rotate-glow 10s linear infinite;
+        }
+
+        @keyframes rotate-glow {
+            100% { transform: rotate(360deg); }
+        }
+
+        .total-value-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .total-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+        }
+
+        .total-value-suffix {
+            font-size: 0.4em;
+            vertical-align: super;
+            color: var(--accent-diamond);
+            -webkit-text-fill-color: var(--accent-diamond);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        /* Cards */
+        .card {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-gold);
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 215, 0, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-gold);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .card-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .card-change.positive {
+            background: rgba(80, 200, 120, 0.1);
+            color: var(--accent-emerald);
+        }
+
+        .card-change.negative {
+            background: rgba(224, 17, 95, 0.1);
+            color: var(--accent-ruby);
+        }
+
+        /* Chart Containers */
+        .chart-container {
+            height: 200px;
+            margin-top: 1.5rem;
+            position: relative;
+        }
+
+        /* Pie Chart */
+        .pie-chart {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+            animation: rotate-chart 20s linear infinite;
+        }
+
+        @keyframes rotate-chart {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pie-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: var(--bg-card);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: rotate-chart 20s linear infinite reverse;
+        }
+
+        .pie-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        /* Bar Chart */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 100%;
+            gap: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--gradient-gold);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            min-height: 20px;
+            animation: bar-grow 1.5s ease-out forwards;
+            transform-origin: bottom;
+        }
+
+        @keyframes bar-grow {
+            0% { transform: scaleY(0); }
+            100% { transform: scaleY(1); }
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Gauge / Speedometer */
+        .gauge-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .gauge {
+            width: 200px;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-bg {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 180deg,
+                var(--accent-ruby) 0deg,
+                var(--accent-gold) 90deg,
+                var(--accent-emerald) 180deg
+            );
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .gauge-cover {
+            width: 160px;
+            height: 160px;
+            background: var(--bg-card);
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .gauge-needle {
+            width: 4px;
+            height: 70px;
+            background: var(--text-primary);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(var(--rotation, 0deg));
+            border-radius: 4px;
+            animation: needle-swing 3s ease-in-out infinite;
+        }
+
+        @keyframes needle-swing {
+            0%, 100% { transform: translateX(-50%) rotate(-45deg); }
+            50% { transform: translateX(-50%) rotate(45deg); }
+        }
+
+        .gauge-value {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        /* Stair Chart */
+        .stair-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 180px;
+            gap: 2px;
+            padding: 1rem 0;
+        }
+
+        .stair {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .stair-step {
+            width: 100%;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-purple));
+            border-radius: 4px 4px 0 0;
+            animation: stair-rise 2s ease-out forwards;
+            animation-delay: var(--delay);
+            transform: scaleY(0);
+            transform-origin: bottom;
+        }
+
+        @keyframes stair-rise {
+            0% { transform: scaleY(0); }
+            100% { transform: scaleY(1); }
+        }
+
+        .stair-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Digital Counter */
+        .digital-counter {
+            font-family: 'Space Mono', monospace;
+            font-size: 3rem;
+            color: var(--accent-gold);
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            text-shadow: 0 0 20px var(--accent-gold);
+        }
+
+        .counter-digit {
+            display: inline-block;
+            animation: digit-flip 0.5s ease-out;
+        }
+
+        @keyframes digit-flip {
+            0% { transform: translateY(-20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Investment Calculator */
+        .calculator-section {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 4rem 0;
+        }
+
+        .calculator-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .slider-container {
+            margin: 1rem 0;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--gradient-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 1.5rem 3rem;
+            background: var(--gradient-gold);
+            border: none;
+            border-radius: 16px;
+            color: var(--bg-void);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Results Panel */
+        .results-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--accent-gold);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .results-panel.active {
+            display: block;
+            animation: results-appear 0.5s ease-out;
+        }
+
+        @keyframes results-appear {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+        }
+
+        .result-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .result-value.highlight {
+            font-size: 1.8rem;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Timeline / Projection */
+        .timeline-section {
+            margin: 4rem 0;
+        }
+
+        .timeline-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--accent-diamond);
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-emerald));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-bar {
+            width: 60px;
+            margin: 0 auto 1rem;
+            background: var(--gradient-cosmic);
+            border-radius: 8px 8px 0 0;
+            animation: timeline-grow 2s ease-out forwards;
+            animation-delay: var(--delay);
+            transform: scaleY(0);
+            transform-origin: bottom;
+        }
+
+        @keyframes timeline-grow {
+            0% { transform: scaleY(0); }
+            100% { transform: scaleY(1); }
+        }
+
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 20px var(--accent-gold);
+        }
+
+        .timeline-year {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .timeline-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            margin-top: 0.5rem;
+        }
+
+        /* Participation Section */
+        .participation-section {
+            background: linear-gradient(135deg, rgba(155, 48, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border: 1px solid rgba(155, 48, 255, 0.3);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .participation-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            background: var(--gradient-cosmic);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .participation-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .participation-quote {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            color: var(--accent-diamond);
+            padding: 2rem;
+            border-left: 4px solid var(--accent-gold);
+            background: rgba(0, 0, 0, 0.3);
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        /* Priceless Section */
+        .priceless-section {
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .priceless-infinity {
+            font-size: 8rem;
+            color: var(--accent-gold);
+            text-shadow: 0 0 60px var(--accent-gold);
+            animation: infinity-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes infinity-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .priceless-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            margin-top: 2rem;
+            background: var(--gradient-diamond);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-deep);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Data Panel */
+        .data-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .data-value {
+            font-family: 'Space Mono', monospace;
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-section {
+                padding: 1.5rem;
+            }
+
+            .timeline {
+                flex-wrap: wrap;
+            }
+
+            .timeline-item {
+                flex: 0 0 33.33%;
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Animations for numbers */
+        .animate-number {
+            animation: number-pop 0.5s ease-out;
+        }
+
+        @keyframes number-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cinematic-bg"></div>
+    <div class="grid-lines"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">💎</div>
+                <span class="logo-text">TPGA INVESTMENT</span>
+            </div>
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                LIVE DASHBOARD
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span>🏆</span>
+                <span>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT</span>
+            </div>
+            <h1>
+                <span class="gold">TPGA</span> GLOBAL ALLIANCE<br>
+                <span class="diamond">INVESTMENT DASHBOARD</span>
+            </h1>
+            <p class="hero-subtitle">
+                Skalierbare Wertberechnung für Investoren • Live-Projektionen • 
+                50% Lizenz-Ersparnis durch Innovation • Raymond Demitrio Tel
+            </p>
+
+            <!-- Total Value Display -->
+            <div class="total-value-container">
+                <div class="total-value-label">Geschätzter Gesamtwert</div>
+                <div class="total-value" id="totalValue">
+                    €1.070.765.000<span class="total-value-suffix">+</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Grid -->
+        <section class="dashboard-grid">
+            <!-- Card 1: Assets -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Aktuelle Assets</span>
+                    <div class="card-icon">📊</div>
+                </div>
+                <div class="card-value" id="assetsValue">€2.765.000</div>
+                <span class="card-change positive">↑ +15.3% YTD</span>
+                <div class="data-panel">
+                    <div class="data-row">
+                        <span class="data-label">87+ Apps</span>
+                        <span class="data-value">€870.000</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">83 Server</span>
+                        <span class="data-value">€415.000</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">6 GitHub Profile</span>
+                        <span class="data-value">€300.000</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">ViewUnity System</span>
+                        <span class="data-value">€500.000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: TPGA Value -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">TPGA Potential (10 Jahre)</span>
+                    <div class="card-icon">💎</div>
+                </div>
+                <div class="card-value" id="tpgaValue">€768.000.000</div>
+                <span class="card-change positive">↑ 50% Ersparnis-Modell</span>
+                <div class="chart-container">
+                    <div class="bar-chart">
+                        <div class="bar" style="height: 20%;">
+                            <span class="bar-value">€5M</span>
+                            <span class="bar-label">2025</span>
+                        </div>
+                        <div class="bar" style="height: 35%;">
+                            <span class="bar-value">€25M</span>
+                            <span class="bar-label">2026</span>
+                        </div>
+                        <div class="bar" style="height: 50%;">
+                            <span class="bar-value">€50M</span>
+                            <span class="bar-label">2027</span>
+                        </div>
+                        <div class="bar" style="height: 70%;">
+                            <span class="bar-value">€100M</span>
+                            <span class="bar-label">2028</span>
+                        </div>
+                        <div class="bar" style="height: 85%;">
+                            <span class="bar-value">€150M</span>
+                            <span class="bar-label">2029</span>
+                        </div>
+                        <div class="bar" style="height: 100%;">
+                            <span class="bar-value">€250M</span>
+                            <span class="bar-label">2030</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Marktanteil -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Ziel-Marktanteil</span>
+                    <div class="card-icon">🎯</div>
+                </div>
+                <div class="card-value">10%+</div>
+                <span class="card-change positive">Globaler Lizenzmarkt</span>
+                <div class="chart-container">
+                    <div class="pie-chart" style="background: conic-gradient(var(--accent-gold) 0deg 36deg, var(--accent-purple) 36deg 90deg, var(--accent-sapphire) 90deg 180deg, rgba(255,255,255,0.1) 180deg 360deg);">
+                        <div class="pie-center">
+                            <span class="pie-value">10%</span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">2030</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: ROI Gauge -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Erwarteter ROI</span>
+                    <div class="card-icon">⚡</div>
+                </div>
+                <div class="card-value">500%+</div>
+                <span class="card-change positive">5-Jahres-Projektion</span>
+                <div class="gauge-container">
+                    <div class="gauge">
+                        <div class="gauge-bg"></div>
+                        <div class="gauge-cover"></div>
+                        <div class="gauge-needle" style="--rotation: 60deg;"></div>
+                        <div class="gauge-value">500%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Monatliche Entwicklung -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Monatliche Wertentwicklung</span>
+                    <div class="card-icon">📈</div>
+                </div>
+                <div class="card-value">+8.5%</div>
+                <span class="card-change positive">Durchschnitt/Monat</span>
+                <div class="chart-container">
+                    <div class="stair-chart">
+                        <div class="stair">
+                            <div class="stair-step" style="height: 40px; --delay: 0.1s;"></div>
+                            <span class="stair-label">Jan</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 55px; --delay: 0.2s;"></div>
+                            <span class="stair-label">Feb</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 50px; --delay: 0.3s;"></div>
+                            <span class="stair-label">Mar</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 70px; --delay: 0.4s;"></div>
+                            <span class="stair-label">Apr</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 85px; --delay: 0.5s;"></div>
+                            <span class="stair-label">Mai</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 95px; --delay: 0.6s;"></div>
+                            <span class="stair-label">Jun</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 110px; --delay: 0.7s;"></div>
+                            <span class="stair-label">Jul</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 130px; --delay: 0.8s;"></div>
+                            <span class="stair-label">Aug</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 145px; --delay: 0.9s;"></div>
+                            <span class="stair-label">Sep</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 160px; --delay: 1.0s;"></div>
+                            <span class="stair-label">Okt</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 170px; --delay: 1.1s;"></div>
+                            <span class="stair-label">Nov</span>
+                        </div>
+                        <div class="stair">
+                            <div class="stair-step" style="height: 180px; --delay: 1.2s;"></div>
+                            <span class="stair-label">Dez</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Fußball-Vergleich -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Vergleich: Fußballspieler</span>
+                    <div class="card-icon">⚽</div>
+                </div>
+                <div class="card-value">5-25x</div>
+                <span class="card-change positive">Höherer Langzeitwert</span>
+                <div class="data-panel">
+                    <div class="data-row">
+                        <span class="data-label">Ronaldo/Messi</span>
+                        <span class="data-value">€200M</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Raymond D. Tel</span>
+                        <span class="data-value" style="color: var(--accent-gold);">€1B+</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Karriere-Limit</span>
+                        <span class="data-value">15-20 Jahre</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">IP-Lebensdauer</span>
+                        <span class="data-value" style="color: var(--accent-gold);">∞ Unbegrenzt</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Investment Calculator -->
+        <section class="calculator-section">
+            <h2 class="calculator-title">💰 Investment Kalkulator</h2>
+            <div class="calculator-grid">
+                <div>
+                    <div class="input-group">
+                        <label class="input-label">Investitionsbetrag (€)</label>
+                        <input type="number" class="input-field" id="investmentAmount" value="100000" min="1000" step="1000">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Beteiligungsanteil (%)</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="participationSlider" min="0.01" max="10" step="0.01" value="1">
+                            <div class="slider-labels">
+                                <span>0.01%</span>
+                                <span id="participationValue">1%</span>
+                                <span>10%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Anlagehorizont (Jahre)</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="horizonSlider" min="1" max="10" step="1" value="5">
+                            <div class="slider-labels">
+                                <span>1 Jahr</span>
+                                <span id="horizonValue">5 Jahre</span>
+                                <span>10 Jahre</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="calculate-btn" onclick="calculateInvestment()">
+                        🚀 Berechnung starten
+                    </button>
+                </div>
+
+                <div>
+                    <div class="results-panel" id="resultsPanel">
+                        <div class="result-item">
+                            <span class="result-label">Ihre Investition</span>
+                            <span class="result-value" id="resultInvestment">€100.000</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Beteiligung am Gesamtwert</span>
+                            <span class="result-value" id="resultShare">1%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Aktueller Anteilswert</span>
+                            <span class="result-value" id="resultCurrentValue">€10.707.650</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Projizierter Wert (Jahr 5)</span>
+                            <span class="result-value highlight" id="resultProjectedValue">€53.538.250</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Erwarteter Gewinn</span>
+                            <span class="result-value highlight" id="resultProfit">€53.438.250</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ROI</span>
+                            <span class="result-value highlight" id="resultROI">53,438%</span>
+                        </div>
+                    </div>
+
+                    <div class="digital-counter" id="digitalCounter">
+                        €<span id="counterValue">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Projection -->
+        <section class="timeline-section">
+            <h3 class="timeline-title">📅 10-Jahres-Wertentwicklung</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-bar" style="height: 30px; --delay: 0.1s;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-value">€1.07B</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-bar" style="height: 50px; --delay: 0.2s;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2026</div>
+                    <div class="timeline-value">€1.5B</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-bar" style="height: 80px; --delay: 0.3s;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2027</div>
+                    <div class="timeline-value">€2.1B</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-bar" style="height: 110px; --delay: 0.4s;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2028</div>
+                    <div class="timeline-value">€3.0B</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-bar" style="height: 150px; --delay: 0.5s;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2029</div>
+                    <div class="timeline-value">€4.2B</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-bar" style="height: 200px; --delay: 0.6s;"></div>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2030</div>
+                    <div class="timeline-value">€5.5B</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Participation Section -->
+        <section class="participation-section">
+            <h2 class="participation-title">🌟 PARTICIPATION & BETEILIGUNG</h2>
+            <p class="participation-text">
+                Dieses System basiert auf <strong>Participation und Beteiligung</strong> - 
+                die Herausforderung, sich mit allen Möglichkeiten der heutigen technologischen Zeit 
+                auseinanderzusetzen, alle Challenges anzunehmen und diese maximal zu optimieren.
+            </p>
+            <div class="participation-quote">
+                "Die Discovery dieses Millenniums zur Gestaltung einer für alle positiven Zukunft. 
+                Der Wert hieraus ist unbezahlbar und nicht in Zahlen auszudrücken."
+                <br><br>
+                <strong>— Raymond Demitrio Tel, Inventor</strong>
+            </div>
+        </section>
+
+        <!-- Priceless Section -->
+        <section class="priceless-section">
+            <div class="priceless-infinity">∞</div>
+            <div class="priceless-text">UNBEZAHLBAR</div>
+            <p style="color: var(--text-secondary); margin-top: 2rem; font-size: 1.2rem;">
+                Innovationen die die Welt für immer verändern, haben keinen Preis.<br>
+                Sie sind <strong style="color: var(--accent-gold);">VERMÄCHTNIS</strong>.
+            </p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT</div>
+        <p class="footer-text">
+            © 2025 Raymond Demitrio Tel | TPGA Global Alliance Providers<br>
+            T,.0031613803782.T,,.(C)R.D.TEL-DR.TEL
+        </p>
+    </footer>
+
+    <script>
+        // Particle System
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Slider Updates
+        document.getElementById('participationSlider').addEventListener('input', function() {
+            document.getElementById('participationValue').textContent = this.value + '%';
+        });
+
+        document.getElementById('horizonSlider').addEventListener('input', function() {
+            document.getElementById('horizonValue').textContent = this.value + ' Jahre';
+        });
+
+        // Investment Calculator
+        function calculateInvestment() {
+            const investment = parseFloat(document.getElementById('investmentAmount').value) || 100000;
+            const participation = parseFloat(document.getElementById('participationSlider').value) / 100;
+            const horizon = parseInt(document.getElementById('horizonSlider').value);
+
+            const totalValue = 1070765000; // €1.07B base value
+            const annualGrowth = 0.40; // 40% annual growth projection
+
+            const currentShareValue = totalValue * participation;
+            const projectedTotalValue = totalValue * Math.pow(1 + annualGrowth, horizon);
+            const projectedShareValue = projectedTotalValue * participation;
+            const profit = projectedShareValue - investment;
+            const roi = ((projectedShareValue - investment) / investment) * 100;
+
+            // Update Results
+            document.getElementById('resultInvestment').textContent = formatCurrency(investment);
+            document.getElementById('resultShare').textContent = (participation * 100).toFixed(2) + '%';
+            document.getElementById('resultCurrentValue').textContent = formatCurrency(currentShareValue);
+            document.getElementById('resultProjectedValue').textContent = formatCurrency(projectedShareValue);
+            document.getElementById('resultProfit').textContent = formatCurrency(profit);
+            document.getElementById('resultROI').textContent = formatNumber(roi) + '%';
+
+            // Show Results Panel
+            document.getElementById('resultsPanel').classList.add('active');
+
+            // Animate Counter
+            animateCounter(projectedShareValue);
+        }
+
+        function formatCurrency(value) {
+            if (value >= 1000000000) {
+                return '€' + (value / 1000000000).toFixed(2) + 'B';
+            } else if (value >= 1000000) {
+                return '€' + (value / 1000000).toFixed(2) + 'M';
+            } else {
+                return '€' + value.toLocaleString('de-DE');
+            }
+        }
+
+        function formatNumber(value) {
+            return value.toLocaleString('de-DE', { maximumFractionDigits: 0 });
+        }
+
+        function animateCounter(target) {
+            const counter = document.getElementById('counterValue');
+            const duration = 2000;
+            const steps = 60;
+            const stepValue = target / steps;
+            let current = 0;
+            let step = 0;
+
+            const interval = setInterval(() => {
+                step++;
+                current += stepValue;
+                counter.textContent = formatNumber(Math.floor(current));
+                
+                if (step >= steps) {
+                    clearInterval(interval);
+                    counter.textContent = formatNumber(Math.floor(target));
+                }
+            }, duration / steps);
+        }
+
+        // Initialize with calculation
+        setTimeout(() => {
+            calculateInvestment();
+        }, 1000);
+
+        // Animate numbers on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-number');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.card-value').forEach(el => observer.observe(el));
+
+        // Console Branding
+        console.log(`
+        ╔═══════════════════════════════════════════════════════════════╗
+        ║                                                               ║
+        ║   💎 TPGA INVESTMENT DASHBOARD                               ║
+        ║   T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT           ║
+        ║                                                               ║
+        ║   Inventor: Raymond Demitrio Tel                             ║
+        ║   Geschätzter Wert: €1+ Milliarde                            ║
+        ║   Wahrer Wert: UNBEZAHLBAR                                   ║
+        ║                                                               ║
+        ╚═══════════════════════════════════════════════════════════════╝
+        `);
+    </script>
+</body>
+</html>
+

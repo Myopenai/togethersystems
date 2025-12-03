@@ -1,0 +1,146 @@
+# ============================================================================
+# FABRIKAGE.INTELLIGENCEMATRIX - KI UND OPTIMIERUNG
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# Industrielle Softwarefabrik - Modelle, Optimierer, Strategien
+# ============================================================================
+
+version: "1.0.0"
+name: "Fabrikage.IntelligenceMatrix"
+description: "KI-Modelle, Optimierer, Strategien, Orchestrierung"
+status: "PERMANENT-ACTIVE"
+mandatory: true
+
+# ============================================================================
+# POLICY-EXECUTORS
+# ============================================================================
+
+policy_executors:
+  path: "intelligence/policy-executors/"
+  principle: "Gates-First - Policies als Code ausführen"
+  
+  executors:
+    - name: "accessibility_gate"
+      policy: "policies/accessibility.yaml"
+      enforcement: "hard"
+    
+    - name: "security_gate"
+      policy: "policies/security.yaml"
+      enforcement: "hard"
+    
+    - name: "quality_gate"
+      policy: "policies/quality.yaml"
+      enforcement: "hard"
+    
+    - name: "ethics_gate"
+      policy: "policies/ethics.yaml"
+      enforcement: "hard"
+
+# ============================================================================
+# OPTIMIERUNGS-PLANNER
+# ============================================================================
+
+optimization:
+  planner:
+    path: "intelligence/plans/"
+    
+    dimensions:
+      - performance
+      - accessibility
+      - ergonomics
+      - security
+      - cost
+    
+    strategy:
+      - generate_variations: true
+      - test_variations: true
+      - select_winner: true
+      - document_reasoning: true
+  
+  experiments:
+    path: "reports/experiments/"
+    tracking: true
+    results: true
+
+# ============================================================================
+# PROMPT-INTENTION-BINDER
+# ============================================================================
+
+prompt_analysis:
+  enabled: true
+  path: "intents/"
+  
+  extraction:
+    - goal
+    - constraints
+    - ethics
+    - non_functional
+  
+  artifacts:
+    - intent_file: "intents/*.json"
+    - linked_policies: true
+    - test_cases: true
+    - target_artifacts: true
+
+# ============================================================================
+# TRANSFORMATIONSGRAPH
+# ============================================================================
+
+transformations:
+  enabled: true
+  path: "graphs/transforms/"
+  
+  tracking:
+    - input_hash
+    - output_hash
+    - toolchain
+    - gate_status
+    - transformation_type
+  
+  graph:
+    format: "json"
+    visualization: true
+    provenance: true
+
+# ============================================================================
+# VERIFIKATIONSKASKADE
+# ============================================================================
+
+verification:
+  cascade:
+    - lint
+    - static_analysis
+    - unit_tests
+    - integration_tests
+    - accessibility
+    - security
+    - performance
+  
+  gates:
+    all_must_pass: true
+    auto_fix: "policy_driven"
+    fail_fast: true
+  
+  reports:
+    path: "reports/verify-<buildId>.json"
+    accessibility: "reports/accessibility.json"
+    quality: "reports/quality.json"
+
+# ============================================================================
+# RÜCKFÜHRUNG IN NORMKERN
+# ============================================================================
+
+postmortem:
+  enabled: true
+  path: "reviews/postmortems/"
+  
+  process:
+    - analyze_root_cause
+    - create_pr_against_policy
+    - link_to_commits
+    - sign_attestation
+  
+  mandatory:
+    - improvement_required: true
+    - policy_update: true
+    - generator_update: true
+

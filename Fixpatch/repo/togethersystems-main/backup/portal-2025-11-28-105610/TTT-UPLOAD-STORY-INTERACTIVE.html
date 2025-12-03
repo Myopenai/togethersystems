@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>TTT Upload & Branding Story – TogetherSystems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #0b1020;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.18);
+      --accent-strong: rgba(129, 140, 248, 0.7);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+      --radius-xl: 18px;
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.85);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 52%, #000 100%);
+      color: var(--text);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(18px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.22), transparent 60%),
+                  radial-gradient(circle at 100% 0, rgba(129,140,248,0.28), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+      padding: 24px 22px 26px;
+    }
+
+    .header {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+      background: radial-gradient(circle at top left, rgba(148,163,184,0.26), rgba(15,23,42,0.9));
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.8);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin: 0 0 4px;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* --- UPLOAD-FLOAT-GALERIE --- */
+    .upload-section {
+      margin-top: 20px;
+      padding: 18px;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.85), rgba(15,23,42,0.98));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.7);
+    }
+
+    .upload-title {
+      font-size: 1.1rem;
+      margin: 0 0 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .ts-upload-floats {
+      overflow: auto;
+      margin-top: 12px;
+      clear: both;
+    }
+
+    .ts-float-left,
+    .ts-float-right {
+      width: 45%;
+      max-width: 280px;
+      float: left;
+      margin: 0 20px 20px 0;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .ts-float-right {
+      float: right;
+      margin: 0 0 20px 20px;
+    }
+
+    .ts-float-left img,
+    .ts-float-right img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .ts-float-caption {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .ts-float-caption strong {
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* TTT-Signatur-Bereich */
+    .ttt-signature {
+      margin-top: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(129, 140, 248, 0.1));
+      border-radius: 12px;
+      border: 1px solid rgba(79, 70, 229, 0.3);
+      text-align: center;
+    }
+
+    .ttt-signature-code {
+      font-family: "Courier New", monospace;
+      font-size: 0.9rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin: 8px 0;
+    }
+
+    .ttt-signature-seal {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .ts-float-left,
+      .ts-float-right {
+        width: 100%;
+        float: none;
+        margin: 0 0 16px 0;
+        max-width: 100%;
+      }
+    }
+
+    .upload-description {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 10px;
+      border-left: 3px solid var(--accent);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .upload-description strong {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <main class="card" aria-label="TTT Upload & Branding Story">
+      <div class="card-inner">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          TTT Upload Portal · Maschinencode-Branding
+        </div>
+
+        <header class="header">
+          <div>
+            <h1>TTT Upload & Branding Story</h1>
+            <p class="subtitle">
+              TTT-Emblem & Produktbild · Sichtbares Branding im Portal
+            </p>
+          </div>
+        </header>
+
+        <!-- UPLOAD-SECTION MIT FLOATS -->
+        <section class="upload-section">
+          <h2 class="upload-title">TTT · Upload & Branding-Galerie</h2>
+          
+          <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">
+            Hier werden die visuellen Kern-Assets des Systems eingebunden:
+            das <strong style="color: var(--accent);">TTT-Emblem</strong> und das Produktbild aus dem
+            Test-/Erfahrungsbericht (YoFood / Mahlzeitenersatz).
+          </p>
+
+          <div class="ts-upload-floats">
+            <!-- Linke Float-Box: TTT-Logo -->
+            <figure class="ts-float-left">
+              <img
+                src="TTT_final.svg"
+                alt="TTT Emblem · Maschinencode-Siegel"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+              />
+              <div style="display:none; padding: 20px; color: var(--muted); font-size: 0.85rem;">
+                TTT_final.svg nicht gefunden. Bitte Datei im selben Verzeichnis platzieren.
+              </div>
+              <figcaption class="ts-float-caption">
+                <strong>TTT · Maschinencode-Emblem</strong>
+                【 SFORMEMBER.T,.AG.CO.AG.T,,. 】
+              </figcaption>
+            </figure>
+
+            <!-- Rechte Float-Box: Produktfoto -->
+            <figure class="ts-float-right">
+              <img
+                src="A_photograph_captures_a_meal_replacement_beverage_.png"
+                alt="Produktfoto · Mahlzeitenersatz / YoFood"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+              />
+              <div style="display:none; padding: 20px; color: var(--muted); font-size: 0.85rem;">
+                Produktfoto nicht gefunden. Bitte Datei im selben Verzeichnis platzieren.
+              </div>
+              <figcaption class="ts-float-caption">
+                <strong>Produktbild · Mahlzeitenersatz</strong>
+                Test- & Eigenerfahrungsbericht (DR.TEL)
+              </figcaption>
+            </figure>
+
+            <div style="clear: both;"></div>
+          </div>
+
+          <!-- TTT-SIGNATUR -->
+          <div class="ttt-signature">
+            <div class="ttt-signature-code">
+              【SFORMEMBER.T,.AG.CO.AG.T,,.】
+            </div>
+            <div class="ttt-signature-seal">
+              TTT-14-2626-∞ · Maschinencode-Branding<br />
+              T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL
+            </div>
+          </div>
+
+          <div class="upload-description">
+            <p>
+              <strong>Beide Bilder sind fester Bestandteil des Upload- / Branding-Prozesses:</strong>
+            </p>
+            <p>
+              Das <strong>TTT-Emblem</strong> steht für das
+              <em>ABSOLUTES SYSTEM – TTT Enterprise Universe</em>,
+              das Produktfoto visualisiert den realen Anwendungsfall im
+              TogetherSystems-Portal.
+            </p>
+            <p style="margin-top: 12px; font-size: 0.85rem;">
+              <strong>Hinweis:</strong> Stelle sicher, dass sich die Dateien
+              <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">TTT_final.svg</code> und
+              <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">A_photograph_captures_a_meal_replacement_beverage_.png</code>
+              im selben Verzeichnis wie diese <code>TTT-UPLOAD-STORY-INTERACTIVE.html</code> befinden,
+              damit sie direkt angezeigt werden.
+            </p>
+          </div>
+        </section>
+
+        <!-- ZUSÄTZLICHE INFORMATIONEN -->
+        <section style="margin-top: 24px; padding: 16px; background: rgba(15, 23, 42, 0.6); border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.3);">
+          <h3 style="font-size: 1rem; margin: 0 0 12px; color: var(--accent);">
+            TTT-14-2626-∞ Contract Seal System
+          </h3>
+          <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin: 0;">
+            Das TTT-14-2626-∞ System ermöglicht die Versiegelung geschäftlicher Verträge mit:
+            <strong style="color: var(--text);">14-Zustands-Sequenz</strong>,
+            <strong style="color: var(--text);">2626-Kombinationsmatrix</strong> und
+            <strong style="color: var(--text);">∞-Verschlüsselungsraum</strong>.
+            Vollständige Dokumentation: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">TTT-14-2626-INFINITY-CONTRACT-SEAL-SYSTEM.md</code>
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+

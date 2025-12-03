@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings Graph View - .{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .graph-container {
+      width: 100%;
+      height: 800px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-card);
+      position: relative;
+    }
+    .graph-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .graph-controls select,
+    .graph-controls input {
+      padding: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+    }
+    .node {
+      cursor: pointer;
+    }
+    .node circle {
+      stroke: var(--primary);
+      stroke-width: 2px;
+    }
+    .node text {
+      font-size: 12px;
+      fill: var(--text);
+    }
+    .link {
+      stroke: var(--text-muted);
+      stroke-opacity: 0.6;
+      stroke-width: 1.5px;
+    }
+    .node-info {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      max-width: 300px;
+      display: none;
+    }
+    .node-info.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <header class="dashboard-header">
+      <h1>📊 Settings Graph View</h1>
+      <p class="subtitle">.{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.</p>
+      <p class="subtitle" style="font-size: 0.8rem; margin-top: 0.5rem;">Producer: TEL1.NL | WhatsApp: 0031613803782</p>
+    </header>
+
+    <div class="graph-controls">
+      <select id="scopeFilter">
+        <option value="">Alle Scopes</option>
+        <option value="global">Global</option>
+        <option value="env:prod">Production</option>
+        <option value="env:dev">Development</option>
+        <option value="project:ai-lab">AI Lab</option>
+      </select>
+
+      <select id="typeFilter">
+        <option value="">Alle Types</option>
+        <option value="runtime.profile">Runtime Profile</option>
+        <option value="build.target">Build Target</option>
+        <option value="nn.model">NN Model</option>
+        <option value="policy.route">Policy Route</option>
+        <option value="mcp.tool">MCP Tool</option>
+      </select>
+
+      <input type="text" id="searchFilter" placeholder="Suche Node ID...">
+
+      <button class="btn-primary" onclick="refreshGraph()">🔄 Aktualisieren</button>
+    </div>
+
+    <div class="graph-container" id="graphContainer">
+      <svg id="graphSvg"></svg>
+      <div class="node-info" id="nodeInfo">
+        <h3 id="nodeInfoTitle"></h3>
+        <div id="nodeInfoContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    let graphData = { nodes: [], links: [] };
+
+    // Lade Graph
+    async function loadGraph() {
+      try {
+        // In Produktion: API-Call
+        // const response = await fetch('/api/settings/graph');
+        // const data = await response.json();
+
+        // Simuliere Graph-Daten
+        graphData = {
+          nodes: [
+            { id: 'settings://project/ai-lab/runtime', type: 'runtime.profile', scope: ['env:prod', 'project:ai-lab'] },
+            { id: 'settings://nn/model/llm-A', type: 'nn.model', scope: ['global'] },
+            { id: 'settings://policy/route/generative', type: 'policy.route', scope: ['global'] },
+            { id: 'settings://mcp/tool/playwright', type: 'mcp.tool', scope: ['global'] },
+            { id: 'settings://build/target/fpga-agx', type: 'build.target', scope: ['global'] }
+          ],
+          links: [
+            { source: 'settings://project/ai-lab/runtime', target: 'settings://nn/model/llm-A', type: 'routes-to' },
+            { source: 'settings://policy/route/generative', target: 'settings://nn/model/llm-A', type: 'routes-to' },
+            { source: 'settings://project/ai-lab/runtime', target: 'settings://build/target/fpga-agx', type: 'requires' }
+          ]
+        };
+
+        renderGraph();
+      } catch (error) {
+        console.error('Error loading graph:', error);
+      }
+    }
+
+    // Rendere Graph
+    function renderGraph() {
+      const svg = d3.select('#graphSvg');
+      svg.selectAll('*').remove();
+
+      const width = document.getElementById('graphContainer').clientWidth;
+      const height = document.getElementById('graphContainer').clientHeight;
+
+      svg.attr('width', width).attr('height', height);
+
+      // Filter
+      const scopeFilter = document.getElementById('scopeFilter').value;
+      const typeFilter = document.getElementById('typeFilter').value;
+      const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+      let filteredNodes = graphData.nodes.filter(node => {
+        if (scopeFilter && !node.scope.some(s => s.includes(scopeFilter))) return false;
+        if (typeFilter && node.type !== typeFilter) return false;
+        if (searchFilter && !node.id.toLowerCase().includes(searchFilter)) return false;
+        return true;
+      });
+
+      const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+      const filteredLinks = graphData.links.filter(link => 
+        filteredNodeIds.has(link.source.id || link.source) && 
+        filteredNodeIds.has(link.target.id || link.target)
+      );
+
+      // Simulation
+      const simulation = d3.forceSimulation(filteredNodes)
+        .force('link', d3.forceLink(filteredLinks).id(d => d.id).distance(100))
+        .force('charge', d3.forceManyBody().strength(-300))
+        .force('center', d3.forceCenter(width / 2, height / 2));
+
+      // Links
+      const link = svg.append('g')
+        .selectAll('line')
+        .data(filteredLinks)
+        .enter()
+        .append('line')
+        .attr('class', 'link')
+        .attr('stroke-width', 2);
+
+      // Nodes
+      const node = svg.append('g')
+        .selectAll('g')
+        .data(filteredNodes)
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended));
+
+      node.append('circle')
+        .attr('r', 10)
+        .attr('fill', d => getNodeColor(d.type));
+
+      node.append('text')
+        .text(d => d.id.split('/').pop())
+        .attr('dx', 15)
+        .attr('dy', 5)
+        .attr('font-size', '12px')
+        .attr('fill', 'var(--text)');
+
+      node.on('click', (event, d) => {
+        showNodeInfo(d);
+      });
+
+      simulation.on('tick', () => {
+        link
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+    }
+
+    function getNodeColor(type) {
+      const colors = {
+        'runtime.profile': '#00ffff',
+        'nn.model': '#ff00ff',
+        'policy.route': '#ffff00',
+        'mcp.tool': '#00ff00',
+        'build.target': '#ff0000'
+      };
+      return colors[type] || '#ffffff';
+    }
+
+    function dragstarted(event) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+
+    function dragended(event) {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+
+    function showNodeInfo(node) {
+      const info = document.getElementById('nodeInfo');
+      const title = document.getElementById('nodeInfoTitle');
+      const content = document.getElementById('nodeInfoContent');
+
+      title.textContent = node.id;
+      content.innerHTML = `
+        <p><strong>Type:</strong> ${node.type}</p>
+        <p><strong>Scope:</strong> ${node.scope.join(', ')}</p>
+      `;
+
+      info.classList.add('visible');
+    }
+
+    window.refreshGraph = loadGraph;
+
+    // Event Listeners
+    document.getElementById('scopeFilter').addEventListener('change', renderGraph);
+    document.getElementById('typeFilter').addEventListener('change', renderGraph);
+    document.getElementById('searchFilter').addEventListener('input', renderGraph);
+
+    // Initial Load
+    loadGraph();
+  </script>
+</body>
+</html>
+

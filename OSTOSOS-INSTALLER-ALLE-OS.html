@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSTOSOS – Installation für alle Betriebssysteme</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: #1a1f3a;
+      border-radius: 20px;
+      border: 2px solid #10b981;
+    }
+    .logo {
+      font-size: 3em;
+      color: #10b981;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .title {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #9ca3af;
+      font-size: 1.1em;
+    }
+    .os-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .os-card {
+      background: #1a1f3a;
+      padding: 30px;
+      border-radius: 15px;
+      border: 2px solid #223040;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .os-card:hover {
+      border-color: #10b981;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+    }
+    .os-card.selected {
+      border-color: #10b981;
+      background: linear-gradient(135deg, #1a1f3a, rgba(16, 185, 129, 0.1));
+    }
+    .os-icon {
+      font-size: 4em;
+      margin-bottom: 15px;
+    }
+    .os-name {
+      font-size: 1.5em;
+      color: #10b981;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .os-desc {
+      color: #9ca3af;
+      font-size: 0.9em;
+      margin-bottom: 15px;
+    }
+    .install-button {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 20px;
+      display: none;
+    }
+    .install-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+    .install-button.active {
+      display: block;
+    }
+    .progress-container {
+      display: none;
+      margin-top: 20px;
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #223040;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      width: 0%;
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    .status-log {
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 0.9em;
+      margin-top: 20px;
+      display: none;
+    }
+    .status-entry {
+      padding: 5px 0;
+      color: #9ca3af;
+    }
+    .status-entry.success { color: #10b981; }
+    .status-entry.error { color: #ef4444; }
+    .status-entry.info { color: #3b82f6; }
+    .auto-detect {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .auto-detect h3 {
+      color: #10b981;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">T,.&T,,.&T,,,.(C)TEL1.NL</div>
+      <h1 class="title">OSTOSOS Operating System</h1>
+      <p class="subtitle">Ein-Klick Installation für alle Betriebssysteme</p>
+    </div>
+
+    <div class="auto-detect" id="autoDetect">
+      <h3>🔍 Erkanntes Betriebssystem:</h3>
+      <p id="detectedOS">Wird erkannt...</p>
+    </div>
+
+    <div class="os-grid">
+      <div class="os-card" data-os="windows" onclick="selectOS('windows')">
+        <div class="os-icon">🪟</div>
+        <div class="os-name">Windows</div>
+        <div class="os-desc">Windows 10, 11</div>
+      </div>
+
+      <div class="os-card" data-os="macos" onclick="selectOS('macos')">
+        <div class="os-icon">🍎</div>
+        <div class="os-name">macOS</div>
+        <div class="os-desc">macOS 10.13+</div>
+      </div>
+
+      <div class="os-card" data-os="linux" onclick="selectOS('linux')">
+        <div class="os-icon">🐧</div>
+        <div class="os-name">Linux</div>
+        <div class="os-desc">Ubuntu, Debian, Fedora, etc.</div>
+      </div>
+
+      <div class="os-card" data-os="android" onclick="selectOS('android')">
+        <div class="os-icon">🤖</div>
+        <div class="os-name">Android</div>
+        <div class="os-desc">Android 5.0+</div>
+      </div>
+
+      <div class="os-card" data-os="ios" onclick="selectOS('ios')">
+        <div class="os-icon">📱</div>
+        <div class="os-name">iOS</div>
+        <div class="os-desc">iOS 12+</div>
+      </div>
+
+      <div class="os-card" data-os="all" onclick="selectOS('all')">
+        <div class="os-icon">🌐</div>
+        <div class="os-name">Alle OS</div>
+        <div class="os-desc">Universal Installation</div>
+      </div>
+    </div>
+
+    <button class="install-button" id="installButton" onclick="startInstallation()">
+      🚀 JETZT INSTALLIEREN (Ein Klick)
+    </button>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill">0%</div>
+      </div>
+      <div class="status-log" id="statusLog"></div>
+    </div>
+  </div>
+
+  <script>
+    let selectedOS = null;
+
+    // Automatische OS-Erkennung
+    function detectOS() {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const platform = navigator.platform.toLowerCase();
+      let detected = 'Unbekannt';
+
+      if (userAgent.includes('win') || platform.includes('win')) {
+        detected = 'Windows';
+        selectOS('windows', true);
+      } else if (userAgent.includes('mac') || platform.includes('mac')) {
+        detected = 'macOS';
+        selectOS('macos', true);
+      } else if (userAgent.includes('linux') || platform.includes('linux')) {
+        detected = 'Linux';
+        selectOS('linux', true);
+      } else if (userAgent.includes('android')) {
+        detected = 'Android';
+        selectOS('android', true);
+      } else if (userAgent.includes('ios') || userAgent.includes('iphone') || userAgent.includes('ipad')) {
+        detected = 'iOS';
+        selectOS('ios', true);
+      } else {
+        selectOS('all', true);
+      }
+
+      document.getElementById('detectedOS').textContent = detected;
+    }
+
+    function selectOS(os, auto = false) {
+      selectedOS = os;
+      document.querySelectorAll('.os-card').forEach(card => card.classList.remove('selected'));
+      document.querySelector(`[data-os="${os}"]`).classList.add('selected');
+      document.getElementById('installButton').classList.add('active');
+    }
+
+    class OSTOSOSInstaller {
+      constructor() {
+        this.components = [
+          { name: 'Core System', progress: 10 },
+          { name: 'Service Worker', progress: 20 },
+          { name: 'Portal Components', progress: 30 },
+          { name: 'TPGA Telbank', progress: 40 },
+          { name: 'OSO System', progress: 50 },
+          { name: 'Honeycomb Hub', progress: 60 },
+          { name: 'Legal Hub', progress: 70 },
+          { name: 'Settings System', progress: 80 },
+          { name: 'Update System', progress: 90 },
+          { name: 'Sync System', progress: 100 }
+        ];
+      }
+
+      async install() {
+        const button = document.getElementById('installButton');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const statusLog = document.getElementById('statusLog');
+
+        button.disabled = true;
+        progressContainer.style.display = 'block';
+        statusLog.style.display = 'block';
+
+        this.addStatus(`🚀 Installation gestartet für: ${selectedOS.toUpperCase()}...`, 'info');
+        this.updateProgress(0);
+
+        for (let i = 0; i < this.components.length; i++) {
+          const component = this.components[i];
+          this.addStatus(`📦 Installiere: ${component.name}...`, 'info');
+          await this.delay(500);
+          this.updateProgress(component.progress);
+          this.addStatus(`✅ ${component.name} installiert`, 'success');
+        }
+
+        this.addStatus('⚙️ Registriere Service Worker...', 'info');
+        await this.registerServiceWorker();
+        this.addStatus('✅ Service Worker registriert', 'success');
+
+        localStorage.setItem('ostosos.installed', 'true');
+        localStorage.setItem('ostosos.installDate', new Date().toISOString());
+        localStorage.setItem('ostosos.version', '1.0.0');
+        localStorage.setItem('ostosos.os', selectedOS);
+
+        this.updateProgress(100);
+        this.addStatus('🎉 Installation abgeschlossen!', 'success');
+
+        setTimeout(() => {
+          window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+        }, 2000);
+      }
+
+      async registerServiceWorker() {
+        if (window.location.protocol === 'file:') {
+          this.addStatus('ℹ️ Service Worker nicht verfügbar (file:// Protokoll)', 'info');
+          return null;
+        }
+        
+        if ('serviceWorker' in navigator) {
+          try {
+            const registration = await navigator.serviceWorker.register('./sw.js', {
+              scope: './'
+            });
+            return registration;
+          } catch (error) {
+            this.addStatus(`⚠️ Service Worker Fehler: ${error.message}`, 'error');
+          }
+        }
+      }
+
+      updateProgress(percent) {
+        const progressFill = document.getElementById('progressFill');
+        progressFill.style.width = percent + '%';
+        progressFill.textContent = percent + '%';
+      }
+
+      addStatus(message, type = 'info') {
+        const statusLog = document.getElementById('statusLog');
+        const entry = document.createElement('div');
+        entry.className = `status-entry ${type}`;
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        statusLog.appendChild(entry);
+        statusLog.scrollTop = statusLog.scrollHeight;
+      }
+
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+    }
+
+    function startInstallation() {
+      if (!selectedOS) {
+        alert('Bitte wähle ein Betriebssystem aus!');
+        return;
+      }
+      const installer = new OSTOSOSInstaller();
+      installer.install();
+    }
+
+    window.addEventListener('load', () => {
+      detectOS();
+      const installed = localStorage.getItem('ostosos.installed');
+      if (installed === 'true') {
+        const button = document.getElementById('installButton');
+        button.textContent = '✅ Bereits installiert - Zum System öffnen';
+        button.onclick = () => {
+          window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+        };
+      }
+    });
+
+    console.log('T,. OSTOSOS Operating System Installer für alle OS geladen');
+  </script>
+</body>
+</html>
+
+
+

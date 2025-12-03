@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BERICHT-ZUGANGSBEGRENZUNG-ANREIZ-SYSTEM-NL</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>📋 GEDETAILLEERD RAPPORT: TOEGANGSBEPERKING & KOOPPRIKKEL SYSTEEM</h1>
+
+<strong>Gemaakt:</strong> 2025-01-XX  
+<strong>Status:</strong> Volledige documentatie van alle implementaties  
+<strong>Talen:</strong> DE, NL, EN
+
+---
+
+<h2>🎯 OVERZICHT</h2>
+
+Dit rapport documenteert <strong>ALLE</strong> systemen voor toegangsbeperking, wachtwoordregulering en koopstimulering in het THYNK ORDERS Production System.
+
+---
+
+<h2>1️⃣ TIJDVERTRAGINGSMECHANISME (Industrial Design System)</h2>
+
+<h3>📊 Gebruikers-Slots-Systeem</h3>
+
+Het systeem gebruikt <strong>5 verschillende gebruikersslots</strong> met verschillende toegangsrechten en vertragingen:
+
+<h4>1.1 DEMO-SLOT</h4>
+- <strong>Vertragingsmultiplicator:</strong> 1.0 (standaardvertraging)
+- <strong>Functietoegang:</strong> Beperkt
+- <strong>Maximale vertraging:</strong> 5 seconden
+- <strong>Progressieve vertraging:</strong> NEE
+- <strong>Doel:</strong> Demo-versie voor niet-prikkelbare gebruikers
+- <strong>Koopprikkel:</strong> Laag - alleen voor testen
+
+<h4>1.2 FREE-SLOT</h4>
+- <strong>Vertragingsmultiplicator:</strong> 1.5 (50% langzamer)
+- <strong>Functietoegang:</strong> Basis (basis functies)
+- <strong>Maximale vertraging:</strong> 10 seconden
+- <strong>Progressieve vertraging:</strong> NEE
+- <strong>Doel:</strong> Gratis versie
+- <strong>Koopprikkel:</strong> Gemiddeld - gebruiker kan functies gebruiken, maar met vertraging
+
+<h4>1.3 PRICKLE-USER-SLOT ⚡</h4>
+- <strong>Vertragingsmultiplicator:</strong> 2.0 (100% langzamer - dubbele wachttijd!)
+- <strong>Functietoegang:</strong> Standaard (meer functies)
+- <strong>Maximale vertraging:</strong> 15 seconden
+- <strong>Progressieve vertraging:</strong> ✅ JA (wordt met de tijd erger)
+- <strong>Doel:</strong> <strong>Gebruikers die tot koop moeten worden aangemoedigd</strong>
+- <strong>Koopprikkel:</strong> <strong>HOOG</strong> - gebruiker wordt bewust geïrriteerd om koop te bevorderen
+
+<h4>1.4 PURCHASED-SLOT</h4>
+- <strong>Vertragingsmultiplicator:</strong> 0.1 (slechts 10% vertraging - bijna geen)
+- <strong>Functietoegang:</strong> Volledig (alle functies)
+- <strong>Maximale vertraging:</strong> 0 seconden
+- <strong>Progressieve vertraging:</strong> NEE
+- <strong>Doel:</strong> Gekochte software - minimale vertraging
+- <strong>Koopprikkel:</strong> Beloning - gebruiker heeft gekocht, krijgt bijna volledige snelheid
+
+<h4>1.5 PREMIUM-SLOT</h4>
+- <strong>Vertragingsmultiplicator:</strong> 0.0 (GEEN vertraging!)
+- <strong>Functietoegang:</strong> Volledig Plus (alle functies + Premium)
+- <strong>Maximale vertraging:</strong> 0 seconden
+- <strong>Progressieve vertraging:</strong> NEE
+- <strong>Doel:</strong> Premium-versie - geen vertraging
+- <strong>Koopprikkel:</strong> Hoogste beloning - volledige snelheid
+
+---
+
+<h2>2️⃣ FUNCTIE-TRAAGHEID (Function Inertia)</h2>
+
+<h3>📊 Progressieve demping</h3>
+
+Het systeem gebruikt <strong>4 vertragingsniveaus</strong> die progressief erger worden:
+
+<h4>Niveau 1 (Zacht)</h4>
+- <strong>Vertraging:</strong> 2 seconden
+- <strong>Beschrijving:</strong> Eerste vertragingsniveau
+- <strong>Gebruikerservaring:</strong> Nauwelijks merkbaar
+
+<h4>Niveau 2 (Gemiddeld)</h4>
+- <strong>Vertraging:</strong> 5 seconden
+- <strong>Beschrijving:</strong> Tweede vertragingsniveau
+- <strong>Gebruikerservaring:</strong> Merkbaar langzamer
+
+<h4>Niveau 3 (Hard)</h4>
+- <strong>Vertraging:</strong> 10 seconden
+- <strong>Beschrijving:</strong> Derde vertragingsniveau
+- <strong>Gebruikerservaring:</strong> Duidelijk langzamer
+
+<h4>Niveau 4 (Zeer Hard)</h4>
+- <strong>Vertraging:</strong> 20 seconden
+- <strong>Beschrijving:</strong> Vierde vertragingsniveau - kort voor blokkade
+- <strong>Gebruikerservaring:</strong> Zeer langzaam, maar nog bruikbaar
+
+<h3>⏰ Genadeperiode</h3>
+
+- <strong>Geactiveerd:</strong> ✅ JA
+- <strong>Duur:</strong> 168 uur (7 dagen)
+- <strong>Beschrijving:</strong> Genadeperiode: 7 dagen volledige functie voor blokkade
+- <strong>Doel:</strong> Gebruiker heeft 7 dagen volledige functionaliteit voordat vertragingen ingaan
+
+---
+
+<h2>3️⃣ BLOKKADE-VOORKOMING</h2>
+
+<h3>🛡️ Voor volledige blokkade</h3>
+
+- <strong>Tijdbeperkte toegang:</strong> ✅ ACTIEF
+- <strong>Vernieuwing vereist:</strong> Elke 24 uur
+- <strong>Beschrijving:</strong> Voor volledige blokkade: tijdbeperking met hernieuwing
+- <strong>Doel:</strong> Gebruiker moet regelmatig actief worden, anders wordt toegang beperkt
+
+<h3>🔄 Vernieuwingsmechanisme</h3>
+
+- <strong>Automatische vernieuwing:</strong> ✅ ACTIEF
+- <strong>Gebruikersmelding:</strong> ✅ ACTIEF
+- <strong>Vernieuwingsvenster:</strong> 48 uur
+- <strong>Doel:</strong> Systeem probeert automatisch te vernieuwen, meldt gebruiker
+
+---
+
+<h2>4️⃣ VOUCHER-LICENTIE SYSTEEM</h2>
+
+<h3>🎫 Vouchertypes</h3>
+
+<h4>4.1 Single-Use Voucher</h4>
+- <strong>Maximale activeringen:</strong> 1
+- <strong>Geldigheid:</strong> 365 dagen
+- <strong>Doel:</strong> Eenmalige toegang
+
+<h4>4.2 Multi-Use Voucher</h4>
+- <strong>Maximale activeringen:</strong> 5
+- <strong>Geldigheid:</strong> 365 dagen
+- <strong>Doel:</strong> Meerdere toegang (bijv. voor teams)
+
+<h4>4.3 Subscription Voucher</h4>
+- <strong>Maximale activeringen:</strong> Onbeperkt (-1)
+- <strong>Geldigheid:</strong> 30 dagen (maandabonnement)
+- <strong>Automatische verlenging:</strong> ✅ JA
+- <strong>Doel:</strong> Abonnement-gebaseerde toegang
+
+<h3>🔐 Online-verificatie</h3>
+
+- <strong>Geactiveerd:</strong> ✅ JA
+- <strong>Betaling eerst:</strong> ✅ JA (Payment First)
+- <strong>Verificatie na betaling:</strong> ✅ JA
+- <strong>Onmiddellijke activering:</strong> ✅ JA
+- <strong>Doel:</strong> Zorgen dat betaling vóór activering plaatsvindt
+
+<h3>📴 Offline-resistentie</h3>
+
+- <strong>Geactiveerd:</strong> ✅ JA
+- <strong>Genadeperiode:</strong> 168 uur (7 dagen)
+- <strong>Gecachte verificatie:</strong> ✅ JA
+- <strong>Progressieve demping offline:</strong> ✅ JA
+- <strong>Doel:</strong> Systeem werkt ook zonder internet gedurende 7 dagen
+
+---
+
+<h2>5️⃣ BELEIDSMOTOR (Functiebeperkingen)</h2>
+
+<h3>📋 Restrictietypen</h3>
+
+<h4>5.1 Tijdgebaseerde restricties</h4>
+- <strong>Geactiveerd:</strong> ✅ JA
+- <strong>Beschrijving:</strong> Functies kunnen op bepaalde tijden geblokkeerd zijn
+- <strong>Voorbeeld:</strong> Alleen tijdens kantooruren toegestaan
+
+<h4>5.2 Functie-gebaseerde restricties</h4>
+- <strong>Geactiveerd:</strong> ✅ JA
+- <strong>Beschrijving:</strong> Functies vereisen bepaalde features
+- <strong>Voorbeeld:</strong> Premium-functie vereist premium-licentie
+
+<h4>5.3 Gebruik-gebaseerde restricties</h4>
+- <strong>Geactiveerd:</strong> ✅ JA
+- <strong>Beschrijving:</strong> Beperking van gebruiksfrequentie
+- <strong>Voorbeeld:</strong> Maximaal 10 aanroepen per dag
+
+---
+
+<h2>6️⃣ RATE LIMITING (API-niveau)</h2>
+
+<h3>🔒 Implementatie</h3>
+
+Het systeem gebruikt <strong>Rate Limiting</strong> op API-niveau:
+
+<h4>Standaardlimieten:</h4>
+- <strong>Voucher Issue:</strong> 60 verzoeken per minuut
+- <strong>Voucher Book:</strong> 60 verzoeken per minuut
+- <strong>Voucher Bookings:</strong> 120 verzoeken per minuut
+- <strong>Slots Available:</strong> 120 verzoeken per minuut
+- <strong>Mortgage Application:</strong> 60 verzoeken per minuut
+- <strong>Mortgage Offer:</strong> 60 verzoeken per minuut
+- <strong>Mortgage Offer List:</strong> 120 verzoeken per minuut
+- <strong>Telemetry:</strong> 300 verzoeken per minuut
+- <strong>Telbank Transfers:</strong> 120 verzoeken per minuut
+
+---
+
+<h2>7️⃣ WACHTWOORDREGULERING / AUTHENTICATIE</h2>
+
+<h3>🔐 Identiteitssysteem</h3>
+
+<strong>GEEN klassiek wachtwoordsysteem!</strong>
+
+In plaats daarvan:
+- <strong>Geen e-mailverificatie</strong>
+- <strong>Geen wachtwoordlogin</strong>
+- <strong>Geen klassieke accounts</strong>
+
+<h3>✅ Alternatief: Manifest-gebaseerde identiteit</h3>
+
+Zie hoofdrapport voor volledige details.
+
+---
+
+<h2>✅ SAMENVATTING</h2>
+
+<strong>Toegangsbeperking:</strong> ✅ Geïmplementeerd via tijdvertraging (geen blokkade)  
+<strong>Wachtwoordregulering:</strong> ✅ Geïmplementeerd via Manifest-Auth (geen klassiek wachtwoord)  
+<strong>Koopprikkel:</strong> ✅ Geïmplementeerd via progressieve demping & Prickle-User-Slot  
+<strong>Status:</strong> Configuratie compleet, integratie in THYNK ORDERS frontend open
+
+---
+
+<strong>Einde van het rapport</strong>
+</body>
+</html>

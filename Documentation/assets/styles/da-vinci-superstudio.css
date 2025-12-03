@@ -1,0 +1,431 @@
+/* T,. Da Vinci Superstudio Style - Hollywood Supermax XXXXXXXXXXXXLS
+ * Version: 1.0.0
+ * Signatur: T,.&T,,.&T,,,.T.
+ * Style: Las Vegas 365 Grad Bubble Mountain Superdome Globe XXXXXXXXXLS
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Playfair+Display:wght@400;700;900&display=swap');
+
+:root {
+    --da-vinci-gold: #FFD700;
+    --da-vinci-bronze: #CD7F32;
+    --da-vinci-copper: #B87333;
+    --da-vinci-royal: #4169E1;
+    --da-vinci-purple: #9370DB;
+    --da-vinci-crimson: #DC143C;
+    --da-vinci-emerald: #50C878;
+    --da-vinci-sapphire: #0F52BA;
+    --da-vinci-onyx: #0A0A0A;
+    --da-vinci-ivory: #FFFFF0;
+    
+    --animation-speed: 0.05s;
+    --spiral-speed: 20s;
+    --morph-speed: 3s;
+    --flight-speed: 15s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Playfair Display', serif;
+    background: radial-gradient(ellipse at center, 
+        var(--da-vinci-onyx) 0%,
+        #1a1a2e 50%,
+        var(--da-vinci-onyx) 100%);
+    color: var(--da-vinci-ivory);
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+    perspective: 2000px;
+}
+
+/* Pixel-Level Animation Container */
+.pixel-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
+}
+
+.pixel {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--da-vinci-gold);
+    border-radius: 50%;
+    animation: pixelFloat 8s infinite ease-in-out;
+    box-shadow: 0 0 4px currentColor;
+}
+
+@keyframes pixelFloat {
+    0%, 100% { 
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.3;
+    }
+    25% { 
+        transform: translateY(-20px) translateX(10px) scale(1.2);
+        opacity: 0.6;
+    }
+    50% { 
+        transform: translateY(-40px) translateX(-10px) scale(0.8);
+        opacity: 0.4;
+    }
+    75% { 
+        transform: translateY(-20px) translateX(5px) scale(1.1);
+        opacity: 0.7;
+    }
+}
+
+/* 3D Globe Container */
+.globe-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.globe {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, 
+        var(--da-vinci-sapphire) 0%,
+        var(--da-vinci-royal) 30%,
+        var(--da-vinci-purple) 60%,
+        var(--da-vinci-onyx) 100%);
+    position: relative;
+    animation: globeRotate var(--flight-speed) infinite linear;
+    box-shadow: 
+        0 0 100px var(--da-vinci-gold),
+        0 0 200px var(--da-vinci-purple),
+        inset 0 0 100px var(--da-vinci-onyx);
+}
+
+.globe::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: 
+        radial-gradient(circle at 20% 30%, transparent 40%, rgba(255,215,0,0.3) 41%, rgba(255,215,0,0.3) 42%, transparent 43%),
+        radial-gradient(circle at 60% 70%, transparent 40%, rgba(255,215,0,0.2) 41%, rgba(255,215,0,0.2) 42%, transparent 43%),
+        radial-gradient(circle at 80% 20%, transparent 40%, rgba(255,215,0,0.25) 41%, rgba(255,215,0,0.25) 42%, transparent 43%);
+    animation: globeRotate calc(var(--flight-speed) * -1.5) infinite linear;
+}
+
+@keyframes globeRotate {
+    from { transform: rotateY(0deg) rotateX(20deg); }
+    to { transform: rotateY(360deg) rotateX(20deg); }
+}
+
+/* Spiral Animation */
+.spiral-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1000px;
+    height: 1000px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.spiral {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 2px solid transparent;
+    border-top-color: var(--da-vinci-gold);
+    border-right-color: var(--da-vinci-emerald);
+    border-bottom-color: var(--da-vinci-crimson);
+    border-left-color: var(--da-vinci-sapphire);
+    border-radius: 50%;
+    animation: spiralExpand var(--spiral-speed) infinite ease-in-out;
+    transform-origin: center;
+}
+
+.spiral:nth-child(1) { animation-delay: 0s; }
+.spiral:nth-child(2) { animation-delay: 0.5s; }
+.spiral:nth-child(3) { animation-delay: 1s; }
+.spiral:nth-child(4) { animation-delay: 1.5s; }
+.spiral:nth-child(5) { animation-delay: 2s; }
+
+@keyframes spiralExpand {
+    0% {
+        width: 0;
+        height: 0;
+        transform: translate(-50%, -50%) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        width: 800px;
+        height: 800px;
+        transform: translate(-50%, -50%) rotate(180deg);
+        opacity: 0.7;
+    }
+    100% {
+        width: 1200px;
+        height: 1200px;
+        transform: translate(-50%, -50%) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Morph Animation */
+.morph-container {
+    position: fixed;
+    top: 20%;
+    right: 10%;
+    width: 300px;
+    height: 300px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.morph-shape {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        var(--da-vinci-gold) 0%,
+        var(--da-vinci-crimson) 50%,
+        var(--da-vinci-sapphire) 100%);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: morphShape var(--morph-speed) infinite ease-in-out;
+    filter: blur(20px);
+    opacity: 0.4;
+}
+
+@keyframes morphShape {
+    0%, 100% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        transform: rotate(0deg) scale(1);
+    }
+    25% {
+        border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+        transform: rotate(90deg) scale(1.2);
+    }
+    50% {
+        border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+        transform: rotate(180deg) scale(0.8);
+    }
+    75% {
+        border-radius: 30% 70% 70% 30% / 70% 30% 30% 70%;
+        transform: rotate(270deg) scale(1.1);
+    }
+}
+
+/* Flight Simulation */
+.flight-container {
+    position: fixed;
+    bottom: 10%;
+    left: 10%;
+    width: 400px;
+    height: 400px;
+    z-index: 0;
+    pointer-events: none;
+    perspective: 1000px;
+}
+
+.flight-path {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--da-vinci-gold);
+    border-radius: 50%;
+    animation: flightPath var(--flight-speed) infinite linear;
+    box-shadow: 
+        0 0 50px var(--da-vinci-gold),
+        inset 0 0 50px var(--da-vinci-purple);
+}
+
+.flight-object {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: var(--da-vinci-emerald);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    animation: flightMove var(--flight-speed) infinite linear;
+    box-shadow: 0 0 20px var(--da-vinci-emerald);
+}
+
+@keyframes flightPath {
+    from { transform: rotateZ(0deg); }
+    to { transform: rotateZ(360deg); }
+}
+
+@keyframes flightMove {
+    0% {
+        transform: translateX(-50%) rotate(0deg) translateY(0);
+    }
+    25% {
+        transform: translateX(-50%) rotate(90deg) translateY(190px);
+    }
+    50% {
+        transform: translateX(-50%) rotate(180deg) translateY(380px);
+    }
+    75% {
+        transform: translateX(-50%) rotate(270deg) translateY(190px);
+    }
+    100% {
+        transform: translateX(-50%) rotate(360deg) translateY(0);
+    }
+}
+
+/* Main Content */
+.main-content {
+    position: relative;
+    z-index: 10;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 
+        0 0 100px rgba(255, 215, 0, 0.3),
+        inset 0 0 50px rgba(65, 105, 225, 0.2);
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+/* Language Selector */
+.language-selector {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+}
+
+.lang-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--da-vinci-gold), var(--da-vinci-bronze));
+    border: 2px solid var(--da-vinci-gold);
+    border-radius: 25px;
+    color: var(--da-vinci-onyx);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 14px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    animation: pulse 2s infinite;
+}
+
+.lang-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+.lang-btn.active {
+    background: linear-gradient(135deg, var(--da-vinci-crimson), var(--da-vinci-purple));
+    border-color: var(--da-vinci-crimson);
+    box-shadow: 0 0 30px rgba(220, 20, 60, 0.8);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Typography */
+h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 4em;
+    font-weight: 900;
+    text-align: center;
+    background: linear-gradient(135deg, 
+        var(--da-vinci-gold) 0%,
+        var(--da-vinci-emerald) 50%,
+        var(--da-vinci-sapphire) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+    margin-bottom: 30px;
+    animation: titleGlow 3s infinite ease-in-out;
+}
+
+@keyframes titleGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.5); }
+}
+
+h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5em;
+    color: var(--da-vinci-gold);
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8em;
+    color: var(--da-vinci-emerald);
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+p, li {
+    font-size: 1.1em;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Code Blocks */
+code, pre {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--da-vinci-gold);
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    color: var(--da-vinci-emerald);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+/* Links */
+a {
+    color: var(--da-vinci-gold);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+a:hover {
+    color: var(--da-vinci-emerald);
+    text-shadow: 0 0 20px rgba(80, 200, 120, 0.8);
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    h1 { font-size: 2.5em; }
+    h2 { font-size: 2em; }
+    .main-content { padding: 20px 15px; }
+    .globe-container, .spiral-container { display: none; }
+}
+

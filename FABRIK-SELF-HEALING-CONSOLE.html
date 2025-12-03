@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>T,. OSOTOSOS Self-Healing Console</title>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --fg: #e7eef5;
+      --red: #ff4d4d;
+      --orange: #ffa64d;
+      --yellow: #ffd633;
+      --green: #66cc66;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.5em;
+      margin-bottom: 30px;
+      color: var(--green);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .panel {
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .panel:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .panel.red { background: var(--red); }
+    .panel.orange { background: var(--orange); }
+    .panel.yellow { background: var(--yellow); color: #000; }
+    .panel.green { background: var(--green); color: #000; }
+    .status {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 1.2em;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #888;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">T,. OSOTOSOS – Self-Healing Console Dashboard</div>
+  
+  <div class="status" id="status">Lade Status...</div>
+  
+  <div class="grid">
+    <div id="frontend" class="panel red">
+      <strong>FRONTEND</strong><br>
+      UI-Ressourcen
+    </div>
+    <div id="backend" class="panel orange">
+      <strong>BACKEND</strong><br>
+      API-Ressourcen
+    </div>
+    <div id="build" class="panel orange">
+      <strong>BUILD</strong><br>
+      Deployment
+    </div>
+    <div id="infra" class="panel red">
+      <strong>INFRASTRUKTUR</strong><br>
+      System
+    </div>
+    <div id="prod" class="panel orange">
+      <strong>PRODUKTION</strong><br>
+      SCADA/Sensoren
+    </div>
+    <div id="org" class="panel yellow">
+      <strong>ORGANISATION</strong><br>
+      Dokumentation
+    </div>
+    <div id="sec" class="panel green">
+      <strong>SICHERHEIT</strong><br>
+      Compliance
+    </div>
+    <div id="data" class="panel green">
+      <strong>DATEN</strong><br>
+      Speicher
+    </div>
+    <div id="user" class="panel green">
+      <strong>BENUTZER</strong><br>
+      Interaktion
+    </div>
+    <div id="ext" class="panel yellow">
+      <strong>EXTERNE</strong><br>
+      Abhängigkeiten
+    </div>
+    <div id="time" class="panel green">
+      <strong>ZEIT</strong><br>
+      Synchronisation
+    </div>
+    <div id="human" class="panel yellow">
+      <strong>MENSCHLICH</strong><br>
+      Faktoren
+    </div>
+  </div>
+  
+  <div class="footer">
+    T,.&T,,.&T,,,.T. - Together Systems International
+  </div>
+
+  <script>
+    async function updateStatus() {
+      try {
+        // Simuliere Status-Abfrage (ersetzt durch echte API)
+        const status = {
+          frontend: { errors: Math.floor(Math.random() * 5) },
+          backend: { errors: Math.floor(Math.random() * 3) },
+          build: { failures: Math.floor(Math.random() * 2) },
+          system: { cpu: Math.floor(Math.random() * 20) },
+          production: { sensor_faults: Math.floor(Math.random() * 1) },
+          org: { violations: Math.floor(Math.random() * 2) },
+          security: { alerts: 0 },
+          db: { corruption: 0 },
+          user: { input_errors: Math.floor(Math.random() * 3) },
+          external: { api_failures: Math.floor(Math.random() * 2) },
+          time: { drift: 0 },
+          human: { errors: Math.floor(Math.random() * 1) }
+        };
+        
+        function setColor(id, value) {
+          const el = document.getElementById(id);
+          if (value > 10) {
+            el.className = "panel red";
+          } else if (value > 0) {
+            el.className = "panel orange";
+          } else {
+            el.className = "panel green";
+          }
+        }
+        
+        setColor("frontend", status.frontend.errors);
+        setColor("backend", status.backend.errors);
+        setColor("build", status.build.failures);
+        setColor("infra", status.system.cpu);
+        setColor("prod", status.production.sensor_faults);
+        setColor("org", status.org.violations);
+        setColor("sec", status.security.alerts);
+        setColor("data", status.db.corruption);
+        setColor("user", status.user.input_errors);
+        setColor("ext", status.external.api_failures);
+        setColor("time", status.time.drift);
+        setColor("human", status.human.errors);
+        
+        const totalErrors = status.frontend.errors + status.backend.errors + 
+                           status.build.failures + status.production.sensor_faults +
+                           status.org.violations + status.user.input_errors +
+                           status.external.api_failures + status.human.errors;
+        
+        if (totalErrors === 0) {
+          document.getElementById("status").innerHTML = 
+            '<span style="color: var(--green);">✓ 100% FEHLERFREI</span>';
+        } else {
+          document.getElementById("status").innerHTML = 
+            `<span style="color: var(--orange);">⚠ ${totalErrors} Warnungen</span>`;
+        }
+      } catch (error) {
+        console.error("Status-Update fehlgeschlagen:", error);
+      }
+    }
+    
+    // Initiale Aktualisierung
+    updateStatus();
+    
+    // Alle 5 Sekunden aktualisieren
+    setInterval(updateStatus, 5000);
+  </script>
+</body>
+</html>
+

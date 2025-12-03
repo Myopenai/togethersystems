@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ALLE-FETCH-CALLS-UMGESTELLT</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>✅ ALLE FETCH-CALLS UMGESTELLT</h1>
+
+<strong>Datum:</strong> 27.11.2025, 03:45 Uhr  
+<strong>Status:</strong> ✅ ABGESCHLOSSEN
+
+---
+
+<h2>✅ UMGESTELLTE FETCH-CALLS</h2>
+
+<h3>1. <strong>Health-Check (Zeile 1133)</strong> ✅</h3>
+- Vorher: `fetch('/api/voucher/list?holderUid=test')`
+- Nachher: `safeFetchJson('/api/voucher/list?holderUid=test')`
+
+<h3>2. <strong>Token-Verifizierung (Zeile 1203)</strong> ✅</h3>
+- Vorher: `fetch(\`${PRESENCE_API_BASE}/verify\`)`
+- Nachher: `safeFetchJson(\`${PRESENCE_API_BASE}/verify\`)`
+
+<h3>3. <strong>Heartbeat (Zeile 1241)</strong> ✅</h3>
+- Vorher: `fetch(\`${PRESENCE_API_BASE}/heartbeat\`)`
+- Nachher: `safeFetchJson(\`${PRESENCE_API_BASE}/heartbeat\`)`
+
+<h3>4. <strong>Match (Zeile 1290)</strong> ✅</h3>
+- Vorher: `fetch(\`${PRESENCE_API_BASE}/match\`)`
+- Nachher: `safeFetchJson(\`${PRESENCE_API_BASE}/match\`)`
+
+<h3>5. <strong>Match (Zeile 1383)</strong> ✅</h3>
+- Vorher: `fetch(\`${PRESENCE_API_BASE}/match\`)`
+- Nachher: `safeFetchJson(\`${PRESENCE_API_BASE}/match\`)`
+
+<h3>6. <strong>Telemetry (Zeile 1710)</strong> ✅</h3>
+- Vorher: `fetch(TELEMETRY_ENDPOINT)`
+- Nachher: `safeFetchJson(TELEMETRY_ENDPOINT)`
+
+<h3>7. <strong>API Fetch (Zeile 1780)</strong> ✅</h3>
+- Vorher: `fetch(url, {headers:{'Accept':'application/json'}})`
+- Nachher: `safeFetchJson(url, {headers:{'Accept':'application/json'}})`
+
+<h3>8. <strong>Voucher List (Zeile 2028)</strong> ✅</h3>
+- Vorher: `fetch(url)`
+- Nachher: `safeFetchJson(url)`
+
+<h3>9. <strong>Slots Available (Zeile 2087)</strong> ✅</h3>
+- Vorher: `fetch(\`${VOUCHER_API_BASE}/slots/available\`)`
+- Nachher: `safeFetchJson(\`${VOUCHER_API_BASE}/slots/available\`)`
+
+<h3>10. <strong>Voucher Book (Zeile 2142)</strong> ✅</h3>
+- Vorher: `fetch(\`${VOUCHER_API_BASE}/voucher/book\`)`
+- Nachher: `safeFetchJson(\`${VOUCHER_API_BASE}/voucher/book\`)`
+
+<h3>11. <strong>Voucher Issue (Zeile 2229)</strong> ✅</h3>
+- Vorher: `fetch(\`${VOUCHER_API_BASE}/voucher/issue\`)`
+- Nachher: `safeFetchJson(\`${VOUCHER_API_BASE}/voucher/issue\`)`
+
+<h3>12. <strong>Voucher List (Zeile 2282)</strong> ✅</h3>
+- Vorher: `fetch(\`${VOUCHER_API_BASE}/voucher/list\`)`
+- Nachher: `safeFetchJson(\`${VOUCHER_API_BASE}/voucher/list\`)`
+
+<h3>13. <strong>Voucher List (Zeile 2351)</strong> ✅</h3>
+- Vorher: `fetch(url, { headers:{ 'Accept':'application/json' } })`
+- Nachher: `safeFetchJson(url, { headers:{ 'Accept':'application/json' } })`
+
+<h3>14. <strong>Voucher Bookings (Zeile 2389)</strong> ✅</h3>
+- Vorher: `fetch(\`${VOUCHER_API_BASE}/voucher/bookings\`)`
+- Nachher: `safeFetchJson(\`${VOUCHER_API_BASE}/voucher/bookings\`)`
+
+<h3>15. <strong>Voucher List (Zeile 2436)</strong> ✅</h3>
+- Vorher: `fetch(url, { headers:{ 'Accept':'application/json' } })`
+- Nachher: `safeFetchJson(url, { headers:{ 'Accept':'application/json' } })`
+
+<h3>16. <strong>Mortgage Application List (Zeile 2509)</strong> ✅</h3>
+- Vorher: `fetch(\`${MORTGAGE_API_BASE}/mortgage/application-list\`)`
+- Nachher: `safeFetchJson(\`${MORTGAGE_API_BASE}/mortgage/application-list\`)`
+
+<h3>17. <strong>Mortgage Offer List (Zeile 2538)</strong> ✅</h3>
+- Vorher: `fetch(\`${MORTGAGE_API_BASE}/mortgage/offer-list\`)`
+- Nachher: `safeFetchJson(\`${MORTGAGE_API_BASE}/mortgage/offer-list\`)`
+
+<h3>18. <strong>Mortgage Application (Zeile 2579)</strong> ✅</h3>
+- Vorher: `fetch(\`${MORTGAGE_API_BASE}/mortgage/application\`)`
+- Nachher: `safeFetchJson(\`${MORTGAGE_API_BASE}/mortgage/application\`)`
+
+---
+
+<h2>✅ VERBESSERUNGEN</h2>
+
+<h3>1. <strong>safeFetchJson erweitert</strong> ✅</h3>
+- ✅ Unterstützt jetzt GET und POST Requests
+- ✅ Bessere Fehlerbehandlung für POST-Responses
+- ✅ Unterstützt leere Responses (204 No Content)
+- ✅ Fallback auf Text-Response wenn kein JSON
+
+<h3>2. <strong>Import hinzugefügt</strong> ✅</h3>
+- ✅ `import { safeFetchJson } from './js/portal-api.js'` am Anfang
+- ✅ `window.safeFetchJson = safeFetchJson` für globale Verfügbarkeit
+
+<h3>3. <strong>Alle res.ok/res.json() Calls entfernt</strong> ✅</h3>
+- ✅ Alle `res.ok` Checks durch `result.ok` ersetzt
+- ✅ Alle `res.json()` Calls durch `result.data` ersetzt
+- ✅ Alle `res.status` Checks durch `result.status` ersetzt
+
+---
+
+<h2>📊 ERGEBNIS</h2>
+
+<strong>✅ ALLE 18 FETCH-CALLS UMGESTELLT</strong>
+
+- ✅ Kein 404-Fehler killt die App mehr
+- ✅ Kein JSON-Parse-Fehler killt die App mehr
+- ✅ Alle Fehler werden sauber behandelt
+- ✅ Klare Fehlermeldungen für den User
+
+---
+
+<strong>Branding:</strong> `.{T,.[ OS.] OS-TOS - OSTOS∞8∞+++a∞:=n→∞lim​an∞ as superscript ≈ ⁺∞(C)(R) | URL: TEL1.NL - WHATSAPP - ( 0031613803782 ). T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.}.`
+
+<strong>Status:</strong> ✅ TODSICHER - ALLE FETCH-CALLS UMGESTELLT
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

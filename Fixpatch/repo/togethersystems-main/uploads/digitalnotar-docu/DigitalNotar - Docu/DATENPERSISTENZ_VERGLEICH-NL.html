@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DATENPERSISTENZ_VERGLEICH-NL</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Vergelijking van Gegevenspersistentie-/Verwijderingsproblemen in Digitaal Notariaat</h1>
+
+<h2>Overzicht</h2>
+
+Dit document vergelijkt de gegevenspersistentie- en verwijderingsproblemen in verschillende componenten van de Digitaal Notariaat applicatie en documenteert de geïmplementeerde oplossingen.
+
+<h2>Probleembeschrijving</h2>
+
+Het oorspronkelijke probleem deed zich voor wanneer gebruikers "alle gegevens verwijderen" wilden, maar na een pagina-herlading verschenen de gegevens weer. Dit gebeurde omdat de `useEffect` hooks automatisch voorbeeldgegevens (mock-gegevens) laadden wanneer er geen opgeslagen gegevens werden gevonden.
+
+<h2>Componentenanalyse</h2>
+
+<h3>1. <strong>Archief (Hoofdprobleem - Opgelost)</strong></h3>
+
+<strong>Probleem:</strong>
+- Gebruikte dezelfde problematische logica als het oorspronkelijke Kasboek
+- Mock-gegevens werden automatisch geladen wanneer `records.length === 0`
+- Verwijdering van alle gegevens leidde tot automatisch herladen van mock-gegevens bij pagina-herlading
+
+<strong>Originele Code:</strong>
+```typescript
+useEffect(() => {
+  const records = secureDB.getAllRecords();
+  if (records.length === 0) {
+    // Fallback: Demo-gegevens wanneer geen beschikbaar
+    const mockRecords: NotarialRecord[] = [...];
+    setRecords(mockRecords);
+  } else {
+    setRecords(records);
+  }
+}, []);
+```
+
+<strong>Geïmplementeerde Oplossing:</strong>
+1. <strong>localStorage Flag:</strong> `archiveSampleDataCleared` voorkomt automatisch herladen
+2. <strong>Nieuwe Functies:</strong> `clearArchiveSampleData()` en `restoreArchiveSampleData()`
+3. <strong>Dynamische UI:</strong> Knoppen wisselen tussen "Voorbeeldgegevens verwijderen" en "Voorbeeldgegevens herstellen"
+
+<strong>Opgeloste Code:</strong>
+```typescript
+useEffect(() => {
+  const records = secureDB.getAllRecords();
+  const sampleDataCleared = localStorage.getItem('archiveSampleDataCleared');
+  
+  if (records.length === 0 && !sampleDataCleared) {
+    // Fallback: Demo-gegevens alleen als niet eerder verwijderd
+    const mockRecords: NotarialRecord[] = [...];
+    setRecords(mockRecords);
+  } else {
+    setRecords(records);
+  }
+}, []);
+```
+
+<h3>2. <strong>Kasboek (Al Opgelost)</strong></h3>
+
+<strong>Probleem:</strong> Identiek aan Archief-probleem
+<strong>Oplossing:</strong> `cashBookSampleDataCleared` flag geïmplementeerd
+<strong>Status:</strong> ✅ Volledig opgelost
+
+<h3>3. <strong>Wachtwoordbeheerder (Geen Probleem)</strong></h3>
+
+<strong>Correcte Implementatie:</strong>
+- Laadt alleen opgeslagen gegevens uit localStorage
+- Geen fallback mock-gegevens
+- Verwijderfunctie werkt correct
+
+```typescript
+useEffect(() => {
+  const savedPasswords = localStorage.getItem('passwords');
+  if (savedPasswords) {
+    try {
+      setEntries(JSON.parse(savedPasswords));
+    } catch (error) {
+      console.error('Error loading passwords:', error);
+    }
+  }
+}, []);
+```
+
+<h3>4. <strong>AutofillEngine (Geen Probleem)</strong></h3>
+
+<strong>Correcte Implementatie:</strong>
+- Laadt alleen opgeslagen profielen
+- Geen mock-gegevens
+- Geen persistentieproblemen
+
+<h2>Geïmplementeerde Oplossingen</h2>
+
+<h3>Archief-Fix</h3>
+
+<strong>Nieuwe Functies in App.tsx:</strong>
+
+```typescript
+const clearArchiveSampleData = () => {
+  if (window.confirm('Wilt u alle voorbeeldgegevens uit het archief verwijderen en beginnen met een leeg archief? Deze actie kan niet ongedaan worden gemaakt.')) {
+    secureDB.clearDatabase();
+    setRecords([]);
+    localStorage.setItem('archiveSampleDataCleared', 'true');
+    alert('✅ Voorbeeldgegevens succesvol verwijderd. Het archief is nu klaar voor echte gegevens.');
+  }
+};
+
+const restoreArchiveSampleData = () => {
+  if (window.confirm('Wilt u de voorbeeldgegevens herstellen? Alle huidige gegevens worden overschreven.')) {
+    localStorage.removeItem('archiveSampleDataCleared');
+    window.location.reload(); // Herladen om voorbeeldgegevens te laden
+  }
+};
+```
+
+<strong>UI-Integratie:</strong>
+```typescript
+{!localStorage.getItem('archiveSampleDataCleared') ? (
+  <button onClick={clearArchiveSampleData}>
+    <Archive className="w-4 h-4" />
+    <span>Voorbeeldgegevens verwijderen</span>
+  </button>
+) : (
+  <button onClick={restoreArchiveSampleData}>
+    <Archive className="w-4 h-4" />
+    <span>Voorbeeldgegevens herstellen</span>
+  </button>
+)}
+```
+
+<h2>Vergelijking van Gegevenspersistentie-Mechanismen</h2>
+
+| Component | Probleem | Oplossing | Status |
+|-----------|----------|-----------|--------|
+| Archief | Mock-gegevens worden na verwijdering herladen | localStorage flag `archiveSampleDataCleared` | ✅ Opgelost |
+| Kasboek | Mock-gegevens worden na verwijdering herladen | localStorage flag `cashBookSampleDataCleared` | ✅ Opgelost |
+| Wachtwoordbeheerder | Geen probleem | Correcte implementatie zonder mock-gegevens | ✅ Correct |
+| AutofillEngine | Geen probleem | Correcte implementatie zonder mock-gegevens | ✅ Correct |
+
+<h2>Technische Details</h2>
+
+<h3>localStorage Keys</h3>
+- `archiveSampleDataCleared`: Voorkomt herladen van Archief mock-gegevens
+- `cashBookSampleDataCleared`: Voorkomt herladen van Kasboek mock-gegevens
+- `passwords`: Slaat wachtwoordbeheerder-gegevens op
+- `autofillProfiles`: Slaat autofill-profielen op
+
+<h3>Database-Operaties</h3>
+- `secureDB.clearDatabase()`: Verwijdert alle gegevens uit de beveiligde database
+- `secureDB.deleteRecord(id)`: Verwijdert individuele records
+- `secureDB.getAllRecords()`: Laadt alle opgeslagen records
+
+<h2>Best Practices voor Toekomstige Ontwikkeling</h2>
+
+1. <strong>Geen automatische mock-gegevens:</strong> Vermijd het automatisch laden van voorbeeldgegevens in `useEffect`
+2. <strong>localStorage flags:</strong> Gebruik flags om de staat van gegevenspersistentie bij te houden
+3. <strong>Gebruikerscontrole:</strong> Geef gebruikers controle over het laden van voorbeeldgegevens
+4. <strong>Consistente implementatie:</strong> Gebruik hetzelfde patroon voor alle componenten met gegevenspersistentie
+
+<h2>Conclusie</h2>
+
+Het probleem van gegevenspersistentie na verwijdering is succesvol opgelost in alle getroffen componenten. De oplossing gebruikt localStorage flags om bij te houden of voorbeeldgegevens expliciet zijn verwijderd en voorkomt het automatisch herladen van deze gegevens bij pagina-herlading.
+
+<strong>Getroffen componenten:</strong> Archief, Kasboek
+<strong>Niet getroffen:</strong> Wachtwoordbeheerder, AutofillEngine
+<strong>Status:</strong> ✅ Alle problemen opgelost
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

@@ -1,0 +1,101 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║  AIDER KONFIGURATION                                                      ║
+# ║  [.TTT T,.&T,,.T,,,.T.] TOGETHERSYSTEMS                                   ║
+# ║                                                                           ║
+# ║  Git-aware Coding Agent - Stabile, deterministische Entwicklung           ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODELL-KONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Primäres Modell (wähle eine Option)
+# model: ollama/llama3.1          # Lokal, 0€
+# model: ollama/deepseek-coder    # Lokal, Coding-fokussiert
+# model: groq/llama-3.1-70b-versatile  # Schnell, günstig
+model: openrouter/deepseek/deepseek-coder  # OpenRouter
+
+# Editor-Modell für schnelle Edits
+edit-format: diff
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERHALTENS-EINSTELLUNGEN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Strikte Regeln
+auto-commits: true
+auto-test: true
+check-update: false
+dirty-commits: false
+attribute-author: true
+attribute-committer: true
+
+# Git-Integration
+git: true
+gitignore: true
+
+# Kontext
+map-tokens: 2048
+map-refresh: auto
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROJEKT-REGELN (System Prompt)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Strikte Anweisungen
+system-prompt: |
+  Du bist der Coding-Agent für TogetherSystems [.TTT T,.&T,,.T,,,.T.].
+  
+  STRIKTE REGELN:
+  1. Befolge Anweisungen EXAKT - ändere Architektur nur auf explizite Anfrage
+  2. Verwende NUR Libraries aus dem Repo oder Lockfile
+  3. Schreibe kompilierbaren, getesteten Code
+  4. Halte dich an vorhandene Build-Skripte, Makefile und CI
+  5. Bei Unsicherheit: FRAGE ZUERST
+  6. Keine eigenmächtigen Refactorings
+  7. Deterministische Änderungen, keine "Kreativität"
+  
+  PROJEKT-KONTEXT:
+  - Branding: [.TTT T,.&T,,.T,,,.T.] TOGETHERSYSTEMS. INTERNATIONAL TTT
+  - Repository: https://github.com/Myopenai/togethersystems
+  - Build-System: Make, Bash-Skripte
+  - Deploy: GitHub Pages
+  - Sprachen: HTML, CSS, JavaScript, TypeScript, Markdown
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DATEIEN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Ignoriere Build-Artefakte
+ignore-patterns:
+  - "docs_build/*"
+  - "node_modules/*"
+  - ".git/*"
+  - "*.log"
+  - ".cache/*"
+
+# Watch-Modus Dateien
+watch-files:
+  - "*.html"
+  - "*.css"
+  - "*.js"
+  - "*.ts"
+  - "*.md"
+  - "*.sh"
+  - "Makefile"
+  - "*.json"
+  - "*.yaml"
+  - "*.yml"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OUTPUT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Ausgabe-Format
+pretty: true
+stream: true
+show-diffs: true
+
+# Farben
+dark-mode: true
+

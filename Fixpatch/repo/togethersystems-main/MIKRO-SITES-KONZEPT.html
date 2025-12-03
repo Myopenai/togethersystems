@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIKRO-SITES-KONZEPT</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Mikro-Sites-Konzept für Together Systems Portal</h1>
+
+<h2>Übersicht</h2>
+
+<strong>Mikro-Sites</strong> sind vollwertige, professionelle Websites für verifizierte Portal-User. Jeder User bekommt automatisch eine <strong>maschinengenerierte URL</strong> im Format `T,.&T,,.&T,,,.&T,,,,.etc.` und kann seine Website per Drag & Drop erstellen.
+
+---
+
+<h2>URL-System: Maschinengenerierte URLs</h2>
+
+<h3>Format-Erklärung</h3>
+
+<strong>Basis-Struktur:</strong>
+```
+T,.&T,,.&T,,,.&T,,,,.&T,,,,,,.etc.
+```
+
+<strong>Bedeutung:</strong>
+- `T` = Together Systems Logo/Symbol
+- `,` (Komma) + `.` (Punkt) = <strong>Host-ID-Container</strong>
+- Zwischen Komma und Punkt = <strong>User-Host-ID</strong> (z.B. `abc123xyz`)
+- Jede zusätzliche Seite = <strong>+1 Komma-Punkt-Paar</strong>
+
+<h3>Beispiel-URLs</h3>
+
+<strong>Startseite eines Users:</strong>
+```
+T,user123.
+```
+- User-ID: `user123`
+- Host-ID: `user123`
+
+<strong>Sub-Seiten:</strong>
+```
+T,user123.&T,,page1.
+T,user123.&T,,page1.&T,,,page2.
+T,user123.&T,,page1.&T,,,page2.&T,,,,page3.
+```
+
+<strong>Rotations-Format (automatisch generiert):</strong>
+```
+T,abc123.                    → Startseite User "abc123"
+T,abc123.&T,,about.          → Über-uns Seite
+T,abc123.&T,,about.&T,,,team. → Team-Seite (unter About)
+```
+
+<h3>Technische Umsetzung</h3>
+
+<strong>URL-Encoder/Decoder:</strong>
+```javascript
+// URL-Encoding
+function encodeMicrositeUrl(userId, pathSegments = []) {
+  let url = `T,${userId}.`;
+  pathSegments.forEach((segment, index) => {
+    const commas = ','.repeat(index + 2); // +2 weil Basis bereits , hat
+    url += `&T${commas}${segment}.`;
+  });
+  return url;
+}
+
+// URL-Decoding
+function decodeMicrositeUrl(url) {
+  const matches = url.match(/^T,([^.]+)\.(.*)$/);
+  if (!matches) return null;
+  
+  const userId = matches[1];
+  const rest = matches[2] || '';
+  const segments = [];
+  
+  let segmentRegex = /&T(,+)([^.]+)\./g;
+  let match;
+  while ((match = segmentRegex.exec(rest)) !== null) {
+    segments.push(match[2]);
+  }
+  
+  return { userId, segments };
+}
+```
+
+---
+
+<h2>Architektur</h2>
+
+<h3>1. User-Verifizierung & Host-Zuweisung</h3>
+
+<strong>Flow:</strong>
+1. User verifiziert sich im OfflineHub/Portal
+2. System erstellt automatisch <strong>Mikro-Site-Host</strong>
+3. User bekommt <strong>maschinengenerierte URL</strong>: `T,{userId}.`
+4. User kann sofort Website erstellen
+
+<h3>2. Website-Builder (Drag & Drop)</h3>
+
+<strong>Features:</strong>
+- <strong>Plug & Play</strong>: Maus-Schieben, Rechts-/Linksklick
+- <strong>Block-basiert</strong>: Text, Bild, Video, Formular, Galerie, etc.
+- <strong>Menüs & Popups</strong>: Automatisch generiert
+- <strong>Responsive</strong>: Automatisch mobil-optimiert
+- <strong>Templates</strong>: Vorgefertigte Designs (optional)
+
+<strong>Zwei Modi:</strong>
+- <strong>Einfacher Modus</strong>: Für Laien (wie jouwweb.nl, aber besser)
+- <strong>Developer-Modus</strong>: Für Full-Stack-Developer (erweiterte Features, API, Code-Editor)
+
+<h3>3. CMS-Integration</h3>
+
+Das Mikro-Sites-System nutzt das <strong>CMS-Schema</strong> (`d1-schema-cms.sql`):
+
+- Jeder User = <strong>Tenant</strong>
+- Jede Mikro-Site = <strong>Site</strong> in CMS
+- Seiten = <strong>Pages</strong> mit <strong>Blocks</strong>
+- URL-Struktur wird in `cms_pages.path` gespeichert
+
+---
+
+<h2>Datenmodell</h2>
+
+<h3>Erweiterung für Mikro-Sites</h3>
+
+```sql
+-- Zusätzlich zu cms_sites:
+
+ALTER TABLE cms_sites ADD COLUMN IF NOT EXISTS microsite_url TEXT; -- T,userId.
+ALTER TABLE cms_sites ADD COLUMN IF NOT EXISTS user_id TEXT; -- Verweis auf verifizierten User
+ALTER TABLE cms_sites ADD COLUMN IF NOT EXISTS builder_mode TEXT DEFAULT 'simple'; -- 'simple' | 'developer'
+
+-- URL-Rotation-Tracking:
+CREATE TABLE IF NOT EXISTS microsite_url_rotations (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  site_id TEXT NOT NULL,
+  url_pattern TEXT NOT NULL, -- T,userId.&T,,page.
+  rotation_index INTEGER NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (site_id) REFERENCES cms_sites(id)
+);
+```
+
+---
+
+<h2>API-Endpoints</h2>
+
+<h3>Mikro-Sites API</h3>
+
+<strong>Basis:</strong>
+```
+GET  /api/microsite/create          # Neue Mikro-Site für User erstellen
+GET  /api/microsite/my-sites        # Alle Sites des Users
+GET  /api/microsite/[siteId]/url    # URL der Site (T,. Format)
+```
+
+<strong>Website-Builder:</strong>
+```
+GET  /api/microsite/[siteId]/editor # Editor-Daten laden
+POST /api/microsite/[siteId]/publish # Site veröffentlichen
+```
+
+<strong>Public-Rendering:</strong>
+```
+GET  /microsite/T,userId.           # Startseite rendern
+GET  /microsite/T,userId.&T,,page.  # Sub-Seite rendern
+```
+
+---
+
+<h2>Website-Builder UI</h2>
+
+<h3>Einfacher Modus (Laien)</h3>
+
+- <strong>Drag & Drop</strong>: Blöcke per Maus verschieben
+- <strong>WYSIWYG</strong>: Direktes Editieren im Browser
+- <strong>Vordefinierte Blöcke</strong>: Text, Bild, Button, Galerie, Formular, Video
+- <strong>Theme-Auswahl</strong>: Vorgefertigte Designs
+
+<h3>Developer-Modus</h3>
+
+- <strong>Alles vom einfachen Modus</strong> +
+- <strong>Code-Editor</strong>: HTML/CSS/JS direkt editieren
+- <strong>API-Zugriff</strong>: REST-API für Inhalte
+- <strong>Custom Blocks</strong>: Eigene Komponenten erstellen
+- <strong>Versionierung</strong>: Git-ähnliche Versionen
+- <strong>Webhooks</strong>: Events abonnieren
+
+---
+
+<h2>Integration mit Portal</h2>
+
+<h3>OfflineHub → Online Portal</h3>
+
+1. User erstellt Inhalte <strong>offline</strong> im Manifest-Forum
+2. Beim Veröffentlichen wird automatisch <strong>Mikro-Site erstellt</strong>
+3. User bekommt <strong>URL</strong>: `T,{userId}.`
+4. Website ist sofort <strong>online verfügbar</strong>
+
+<h3>Verifizierung</h3>
+
+- User ist bereits <strong>verifiziert</strong> im Portal
+- Verifizierung = automatische <strong>Host-Freischaltung</strong>
+- Kein zusätzlicher Registrierungsprozess nötig
+
+---
+
+<h2>Nächste Schritte</h2>
+
+1. ✅ Konzept erstellt
+2. ⏳ URL-Generator implementieren
+3. ⏳ Website-Builder UI erstellen
+4. ⏳ Mikro-Sites API-Endpoints
+5. ⏳ Public-Rendering für T,. URLs
+6. ⏳ Integration mit Portal
+
+---
+
+<h2>Beispiel-Workflow</h2>
+
+1. User verifiziert sich im Portal → `user123`
+2. System erstellt automatisch Mikro-Site
+3. User bekommt URL: `T,user123.`
+4. User öffnet Website-Builder
+5. User zieht Blöcke per Maus zusammen
+6. User klickt "Veröffentlichen"
+7. Website ist live: `https://portal.togethersystems/microsite/T,user123.`
+8. User kann später TinyURL kürzen: `tinyurl.com/meine-site` → führt zu `T,user123.`
+
+---
+
+<strong>Status:</strong> ✅ Konzept erstellt, bereit für Implementierung
+
+
+---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+</body>
+</html>

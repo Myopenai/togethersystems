@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DATEN-1-1-UEBERNAHME</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>THYNK ORDERS - 1:1 Datenübernahme von thynkorders.com</h1>
+
+<strong>Quelle:</strong> https://thynkorders.com/#/userCenter  
+<strong>Zweck:</strong> Vollständige technische Absicherung ALLER Firmen-Daten
+
+---
+
+<h2>🔐 KRITISCH WICHTIG</h2>
+
+Alle Daten müssen <strong>EXAKT 1:1</strong> von thynkorders.com übernommen werden.  
+<strong>Keine Änderungen ohne Genehmigung!</strong>
+
+---
+
+<h2>📋 SCHRITT-FÜR-SCHRITT ANLEITUNG</h2>
+
+<h3>Schritt 1: Zugriff auf thynkorders.com</h3>
+
+1. Öffnen Sie: <strong>https://thynkorders.com/#/userCenter</strong>
+2. Loggen Sie sich ein mit Ihren Credentials
+3. Navigieren Sie durch alle Bereiche
+
+---
+
+<h3>Schritt 2: Salesforce CRM Konfiguration sichern</h3>
+
+<h4>A. Org-Informationen:</h4>
+
+1. Gehen Sie zu: <strong>Setup → Company Information</strong>
+2. Notieren Sie:
+   - <strong>Org-ID:</strong> `00D...` (18-stellig)
+   - <strong>Instance URL:</strong> `https://xxx.salesforce.com`
+   - <strong>API Version:</strong> Meist `v59.0` oder aktuellste
+
+3. Tragen Sie in `config/salesforce-config.json` ein:
+```json
+{
+  "salesforce": {
+    "org_id": "IHRE_ORG_ID_HIER",
+    "instance_url": "https://ihre-instance.salesforce.com",
+    "api_version": "v59.0"
+  }
+}
+```
+
+<h4>B. Connected App (OAuth):</h4>
+
+1. Gehen Sie zu: <strong>Setup → App Manager → New Connected App</strong>
+2. Oder finden Sie bestehende Connected App
+3. Notieren Sie:
+   - <strong>Consumer Key (Client ID)</strong>
+   - <strong>Consumer Secret (Client Secret)</strong>
+   - <strong>Callback URL</strong>
+
+4. Tragen Sie in `config/salesforce-config.json` ein:
+```json
+{
+  "auth": {
+    "client_id": "IHRE_CLIENT_ID",
+    "client_secret": "IHRE_CLIENT_SECRET",
+    "redirect_uri": "https://thynkorders.com/callback"
+  }
+}
+```
+
+<h4>C. Custom Objects & Fields:</h4>
+
+1. Gehen Sie zu: <strong>Setup → Object Manager</strong>
+2. Finden Sie alle Custom Objects:
+   - `Order__c`
+   - `Order_Item__c`
+   - `Product__c`
+   - etc.
+
+3. Für jedes Object:
+   - Öffnen Sie das Object
+   - Gehen Sie zu: <strong>Fields & Relationships</strong>
+   - Listen Sie alle Field-Namen auf
+
+4. Tragen Sie in `config/salesforce-config.json` ein:
+```json
+{
+  "objects": {
+    "orders": {
+      "api_name": "Order__c",
+      "fields": [
+        "Id",
+        "Name",
+        "Order_Number__c",
+        "Status__c",
+        "Total_Amount__c",
+        "... ALLE FIELDS HIER ..."
+      ]
+    }
+  }
+}
+```
+
+---
+
+<h3>Schritt 3: Dimensionen & Geschäftslogik sichern</h3>
+
+<h4>A. Bestell-Workflow:</h4>
+
+1. Gehen Sie zu: <strong>Workflow-Administration</strong> oder <strong>Process Builder</strong>
+2. Finden Sie alle Workflow-Status
+3. Notieren Sie die komplette Workflow-Kette
+
+4. Tragen Sie in `config/dimensions-config.json` ein:
+```json
+{
+  "dimensions": {
+    "hospitality": {
+      "business_logic": {
+        "order_workflow": [
+          "Status1",
+          "Status2",
+          "... ALLE STATUS HIER ..."
+        ]
+      }
+    }
+  }
+}
+```
+
+<h4>B. Bestelltypen & Kategorien:</h4>
+
+1. Gehen Sie zu: <strong>Picklist Values</strong> oder <strong>Custom Settings</strong>
+2. Finden Sie:
+   - Bestelltypen (Restaurant, Hotel, etc.)
+   - Produktkategorien
+   - Kunden-Segmente
+
+3. Tragen Sie ALLE Werte in `config/dimensions-config.json` ein
+
+---
+
+<h3>Schritt 4: Neuronale Netzwerke / AI sichern</h3>
+
+<h4>A. AI-Modelle finden:</h4>
+
+1. Prüfen Sie: <strong>Einstein Analytics</strong> oder <strong>AI-Features</strong>
+2. Oder: <strong>Custom Apex Classes</strong> die AI verwenden
+3. Notieren Sie:
+   - Model-Namen
+   - Training-Parameter
+   - Prediction-Endpunkte
+
+<h4>B. Konfiguration dokumentieren:</h4>
+
+Tragen Sie in `config/neural-network-config.json` ein:
+```json
+{
+  "neural_networks": {
+    "recommendation_engine": {
+      "type": "Einstein Recommendation",
+      "model_id": "...",
+      "parameters": {...}
+    }
+  }
+}
+```
+
+---
+
+<h3>Schritt 5: User Center Konfiguration sichern</h3>
+
+<h4>A. Rollen & Berechtigungen:</h4>
+
+1. Gehen Sie zu: <strong>Setup → Users → Roles</strong>
+2. Listen Sie alle Rollen auf
+3. Für jede Rolle: Notieren Sie Permissions
+
+4. Tragen Sie in `config/user-center-config.json` ein:
+```json
+{
+  "user_center": {
+    "user_roles": {
+      "admin": {
+        "permissions": ["permission1", "permission2", "..."]
+      }
+    }
+  }
+}
+```
+
+<h4>B. Dashboard-Konfiguration:</h4>
+
+1. Gehen Sie zu: <strong>Dashboards</strong>
+2. Öffnen Sie das User Center Dashboard
+3. Notieren Sie alle Widgets und deren Konfiguration
+
+---
+
+<h2>🛠️ AUTOMATISCHES TOOL</h2>
+
+<h3>Manueller Import-Editor:</h3>
+
+1. Öffnen Sie: <strong>`scripts/manual-config-import.html`</strong> im Browser
+2. Loggen Sie sich in thynkorders.com ein (separates Tab)
+3. Kopieren Sie alle Daten in den Import-Editor
+4. Klicken Sie: <strong>"✅ Alle Konfigurationen exportieren"</strong>
+
+---
+
+<h2>✅ VALIDIERUNG</h2>
+
+Nach der Übernahme:
+
+1. ✅ JSON-Syntax prüfen (keine Fehler)
+2. ✅ Alle Pflichtfelder gefüllt
+3. ✅ Vergleich mit Original (1:1)
+4. ✅ Backup erstellen
+
+---
+
+<h2>📁 DATEIEN ZU FÜLLEN</h2>
+
+1. ✅ `config/salesforce-config.json`
+2. ✅ `config/dimensions-config.json`
+3. ✅ `config/neural-network-config.json`
+4. ✅ `config/user-center-config.json`
+
+---
+
+<h2>🔒 SICHERHEIT</h2>
+
+<strong>WICHTIG:</strong>
+- ❌ <strong>NIEMALS</strong> API-Keys in Git committen!
+- ✅ Verwenden Sie `.env` Dateien
+- ✅ `.gitignore` ist bereits konfiguriert
+
+---
+
+<h2>📞 QUelle</h2>
+
+Alle Daten stammen von: <strong>https://thynkorders.com/#/userCenter</strong>
+
+---
+
+<strong>Status:</strong> ⚠️ <strong>MUSS MIT ECHTEN DATEN GEFÜLLT WERDEN</strong>
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+</body>
+</html>

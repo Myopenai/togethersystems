@@ -1,0 +1,69 @@
+# ============================================================================
+# PROMETHEUS CONFIGURATION
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Prometheus-Konfiguration für Monitoring
+# ============================================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'togethersystems'
+    environment: 'production'
+    branding: 'T,.&T,,.&T,,,.T.'
+
+# ============================================================================
+# SCRAPE CONFIGS
+# ============================================================================
+
+scrape_configs:
+  # ============================================================================
+  # TOGETHERSYSTEMS METRICS
+  # ============================================================================
+  - job_name: 'togethersystems'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'togethersystems'
+          module: 'core'
+  
+  # ============================================================================
+  # FABRIKAGE MODULES
+  # ============================================================================
+  - job_name: 'fabrikage-core-protocols'
+    static_configs:
+      - targets: ['localhost:9091']
+        labels:
+          module: 'core-protocols'
+  
+  - job_name: 'fabrikage-auto-execution'
+    static_configs:
+      - targets: ['localhost:9092']
+        labels:
+          module: 'auto-execution'
+  
+  - job_name: 'fabrikage-intelligence-matrix'
+    static_configs:
+      - targets: ['localhost:9093']
+        labels:
+          module: 'intelligence-matrix'
+  
+  - job_name: 'fabrikage-provenance-ledger'
+    static_configs:
+      - targets: ['localhost:9094']
+        labels:
+          module: 'provenance-ledger'
+  
+  - job_name: 'fabrikage-observability-atlas'
+    static_configs:
+      - targets: ['localhost:9095']
+        labels:
+          module: 'observability-atlas'
+
+# ============================================================================
+# ALERTING RULES
+# ============================================================================
+
+rule_files:
+  - 'alerts.yml'
+

@@ -1,0 +1,94 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║  APACHE .HTACCESS - UTF-8 KONFIGURATION                                   ║
+# ║  [.TTT T,.&T,,.T,,,.T.] TOGETHERSYSTEMS                                   ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# UTF-8 ENCODING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Default Charset für alle Textdateien
+AddDefaultCharset utf-8
+
+# Spezifische MIME-Types mit Charset
+AddType text/html; charset=utf-8 .html .htm
+AddType text/css; charset=utf-8 .css
+AddType application/javascript; charset=utf-8 .js
+AddType application/json; charset=utf-8 .json
+AddType text/xml; charset=utf-8 .xml
+AddType text/plain; charset=utf-8 .txt .md
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CACHE-CONTROL (für Assets mit Hash im Namen)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # HTML: Immer frisch laden
+    ExpiresByType text/html "access plus 0 seconds"
+    
+    # Assets mit Hash: 1 Jahr cachen (immutable)
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # HTML: Kein Cache
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+    
+    # Assets: Immutable Cache
+    <FilesMatch "\.(css|js|png|svg|webp|woff2)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SICHERHEIT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Verhindere Directory Listing
+Options -Indexes
+
+# Schütze sensible Dateien
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(json|yaml|yml|md|sh|sql|log)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Erlaube manifest.json und sw.js
+<FilesMatch "^(manifest\.json|sw\.js)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# KOMPRESSION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript
+    AddOutputFilterByType DEFLATE application/json text/xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FEHLERSEITEN
+# ═══════════════════════════════════════════════════════════════════════════════
+
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html
+

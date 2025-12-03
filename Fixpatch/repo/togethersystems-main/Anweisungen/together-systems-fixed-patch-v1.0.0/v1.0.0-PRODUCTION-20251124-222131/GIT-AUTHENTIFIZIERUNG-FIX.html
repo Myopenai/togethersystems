@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GIT-AUTHENTIFIZIERUNG-FIX</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🔧 GIT AUTHENTIFIZIERUNG FIX</h1>
+
+<h2>❌ Problem:</h2>
+```
+remote: Permission to myopenai/togethersystems.git denied to ViewunitySystem.
+fatal: unable to access 'https://github.com/myopenai/togethersystems.git/': The requested URL returned error: 403
+```
+
+<strong>Ursache:</strong> Git verwendet falsche Credentials (ViewunitySystem statt myopenai)
+
+---
+
+<h2>✅ LÖSUNG: Git Credentials zurücksetzen</h2>
+
+<h3>Option 1: Windows Credential Manager (Empfohlen)</h3>
+
+1. <strong>Windows Credential Manager öffnen:</strong>
+   - Drücke `Windows + R`
+   - Tippe: `control /name Microsoft.CredentialManager`
+   - Oder: Windows-Suche → "Credential Manager"
+
+2. <strong>Git Credentials finden:</strong>
+   - Klicke auf <strong>"Windows Credentials"</strong>
+   - Suche nach: `git:https://github.com`
+   - Oder: `github.com`
+
+3. <strong>Alte Credentials entfernen:</strong>
+   - Klicke auf den Eintrag
+   - Klicke <strong>"Remove"</strong> oder <strong>"Edit"</strong>
+   - Entferne alle GitHub-Credentials
+
+4. <strong>Neu authentifizieren:</strong>
+   - Führe `git push` aus
+   - GitHub fragt nach Username/Password
+   - <strong>Username:</strong> `myopenai`
+   - <strong>Password:</strong> Verwende <strong>Personal Access Token</strong> (nicht dein Passwort!)
+
+---
+
+<h3>Option 2: Git Credential Helper zurücksetzen (PowerShell)</h3>
+
+```powershell
+<h1>Git Credential Helper zurücksetzen</h1>
+git config --global --unset credential.helper
+git config --global credential.helper manager-core
+
+<h1>Oder für Windows:</h1>
+git config --global credential.helper wincred
+```
+
+---
+
+<h3>Option 3: Personal Access Token erstellen</h3>
+
+1. <strong>Gehe zu:</strong> https://github.com/settings/tokens
+2. Klicke <strong>"Generate new token"</strong> → <strong>"Generate new token (classic)"</strong>
+3. <strong>Note:</strong> z.B. "TogetherSystems Deployment"
+4. <strong>Expiration:</strong> Wähle Ablaufzeit (z.B. 90 Tage oder "No expiration")
+5. <strong>Scopes:</strong> Aktiviere <strong>`repo`</strong> (vollständiger Zugriff)
+6. Klicke <strong>"Generate token"</strong>
+7. <strong>Kopiere den Token</strong> (wird nur einmal angezeigt!)
+
+<strong>Beispiel Token:</strong> `ghp_abc123def456ghi789jkl012mno345pqr678`
+
+---
+
+<h2>✅ SCHRITT 4: Mit Token pushen</h2>
+
+<h3>Methode 1: Token als Password verwenden</h3>
+```powershell
+git push -u origin main
+```
+
+Wenn nach Password gefragt wird:
+- <strong>Username:</strong> `myopenai`
+- <strong>Password:</strong> Füge deinen <strong>Personal Access Token</strong> ein (nicht dein GitHub-Passwort!)
+
+<h3>Methode 2: Token in URL einbetten (temporär)</h3>
+```powershell
+git remote set-url origin https://myopenai:DEIN_TOKEN@github.com/myopenai/togethersystems.git
+git push -u origin main
+```
+
+<strong>WICHTIG:</strong> Ersetze `DEIN_TOKEN` mit deinem echten Token!
+
+<strong>Nach erfolgreichem Push:</strong> Token aus URL entfernen (Sicherheit):
+```powershell
+git remote set-url origin https://github.com/myopenai/togethersystems.git
+```
+
+---
+
+<h2>✅ SCHRITT 5: Prüfen ob erfolgreich</h2>
+
+```powershell
+git push -u origin main
+```
+
+<strong>Erfolgreich wenn:</strong>
+```
+Enumerating objects: 147, done.
+Counting objects: 100% (147/147), done.
+...
+To https://github.com/myopenai/togethersystems.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+```
+
+---
+
+<h2>🔧 TROUBLESHOOTING</h2>
+
+<h3>Problem: "Permission denied" weiterhin</h3>
+- Prüfe ob Token `repo` Scope hat
+- Prüfe ob Username korrekt ist (`myopenai`)
+- Prüfe ob Repository existiert: https://github.com/myopenai/togethersystems
+
+<h3>Problem: "Repository not found"</h3>
+- Prüfe ob Repository existiert
+- Prüfe ob du Zugriff hast
+- Prüfe Repository-Name: `togethersystems` (nicht `togethersystems-portal`)
+
+<h3>Problem: Token funktioniert nicht</h3>
+- Token muss `repo` Scope haben
+- Token muss noch gültig sein (nicht abgelaufen)
+- Token muss für Account `myopenai` erstellt sein
+
+---
+
+<h2>✅ ZUSAMMENFASSUNG</h2>
+
+<strong>Du musst:</strong>
+1. ✅ Alte Git Credentials entfernen (Windows Credential Manager)
+2. ✅ Personal Access Token erstellen (https://github.com/settings/tokens)
+3. ✅ Token mit `repo` Scope
+4. ✅ `git push` ausführen
+5. ✅ Token als Password verwenden
+
+<strong>Nächster Schritt:</strong> Erstelle Personal Access Token und pushe!
+</body>
+</html>

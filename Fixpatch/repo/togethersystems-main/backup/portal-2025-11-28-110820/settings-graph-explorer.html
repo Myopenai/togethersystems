@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>OSTOS Settings-Graph Explorer · Space License TTT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #020413;
+      --bg-elevated: #05071b;
+      --border-subtle: #262944;
+      --accent: #00d1ff;
+      --accent-soft: #00d1ff22;
+      --accent-strong: #ff4b9f;
+      --text-main: #e8edff;
+      --text-muted: #9aa4d7;
+      --danger: #ff6b81;
+      --success: #4ade80;
+      --warn: #facc15;
+      --console-bg: #020617;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at 0% 0%, #20105a 0, transparent 50%),
+        radial-gradient(circle at 100% 100%, #14396b 0, transparent 50%),
+        var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      gap: 1.25rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #f9fbff;
+    }
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+    .badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border-radius: 999px;
+      padding: 0.16rem 0.6rem;
+      background: #050716;
+      border: 1px solid #ffffff22;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    .badge--accent {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.4fr) minmax(0, 1.3fr);
+      gap: 1.25rem;
+      margin-top: 0.25rem;
+      min-height: 0;
+      flex: 1;
+    }
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+      }
+    }
+    .card {
+      background: radial-gradient(circle at 0% 0%, #ffffff05 0, transparent 60%),
+        var(--bg-elevated);
+      border-radius: 18px;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.7),
+        0 0 0 1px #0f172a;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      min-height: 0;
+    }
+    .card-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.17em;
+      color: var(--text-muted);
+    }
+    .card-title strong {
+      color: var(--accent);
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-bottom: 0.5rem;
+    }
+    label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    label span.hint {
+      font-size: 0.7rem;
+      color: #a5b4fc;
+    }
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+    button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #020617;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.15rem;
+    }
+    button:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 0 22px #22d3ee55;
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    button.secondary {
+      background: transparent;
+      border-color: #4b5563;
+      color: var(--text-main);
+      box-shadow: none;
+    }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .stack small {
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+    .pill {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 0.1rem 0.45rem;
+      border: 1px solid #4b556350;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      margin-right: 0.25rem;
+      white-space: nowrap;
+    }
+    .pill--good {
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .pill--warn {
+      border-color: var(--warn);
+      color: var(--warn);
+    }
+    .pill--bad {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .result-main {
+      margin-top: 0.25rem;
+      font-size: 0.95rem;
+    }
+    .result-main span.provider {
+      font-weight: 600;
+      color: #f9fafb;
+    }
+    .result-main span.region {
+      color: #a5b4fc;
+    }
+    .result-main span.hardware {
+      color: #fbbf24;
+    }
+    .result-dims {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+    }
+    .dim-chip {
+      font-size: 0.7rem;
+      border-radius: 999px;
+      padding: 0.1rem 0.45rem;
+      border: 1px solid #4b5563;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    .dim-chip b {
+      color: #e5e7eb;
+    }
+    .table-wrapper {
+      margin-top: 0.5rem;
+      border-radius: 12px;
+      border: 1px solid #111827;
+      background: #020617;
+      overflow: hidden;
+      flex: 1;
+      min-height: 0;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+    thead {
+      background: #020617;
+    }
+    th,
+    td {
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid #111827;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      font-weight: 500;
+      color: #9ca3af;
+    }
+    tbody tr:hover {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .score-cell {
+      font-weight: 600;
+    }
+    .score-good {
+      color: var(--success);
+    }
+    .score-mid {
+      color: var(--warn);
+    }
+    .score-bad {
+      color: var(--danger);
+    }
+    .console {
+      flex: 1;
+      min-height: 200px;
+      background: var(--console-bg);
+      border-radius: 12px;
+      border: 1px solid #111827;
+      padding: 0.5rem 0.6rem;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+        Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.72rem;
+      color: #e5e7eb;
+      overflow: auto;
+    }
+    .console-line {
+      white-space: pre;
+    }
+    .console-line--info {
+      color: #a5b4fc;
+    }
+    .console-line--ok {
+      color: var(--success);
+    }
+    .console-line--warn {
+      color: var(--warn);
+    }
+    .console-line--err {
+      color: var(--danger);
+    }
+    .console-line--fix {
+      color: #f97316;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>OSTOS · Settings-Graph Explorer</h1>
+    <p class="subtitle">
+      Neural Network Config + Provider + Deployment + OS/Hardware-Dimensionen ·
+      Live-„Fixbox“-Konsole für das Raumschiff <strong>SPACE ENTER UNIVERSE · License TTT</strong>.
+    </p>
+    <div class="badge-row">
+      <span class="badge badge--accent">Neural Network Config</span>
+      <span class="badge">AWS</span>
+      <span class="badge">GCP</span>
+      <span class="badge">TEL1 CLOUD</span>
+      <span class="badge">CPU · Kernel · BIOS · RAM · Storage</span>
+      <span class="badge">Console = Sprachmodul der Software</span>
+    </div>
+  </header>
+  <main class="layout">
+    <!-- LEFT: MODEL + DEPLOYMENT -->
+    <section class="card">
+      <div class="card-title">
+        <strong>1 · Modell &amp; Ziel</strong> · OS/Kernel/BIOS-bewusste Konfiguration
+      </div>
+      <div class="stack">
+        <div class="input-group">
+          <label for="modelSelect">
+            Neural Network
+            <span class="hint">wähle ein Beispielmodell</span>
+          </label>
+          <select id="modelSelect">
+            <option value="model-ostos-supercode">OSTOS-SuperCode-∞ (Universal OS Agent)</option>
+            <option value="model-vision-hubble">Vision-Hubble-Net (Deep Space Vision)</option>
+            <option value="model-mini-control">Mini-Control-Core (Konsole/Kernel-Agent)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="deploymentSelect">
+            Deployment-Profil
+            <span class="hint">Qualität &amp; Kosten vs. Space-Style</span>
+          </label>
+          <select id="deploymentSelect">
+            <option value="deploy-ostos-prod-eu">OSTOS Production EU (Latenz &lt;= 250ms, EU-Data)</option>
+            <option value="deploy-ostos-green">OSTOS Green Energy (CO₂ minimieren)</option>
+            <option value="deploy-lab-multiverse">Multiverse Experiment Lab (max Exploration)</option>
+          </select>
+        </div>
+        <div>
+          <button id="runPlanner">
+            🚀 Dimensionale Provider-Wahl starten
+          </button>
+          <button id="resetConsole" class="secondary">
+            🧹 Konsole leeren
+          </button>
+        </div>
+        <div class="stack">
+          <div>
+            <span class="pill pill--good">Hard Constraint</span>
+            <small>muss erfüllt sein (z.B. EU-Region, Budget)</small>
+          </div>
+          <div>
+            <span class="pill pill--warn">Soft Constraint</span>
+            <small>fließt in Score ein (z.B. Latenz, CO₂)</small>
+          </div>
+          <div>
+            <span class="pill">Meta-Dimension</span>
+            <small>„Space-License“, Explorationslevel, futuristische Achsen</small>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CENTER: RESULT + CANDIDATES -->
+    <section class="card">
+      <div class="card-title">
+        <strong>2 · AI-Entscheidung</strong> · Provider, Region, Hardware, OS/Kernel
+      </div>
+      <div id="resultArea">
+        <div class="result-header">
+          <div>Bestes Deployment (AI-Auswahl)</div>
+          <div id="resultScoreLabel">Score: –</div>
+        </div>
+        <div class="result-main" id="resultMain">
+          Noch keine Planung ausgeführt.
+        </div>
+        <div class="result-dims" id="resultDims"></div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Region</th>
+              <th>Hardware</th>
+              <th>CPU/Arch</th>
+              <th>RAM</th>
+              <th>Latency p95</th>
+              <th>Cost/h</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody id="candidateTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+    <!-- RIGHT: CONSOLE / FIXBOX -->
+    <section class="card">
+      <div class="card-title">
+        <strong>3 · Konsole / Fixbox</strong> · 24/7 Live-Sprachmodul
+      </div>
+      <div class="stack">
+        <div>
+          Die Konsole simuliert:
+          <ul style="margin-left: 1rem; margin-top: 0.25rem; list-style: square; font-size: 0.75rem;">
+            <li>Dimensionale Checks (OS, CPU, Kernel, BIOS, RAM, Region, Kosten, Latenz)</li>
+            <li>Auto-Fixes &amp; Fallbacks auf alternative Kandidaten</li>
+            <li>Fehler-/Warnmeldungen wie ein „Master Boot Log“ des Raumschiffs</li>
+          </ul>
+        </div>
+      </div>
+      <div class="console" id="console"></div>
+    </section>
+  </main>
+  <script type="module">
+    /**
+     * Minimal JS-Implementierung des Settings-Graph-Modells
+     * (entspricht vereinfacht den TS-Interfaces von vorher)
+     */
+    /**
+     * @typedef {Object} DimensionAxis
+     * @property {string} id
+     * @property {string} key
+     * @property {string} kind
+     * @property {string} label
+     * @property {string=} unit
+     */
+    /**
+     * @typedef {Object} DimensionValue
+     * @property {string} axisId
+     * @property {number=} numericValue
+     * @property {string=} stringValue
+     */
+    /**
+     * @typedef {Object} HardwareProfile
+     * @property {string} id
+     * @property {string} regionId
+     * @property {string} name
+     * @property {string} acceleratorType
+     * @property {string} acceleratorModel
+     * @property {number} acceleratorCount
+     * @property {number} vramPerAcceleratorGB
+     * @property {number} systemRamGB
+     * @property {number} vcpus
+     * @property {DimensionValue[]} dimensions
+     */
+    /**
+     * @typedef {Object} Region
+     * @property {string} id
+     * @property {string} providerId
+     * @property {string} code
+     * @property {string} displayName
+     * @property {boolean} isDefault
+     * @property {DimensionValue[]} dimensions
+     * @property {HardwareProfile[]} hardwareProfiles
+     */
+    /**
+     * @typedef {Object} Provider
+     * @property {string} id
+     * @property {string} name
+     * @property {string} website
+     * @property {DimensionValue[]} capabilities
+     * @property {Region[]} regions
+     */
+    /**
+     * @typedef {Object} NeuralNetworkConfig
+     * @property {string} id
+     * @property {string} name
+     * @property {string} architecture
+     * @property {number} parameterCount
+     * @property {string[]} inputModalities
+     * @property {string} precision
+     * @property {number} estimatedVRAMGB
+     * @property {number} maxSequenceLength
+     * @property {string} stage
+     */
+    /**
+     * @typedef {Object} DeploymentConstraint
+     * @property {string} id
+     * @property {string} axisId
+     * @property {"<="|">="|"=="|"in"} operator
+     * @property {number=} numericValue
+     * @property {string[]=} stringValues
+     * @property {number=} weight
+     * @property {boolean=} hard
+     */
+    /**
+     * @typedef {Object} DeploymentConfig
+     * @property {string} id
+     * @property {string} name
+     * @property {string} modelId
+     * @property {string} mode
+     * @property {string[]=} targetRegions
+     * @property {string[]=} preferredProviders
+     * @property {string[]=} disallowedProviders
+     * @property {string[]=} preferredRegions
+     * @property {string[]=} disallowedRegions
+     * @property {DeploymentConstraint[]} constraints
+     */
+    /**
+     * @typedef {Object} SettingsGraph
+     * @property {DimensionAxis[]} axes
+     * @property {NeuralNetworkConfig[]} models
+     * @property {Provider[]} providers
+     * @property {DeploymentConfig[]} deployments
+     */
+    /**
+     * @typedef {Object} Candidate
+     * @property {Provider} provider
+     * @property {Region} region
+     * @property {HardwareProfile} hardware
+    */
+
+    // --- 1. DIMENSIONEN: inkl. OS/CPU/Kernel/BIOS/Space-License -----------------
+    /** @type {DimensionAxis[]} */
+    const axes = [
+      {
+        id: "axis-latency-p95",
+        key: "latency.p95",
+        kind: "quality",
+        label: "p95 Latency",
+        unit: "ms",
+      },
+      {
+        id: "axis-cost-hour",
+        key: "cost.hour",
+        kind: "cost",
+        label: "Cost per Hour",
+        unit: "EUR",
+      },
+      {
+        id: "axis-region",
+        key: "infra.region",
+        kind: "infra",
+        label: "Region Code",
+      },
+      {
+        id: "axis-cpu-arch",
+        key: "infra.cpu.arch",
+        kind: "infra",
+        label: "CPU Architecture",
+      },
+      {
+        id: "axis-ram-gb",
+        key: "infra.ram.gb",
+        kind: "infra",
+        label: "RAM",
+        unit: "GB",
+      },
+      {
+        id: "axis-kernel-version",
+        key: "infra.kernel.version",
+        kind: "infra",
+        label: "Kernel Version (major)",
+      },
+      {
+        id: "axis-bios-vendor",
+        key: "infra.bios.vendor",
+        kind: "infra",
+        label: "BIOS/UEFI Vendor",
+      },
+      {
+        id: "axis-storage-type",
+        key: "infra.storage.type",
+        kind: "infra",
+        label: "Storage Type",
+      },
+      {
+        id: "axis-governance-eu",
+        key: "governance.eu.data",
+        kind: "governance",
+        label: "Strict EU Data Residency",
+      },
+      {
+        id: "axis-meta-space-license",
+        key: "meta.space.license.ttt",
+        kind: "meta",
+        label: "Space License TTT Level",
+      },
+      {
+        id: "axis-meta-exploration",
+        key: "meta.exploration.level",
+        kind: "meta",
+        label: "Exploration Level",
+      },
+      {
+        id: "axis-co2",
+        key: "cost.co2.gperkwh",
+        kind: "cost",
+        label: "CO₂ Intensity",
+        unit: "g/kWh",
+      },
+    ];
+
+    const AX = Object.fromEntries(axes.map(a => [a.id, a]));
+
+    // Helper
+    const vNum = (axisId, numericValue) => ({ axisId, numericValue });
+    const vStr = (axisId, stringValue) => ({ axisId, stringValue });
+
+    // --- 2. PROVIDER: AWS, GCP, TEL1 (Beispieldaten) ---------------------------
+    /** @type {Provider[]} */
+    const providers = [
+      {
+        id: "provider-aws",
+        name: "AWS",
+        website: "https://aws.amazon.com",
+        capabilities: [vStr("axis-bios-vendor", "AMI"), vNum("axis-meta-space-license", 0.4)],
+        regions: [
+          {
+            id: "aws-eu-central-1",
+            providerId: "provider-aws",
+            code: "eu-central-1",
+            displayName: "AWS EU (Frankfurt)",
+            isDefault: true,
+            dimensions: [
+              vStr("axis-region", "eu-central-1"),
+              vNum("axis-governance-eu", 1), // EU-Data möglich
+              vNum("axis-meta-space-license", 0.6),
+              vNum("axis-co2", 380),
+            ],
+            hardwareProfiles: [
+              {
+                id: "aws-a100x4",
+                regionId: "aws-eu-central-1",
+                name: "p4d.24xlarge · A100 x8",
+                acceleratorType: "gpu",
+                acceleratorModel: "NVIDIA A100",
+                acceleratorCount: 8,
+                vramPerAcceleratorGB: 40,
+                systemRamGB: 1152,
+                vcpus: 96,
+                dimensions: [
+                  vNum("axis-latency-p95", 180),
+                  vNum("axis-cost-hour", 28),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 1152),
+                  vNum("axis-kernel-version", 5.15),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+              {
+                id: "aws-l4x4",
+                regionId: "aws-eu-central-1",
+                name: "g5.12xlarge · L4 x4",
+                acceleratorType: "gpu",
+                acceleratorModel: "NVIDIA L4",
+                acceleratorCount: 4,
+                vramPerAcceleratorGB: 24,
+                systemRamGB: 192,
+                vcpus: 48,
+                dimensions: [
+                  vNum("axis-latency-p95", 220),
+                  vNum("axis-cost-hour", 10),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 192),
+                  vNum("axis-kernel-version", 5.10),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+            ],
+          },
+          {
+            id: "aws-us-east-1",
+            providerId: "provider-aws",
+            code: "us-east-1",
+            displayName: "AWS US (N. Virginia)",
+            isDefault: false,
+            dimensions: [
+              vStr("axis-region", "us-east-1"),
+              vNum("axis-governance-eu", 0),
+              vNum("axis-meta-space-license", 0.5),
+              vNum("axis-co2", 450),
+            ],
+            hardwareProfiles: [
+              {
+                id: "aws-a10g-x4",
+                regionId: "aws-us-east-1",
+                name: "g5.12xlarge · A10G x4",
+                acceleratorType: "gpu",
+                acceleratorModel: "NVIDIA A10G",
+                acceleratorCount: 4,
+                vramPerAcceleratorGB: 24,
+                systemRamGB: 192,
+                vcpus: 48,
+                dimensions: [
+                  vNum("axis-latency-p95", 120),
+                  vNum("axis-cost-hour", 9),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 192),
+                  vNum("axis-kernel-version", 5.4),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "provider-gcp",
+        name: "GCP",
+        website: "https://cloud.google.com",
+        capabilities: [vStr("axis-bios-vendor", "Google Compute Engine"), vNum("axis-meta-space-license", 0.5)],
+        regions: [
+          {
+            id: "gcp-europe-west4",
+            providerId: "provider-gcp",
+            code: "europe-west4",
+            displayName: "GCP Europe (Netherlands)",
+            isDefault: true,
+            dimensions: [
+              vStr("axis-region", "europe-west4"),
+              vNum("axis-governance-eu", 1),
+              vNum("axis-meta-space-license", 0.7),
+              vNum("axis-co2", 260),
+            ],
+            hardwareProfiles: [
+              {
+                id: "gcp-a100x4",
+                regionId: "gcp-europe-west4",
+                name: "A2 High-GPU · A100 x4",
+                acceleratorType: "gpu",
+                acceleratorModel: "NVIDIA A100",
+                acceleratorCount: 4,
+                vramPerAcceleratorGB: 40,
+                systemRamGB: 340,
+                vcpus: 48,
+                dimensions: [
+                  vNum("axis-latency-p95", 160),
+                  vNum("axis-cost-hour", 24),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 340),
+                  vNum("axis-kernel-version", 5.15),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+              {
+                id: "gcp-l4x4",
+                regionId: "gcp-europe-west4",
+                name: "G2 Standard · L4 x4",
+                acceleratorType: "gpu",
+                acceleratorModel: "NVIDIA L4",
+                acceleratorCount: 4,
+                vramPerAcceleratorGB: 24,
+                systemRamGB: 120,
+                vcpus: 32,
+                dimensions: [
+                  vNum("axis-latency-p95", 150),
+                  vNum("axis-cost-hour", 8),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 120),
+                  vNum("axis-kernel-version", 6.1),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+            ],
+          },
+          {
+            id: "gcp-us-central1",
+            providerId: "provider-gcp",
+            code: "us-central1",
+            displayName: "GCP US Central",
+            isDefault: false,
+            dimensions: [
+              vStr("axis-region", "us-central1"),
+              vNum("axis-governance-eu", 0),
+              vNum("axis-meta-space-license", 0.5),
+              vNum("axis-co2", 380),
+            ],
+            hardwareProfiles: [
+              {
+                id: "gcp-tpuv4",
+                regionId: "gcp-us-central1",
+                name: "TPU v4 Pod (slice)",
+                acceleratorType: "tpu",
+                acceleratorModel: "TPU v4",
+                acceleratorCount: 4,
+                vramPerAcceleratorGB: 32,
+                systemRamGB: 128,
+                vcpus: 32,
+                dimensions: [
+                  vNum("axis-latency-p95", 140),
+                  vNum("axis-cost-hour", 20),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 128),
+                  vNum("axis-kernel-version", 5.10),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "provider-tel1",
+        name: "TEL1 Cloud",
+        website: "https://tel1.nl",
+        capabilities: [
+          vStr("axis-bios-vendor", "TEL1-UEFI"),
+          vNum("axis-meta-space-license", 1.0),
+        ],
+        regions: [
+          {
+            id: "tel1-eu-space-1",
+            providerId: "provider-tel1",
+            code: "eu-space-1",
+            displayName: "TEL1 · Space Dock Europe (OSTOS Orbit)",
+            isDefault: true,
+            dimensions: [
+              vStr("axis-region", "eu-space-1"),
+              vNum("axis-governance-eu", 1),
+              vNum("axis-meta-space-license", 1.0),
+              vNum("axis-co2", 120), // super-grün
+            ],
+            hardwareProfiles: [
+              {
+                id: "tel1-h100x4",
+                regionId: "tel1-eu-space-1",
+                name: "OSTOS-Node · H100 x4",
+                acceleratorType: "gpu",
+                acceleratorModel: "NVIDIA H100",
+                acceleratorCount: 4,
+                vramPerAcceleratorGB: 80,
+                systemRamGB: 512,
+                vcpus: 64,
+                dimensions: [
+                  vNum("axis-latency-p95", 130),
+                  vNum("axis-cost-hour", 26),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 512),
+                  vNum("axis-kernel-version", 6.2),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+              {
+                id: "tel1-l4x4-green",
+                regionId: "tel1-eu-space-1",
+                name: "OSTOS-Green · L4 x4 (Solar Farm)",
+                acceleratorType: "gpu",
+                acceleratorModel: "NVIDIA L4",
+                acceleratorCount: 4,
+                vramPerAcceleratorGB: 24,
+                systemRamGB: 128,
+                vcpus: 32,
+                dimensions: [
+                  vNum("axis-latency-p95", 190),
+                  vNum("axis-cost-hour", 7),
+                  vStr("axis-cpu-arch", "x86_64"),
+                  vNum("axis-ram-gb", 128),
+                  vNum("axis-kernel-version", 6.3),
+                  vStr("axis-storage-type", "nvme"),
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    // --- 3. MODELLE ------------------------------------------------------------
+    /** @type {NeuralNetworkConfig[]} */
+    const models = [
+      {
+        id: "model-ostos-supercode",
+        name: "OSTOS-SuperCode-∞",
+        architecture: "transformer",
+        parameterCount: 130e9,
+        inputModalities: ["text", "image"],
+        precision: "fp16",
+        estimatedVRAMGB: 80,
+        maxSequenceLength: 8192,
+        stage: "staging",
+      },
+      {
+        id: "model-vision-hubble",
+        name: "Vision-Hubble-Net",
+        architecture: "vision-transformer",
+        parameterCount: 2.4e9,
+        inputModalities: ["image"],
+        precision: "fp16",
+        estimatedVRAMGB: 24,
+        maxSequenceLength: 1024,
+        stage: "research",
+      },
+      {
+        id: "model-mini-control",
+        name: "Mini-Control-Core",
+        architecture: "transformer",
+        parameterCount: 0.5e9,
+        inputModalities: ["text"],
+        precision: "int8",
+        estimatedVRAMGB: 4,
+        maxSequenceLength: 2048,
+        stage: "production",
+      },
+    ];
+
+    // --- 4. DEPLOYMENT-CONFIGS (mit Hard/Soft Constraints) --------------------
+    /** @type {DeploymentConfig[]} */
+    const deployments = [
+      {
+        id: "deploy-ostos-prod-eu",
+        name: "OSTOS Production EU",
+        modelId: "model-ostos-supercode",
+        mode: "online-inference",
+        targetRegions: ["EU"],
+        preferredProviders: ["provider-tel1", "provider-gcp", "provider-aws"],
+        constraints: [
+          {
+            id: "c-latency-250",
+            axisId: "axis-latency-p95",
+            operator: "<=",
+            numericValue: 250,
+            weight: 1.0,
+            hard: false,
+          },
+          {
+            id: "c-cost-30-eur",
+            axisId: "axis-cost-hour",
+            operator: "<=",
+            numericValue: 30,
+            weight: 0.7,
+            hard: true,
+          },
+          {
+            id: "c-region-eu",
+            axisId: "axis-region",
+            operator: "in",
+            stringValues: ["eu-central-1", "europe-west4", "eu-space-1"],
+            weight: 1.5,
+            hard: true,
+          },
+          {
+            id: "c-eu-data",
+            axisId: "axis-governance-eu",
+            operator: ">=",
+            numericValue: 1,
+            weight: 1.4,
+            hard: true,
+          },
+          {
+            id: "c-cpu-x86",
+            axisId: "axis-cpu-arch",
+            operator: "==",
+            stringValues: ["x86_64"],
+            weight: 0.5,
+            hard: false,
+          },
+        ],
+      },
+      {
+        id: "deploy-ostos-green",
+        name: "OSTOS Green Energy",
+        modelId: "model-ostos-supercode",
+        mode: "online-inference",
+        constraints: [
+          {
+            id: "c-latency-350",
+            axisId: "axis-latency-p95",
+            operator: "<=",
+            numericValue: 350,
+            weight: 0.8,
+            hard: false,
+          },
+          {
+            id: "c-co2-low",
+            axisId: "axis-co2",
+            operator: "<=",
+            numericValue: 200,
+            weight: 1.5,
+            hard: false,
+          },
+          {
+            id: "c-cost-20",
+            axisId: "axis-cost-hour",
+            operator: "<=",
+            numericValue: 20,
+            weight: 1.0,
+            hard: true,
+          },
+        ],
+      },
+      {
+        id: "deploy-lab-multiverse",
+        name: "Multiverse Experiment Lab",
+        modelId: "model-vision-hubble",
+        mode: "training",
+        constraints: [
+          {
+            id: "c-latency-loose",
+            axisId: "axis-latency-p95",
+            operator: "<=",
+            numericValue: 500,
+            weight: 0.3,
+            hard: false,
+          },
+          {
+            id: "c-explore-high",
+            axisId: "axis-meta-exploration",
+            operator: ">=",
+            numericValue: 0.7,
+            weight: 1.3,
+            hard: false,
+          },
+          {
+            id: "c-space-license",
+            axisId: "axis-meta-space-license",
+            operator: ">=",
+            numericValue: 0.7,
+            weight: 1.2,
+            hard: false,
+          },
+        ],
+      },
+    ];
+
+    /** @type {SettingsGraph} */
+    const graph = { axes, models, providers, deployments };
+
+    // --- 5. KONSOLE / FIXBOX ---------------------------------------------------
+    const consoleEl = document.getElementById("console");
+
+    /** @type {{ level: "info"|"ok"|"warn"|"err"|"fix", msg: string }[]} */
+    let consoleBuffer = [];
+
+    function renderConsole() {
+      consoleEl.innerHTML = "";
+      for (const entry of consoleBuffer.slice(-120)) {
+        const line = document.createElement("div");
+        line.className = "console-line console-line--" + entry.level;
+        line.textContent = entry.msg;
+        consoleEl.appendChild(line);
+      }
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    function logInfo(msg) {
+      consoleBuffer.push({ level: "info", msg: "[INFO] " + msg });
+      renderConsole();
+    }
+
+    function logOk(msg) {
+      consoleBuffer.push({ level: "ok", msg: "[OK]   " + msg });
+      renderConsole();
+    }
+
+    function logWarn(msg) {
+      consoleBuffer.push({ level: "warn", msg: "[WARN] " + msg });
+      renderConsole();
+    }
+
+    function logErr(msg) {
+      consoleBuffer.push({ level: "err", msg: "[ERR]  " + msg });
+      renderConsole();
+    }
+
+    function logFix(msg) {
+      consoleBuffer.push({ level: "fix", msg: "[FIX]  " + msg });
+      renderConsole();
+    }
+
+    function resetConsole() {
+      consoleBuffer = [];
+      logInfo("Konsole / Fixbox gestartet. 24/7-Dimensional-Monitor aktiviert.");
+    }
+
+    resetConsole();
+
+    // --- 6. HELFER FÜR DIMENSIONEN --------------------------------------------
+    /**
+     * @param {Candidate} candidate
+     * @param {DimensionAxis} axis
+     * @returns {DimensionValue | undefined}
+     */
+    function getDimensionValueFromCandidate(candidate, axis) {
+      const pools = [
+        candidate.region.dimensions,
+        candidate.hardware.dimensions,
+        candidate.provider.capabilities,
+      ];
+      for (const pool of pools) {
+        const found = pool.find(v => v.axisId === axis.id);
+        if (found) return found;
+      }
+      return undefined;
+    }
+
+    /**
+     * @param {Candidate} candidate
+     * @param {DeploymentConstraint} constraint
+     * @returns {boolean}
+     */
+    function checkConstraintHard(candidate, constraint) {
+      const axis = AX[constraint.axisId];
+      if (!axis) return true;
+      const value = getDimensionValueFromCandidate(candidate, axis);
+      if (!value) {
+        logWarn(
+          `Missing dimension '${axis.key}' für Hard-Constraint '${constraint.id}' → Kandidat verworfen.`
+        );
+        return false;
+      }
+      if (constraint.operator === "in" && constraint.stringValues) {
+        const ok = constraint.stringValues.includes(value.stringValue ?? "");
+        if (!ok) {
+          logWarn(
+            `Hard-Constraint 'in' verletzt (${axis.key}=${value.stringValue} not in [${constraint.stringValues.join(
+              ", "
+            )}])`
+          );
+        }
+        return ok;
+      }
+      if (constraint.operator === "==" && constraint.stringValues) {
+        const ok = constraint.stringValues.includes(value.stringValue ?? "");
+        if (!ok) {
+          logWarn(
+            `Hard-Constraint '==' verletzt (${axis.key}=${value.stringValue} != ${constraint.stringValues.join(
+              " | "
+            )})`
+          );
+        }
+        return ok;
+      }
+      if (constraint.numericValue != null && value.numericValue != null) {
+        const a = value.numericValue;
+        const b = constraint.numericValue;
+        let ok = true;
+        switch (constraint.operator) {
+          case "<=":
+            ok = a <= b;
+            break;
+          case ">=":
+            ok = a >= b;
+            break;
+          case "==":
+            ok = a === b;
+            break;
+        }
+        if (!ok) {
+          logWarn(
+            `Hard-Constraint '${axis.key} ${constraint.operator} ${b}' verletzt (gemessen: ${a}).`
+          );
+        }
+        return ok;
+      }
+      return true;
+    }
+
+    /**
+     * @param {Candidate} candidate
+     * @param {DeploymentConstraint} constraint
+     * @returns {number} contribution
+     */
+    function scoreConstraintSoft(candidate, constraint) {
+      const axis = AX[constraint.axisId];
+      if (!axis) return 0;
+      const value = getDimensionValueFromCandidate(candidate, axis);
+      if (!value) return 0;
+      const w = constraint.weight ?? 1;
+      // String-basierte
+      if (constraint.operator === "in" && constraint.stringValues) {
+        const ok = constraint.stringValues.includes(value.stringValue ?? "");
+        return ok ? 1 * w : 0;
+      }
+      if (constraint.operator === "==" && constraint.stringValues) {
+        const ok = constraint.stringValues.includes(value.stringValue ?? "");
+        return ok ? 1 * w : 0;
+      }
+      // Numerische Utility
+      if (constraint.numericValue != null && value.numericValue != null) {
+        const target = constraint.numericValue;
+        const x = value.numericValue;
+        let utility = 0;
+        if (constraint.operator === "<=") {
+          const diff = Math.max(0, x - target);
+          utility = Math.max(0, 1 - diff / (Math.abs(target) + 1));
+        } else if (constraint.operator === ">=") {
+          const diff = Math.max(0, target - x);
+          utility = Math.max(0, 1 - diff / (Math.abs(target) + 1));
+        } else if (constraint.operator === "==") {
+          utility = x === target ? 1 : 0;
+        }
+        return utility * w;
+      }
+      return 0;
+    }
+
+    /**
+     * Erweiterung: Exploration / Space-License nach oben „fixen“, 
+     * falls Provider eigentlich sonst perfekt aber zu wenig „Space" hat.
+     * @param {Candidate} candidate
+     * @param {DeploymentConfig} deployment
+     * @param {number} baseScore
+     * @returns {number}
+     */
+    function applyMetaFixes(candidate, deployment, baseScore) {
+      // Space-License-Check
+      const axisSpace = AX["axis-meta-space-license"];
+      const vSpace = axisSpace
+        ? getDimensionValueFromCandidate(candidate, axisSpace)
+        : undefined;
+      if (vSpace && vSpace.numericValue != null && vSpace.numericValue < 0.5) {
+        logFix(
+          `Meta-Fix: Space-License-Level (${vSpace.numericValue}) ist niedrig → Score leicht reduziert.`
+        );
+        return baseScore * 0.9;
+      }
+      // Exploration-Level, falls Deployment multiverse
+      if (deployment.id === "deploy-lab-multiverse") {
+        const axisExp = AX["axis-meta-exploration"];
+        const vExp = axisExp
+          ? getDimensionValueFromCandidate(candidate, axisExp)
+          : undefined;
+        if (!vExp) {
+          logFix(
+            "Meta-Fix: fehlende Exploration-Dimension → Standardwert 0.5 angenommen."
+          );
+          return baseScore + 0.3;
+        }
+      }
+      return baseScore;
+    }
+
+    // --- 7. KANDIDATEN-GENERIERUNG & WAHL -------------------------------------
+    /**
+     * @param {SettingsGraph} graph
+     * @param {string} modelId
+     * @param {string} deploymentId
+     * @returns {{best: Candidate|null, scores: {candidate: Candidate, score: number}[]}}
+     */
+    function chooseBestDeployment(graph, modelId, deploymentId) {
+      const model = graph.models.find(m => m.id === modelId);
+      const deployment = graph.deployments.find(d => d.id === deploymentId);
+      if (!model || !deployment) return { best: null, scores: [] };
+
+      logInfo(
+        `Planner-Start: Modell='${model.name}', Deployment='${deployment.name}'.`
+      );
+
+      /** @type {Candidate[]} */
+      const candidates = [];
+
+      for (const provider of graph.providers) {
+        if (
+          deployment.disallowedProviders?.includes(provider.id) ||
+          (deployment.preferredProviders &&
+            deployment.preferredProviders.length > 0 &&
+            !deployment.preferredProviders.includes(provider.id))
+        ) {
+          logFix(
+            `Provider '${provider.name}' nicht in bevorzugter Liste → wird übersprungen.`
+          );
+          continue;
+        }
+
+        for (const region of provider.regions) {
+          for (const hw of region.hardwareProfiles) {
+            const candidate = { provider, region, hardware: hw };
+
+            // VRAM-Hardcheck
+            const totalVRAM = hw.vramPerAcceleratorGB * hw.acceleratorCount;
+            if (totalVRAM < model.estimatedVRAMGB) {
+              logWarn(
+                `Kandidat ${provider.name}/${region.code}/${hw.name} → total VRAM ${totalVRAM}GB < benötigte ${model.estimatedVRAMGB}GB.`
+              );
+              continue;
+            }
+
+            // Hard-Constraints
+            let hardOk = true;
+            for (const c of deployment.constraints.filter(c => c.hard)) {
+              if (!checkConstraintHard(candidate, c)) {
+                hardOk = false;
+                break;
+              }
+            }
+            if (!hardOk) continue;
+
+            // Kandidat gültig
+            logOk(
+              `Kandidat validiert: ${provider.name} · ${region.code} · ${hw.name} (VRAM OK).`
+            );
+            candidates.push(candidate);
+          }
+        }
+      }
+
+      if (candidates.length === 0) {
+        logErr("Keine Kandidaten erfüllen die Hard-Constraints. Planner-Abbruch.");
+        return { best: null, scores: [] };
+      }
+
+      // Scoring
+      const results = [];
+      for (const cand of candidates) {
+        let score = 0;
+        for (const c of deployments
+          .find(d => d.id === deploymentId)
+          .constraints.filter(c => !c.hard)) {
+          score += scoreConstraintSoft(cand, c);
+        }
+        score = applyMetaFixes(cand, deployment, score);
+        results.push({ candidate: cand, score });
+      }
+
+      results.sort((a, b) => b.score - a.score);
+      const best = results[0]?.candidate ?? null;
+
+      if (best) {
+        logOk(
+          `Best Candidate: ${best.provider.name} · ${best.region.code} · ${best.hardware.name} (Score=${results[0].score.toFixed(
+            2
+          )}).`
+        );
+      } else {
+        logErr("Kein bestes Deployment gefunden (interner Fehler).");
+      }
+
+      return { best, scores: results };
+    }
+
+    // --- 8. UI-BINDING --------------------------------------------------------
+    const resultMainEl = document.getElementById("resultMain");
+    const resultDimsEl = document.getElementById("resultDims");
+    const resultScoreLabelEl = document.getElementById("resultScoreLabel");
+    const tableBodyEl = document.getElementById("candidateTableBody");
+
+    function formatLatency(num) {
+      return num != null ? `${num.toFixed(0)} ms` : "–";
+    }
+
+    function formatCost(num) {
+      return num != null ? `${num.toFixed(2)} €` : "–";
+    }
+
+    /**
+     * @param {{candidate: Candidate, score: number}[]} scored
+     */
+    function renderCandidatesTable(scored) {
+      tableBodyEl.innerHTML = "";
+      for (const entry of scored) {
+        const { candidate: c, score } = entry;
+        const tr = document.createElement("tr");
+        const tdProvider = document.createElement("td");
+        tdProvider.textContent = c.provider.name;
+        const tdRegion = document.createElement("td");
+        tdRegion.textContent = c.region.code;
+        const tdHw = document.createElement("td");
+        tdHw.textContent = c.hardware.name;
+        const dimCpu = getDimensionValueFromCandidate(c, AX["axis-cpu-arch"]);
+        const tdCpu = document.createElement("td");
+        tdCpu.textContent = dimCpu?.stringValue ?? "–";
+        const dimRam = getDimensionValueFromCandidate(c, AX["axis-ram-gb"]);
+        const tdRam = document.createElement("td");
+        tdRam.textContent = dimRam?.numericValue != null ? `${dimRam.numericValue} GB` : "–";
+        const dimLat = getDimensionValueFromCandidate(c, AX["axis-latency-p95"]);
+        const tdLat = document.createElement("td");
+        tdLat.textContent = formatLatency(dimLat?.numericValue);
+        const dimCost = getDimensionValueFromCandidate(c, AX["axis-cost-hour"]);
+        const tdCost = document.createElement("td");
+        tdCost.textContent = formatCost(dimCost?.numericValue);
+        const tdScore = document.createElement("td");
+        tdScore.className = "score-cell";
+        tdScore.textContent = score.toFixed(2);
+        if (score >= 2) tdScore.classList.add("score-good");
+        else if (score >= 1) tdScore.classList.add("score-mid");
+        else tdScore.classList.add("score-bad");
+        tr.appendChild(tdProvider);
+        tr.appendChild(tdRegion);
+        tr.appendChild(tdHw);
+        tr.appendChild(tdCpu);
+        tr.appendChild(tdRam);
+        tr.appendChild(tdLat);
+        tr.appendChild(tdCost);
+        tr.appendChild(tdScore);
+        tableBodyEl.appendChild(tr);
+      }
+    }
+
+    /**
+     * @param {Candidate|null} best
+     * @param {number} score
+     */
+    function renderResult(best, score) {
+      if (!best) {
+        resultMainEl.textContent = "Keine gültige Konfiguration gefunden.";
+        resultDimsEl.innerHTML = "";
+        resultScoreLabelEl.textContent = "Score: –";
+        return;
+      }
+
+      resultMainEl.innerHTML = `
+        <span class="provider">${best.provider.name}</span>
+        in <span class="region">${best.region.displayName}</span><br/>
+        <span class="hardware">${best.hardware.name}</span>
+      `;
+
+      resultScoreLabelEl.textContent = `Score: ${score.toFixed(2)}`;
+
+      resultDimsEl.innerHTML = "";
+      const dimsToShow = [
+        "axis-latency-p95",
+        "axis-cost-hour",
+        "axis-cpu-arch",
+        "axis-ram-gb",
+        "axis-kernel-version",
+        "axis-bios-vendor",
+        "axis-governance-eu",
+        "axis-meta-space-license",
+        "axis-co2",
+      ];
+
+      for (const axisId of dimsToShow) {
+        const axis = AX[axisId];
+        if (!axis) continue;
+        const v = getDimensionValueFromCandidate(best, axis);
+        const chip = document.createElement("div");
+        chip.className = "dim-chip";
+        let valueText = "–";
+        if (v?.numericValue != null) valueText = v.numericValue.toString();
+        if (v?.stringValue != null) valueText = v.stringValue;
+        if (axis.unit && v?.numericValue != null) {
+          valueText = `${v.numericValue} ${axis.unit}`;
+        }
+        chip.innerHTML = `<b>${axis.label}</b>: ${valueText}`;
+        resultDimsEl.appendChild(chip);
+      }
+    }
+
+    // --- 9. EVENT-HANDLER -----------------------------------------------------
+    const modelSelect = document.getElementById("modelSelect");
+    const deploymentSelect = document.getElementById("deploymentSelect");
+    const runPlannerBtn = document.getElementById("runPlanner");
+    const resetConsoleBtn = document.getElementById("resetConsole");
+
+    runPlannerBtn.addEventListener("click", () => {
+      const modelId = modelSelect.value;
+      const deploymentId = deploymentSelect.value;
+      logInfo(
+        `--- Neue Planungsrunde gestartet (Model=${modelId}, Deployment=${deploymentId}) ---`
+      );
+      const { best, scores } = chooseBestDeployment(graph, modelId, deploymentId);
+      if (scores.length > 0) {
+        renderCandidatesTable(scores);
+        renderResult(best, scores[0].score);
+      } else {
+        renderCandidatesTable([]);
+        renderResult(null, 0);
+      }
+    });
+
+    resetConsoleBtn.addEventListener("click", () => {
+      resetConsole();
+    });
+
+    // Optional: beim Laden einmal initial ausführen
+    setTimeout(() => {
+      runPlannerBtn.click();
+    }, 200);
+  </script>
+</body>
+</html>
+

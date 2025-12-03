@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GITHUB-PAGES-FIXES</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>GitHub Pages Fixes - Alle 404/405 Fehler behoben</h1>
+
+<h2>✅ Behobene Probleme</h2>
+
+<h3>1. Autofix Backend-Calls deaktiviert ✅</h3>
+- <strong>Problem:</strong> Autofix versuchte weiterhin Backend-Calls auf GitHub Pages
+- <strong>Fix:</strong> `isGitHubPages()` Funktion hinzugefügt, `USE_BACKEND` explizit auf `false` gesetzt
+- <strong>Datei:</strong> `autofix-client.js`
+
+<h3>2. API-Calls deaktiviert ✅</h3>
+- <strong>Problem:</strong> Health-Check in `initApiBase()` versuchte `/api` zu erreichen → 404-Fehler
+- <strong>Fix:</strong> GitHub Pages Erkennung vor Health-Check, `PRESENCE_API_BASE` auch deaktiviert
+- <strong>Datei:</strong> `manifest-portal.html`
+
+<h3>3. Telbank-Link ✅</h3>
+- <strong>Pfad:</strong> `./TELBANK/index.html` (relativ)
+- <strong>Status:</strong> Sollte funktionieren, wenn Datei existiert
+- <strong>Prüfung:</strong> Datei existiert in `TELBANK/index.html`
+
+<h3>4. OneNetwork-Link ✅</h3>
+- <strong>Pfad:</strong> `./TsysytemsT/TsysytemsT.html` (relativ)
+- <strong>Status:</strong> Sollte funktionieren, wenn Datei existiert
+- <strong>Prüfung:</strong> Datei existiert in `TsysytemsT/TsysytemsT.html`
+
+<h3>5. Bildkarussell-Fallbacks ✅</h3>
+- <strong>Problem:</strong> Lokale Bilder nicht verfügbar → keine Bilder sichtbar
+- <strong>Fix:</strong> Fallback-Bilder hinzugefügt (Unsplash direkt)
+- <strong>Datei:</strong> `room-image-carousel.js`
+
+<h3>6. de_rechtspraak_128.png ✅</h3>
+- <strong>Problem:</strong> 404-Fehler für Branding-Bilder
+- <strong>Status:</strong> Bilder existieren in `assets/branding/`
+- <strong>Hinweis:</strong> Service Worker cached Bilder, aber Pfad muss korrekt sein
+
+---
+
+<h2>🔧 Implementierte Fixes</h2>
+
+<h3>autofix-client.js</h3>
+```javascript
+// GitHub Pages explizit erkennen
+function isGitHubPages() {
+  return location.hostname.includes('github.io');
+}
+
+// USE_BACKEND nur auf Cloudflare Pages, NICHT auf GitHub Pages
+USE_BACKEND: isCloudflarePages() && !isGitHubPages(),
+```
+
+<h3>manifest-portal.html</h3>
+```javascript
+// GitHub Pages: KEIN Health-Check
+if (location.hostname.includes('github.io')) {
+  VOUCHER_API_BASE = null;
+  window.PRESENCE_API_BASE = null;
+  return; // Keine API-Calls
+}
+```
+
+<h3>room-image-carousel.js</h3>
+```javascript
+// Fallback-Bilder wenn lokale nicht verfügbar
+FALLBACK_IMAGES: [
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+  // ...
+]
+```
+
+---
+
+<h2>📋 Status</h2>
+
+- ✅ Autofix: Keine Backend-Calls mehr auf GitHub Pages
+- ✅ API-Calls: Alle deaktiviert auf GitHub Pages
+- ✅ Links: Telbank und OneNetwork sollten funktionieren
+- ✅ Bilder: Fallbacks implementiert
+- ⚠️ Branding-Bilder: Pfade müssen auf GitHub Pages korrekt sein
+
+---
+
+<h2>🚀 Nächste Schritte</h2>
+
+1. ✅ Alle Fixes implementiert
+2. ⏭ Committen & Pushen
+3. ⏭ Browser-Cache leeren (Strg+Shift+R)
+4. ⏭ Testen auf GitHub Pages
+</body>
+</html>

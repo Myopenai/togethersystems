@@ -1,0 +1,100 @@
+# TOGETHERSYSTEMS - Automatic Link Check
+# Runs Playwright tests on every push to find 404 errors
+
+name: Link Check & 404 Detection
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  link-check:
+    name: Check for 404 Errors
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd FIX-PATCH-v1.0.0 || true
+          npm ci || npm install
+
+      - name: Install Playwright browsers
+        run: |
+          cd FIX-PATCH-v1.0.0 || true
+          npx playwright install chromium --with-deps
+
+      - name: Run link checker tests
+        run: |
+          cd FIX-PATCH-v1.0.0 || true
+          npm run check-links || npx playwright test tests/link-checker.spec.ts --project=chromium
+        continue-on-error: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: link-check-results
+          path: |
+            FIX-PATCH-v1.0.0/test-results/
+            FIX-PATCH-v1.0.0/playwright-report/
+          retention-days: 7
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: FIX-PATCH-v1.0.0/playwright-report/
+          retention-days: 30
+
+  auto-fix:
+    name: Auto-Fix Broken Links
+    runs-on: ubuntu-latest
+    needs: link-check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run auto-fix script
+        run: |
+          cd FIX-PATCH-v1.0.0 || true
+          node scripts/auto-fix-links.js || echo "Auto-fix script not found"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit fixes
+        if: steps.changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "🔧 Auto-fix: Repair broken links [skip ci]" || echo "No changes to commit"
+          git push || echo "Nothing to push"
+

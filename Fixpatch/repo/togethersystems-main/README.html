@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>README</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>TogetherSystems – Manifest of Thinkers / BusinessConnect Hub</h1>
+<p>Dieses Repository enthält eine lauffähige, statische Web-Applikation:</p>
+<p>- Offline-Portal (`index.html`)
+- Admin-Bereich (`admin.html`)
+- Offline-Manifest / Forum (`manifest-forum.html`)
+- Online-Portal / Bridge (`manifest-portal.html`)
+- Wabenräume für Verabredungen (`honeycomb.html`)
+- Legal- & Verifikations-Hub (`legal-hub.html`)
+- Service Worker (`sw.js`) für Offline-Funktionalität
+- Branding-Assets im Verzeichnis `assets/branding/`</p>
+<h2>Deployment auf GitHub Pages</h2>
+<p>1. Neues Repository auf GitHub anlegen (z. B. `together-systems-manifest`).
+2. Den gesamten Inhalt dieses Projektordners in das Repository kopieren (Dateien direkt ins Wurzelverzeichnis).
+3. Commit & Push.
+4. In den <em>Repository Settings</em> → <strong>Pages</strong>:
+   - Source: `Deploy from a branch`
+   - Branch: z. B. `main` / `/ (root)`
+5. Nach der Aktivierung ist die Anwendung unter der angegebenen GitHub-Pages-URL erreichbar, z. B.:</p>
+<p>`https://USERNAME.github.io/together-systems-manifest/`</p>
+<p>Beim Aufruf von `index.html` ist das Portal direkt sichtbar – keine leere Standardseite von GitHub.</p>
+<h2>Hinweise</h2>
+<p>- Die App ist komplett statisch und läuft rein im Browser (HTML, CSS, JavaScript).
+- Daten werden im Browser über `localStorage` gehalten.
+- Die Wabenräume sind derzeit lokal organisiert; echte Live-Kommunikation (Chat, Video, etc.) kann über separate Hubs ergänzt werden.
+- Der Legal-/Verifikationsbereich ist als Demo gedacht und ersetzt keine Rechtsberatung.</p>
+<h2>E2E-Tests & „Pool-Einstieg“ (Playwright)</h2>
+<p>Für automatische End-to-End-Tests gibt es im Unterordner `businessconnecthub-playwright-tests-full` eine vollständige
+Playwright-Suite (Chromium).</p>
+<strong>Schnellstart lokal:</strong>
+<p>- Im Projekt-Root einen statischen Server starten:</p>
+<pre><code>  python -m http.server 9323
+  </code></pre>
+<p>- In einem zweiten Terminal in den Testordner wechseln und die Chromium-Tests ausführen:</p>
+<pre><code>  cd businessconnecthub-playwright-tests-full
+  npx playwright test --project=Chromium
+  </code></pre>
+<p>Alternativ kannst du vom Projekt-Root aus mit einem Befehl starten:</p>
+<pre><code>npm run test:e2e
+</code></pre>
+<p>Der spezielle Test `businessconnecthub-playwright-tests-full/tests/pool-entry.spec.ts` prüft den <strong>„Pool-Einstieg“-No-Code-Flow</strong>:</p>
+<p>- Startseite (`index.html`) öffnen.
+- Link/Schaltfläche „Portal öffnen“ klicken.
+- Im Manifest-Portal (`manifest-portal.html`) die No-Code-Bereiche verifizieren:
+  - Verifizierung & „Token-URL generieren (No‑Code)“
+  - „Daten laden“ mit JSON-Upload und API-URL
+  - „Live-Raum erstellen (No‑Code)“ mit Formular statt JSON-Handarbeit.</p>
+<p>Damit lässt sich der zentrale „ins Becken rein und wieder raus“-Einstieg des Portals automatisch überwachen.</p>
+<p>Branding-String (vollständig):</p>
+<p>> T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430</p>
+</body>
+</html>

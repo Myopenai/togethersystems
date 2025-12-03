@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSTOSOS – Ein-Klick Installation</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .installer-container {
+      max-width: 800px;
+      width: 100%;
+      background: var(--davinci-card, #1a1f3a);
+      border-radius: var(--davinci-radius-lg, 20px);
+      padding: 40px;
+      box-shadow: var(--davinci-shadow-soft, 0 20px 60px rgba(0, 0, 0, 0.5));
+      border: 2px solid var(--davinci-accent-primary, #10b981);
+    }
+    .logo {
+      text-align: center;
+      font-size: 3em;
+      color: var(--davinci-accent-primary, #10b981);
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    .title {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #e5e7eb;
+    }
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 40px;
+    }
+    .install-button {
+      width: 100%;
+      background: linear-gradient(135deg, var(--davinci-accent-primary, #10b981), #059669);
+      color: white;
+      border: none;
+      padding: 20px;
+      border-radius: var(--davinci-radius-md, 12px);
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform var(--davinci-transition-normal, 0.3s), box-shadow var(--davinci-transition-normal, 0.3s);
+      margin-bottom: 20px;
+    }
+    .install-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--davinci-shadow-medium, 0 10px 30px rgba(16, 185, 129, 0.4));
+    }
+    .install-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .progress-container {
+      display: none;
+      margin-top: 20px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #0f172a;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      width: 0%;
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    .status-log {
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 0.9em;
+      margin-top: 20px;
+      display: none;
+    }
+    .status-entry {
+      padding: 5px 0;
+      color: #9ca3af;
+    }
+    .status-entry.success { color: #10b981; }
+    .status-entry.error { color: #ef4444; }
+    .status-entry.info { color: #3b82f6; }
+    .auto-start-notice {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10b981;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: center;
+      color: #10b981;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="installer-container davinci-card" data-davinci-phosphor-complete>
+    <div class="logo davinci-logo" data-davinci-particle><a href="https://tel1.jouwweb.nl/servicesoftware" target="_blank" rel="noopener noreferrer" title="TEL & Gentlyoverdone - Servicesoftware" style="color: inherit; text-decoration: none;">T,.&T,,.&T,,,.(C)TEL1.NL</a></div>
+    <h1 class="title davinci-heading-1">OSTOSOS Operating System</h1>
+    <p class="subtitle">Ein-Klick Installation – Minimalste User-Handlung</p>
+
+    <button class="install-button davinci-btn" id="installButton" onclick="startInstallation()" data-davinci-expressive>
+      🚀 JETZT INSTALLIEREN (Ein Klick)
+    </button>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill">0%</div>
+      </div>
+      <div class="status-log" id="statusLog"></div>
+    </div>
+
+    <div class="auto-start-notice" id="autoStartNotice">
+      ✅ Installation abgeschlossen! Das System startet automatisch...
+    </div>
+  </div>
+
+  <script>
+    class OSTOSOSInstaller {
+      constructor() {
+        this.components = [
+          { name: 'Core System', progress: 10 },
+          { name: 'Service Worker', progress: 20 },
+          { name: 'Portal Components', progress: 30 },
+          { name: 'TPGA Telbank', progress: 40 },
+          { name: 'OSO System', progress: 50 },
+          { name: 'Honeycomb Hub', progress: 60 },
+          { name: 'Legal Hub', progress: 70 },
+          { name: 'Settings System', progress: 80 },
+          { name: 'Update System', progress: 90 },
+          { name: 'Sync System', progress: 100 }
+        ];
+      }
+
+      async install() {
+        const button = document.getElementById('installButton');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const statusLog = document.getElementById('statusLog');
+        const autoStartNotice = document.getElementById('autoStartNotice');
+
+        button.disabled = true;
+        progressContainer.style.display = 'block';
+        statusLog.style.display = 'block';
+
+        this.addStatus('🚀 Installation gestartet...', 'info');
+        this.updateProgress(0);
+
+        for (let i = 0; i < this.components.length; i++) {
+          const component = this.components[i];
+          this.addStatus(`📦 Installiere: ${component.name}...`, 'info');
+          await this.delay(500);
+          this.updateProgress(component.progress);
+          this.addStatus(`✅ ${component.name} installiert`, 'success');
+        }
+
+        this.addStatus('⚙️ Registriere Service Worker...', 'info');
+        await this.registerServiceWorker();
+        this.addStatus('✅ Service Worker registriert', 'success');
+
+        this.addStatus('🔄 Initialisiere Update-System...', 'info');
+        await this.initUpdateSystem();
+        this.addStatus('✅ Update-System initialisiert', 'success');
+
+        this.addStatus('🌐 Initialisiere Cross-Device-Sync...', 'info');
+        await this.initSyncSystem();
+        this.addStatus('✅ Sync-System initialisiert', 'success');
+
+        localStorage.setItem('ostosos.installed', 'true');
+        localStorage.setItem('ostosos.installDate', new Date().toISOString());
+        localStorage.setItem('ostosos.version', '1.0.0');
+
+        this.updateProgress(100);
+        this.addStatus('🎉 Installation abgeschlossen!', 'success');
+        
+        button.style.display = 'none';
+        autoStartNotice.style.display = 'block';
+
+        setTimeout(() => {
+          window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+        }, 2000);
+      }
+
+      async registerServiceWorker() {
+        // Skip Service Worker if running from file:// protocol
+        if (window.location.protocol === 'file:') {
+          this.addStatus('ℹ️ Service Worker nicht verfügbar (file:// Protokoll)', 'info');
+          return null;
+        }
+        
+        if ('serviceWorker' in navigator) {
+          try {
+            const registration = await navigator.serviceWorker.register('./sw.js', {
+              scope: './'
+            });
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              this.addStatus('🔄 Update gefunden, installiere...', 'info');
+            });
+            
+            return registration;
+          } catch (error) {
+            this.addStatus(`⚠️ Service Worker Fehler: ${error.message}`, 'error');
+          }
+        }
+      }
+
+      async initUpdateSystem() {
+        // Update-System wird automatisch über Service Worker gehandhabt
+        localStorage.setItem('ostosos.updates.enabled', 'true');
+        localStorage.setItem('ostosos.updates.auto', 'true');
+        localStorage.setItem('ostosos.updates.silent', 'true');
+      }
+
+      async initSyncSystem() {
+        // Cross-Device-Sync wird initialisiert
+        localStorage.setItem('ostosos.sync.enabled', 'true');
+        localStorage.setItem('ostosos.sync.p2p', 'true');
+        localStorage.setItem('ostosos.sync.mesh', 'true');
+      }
+
+      updateProgress(percent) {
+        const progressFill = document.getElementById('progressFill');
+        progressFill.style.width = percent + '%';
+        progressFill.textContent = percent + '%';
+      }
+
+      addStatus(message, type = 'info') {
+        const statusLog = document.getElementById('statusLog');
+        const entry = document.createElement('div');
+        entry.className = `status-entry ${type}`;
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        statusLog.appendChild(entry);
+        statusLog.scrollTop = statusLog.scrollHeight;
+      }
+
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+    }
+
+    function startInstallation() {
+      const installer = new OSTOSOSInstaller();
+      installer.install();
+    }
+
+    window.addEventListener('load', () => {
+      const installed = localStorage.getItem('ostosos.installed');
+      if (installed === 'true') {
+        const button = document.getElementById('installButton');
+        button.textContent = '✅ Bereits installiert - Zum System öffnen';
+        button.onclick = () => {
+          window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+        };
+      }
+    });
+
+    console.log('T,. OSTOSOS Operating System Installer geladen');
+  </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>
+

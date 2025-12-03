@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. Produktionsprozess-Dateien-Dashboard</title>
+  <style>
+    :root {
+      --davinci-bg: #0a0e27;
+      --davinci-card: #1a1f3a;
+      --davinci-accent-primary: #10b981;
+      --davinci-accent-secondary: #3b82f6;
+      --davinci-text: #ffffff;
+      --davinci-muted: #9ca3af;
+      --davinci-danger: #ef4444;
+      --davinci-warn: #f59e0b;
+      --davinci-success: #22c55e;
+      --davinci-border: #223040;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--davinci-bg);
+      color: var(--davinci-text);
+      padding: 20px;
+    }
+    .header {
+      background: var(--davinci-card);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 2px solid var(--davinci-accent-primary);
+    }
+    .filters {
+      background: var(--davinci-card);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--davinci-border);
+      background: var(--davinci-bg);
+      color: var(--davinci-text);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .filter-btn:hover { border-color: var(--davinci-accent-primary); }
+    .filter-btn.active {
+      background: var(--davinci-accent-primary);
+      border-color: var(--davinci-accent-primary);
+    }
+    .file-list {
+      display: grid;
+      gap: 10px;
+    }
+    .file-item {
+      background: var(--davinci-card);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid var(--davinci-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .file-item.status-production { border-left-color: var(--davinci-success); }
+    .file-item.status-unknown { border-left-color: var(--davinci-warn); }
+    .file-item.status-trash { border-left-color: var(--davinci-danger); }
+    .file-item.status-binary { border-left-color: var(--davinci-muted); }
+    .file-info {
+      flex: 1;
+    }
+    .file-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .file-path {
+      font-size: 0.9em;
+      color: var(--davinci-muted);
+    }
+    .file-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.3s;
+    }
+    .btn-add { background: var(--davinci-success); color: white; }
+    .btn-move { background: var(--davinci-danger); color: white; }
+    .btn-delete { background: #6b7280; color: white; }
+    .btn:hover { transform: translateY(-2px); }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--davinci-card);
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 2em;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+    .stat-label {
+      color: var(--davinci-muted);
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>T,. Produktionsprozess-Dateien-Dashboard</h1>
+    <p>Übersicht aller Dateien im Root mit Status und Aktionen</p>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat-card">
+      <div class="stat-number" style="color: var(--davinci-success);" id="stat-production">0</div>
+      <div class="stat-label">Im Produktionsprozess</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" style="color: var(--davinci-warn);" id="stat-unknown">0</div>
+      <div class="stat-label">Nicht erfasst</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" style="color: var(--davinci-danger);" id="stat-trash">0</div>
+      <div class="stat-label">Schrottplatz-Kandidaten</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" style="color: var(--davinci-muted);" id="stat-binary">0</div>
+      <div class="stat-label">Ohne Code-Einsicht</div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">Alle</button>
+    <button class="filter-btn" data-filter="production">✅ Im Prozess</button>
+    <button class="filter-btn" data-filter="unknown">❓ Nicht erfasst</button>
+    <button class="filter-btn" data-filter="trash">🗑️ Schrottplatz</button>
+    <button class="filter-btn" data-filter="binary">⚠️ Binär</button>
+  </div>
+
+  <div class="file-list" id="fileList">
+    <!-- Wird dynamisch gefüllt -->
+  </div>
+
+  <script>
+    // Datei-Kategorien (Beispiel-Daten - sollte aus Analyse generiert werden)
+    const fileCategories = {
+      production: [
+        'index.html',
+        'manifest-forum.html',
+        'manifest-portal.html',
+        'honeycomb.html',
+        'legal-hub.html',
+        'admin.html',
+        'autofix-client.js',
+        'console-monitor.js',
+        'GESAMTSYSTEM-MASTER-DOKUMENTATION.md',
+        'settings/settings-manifest.json',
+        'TELBANK/README.md',
+        'DEPLOYMENT/README.md',
+        'OSTOSOS-COMPLETE-OS-SYSTEM/OSTOSOS-OS-COMPLETE-SYSTEM.html'
+      ],
+      unknown: [
+        'ostos-branding.html',
+        'FINANZIERUNGSERSCHEN-VIEWUNITY-TOGETHERSYSTEMS.html',
+        'Bertie/',
+        'CURSOR-COM/',
+        'startupsystems-kernel/'
+      ],
+      trash: [
+        '[.(..T,,.&T,,,.).] - kopie/',
+        'businessconnecthub-playwright-tests-full/',
+        'Prefinal - THYNK ORDNER PRODUCTION/',
+        'comprehensive-test-system.js',
+        'ALLE-10-FEATURES-ABGESCHLOSSEN.md',
+        'FINAL-DEPLOYMENT-REPORT.md',
+        'Developer Portal - Together Systems.html'
+      ],
+      binary: [
+        'GLI5_msWMAAPink.jpg',
+        'icon.png',
+        'cloudflare-complete.zip',
+        'help-manifest.zip'
+      ]
+    };
+
+    let currentFilter = 'all';
+    let files = [];
+
+    // Lade Dateien (sollte aus Server/API kommen)
+    async function loadFiles() {
+      // Simuliere Datei-Liste
+      files = [
+        ...fileCategories.production.map(f => ({ path: f, status: 'production' })),
+        ...fileCategories.unknown.map(f => ({ path: f, status: 'unknown' })),
+        ...fileCategories.trash.map(f => ({ path: f, status: 'trash' })),
+        ...fileCategories.binary.map(f => ({ path: f, status: 'binary' }))
+      ];
+      
+      updateStats();
+      renderFiles();
+    }
+
+    function updateStats() {
+      document.getElementById('stat-production').textContent = 
+        files.filter(f => f.status === 'production').length;
+      document.getElementById('stat-unknown').textContent = 
+        files.filter(f => f.status === 'unknown').length;
+      document.getElementById('stat-trash').textContent = 
+        files.filter(f => f.status === 'trash').length;
+      document.getElementById('stat-binary').textContent = 
+        files.filter(f => f.status === 'binary').length;
+    }
+
+    function renderFiles() {
+      const list = document.getElementById('fileList');
+      const filtered = currentFilter === 'all' 
+        ? files 
+        : files.filter(f => f.status === currentFilter);
+      
+      list.innerHTML = filtered.map(file => `
+        <div class="file-item status-${file.status}">
+          <div class="file-info">
+            <div class="file-name">${file.path.split('/').pop()}</div>
+            <div class="file-path">${file.path}</div>
+          </div>
+          <div class="file-actions">
+            ${file.status === 'unknown' ? '<button class="btn btn-add" onclick="addToProduction(\'' + file.path + '\')">➕ Hinzufügen</button>' : ''}
+            ${file.status === 'trash' ? '<button class="btn btn-move" onclick="moveToTrash(\'' + file.path + '\')">🗑️ Verschieben</button>' : ''}
+            ${file.status !== 'production' ? '<button class="btn btn-delete" onclick="deleteFile(\'' + file.path + '\')">❌ Löschen</button>' : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addToProduction(path) {
+      if (confirm(`Datei "${path}" zum Produktionsprozess hinzufügen?`)) {
+        const file = files.find(f => f.path === path);
+        if (file) {
+          file.status = 'production';
+          updateStats();
+          renderFiles();
+          console.log(`[DASHBOARD] ${path} zum Produktionsprozess hinzugefügt`);
+        }
+      }
+    }
+
+    function moveToTrash(path) {
+      if (confirm(`Datei "${path}" zum Schrottplatz verschieben?`)) {
+        const file = files.find(f => f.path === path);
+        if (file) {
+          file.status = 'trash';
+          updateStats();
+          renderFiles();
+          console.log(`[DASHBOARD] ${path} zum Schrottplatz verschoben`);
+        }
+      }
+    }
+
+    function deleteFile(path) {
+      if (confirm(`Datei "${path}" wirklich löschen?`)) {
+        files = files.filter(f => f.path !== path);
+        updateStats();
+        renderFiles();
+        console.log(`[DASHBOARD] ${path} gelöscht`);
+      }
+    }
+
+    // Filter-Buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderFiles();
+      });
+    });
+
+    // Initialisierung
+    loadFiles();
+  </script>
+</body>
+</html>
+

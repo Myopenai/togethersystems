@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VOUCHER-PORTAL-FUNKTIONALITAETSBERICHT-NL</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Voucher Portal Functionaliteitsrapport</h1>
+
+<strong>Datum:</strong> 30 november 2025  
+<strong>Status:</strong> ✅ <strong>FUNCTIONALITEITSCHECK AFGEROND</strong>  
+<strong>Systeem:</strong> TogetherSystems Voucher Portal
+
+---
+
+<h2>🎯 Samenvatting</h2>
+
+<strong>Het Voucher Portal is FUNCTIONEEL</strong>, maar met beperkingen afhankelijk van de implementatieomgeving.
+
+---
+
+<h2>✅ Functionaliteit – Wat Werkt</h2>
+
+<h3><strong>1. Backend-API (Cloudflare Pages Functions)</strong></h3>
+
+<h4><strong>✅ Geïmplementeerde Endpoints:</strong></h4>
+- ✅ `POST /api/voucher/issue` – Voucher uitgeven
+- ✅ `GET /api/voucher/list` – Vouchers opvragen
+- ✅ `GET /api/slots/available` – Beschikbare slots opvragen
+- ✅ `POST /api/voucher/book` – Voucher boeken
+- ✅ `POST /api/voucher/cancel` – Boeking annuleren
+- ✅ `GET /api/voucher/bookings` – Boekingsoverzicht
+
+<strong>Status:</strong> ✅ <strong>VOLLEDIG GEÏMPLEMENTEERD</strong>
+
+<h4><strong>✅ Database-integratie:</strong></h4>
+- ✅ Cloudflare D1-schema aanwezig (`d1-schema.sql`)
+- ✅ Tabellen: `vouchers`, `voucher_bookings`
+- ✅ Indexen voor prestaties
+- ✅ Foreign keys voor gegevensintegriteit
+
+<strong>Status:</strong> ✅ <strong>VOLLEDIG GEÏMPLEMENTEERD</strong>
+
+<h4><strong>✅ Beveiligingsfeatures:</strong></h4>
+- ✅ API-sleutelauthenticatie (optioneel)
+- ✅ Rate limiting
+- ✅ IP-tracking
+- ✅ Foutafhandeling
+
+<strong>Status:</strong> ✅ <strong>VOLLEDIG GEÏMPLEMENTEERD</strong>
+
+---
+
+<h3><strong>2. Frontend-Portal (manifest-portal.html)</strong></h3>
+
+<h4><strong>✅ Voucherbeheer:</strong></h4>
+- ✅ Voucherlijst weergeven (klant/uitgever-modus)
+- ✅ Voucherdetails weergeven
+- ✅ Statusbadges (issued, booked, consumed, expired)
+- ✅ Filteren op issuerUid/holderUid/status
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+<h4><strong>✅ Slotbeheer:</strong></h4>
+- ✅ Beschikbare slots weergeven
+- ✅ Slotkalenderweergave
+- ✅ Slotboeking
+- ✅ Uurlijkse slotgeneratie
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+<h4><strong>✅ Voucher-sjablonen:</strong></h4>
+- ✅ Advies 60 Min
+- ✅ Therapiesessie
+- ✅ Huisbezichtiging
+- ✅ Machinetijd
+- ✅ Lidmaatschap
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+<h4><strong>✅ Automatische Features:</strong></h4>
+- ✅ Auto-detectie van API-basis-URL
+- ✅ Health check voor API-beschikbaarheid
+- ✅ Automatische vouchercreatie bij eerste start
+- ✅ Foutafhandeling met autofix-integratie
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+---
+
+<h3><strong>3. Lokale Ontwikkelserver</strong></h3>
+
+<h4><strong>✅ voucher-api-server.js:</strong></h4>
+- ✅ In-memory store voor lokale tests
+- ✅ Alle API-endpoints geïmplementeerd
+- ✅ Slotgeneratie functioneel
+- ✅ Poort 3200 (configureerbaar)
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL VOOR LOKALE ONTWIKKELING</strong>
+
+---
+
+<h2>⚠️ Beperkingen & Afhankelijkheden</h2>
+
+<h3><strong>1. Implementatieomgeving</strong></h3>
+
+<h4><strong>✅ Cloudflare Pages:</strong></h4>
+- ✅ <strong>VOLLEDIG FUNCTIONEEL</strong>
+- ✅ Alle API-endpoints beschikbaar
+- ✅ D1-database beschikbaar
+- ✅ Rate limiting actief
+- ✅ Productieklaar
+
+<h4><strong>⚠️ GitHub Pages:</strong></h4>
+- ⚠️ <strong>BEPERKTE FUNCTIONALITEIT</strong>
+- ❌ Geen serverloze functies
+- ❌ Geen API-endpoints
+- ✅ Frontend functioneel (alleen weergave)
+- ⚠️ Voucherfuncties uitgeschakeld
+
+<h4><strong>✅ Lokaal (localhost):</strong></h4>
+- ✅ <strong>FUNCTIONEEL MET SERVER</strong>
+- ✅ Als `voucher-api-server.js` draait: volledig functioneel
+- ⚠️ Zonder server: frontend functioneel, API-aanroepen mislukken
+
+---
+
+<h3><strong>2. Database-afhankelijkheden</strong></h3>
+
+<h4><strong>✅ Cloudflare D1:</strong></h4>
+- ✅ Schema aanwezig
+- ✅ Migratie gereed
+- ✅ Functioneel in productie
+
+<h4><strong>⚠️ Lokale Ontwikkeling:</strong></h4>
+- ⚠️ In-memory store (geen persistentie)
+- ⚠️ Gegevens gaan verloren bij serverherstart
+- ✅ Voldoende voor tests
+
+---
+
+<h2>🔧 Technische Details</h2>
+
+<h3><strong>API-endpoints in Detail:</strong></h3>
+
+<h4><strong>POST /api/voucher/issue</strong></h4>
+```javascript
+// Request:
+{
+  "issuerUid": "user-id",
+  "serviceType": "consulting.session",
+  "title": "Advies 60 Minuten",
+  "durationMinutes": 60,
+  "validFrom": "2025-12-01T00:00:00Z",
+  "validUntil": "2025-12-31T23:59:59Z",
+  "price": { "amount": 10000, "currency": "EUR" },
+  "transferable": true
+}
+
+// Response:
+{
+  "ok": true,
+  "voucher": { ... }
+}
+```
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+<h4><strong>GET /api/voucher/list</strong></h4>
+```javascript
+// Query-parameters:
+?issuerUid=user-id
+?holderUid=user-id
+?status=issued
+
+// Response:
+{
+  "items": [ ... ]
+}
+```
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+<h4><strong>GET /api/slots/available</strong></h4>
+```javascript
+// Query-parameters:
+?voucherId=v-...
+
+// Response:
+{
+  "items": [
+    {
+      "slotId": "slot-...",
+      "start": "2025-12-15T10:00:00Z",
+      "end": "2025-12-15T11:00:00Z"
+    }
+  ]
+}
+```
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+<h4><strong>POST /api/voucher/book</strong></h4>
+```javascript
+// Request:
+{
+  "voucherId": "v-...",
+  "slotId": "slot-...",
+  "holderUid": "user-id"
+}
+
+// Response:
+{
+  "ok": true,
+  "booking": { ... },
+  "voucher": { ... }
+}
+```
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+<h4><strong>POST /api/voucher/cancel</strong></h4>
+```javascript
+// Request:
+{
+  "voucherId": "v-...",
+  "bookingId": "b-...",
+  "reason": "optioneel"
+}
+
+// Response:
+{
+  "ok": true
+}
+```
+
+<strong>Status:</strong> ✅ <strong>FUNCTIONEEL</strong>
+
+---
+
+<h2>📊 Functionaliteitsmatrix</h2>
+
+| Feature | Cloudflare Pages | GitHub Pages | Lokaal (met Server) | Lokaal (zonder Server) |
+|---------|------------------|--------------|-------------------|---------------------|
+| Voucher uitgeven | ✅ | ❌ | ✅ | ❌ |
+| Vouchers opvragen | ✅ | ❌ | ✅ | ❌ |
+| Slots weergeven | ✅ | ❌ | ✅ | ❌ |
+| Slot boeken | ✅ | ❌ | ✅ | ❌ |
+| Boeking annuleren | ✅ | ❌ | ✅ | ❌ |
+| Frontend-weergave | ✅ | ✅ | ✅ | ✅ |
+| Database-persistentie | ✅ | ❌ | ⚠️ (In-Memory) | ❌ |
+
+---
+
+<h2>🎯 Conclusie</h2>
+
+<h3><strong>✅ Het Voucher Portal is FUNCTIONEEL:</strong></h3>
+
+1. <strong>Backend-API's:</strong> ✅ Volledig geïmplementeerd en functioneel
+2. <strong>Frontend-UI:</strong> ✅ Volledig geïmplementeerd en functioneel
+3. <strong>Database-schema:</strong> ✅ Volledig gedefinieerd
+4. <strong>Beveiliging:</strong> ✅ API-sleutels, rate limiting geïmplementeerd
+5. <strong>Foutafhandeling:</strong> ✅ Uitgebreid geïmplementeerd
+
+<h3><strong>⚠️ Beperkingen:</strong></h3>
+
+1. <strong>GitHub Pages:</strong> ❌ Geen API-functionaliteit (alleen frontend)
+2. <strong>Lokale Ontwikkeling:</strong> ⚠️ Vereist draaiende server
+3. <strong>Database:</strong> ⚠️ Lokaal alleen in-memory (geen persistentie)
+
+<h3><strong>✅ Aanbevolen Implementatieomgeving:</strong></h3>
+
+<strong>Cloudflare Pages</strong> – Volledig functioneel, productieklaar
+
+---
+
+<h2>🏢 Branding & Contact</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Informatie | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+
+<strong>TTT - Verzegeld met horizontale balk van oneindigheid</strong>  
+<strong>⌘∞Ω</strong>
+</body>
+</html>

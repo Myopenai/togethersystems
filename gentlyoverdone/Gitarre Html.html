@@ -247,7 +247,16 @@
   <!-- VexFlow ESM-Import mit Fallback -->
   <script>
     // Dynamischer ESM-Import für VexFlow
-    document.addEventListener('DOMContentLoaded', async () => {
+    function initVexFlowAndApp() {
+      // Initialisiere DOM-Elemente zuerst
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadVexFlow);
+      } else {
+        loadVexFlow();
+      }
+    }
+    
+    async function loadVexFlow() {
       try {
         console.log('Lade VexFlow via ESM...');
         // ESM-Build laden (korrekte Entry-Datei)
@@ -265,7 +274,10 @@
         activateMockVexFlow();
         initializeApp();
       }
-    });
+    }
+    
+    // Starte Initialisierung
+    initVexFlowAndApp();
     
     // Mock VexFlow als letzter Ausweg
     function activateMockVexFlow() {
@@ -619,8 +631,12 @@
   function trNote(n, semi){ 
     // Sichere Prüfung ob target bereits initialisiert ist
     let targetKey = "C";
-    if (typeof target !== 'undefined' && target && target.value) {
-      targetKey = target.value;
+    try {
+      if (target && target.value) {
+        targetKey = target.value;
+      }
+    } catch (e) {
+      console.warn('target nicht verfügbar, verwende Standard C:', e);
     }
     const flats = useFlatsForKey(targetKey);
     return idxToNote(noteIndex(n)+semi, flats); 
@@ -688,10 +704,14 @@
     // Verwende die aktuell selektierte Stimmung statt der festen E-Standard
     // Sichere Prüfung ob tuningSel bereits initialisiert ist
     let tuningKey = "E Standard (E A D G B E)";
-    if (typeof tuningSel !== 'undefined' && tuningSel && tuningSel.value) {
-      tuningKey = tuningSel.value;
+    try {
+      if (tuningSel && tuningSel.value) {
+        tuningKey = tuningSel.value;
+      }
+    } catch (e) {
+      console.warn('tuningSel nicht verfügbar, verwende Standard E:', e);
     }
-    const open = TUNINGS[tuningKey]; 
+    const open = TUNINGS[tuningKey] || TUNINGS["E Standard (E A D G B E)"]; 
     const str = preferA?1:0; 
     const fret=fretForRootOnString(root, open[str]); 
     const frets=base.map(v=> v<0? -1: v+fret); 
@@ -806,8 +826,59 @@
   }
 
   // ---------- UI Setup ----------
-  const $ = (id)=>document.getElementById(id);
-  const inp=$("inp"), orig=$("orig"), target=$("target"), semi=$("semi"), semiLbl=$("semiLbl"), capo=$("capo"), capoLbl=$("capoLbl"), tuningSel=$("tuning"), out=$("out"), playBtn=$("play"), stopBtn=$("stop"), metronomeBtn=$("metronome"), exportBtn=$("export"), pdfExportBtn=$("pdfExport"), saveProg=$("saveProg"), loadProg=$("loadProg"), status=$("status"), diagrams=$("diagrams"), ascii=$("ascii"), tempo=$("tempo"), tempoLbl=$("tempoLbl"), pattern=$("pattern"), lefty=$("lefty"), easy=$("easy"), vfNotes=$("vf-notes"), vfTab=$("vf-tab");
+  const $ = (id) => {
+    const el = document.getElementById(id);
+    if (!el) {
+      console.warn(`Element mit ID "${id}" nicht gefunden`);
+    }
+    return el;
+  };
+  
+  // DOM-Elemente werden sicher initialisiert (können null sein)
+  let inp, orig, target, semi, semiLbl, capo, capoLbl, tuningSel, out, playBtn, stopBtn, metronomeBtn;
+  let exportBtn, pdfExportBtn, saveProg, loadProg, status, diagrams, ascii, tempo, tempoLbl;
+  let pattern, lefty, easy, vfNotes, vfTab, megaOut;
+  
+  // Sichere Initialisierung der DOM-Elemente
+  function initializeDOMElements() {
+    inp = $("inp");
+    orig = $("orig");
+    target = $("target");
+    semi = $("semi");
+    semiLbl = $("semiLbl");
+    capo = $("capo");
+    capoLbl = $("capoLbl");
+    tuningSel = $("tuning");
+    out = $("out");
+    playBtn = $("play");
+    stopBtn = $("stop");
+    metronomeBtn = $("metronome");
+    exportBtn = $("export");
+    pdfExportBtn = $("pdfExport");
+    saveProg = $("saveProg");
+    loadProg = $("loadProg");
+    status = $("status");
+    diagrams = $("diagrams");
+    ascii = $("ascii");
+    tempo = $("tempo");
+    tempoLbl = $("tempoLbl");
+    pattern = $("pattern");
+    lefty = $("lefty");
+    easy = $("easy");
+    vfNotes = $("vf-notes");
+    vfTab = $("vf-tab");
+    megaOut = $("megaOut");
+    
+    // Prüfe ob alle kritischen Elemente vorhanden sind
+    const critical = [inp, orig, target, out, diagrams, ascii];
+    const missing = critical.filter(el => !el);
+    if (missing.length > 0) {
+      console.error('Kritische DOM-Elemente fehlen:', missing);
+      if (status) {
+        status.textContent = 'Fehler: Kritische Elemente fehlen - Seite neu laden';
+      }
+    }
+  }
   
   // --- Audio Globals ---
   let synth = null;
@@ -903,19 +974,19 @@
     throw new Error('Kein start()/resume() auf Tone verfügbar');
   }
 
-  // Explizite Audio-Aktivierung über Button
-  async function enableAudioExplicitly() {
+  // Explizite Audio-Aktivierung über Button (global für onclick)
+  window.enableAudioExplicitly = async function() {
     if (!audioInitialized) {
       await initializeAudioOnUserInteraction();
     }
-  }
+  };
   
   async function ensureAudio() {
     try {
       // Prüfe ob Tone.js geladen ist
       if (!window.Tone) {
         console.log('Tone.js noch nicht geladen - warte auf User-Interaktion');
-        status.textContent = 'Bitte klicken Sie, um Audio zu aktivieren';
+        if (status) status.textContent = 'Bitte klicken Sie, um Audio zu aktivieren';
         return false;
       }
       
@@ -927,10 +998,10 @@
           // UI updaten
           const enableAudioBtn = document.getElementById('enableAudio');
           if (enableAudioBtn) enableAudioBtn.style.display = 'none';
-          status.textContent = 'Audio aktiviert - bereit zum Abspielen';
+          if (status) status.textContent = 'Audio aktiviert - bereit zum Abspielen';
         } catch (e) {
           console.warn('Konnte AudioContext nicht starten:', e);
-          status.textContent = 'Audio konnte nicht aktiviert werden';
+          if (status) status.textContent = 'Audio konnte nicht aktiviert werden';
           const enableAudioBtn = document.getElementById('enableAudio');
           if (enableAudioBtn) enableAudioBtn.style.display = 'inline-block';
           return false;
@@ -945,7 +1016,7 @@
 
       // Synth wird bereits in initializeAudioOnUserInteraction() erstellt
       if (!synth) {
-        status.textContent = 'Audio nicht bereit – bitte einmal irgendwo klicken (User-Geste).';
+        if (status) status.textContent = 'Audio nicht bereit – bitte einmal irgendwo klicken (User-Geste).';
         console.warn('Synth nicht verfügbar - Audio-Initialisierung unvollständig');
         return false;
       }
@@ -965,16 +1036,31 @@
   // ---------- Hauptfunktionen ----------
   function compute() {
     try {
+      // Initialisiere DOM-Elemente falls noch nicht geschehen
+      if (!inp || !orig || !target) {
+        initializeDOMElements();
+      }
+      
       // Prüfe ob alle erforderlichen Elemente initialisiert sind
-      if (!inp || !orig || !target || !diagrams || !ascii || !vfNotes || !vfTab) {
+      if (!inp || !orig || !target) {
         console.log('Warte auf Initialisierung der HTML-Elemente...');
         setTimeout(compute, 100);
         return;
       }
       
+      // Sicherstellen dass alle kritischen Elemente vorhanden sind
+      if (!diagrams) diagrams = $("diagrams");
+      if (!ascii) ascii = $("ascii");
+      if (!vfNotes) vfNotes = $("vf-notes");
+      if (!vfTab) vfTab = $("vf-tab");
+      if (!out) out = $("out");
+      if (!status) status = $("status");
+      if (!megaOut) megaOut = $("megaOut");
+      
       const input = inp.value.trim();
       if (!input) {
         console.log('Keine Eingabe vorhanden');
+        if (status) status.textContent = 'Keine Eingabe vorhanden';
         return;
       }
       
@@ -989,7 +1075,7 @@
       
       if (parsed.length === 0) {
         console.log('Keine gültigen Akkorde gefunden');
-        status.textContent = 'Keine gültigen Akkorde gefunden';
+        if (status) status.textContent = 'Keine gültigen Akkorde gefunden';
         return;
       }
       
@@ -1066,43 +1152,55 @@
       const finalVoicings = optimizeSlashChords(transposed, optimized);
       console.log('Finale Voicings:', finalVoicings);
       
-      // Zeige Ergebnis
+      // Zeige Ergebnis (mit Null-Checks)
       const display = transposed.map(c => {
         const suffix = c.quality === "maj" ? "" : c.quality === "min" ? "m" : c.quality;
         return c.bass ? `${c.root}${suffix}/${c.bass}` : `${c.root}${suffix}`;
       }).join(" ");
       
       console.log('Anzeige-String:', display);
-      out.textContent = display;
-      megaOut.textContent = display;
+      if (out) out.textContent = display;
+      if (megaOut) megaOut.textContent = display;
       
-      // Update Labels
-      semiLbl.textContent = semi.value;
-      capoLbl.textContent = capo.value;
-      tempoLbl.textContent = tempo.value;
+      // Update Labels (mit Null-Checks)
+      if (semiLbl && semi) semiLbl.textContent = semi.value;
+      if (capoLbl && capo) capoLbl.textContent = capo.value;
+      if (tempoLbl && tempo) tempoLbl.textContent = tempo.value;
       
-      // Rendere Griffbilder
+      // Rendere Griffbilder (mit Null-Checks)
       console.log('Rendere Griffbilder...');
-      renderChordDiagrams(transposed, finalVoicings);
+      if (diagrams) {
+        renderChordDiagrams(transposed, finalVoicings);
+      } else {
+        console.warn('diagrams Element nicht gefunden');
+      }
       
-      // Rendere ASCII-TAB
+      // Rendere ASCII-TAB (mit Null-Checks)
       console.log('Rendere ASCII-TAB...');
-      ascii.textContent = asciiTab(transposed, finalVoicings);
+      if (ascii) {
+        ascii.textContent = asciiTab(transposed, finalVoicings);
+      } else {
+        console.warn('ascii Element nicht gefunden');
+      }
       
-      // Rendere VexFlow-Notation
+      // Rendere VexFlow-Notation (mit Null-Checks)
       console.log('Rendere VexFlow-Notation...');
-      renderVexflow(transposed, finalVoicings);
+      if (vfNotes && vfTab) {
+        renderVexflow(transposed, finalVoicings);
+      } else {
+        console.warn('VexFlow Container nicht gefunden');
+      }
       
       // Speichere für Audio
       window.currentChords = transposed;
       window.currentVoicings = finalVoicings;
       
       console.log('Compute erfolgreich abgeschlossen');
-      status.textContent = 'Akkorde erfolgreich verarbeitet';
+      if (status) status.textContent = 'Akkorde erfolgreich verarbeitet';
       
     } catch (e) {
       console.error('Fehler in compute:', e);
-      status.textContent = 'Fehler: ' + e.message;
+      if (status) status.textContent = 'Fehler: ' + (e.message || String(e));
       
       // Zeige detaillierte Fehlerinformationen
       if (e.stack) {
@@ -1200,7 +1298,20 @@
   
   // ---------- Rendering-Funktionen ----------
   function renderChordDiagrams(chords, voicings) {
+    if (!diagrams) {
+      diagrams = $("diagrams");
+      if (!diagrams) {
+        console.error('diagrams Element nicht gefunden');
+        return;
+      }
+    }
+    
     diagrams.innerHTML = '';
+    
+    if (!chords || !voicings || chords.length !== voicings.length) {
+      console.error('Ungültige Parameter für renderChordDiagrams');
+      return;
+    }
     
     chords.forEach((chord, i) => {
       const voicing = voicings[i];
@@ -1355,6 +1466,15 @@
       return;
     }
     
+    if (!vfNotes || !vfTab) {
+      vfNotes = $("vf-notes");
+      vfTab = $("vf-tab");
+      if (!vfNotes || !vfTab) {
+        console.warn('VexFlow Container nicht gefunden');
+        return;
+      }
+    }
+    
     try {
       const {Renderer, Stave, StaveNote, Voice, Formatter, TabStave, TabNote} = VexFlow;
       
@@ -1495,8 +1615,8 @@
     }
     
     isPlaying = true;
-    playBtn.textContent = '⏸ Pause';
-    status.textContent = 'Spielt ab...';
+    if (playBtn) playBtn.textContent = '⏸ Pause';
+    if (status) status.textContent = 'Spielt ab...';
     
     // Erstelle Akkord-Sequenz
     const chordNotes = voicings.map(voicing => {
@@ -1590,8 +1710,8 @@
       Tone.Transport.position = 0; // Reset auf Anfang
     }
     isPlaying = false;
-    playBtn.textContent = '▶︎ Abspielen';
-    status.textContent = 'Gestoppt';
+    if (playBtn) playBtn.textContent = '▶︎ Abspielen';
+    if (status) status.textContent = 'Gestoppt';
   }
   
   async function startMetronome() {
@@ -1635,8 +1755,8 @@
     Tone.Transport.start();
     metroLoop.start(0);
     
-    metronomeBtn.textContent = '🥁 Metronom Stop';
-    status.textContent = `Metronom läuft bei ${bpm} BPM`;
+    if (metronomeBtn) metronomeBtn.textContent = '🥁 Metronom Stop';
+    if (status) status.textContent = `Metronom läuft bei ${bpm} BPM`;
   }
   
   function stopMetronome() {
@@ -1651,8 +1771,8 @@
       Tone.Transport.stop();
       Tone.Transport.position = 0; // Reset auf Anfang
     }
-    metronomeBtn.textContent = '🥁 Metronom';
-    status.textContent = 'Metronom gestoppt';
+    if (metronomeBtn) metronomeBtn.textContent = '🥁 Metronom';
+    if (status) status.textContent = 'Metronom gestoppt';
   }
   
   // ---------- Export-Funktionen ----------
@@ -1675,7 +1795,7 @@
     a.click();
     
     URL.revokeObjectURL(url);
-    status.textContent = 'ASCII-TAB exportiert';
+    if (status) status.textContent = 'ASCII-TAB exportiert';
   }
   
   function exportToPDF() {
@@ -1718,19 +1838,23 @@
       });
       
       doc.save('gitarren-akkorde.pdf');
-      status.textContent = 'PDF exportiert';
+      if (status) status.textContent = 'PDF exportiert';
       
     } catch (e) {
       console.error('Fehler beim PDF-Export:', e);
-      status.textContent = 'PDF-Export fehlgeschlagen';
+      if (status) status.textContent = 'PDF-Export fehlgeschlagen';
     }
   }
   
   // ---------- Speichern/Laden ----------
   function saveProgression() {
+    if (!inp) {
+      if (status) status.textContent = 'Eingabefeld nicht verfügbar';
+      return;
+    }
     const input = inp.value.trim();
     if (!input) {
-      status.textContent = 'Keine Akkordfolge zum Speichern';
+      if (status) status.textContent = 'Keine Akkordfolge zum Speichern';
       return;
     }
     
@@ -1741,7 +1865,7 @@
       if (name) {
         saved.push({ name, progression: input, timestamp: Date.now() });
         localStorage.setItem('gitarreProgressions', JSON.stringify(saved));
-        status.textContent = 'Akkordfolge gespeichert';
+        if (status) status.textContent = 'Akkordfolge gespeichert';
       }
     } catch (e) {
       console.error('Fehler beim Speichern:', e);
@@ -1763,9 +1887,11 @@
       
       if (selected && names.includes(selected)) {
         const progression = saved.find(p => p.name === selected);
-        inp.value = progression.progression;
-        compute();
-        status.textContent = 'Akkordfolge geladen';
+        if (inp) {
+          inp.value = progression.progression;
+          compute();
+          if (status) status.textContent = 'Akkordfolge geladen';
+        }
       }
     } catch (e) {
       console.error('Fehler beim Laden:', e);
@@ -1773,38 +1899,75 @@
     }
   }
   
-  function loadProgression(progression) {
+  // Globale Funktion für onclick-Handler
+  window.loadProgression = function(progression) {
+    if (!inp) {
+      initializeDOMElements();
+      if (!inp) {
+        if (status) status.textContent = 'Eingabefeld nicht verfügbar';
+        return;
+      }
+    }
     inp.value = progression;
     compute();
-    status.textContent = 'Akkordfolge geladen';
-  }
+    if (status) status.textContent = 'Akkordfolge geladen';
+  };
   
   // ---------- Event-Handler ----------
   let computeTimeout;
-  [inp, orig, target, semi, capo, tuningSel, pattern, lefty, easy].forEach(el =>
-    el.addEventListener("input", () => {
-      clearTimeout(computeTimeout);
-      computeTimeout = setTimeout(compute, 120);
-    })
-  );
   
-  // Live-BPM-Änderungen für Metronom und Playback
-  tempo.addEventListener("input", () => {
-    const bpm = parseInt(tempo.value, 10);
-    tempoLbl.textContent = tempo.value;
-    if (window.Tone && Tone.Transport && Tone.Transport.bpm && typeof Tone.Transport.bpm.rampTo === 'function') {
-      // Smooth statt Hart-Sprung
-      Tone.Transport.bpm.rampTo(bpm, 0.05);
+  function setupEventListeners() {
+    // Initialisiere DOM-Elemente zuerst
+    initializeDOMElements();
+    
+    // Event-Listener nur registrieren wenn Elemente existieren
+    const inputElements = [inp, orig, target, semi, capo, tuningSel, pattern, lefty, easy].filter(el => el !== null && el !== undefined);
+    
+    inputElements.forEach(el => {
+      if (el && typeof el.addEventListener === 'function') {
+        el.addEventListener("input", () => {
+          clearTimeout(computeTimeout);
+          computeTimeout = setTimeout(compute, 120);
+        });
+      }
+    });
+    
+    // Live-BPM-Änderungen für Metronom und Playback
+    if (tempo && typeof tempo.addEventListener === 'function') {
+      tempo.addEventListener("input", () => {
+        if (!tempo || !tempoLbl) return;
+        const bpm = parseInt(tempo.value, 10);
+        if (tempoLbl) tempoLbl.textContent = tempo.value;
+        if (window.Tone && Tone.Transport && Tone.Transport.bpm && typeof Tone.Transport.bpm.rampTo === 'function') {
+          // Smooth statt Hart-Sprung
+          Tone.Transport.bpm.rampTo(bpm, 0.05);
+        }
+      });
     }
-  });
-  
-  playBtn.addEventListener('click', startPlayback);
-  stopBtn.addEventListener('click', stopPlayback);
-  metronomeBtn.addEventListener('click', startMetronome);
-  exportBtn.addEventListener('click', exportToASCII);
-  pdfExportBtn.addEventListener('click', exportToPDF);
-  saveProg.addEventListener('click', saveProgression);
-  loadProg.addEventListener('click', loadSavedProgressions);
+    
+    // Button Event-Listener mit Null-Checks
+    if (playBtn && typeof playBtn.addEventListener === 'function') {
+      playBtn.addEventListener('click', startPlayback);
+    }
+    if (stopBtn && typeof stopBtn.addEventListener === 'function') {
+      stopBtn.addEventListener('click', stopPlayback);
+    }
+    if (metronomeBtn && typeof metronomeBtn.addEventListener === 'function') {
+      metronomeBtn.addEventListener('click', startMetronome);
+    }
+    if (exportBtn && typeof exportBtn.addEventListener === 'function') {
+      exportBtn.addEventListener('click', exportToASCII);
+    }
+    if (pdfExportBtn && typeof pdfExportBtn.addEventListener === 'function') {
+      pdfExportBtn.addEventListener('click', exportToPDF);
+    }
+    if (saveProg && typeof saveProg.addEventListener === 'function') {
+      saveProg.addEventListener('click', saveProgression);
+    }
+    if (loadProg && typeof loadProg.addEventListener === 'function') {
+      loadProg.addEventListener('click', loadSavedProgressions);
+    }
+  }
   
   // ---------- VexFlow-Initialisierung ----------
   function checkVexFlowAvailability() {
@@ -1834,20 +1997,40 @@
   
   // Vereinfachte App-Initialisierung (wird jetzt von VexFlow-ESM-Import gesteuert)
   function initializeApp() {
+    // Initialisiere DOM-Elemente zuerst
+    initializeDOMElements();
+    
+    // Setup Event-Listener
+    setupEventListeners();
+    
     if (checkVexFlowAvailability()) {
       console.log('VexFlow verfügbar, starte Anwendung');
       // Update Status für VexFlow
-      if (typeof VexFlow !== 'undefined' && VexFlow.Renderer && VexFlow.Renderer.name === 'MockRenderer') {
-        status.textContent = 'Anwendung läuft - VexFlow im Fallback-Modus';
-      } else {
-        status.textContent = 'Anwendung läuft - VexFlow verfügbar';
+      if (status) {
+        if (typeof VexFlow !== 'undefined' && VexFlow.Renderer && VexFlow.Renderer.name === 'MockRenderer') {
+          status.textContent = 'Anwendung läuft - VexFlow im Fallback-Modus';
+        } else {
+          status.textContent = 'Anwendung läuft - VexFlow verfügbar';
+        }
       }
-      compute();
-      initializeTabs();
-      initializeProjectManagement();
+      
+      // Warte kurz bis DOM vollständig geladen ist
+      setTimeout(() => {
+        compute();
+        initializeTabs();
+        initializeProjectManagement();
+      }, 100);
     } else {
       console.log('VexFlow nicht verfügbar - sollte nicht passieren mit ESM-Import');
-      status.textContent = 'Fehler: VexFlow konnte nicht geladen werden';
+      if (status) {
+        status.textContent = 'Fehler: VexFlow konnte nicht geladen werden';
+      }
+      // App trotzdem starten ohne VexFlow
+      setTimeout(() => {
+        compute();
+        initializeTabs();
+        initializeProjectManagement();
+      }, 100);
     }
   }
   
@@ -1876,7 +2059,8 @@
     loadProjects();
   }
   
-  function createProject() {
+  // Globale Funktionen für Projekt-Management (onclick-Handler)
+  window.createProject = function() {
     const name = document.getElementById('projectName').value.trim();
     const description = document.getElementById('projectDescription').value.trim();
     
@@ -1895,12 +2079,14 @@
     };
     
     saveProject(project);
-    document.getElementById('projectName').value = '';
-    document.getElementById('projectDescription').value = '';
+    const nameInput = document.getElementById('projectName');
+    const descInput = document.getElementById('projectDescription');
+    if (nameInput) nameInput.value = '';
+    if (descInput) descInput.value = '';
     loadProjects();
-  }
+  };
   
-  function saveCurrentProject() {
+  window.saveCurrentProject = function() {
     const name = prompt('Projektname:');
     if (!name) return;
     
@@ -1915,7 +2101,7 @@
     
     saveProject(project);
     loadProjects();
-  }
+  };
   
   function saveProject(project) {
     try {
@@ -1951,7 +2137,7 @@
     }
   }
   
-  function loadProject(projectId) {
+  window.loadProject = function(projectId) {
     try {
       const projects = JSON.parse(localStorage.getItem('gitarreProjects') || '[]');
       const project = projects.find(p => p.id === projectId);
@@ -1970,10 +2156,10 @@
       console.error('Fehler beim Laden des Projekts:', e);
       alert('Fehler beim Laden des Projekts');
     }
-  }
+  };
   
   // ---------- Noten-Editor ----------
-  function parseNotes() {
+  window.parseNotes = function() {
     const notesInput = document.getElementById('notesInput').value;
     const liveDisplay = document.getElementById('liveNotesDisplay');
     
@@ -1991,9 +2177,9 @@
         ${notes.map(note => `<span class="note" style="display: inline-block; margin: 5px; padding: 10px; background: #007acc; color: white; border-radius: 8px;">${note}</span>`).join('')}
       </div>
     `;
-  }
+  };
   
-  function playNotes() {
+  window.playNotes = function() {
     const notesInput = document.getElementById('notesInput').value;
     if (!notesInput.trim()) {
       alert('Bitte geben Sie Noten ein');
@@ -2002,10 +2188,10 @@
     
     // Einfache Noten-Wiedergabe (kann erweitert werden)
     alert('Noten-Wiedergabe wird implementiert...');
-  }
+  };
   
   // ---------- Multimedia-Player ----------
-  function loadMedia() {
+  window.loadMedia = function() {
     const fileInput = document.getElementById('mediaFile');
     const file = fileInput.files[0];
     
@@ -2030,19 +2216,19 @@
       mediaPlayer.innerHTML = '';
       mediaPlayer.appendChild(video);
     }
-  }
+  };
   
-  function syncWithChords() {
+  window.syncWithChords = function() {
     if (!window.currentVoicings) {
       alert('Bitte laden Sie zuerst Akkorde');
       return;
     }
     
     alert('Synchronisation mit Akkorden wird implementiert...');
-  }
+  };
   
-  // Test-Funktion für Debugging
-  function testChordParsing() {
+  // Test-Funktion für Debugging (global für onclick)
+  window.testChordParsing = function() {
     console.log('=== TEST: Chord Parsing ===');
     
     // Prüfe ob alle erforderlichen Elemente initialisiert sind
@@ -2105,8 +2291,8 @@
     }
     
     console.log('=== TEST ENDE ===');
-    status.textContent = 'Test abgeschlossen - siehe Konsole';
-  }
+    if (status) status.textContent = 'Test abgeschlossen - siehe Konsole';
+  };
   </script>
 
   <script>

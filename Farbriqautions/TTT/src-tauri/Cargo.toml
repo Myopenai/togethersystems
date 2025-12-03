@@ -1,0 +1,47 @@
+[package]
+name = "togethersystems"
+version = "1.0.0"
+description = "TogetherSystems Portal - [.TTT T,.&T,,.T,,,.T.]"
+authors = ["Raymond Demitrio Tel"]
+license = "MIT"
+repository = "https://github.com/Myopenai/togethersystems"
+edition = "2021"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TAURI DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.6", features = [
+    "shell-open",
+    "window-all",
+    "fs-read-file",
+    "fs-write-file",
+    "fs-read-dir",
+    "fs-create-dir",
+    "dialog-all",
+    "notification-all",
+    "clipboard-all",
+    "updater"
+] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# OPTIMIZATIONS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
+

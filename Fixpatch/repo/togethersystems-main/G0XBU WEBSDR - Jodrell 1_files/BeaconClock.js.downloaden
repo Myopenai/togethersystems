@@ -1,0 +1,100 @@
+// BeaconClock.js  by Peter Jennings VE3SUN   http://ncdxf.org/beacon/index.html
+// Copyright 2016 Free to use under MIT License https://opensource.org/licenses/MIT
+
+var delta = 0;
+var vband = ["14.100", "18.110","21.150","24.930","28.200"];
+var beacons = ['4U1UN','VE8AT','W6WX','KH6RS','ZL6B','VK6RBP','JA2IGY','RR9O','VR2B','4S7B','ZS6DN','5Z4B','4X6TU','OH2B','CS3B','LU4AA','OA4B','YV5B']
+var beaconSup = ['','','','','','','','','','','','','','','','','',''];
+var locations = ['New York','Inuvik NT','California','Hawaii','New Zealand','Australia','Japan','Siberia','Hong Kong','Sri Lanka','South Africa','Kenya','Israel','Finland','Madeira','Argentina','Peru','Venezuela'];
+
+function updateBeacons() 
+   {
+   clock()
+   var t3 = (new Date()).valueOf();
+   var vband = ["14.100", "18.110","21.150","24.930","28.200"];
+   var today = new Date();
+   var n = Math.floor((today.getTime()+delta)/10000) % 18;
+   var beacon = '';
+   var frequency = 0;
+   var htmlOut = '<tr><th>Beacon</th><th>Frequency</th></tr>';
+   for ( i=0; i<18; i++ )
+      {
+      beacon    = beacons[i]+'<sup>&nbsp;'+beaconSup[i]+'</sup>';
+      frequency = beaconFrequency((18+n-i)%18);
+      htmlOut += '<tr><td>'+ beacon + '</td><td>'+frequency+'</td></tr>';
+      }
+   $ID('beacons').innerHTML = htmlOut;
+   htmlOut = '<tr><th>Freq</th><th>Beacon</th><th>Location</th></tr>';
+   for ( i=0; i<5; i++)
+      {
+      htmlOut += '<tr><td>'+ vband[i] + '</td><td>'+beacons[(18+n-i)%18]+'<sup>&nbsp;'+beaconSup[(18+n-i)%18]+'</sup></td><td>'+locations[(18+n-i)%18]+'</td></tr>';
+      }
+   $ID('frequencies').innerHTML = htmlOut;
+   setTimeout(updateBeacons, 1000);
+   }
+function beaconFrequency(n)
+   {
+   if ( typeof(vband[n]) == "undefined" )
+      {
+      return 'silent';
+      }
+   else 
+      {
+      return vband[n];
+      }
+   }
+function BeaconClock()
+   {
+   var today = new Date();
+   today.getTime();
+   var timeStamp = Math.floor(today);
+   var serverTime = new XMLHttpRequest();
+   serverTime.open('GET',"time.php?t="+timeStamp, true);
+   serverTime.send();
+   serverTime.onreadystatechange = function() 
+      {
+      if( (serverTime.readyState == 4) && ( serverTime.status == 200 ))
+        {
+        today.getTime();
+        delta = serverTime.responseText - today + 800;  // allow time for screen refresh, internet
+        }
+      }
+
+   var beaconStatus = new XMLHttpRequest();
+   beaconStatus.open('GET',"QuickStatus", true);
+   beaconStatus.send();
+   beaconStatus.onreadystatechange = function() 
+      {
+      if( (beaconStatus.readyState == 4) && ( beaconStatus.status == 200 ))
+        {
+        beaconSup = beaconStatus.responseText.split('');
+        }
+      }
+   updateBeacons();
+   }
+
+
+function clock()
+   {
+   var d = new Date();
+   d.setTime(d.getTime() + delta);
+   var h = addZero(d.getUTCHours());
+   var m = addZero(d.getUTCMinutes());
+   var s = addZero(d.getUTCSeconds());
+   $ID('clock').innerHTML = "<b>" + h + ":" + m + ":" + s + " UTC</b>";
+   $ID('delta').innerHTML = Math.round(delta/1000);
+   }
+function retard()
+   {
+   delta -= 1000;
+   }
+function advance()
+   {
+   delta += 1000;
+   }
+function addZero(i) 
+   {
+   if (i < 10) { i = "0" + i; }
+   return i;
+   }
+function $ID(id) { return document.getElementById(id); } 

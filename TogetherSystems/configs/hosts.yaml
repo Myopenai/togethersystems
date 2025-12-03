@@ -1,0 +1,138 @@
+# ============================================================================
+# HOSTS CONFIGURATION
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Online-Hosts, Ports und Gateways
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Hosts Configuration"
+branding: "T,.&T,,.&T,,,.T."
+
+# ============================================================================
+# CLUSTER
+# ============================================================================
+
+cluster:
+  enabled: true
+  orchestration: enabled
+  
+  hosts:
+    - name: "build-01"
+      roles: [build, test]
+      ports: [3000, 3001]
+      status: "active"
+    
+    - name: "edge-01"
+      roles: [runtime, playwright]
+      ports: [4000, 4001]
+      status: "active"
+    
+    - name: "observability-01"
+      roles: [error_bus, telemetry]
+      ports: [5000, 5001]
+      status: "active"
+
+# ============================================================================
+# PORT REGISTRY
+# ============================================================================
+
+port_registry:
+  enabled: true
+  policy: "allocate_free, avoid_conflict, auto_rebind"
+  
+  ranges:
+    app: [3000, 3999]
+    services: [4000, 4999]
+    tests: [5000, 5999]
+    reserved: [8000, 8999]
+  
+  allocation:
+    strategy: "round_robin"
+    conflict_resolution: "auto_rebind"
+    timeout: "30s"
+
+# ============================================================================
+# API GATEWAYS
+# ============================================================================
+
+api_gateways:
+  enabled: true
+  sandbox: true
+  
+  outbound_whitelist:
+    - "https://api.example.com"
+    - "https://registry.example.org"
+    - "https://api.openai.com"
+    - "https://api.anthropic.com"
+    - "https://openrouter.ai"
+  
+  rate_limits:
+    per_minute: 120
+    per_hour: 5000
+    per_day: 100000
+  
+  isolation: "process"
+  security: "tls_required"
+
+# ============================================================================
+# FEDERATION
+# ============================================================================
+
+federation:
+  error_bus:
+    enabled: true
+    protocol: "nats"
+    retention: "24h"
+    encryption: enabled
+    compression: true
+  
+  telemetry:
+    enabled: true
+    protocol: "prometheus"
+    retention: "7d"
+    aggregation: true
+
+# ============================================================================
+# ONLINE CONNECTIONS
+# ============================================================================
+
+online_connections:
+  enabled: true
+  
+  cloud:
+    - name: "github"
+      type: "git"
+      url: "https://github.com"
+    
+    - name: "cloudflare"
+      type: "cdn"
+      url: "https://cloudflare.com"
+  
+  database:
+    - name: "supabase"
+      type: "postgres"
+      url: "https://supabase.com"
+    
+    - name: "firebase"
+      type: "firestore"
+      url: "https://firebase.com"
+  
+  global:
+    - name: "dns"
+      type: "dns"
+      url: "https://cloudflare-dns.com"
+    
+    - name: "cdn"
+      type: "cdn"
+      url: "https://cdn.example.com"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T20:37:00Z"
+  updated: "2025-01-15T20:37:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

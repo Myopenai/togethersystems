@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GLEICHGEWICHTS-BOERSE-IMPLEMENTIERUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Gleichgewichts-Börse – Implementierungs-Guide</h1>
+
+> Vollständige Dokumentation für Real-Bilanz-System, Instrumente und Nachrichten-System
+
+---
+
+<h2>📋 Übersicht</h2>
+
+Dieses Dokument beschreibt die Implementierung der <strong>Gleichgewichts-Börse</strong> in TogetherSystems:
+
+1. <strong>Real-Bilanz-System</strong>: Erfassung aller Transaktionen (Einnahmen, Ausgaben, Schäden, Nutzen)
+2. <strong>Gleichgewichts-Instrumente</strong>: Handelbare Titel nur auf Basis positiver Netto-Werte
+3. <strong>Nachrichten-System</strong>: User-zu-User-Kommunikation mit Offline-Support
+4. <strong>High-End-Kommunikation</strong>: HiFi-Audio und Full-HD-Video
+
+---
+
+<h2>🗄️ Datenbank-Schema</h2>
+
+<h3>Tabellen erweitern</h3>
+
+Füge das Schema aus `d1-schema-balanced-exchange.sql` zu deiner D1-Datenbank hinzu:
+
+```bash
+wrangler d1 execute togethersystems-db --file=d1-schema-balanced-exchange.sql
+```
+
+<h3>Wichtige Tabellen</h3>
+
+- <strong>entities</strong>: Reale Einheiten (Unternehmen, Projekte)
+- <strong>real_transactions</strong>: Einzelne Transaktionen
+- <strong>real_balances</strong>: Aggregierte Bilanzen mit Netto-Wert
+- <strong>instruments</strong>: Handelbare Titel
+- <strong>messages</strong>: User-zu-User-Nachrichten
+- <strong>av_sessions</strong>: High-End Audio/Video Sessions
+
+---
+
+<h2>🔌 API-Endpunkte</h2>
+
+<h3>Real-Bilanz</h3>
+
+<h4>POST /api/real/transactions</h4>
+
+Erfasst eine Real-Transaktion:
+
+```javascript
+const response = await fetch('/api/real/transactions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-TS-APIKEY': API_KEY
+  },
+  body: JSON.stringify({
+    entity_id: 'ent-energie-berlin',
+    category: 'damage',
+    label: 'CO2 Emission Q1',
+    amount: 10000,
+    unit: 'tCO2e',
+    direction: 'negative',
+    weight: 80, // 80 EUR pro Tonne CO2
+    occurred_at: '2025-03-31T23:59:59Z',
+    meta: { scope: 'scope2' }
+  })
+});
+```
+
+<h4>POST /api/real/balances/recompute</h4>
+
+Berechnet eine Real-Bilanz für einen Zeitraum:
+
+```javascript
+const response = await fetch('/api/real/balances/recompute', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    entity_id: 'ent-energie-berlin',
+    period_start: '2025-01-01T00:00:00Z',
+    period_end: '2025-03-31T23:59:59Z'
+  })
+});
+```
+
+<h3>Instrumente</h3>
+
+<h4>POST /api/instruments</h4>
+
+Erstellt ein Instrument auf Basis positiver Real-Bilanz:
+
+```javascript
+const response = await fetch('/api/instruments', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    entity_id: 'ent-energie-berlin',
+    balance_id: 'rb-2025Q1-ent-energie-berlin',
+    symbol: 'GEB-25Q1',
+    name: 'Gleichgewichts-Einheit Berlin Q1/2025',
+    units_issued: 20000
+  })
+});
+```
+
+<h4>GET /api/instruments/:id</h4>
+
+Holt Instrument-Details inkl. vollständiger Real-Bilanz (Waage):
+
+```javascript
+const response = await fetch('/api/instruments/inst-geb-25q1');
+const data = await response.json();
+// data.data.instrument: Instrument-Daten
+// data.data.balance: Vollständige Real-Bilanz (Waage)
+```
+
+<h3>Nachrichten</h3>
+
+<h4>POST /api/messages/send</h4>
+
+Sendet eine Nachricht:
+
+```javascript
+const response = await fetch('/api/messages/send', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    from_user_id: 'usr-abc',
+    to_user_id: 'usr-def',
+    subject: 'Kurzfrage',
+    body: 'Hast du 10 Minuten für einen Call?',
+    meta: { importance: 'normal' }
+  })
+});
+```
+
+<h4>GET /api/messages/pending</h4>
+
+Holt ungelesene Nachrichten (beim Online-Gehen):
+
+```javascript
+const response = await fetch(`/api/messages/pending?user_id=usr-def&since=2025-04-05T00:00:00Z`);
+const data = await response.json();
+// data.data.messages: Array von Nachrichten
+```
+
+---
+
+<h2>💬 Nachrichten-System: Offline-First</h2>
+
+<h3>Frontend-Integration (manifest-forum.html)</h3>
+
+<h4>LocalStorage-Struktur</h4>
+
+```javascript
+// Lokale Nachrichten-Datenbank
+const messagesDB = {
+  inbox: [
+    {
+      id: 'msg-123',
+      from: 'usr-abc',
+      subject: 'Hallo',
+      preview: 'Wollte nur kurz...',
+      body: 'Wollte nur kurz hallo sagen...',
+      created_at: '2025-04-05T10:00:00Z',
+      delivered_at: '2025-04-05T10:01:00Z',
+      read_at: null
+    }
+  ],
+  outbox: [
+    {
+      id: 'msg-temp-1',
+      to: 'usr-def',
+      subject: 'Terminvorschlag',
+      body: 'Wie wäre es mit Freitag?',
+      created_at: '2025-04-05T10:02:00Z',
+      synced: false
+    }
+  ]
+};
+```
+
+<h4>Online-Gehen (Portal öffnen)</h4>
+
+```javascript
+async function syncMessages() {
+  const userId = getUserId(); // Aus MOT-Token
+  
+  // Outbox → Server: Alle nicht gesyncten Nachrichten senden
+  const outbox = loadOutbox();
+  for (const msg of outbox.filter(m => !m.synced)) {
+    try {
+      await fetch('/api/messages/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from_user_id: userId,
+          to_user_id: msg.to,
+          subject: msg.subject,
+          body: msg.body
+        })
+      });
+      msg.synced = true;
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    }
+  }
+  saveOutbox(outbox);
+  
+  // Server → Inbox: Neue Nachrichten abholen
+  try {
+    const response = await fetch(`/api/messages/pending?user_id=${userId}`);
+    const data = await response.json();
+    if (data.ok && data.data.messages) {
+      const inbox = loadInbox();
+      data.data.messages.forEach(msg => {
+        // Nur hinzufügen wenn noch nicht vorhanden
+        if (!inbox.find(m => m.id === msg.id)) {
+          inbox.push({
+            ...msg,
+            delivered_at: new Date().toISOString()
+          });
+          // Popup anzeigen
+          showMessagePopup(msg);
+        }
+      });
+      saveInbox(inbox);
+      
+      // Bestätigen
+      await fetch('/api/messages/ack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          message_ids: data.data.messages.map(m => m.id)
+        })
+      });
+    }
+  } catch (err) {
+    console.error('Failed to fetch messages:', err);
+  }
+}
+```
+
+<h4>Popup anzeigen</h4>
+
+```javascript
+function showMessagePopup(message) {
+  const popup = document.createElement('div');
+  popup.className = 'message-popup';
+  popup.innerHTML = `
+    <div class="message-popup-content">
+      <h3>Neue Nachricht</h3>
+      <p><strong>Von:</strong> ${escapeHtml(message.from_user_id)}</p>
+      <p><strong>Zeit:</strong> ${new Date(message.created_at).toLocaleString()}</p>
+      <p><strong>Betreff:</strong> ${escapeHtml(message.subject || '(Kein Betreff)')}</p>
+      <div class="message-preview">${escapeHtml(message.content_preview || message.body)}</div>
+      <div class="message-actions">
+        <button class="btn" onclick="openMessage('${message.id}')">Öffnen</button>
+        <button class="btn ghost" onclick="closePopup(this)">Schließen</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  
+  // Optional: Notification-Sound
+  playNotificationSound();
+  
+  // Auto-Close nach 30 Sekunden
+  setTimeout(() => popup.remove(), 30000);
+}
+```
+
+---
+
+<h2>🎵 High-End-Kommunikation</h2>
+
+<h3>Audio-Qualität (HiFi)</h3>
+
+WebRTC mit Opus-Codec in hoher Qualität:
+
+```javascript
+// WebRTC Audio-Constraints
+const audioConstraints = {
+  echoCancellation: true,
+  noiseSuppression: true,
+  autoGainControl: true,
+  sampleRate: 48000, // HiFi: 48 kHz
+  channelCount: 2, // Stereo
+  sampleSize: 16,
+  opusStereo: true,
+  opusFec: true,
+  opusDtx: true,
+  opusMaxPlaybackRate: 48000,
+  opusPtime: 20,
+  opusComplexity: 10 // Maximum für beste Qualität
+};
+
+navigator.mediaDevices.getUserMedia({ audio: audioConstraints })
+  .then(stream => {
+    // Stream für WebRTC verwenden
+  });
+```
+
+<h3>Video-Qualität (Full-HD)</h3>
+
+```javascript
+// Video-Constraints für Full-HD
+const videoConstraints = {
+  width: { ideal: 1920 },
+  height: { ideal: 1080 },
+  frameRate: { ideal: 30 },
+  facingMode: 'user'
+};
+
+navigator.mediaDevices.getUserMedia({ 
+  video: videoConstraints,
+  audio: audioConstraints 
+})
+  .then(stream => {
+    // Stream für WebRTC verwenden
+  });
+```
+
+<h3>AV-Session erfassen</h3>
+
+```javascript
+async function startAVSession(roomId, initiatorId, participantIds, audioQuality, videoQuality) {
+  const response = await fetch('/api/av/sessions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      room_id: roomId,
+      initiator_id: initiatorId,
+      participant_ids: participantIds,
+      audio_quality: audioQuality, // 'hifi', 'standard'
+      video_quality: videoQuality, // 'full-hd', 'hd', 'sd'
+      status: 'active'
+    })
+  });
+  return response.json();
+}
+```
+
+---
+
+<h2>🚀 Deployment-Checkliste</h2>
+
+1. <strong>Schema erweitern:</strong>
+   ```bash
+   wrangler d1 execute togethersystems-db --file=d1-schema-balanced-exchange.sql
+   ```
+
+2. <strong>Functions deployen:</strong>
+   - `functions/api/real/transactions.js`
+   - `functions/api/real/balances/recompute.js`
+   - `functions/api/instruments/*.js`
+   - `functions/api/messages/*.js`
+
+3. <strong>Frontend integrieren:</strong>
+   - Neue Tabs/Buttons in `manifest-portal.html`
+   - Nachrichten-UI in `manifest-forum.html`
+   - Gleichgewichts-Börse-Dashboard
+
+4. <strong>WebSocket erweitern:</strong>
+   - `functions/ws.js` für Live-Push-Nachrichten
+   - `direct_message`-Typ hinzufügen
+
+---
+
+<h2>📚 Weitere Dokumentation</h2>
+
+- `api-balanced-exchange.yaml` - OpenAPI-Spezifikation
+- `ENTWICKLER-DOKUMENTATION.md` - Vollständige Architektur
+- `d1-schema-balanced-exchange.sql` - Datenbank-Schema
+
+---
+
+<strong>Motto:</strong> "Wir bewegen die Welt. Die Welt bewegt uns. Ihnen kostet das Geld. Uns ist das egal."
+
+
+---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+</body>
+</html>

@@ -1,0 +1,141 @@
+# ============================================================================
+# AUTO-FIX PIPELINE
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Auto-Fix-Pipeline: Clean → Build → Hash → Deploy → CDN Purge
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Auto-Fix Pipeline"
+branding: "T,.&T,,.&T,,,.T."
+
+# ============================================================================
+# STAGES
+# ============================================================================
+
+stages:
+  - name: "clean"
+    description: "T,. Bereinigt alte Builds und Caches"
+    steps:
+      - name: "clean-build-dir"
+        action: "clean"
+        target: "builds/"
+      
+      - name: "clean-dist-dir"
+        action: "clean"
+        target: "dist/"
+      
+      - name: "clean-cache"
+        action: "clean"
+        target: ".cache/"
+        cache: true
+  
+  - name: "encoding-check"
+    description: "T,. Prüft UTF-8 Compliance"
+    steps:
+      - name: "encoding-lint"
+        action: "run"
+        tool: "Fabrikage.CoreProtocols/tools/encoding-lint.js"
+    
+    gates:
+      - name: "utf8-compliance"
+        required: true
+        fail_fast: true
+  
+  - name: "build"
+    description: "T,. Baut Artefakte"
+    steps:
+      - name: "build-artifacts"
+        action: "build"
+        toolchain: "node@20"
+      
+      - name: "generate-assets"
+        action: "generate"
+        generators: ["ui", "api", "adapters"]
+  
+  - name: "hash-assets"
+    description: "T,. Hasht Assets für Cache-Busting"
+    steps:
+      - name: "hash-css"
+        action: "hash"
+        files: "**/*.css"
+        algorithm: "sha256"
+        format: "{name}-{hash}.{ext}"
+      
+      - name: "hash-js"
+        action: "hash"
+        files: "**/*.js"
+        algorithm: "sha256"
+        format: "{name}-{hash}.{ext}"
+      
+      - name: "hash-images"
+        action: "hash"
+        files: "**/*.{png,jpg,jpeg,svg,webp}"
+        algorithm: "sha256"
+        format: "{name}-{hash}.{ext}"
+      
+      - name: "update-html-references"
+        action: "update-references"
+        files: "**/*.html"
+        reference_map: "asset-hash-map.json"
+  
+  - name: "service-worker-version"
+    description: "T,. Bumped Service Worker Version"
+    steps:
+      - name: "bump-sw-version"
+        action: "bump-version"
+        file: "sw.js"
+        version_type: "timestamp"
+        format: "YYYYMMDDHHmmss"
+  
+  - name: "deploy"
+    description: "T,. Deployt Artefakte"
+    steps:
+      - name: "deploy-to-github-pages"
+        action: "deploy"
+        target: "github-pages"
+        branch: "gh-pages"
+      
+      - name: "deploy-to-cloudflare"
+        action: "deploy"
+        target: "cloudflare-pages"
+        project: "togethersystems"
+  
+  - name: "cdn-purge"
+    description: "T,. Purgt CDN-Cache"
+    steps:
+      - name: "purge-cloudflare"
+        action: "purge"
+        cdn: "cloudflare"
+        zones: ["togethersystems.com"]
+        purge_all: true
+      
+      - name: "purge-github-pages"
+        action: "purge"
+        cdn: "github-pages"
+        cache_headers: ["Cache-Control: no-cache"]
+  
+  - name: "verify"
+    description: "T,. Verifiziert Deployment"
+    steps:
+      - name: "verify-github-pages"
+        action: "verify"
+        url: "https://togethersystems.github.io/togethersystems/"
+        expected_status: 200
+        expected_charset: "utf-8"
+      
+      - name: "verify-cloudflare"
+        action: "verify"
+        url: "https://togethersystems.pages.dev/"
+        expected_status: 200
+        expected_charset: "utf-8"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T14:30:00Z"
+  updated: "2025-01-15T14:30:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

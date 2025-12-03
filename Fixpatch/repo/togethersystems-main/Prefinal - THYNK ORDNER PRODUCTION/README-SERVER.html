@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>README-SERVER</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>THYNK ORDNER - Server Setup & Deployment</h1>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+---
+
+<h2>🚀 SERVER STARTEN</h2>
+
+<h3>Linux/Mac:</h3>
+
+```bash
+cd "THYNK ORDNER PRODUCTION"
+chmod +x start-thynk-order-server.sh
+./start-thynk-order-server.sh
+```
+
+<h3>Windows (PowerShell):</h3>
+
+```powershell
+cd "THYNK ORDNER PRODUCTION"
+bash start-thynk-order-server.sh
+```
+
+<h3>Oder direkt mit Node.js:</h3>
+
+```bash
+node server.js
+```
+
+---
+
+<h2>📁 API ENDPOINTS</h2>
+
+<h3>Orders:</h3>
+- `POST /api/orders` - Neue Bestellung erstellen
+- `GET /api/orders` - Liste aller Bestellungen
+- `GET /api/orders/[orderId]` - Bestellung abrufen
+- `PUT /api/orders/[orderId]` - Bestellung aktualisieren
+- `DELETE /api/orders/[orderId]` - Bestellung löschen
+
+<h3>Order Items:</h3>
+- `GET /api/orders/[orderId]/items` - Items einer Bestellung
+- `POST /api/orders/[orderId]/items` - Item hinzufügen
+
+<h3>Payments:</h3>
+- `POST /api/payments/mollie/create` - Zahlung erstellen
+- `GET /api/payments/mollie/[paymentId]` - Zahlungsstatus abrufen
+- `POST /api/payments/mollie/webhook` - Webhook-Handler
+
+<h3>Notifications:</h3>
+- `POST /api/notifications/email` - E-Mail senden
+
+<h3>Health:</h3>
+- `GET /api/health` - System-Status
+
+---
+
+<h2>⚙️ KONFIGURATION</h2>
+
+<h3>Umgebungsvariablen:</h3>
+
+```bash
+export PORT=8787
+export TS_API_KEY=your-api-key-here
+export MOLLIE_API_KEY=your-mollie-key
+export SENDGRID_API_KEY=your-sendgrid-key
+export FROM_EMAIL=noreply@yoursite.com
+```
+
+<h3>Development Mode:</h3>
+
+Wenn keine API-Keys gesetzt sind, läuft das System im Development-Modus:
+- Keine API-Key-Prüfung
+- E-Mails werden nur geloggt (nicht gesendet)
+- Payment wird simuliert
+
+---
+
+<h2>📝 BEISPIEL-REQUESTS</h2>
+
+<h3>Bestellung erstellen:</h3>
+
+```bash
+curl -X POST http://localhost:8787/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "site_id": "site-123",
+    "items": [
+      {"product_id": "prod-1", "quantity": 2}
+    ],
+    "customer": {
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
+  }'
+```
+
+<h3>Health Check:</h3>
+
+```bash
+curl http://localhost:8787/api/health
+```
+
+---
+
+<h2>🔧 ANFORDERUNGEN</h2>
+
+- Node.js 18+
+- npm oder yarn
+- Cloudflare D1 Database (oder SQLite für lokal)
+- (Optional) Mollie API Key für Zahlungen
+- (Optional) SendGrid API Key für E-Mails
+
+---
+
+<h2>📞 KONTAKT</h2>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+</body>
+</html>

@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛠 Setup-Handbuch Portal | Kostenlose Produktion</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --bg-card-hover: #222230;
+            --accent-primary: #00d4aa;
+            --accent-secondary: #7c3aed;
+            --accent-warning: #f59e0b;
+            --accent-error: #ef4444;
+            --accent-info: #3b82f6;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border-color: #2d2d3a;
+            --gradient-1: linear-gradient(135deg, #00d4aa 0%, #7c3aed 100%);
+            --gradient-2: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+            --gradient-3: linear-gradient(135deg, #3b82f6 0%, #00d4aa 100%);
+            --shadow-glow: 0 0 40px rgba(0, 212, 170, 0.15);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            animation: bgPulse 20s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Grid Pattern Overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-card);
+            color: var(--accent-primary);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-1);
+            color: var(--bg-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: var(--bg-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-card-hover);
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            max-width: 800px;
+            margin: 3rem auto 0;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Block Sections */
+        .block-section {
+            padding: 4rem 0;
+            scroll-margin-top: 100px;
+        }
+
+        .block-section:nth-child(even) {
+            background: var(--bg-secondary);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-card);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: gap 0.3s ease;
+        }
+
+        .card-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* Feature Card Variants */
+        .card-purple .card-icon { background: var(--gradient-2); }
+        .card-blue .card-icon { background: var(--gradient-3); }
+
+        /* Command Blocks */
+        .command-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            position: relative;
+        }
+
+        .command-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .command-header .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .command-header .dot-red { background: #ff5f56; }
+        .command-header .dot-yellow { background: #ffbd2e; }
+        .command-header .dot-green { background: #27c93f; }
+
+        .command-line {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .command-prompt {
+            color: var(--accent-primary);
+        }
+
+        .command-text {
+            color: #e6edf3;
+        }
+
+        .command-comment {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .tool-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(5px);
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .tool-info h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .tool-info p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .tool-badge {
+            margin-left: auto;
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--accent-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .checklist li:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .checklist .check-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        .checklist .check-content h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .checklist .check-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Production Link */
+        .production-banner {
+            background: var(--gradient-1);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .production-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .production-banner h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            color: var(--bg-primary);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .production-banner p {
+            color: rgba(0, 0, 0, 0.7);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .production-banner .btn {
+            background: var(--bg-primary);
+            color: var(--accent-primary);
+            position: relative;
+        }
+
+        .production-banner .btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Workflow Diagram */
+        .workflow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding: 2rem 0;
+        }
+
+        .workflow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .workflow-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-icon:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.1);
+        }
+
+        .workflow-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .workflow-arrow {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .toc h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.75rem;
+            list-style: none;
+        }
+
+        .toc-list a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .toc-list a:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .toc-list .toc-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Advantages Box */
+        .advantages-box {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border: 1px solid var(--accent-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .advantages-box h4 {
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .advantages-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .advantages-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .advantages-list li::before {
+            content: '✓';
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Status Indicator */
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .status-online { background: var(--accent-primary); }
+        .status-offline { background: var(--text-muted); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding: 6rem 1rem 3rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .workflow {
+                flex-direction: column;
+            }
+            
+            .workflow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav, .bg-pattern, .grid-overlay {
+                display: none;
+            }
+            
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .card {
+                break-inside: avoid;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                🛠 Setup-Handbuch
+            </div>
+            <div class="nav-links">
+                <a href="#lokale-ki" class="nav-link">🤖 Lokale KI</a>
+                <a href="#apis" class="nav-link">🌐 APIs</a>
+                <a href="#coding" class="nav-link">💻 Coding</a>
+                <a href="#portal" class="nav-link">🚀 Portal</a>
+                <a href="#backend" class="nav-link">⚙️ Backend</a>
+                <a href="#automation" class="nav-link">🔄 Automation</a>
+                <a href="https://myopenai.github.io/togethersystems/index.html" target="_blank" class="nav-link active">📡 Live Portal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="status-dot status-online"></span>
+            Kostenlose Alternative zu ChatGPT & Cursor
+        </div>
+        <h1>🛠 Setup-Handbuch für <span>Dein Projekt</span></h1>
+        <p class="hero-subtitle">
+            Vollständige Routine zum Betreiben einer Portalseite mit allen Links und Verknüpfungen. 
+            100% kostenlos, lokal & zukunftssicher.
+        </p>
+        <div class="hero-buttons">
+            <a href="https://myopenai.github.io/togethersystems/index.html" target="_blank" class="btn btn-primary">
+                🚀 Live Produktion öffnen
+            </a>
+            <a href="#lokale-ki" class="btn btn-secondary">
+                📖 Handbuch starten
+            </a>
+        </div>
+        
+        <div class="quick-stats">
+            <div class="stat-item">
+                <div class="stat-value">0€</div>
+                <div class="stat-label">Kosten</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Offline-fähig</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Module</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">Erweiterbar</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <div class="container">
+        <div class="toc">
+            <h3>📑 Inhaltsverzeichnis</h3>
+            <ul class="toc-list">
+                <li><a href="#lokale-ki"><span class="toc-number">01</span> Lokale KI-Modelle (kostenlos, offline)</a></li>
+                <li><a href="#apis"><span class="toc-number">02</span> Kostenlose APIs für Online-Power</a></li>
+                <li><a href="#coding"><span class="toc-number">03</span> Kostenlose Coding-Assistenten</a></li>
+                <li><a href="#portal"><span class="toc-number">04</span> OSOSOS-Portal starten</a></li>
+                <li><a href="#backend"><span class="toc-number">05</span> API-Backend (optional, kostenlos)</a></li>
+                <li><a href="#automation"><span class="toc-number">06</span> Selbstheilung & Automatisierung</a></li>
+                <li><a href="#zukunft"><span class="toc-number">07</span> Zukunftssicherheit & Skalierung</a></li>
+                <li><a href="#fazit"><span class="toc-number">08</span> Fazit & Hybrid-Strategie</a></li>
+            </ul>
+        </div>
+
+        <!-- Workflow Overview -->
+        <div class="section-header">
+            <div class="section-number">ÜBERSICHT</div>
+            <h2 class="section-title">Workflow-Architektur</h2>
+            <p class="section-desc">Von lokal bis global - dein Weg zur kostenlosen Produktion</p>
+        </div>
+        
+        <div class="workflow">
+            <div class="workflow-step">
+                <div class="workflow-icon">🖥️</div>
+                <span class="workflow-label">Lokale KI<br>(Ollama)</span>
+            </div>
+            <span class="workflow-arrow">→</span>
+            <div class="workflow-step">
+                <div class="workflow-icon">💻</div>
+                <span class="workflow-label">Code Editor<br>(Codeium)</span>
+            </div>
+            <span class="workflow-arrow">→</span>
+            <div class="workflow-step">
+                <div class="workflow-icon">🌐</div>
+                <span class="workflow-label">Portal<br>(OSOSOS)</span>
+            </div>
+            <span class="workflow-arrow">→</span>
+            <div class="workflow-step">
+                <div class="workflow-icon">☁️</div>
+                <span class="workflow-label">Backend<br>(Supabase)</span>
+            </div>
+            <span class="workflow-arrow">→</span>
+            <div class="workflow-step">
+                <div class="workflow-icon">🚀</div>
+                <span class="workflow-label">Production<br>(Live)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 1: Lokale KI-Modelle -->
+    <section id="lokale-ki" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 01</div>
+                <h2 class="section-title">🤖 Lokale KI-Modelle</h2>
+                <p class="section-desc">Kostenlos, offline, deine Daten bleiben bei dir</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🦙</div>
+                    <h3 class="card-title">Ollama</h3>
+                    <p class="card-desc">
+                        Die Plattform für lokale KI-Modelle. Einmal installieren, alle Modelle nutzen.
+                    </p>
+                    <a href="https://ollama.com" target="_blank" class="card-link">
+                        ollama.com öffnen →
+                    </a>
+                </div>
+
+                <div class="card card-purple">
+                    <div class="card-icon">🧠</div>
+                    <h3 class="card-title">Llama 3.1</h3>
+                    <p class="card-desc">
+                        Multilingual, stark für Text. Das Flaggschiff von Meta für allgemeine Aufgaben.
+                    </p>
+                    <a href="#" class="card-link" onclick="copyCommand('ollama run llama3.1'); return false;">
+                        Befehl kopieren →
+                    </a>
+                </div>
+
+                <div class="card card-blue">
+                    <div class="card-icon">👨‍💻</div>
+                    <h3 class="card-title">DeepSeek Coder</h3>
+                    <p class="card-desc">
+                        Spezialisierter Coding-Assistent für Programmierung und Code-Reviews.
+                    </p>
+                    <a href="#" class="card-link" onclick="copyCommand('ollama run deepseek-coder'); return false;">
+                        Befehl kopieren →
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3 class="card-title">Mistral</h3>
+                    <p class="card-desc">
+                        Leicht und schnell. Perfekt für schnelle Antworten auf schwächerer Hardware.
+                    </p>
+                    <a href="#" class="card-link" onclick="copyCommand('ollama run mistral'); return false;">
+                        Befehl kopieren →
+                    </a>
+                </div>
+            </div>
+
+            <div class="command-block">
+                <button class="copy-btn" onclick="copyAllCommands()">📋 Alle kopieren</button>
+                <div class="command-header">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span>Terminal / PowerShell</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">ollama run llama3.1</span>
+                    <span class="command-comment"># Multilingual, stark für Text</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">ollama run deepseek-coder</span>
+                    <span class="command-comment"># Coding-Assistent</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">ollama run mistral</span>
+                    <span class="command-comment"># Leicht, schnell</span>
+                </div>
+            </div>
+
+            <div class="advantages-box">
+                <h4>✨ Vorteile</h4>
+                <ul class="advantages-list">
+                    <li>0€ Kosten - komplett kostenlos</li>
+                    <li>Läuft offline - keine Internetverbindung nötig</li>
+                    <li>Deine Daten bleiben bei dir - volle Privatsphäre</li>
+                    <li>Keine Ratelimits oder API-Beschränkungen</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block 2: Kostenlose APIs -->
+    <section id="apis" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 02</div>
+                <h2 class="section-title">🌐 Kostenlose APIs für Online-Power</h2>
+                <p class="section-desc">Optional für zusätzliche Leistung - nur bei Bedarf zahlen</p>
+            </div>
+
+            <div class="tools-grid">
+                <a href="https://console.groq.com" target="_blank" class="tool-item">
+                    <div class="tool-icon">⚡</div>
+                    <div class="tool-info">
+                        <h4>Groq API</h4>
+                        <p>Extrem schnell, kostenlos/kostengünstig</p>
+                    </div>
+                    <span class="tool-badge">SCHNELL</span>
+                </a>
+
+                <a href="https://together.ai" target="_blank" class="tool-item">
+                    <div class="tool-icon">🤝</div>
+                    <div class="tool-info">
+                        <h4>Together.ai</h4>
+                        <p>Viele Modelle, Pay-per-Use</p>
+                    </div>
+                    <span class="tool-badge">FLEXIBEL</span>
+                </a>
+
+                <a href="https://openrouter.ai" target="_blank" class="tool-item">
+                    <div class="tool-icon">🔀</div>
+                    <div class="tool-info">
+                        <h4>OpenRouter</h4>
+                        <p>Zugang zu allen Modellen über eine API</p>
+                    </div>
+                    <span class="tool-badge">UNIVERSAL</span>
+                </a>
+
+                <a href="https://huggingface.co/inference-api" target="_blank" class="tool-item">
+                    <div class="tool-icon">🤗</div>
+                    <div class="tool-info">
+                        <h4>Hugging Face</h4>
+                        <p>Inference API, viele kostenlose Modelle</p>
+                    </div>
+                    <span class="tool-badge">OPEN SOURCE</span>
+                </a>
+            </div>
+
+            <div class="advantages-box">
+                <h4>✨ Vorteile</h4>
+                <ul class="advantages-list">
+                    <li>Keine Fixkosten - nur bei Bedarf zahlen</li>
+                    <li>Optionaler Verbrauch - nutze wenn du Power brauchst</li>
+                    <li>Schnelle Inferenz - bis zu 10x schneller als OpenAI</li>
+                    <li>Viele Modelle zur Auswahl</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block 3: Coding-Assistenten -->
+    <section id="coding" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 03</div>
+                <h2 class="section-title">💻 Kostenlose Coding-Assistenten</h2>
+                <p class="section-desc">Entwickeln, refactoren und debuggen - ohne Gebühren</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🔌</div>
+                    <h3 class="card-title">Codeium</h3>
+                    <p class="card-desc">
+                        VSCode-Plugin, komplett gratis. Autocomplete, Chat und Refactoring in deiner IDE.
+                    </p>
+                    <a href="https://codeium.com" target="_blank" class="card-link">
+                        codeium.com öffnen →
+                    </a>
+                </div>
+
+                <div class="card card-purple">
+                    <div class="card-icon">🛠️</div>
+                    <h3 class="card-title">Aider</h3>
+                    <p class="card-desc">
+                        Open-Source CLI für AI-gestützte Programmierung. Funktioniert mit lokalen Modellen.
+                    </p>
+                    <a href="https://aider.chat" target="_blank" class="card-link">
+                        aider.chat öffnen →
+                    </a>
+                </div>
+
+                <div class="card card-blue">
+                    <div class="card-icon">🏄</div>
+                    <h3 class="card-title">Windsurf IDE</h3>
+                    <p class="card-desc">
+                        Alternative zu Cursor, günstiger. Vollständige IDE mit AI-Integration.
+                    </p>
+                    <a href="https://www.codeium.com/windsurf" target="_blank" class="card-link">
+                        Windsurf herunterladen →
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🐙</div>
+                    <h3 class="card-title">GitHub Copilot (Alternativen)</h3>
+                    <p class="card-desc">
+                        Tabby, CodeLlama + Continue.dev - Open-Source Alternativen.
+                    </p>
+                    <a href="https://continue.dev" target="_blank" class="card-link">
+                        continue.dev öffnen →
+                    </a>
+                </div>
+            </div>
+
+            <div class="command-block">
+                <button class="copy-btn" onclick="copyCommand('pip install aider-chat')">📋 Kopieren</button>
+                <div class="command-header">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span>Aider Installation</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">pip install aider-chat</span>
+                    <span class="command-comment"># Installation</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">aider --model ollama/llama3.1</span>
+                    <span class="command-comment"># Mit lokalem Modell starten</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block 4: OSOSOS Portal -->
+    <section id="portal" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 04</div>
+                <h2 class="section-title">🚀 OSOSOS-Portal starten</h2>
+                <p class="section-desc">Dein zentrales Portal - offline, keine Registrierung</p>
+            </div>
+
+            <div class="production-banner">
+                <h2>📡 Live Produktion</h2>
+                <p>OSTOS ∞ Branding Universe - Arbeits-Portal vollständig online</p>
+                <a href="https://myopenai.github.io/togethersystems/index.html" target="_blank" class="btn">
+                    🌐 Portal öffnen
+                </a>
+            </div>
+
+            <ul class="checklist">
+                <li>
+                    <span class="check-icon">1</span>
+                    <div class="check-content">
+                        <h4>HTML/PWA-Datei nutzen</h4>
+                        <p>Öffne die Datei lokal → Portal, Manifest, OS, Fenster-Manager, Taskleiste laufen sofort.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="check-icon">2</span>
+                    <div class="check-content">
+                        <h4>Alles offline, keine Registrierung</h4>
+                        <p>Das Portal funktioniert komplett ohne Internet nach dem ersten Laden.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="check-icon">3</span>
+                    <div class="check-content">
+                        <h4>Survey-Einbettung</h4>
+                        <p>Ersetze die SmartSurvey-ID im iFrame für deine eigenen Umfragen.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="check-icon">4</span>
+                    <div class="check-content">
+                        <h4>Telbank konfigurieren</h4>
+                        <p>Ersetze die Skrill-Platzhalter mit deinem echten Zahlungslink.</p>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="tools-grid" style="margin-top: 2rem;">
+                <a href="https://myopenai.github.io/togethersystems/index.html#portal" target="_blank" class="tool-item">
+                    <div class="tool-icon">🏠</div>
+                    <div class="tool-info">
+                        <h4>Portal</h4>
+                        <p>Haupt-Dashboard</p>
+                    </div>
+                </a>
+                <a href="https://myopenai.github.io/togethersystems/index.html#manifest" target="_blank" class="tool-item">
+                    <div class="tool-icon">📜</div>
+                    <div class="tool-info">
+                        <h4>Manifest</h4>
+                        <p>Forum & Dokumentation</p>
+                    </div>
+                </a>
+                <a href="https://myopenai.github.io/togethersystems/index.html#legal" target="_blank" class="tool-item">
+                    <div class="tool-icon">⚖️</div>
+                    <div class="tool-info">
+                        <h4>Legal Hub</h4>
+                        <p>Rechtliche Dokumente</p>
+                    </div>
+                </a>
+                <a href="https://myopenai.github.io/togethersystems/index.html#telbank" target="_blank" class="tool-item">
+                    <div class="tool-icon">💰</div>
+                    <div class="tool-info">
+                        <h4>Telbank</h4>
+                        <p>Zahlungsabwicklung</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block 5: API Backend -->
+    <section id="backend" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 05</div>
+                <h2 class="section-title">⚙️ API-Backend (optional, kostenlos)</h2>
+                <p class="section-desc">Sofort ein Backend, ohne Kosten - skaliere später wenn nötig</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🔷</div>
+                    <h3 class="card-title">Supabase Free Tier</h3>
+                    <p class="card-desc">
+                        PostgreSQL, Auth, Storage, Realtime - alles kostenlos. Perfekt für Prototypen.
+                    </p>
+                    <a href="https://supabase.com" target="_blank" class="card-link">
+                        supabase.com öffnen →
+                    </a>
+                </div>
+
+                <div class="card card-purple">
+                    <div class="card-icon">🔥</div>
+                    <h3 class="card-title">Firebase Free Tier</h3>
+                    <p class="card-desc">
+                        Firestore, Auth, Hosting, Functions - Google's Backend-as-a-Service.
+                    </p>
+                    <a href="https://firebase.google.com" target="_blank" class="card-link">
+                        firebase.google.com →
+                    </a>
+                </div>
+
+                <div class="card card-blue">
+                    <div class="card-icon">🌊</div>
+                    <h3 class="card-title">Vercel Edge</h3>
+                    <p class="card-desc">
+                        Serverless Functions, Edge Computing - schnelle API-Endpunkte.
+                    </p>
+                    <a href="https://vercel.com" target="_blank" class="card-link">
+                        vercel.com öffnen →
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">📦</div>
+                    <h3 class="card-title">Cloudflare Workers</h3>
+                    <p class="card-desc">
+                        Edge Functions, KV Storage, D1 Database - 100k Requests/Tag kostenlos.
+                    </p>
+                    <a href="https://workers.cloudflare.com" target="_blank" class="card-link">
+                        workers.cloudflare.com →
+                    </a>
+                </div>
+            </div>
+
+            <div class="command-block">
+                <div class="command-header">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                    <span>OpenAPI Spec - Endpoints</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">GET</span>
+                    <span class="command-text">/api/manifest</span>
+                    <span class="command-comment"># Manifest-Daten</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">POST</span>
+                    <span class="command-text">/api/voucher</span>
+                    <span class="command-comment"># Voucher erstellen</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">GET</span>
+                    <span class="command-text">/api/telbank/balance</span>
+                    <span class="command-comment"># Kontostand</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">POST</span>
+                    <span class="command-text">/api/legal/imprint</span>
+                    <span class="command-comment"># Legal-Eintrag</span>
+                </div>
+                <div class="command-line">
+                    <span class="command-prompt">GET</span>
+                    <span class="command-text">/api/rooms/:id</span>
+                    <span class="command-comment"># Wabenraum-Daten</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block 6: Selbstheilung & Automatisierung -->
+    <section id="automation" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 06</div>
+                <h2 class="section-title">🔄 Selbstheilung & Automatisierung</h2>
+                <p class="section-desc">Programme installieren sich selbst, Ordner erweitern sich automatisch</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">📋</div>
+                    <h3 class="card-title">Registry</h3>
+                    <p class="card-desc">
+                        Programme werden automatisch installiert, Ordner erweitern sich selbst. Plug & Play.
+                    </p>
+                </div>
+
+                <div class="card card-purple">
+                    <div class="card-icon">🪟</div>
+                    <h3 class="card-title">Fenster-Manager</h3>
+                    <p class="card-desc">
+                        Minimieren/Maximieren/Taskleiste → alles automatisch. Wie ein echtes OS.
+                    </p>
+                </div>
+
+                <div class="card card-blue">
+                    <div class="card-icon">📝</div>
+                    <h3 class="card-title">Audit-Logs</h3>
+                    <p class="card-desc">
+                        Jeder Imprint mit Zeitstempel & Hash. Vollständige Nachverfolgbarkeit.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">Survey-System</h3>
+                    <p class="card-desc">
+                        User-Feedback wird sofort eingebettet, keine externe Anmeldung nötig.
+                    </p>
+                </div>
+            </div>
+
+            <div class="advantages-box">
+                <h4>🔧 Automatisierungs-Features</h4>
+                <ul class="advantages-list">
+                    <li>Self-Healing: Fehlerhafte Komponenten werden automatisch repariert</li>
+                    <li>Auto-Expand: Ordnerstrukturen wachsen dynamisch</li>
+                    <li>Hot-Reload: Änderungen werden sofort sichtbar</li>
+                    <li>Offline-First: Alles funktioniert ohne Internet</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block 7: Zukunftssicherheit -->
+    <section id="zukunft" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 07</div>
+                <h2 class="section-title">🚀 Zukunftssicherheit</h2>
+                <p class="section-desc">Skalierbar, multilingual, erweiterbar, kostenfrei</p>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-item" style="cursor: default;">
+                    <div class="tool-icon">📈</div>
+                    <div class="tool-info">
+                        <h4>Skalierbar</h4>
+                        <p>Von lokal → Cloud → global Mesh</p>
+                    </div>
+                </div>
+
+                <div class="tool-item" style="cursor: default;">
+                    <div class="tool-icon">🌍</div>
+                    <div class="tool-info">
+                        <h4>Multilingual</h4>
+                        <p>Llama 3.1 & DeepSeek verstehen viele Sprachen</p>
+                    </div>
+                </div>
+
+                <div class="tool-item" style="cursor: default;">
+                    <div class="tool-icon">🔌</div>
+                    <div class="tool-info">
+                        <h4>Erweiterbar</h4>
+                        <p>Survey, Telbank, Business-Module, P2P-Sync</p>
+                    </div>
+                </div>
+
+                <div class="tool-item" style="cursor: default;">
+                    <div class="tool-icon">💸</div>
+                    <div class="tool-info">
+                        <h4>Kostenfrei</h4>
+                        <p>Lokal + Free-Tiers = 0€ Kosten</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Block 8: Fazit -->
+    <section id="fazit" class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">BLOCK 08</div>
+                <h2 class="section-title">📌 Fazit: Hybrid-Strategie</h2>
+                <p class="section-desc">Das beste Vorgehen für kostenlose, zukunftssichere Produktion</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🏠</div>
+                    <h3 class="card-title">Lokal mit Ollama + OSOSOS</h3>
+                    <p class="card-desc">
+                        <strong>100% kostenlos.</strong> Deine Daten, deine Kontrolle, keine Abhängigkeiten.
+                    </p>
+                </div>
+
+                <div class="card card-purple">
+                    <div class="card-icon">☁️</div>
+                    <h3 class="card-title">Online mit Groq / Supabase</h3>
+                    <p class="card-desc">
+                        <strong>Optional, ohne Fixkosten.</strong> Nutze Cloud-Power nur wenn du sie brauchst.
+                    </p>
+                </div>
+
+                <div class="card card-blue">
+                    <div class="card-icon">💻</div>
+                    <h3 class="card-title">Coding mit Codeium/Aider</h3>
+                    <p class="card-desc">
+                        <strong>Gratis.</strong> Professionelle Entwicklung ohne Abo-Modelle.
+                    </p>
+                </div>
+            </div>
+
+            <div class="production-banner" style="margin-top: 3rem;">
+                <h2>🎯 Starte jetzt mit der Produktion</h2>
+                <p>Alle Tools, alle Links, alle Verbindungen - bereit für dein Projekt</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://myopenai.github.io/togethersystems/index.html" target="_blank" class="btn">
+                        🚀 Live Portal
+                    </a>
+                    <a href="https://ollama.com" target="_blank" class="btn" style="background: var(--bg-secondary); color: var(--text-primary);">
+                        🦙 Ollama installieren
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Links Summary -->
+    <section class="block-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-number">REFERENZ</div>
+                <h2 class="section-title">🔗 Alle Links auf einen Blick</h2>
+            </div>
+
+            <div class="tools-grid">
+                <!-- Produktion -->
+                <a href="https://myopenai.github.io/togethersystems/index.html" target="_blank" class="tool-item">
+                    <div class="tool-icon">📡</div>
+                    <div class="tool-info">
+                        <h4>OSTOS Live Portal</h4>
+                        <p>Produktion</p>
+                    </div>
+                    <span class="tool-badge">LIVE</span>
+                </a>
+
+                <!-- Lokale KI -->
+                <a href="https://ollama.com" target="_blank" class="tool-item">
+                    <div class="tool-icon">🦙</div>
+                    <div class="tool-info">
+                        <h4>Ollama</h4>
+                        <p>Lokale KI-Plattform</p>
+                    </div>
+                </a>
+
+                <!-- APIs -->
+                <a href="https://console.groq.com" target="_blank" class="tool-item">
+                    <div class="tool-icon">⚡</div>
+                    <div class="tool-info">
+                        <h4>Groq Console</h4>
+                        <p>Schnelle API</p>
+                    </div>
+                </a>
+
+                <a href="https://together.ai" target="_blank" class="tool-item">
+                    <div class="tool-icon">🤝</div>
+                    <div class="tool-info">
+                        <h4>Together.ai</h4>
+                        <p>Multi-Model API</p>
+                    </div>
+                </a>
+
+                <a href="https://openrouter.ai" target="_blank" class="tool-item">
+                    <div class="tool-icon">🔀</div>
+                    <div class="tool-info">
+                        <h4>OpenRouter</h4>
+                        <p>Universal API</p>
+                    </div>
+                </a>
+
+                <!-- Coding -->
+                <a href="https://codeium.com" target="_blank" class="tool-item">
+                    <div class="tool-icon">🔌</div>
+                    <div class="tool-info">
+                        <h4>Codeium</h4>
+                        <p>VSCode Plugin</p>
+                    </div>
+                </a>
+
+                <a href="https://aider.chat" target="_blank" class="tool-item">
+                    <div class="tool-icon">🛠️</div>
+                    <div class="tool-info">
+                        <h4>Aider</h4>
+                        <p>CLI Assistent</p>
+                    </div>
+                </a>
+
+                <a href="https://www.codeium.com/windsurf" target="_blank" class="tool-item">
+                    <div class="tool-icon">🏄</div>
+                    <div class="tool-info">
+                        <h4>Windsurf IDE</h4>
+                        <p>Cursor Alternative</p>
+                    </div>
+                </a>
+
+                <a href="https://continue.dev" target="_blank" class="tool-item">
+                    <div class="tool-icon">🐙</div>
+                    <div class="tool-info">
+                        <h4>Continue.dev</h4>
+                        <p>Open Source Copilot</p>
+                    </div>
+                </a>
+
+                <!-- Backend -->
+                <a href="https://supabase.com" target="_blank" class="tool-item">
+                    <div class="tool-icon">🔷</div>
+                    <div class="tool-info">
+                        <h4>Supabase</h4>
+                        <p>Backend Free Tier</p>
+                    </div>
+                </a>
+
+                <a href="https://firebase.google.com" target="_blank" class="tool-item">
+                    <div class="tool-icon">🔥</div>
+                    <div class="tool-info">
+                        <h4>Firebase</h4>
+                        <p>Google Backend</p>
+                    </div>
+                </a>
+
+                <a href="https://vercel.com" target="_blank" class="tool-item">
+                    <div class="tool-icon">🌊</div>
+                    <div class="tool-info">
+                        <h4>Vercel</h4>
+                        <p>Edge Deployment</p>
+                    </div>
+                </a>
+
+                <!-- Forum -->
+                <a href="https://tel1.boards.net/" target="_blank" class="tool-item">
+                    <div class="tool-icon">💬</div>
+                    <div class="tool-info">
+                        <h4>TEL1 Forum</h4>
+                        <p>Community & Support</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">🛠 Setup-Handbuch Portal</div>
+        <p>
+            T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT<br>
+            © 2025 R.D.TEL-DR.TEL | Kostenlose Alternative zu ChatGPT & Cursor
+        </p>
+        <div class="footer-links">
+            <a href="https://myopenai.github.io/togethersystems/index.html" target="_blank">Live Portal</a>
+            <a href="https://tel1.boards.net/" target="_blank">Forum</a>
+            <a href="https://orcid.org/0009-0003-1328-2430" target="_blank">ORCID</a>
+            <a href="#lokale-ki">Handbuch</a>
+        </div>
+    </footer>
+
+    <script>
+        // Copy Command Function
+        function copyCommand(command) {
+            navigator.clipboard.writeText(command).then(() => {
+                showNotification('📋 Kopiert: ' + command);
+            });
+        }
+
+        // Copy All Commands
+        function copyAllCommands() {
+            const commands = `ollama run llama3.1
+ollama run deepseek-coder
+ollama run mistral`;
+            navigator.clipboard.writeText(commands).then(() => {
+                showNotification('📋 Alle Befehle kopiert!');
+            });
+        }
+
+        // Notification
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: var(--accent-primary);
+                color: var(--bg-primary);
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                font-weight: 600;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+            `;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notif.remove(), 300);
+            }, 2000);
+        }
+
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Active nav link on scroll
+        const sections = document.querySelectorAll('.block-section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Print stats
+        console.log(`
+🛠 Setup-Handbuch Portal geladen
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📦 Module: 8 Blöcke
+🔗 Links: 15+ Tools
+💰 Kosten: 0€
+🌐 Status: Offline-fähig
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Produktion: https://myopenai.github.io/togethersystems/index.html
+        `);
+    </script>
+</body>
+</html>
+
+

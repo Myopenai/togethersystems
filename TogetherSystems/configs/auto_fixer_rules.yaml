@@ -1,0 +1,167 @@
+# ============================================================================
+# AUTO-FIXER RULES
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Auto-Fixer-Regeln und Verifikation
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Auto-Fixer Rules"
+branding: "T,.&T,,.&T,,,.T."
+
+# ============================================================================
+# STRATEGIES
+# ============================================================================
+
+strategies:
+  syntax:
+    match:
+      - "SyntaxError"
+      - "TypeError"
+      - "MissingSemicolon"
+      - "UndefinedVariable"
+      - "unexpected token"
+      - "parse error"
+    actions:
+      - apply_linter_fix
+      - infer_types
+      - insert_required_imports
+    fixer: "syntax-fixer"
+    model: "DeepSeek Coder"
+    provider: "OpenRouter"
+    auto_fix: true
+  
+  runtime:
+    match:
+      - "NullReference"
+      - "Timeout"
+      - "UnhandledPromise"
+      - "runtime error"
+      - "exception"
+      - "crash"
+    actions:
+      - guard_clauses
+      - retry_with_backoff
+      - wrap_try_catch
+    fixer: "self-healing"
+    model: "GPT-4"
+    provider: "OpenAI"
+    auto_fix: true
+  
+  ports:
+    match:
+      - "EADDRINUSE"
+      - "BindError"
+      - "PortConflict"
+      - "port.*already in use"
+      - "cannot bind"
+    actions:
+      - allocate_from_registry
+      - kill_conflicting_process
+      - rebind
+    fixer: "self-healing"
+    model: "GPT-4"
+    provider: "OpenAI"
+    auto_fix: true
+  
+  accessibility:
+    match:
+      - "ContrastViolation"
+      - "MissingARIA"
+      - "FocusableError"
+      - "accessibility"
+      - "aria"
+      - "contrast"
+    actions:
+      - auto_contrast_adjust
+      - inject_aria_roles
+      - repair_focus_order
+    fixer: "accessibility-fixer"
+    model: "Claude 3.5 Sonnet"
+    provider: "Anthropic"
+    auto_fix: true
+  
+  playwright:
+    match:
+      - "TestFail"
+      - "SelectorNotFound"
+      - "TimingIssue"
+    actions:
+      - stabilize_selectors
+      - wait_for_state
+      - add_test_id
+    fixer: "test-fixer"
+    model: "DeepSeek Coder"
+    provider: "OpenRouter"
+    auto_fix: true
+  
+  policy:
+    match:
+      - "policy"
+      - "compliance"
+      - "standard"
+    actions:
+      - apply_policy_fix
+      - update_compliance
+    fixer: "policy-fixer"
+    model: "GPT-4"
+    provider: "OpenAI"
+    auto_fix: true
+  
+  performance:
+    match:
+      - "performance"
+      - "slow"
+      - "timeout"
+    actions:
+      - optimize_code
+      - cache_results
+      - lazy_load
+    fixer: "performance-fixer"
+    model: "Claude 3.5 Sonnet"
+    provider: "Anthropic"
+    auto_fix: false
+
+# ============================================================================
+# VERIFICATION
+# ============================================================================
+
+verification:
+  unit_tests: required
+  e2e_playwright: required
+  accessibility: required
+  perf_budgets: required
+  security_scan: required
+  rollback_on_fail: true
+  
+  gates:
+    - name: "unit_tests_pass"
+      required: true
+      fail_fast: true
+    
+    - name: "e2e_tests_pass"
+      required: true
+      fail_fast: true
+    
+    - name: "accessibility_compliance"
+      required: true
+      level: "WCAG AA"
+      fail_fast: true
+    
+    - name: "perf_budgets_met"
+      required: true
+      fail_fast: false
+    
+    - name: "security_scan_pass"
+      required: true
+      fail_fast: true
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T20:37:00Z"
+  updated: "2025-01-15T20:37:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

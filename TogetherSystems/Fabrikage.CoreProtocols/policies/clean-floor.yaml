@@ -1,0 +1,210 @@
+# ============================================================================
+# CLEAN FLOOR POLICY
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Clean-Floor-Policy - Werkflur immer sauber, TÜV/APK abgenommen
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Clean Floor Policy"
+branding: "T,.&T,,.&T,,,.T."
+enforce: true
+fail_fast: true
+
+# ============================================================================
+# PRINZIPIEN
+# ============================================================================
+
+principles:
+  - name: "aktiver_inhalt"
+    description: "T,. Eindeutig gültig, produktiv, auditierbar"
+    status: "active"
+    visibility: "default"
+  
+  - name: "historischer_inhalt"
+    description: "T,. Erhalten, aber klar als 'Vergangenheit' markiert"
+    status: ["deprecated", "superseded", "archived"]
+    visibility: "filtered"
+    marking: true
+  
+  - name: "müllvermeidung"
+    description: "T,. Keine unauffindbaren Artefakte; alles hat Pfad, Hash, Status"
+    required: ["path", "hash", "status"]
+    registry: true
+
+# ============================================================================
+# STATUS-KONVENTIONEN
+# ============================================================================
+
+status_conventions:
+  active:
+    description: "T,. Aktuell gültig, produktiv"
+    symbol: ""
+    frontmatter: "status: active"
+    visibility: "default"
+    editable: true
+  
+  deprecated:
+    description: "T,. Veraltet, aber noch vorhanden"
+    symbol: "#Vergangenheit:"
+    frontmatter: "status: deprecated"
+    visibility: "filtered"
+    editable: false
+    requires: "replaced_by"
+  
+  superseded:
+    description: "T,. Ersetzt durch neues Artefakt"
+    symbol: "↦ Ersetzt durch:"
+    frontmatter: "status: superseded"
+    visibility: "filtered"
+    editable: false
+    requires: "replaced_by"
+  
+  archived:
+    description: "T,. Archiviert, nur Historie"
+    symbol: "⟂"
+    frontmatter: "status: archived"
+    visibility: "history_only"
+    editable: false
+    final: true
+
+# ============================================================================
+# FRONTMATTER-REQUIREMENTS
+# ============================================================================
+
+frontmatter_required:
+  - field: "status"
+    required: true
+    values: ["active", "deprecated", "superseded", "archived"]
+  
+  - field: "epoch"
+    required: true
+    format: "ISO 8601"
+    example: "2025-01-15T20:37:00Z"
+  
+  - field: "ref"
+    required: true
+    format: "path#anchor"
+    example: "Docs/API.md#build"
+  
+  - field: "hash"
+    required: true
+    format: "sha256"
+    example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+# ============================================================================
+# TITEL-MARKIERUNG
+# ============================================================================
+
+title_marking:
+  deprecated:
+    prefix: "#Vergangenheit:"
+    suffix: ""
+    example: "#Vergangenheit: Alte API-Dokumentation"
+  
+  superseded:
+    prefix: "↦ Ersetzt durch:"
+    suffix: ""
+    example: "↦ Ersetzt durch: Docs/API.md#build"
+  
+  archived:
+    prefix: "⟂"
+    suffix: "⟂"
+    example: "⟂ Archivierte Dokumentation ⟂"
+
+# ============================================================================
+# PFAD-REGELN
+# ============================================================================
+
+path_rules:
+  active:
+    location: "regulärer Modulpfad"
+    examples: ["Docs/", "Pipelines/", "Policies/"]
+    moveable: true
+  
+  deprecated:
+    location: "gleicher Pfad, Status-Markierung"
+    examples: ["Docs/#Vergangenheit:API.md"]
+    moveable: false
+  
+  superseded:
+    location: "gleicher Pfad, Ersetzungs-Link"
+    examples: ["Docs/↦ Ersetzt durch:API.md"]
+    moveable: false
+  
+  archived:
+    location: "Archive/YYYY/MM/<module>/<file>@<hash>.md"
+    examples: ["Archive/2025/01/Docs/API.md@5a1c...d3.md"]
+    moveable: true
+    hard_archive: true
+
+# ============================================================================
+# AUTOMATISIERTE PFLEGE
+# ============================================================================
+
+automated_maintenance:
+  pre_commit_hook:
+    enabled: true
+    checks:
+      - frontmatter_consistency
+      - title_symbol_consistency
+      - replaced_by_validation
+      - registry_entry_required
+  
+  status_lint:
+    enabled: true
+    path: "Fabrikage.CoreProtocols/tools/status-lint.js"
+    frequency: "on-commit"
+  
+  clean_floor_check:
+    enabled: true
+    checks:
+      - no_floating_files
+      - all_artifacts_registered
+      - all_links_valid
+      - no_orphaned_deprecated
+
+# ============================================================================
+# REGISTRY-REQUIREMENTS
+# ============================================================================
+
+registry_requirements:
+  required_fields:
+    - id
+    - type
+    - module
+    - path
+    - hash
+    - status
+    - created_at
+  
+  optional_fields:
+    - anchor
+    - replaces
+    - replaced_by
+    - epoch
+    - ref
+
+# ============================================================================
+# GATES
+# ============================================================================
+
+gates:
+  - name: "clean_floor_compliance"
+    required: true
+    fail_fast: true
+    checks:
+      - all_files_have_status
+      - all_artifacts_registered
+      - no_unmarked_removals
+      - all_links_valid
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T20:37:00Z"
+  updated: "2025-01-15T20:37:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

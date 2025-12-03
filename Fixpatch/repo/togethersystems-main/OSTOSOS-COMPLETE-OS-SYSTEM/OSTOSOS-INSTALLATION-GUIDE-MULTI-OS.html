@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSTOSOS-INSTALLATION-GUIDE-MULTI-OS</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>T,. OSTOSOS - Multi-OS Installation Guide</h1>
+
+<strong>VERSION:</strong> 1.0.0-MULTI-OS  
+<strong>BRANDING:</strong> T,.&T,,.&T,,,.(C)TEL1.NL  
+<strong>DATUM:</strong> 2025-01-15
+
+---
+
+<h2>🎯 Übersicht</h2>
+
+OSTOSOS kann auf verschiedene Weise installiert werden:
+
+1. <strong>Parallel-Installation</strong> - Neben bestehenden Systemen (Windows, macOS, Linux)
+2. <strong>Standalone-Installation</strong> - Als einziges Betriebssystem
+3. <strong>Virtual Machine</strong> - In einer VM (VMware, VirtualBox, Hyper-V)
+4. <strong>Container-Installation</strong> - Als Container (Docker, Podman, LXC)
+5. <strong>Boot-Image</strong> - Direktes Boot-Image für Geräte ohne OS
+6. <strong>Progressive Web App</strong> - Als PWA im Browser
+
+---
+
+<h2>🔄 Parallel-Installation (Empfohlen)</h2>
+
+<h3>Windows</h3>
+
+<h4>Voraussetzungen:</h4>
+- Windows 10/11 (64-bit)
+- Mindestens 10 GB freier Speicherplatz
+- Administrator-Rechte
+
+<h4>Installation:</h4>
+1. Öffne `OSTOSOS-INSTALLER-MULTI-OS.html`
+2. Wähle "Parallel-Installation"
+3. Wähle Installations-Pfad (z.B. `C:\OSTOSOS`)
+4. Wähle Partitions-Größe (Standard: 10 GB)
+5. Boot-Manager: "Windows Boot Manager" (automatisch)
+6. Starte Installation
+
+<h4>Boot-Manager:</h4>
+OSTOSOS wird in den Windows Boot Manager integriert. Beim Start kannst du zwischen Windows und OSTOSOS wählen.
+
+<h4>Deinstallation:</h4>
+1. Öffne Windows Boot Manager Konfiguration
+2. Entferne OSTOSOS-Eintrag
+3. Lösche `C:\OSTOSOS` Ordner
+
+---
+
+<h3>macOS</h3>
+
+<h4>Voraussetzungen:</h4>
+- macOS 10.15 oder neuer
+- Mindestens 10 GB freier Speicherplatz
+- Administrator-Rechte
+
+<h4>Installation:</h4>
+1. Öffne `OSTOSOS-INSTALLER-MULTI-OS.html`
+2. Wähle "Parallel-Installation"
+3. Wähle Installations-Pfad (z.B. `/Applications/OSTOSOS`)
+4. Wähle Partitions-Größe (Standard: 10 GB)
+5. Boot-Manager: "rEFInd" oder "OSTOSOS Boot Manager"
+6. Starte Installation
+
+<h4>Boot-Manager:</h4>
+OSTOSOS wird in rEFInd oder den OSTOSOS Boot Manager integriert. Beim Start kannst du zwischen macOS und OSTOSOS wählen.
+
+---
+
+<h3>Linux</h3>
+
+<h4>Voraussetzungen:</h4>
+- Linux-Distribution (Ubuntu, Debian, Fedora, etc.)
+- Mindestens 10 GB freier Speicherplatz
+- Root-Rechte
+
+<h4>Installation:</h4>
+1. Öffne `OSTOSOS-INSTALLER-MULTI-OS.html`
+2. Wähle "Parallel-Installation"
+3. Wähle Installations-Pfad (z.B. `/opt/ostosos`)
+4. Wähle Partitions-Größe (Standard: 10 GB)
+5. Boot-Manager: "GRUB" (automatisch)
+6. Starte Installation
+
+<h4>Boot-Manager:</h4>
+OSTOSOS wird in GRUB integriert. Beim Start kannst du zwischen Linux und OSTOSOS wählen.
+
+<h4>GRUB-Konfiguration:</h4>
+```bash
+<h1>/etc/grub.d/40_custom</h1>
+menuentry "OSTOSOS" {
+    set root=(hd0,1)
+    chainloader +1
+}
+sudo update-grub
+```
+
+---
+
+<h2>🖥️ Standalone-Installation (Erweitert)</h2>
+
+<h3>Voraussetzungen:</h3>
+- Gerät ohne Betriebssystem oder
+- Bereit, vorhandenes OS zu ersetzen
+- Mindestens 20 GB Speicherplatz
+- Boot-fähiges Medium (USB, CD, etc.)
+
+<h3>Installation:</h3>
+1. Erstelle Boot-Medium (ISO/IMG)
+2. Boote vom Medium
+3. Wähle "Standalone-Installation"
+4. Wähle Festplatte/Partition
+5. Starte Installation
+
+<h3>⚠️ Warnung:</h3>
+<strong>Standalone-Installation ersetzt das vorhandene Betriebssystem!</strong> Alle Daten auf der gewählten Partition werden gelöscht. Stelle sicher, dass du ein Backup erstellt hast.
+
+---
+
+<h2>💻 Virtual Machine Installation</h2>
+
+<h3>VMware</h3>
+
+1. Erstelle neue VM
+2. Wähle "OSTOSOS" als Betriebssystem
+3. Wähle ISO-Datei: `OSTOSOS-VM.iso`
+4. Starte VM
+
+<h3>VirtualBox</h3>
+
+1. Erstelle neue VM
+2. Typ: "Linux" → "Other Linux (64-bit)"
+3. Wähle ISO-Datei: `OSTOSOS-VM.iso`
+4. Starte VM
+
+<h3>Hyper-V</h3>
+
+1. Erstelle neue VM
+2. Generation: Generation 2
+3. Wähle ISO-Datei: `OSTOSOS-VM.iso`
+4. Starte VM
+
+---
+
+<h2>📦 Container-Installation</h2>
+
+<h3>Docker</h3>
+
+```bash
+docker pull ostosos/ostosos:latest
+docker run -d --name ostosos -p 8080:8080 ostosos/ostosos:latest
+```
+
+<h3>Podman</h3>
+
+```bash
+podman pull ostosos/ostosos:latest
+podman run -d --name ostosos -p 8080:8080 ostosos/ostosos:latest
+```
+
+<h3>LXC</h3>
+
+```bash
+lxc launch images:ostosos/ostosos ostosos
+```
+
+---
+
+<h2>💾 Boot-Image Installation (Ohne OS)</h2>
+
+<h3>Für Geräte ohne Betriebssystem:</h3>
+
+<h4>1. Direkt als Boot-Image</h4>
+
+OSTOSOS kann als ISO/IMG oder Flash-Image bereitgestellt werden:
+- Dieses Image enthält Kernel, Bootloader und alle Module in einer einzigen Datei
+- Der User schreibt das Image auf den Speicherchip (z.B. SD-Karte, eMMC, SSD)
+- Beim Einschalten bootet das Gerät direkt in OSTOSOS, ohne ein anderes OS
+
+<strong>Vergleichbar mit:</strong> Linux-Distributionen, die direkt auf Hardware laufen
+
+<h4>2. Firmware-Flash</h4>
+
+Für Geräte ohne OS, aber mit Firmware-Loader (z.B. Router, IoT-Boards):
+- OSTOSOS wird als Firmware-Binary kompiliert und über den Loader geflasht
+- Danach ersetzt es die alte Firmware und läuft als einziges System
+
+<strong>Beispiel:</strong> Raspberry Pi oder ESP32 mit einem eigenen OS-Image
+
+<h4>3. ROM/EEPROM-Integration</h4>
+
+OSTOSOS kann in ROM/EEPROM eingebrannt werden:
+- Das Gerät startet dann immer direkt OSTOSOS
+- Vorteil: Keine externe Speicherkarte nötig, alles ist im Chip
+
+<strong>Typisch für:</strong> Embedded-Systeme oder Industrie-Controller
+
+<h4>4. Universal Bootloader</h4>
+
+Wenn ein Gerät nur Hardware hat, aber keinen OS-Layer:
+- Ein kleiner Bootloader (BIOS/UEFI-ähnlich) wird installiert
+- Dieser lädt das OSTOSOS-Image aus Speicher oder Netzwerk
+
+<strong>Damit kann OSTOSOS auch auf "nackten" Geräten laufen.</strong>
+
+---
+
+<h2>🌐 Progressive Web App (PWA)</h2>
+
+<h3>Installation:</h3>
+1. Öffne `OSTOSOS-OS-COMPLETE-SYSTEM.html` im Browser
+2. Klicke auf "Installieren" (erscheint automatisch)
+3. Bestätige Installation
+4. OSTOSOS wird als App installiert
+
+<h3>Vorteile:</h3>
+- ✅ Keine System-Installation nötig
+- ✅ Funktioniert auf allen Geräten
+- ✅ Sofort nutzbar
+- ✅ Keine Administrator-Rechte erforderlich
+- ✅ Automatische Updates
+
+---
+
+<h2>🛡️ Eigenschaften von OSTOSOS</h2>
+
+<h3>Alles in einer Datei:</h3>
+OSTOSOS ist als Single-File-Image oder Binary verpackt.
+
+<h3>Keine Abhängigkeiten:</h3>
+Alle Module sind eingebettet:
+- Kernel
+- Portal
+- Telbank
+- Honeycomb
+- Legal Hub
+- Cloud Hub
+- Mail Hub
+- Media Hub
+- Matrix Games
+
+<h3>User-Unabhängig:</h3>
+- Keine Eingriffe nötig
+- Keine Source-Code-Zugriffe
+- Automatische Konfiguration
+
+<h3>Updates:</h3>
+- Kommen über die Plattform
+- Nicht über den User
+- Automatisch und transparent
+
+<h3>Geräte-Unabhängig:</h3>
+Läuft auf:
+- PCs (Windows, macOS, Linux)
+- Smartphones (Android, iOS)
+- IoT-Boards (Raspberry Pi, ESP32, etc.)
+- Industrie-Hardware
+
+---
+
+<h2>🎯 Fazit</h2>
+
+OSTOSOS kann auf verschiedene Weise installiert werden:
+
+- <strong>Mit bestehendem OS:</strong> Parallel-Installation, VM, Container, PWA
+- <strong>Ohne OS:</strong> Boot-Image, Firmware-Flash, ROM-Integration
+
+<strong>Ein Klick, eine Datei, ein System – überall lauffähig.</strong>
+
+---
+
+<h2>📞 Support</h2>
+
+Bei Fragen oder Problemen:
+- <strong>Website:</strong> https://tel1.jouwweb.nl/servicesoftware
+- <strong>Email:</strong> support@tel1.nl
+- <strong>WhatsApp:</strong> +31 61 380 3782
+
+---
+
+<strong>ERSTELLT:</strong> 2025-01-15  
+<strong>VERSION:</strong> 1.0.0-MULTI-OS  
+<strong>BRANDING:</strong> T,.&T,,.&T,,,.(C)TEL1.NL
+</body>
+</html>

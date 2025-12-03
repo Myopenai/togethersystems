@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETTINGS-INDUSTRIELLE-FABRIKEN-ERWEITERUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>T,. SETTINGS – INDUSTRIELLE FABRIKEN ERWEITERUNG</h1>
+<h2>Detaillierte Erweiterungsplanung für Hardware-Anbindungen</h2>
+
+<strong>LOGO:</strong> `T,.&T,,.&T,,,.(C)TEL1.NL`  
+<strong>VERSION:</strong> 1.0.0-ERWEITERUNG  
+<strong>DATUM:</strong> 2025-01-15  
+<strong>TYP:</strong> Erweiterungsplanung (kein Code)
+
+---
+
+<h2>🏭 ÜBERSICHT: INDUSTRIELLE FABRIKEN-INTEGRATION</h2>
+
+<h3>Ziel</h3>
+Das System soll über Softwareproduktion hinauswachsen und <strong>vollständige Anschlussmöglichkeiten für alle verifizierten industriellen Fabrikinstallationen</strong> bieten - nicht nur Software, sondern auch Hardware.
+
+<h3>Kernanforderungen</h3>
+1. <strong>Schaltmodule:</strong> Alle Schaltmodule sollen Anschlussparallelmöglichkeiten haben
+2. <strong>Signalgeber:</strong> Für Test- und Realsituationen
+3. <strong>Hardware-Integration:</strong> Anbindung an Logik, Intelligenz und Macht des Softwarepakets
+4. <strong>Portal-Integration:</strong> Signalgeber als Ausgabe für Test- und Realsituationen
+5. <strong>Potenzielle Käufer:</strong> Online-Bestätigung, dass alles funktioniert
+
+---
+
+<h2>🔌 SCHALTMODULE-ANBINDUNGEN</h2>
+
+<h3>1. Digitale Schaltmodule</h3>
+
+<h4>1.1 Eingänge</h4>
+<strong>Typen:</strong>
+- <strong>24V Digital Input:</strong> Standard in der Industrie (SPS, PLC)
+- <strong>5V TTL:</strong> Für Mikrocontroller (Arduino, Raspberry Pi)
+- <strong>Optokoppler:</strong> Galvanische Trennung (Sicherheit)
+
+<strong>Anbindung:</strong>
+- <strong>Modbus:</strong> Standard-Protokoll für industrielle Automatisierung
+- <strong>GPIO:</strong> Direkter Hardware-Zugriff (Raspberry Pi, BeagleBone)
+- <strong>I2C/SPI:</strong> Für Embedded-Systeme
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "switches": {
+      "digital": {
+        "inputs": [
+          {
+            "id": "di-001",
+            "name": "Production Line Start Button",
+            "type": "24v-digital",
+            "protocol": "modbus",
+            "address": 10001,
+            "function": "read-discrete-inputs",
+            "safety": {
+              "galvanic-isolation": true,
+              "overload-protection": true
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "id": "do-001",
+            "name": "Production Line Motor Control",
+            "type": "relay",
+            "protocol": "modbus",
+            "address": 1,
+            "function": "write-single-coil",
+            "safety": {
+              "emergency-stop": true,
+              "overload-protection": true
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+<h4>1.2 Ausgänge</h4>
+<strong>Typen:</strong>
+- <strong>Relais:</strong> Mechanische Schalter (robust, langsam)
+- <strong>Transistor:</strong> Schnelle Schalter (hohe Frequenz)
+- <strong>SSR:</strong> Solid State Relay (keine beweglichen Teile, langlebig)
+
+<strong>Anwendungen:</strong>
+- <strong>Motoren:</strong> Start/Stop, Richtung
+- <strong>Lampen:</strong> Beleuchtung, Warnleuchten
+- <strong>Ventile:</strong> Pneumatik, Hydraulik
+- <strong>Heizungen:</strong> Temperatur-Regelung
+
+<h3>2. Analoge Schaltmodule</h3>
+
+<h4>2.1 Eingänge</h4>
+<strong>Typen:</strong>
+- <strong>0-10V:</strong> Standard-Analog-Eingang
+- <strong>4-20mA:</strong> Strom-Loop (robust, störungsresistent)
+- <strong>Thermocouple:</strong> Temperatur-Messung (K-Typ, J-Typ, etc.)
+- <strong>RTD:</strong> Widerstands-Temperatur-Messung (Pt100, Pt1000)
+
+<strong>Anwendungen:</strong>
+- <strong>Temperatur:</strong> Öfen, Kühlanlagen, Prozesse
+- <strong>Druck:</strong> Druckmessung, Vakuum
+- <strong>Durchfluss:</strong> Flüssigkeiten, Gase
+- <strong>Position:</strong> Lineare/rotative Position
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "switches": {
+      "analog": {
+        "inputs": [
+          {
+            "id": "ai-001",
+            "name": "Furnace Temperature",
+            "type": "thermocouple-k",
+            "protocol": "modbus",
+            "address": 30001,
+            "function": "read-input-registers",
+            "range": {
+              "min": 0,
+              "max": 1200,
+              "unit": "celsius"
+            },
+            "calibration": {
+              "offset": 0,
+              "gain": 1.0
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "id": "ao-001",
+            "name": "Motor Speed Control",
+            "type": "0-10v",
+            "protocol": "modbus",
+            "address": 40001,
+            "function": "write-single-register",
+            "range": {
+              "min": 0,
+              "max": 10,
+              "unit": "volts"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+<h4>2.2 Ausgänge</h4>
+<strong>Typen:</strong>
+- <strong>0-10V:</strong> Standard-Analog-Ausgang
+- <strong>4-20mA:</strong> Strom-Loop-Ausgang
+- <strong>PWM:</strong> Pulsweiten-Modulation (für Motoren, Heizungen)
+
+<strong>Anwendungen:</strong>
+- <strong>Motoren:</strong> Geschwindigkeits-Regelung
+- <strong>Heizungen:</strong> Leistungs-Regelung
+- <strong>Ventile:</strong> Positions-Regelung
+- <strong>Lampen:</strong> Helligkeits-Regelung
+
+<h3>3. Frequenz-Schaltmodule</h3>
+
+<h4>3.1 Eingänge</h4>
+<strong>Typen:</strong>
+- <strong>Frequenz:</strong> 0-100 kHz (für Drehzahl-Messung)
+- <strong>Encoder:</strong> Inkremental, Absolut (für Positions-Messung)
+- <strong>Tachometer:</strong> Drehzahl-Messung
+
+<strong>Anwendungen:</strong>
+- <strong>Drehzahl:</strong> Motoren, Turbinen, Pumpen
+- <strong>Position:</strong> Lineare/rotative Position
+- <strong>Durchfluss:</strong> Durchfluss-Messung
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "switches": {
+      "frequency": {
+        "inputs": [
+          {
+            "id": "fi-001",
+            "name": "Motor RPM",
+            "type": "frequency",
+            "protocol": "modbus",
+            "address": 30001,
+            "function": "read-input-registers",
+            "range": {
+              "min": 0,
+              "max": 3000,
+              "unit": "rpm"
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "id": "fo-001",
+            "name": "Variable Frequency Drive",
+            "type": "pwm",
+            "protocol": "modbus",
+            "address": 40001,
+            "function": "write-single-register",
+            "range": {
+              "min": 0,
+              "max": 100,
+              "unit": "percent"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+<h4>3.2 Ausgänge</h4>
+<strong>Typen:</strong>
+- <strong>Frequenz:</strong> Variable Frequenz (für Motoren)
+- <strong>PWM:</strong> Pulsweiten-Modulation
+- <strong>Step/Direction:</strong> Schrittmotor-Steuerung
+
+<strong>Anwendungen:</strong>
+- <strong>Motoren:</strong> Geschwindigkeits-Regelung
+- <strong>Schrittmotoren:</strong> Präzise Positionierung
+- <strong>Servomotoren:</strong> Positions-Regelung
+
+---
+
+<h2>📡 SIGNALGEBER-SYSTEM</h2>
+
+<h3>1. Test-Signale (Für potenzielle Käufer)</h3>
+
+<h4>1.1 Simulation</h4>
+<strong>Zweck:</strong> Für Leute, die das System noch nicht haben und überlegen, es anzuschaffen
+
+<strong>Features:</strong>
+- <strong>Generierte Signale:</strong> Ohne Hardware
+- <strong>Demo-Modus:</strong> Vorführung der Funktionalität
+- <strong>Online-Bestätigung:</strong> Bestätigung, dass alles funktioniert
+- <strong>Test-Szenarien:</strong> Vordefinierte Test-Szenarien
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "signals": {
+      "test": {
+        "enabled": true,
+        "mode": "simulation",
+        "generators": [
+          {
+            "id": "test-digital-001",
+            "name": "Test Digital Signal",
+            "type": "digital",
+            "pattern": "square",
+            "frequency": 1.0,
+            "amplitude": 1.0,
+            "duty-cycle": 50,
+            "description": "Square wave for testing digital inputs"
+          },
+          {
+            "id": "test-analog-001",
+            "name": "Test Analog Signal",
+            "type": "analog",
+            "pattern": "sine",
+            "frequency": 50.0,
+            "amplitude": 5.0,
+            "offset": 2.5,
+            "description": "Sine wave for testing analog inputs"
+          },
+          {
+            "id": "test-frequency-001",
+            "name": "Test Frequency Signal",
+            "type": "frequency",
+            "pattern": "constant",
+            "frequency": 1000.0,
+            "description": "Constant frequency for testing frequency inputs"
+          }
+        ],
+        "scenarios": [
+          {
+            "id": "scenario-production-line",
+            "name": "Production Line Simulation",
+            "description": "Simulates a complete production line",
+            "signals": [
+              "test-digital-001",
+              "test-analog-001",
+              "test-frequency-001"
+            ],
+            "duration": 3600,
+            "repeat": true
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+<h4>1.2 Demo-Modus im Portal</h4>
+<strong>Features:</strong>
+- <strong>Live-Dashboard:</strong> Anzeige von Test-Signalen
+- <strong>Visualisierung:</strong> Grafische Darstellung
+- <strong>Interaktivität:</strong> User kann Signale starten/stoppen
+- <strong>Online-Verfügbar:</strong> Keine Installation nötig
+
+<strong>Integration:</strong>
+- <strong>Portal:</strong> Demo-Modus im Portal
+- <strong>API:</strong> Test-Signal-API
+- <strong>Dashboard:</strong> Live-Anzeige
+
+<h3>2. Real-Signale (Für echte Fabriken)</h3>
+
+<h4>2.1 Live-Daten</h4>
+<strong>Zweck:</strong> Für echte Fabriken mit Hardware
+
+<strong>Features:</strong>
+- <strong>Live-Hardware-Daten:</strong> Echte Hardware-Daten
+- <strong>Streaming:</strong> Echtzeit-Datenstrom
+- <strong>Buffering:</strong> Daten-Pufferung
+- <strong>Analytics:</strong> Datenanalyse und Trends
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "signals": {
+      "real": {
+        "enabled": true,
+        "mode": "live",
+        "sources": [
+          {
+            "id": "real-modbus-001",
+            "name": "Production Line Modbus",
+            "type": "modbus",
+            "protocol": "modbus-tcp",
+            "endpoint": "192.168.1.100:502",
+            "device": "switch-001",
+            "address": 1,
+            "polling-interval": 100,
+            "timeout": 5000,
+            "retries": 3
+          },
+          {
+            "id": "real-opcua-001",
+            "name": "Production Line OPC-UA",
+            "type": "opcua",
+            "protocol": "opcua",
+            "endpoint": "opc.tcp://192.168.1.100:4840",
+            "node": "ns=2;s=TemperatureSensor1",
+            "polling-interval": 1000,
+            "security": "basic128rsa15"
+          },
+          {
+            "id": "real-mqtt-001",
+            "name": "Production Line MQTT",
+            "type": "mqtt",
+            "protocol": "mqtt",
+            "broker": "mqtt://192.168.1.100:1883",
+            "topic": "factory/sensors/temperature",
+            "qos": 1,
+            "retain": false
+          }
+        ],
+        "processing": {
+          "buffering": true,
+          "buffer-size": 1000,
+          "analytics": true,
+          "trends": true,
+          "alerts": true
+        }
+      }
+    }
+  }
+}
+```
+
+<h4>2.2 Portal-Integration</h4>
+<strong>Features:</strong>
+- <strong>Live-Dashboard:</strong> Anzeige von Real-Signalen
+- <strong>Visualisierung:</strong> Grafische Darstellung
+- <strong>Historische Daten:</strong> Langzeit-Trends
+- <strong>Alerts:</strong> Warnungen bei Grenzwerten
+
+<strong>Integration:</strong>
+- <strong>Portal:</strong> Live-Dashboard im Portal
+- <strong>API:</strong> Real-Signal-API
+- <strong>Dashboard:</strong> Live-Anzeige + Historische Daten
+
+---
+
+<h2>🔗 PARALLEL-ANSCHLUSS-MÖGLICHKEITEN</h2>
+
+<h3>1. Multi-Protocol Support</h3>
+
+<h4>1.1 Gleichzeitige Unterstützung</h4>
+<strong>Kombinationen:</strong>
+- <strong>Modbus + OPC-UA:</strong> Parallel betreibbar
+- <strong>MQTT + WebSocket:</strong> Beide gleichzeitig
+- <strong>HTTP REST + gRPC:</strong> Kombinierbar
+- <strong>Alle Protokolle:</strong> Gleichzeitig möglich
+
+<strong>Vorteil:</strong> Flexibilität für verschiedene Fabriken
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "hardware": {
+      "protocols": {
+        "parallel-support": true,
+        "active-protocols": [
+          "modbus",
+          "opcua",
+          "mqtt",
+          "websocket"
+        ],
+        "resource-sharing": {
+          "cpu": "fair-share",
+          "memory": "dynamic",
+          "network": "bandwidth-limited"
+        }
+      }
+    }
+  }
+}
+```
+
+<h3>2. Multi-Device Support</h3>
+
+<h4>2.1 Gleichzeitige Anbindung</h4>
+<strong>Features:</strong>
+- <strong>Mehrere Modbus-Geräte:</strong> Über verschiedene Ports/Adressen
+- <strong>Mehrere OPC-UA-Server:</strong> Über verschiedene Endpoints
+- <strong>Hybrid-Setup:</strong> Modbus + OPC-UA + MQTT gleichzeitig
+
+<strong>Vorteil:</strong> Skalierbarkeit für große Fabriken
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "hardware": {
+      "devices": {
+        "max-concurrent": 100,
+        "load-balancing": true,
+        "failover": true,
+        "devices": [
+          {
+            "id": "device-001",
+            "protocol": "modbus",
+            "endpoint": "192.168.1.100:502",
+            "priority": "high"
+          },
+          {
+            "id": "device-002",
+            "protocol": "opcua",
+            "endpoint": "opc.tcp://192.168.1.101:4840",
+            "priority": "medium"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+<h3>3. Redundanz & Failover</h3>
+
+<h4>3.1 Primary/Secondary</h4>
+<strong>Features:</strong>
+- <strong>Automatisches Failover:</strong> Bei Ausfall des Primary
+- <strong>Health Monitoring:</strong> Automatische Erkennung von Ausfällen
+- <strong>Load Balancing:</strong> Verteilung auf mehrere Geräte
+
+<strong>Settings-Struktur:</strong>
+```json
+{
+  "industrial": {
+    "hardware": {
+      "redundancy": {
+        "enabled": true,
+        "mode": "primary-secondary",
+        "failover-time": 1000,
+        "health-check-interval": 5000,
+        "devices": [
+          {
+            "id": "device-primary",
+            "role": "primary",
+            "protocol": "modbus",
+            "endpoint": "192.168.1.100:502"
+          },
+          {
+            "id": "device-secondary",
+            "role": "secondary",
+            "protocol": "modbus",
+            "endpoint": "192.168.1.101:502"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+---
+
+<h2>🎯 ANBINDUNG AN LOGIK, INTELLIGENZ & MACHT</h2>
+
+<h3>1. Software-zu-Hardware-Brücke</h3>
+
+<h4>1.1 Signalgeber als Ausgabe</h4>
+<strong>Zweck:</strong> Anbindung an Logik, Intelligenz und Macht des Softwarepakets
+
+<strong>Features:</strong>
+- <strong>Portal → Hardware:</strong> Signale vom Portal an Hardware senden
+- <strong>Hardware → Portal:</strong> Daten von Hardware ins Portal
+- <strong>Bidirektional:</strong> Vollständige Kommunikation
+
+<strong>Integration:</strong>
+- <strong>Portal:</strong> Signalgeber im Portal
+- <strong>API:</strong> Signalgeber-API
+- <strong>Hardware:</strong> Hardware-Anbindung
+
+<h4>1.2 Intelligenz-Layer</h4>
+<strong>Features:</strong>
+- <strong>KI-Integration:</strong> Neuronale Netzwerke für Mustererkennung
+- <strong>Predictive Maintenance:</strong> Vorhersage von Wartungsbedarf
+- <strong>Optimization:</strong> Automatische Optimierung von Prozessen
+
+<strong>Integration:</strong>
+- <strong>Settings:</strong> `settings/industrial/intelligence/`
+- <strong>Portal:</strong> KI-Dashboard im Portal
+- <strong>API:</strong> KI-API
+
+<h3>2. Macht-Layer (Power Layer)</h3>
+
+<h4>2.1 Kontrolle & Steuerung</h4>
+<strong>Features:</strong>
+- <strong>Vollständige Kontrolle:</strong> Über alle angeschlossenen Geräte
+- <strong>Zentrale Steuerung:</strong> Von einem Portal aus
+- <strong>Automatisierung:</strong> Automatische Steuerung basierend auf Logik
+
+<strong>Integration:</strong>
+- <strong>Settings:</strong> `settings/industrial/power/`
+- <strong>Portal:</strong> Kontroll-Panel im Portal
+- <strong>API:</strong> Power-API
+
+---
+
+<h2>📊 ERWEITERUNGS-STRUKTUR</h2>
+
+<h3>Empfohlene Settings-Struktur</h3>
+
+```
+settings/
+├── settings-manifest.json
+├── industrial/                    # NEU: Industrielle Fabriken
+│   ├── hardware/                 # Hardware-Anbindungen
+│   │   ├── hal.json              # Hardware-Abstraktions-Layer
+│   │   ├── devices/               # Geräte-Definitionen
+│   │   │   ├── switches.json     # Schaltmodule
+│   │   │   ├── sensors.json      # Sensoren
+│   │   │   ├── actuators.json    # Aktoren
+│   │   │   └── controllers.json  # Controller
+│   │   └── protocols/            # Protokoll-Konfigurationen
+│   │       ├── modbus.json
+│   │       ├── opcua.json
+│   │       ├── profinet.json
+│   │       ├── ethercat.json
+│   │       └── mqtt.json
+│   ├── signals/                  # Signalgeber
+│   │   ├── test/                 # Test-Signale
+│   │   │   ├── digital.json
+│   │   │   ├── analog.json
+│   │   │   └── frequency.json
+│   │   └── real/                 # Real-Signale
+│   │       ├── modbus.json
+│   │       ├── opcua.json
+│   │       └── mqtt.json
+│   ├── switches/                 # Schaltmodule
+│   │   ├── digital.json
+│   │   ├── analog.json
+│   │   └── frequency.json
+│   ├── intelligence/             # KI-Integration
+│   │   ├── neural-networks.json
+│   │   ├── predictive-maintenance.json
+│   │   └── optimization.json
+│   └── power/                    # Macht-Layer
+│       ├── control.json
+│       ├── automation.json
+│       └── monitoring.json
+└── [Bestehende Struktur]
+```
+
+---
+
+<h2>🎯 FÜR POTENZIELLE KÄUFER</h2>
+
+<h3>Online-Bestätigungssystem</h3>
+
+<strong>Zweck:</strong> Für Leute, die das System noch nicht haben und überlegen, es anzuschaffen
+
+<strong>Features:</strong>
+
+1. <strong>Test-Signal-Generatoren:</strong>
+   - Simulation ohne Hardware
+   - Demo-Modus im Portal
+   - Vorführung der Funktionalität
+   - Online-Bestätigung, dass alles funktioniert
+
+2. <strong>Live-Demo:</strong>
+   - Interaktive Demo im Portal
+   - Test-Szenarien
+   - Visualisierung von Signalen
+
+3. <strong>Bestätigung:</strong>
+   - Online-Bestätigung, dass alles funktioniert
+   - Test-Report
+   - Funktionalitäts-Nachweis
+
+<strong>Integration:</strong>
+- <strong>Portal:</strong> Demo-Modus im Portal
+- <strong>API:</strong> Test-Signal-API
+- <strong>Dashboard:</strong> Live-Anzeige
+
+---
+
+<h2>📋 ZUSAMMENFASSUNG</h2>
+
+<h3>Empfehlung: Ein zentraler Settings-Ordner</h3>
+
+<strong>Begründung:</strong>
+- ✅ Trackmäßig günstigste Lösung
+- ✅ Einfachste Wartung
+- ✅ Konsistente Struktur
+- ✅ Skalierbar für Erweiterungen
+
+<h3>Erweiterungen: Industrielle Fabriken</h3>
+
+<strong>Neue Struktur:</strong>
+```
+settings/industrial/
+├── hardware/        # Hardware-Anbindungen
+├── signals/         # Signalgeber (Test & Real)
+├── switches/        # Schaltmodule
+├── intelligence/    # KI-Integration
+└── power/           # Macht-Layer
+```
+
+<strong>Vorteile:</strong>
+- Klare Trennung Software/Hardware
+- Einfache Erweiterung
+- Modulare Struktur
+- Parallel-Anschluss-Möglichkeiten
+
+---
+
+<strong>Erstellt:</strong> 2025-01-15  
+<strong>Version:</strong> 1.0.0-ERWEITERUNG  
+<strong>LOGO:</strong> `T,.&T,,.&T,,,.(C)TEL1.NL`
+
+---
+
+<strong>T,. SETTINGS – INDUSTRIELLE FABRIKEN ERWEITERUNG</strong>
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HOSTINGER_DEPLOYMENT_GUIDE</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🚀 Hostinger Deployment Guide - Digital Notariat</h1>
+
+<h2>📋 <strong>Übersicht</strong></h2>
+
+<strong>Server:</strong> Hostinger.de  
+<strong>Anwendung:</strong> Digital Notariat  
+<strong>Deployment-Methode:</strong> Node.js / React  
+<strong>Status:</strong> ✅ <strong>DEPLOYMENT-READY</strong>
+
+---
+
+<h2>🔑 <strong>Server-Zugriff Methoden</strong></h2>
+
+<h3><strong>1. SSH-Zugriff (Empfohlen)</strong></h3>
+
+<h4><strong>A. SSH aktivieren:</strong></h4>
+```
+1. Hostinger Control Panel öffnen
+2. "Advanced" → "SSH Access"
+3. SSH aktivieren und Passwort setzen
+4. SSH-Schlüssel generieren (optional)
+```
+
+<h4><strong>B. SSH-Verbindung:</strong></h4>
+```bash
+<h1>Verbindung herstellen</h1>
+ssh u123456789@your-server.hostinger.com
+
+<h1>Oder mit Port (falls erforderlich)</h1>
+ssh -p 22 u123456789@your-server.hostinger.com
+```
+
+<h4><strong>C. Verfügbare Befehle nach SSH-Login:</strong></h4>
+```bash
+<h1>Verzeichnis wechseln</h1>
+cd public_html
+
+<h1>Node.js Version prüfen</h1>
+node --version
+npm --version
+
+<h1>Package Manager installieren (falls nicht verfügbar)</h1>
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+nvm install 18
+nvm use 18
+
+<h1>Projekt klonen/hochladen</h1>
+git clone https://github.com/your-repo/digital-notary.git
+<h1>ODER Dateien über FTP hochladen</h1>
+
+<h1>Dependencies installieren</h1>
+cd digital-notary
+npm install
+<h1>ODER</h1>
+pnpm install
+
+<h1>Build erstellen</h1>
+npm run build
+<h1>ODER</h1>
+pnpm run build
+
+<h1>Server starten</h1>
+npm start
+<h1>ODER</h1>
+pnpm start
+```
+
+---
+
+<h3><strong>2. Hostinger Terminal (Web-basiert)</strong></h3>
+
+<h4><strong>A. Terminal öffnen:</strong></h4>
+```
+1. Hostinger Control Panel
+2. "Advanced" → "Terminal"
+3. Web-basiertes Terminal öffnen
+```
+
+<h4><strong>B. Verfügbare Befehle:</strong></h4>
+```bash
+<h1>Verzeichnis navigieren</h1>
+cd public_html
+
+<h1>Node.js prüfen</h1>
+which node
+which npm
+
+<h1>Projekt-Setup</h1>
+mkdir digital-notary
+cd digital-notary
+
+<h1>Dependencies installieren</h1>
+npm install
+
+<h1>Build-Prozess</h1>
+npm run build
+
+<h1>Server starten</h1>
+npm start
+```
+
+---
+
+<h3><strong>3. Cron Jobs (Automatisierung)</strong></h3>
+
+<h4><strong>A. Cron Job einrichten:</strong></h4>
+```
+1. Hostinger Control Panel
+2. "Advanced" → "Cron Jobs"
+3. Neue Cron Job erstellen
+```
+
+<h4><strong>B. Beispiel Cron Jobs:</strong></h4>
+```bash
+<h1>Täglich um 2:00 Uhr Backup erstellen</h1>
+0 2 <em> </em> * cd /home/u123456789/public_html/digital-notary && npm run backup
+
+<h1>Alle 5 Minuten Server-Status prüfen</h1>
+<em>/5 </em> <em> </em> * cd /home/u123456789/public_html/digital-notary && npm run health-check
+
+<h1>Wöchentlich Dependencies aktualisieren</h1>
+0 3 <em> </em> 0 cd /home/u123456789/public_html/digital-notary && npm update
+```
+
+---
+
+<h3><strong>4. FTP/SFTP Upload + SSH Commands</strong></h3>
+
+<h4><strong>A. Dateien hochladen:</strong></h4>
+```
+1. FileZilla oder ähnliches FTP-Programm
+2. Verbindung zu Hostinger-Server
+3. Projekt-Dateien in public_html hochladen
+4. SSH für Build-Befehle verwenden
+```
+
+<h4><strong>B. SSH-Befehle nach Upload:</strong></h4>
+```bash
+<h1>SSH-Verbindung</h1>
+ssh u123456789@your-server.hostinger.com
+
+<h1>In Projekt-Verzeichnis wechseln</h1>
+cd public_html/digital-notary
+
+<h1>Dependencies installieren</h1>
+npm install
+
+<h1>Production Build erstellen</h1>
+npm run build
+
+<h1>Server starten</h1>
+npm start
+```
+
+---
+
+<h2>🛠️ <strong>Deployment-Prozess</strong></h2>
+
+<h3><strong>Schritt 1: Server-Vorbereitung</strong></h3>
+```bash
+<h1>SSH-Verbindung herstellen</h1>
+ssh u123456789@your-server.hostinger.com
+
+<h1>Verzeichnis erstellen</h1>
+mkdir -p public_html/digital-notary
+cd public_html/digital-notary
+```
+
+<h3><strong>Schritt 2: Node.js Setup</strong></h3>
+```bash
+<h1>Node.js Version prüfen</h1>
+node --version
+
+<h1>Falls Node.js nicht verfügbar:</h1>
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+nvm install 18
+nvm use 18
+```
+
+<h3><strong>Schritt 3: Projekt-Deployment</strong></h3>
+```bash
+<h1>Projekt-Dateien hochladen (über FTP oder Git)</h1>
+<h1>Dann in SSH:</h1>
+
+<h1>Dependencies installieren</h1>
+npm install
+
+<h1>Environment-Variablen setzen</h1>
+echo "NODE_ENV=production" > .env
+
+<h1>Production Build erstellen</h1>
+npm run build
+
+<h1>Server starten</h1>
+npm start
+```
+
+<h3><strong>Schritt 4: PM2 für Prozess-Management</strong></h3>
+```bash
+<h1>PM2 global installieren</h1>
+npm install -g pm2
+
+<h1>Anwendung mit PM2 starten</h1>
+pm2 start npm --name "digital-notary" -- start
+
+<h1>PM2 Status prüfen</h1>
+pm2 status
+
+<h1>PM2 Logs anzeigen</h1>
+pm2 logs digital-notary
+
+<h1>PM2 Auto-Start aktivieren</h1>
+pm2 startup
+pm2 save
+```
+
+---
+
+<h2>📁 <strong>Verzeichnis-Struktur</strong></h2>
+
+```
+/home/u123456789/
+├── public_html/
+│   ├── digital-notary/
+│   │   ├── src/
+│   │   ├── public/
+│   │   ├── package.json
+│   │   ├── vite.config.ts
+│   │   └── dist/ (nach Build)
+│   └── index.html (Redirect)
+├── logs/
+│   └── digital-notary.log
+└── backups/
+    └── digital-notary/
+```
+
+---
+
+<h2>🔧 <strong>Konfiguration</strong></h2>
+
+<h3><strong>A. Vite Konfiguration für Production:</strong></h3>
+```typescript
+// vite.config.ts
+export default defineConfig({
+  base: '/digital-notary/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'terser'
+  },
+  server: {
+    port: process.env.PORT || 3000,
+    host: '0.0.0.0'
+  }
+})
+```
+
+<h3><strong>B. Package.json Scripts:</strong></h3>
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "start": "vite preview --port 3000 --host 0.0.0.0",
+    "backup": "node scripts/backup.js",
+    "health-check": "node scripts/health-check.js"
+  }
+}
+```
+
+---
+
+<h2>🌐 <strong>Domain-Konfiguration</strong></h2>
+
+<h3><strong>A. Subdomain einrichten:</strong></h3>
+```
+1. Hostinger Control Panel
+2. "Domains" → "Subdomains"
+3. Subdomain erstellen: notar.yourdomain.com
+4. Auf digital-notary Verzeichnis zeigen
+```
+
+<h3><strong>B. SSL-Zertifikat:</strong></h3>
+```
+1. "SSL" → "SSL Manager"
+2. Kostenloses SSL für Subdomain aktivieren
+3. HTTPS-Redirect einrichten
+```
+
+---
+
+<h2>📊 <strong>Monitoring und Wartung</strong></h2>
+
+<h3><strong>A. Log-Monitoring:</strong></h3>
+```bash
+<h1>PM2 Logs</h1>
+pm2 logs digital-notary
+
+<h1>System Logs</h1>
+tail -f /var/log/apache2/error.log
+tail -f /var/log/nginx/error.log
+
+<h1>Anwendungs-Logs</h1>
+tail -f /home/u123456789/logs/digital-notary.log
+```
+
+<h3><strong>B. Performance-Monitoring:</strong></h3>
+```bash
+<h1>System-Ressourcen</h1>
+htop
+df -h
+free -h
+
+<h1>Node.js Prozesse</h1>
+ps aux | grep node
+pm2 monit
+```
+
+<h3><strong>C. Backup-Strategie:</strong></h3>
+```bash
+<h1>Automatisches Backup-Script</h1>
+#!/bin/bash
+DATE=$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR="/home/u123456789/backups/digital-notary"
+SOURCE_DIR="/home/u123456789/public_html/digital-notary"
+
+mkdir -p $BACKUP_DIR
+tar -czf $BACKUP_DIR/backup_$DATE.tar.gz $SOURCE_DIR
+
+<h1>Alte Backups löschen (älter als 30 Tage)</h1>
+find $BACKUP_DIR -name "backup_*.tar.gz" -mtime +30 -delete
+```
+
+---
+
+<h2>🚨 <strong>Troubleshooting</strong></h2>
+
+<h3><strong>Häufige Probleme:</strong></h3>
+
+<h4><strong>1. Node.js nicht verfügbar:</strong></h4>
+```bash
+<h1>NVM installieren</h1>
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+nvm install 18
+nvm use 18
+```
+
+<h4><strong>2. Port bereits belegt:</strong></h4>
+```bash
+<h1>Verfügbare Ports prüfen</h1>
+netstat -tulpn | grep LISTEN
+
+<h1>Anderen Port verwenden</h1>
+npm start -- --port 3001
+```
+
+<h4><strong>3. Berechtigungsprobleme:</strong></h4>
+```bash
+<h1>Berechtigungen setzen</h1>
+chmod -R 755 /home/u123456789/public_html/digital-notary
+chown -R u123456789:u123456789 /home/u123456789/public_html/digital-notary
+```
+
+<h4><strong>4. Memory-Limits:</strong></h4>
+```bash
+<h1>Node.js Memory-Limit erhöhen</h1>
+export NODE_OPTIONS="--max-old-space-size=2048"
+npm start
+```
+
+---
+
+<h2>📞 <strong>Support-Kontakte</strong></h2>
+
+<h3><strong>Hostinger Support:</strong></h3>
+- <strong>Live Chat:</strong> Hostinger Control Panel
+- <strong>E-Mail:</strong> support@hostinger.com
+- <strong>Telefon:</strong> +49 69 348 77 88 0
+
+<h3><strong>Deployment-Support:</strong></h3>
+- <strong>SSH-Zugriff:</strong> Über Hostinger Control Panel
+- <strong>Terminal:</strong> Web-basiertes Terminal verfügbar
+- <strong>FTP:</strong> FileZilla oder ähnliche Clients
+
+---
+
+<h2>✅ <strong>Deployment-Checkliste</strong></h2>
+
+- [ ] SSH-Zugriff aktiviert
+- [ ] Node.js installiert (Version 18+)
+- [ ] Projekt-Dateien hochgeladen
+- [ ] Dependencies installiert (`npm install`)
+- [ ] Production Build erstellt (`npm run build`)
+- [ ] PM2 installiert und konfiguriert
+- [ ] SSL-Zertifikat aktiviert
+- [ ] Domain/Subdomain konfiguriert
+- [ ] Monitoring eingerichtet
+- [ ] Backup-Strategie implementiert
+
+---
+
+<strong>🎯 Die Digital Notary Anwendung ist bereit für das Deployment auf Hostinger!</strong>
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

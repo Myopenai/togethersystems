@@ -1,0 +1,1063 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Think Orders - Dokumentations-Portal | Da Vinci Style</title>
+    
+    <!-- Meta Tags für Kino Qualität -->
+    <meta name="description" content="Vollständige Dokumentation für Think Orders System - Da Vinci Style Animation Portal">
+    <meta name="author" content="Think Orders Production">
+    
+    <style>
+        /* ===== GLOBAL RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Da Vinci Color Palette - Hexachromatography */
+            --dv-primary: #1a1a2e;
+            --dv-secondary: #16213e;
+            --dv-accent: #0f3460;
+            --dv-gold: #e94560;
+            --dv-light: #f5f5f5;
+            --dv-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --dv-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dv-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            
+            /* Extended HD Colors */
+            --dv-cinema-black: #000000;
+            --dv-cinema-white: #ffffff;
+            --dv-cinema-gold: #ffd700;
+            --dv-cinema-silver: #c0c0c0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: var(--dv-primary);
+            color: var(--dv-light);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* ===== 3D ANIMATION BACKGROUND ===== */
+        .canvas-3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--dv-gold);
+            border-radius: 50%;
+            animation: float 20s infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+                opacity: 0.6;
+            }
+            25% {
+                transform: translate(100px, -100px) rotate(90deg) scale(1.2);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(-50px, -200px) rotate(180deg) scale(0.8);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translate(-100px, -50px) rotate(270deg) scale(1.1);
+                opacity: 0.7;
+            }
+        }
+        
+        /* ===== HEADER - DA VINCI STYLE ===== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 20px 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            background: rgba(26, 26, 46, 0.98);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: var(--dv-gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: logoGlow 3s ease-in-out infinite;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes logoGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8));
+            }
+        }
+        
+        /* ===== SEARCH BAR - SUPER STYLED ===== */
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 40px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(233, 69, 96, 0.3);
+            border-radius: 50px;
+            color: var(--dv-light);
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--dv-gold);
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dv-gradient-2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.1) rotate(90deg);
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.8);
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        main {
+            margin-top: 120px;
+            padding: 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* ===== HERO SECTION - 360° KINO VIEW ===== */
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px;
+            background: var(--dv-gradient-1);
+            margin-bottom: 60px;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(233, 69, 96, 0.3) 0%, transparent 70%);
+            animation: rotate360 20s linear infinite;
+        }
+        
+        @keyframes rotate360 {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 4.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: fadeInUp 1s ease-out;
+            background: linear-gradient(45deg, #fff, #ffd700, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+            opacity: 0.9;
+        }
+        
+        /* ===== STATS CARDS - MORPH ANIMATION ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: var(--dv-gradient-3);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--dv-gold);
+            box-shadow: 0 20px 60px rgba(233, 69, 96, 0.4);
+        }
+        
+        .stat-card:hover::before {
+            opacity: 0.1;
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            background: var(--dv-gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+        
+        /* ===== DOCUMENTATION GRID ===== */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .doc-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .doc-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .doc-card:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            border-color: var(--dv-gold);
+            box-shadow: 0 15px 50px rgba(233, 69, 96, 0.3);
+        }
+        
+        .doc-card:hover::after {
+            left: 100%;
+        }
+        
+        .doc-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: var(--dv-gold);
+        }
+        
+        .doc-description {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .doc-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tag {
+            background: var(--dv-gradient-3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        /* ===== SEARCH RESULTS ===== */
+        .search-results {
+            display: none;
+            margin-top: 40px;
+        }
+        
+        .search-results.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 2px dashed rgba(233, 69, 96, 0.3);
+        }
+        
+        .suggestions {
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(233, 69, 96, 0.1);
+            border-radius: 20px;
+            border-left: 4px solid var(--dv-gold);
+        }
+        
+        .suggestions h3 {
+            margin-bottom: 15px;
+            color: var(--dv-gold);
+        }
+        
+        .suggestion-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .suggestion-item:hover {
+            background: rgba(233, 69, 96, 0.2);
+            transform: translateX(10px);
+        }
+        
+        /* ===== LOADING ANIMATION ===== */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(233, 69, 96, 0.3);
+            border-top-color: var(--dv-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .search-container {
+                margin: 0;
+                max-width: 100%;
+            }
+            
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ===== ACCESSIBILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* ===== SCROLLBAR STYLING ===== */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dv-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--dv-gradient-2);
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dv-gold);
+        }
+    </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+    <!-- 3D Background Canvas -->
+    <div class="canvas-3d" id="canvas3d"></div>
+    
+    <!-- Header -->
+    <header id="header">
+        <div class="header-content">
+            <div class="logo">Think Orders</div>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Suche in allen Dokumentationen... (z.B. 'Tests ausführen' oder 'Installation')"
+                    aria-label="Dokumentationssuche"
+                >
+                <button class="search-btn" id="searchBtn" aria-label="Suchen">
+                    🔍
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Dokumentations-Portal</h1>
+                <p>Vollständige Sammlung aller Dokumentationen</p>
+                <p style="font-size: 1.2em; opacity: 0.7;">Da Vinci Style • Kino Qualität • Extended HD</p>
+            </div>
+        </section>
+        
+        <!-- Stats -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalDocs">91</div>
+                <div class="stat-label">Dokumentationen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTests">30+</div>
+                <div class="stat-label">Automatische Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Sprachen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Abdeckung</div>
+            </div>
+        </section>
+        
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px;">Lade Dokumentationen...</p>
+        </div>
+        
+        <!-- Search Results -->
+        <div class="search-results" id="searchResults">
+            <h2 style="margin-bottom: 30px; color: var(--dv-gold);">Suchergebnisse</h2>
+            <div id="resultsContainer"></div>
+        </div>
+        
+        <!-- Documentation Grid -->
+        <section class="docs-grid" id="docsGrid">
+            <!-- Wird dynamisch befüllt -->
+        </section>
+    </main>
+    
+    <script>
+        // ===== DOCUMENTATION DATABASE =====
+        const documentationDB = [
+            // Test Handbücher
+            {
+                id: 'handbuch-de',
+                title: 'Vollständiges Handbuch (Deutsch)',
+                description: 'Komplettes Handbuch von Anfang an - Terminal erklärt, Installation, Tests ausführen',
+                tags: ['Deutsch', 'Anfänger', 'Terminal', 'Installation', 'Tests'],
+                path: 'tests/think-orders/HANDBUCH-DE-KOMPLETT.md',
+                category: 'Handbücher',
+                keywords: ['handbuch', 'anleitung', 'terminal', 'installation', 'tests', 'dummies', 'anfänger', 'hilfe']
+            },
+            {
+                id: 'handbuch-nl',
+                title: 'Vollständiges Handbuch (Nederlands)',
+                description: 'Volledig handboek - Terminal, installatie, tests uitvoeren',
+                tags: ['Nederlands', 'Anfänger', 'Terminal'],
+                path: 'tests/think-orders/HANDBUCH-NL-KOMPLETT.md',
+                category: 'Handbücher',
+                keywords: ['handboek', 'nederlands', 'installatie', 'tests']
+            },
+            {
+                id: 'handbuch-en',
+                title: 'Complete Handbook (English)',
+                description: 'Full handbook - Terminal, installation, running tests',
+                tags: ['English', 'Beginner', 'Terminal'],
+                path: 'tests/think-orders/HANDBUCH-EN-COMPLETE.md',
+                category: 'Handbücher',
+                keywords: ['handbook', 'english', 'installation', 'tests', 'terminal']
+            },
+            {
+                id: 'start-dummies',
+                title: 'Start Hier - Für Dummies',
+                description: '5-Schritte Quick Start für absolute Anfänger',
+                tags: ['Dummies', 'Schnellstart', 'Anfänger'],
+                path: 'tests/think-orders/START-HIER-DUMMIES.md',
+                category: 'Quick Start',
+                keywords: ['dummies', 'anfänger', 'schnellstart', 'quick start', 'start']
+            },
+            {
+                id: 'bilder-anleitung',
+                title: 'Visuelle Anleitung',
+                description: 'Wo klicken, was tun - Screenshot-Beschreibungen',
+                tags: ['Visuell', 'Screenshots', 'Anleitung'],
+                path: 'tests/think-orders/BILDER-ANLEITUNG.md',
+                category: 'Anleitungen',
+                keywords: ['bilder', 'screenshots', 'visuell', 'klicken', 'sehen']
+            },
+            {
+                id: 'erweiterungs-handbuch',
+                title: 'Erweiterungs-Handbuch',
+                description: 'Alle Erweiterungsmöglichkeiten - Performance, Accessibility, Security',
+                tags: ['Erweiterung', 'Fortgeschritten', 'Performance'],
+                path: 'tests/think-orders/ERWEITERUNGS-HANDBUCH-VOLLSTAENDIG.md',
+                category: 'Entwicklung',
+                keywords: ['erweitern', 'erweiterung', 'performance', 'security', 'entwicklung']
+            },
+            {
+                id: 'test-features',
+                title: 'Test Features',
+                description: 'Alle getesteten Features und Test-Statistiken',
+                tags: ['Tests', 'Features', 'Statistiken'],
+                path: 'tests/think-orders/TEST-FEATURES.md',
+                category: 'Tests',
+                keywords: ['tests', 'features', 'statistiken', 'testen']
+            },
+            {
+                id: 'kalkulation',
+                title: 'Kalkulationsrechnungsauftrag',
+                description: 'Vollständiger Rechnungsauftrag mit allen Funktionen',
+                tags: ['Rechnung', 'Kalkulation', 'Aufwand'],
+                path: 'KALKULATIONSRECHNUNGSANTRAG-VOLLSTAENDIG.md',
+                category: 'Administration',
+                keywords: ['rechnung', 'kalkulation', 'aufwand', 'kosten', 'preis']
+            }
+        ];
+        
+        // ===== SEARCH FUNCTIONALITY =====
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchResults = document.getElementById('searchResults');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const docsGrid = document.getElementById('docsGrid');
+        const loading = document.getElementById('loading');
+        
+        // Simple to Technical Language Mapping
+        const languageMapping = {
+            'wie teste ich': ['test', 'tests ausführen', 'npm test'],
+            'wie installiere ich': ['installation', 'installieren', 'setup'],
+            'fehler beheben': ['troubleshooting', 'fehler', 'problem', 'hilfe'],
+            'tests erweitern': ['erweitern', 'neue tests', 'tests hinzufügen'],
+            'was ist ein terminal': ['terminal', 'kommandozeile', 'powerShell'],
+            'dokumentation': ['handbuch', 'anleitung', 'doku'],
+            'anfänger': ['dummies', 'beginner', 'quick start'],
+            'wie funktioniert': ['anleitung', 'tutorial', 'erklärung']
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            init3DBackground();
+            displayAllDocs();
+            setupSearch();
+            setupScroll();
+        });
+        
+        // 3D Background Particles
+        function init3DBackground() {
+            const canvas = document.getElementById('canvas3d');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                canvas.appendChild(particle);
+            }
+        }
+        
+        // Display All Docs
+        function displayAllDocs() {
+            docsGrid.innerHTML = '';
+            documentationDB.forEach(doc => {
+                const card = createDocCard(doc);
+                docsGrid.appendChild(card);
+            });
+        }
+        
+        // Create Doc Card
+        function createDocCard(doc) {
+            const card = document.createElement('div');
+            card.className = 'doc-card';
+            card.innerHTML = `
+                <h3 class="doc-title">${doc.title}</h3>
+                <p class="doc-description">${doc.description}</p>
+                <div class="doc-tags">
+                    ${doc.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                openDocumentation(doc);
+            });
+            return card;
+        }
+        
+        // Setup Search
+        function setupSearch() {
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Real-time search
+            searchInput.addEventListener('input', () => {
+                if (searchInput.value.length > 2) {
+                    performSearch();
+                } else if (searchInput.value.length === 0) {
+                    searchResults.classList.remove('active');
+                    docsGrid.style.display = 'grid';
+                }
+            });
+        }
+        
+        // Perform Search
+        function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            
+            if (query.length < 2) {
+                return;
+            }
+            
+            loading.classList.add('active');
+            docsGrid.style.display = 'none';
+            
+            setTimeout(() => {
+                // Translate simple language
+                let searchTerms = [query];
+                Object.keys(languageMapping).forEach(simple => {
+                    if (query.includes(simple)) {
+                        searchTerms.push(...languageMapping[simple]);
+                    }
+                });
+                
+                // Search in database
+                const results = documentationDB.filter(doc => {
+                    const searchableText = [
+                        doc.title,
+                        doc.description,
+                        ...doc.tags,
+                        ...doc.keywords
+                    ].join(' ').toLowerCase();
+                    
+                    return searchTerms.some(term => searchableText.includes(term));
+                });
+                
+                displayResults(results, query);
+                loading.classList.remove('active');
+            }, 500);
+        }
+        
+        // Display Results
+        function displayResults(results, query) {
+            searchResults.classList.add('active');
+            resultsContainer.innerHTML = '';
+            
+            if (results.length === 0) {
+                // No results - show suggestions
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <h3 style="color: var(--dv-gold); margin-bottom: 20px;">
+                            Keine Ergebnisse für "${query}"
+                        </h3>
+                        <p style="margin-bottom: 20px; opacity: 0.8;">
+                            Möglicherweise haben Sie einen der folgenden Begriffe gemeint:
+                        </p>
+                        <div class="suggestions">
+                            <h3>Vorschläge:</h3>
+                            ${getSuggestions(query).map(suggestion => `
+                                <div class="suggestion-item" onclick="searchFor('${suggestion}')">
+                                    ${suggestion}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p style="margin-top: 30px; opacity: 0.7;">
+                            💡 Tipp: Verwenden Sie einfache Begriffe wie "Tests ausführen" oder "Installation"
+                        </p>
+                    </div>
+                `;
+            } else {
+                results.forEach(doc => {
+                    const card = createDocCard(doc);
+                    resultsContainer.appendChild(card);
+                });
+            }
+        }
+        
+        // Get Suggestions
+        function getSuggestions(query) {
+            const suggestions = [];
+            
+            // Keyword-based suggestions
+            if (query.includes('test')) {
+                suggestions.push('Tests ausführen', 'Test-Suite', 'Playwright Tests');
+            }
+            if (query.includes('install')) {
+                suggestions.push('Installation', 'Node.js installieren', 'Dependencies installieren');
+            }
+            if (query.includes('fehler') || query.includes('problem')) {
+                suggestions.push('Troubleshooting', 'Fehler beheben', 'Hilfe');
+            }
+            if (query.includes('terminal') || query.includes('befehle')) {
+                suggestions.push('Terminal-Grundlagen', 'Befehle', 'PowerShell');
+            }
+            
+            // Generic suggestions
+            if (suggestions.length === 0) {
+                suggestions.push('Handbücher', 'Anleitungen', 'Dokumentation', 'Quick Start');
+            }
+            
+            return suggestions.slice(0, 5);
+        }
+        
+        // Search For (from suggestions)
+        window.searchFor = function(term) {
+            searchInput.value = term;
+            performSearch();
+        };
+        
+        // Setup Scroll
+        function setupScroll() {
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+        
+        // ===== OPEN DOCUMENTATION =====
+        async function openDocumentation(doc) {
+            const loading = document.getElementById('loading');
+            if (loading) loading.classList.add('active');
+            
+            try {
+                const response = await fetch(doc.path);
+                if (!response.ok) {
+                    throw new Error(`Datei nicht gefunden: ${doc.path}`);
+                }
+                
+                const markdownText = await response.text();
+                const htmlContent = renderMarkdownToHTML(markdownText);
+                showDocumentationModal(doc.title, htmlContent, doc.path);
+            } catch (error) {
+                console.error('Error loading documentation:', error);
+                alert(`Fehler beim Laden:\n\n${doc.path}\n\n${error.message}`);
+            } finally {
+                if (loading) loading.classList.remove('active');
+            }
+        }
+        
+        // ===== RENDER MARKDOWN TO HTML =====
+        function renderMarkdownToHTML(markdown) {
+            let html = markdown;
+            
+            // Headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+            
+            // Italic
+            html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+            
+            // Code blocks
+            html = html.replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>');
+            
+            // Inline code
+            html = html.replace(/`([^`]+)`/gim, '<code>$1</code>');
+            
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank">$1</a>');
+            
+            // Lists
+            const lines = html.split('\n');
+            let inList = false;
+            let newLines = [];
+            
+            lines.forEach(line => {
+                if (/^[\-\*\+] .+/.test(line.trim())) {
+                    if (!inList) {
+                        newLines.push('<ul>');
+                        inList = true;
+                    }
+                    newLines.push(`<li>${line.trim().substring(2)}</li>`);
+                } else if (/^\d+\. .+/.test(line.trim())) {
+                    if (!inList) {
+                        newLines.push('<ol>');
+                        inList = true;
+                    }
+                    newLines.push(`<li>${line.trim().replace(/^\d+\. /, '')}</li>`);
+                } else {
+                    if (inList) {
+                        newLines.push(inList ? '</ul>' : '</ol>');
+                        inList = false;
+                    }
+                    if (line.trim() && !line.match(/^<[hul]/)) {
+                        newLines.push(`<p>${line.trim()}</p>`);
+                    } else if (line.trim()) {
+                        newLines.push(line);
+                    }
+                }
+            });
+            
+            if (inList) {
+                newLines.push('</ul>');
+            }
+            
+            html = newLines.join('\n');
+            
+            return html;
+        }
+        
+        // ===== SHOW DOCUMENTATION MODAL =====
+        function showDocumentationModal(title, content, path) {
+            let modal = document.getElementById('docModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'docModal';
+                modal.className = 'doc-modal';
+                modal.innerHTML = `
+                    <div class="doc-modal-overlay" onclick="closeDocModal()"></div>
+                    <div class="doc-modal-content">
+                        <div class="doc-modal-header">
+                            <h2 class="doc-modal-title"></h2>
+                            <button class="doc-modal-close" onclick="closeDocModal()">&times;</button>
+                        </div>
+                        <div class="doc-modal-body"></div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                if (!document.getElementById('docModalStyles')) {
+                    const style = document.createElement('style');
+                    style.id = 'docModalStyles';
+                    style.textContent = `
+                        .doc-modal {
+                            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                            z-index: 10000; display: none; align-items: center; justify-content: center;
+                        }
+                        .doc-modal.active { display: flex; }
+                        .doc-modal-overlay {
+                            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+                        }
+                        .doc-modal-content {
+                            position: relative; background: var(--dv-primary);
+                            border: 2px solid var(--dv-gold); border-radius: 10px;
+                            width: 90%; max-width: 1200px; max-height: 90vh;
+                            overflow: hidden; display: flex; flex-direction: column;
+                            box-shadow: 0 20px 60px rgba(233,69,96,0.4);
+                        }
+                        .doc-modal-header {
+                            padding: 20px; border-bottom: 1px solid var(--dv-gold);
+                            display: flex; justify-content: space-between; align-items: center;
+                            background: var(--dv-secondary);
+                        }
+                        .doc-modal-title { color: var(--dv-gold); margin: 0; font-size: 1.5em; }
+                        .doc-modal-close {
+                            background: none; border: none; color: var(--dv-gold);
+                            font-size: 2em; cursor: pointer; padding: 0 15px; line-height: 1;
+                        }
+                        .doc-modal-close:hover { color: var(--dv-light); }
+                        .doc-modal-body {
+                            padding: 30px; overflow-y: auto; flex: 1; color: var(--dv-light);
+                            line-height: 1.6;
+                        }
+                        .doc-modal-body h1, .doc-modal-body h2, .doc-modal-body h3 {
+                            color: var(--dv-gold); margin-top: 25px; margin-bottom: 15px;
+                        }
+                        .doc-modal-body h1 { font-size: 2em; border-bottom: 2px solid var(--dv-gold); padding-bottom: 10px; }
+                        .doc-modal-body h2 { font-size: 1.5em; }
+                        .doc-modal-body h3 { font-size: 1.2em; }
+                        .doc-modal-body pre {
+                            background: var(--dv-secondary); padding: 15px; border-radius: 5px;
+                            overflow-x: auto; border-left: 3px solid var(--dv-gold); margin: 15px 0;
+                        }
+                        .doc-modal-body code {
+                            background: var(--dv-secondary); padding: 2px 6px; border-radius: 3px;
+                            font-family: 'Courier New', monospace; font-size: 0.9em;
+                        }
+                        .doc-modal-body ul, .doc-modal-body ol {
+                            margin-left: 25px; margin-bottom: 15px;
+                        }
+                        .doc-modal-body li { margin-bottom: 8px; }
+                        .doc-modal-body a {
+                            color: var(--dv-gold); text-decoration: underline;
+                        }
+                        .doc-modal-body a:hover { color: var(--dv-light); }
+                        .doc-modal-body p { margin-bottom: 15px; }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }
+            
+            modal.querySelector('.doc-modal-title').textContent = title;
+            modal.querySelector('.doc-modal-body').innerHTML = content;
+            modal.classList.add('active');
+        }
+        
+        // ===== CLOSE DOCUMENTATION MODAL =====
+        function closeDocModal() {
+            const modal = document.getElementById('docModal');
+            if (modal) modal.classList.remove('active');
+        }
+    </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>
+

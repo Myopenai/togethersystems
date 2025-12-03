@@ -1,0 +1,88 @@
+# ============================================================================
+# ALERTING RULES
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Alerting-Regeln für Prometheus
+# ============================================================================
+
+groups:
+  - name: togethersystems_alerts
+    interval: 30s
+    rules:
+      # ============================================================================
+      # ERROR RATE
+      # ============================================================================
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          module: core
+        annotations:
+          summary: "T,. High Error Rate"
+          description: "Error rate is above 5% for 5 minutes"
+      
+      # ============================================================================
+      # RESPONSE TIME
+      # ============================================================================
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          module: core
+        annotations:
+          summary: "T,. High Response Time"
+          description: "P99 response time is above 500ms"
+      
+      # ============================================================================
+      # ACCESSIBILITY SCORE
+      # ============================================================================
+      - alert: LowAccessibilityScore
+        expr: accessibility_score < 100
+        for: 1m
+        labels:
+          severity: critical
+          module: core-protocols
+        annotations:
+          summary: "T,. Low Accessibility Score"
+          description: "Accessibility score dropped below 100%"
+      
+      # ============================================================================
+      # SECURITY SCORE
+      # ============================================================================
+      - alert: LowSecurityScore
+        expr: security_score < 100
+        for: 1m
+        labels:
+          severity: critical
+          module: core-protocols
+        annotations:
+          summary: "T,. Low Security Score"
+          description: "Security score dropped below 100%"
+      
+      # ============================================================================
+      # BUILD FAILURES
+      # ============================================================================
+      - alert: BuildFailure
+        expr: build_status == 0
+        for: 1m
+        labels:
+          severity: warning
+          module: auto-execution
+        annotations:
+          summary: "T,. Build Failure"
+          description: "Build failed"
+      
+      # ============================================================================
+      # DEPLOYMENT FAILURES
+      # ============================================================================
+      - alert: DeploymentFailure
+        expr: deployment_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          module: auto-execution
+        annotations:
+          summary: "T,. Deployment Failure"
+          description: "Deployment failed"
+

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLOUDFLARE-PAGES-CHECKLIST</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>Cloudflare Pages Checklist - Was wurde gemacht & was ist zu beachten</h1>
+
+<h2>✅ Bereits erledigt für Cloudflare Pages</h2>
+
+<h3>1. 404-Funktion aktualisiert ✅</h3>
+- <strong>Datei:</strong> `functions/404.js`
+- <strong>Änderungen:</strong>
+  - Telbank-Redirects hinzugefügt
+  - OneNetwork-Redirects hinzugefügt
+  - Case-insensitive Fallbacks
+  - Telbank-Link in 404-Seite hinzugefügt
+
+<h3>2. Links korrigiert ✅</h3>
+- <strong>Alle HTML-Dateien:</strong> Links von `./TELBANK/index.html` auf `TELBANK/index.html`
+- <strong>Funktioniert auf:</strong> Cloudflare Pages UND GitHub Pages
+- <strong>Grund:</strong> Relative Pfade funktionieren auf beiden Plattformen
+
+<h3>3. API-Calls konfiguriert ✅</h3>
+- <strong>GitHub Pages:</strong> API-Calls deaktiviert (keine Serverless Functions)
+- <strong>Cloudflare Pages:</strong> API-Calls aktiviert (Functions verfügbar)
+- <strong>Erkennung:</strong> Automatisch via `location.hostname.includes('pages.dev')`
+
+---
+
+<h2>🔧 Cloudflare Pages Deployment</h2>
+
+<h3>Aktuelles Setup</h3>
+- <strong>Projekt-Name:</strong> `ts-portal`
+- <strong>Deployment-Skript:</strong> `deploy.ps1`
+- <strong>GitHub Actions:</strong> `.github/workflows/deploy.yml`
+
+<h3>Deployment-Befehl</h3>
+```powershell
+wrangler pages deploy . --project-name ts-portal
+```
+
+<h3>Wichtige Hinweise</h3>
+1. <strong>BACKUPS-Ordner:</strong> Sollte NICHT im Projekt sein (Dateigrößen-Limit 25MB)
+2. <strong>Functions:</strong> Werden automatisch aus `functions/` deployt
+3. <strong>D1-Datenbank:</strong> Muss separat konfiguriert werden (Binding im Cloudflare Dashboard)
+
+---
+
+<h2>📋 Was funktioniert auf Cloudflare Pages</h2>
+
+<h3>✅ Funktioniert</h3>
+- <strong>404-Handler:</strong> `functions/404.js` fängt 404-Fehler ab
+- <strong>API-Endpoints:</strong> `/api/presence/<em>`, `/api/voucher/</em>`, `/api/telbank/*`, etc.
+- <strong>WebSocket:</strong> `/ws` (via `functions/ws.js`)
+- <strong>Links:</strong> Telbank & OneNetwork funktionieren
+- <strong>Bilder:</strong> Fallbacks implementiert
+
+<h3>⚠️ Zu beachten</h3>
+- <strong>D1-Datenbank:</strong> Muss im Cloudflare Dashboard konfiguriert sein
+- <strong>R2-Bucket:</strong> Falls verwendet, muss Binding gesetzt sein
+- <strong>Umgebungsvariablen:</strong> `TS_API_KEY` etc. müssen im Dashboard gesetzt sein
+
+---
+
+<h2>🚀 Nächste Schritte für Cloudflare Pages</h2>
+
+1. ✅ <strong>404-Funktion:</strong> Bereits aktualisiert
+2. ✅ <strong>Links:</strong> Bereits korrigiert
+3. ⏭ <strong>Deployment:</strong> `.\deploy.ps1` ausführen
+4. ⏭ <strong>Tests:</strong> Nach Deployment testen
+
+---
+
+<h2>📝 Unterschiede: GitHub Pages vs. Cloudflare Pages</h2>
+
+| Feature | GitHub Pages | Cloudflare Pages |
+|---------|--------------|------------------|
+| <strong>API-Calls</strong> | ❌ Deaktiviert | ✅ Aktiviert |
+| <strong>404-Handler</strong> | ❌ Nicht verfügbar | ✅ `functions/404.js` |
+| <strong>WebSocket</strong> | ❌ Nicht verfügbar | ✅ `functions/ws.js` |
+| <strong>Links</strong> | ✅ Funktioniert | ✅ Funktioniert |
+| <strong>Bilder</strong> | ✅ Mit Fallbacks | ✅ Mit Fallbacks |
+
+---
+
+<h2>✅ Status</h2>
+
+- ✅ <strong>404-Funktion:</strong> Aktualisiert für Cloudflare Pages
+- ✅ <strong>Links:</strong> Korrigiert (funktioniert auf beiden Plattformen)
+- ✅ <strong>API-Erkennung:</strong> Automatisch (GitHub Pages = deaktiviert, Cloudflare = aktiviert)
+- ✅ <strong>Deployment-Skript:</strong> Bereit (`deploy.ps1`)
+
+<strong>Alles ist bereit für Cloudflare Pages!</strong> 🚀
+</body>
+</html>

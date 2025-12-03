@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UMBAU-ANPASSUNGEN-ANLEITUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🔧 THYNK ORDERS - Umbau & Anpassungen Anleitung</h1>
+
+<strong>Zweck:</strong> Detaillierte Anleitung für Umbau-Maßnahmen, Konfigurationen und Anpassungen  
+<strong>Für:</strong> Entwickler, Administratoren, Anpasser
+
+---
+
+<h2>📋 INHALTSVERZEICHNIS</h2>
+
+1. <a href="#grundlegendes">Grundlegendes</a>
+2. <a href="#design-anpassungen">Design-Anpassungen</a>
+3. <a href="#funktions-erweiterungen">Funktions-Erweiterungen</a>
+4. <a href="#datenbank-anpassungen">Datenbank-Anpassungen</a>
+5. <a href="#api-integration">API-Integration</a>
+6. <a href="#konfiguration-erweitern">Konfiguration erweitern</a>
+7. <a href="#von-lokal-zu-server">Von lokal zu Server</a>
+
+---
+
+<h2>🎯 GRUNDLEGENDES</h2>
+
+<h3>Datei-Struktur verstehen</h3>
+
+```
+THYNK-ORDERS-COMPLETE.html
+├── <head>
+│   ├── <meta> Tags
+│   └── <style> → ALLE CSS (inline)
+└── <body>
+    ├── Container
+    │   ├── Header
+    │   ├── Tabs (Navigation)
+    │   └── Tab-Contents (Inhalt)
+    └── <script>
+        ├── Globale Variablen
+        ├── Initialisierung
+        └── Funktionen
+```
+
+<strong>Wichtig:</strong>
+- Alles in EINER Datei
+- CSS ist inline (im `<style>`-Tag)
+- JavaScript ist inline (im `<script>`-Tag)
+- Keine externen Abhängigkeiten
+
+---
+
+<h2>🎨 DESIGN-ANPASSUNGEN</h2>
+
+<h3>Farben ändern</h3>
+
+<strong>Methode 1: Direkt im CSS</strong>
+
+Suchen Sie nach:
+```css
+background: #0a0a0a;  /<em> Hintergrund </em>/
+color: #e0e0e0;       /<em> Text </em>/
+background: #4CAF50;  /<em> Buttons </em>/
+```
+
+Ändern Sie die Werte:
+```css
+background: #1a1a1a;  /<em> Dunklerer Hintergrund </em>/
+color: #ffffff;       /<em> Weißer Text </em>/
+background: #2196F3;  /<em> Blaue Buttons </em>/
+```
+
+<strong>Methode 2: CSS-Variablen (empfohlen)</strong>
+
+Fügen Sie am Anfang des `<style>`-Tags hinzu:
+```css
+:root {
+  --primary-color: #4CAF50;
+  --secondary-color: #555;
+  --background-color: #0a0a0a;
+  --text-color: #e0e0e0;
+  --card-background: #111;
+  --border-color: #333;
+}
+```
+
+Dann ersetzen Sie alle Farbwerte durch Variablen:
+```css
+background: var(--primary-color);
+color: var(--text-color);
+```
+
+<h3>Layout ändern</h3>
+
+<strong>Container-Breite:</strong>
+```css
+.container {
+  max-width: 1400px; /<em> Ändern Sie hier </em>/
+}
+```
+
+<strong>Spalten-Grid:</strong>
+```css
+.grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /<em> Ändern Sie minmax(300px, 1fr) für andere Breiten </em>/
+}
+```
+
+<h3>Schriftarten ändern</h3>
+
+Suchen Sie nach:
+```css
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+```
+
+Ändern Sie zu:
+```css
+font-family: 'Arial', 'Helvetica', sans-serif;
+/<em> Oder: font-family: 'Roboto', sans-serif; </em>/
+```
+
+---
+
+<h2>⚙️ FUNKTIONS-ERWEITERUNGEN</h2>
+
+<h3>Neue Funktion hinzufügen</h3>
+
+<strong>Schritt 1: Funktion im Script erstellen</strong>
+
+Suchen Sie nach dem Ende der bestehenden Funktionen und fügen Sie hinzu:
+```javascript
+function meineNeueFunktion() {
+    // Ihre Logik hier
+    alert('Neue Funktion!');
+}
+```
+
+<strong>Schritt 2: Funktion aufrufen</strong>
+
+Im HTML oder in einem Button:
+```html
+<button class="btn" onclick="meineNeueFunktion()">Neue Funktion</button>
+```
+
+<h3>Neues Tab hinzufügen</h3>
+
+<strong>Schritt 1: Tab-Button hinzufügen</strong>
+
+Suchen Sie nach `.tabs` und fügen Sie hinzu:
+```html
+<button class="tab" onclick="showTab('meinTab')">Mein Tab</button>
+```
+
+<strong>Schritt 2: Tab-Content hinzufügen</strong>
+
+Fügen Sie nach den anderen Tab-Contents hinzu:
+```html
+<div id="meinTab-tab" class="tab-content section">
+    <h2>Mein Tab</h2>
+    <p>Inhalt hier...</p>
+    <button class="btn" onclick="meineFunktion()">Aktion</button>
+</div>
+```
+
+<h3>Bestellungsfelder erweitern</h3>
+
+<strong>Schritt 1: Input-Felder hinzufügen</strong>
+
+In der "Neue Bestellung" Sektion:
+```html
+<input type="text" id="newField" placeholder="Neues Feld">
+```
+
+<strong>Schritt 2: In createOrder() einbinden</strong>
+
+Suchen Sie nach `createOrder()` und fügen Sie hinzu:
+```javascript
+const newField = document.getElementById('newField').value;
+order.new_field = newField; // Zu Order-Objekt hinzufügen
+```
+
+<h3>Export-Format ändern</h3>
+
+<strong>Excel-Export hinzufügen:</strong>
+
+Installieren Sie eine Bibliothek oder erstellen Sie CSV:
+```javascript
+function exportToExcel() {
+    const orders = getOrders();
+    let csv = 'Bestellnummer,Kunde,Betrag\n';
+    
+    orders.forEach(order => {
+        csv += `${order.order_number},${order.customer.name},${order.total_amount}\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'bestellungen.csv';
+    link.click();
+}
+```
+
+---
+
+<h2>🗄️ DATENBANK-ANPASSUNGEN</h2>
+
+<h3>Daten-Struktur erweitern</h3>
+
+<strong>Neue Felder zur Bestellung:</strong>
+
+1. Ändern Sie `createOrder()`:
+```javascript
+const order = {
+    // ... bestehende Felder ...
+    new_field: document.getElementById('newField').value,
+    metadata: {
+        source: 'web',
+        campaign: 'summer2024'
+    }
+};
+```
+
+2. Beim Laden anzeigen:
+```javascript
+function viewOrder(orderId) {
+    const order = getOrders().find(o => o.id === orderId);
+    // Zeigen Sie order.new_field an
+    console.log(order.new_field);
+}
+```
+
+<h3>Neue Status hinzufügen</h3>
+
+<strong>Schritt 1: Status definieren</strong>
+
+```javascript
+const STATUS_MAP = {
+    '1': 'pending',
+    '2': 'paid',
+    '3': 'shipped',
+    '4': 'cancelled',
+    '5': 'delivered',  // NEU
+    '6': 'returned'    // NEU
+};
+```
+
+<strong>Schritt 2: Status-CSS hinzufügen</strong>
+
+```css
+.status-delivered { background: #00BCD4; color: #fff; }
+.status-returned { background: #9E9E9E; color: #fff; }
+```
+
+<h3>Datenbank-Migration</h3>
+
+<strong>Von localStorage zu IndexedDB:</strong>
+
+1. IndexedDB-Setup:
+```javascript
+let db;
+const request = indexedDB.open('thynk_orders_db', 1);
+
+request.onupgradeneeded = function(event) {
+    db = event.target.result;
+    const objectStore = db.createObjectStore('orders', { keyPath: 'id' });
+    objectStore.createIndex('order_number', 'order_number', { unique: true });
+};
+
+request.onsuccess = function(event) {
+    db = event.target.result;
+};
+```
+
+2. Daten migrieren:
+```javascript
+function migrateToIndexedDB() {
+    const orders = getOrders();
+    const transaction = db.transaction(['orders'], 'readwrite');
+    const store = transaction.objectStore('orders');
+    
+    orders.forEach(order => {
+        store.add(order);
+    });
+}
+```
+
+---
+
+<h2>🔌 API-INTEGRATION</h2>
+
+<h3>Server-API verbinden</h3>
+
+<strong>Schritt 1: API-Endpunkt definieren</strong>
+
+```javascript
+const API_BASE_URL = 'https://your-api.com/api';
+```
+
+<strong>Schritt 2: Fetch-Funktion erstellen</strong>
+
+```javascript
+async function fetchFromAPI(endpoint, method = 'GET', data = null) {
+    const options = {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer YOUR_TOKEN'
+        }
+    };
+    
+    if (data) {
+        options.body = JSON.stringify(data);
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        if (!response.ok) throw new Error('API Error');
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        return null;
+    }
+}
+```
+
+<strong>Schritt 3: Bestellung an Server senden</strong>
+
+```javascript
+async function createOrderWithAPI() {
+    const order = {
+        // ... Order-Daten ...
+    };
+    
+    // Lokal speichern
+    const orders = getOrders();
+    orders.push(order);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    
+    // An Server senden
+    const result = await fetchFromAPI('/orders', 'POST', order);
+    if (result) {
+        console.log('Order saved on server:', result);
+    }
+}
+```
+
+<h3>Offline-Funktionalität</h3>
+
+<strong>Queue für Offline-Requests:</strong>
+
+```javascript
+const offlineQueue = [];
+
+function queueRequest(endpoint, method, data) {
+    offlineQueue.push({ endpoint, method, data, timestamp: Date.now() });
+    localStorage.setItem('offline_queue', JSON.stringify(offlineQueue));
+}
+
+function processOfflineQueue() {
+    if (!navigator.onLine) return;
+    
+    const queue = JSON.parse(localStorage.getItem('offline_queue') || '[]');
+    queue.forEach(request => {
+        fetchFromAPI(request.endpoint, request.method, request.data)
+            .then(() => {
+                // Erfolgreich gesendet, aus Queue entfernen
+                const newQueue = queue.filter(r => r !== request);
+                localStorage.setItem('offline_queue', JSON.stringify(newQueue));
+            });
+    });
+}
+
+// Bei Online-Verbindung verarbeiten
+window.addEventListener('online', processOfflineQueue);
+```
+
+---
+
+<h2>⚙️ KONFIGURATION ERWEITERN</h2>
+
+<h3>Konfigurationsdatei erstellen</h3>
+
+<strong>config.js erstellen:</strong>
+
+```javascript
+window.THYNK_CONFIG = {
+    currency: {
+        default: 'EUR',
+        symbol: '€',
+        decimalPlaces: 2
+    },
+    order: {
+        numberFormat: 'ORD-{YYYY}-{MM}-{DD}-{RANDOM}',
+        defaultStatus: 'pending',
+        autoIncrement: true
+    },
+    ui: {
+        theme: 'dark',
+        language: 'de',
+        itemsPerPage: 20
+    },
+    features: {
+        exportEnabled: true,
+        importEnabled: true,
+        statisticsEnabled: true
+    }
+};
+```
+
+<strong>In HTML einbinden:</strong>
+
+```html
+<script src="config.js"></script>
+<script>
+    // Verwenden Sie die Konfiguration
+    const currency = window.THYNK_CONFIG.currency.default;
+</script>
+```
+
+<h3>Einstellungen erweitern</h3>
+
+<strong>Neue Einstellung hinzufügen:</strong>
+
+1. Im Settings-Tab:
+```html
+<select id="theme">
+    <option value="dark">Dark</option>
+    <option value="light">Light</option>
+</select>
+```
+
+2. Speichern:
+```javascript
+function saveSettings() {
+    settings.theme = document.getElementById('theme').value;
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+```
+
+3. Anwenden:
+```javascript
+function applyTheme(theme) {
+    document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
+}
+```
+
+---
+
+<h2>🚀 VON LOKAL ZU SERVER</h2>
+
+<h3>Schritt 1: Backend erstellen</h3>
+
+<strong>Node.js/Express Beispiel:</strong>
+
+```javascript
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.post('/api/orders', async (req, res) => {
+    const order = req.body;
+    // In Datenbank speichern
+    const savedOrder = await db.orders.insert(order);
+    res.json(savedOrder);
+});
+
+app.get('/api/orders', async (req, res) => {
+    const orders = await db.orders.findAll();
+    res.json(orders);
+});
+```
+
+<h3>Schritt 2: Frontend anpassen</h3>
+
+<strong>API-URL konfigurieren:</strong>
+
+```javascript
+const API_URL = 'https://your-server.com/api';
+```
+
+<strong>Alle localStorage-Calls durch API-Calls ersetzen:</strong>
+
+```javascript
+// ALT (localStorage):
+localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+
+// NEU (API):
+await fetch(`${API_URL}/orders`, {
+    method: 'POST',
+    body: JSON.stringify(order)
+});
+```
+
+<h3>Schritt 3: Hybrid-Lösung</h3>
+
+<strong>Lokal UND Server:</strong>
+
+```javascript
+async function saveOrder(order) {
+    // 1. Lokal speichern (Offline-First)
+    const orders = getOrders();
+    orders.push(order);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    
+    // 2. An Server senden (falls online)
+    if (navigator.onLine) {
+        try {
+            await fetch(`${API_URL}/orders`, {
+                method: 'POST',
+                body: JSON.stringify(order)
+            });
+        } catch (error) {
+            console.error('Server sync failed, saved locally');
+        }
+    }
+}
+```
+
+---
+
+<h2>📋 CHECKLISTE FÜR UMBAU</h2>
+
+<h3>Vor dem Umbau:</h3>
+- [ ] Backup erstellen (Datei kopieren)
+- [ ] Änderungen dokumentieren
+- [ ] Test-Umgebung einrichten
+
+<h3>Während des Umbaus:</h3>
+- [ ] Schritt für Schritt vorgehen
+- [ ] Jeden Schritt testen
+- [ ] Fehler dokumentieren
+
+<h3>Nach dem Umbau:</h3>
+- [ ] Alle Funktionen testen
+- [ ] Dokumentation aktualisieren
+- [ ] Backup aufbewahren
+
+---
+
+<strong>Version:</strong> 1.0.0  
+<strong>Letzte Aktualisierung:</strong> $(Get-Date -Format "yyyy-MM-dd")
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CMS-IMPLEMENTIERUNGS-PLAN</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>CMS-Implementierungsplan für Together Systems Portal</h1>
+
+<h2>Übersicht</h2>
+
+Dieses Dokument beschreibt die Integration eines vollwertigen, block-basierten CMS-Systems in das Together Systems Portal. Das System ist <strong>keine Kopie</strong> eines bestehenden Systems, sondern eine <strong>eigenständige Weiterentwicklung</strong> mit erweiterten Features.
+
+<h2>Architektur</h2>
+
+<h3>Datenbank-Schema</h3>
+
+- <strong>d1-schema-cms.sql</strong>: Vollständiges Datenbankschema für Multi-Tenant-CMS
+  - Tenants, Sites, Domains
+  - Pages, BlockTypes, Blocks
+  - Collections (Blog, Produkte, Events)
+  - E-Commerce (Products, Orders)
+  - API-Keys, Webhooks, Audit-Logs
+
+<h3>API-Endpoints</h3>
+
+<strong>Basis-Struktur:</strong>
+```
+/api/cms/
+  ├── sites/              # Site-Verwaltung
+  │   └── [siteId]/
+  │       └── pages/      # Seiten-Verwaltung
+  ├── pages/
+  │   └── [pageId]        # Einzelne Seite (GET, PUT, DELETE)
+  ├── blocks/             # Block-Verwaltung
+  ├── collections/        # Collections (Blog, etc.)
+  ├── products/           # E-Commerce
+  ├── media/              # Medien-Verwaltung
+  └── public/
+      └── [siteSlug]/
+          └── [...path]   # Public Website-Rendering
+```
+
+<h3>Frontend-Integration</h3>
+
+<strong>Portal-Routen:</strong>
+```
+/portal/cms/
+  ├── index              # Sites-Dashboard
+  ├── site/[siteId]      # Site-Verwaltung
+  └── editor/
+      └── [siteId]/[pageId]  # Block-Editor
+```
+
+<h2>Implementierungs-Phasen</h2>
+
+<h3>Phase 1: Basis (MVP)</h3>
+- ✅ Datenbank-Schema
+- ✅ Sites API (GET, POST)
+- ⏳ Pages API
+- ⏳ Blocks API
+- ⏳ Basis-Editor-UI
+
+<h3>Phase 2: Erweitert</h3>
+- ⏳ Collections
+- ⏳ Mehrsprachigkeit
+- ⏳ Media-Verwaltung
+- ⏳ Public-Rendering
+
+<h3>Phase 3: E-Commerce</h3>
+- ⏳ Products API
+- ⏳ Orders API
+- ⏳ Zahlungsintegration
+
+<h3>Phase 4: Enterprise</h3>
+- ⏳ API-Keys & Webhooks
+- ⏳ Audit-Logs
+- ⏳ Plugin-System
+- ⏳ Multi-Tenant-Verwaltung
+
+<h2>Nächste Schritte</h2>
+
+1. ✅ Datenbank-Schema erstellt
+2. ✅ Sites API implementiert
+3. ⏳ Pages API implementieren
+4. ⏳ Block-Editor-UI erstellen
+5. ⏳ Public-Rendering implementieren
+
+<h2>Technische Details</h2>
+
+<h3>Block-System</h3>
+
+Blöcke sind generische Content-Bausteine:
+- <strong>BlockType</strong>: Definiert Schema und Komponente
+- <strong>Block</strong>: Instanz mit Daten (JSON)
+- <strong>Zones</strong>: main, sidebar, footer, header
+- <strong>Position</strong>: Reihenfolge innerhalb Zone
+
+<h3>Multi-Tenant</h3>
+
+Jeder Tenant kann mehrere Sites haben:
+- Tenant → Sites (1:n)
+- Sites isoliert pro Tenant
+- Tenant-basierte API-Keys
+
+<h3>Headless-Fähig</h3>
+
+Inhalte können:
+- Klassisch als Website gerendert werden
+- Per API (JSON) ausgeliefert werden
+- Headless-Frontends speisen
+
+<h2>Wichtige Hinweise</h2>
+
+⚠️ <strong>Keine Erwähnung des Originalsystems</strong> in Code, UI oder Dokumentation.
+
+✅ <strong>Eigenständige Entwicklung</strong> – basiert nur auf funktionalen Anforderungen.
+
+🚀 <strong>Performance</strong>: Edge-Caching, Query-Optimierung, CDN-Integration.
+
+
+---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---
+</body>
+</html>

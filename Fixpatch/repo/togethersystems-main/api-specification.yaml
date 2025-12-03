@@ -1,0 +1,865 @@
+openapi: 3.0.3
+info:
+  title: T,. / INTERNATIONAL TTT – Core API
+  version: 1.0.0
+  description: |
+    Kern-API für TogetherSystems:
+    - Manifest-Service (Offline → Online, Feeds)
+    - Voucher-Service (Kapazitäten, Slots, Buchungen)
+    - Telbank-Service (Transfers, Wallet-Operationen)
+    - Room/Live-Service (Signaling, WebRTC)
+    
+    Motto:
+    "Wir bewegen die Welt. Die Welt bewegt uns.
+     Ihnen kostet das Geld. Uns ist das egal."
+    
+    Branding: MYOPENAi(C)R {MOAi(C)T,.&T,,.&T,,,.(C)INTERNATIONAL TTT,.}
+  contact:
+    name: TogetherSystems Support
+    url: https://myopenai.github.io/togethersystems/
+
+servers:
+  - url: https://api.ttt.example.com
+    description: Production (Cloudflare Pages)
+  - url: https://ts-portal.pages.dev/api
+    description: Cloudflare Pages Dev
+  - url: http://localhost:8788/api
+    description: Local Development
+
+tags:
+  - name: Manifest
+    description: Verwaltung von Manifest-Einträgen (Offline → Online)
+  - name: Voucher
+    description: Vouchers, Slots und Buchungen
+  - name: Telbank
+    description: Transfer-Ledger und Wallet-Operationen
+  - name: Room
+    description: Live-Räume, Signaling, WebRTC
+  - name: Admin
+    description: Admin-Endpunkte (Monitoring, Dashboard, Backups)
+
+paths:
+  #########################################
+  # MANIFEST-SERVICE
+  #########################################
+  
+  /manifest/entries:
+    get:
+      tags: [Manifest]
+      summary: Liste öffentlicher Manifest-Einträge
+      description: |
+        Liefert eine paginierte Liste von Manifest-Einträgen.
+        Filterbar nach Sprache, Tags und Zeit.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: language
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Erfolgreiche Antwort
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestEntryPage'
+    
+    post:
+      tags: [Manifest]
+      summary: Manifest-Eintrag veröffentlichen
+      description: |
+        Nimmt einen Manifest-Eintrag entgegen, der aus dem Offline-Manifest
+        exportiert wurde. Optional mit Token/Signatur zur Verknüpfung mit TTT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManifestEntryCreateRequest'
+      responses:
+        '201':
+          description: Eintrag erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestEntry'
+
+  #########################################
+  # VOUCHER-SERVICE
+  #########################################
+  
+  /voucher/vouchers:
+    get:
+      tags: [Voucher]
+      summary: Liste von Vouchern
+      description: |
+        Liefert Vouchers, optional gefiltert nach Service-Typ, Status oder
+        zugehöriger Organisation.
+      parameters:
+        - name: issuerUid
+          in: query
+          schema:
+            type: string
+        - name: holderUid
+          in: query
+          schema:
+            type: string
+        - name: serviceType
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, active, expired, cancelled]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Voucher'
+    
+    post:
+      tags: [Voucher]
+      summary: Neuen Voucher anlegen
+      description: |
+        Legt einen Voucher an, der Kapazität repräsentiert.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoucherCreateRequest'
+      responses:
+        '201':
+          description: Voucher erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Voucher'
+
+  /voucher/bookings:
+    get:
+      tags: [Voucher]
+      summary: Buchungen auflisten
+      description: |
+        Listet Buchungen – z.B. pro Organisation, pro Kunde oder
+        pro Service-Typ.
+      parameters:
+        - name: holderUid
+          in: query
+          schema:
+            type: string
+        - name: issuerUid
+          in: query
+          schema:
+            type: string
+        - name: voucherId
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Booking'
+    
+    post:
+      tags: [Voucher]
+      summary: Slot buchen
+      description: |
+        Erstellt eine Buchung für einen verfügbaren Slot.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingCreateRequest'
+      responses:
+        '201':
+          description: Buchung erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+
+  #########################################
+  # TELBANK-SERVICE
+  #########################################
+  
+  /telbank/transfers:
+    get:
+      tags: [Telbank]
+      summary: Transfer-Ledger abrufen
+      description: |
+        Liefert den Transfer-Ledger mit optionalen Filtern.
+      parameters:
+        - name: wallet
+          in: query
+          schema:
+            type: string
+        - name: direction
+          in: query
+          schema:
+            type: string
+            enum: [in, out]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Transfer'
+    
+    post:
+      tags: [Telbank]
+      summary: Transfer loggen
+      description: |
+        Loggt einen neuen Transfer (In oder Out).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferCreateRequest'
+      responses:
+        '201':
+          description: Transfer geloggt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transfer'
+
+  #########################################
+  # ROOM/LIVE-SERVICE (Signaling, WebRTC)
+  #########################################
+  
+  /presence/verify:
+    post:
+      tags: [Room]
+      summary: Token-Verifikation und Thinker-ID-Ableitung
+      description: |
+        Verifiziert ein Token (optional mit HMAC-Signatur) und leitet eine stabile thinker_id ab.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRequest'
+      responses:
+        '200':
+          description: Verifizierung erfolgreich
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResponse'
+        '401':
+          description: Token ungültig oder abgelaufen
+  
+  /presence/heartbeat:
+    post:
+      tags: [Room]
+      summary: Presence-Heartbeat senden
+      description: |
+        Meldet Anwesenheit eines Thinkers. Sollte regelmäßig (alle 25 Sekunden) gesendet werden.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HeartbeatRequest'
+      responses:
+        '200':
+          description: Heartbeat akzeptiert
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  
+  /presence/match:
+    post:
+      tags: [Room]
+      summary: Partner/Gruppe mit gleichem pair_code finden
+      description: |
+        Sucht nach anderen Thinkern mit demselben pair_code und vergibt room_id bei Match.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchRequest'
+      responses:
+        '200':
+          description: Match-Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchResponse'
+  
+  /ws:
+    get:
+      tags: [Room]
+      summary: WebSocket-Verbindung für Signaling
+      description: |
+        WebSocket-Endpunkt für Live-Kommunikation, WebRTC-Signaling, Text-Chat.
+        Upgrade-Header erforderlich.
+      parameters:
+        - name: room_id
+          in: query
+          schema:
+            type: string
+          description: Raum-ID (wird beim Join übergeben)
+      responses:
+        '101':
+          description: WebSocket-Verbindung hergestellt
+          headers:
+            Upgrade:
+              schema:
+                type: string
+                example: websocket
+        '426':
+          description: Upgrade Required (kein WebSocket-Upgrade-Header)
+  
+  /room/list:
+    get:
+      tags: [Room]
+      summary: Liste aktiver Räume abrufen
+      description: |
+        Liefert eine Liste der aktiven Räume (optional gefiltert nach thinker_id).
+      parameters:
+        - name: thinker_id
+          in: query
+          schema:
+            type: string
+          description: Filter nach Thinker-ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rooms:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Room'
+  
+  /room/{roomId}:
+    get:
+      tags: [Room]
+      summary: Raum-Details abrufen
+      description: |
+        Liefert Details zu einem spezifischen Raum.
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+        '404':
+          description: Raum nicht gefunden
+
+  #########################################
+  # ADMIN-SERVICE
+  #########################################
+  
+  /admin/events:
+    get:
+      tags: [Admin]
+      summary: Events für Monitoring abrufen
+      description: |
+        Liefert die letzten N Events aus der events-Tabelle.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+  
+  /admin/dashboard:
+    get:
+      tags: [Admin]
+      summary: Production Dashboard Metriken
+      description: |
+        Liefert umfassende Metriken für das Production Dashboard.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardMetrics'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-TS-APIKEY
+
+  schemas:
+    # MANIFEST SCHEMAS
+    ManifestEntry:
+      type: object
+      required: [id, title, content, createdAt]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          maxLength: 200
+        content:
+          type: string
+        language:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        initials:
+          type: string
+        identity:
+          type: string
+          description: Logo-URL (Data-URL oder HTTP-URL)
+        createdAt:
+          type: string
+          format: date-time
+    
+    ManifestEntryCreateRequest:
+      type: object
+      required: [title, content]
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        content:
+          type: string
+        language:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        initials:
+          type: string
+        identity:
+          type: string
+        token:
+          type: string
+          description: Token aus Offline-Manifest
+    
+    ManifestEntryPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ManifestEntry'
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalItems:
+          type: integer
+    
+    # VOUCHER SCHEMAS
+    Voucher:
+      type: object
+      required: [id, serviceType, status]
+      properties:
+        id:
+          type: string
+        issuerUid:
+          type: string
+        holderUid:
+          type: string
+        serviceType:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        durationMinutes:
+          type: integer
+        validFrom:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        priceAmount:
+          type: number
+        priceCurrency:
+          type: string
+        status:
+          type: string
+          enum: [draft, active, expired, cancelled]
+        transferable:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    
+    VoucherCreateRequest:
+      type: object
+      required: [serviceType, issuerUid]
+      properties:
+        issuerUid:
+          type: string
+        serviceType:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        durationMinutes:
+          type: integer
+        validFrom:
+          type: string
+          format: date-time
+        validUntil:
+          type: string
+          format: date-time
+        priceAmount:
+          type: number
+        priceCurrency:
+          type: string
+        transferable:
+          type: boolean
+          default: false
+    
+    Booking:
+      type: object
+      required: [id, voucherId, holderUid]
+      properties:
+        id:
+          type: string
+        voucherId:
+          type: string
+        issuerUid:
+          type: string
+        holderUid:
+          type: string
+        slotId:
+          type: string
+        slotStart:
+          type: string
+          format: date-time
+        slotEnd:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [booked, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+    
+    BookingCreateRequest:
+      type: object
+      required: [voucherId, slotId, holderUid]
+      properties:
+        voucherId:
+          type: string
+        slotId:
+          type: string
+        holderUid:
+          type: string
+        slotStart:
+          type: string
+          format: date-time
+        slotEnd:
+          type: string
+          format: date-time
+    
+    # TELBANK SCHEMAS
+    Transfer:
+      type: object
+      required: [id, direction, cryptoAmount, cryptoSymbol, fiatAmount, fiatCurrency]
+      properties:
+        id:
+          type: string
+        direction:
+          type: string
+          enum: [in, out]
+        label:
+          type: string
+        walletAddress:
+          type: string
+        network:
+          type: string
+        cryptoAmount:
+          type: number
+        cryptoSymbol:
+          type: string
+        fiatAmount:
+          type: number
+        fiatCurrency:
+          type: string
+        externalAccount:
+          type: string
+        status:
+          type: string
+          enum: [logged, settled]
+        createdAt:
+          type: string
+          format: date-time
+    
+    TransferCreateRequest:
+      type: object
+      required: [direction, cryptoAmount, cryptoSymbol, fiatAmount, fiatCurrency]
+      properties:
+        direction:
+          type: string
+          enum: [in, out]
+        label:
+          type: string
+        walletAddress:
+          type: string
+        network:
+          type: string
+        cryptoAmount:
+          type: number
+        cryptoSymbol:
+          type: string
+        fiatAmount:
+          type: number
+        fiatCurrency:
+          type: string
+        externalAccount:
+          type: string
+    
+    # ADMIN SCHEMAS
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        actorId:
+          type: string
+        subjectType:
+          type: string
+        subjectId:
+          type: string
+        meta:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+    
+    DashboardMetrics:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        productionReadiness:
+          type: number
+          description: Produktionsreife (0-100%)
+        qualityScore:
+          type: number
+          description: Qualitäts-Score (0-100%)
+        systemStability:
+          type: number
+          description: System-Stabilität (0-100%)
+        activityCount:
+          type: integer
+          description: Events in letzten 24h
+        productionTimeline:
+          type: array
+          items:
+            type: object
+            properties:
+    
+    # ROOM/LIVE SCHEMAS
+    VerifyRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+          description: Token aus Offline-Manifest
+        ts:
+          type: integer
+          description: Timestamp (optional, für Signatur-Validierung)
+        sig:
+          type: string
+          description: HMAC-Signatur (optional)
+    
+    VerifyResponse:
+      type: object
+      properties:
+        thinker_id:
+          type: string
+          description: Stabile Thinker-ID
+        pair_code:
+          type: string
+          description: Aktueller Pair-Code (falls vorhanden)
+    
+    HeartbeatRequest:
+      type: object
+      required: [thinker_id]
+      properties:
+        thinker_id:
+          type: string
+        pair_code:
+          type: string
+          description: Optional: Pair-Code für Matching
+        status:
+          type: string
+          enum: [online, offline, idle]
+          default: online
+    
+    MatchRequest:
+      type: object
+      required: [thinker_id, pair_code]
+      properties:
+        thinker_id:
+          type: string
+        pair_code:
+          type: string
+          description: Stichwort für Matching
+    
+    MatchResponse:
+      type: object
+      properties:
+        room_id:
+          type: string
+          description: Raum-ID (wenn Match gefunden)
+        matched:
+          type: boolean
+          description: Ob ein Match gefunden wurde
+        participants:
+          type: array
+          items:
+            type: string
+          description: Liste der Thinker-IDs im Raum
+    
+    Room:
+      type: object
+      properties:
+        room_id:
+          type: string
+        type:
+          type: string
+          enum: [text, video, file, contract, mixed]
+          description: Raum-Typ
+        owner_id:
+          type: string
+          description: Thinker-ID des Raum-Besitzers
+        participants:
+          type: array
+          items:
+            type: string
+          description: Liste der Thinker-IDs
+        status:
+          type: string
+          enum: [waiting, joining, active, closing, closed]
+        created_at:
+          type: string
+          format: date-time
+        meta:
+          type: object
+          description: Zusätzliche Metadaten
+          additionalProperties: true
+    
+    WebSocketMessage:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [join, leave, message, signal, system]
+        room_id:
+          type: string
+        thinker_id:
+          type: string
+        payload:
+          type: object
+          description: Nachrichten-Payload (Text, WebRTC-Signaling, etc.)
+          additionalProperties: true
+        at:
+          type: integer
+          description: Timestamp
+              date:
+                type: string
+              count:
+                type: integer
+        errorStats:
+          type: object
+        featureMaturity:
+          type: array
+          items:
+            type: object
+

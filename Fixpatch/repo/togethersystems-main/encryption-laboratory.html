@@ -1,0 +1,468 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Experimentelles Verschlüsselungslabor – Forschung & Eigenstudium</title>
+  <meta name="ts-branding" content="T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C) (+31) - ( 613 803 782.) https://orcid.org/0009-0003-1328-2430">
+  <style>
+    :root {
+      --bg: #0a0e27;
+      --card: #1a1f3a;
+      --ink: #e5e7eb;
+      --muted: #9ca3af;
+      --primary: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --border: #374151;
+      --radius: 16px;
+      --gradient: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .ts-brand-banner {
+      background: linear-gradient(90deg, #020617, #0f172a 50%, #111827);
+      color: #e5e7eb;
+      padding: 8px 16px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+    }
+    .ts-brand-banner strong { font-weight: 600; }
+    .ts-brand-links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      font-size: 11px;
+      margin-left: 8px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header h1 {
+      font-size: 3rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+    .warning-banner {
+      background: rgba(239, 68, 68, 0.2);
+      border: 3px solid var(--bad);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 48px;
+      text-align: center;
+    }
+    .warning-banner h2 {
+      color: var(--bad);
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .warning-banner h2::before {
+      content: "⚠️";
+      font-size: 2.5rem;
+    }
+    .warning-banner p {
+      font-size: 1.125rem;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .research-access {
+      background: rgba(245, 158, 11, 0.1);
+      border: 2px solid var(--warn);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .research-access h3 {
+      color: var(--warn);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .research-access h3::before {
+      content: "🔬";
+      font-size: 1.5rem;
+    }
+    .encryption-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .encryption-item {
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid var(--bad);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+    .encryption-item:hover {
+      border-color: var(--warn);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+    }
+    .encryption-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .encryption-item-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .encryption-item-version {
+      background: var(--gradient);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .encryption-item-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .detail-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .detail-value {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--bad);
+      border: 1px solid var(--bad);
+    }
+    .request-access {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+    .request-access h3 {
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    .btn {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+    }
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      box-shadow: none;
+    }
+    .btn-secondary:hover {
+      background: rgba(16, 185, 129, 0.1);
+    }
+  </style>
+  <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+</head>
+<body>
+  <div class="ts-brand-banner">
+    <div>
+      <strong>T,.&T,,.&T,,,.TOGETHERSYSTEMS. INTERNATIONAL TTT T,.&T,,.T,,,.(C)</strong>
+      <span style="opacity: 0.78; display: block; margin-top: 4px;">
+        (+31) - ( 613 803 782.) 
+        <a href="https://orcid.org/0009-0003-1328-2430" target="_blank">ORCID</a>
+      </span>
+    </div>
+    <div class="ts-brand-links">
+      <a href="./index.html">Portal</a>
+      <a href="./encryption-dashboard.html">Verschlüsselungs-Dashboard</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>🔬 Experimentelles Verschlüsselungslabor</h1>
+      <p style="font-size: 1.25rem; color: var(--muted); margin-top: 16px;">
+        Forschung & Eigenstudium – Nicht für Verteilung freigegeben
+      </p>
+    </div>
+
+    <div class="warning-banner">
+      <h2>⚠️ Forschungs-Labor</h2>
+      <p>
+        <strong>Dieser Bereich ist nur für Eigenstudium und Forschung zugänglich.</strong>
+      </p>
+      <p>
+        Forschungsinstitute können nach Kopien oder Applikationen anfragen für weitere Studien 
+        der Verschlüsselungstechnologie. Dies kann ohne Kosten erfolgen bei zukünftiger 
+        partnerschaftlicher Zusammenarbeit.
+      </p>
+      <p style="margin-top: 16px; font-weight: 600; color: var(--warn);">
+        ⚠️ NICHT FÜR VERTEILUNG FREIGEGEBEN
+      </p>
+    </div>
+
+    <div class="card research-access">
+      <h3>Zugang für Forschungsinstitute</h3>
+      <p style="margin-bottom: 16px;">
+        Forschungsinstitute können nach Kopien oder Applikationen anfragen, um die Verschlüsselung 
+        noch weiter zu bestudieren. Dies kann ohne Kosten erfolgen bei zukünftiger partnerschaftlicher 
+        Zusammenarbeit.
+      </p>
+      <div style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 16px; margin-top: 16px;">
+        <h4 style="color: var(--warn); margin-bottom: 12px;">Bedingungen:</h4>
+        <ul style="list-style: none; padding: 0;">
+          <li style="margin-bottom: 8px;">✅ Nur für Forschungszwecke</li>
+          <li style="margin-bottom: 8px;">✅ Partnerschaftliche Zusammenarbeit erforderlich</li>
+          <li style="margin-bottom: 8px;">✅ Keine kommerzielle Nutzung ohne Genehmigung</li>
+          <li style="margin-bottom: 8px;">✅ Ohne Kosten bei zukünftiger Zusammenarbeit</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+        <span>T,.</span>
+        Labor-Verschlüsselungen
+      </h2>
+      <div class="encryption-list" id="laboratoryList"></div>
+    </div>
+
+    <div class="card request-access">
+      <h3>🔬 Zugang anfragen</h3>
+      <p style="margin-bottom: 24px; color: var(--muted);">
+        Forschungsinstitute können hier einen Zugang anfragen. Bitte füllen Sie das Formular aus 
+        oder kontaktieren Sie uns direkt.
+      </p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn" onclick="requestAccess()">
+          📧 Zugang anfragen
+        </button>
+        <button class="btn btn-secondary" onclick="contactProducer()">
+          📞 Producer kontaktieren
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Labor-Verschlüsselungssysteme
+    const laboratorySystems = [
+      {
+        id: 'quantum-resistant-v1',
+        name: 'Quantum-Resistant Encryption',
+        version: '0.1.0-research',
+        algorithm: 'Lattice-Based',
+        status: 'laboratory',
+        description: 'Forschung zu quantenresistenten Verschlüsselungen für die Post-Quantum-Ära',
+        created: '2025-01-10',
+        lastUpdated: '2025-01-15',
+        access: 'research-only',
+        researchAreas: [
+          'Lattice-basierte Kryptographie',
+          'Code-basierte Kryptographie',
+          'Hash-basierte Signaturen',
+          'Multivariate Kryptographie'
+        ],
+        notes: 'Diese Verschlüsselungstechnologie ist noch in der Forschungsphase und nicht für produktive Nutzung geeignet.'
+      },
+      {
+        id: 'homomorphic-v1',
+        name: 'Homomorphic Encryption',
+        version: '0.0.5-research',
+        algorithm: 'FHE (Fully Homomorphic Encryption)',
+        status: 'laboratory',
+        description: 'Verschlüsselung mit Berechnungen auf verschlüsselten Daten ohne Entschlüsselung',
+        created: '2025-01-08',
+        lastUpdated: '2025-01-14',
+        access: 'research-only',
+        researchAreas: [
+          'Vollständig homomorphe Verschlüsselung',
+          'Teilweise homomorphe Verschlüsselung',
+          'Performance-Optimierung',
+          'Praktische Anwendungen'
+        ],
+        notes: 'Erlaubt Berechnungen auf verschlüsselten Daten, ohne die Daten zu entschlüsseln. Noch sehr rechenintensiv.'
+      },
+      {
+        id: 'zero-knowledge-v1',
+        name: 'Zero-Knowledge Proofs',
+        version: '0.2.0-research',
+        algorithm: 'zk-SNARKs / zk-STARKs',
+        status: 'laboratory',
+        description: 'Beweise ohne Offenlegung von Informationen',
+        created: '2025-01-12',
+        lastUpdated: '2025-01-15',
+        access: 'research-only',
+        researchAreas: [
+          'zk-SNARKs (Succinct Non-Interactive Arguments of Knowledge)',
+          'zk-STARKs (Scalable Transparent Arguments of Knowledge)',
+          'Anwendungen in Blockchain',
+          'Privacy-Preserving Computing'
+        ],
+        notes: 'Ermöglicht Verifikation von Aussagen ohne Offenlegung der zugrundeliegenden Daten.'
+      },
+      {
+        id: 'multiparty-v1',
+        name: 'Secure Multiparty Computation',
+        version: '0.1.5-research',
+        algorithm: 'MPC Protocols',
+        status: 'laboratory',
+        description: 'Sichere Berechnungen mit mehreren Parteien ohne Vertrauensannahme',
+        created: '2025-01-11',
+        lastUpdated: '2025-01-14',
+        access: 'research-only',
+        researchAreas: [
+          'Secret Sharing',
+          'Garbled Circuits',
+          'Oblivious Transfer',
+          'Anwendungen in Datenschutz'
+        ],
+        notes: 'Ermöglicht gemeinsame Berechnungen ohne dass eine Partei die Eingaben der anderen sieht.'
+      }
+    ];
+
+    function renderLaboratoryList() {
+      const container = document.getElementById('laboratoryList');
+      container.innerHTML = '';
+
+      laboratorySystems.forEach(system => {
+        const div = document.createElement('div');
+        div.className = 'encryption-item';
+
+        div.innerHTML = `
+          <div class="encryption-item-header">
+            <div class="encryption-item-name">${system.name}</div>
+            <span class="encryption-item-version">v${system.version}</span>
+          </div>
+          <div style="color: var(--muted); font-size: 0.875rem; margin-bottom: 16px;">
+            ${system.description}
+          </div>
+          <div class="encryption-item-details">
+            <div class="detail-item">
+              <div class="detail-label">Algorithmus</div>
+              <div class="detail-value">${system.algorithm}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Status</div>
+              <div class="detail-value">
+                <span class="status-badge">${system.status}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Zugang</div>
+              <div class="detail-value">${system.access}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Aktualisiert</div>
+              <div class="detail-value">${new Date(system.lastUpdated).toLocaleDateString('de-DE')}</div>
+            </div>
+          </div>
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+              Forschungsbereiche:
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${system.researchAreas.map(area => `
+                <span style="background: rgba(245, 158, 11, 0.2); color: var(--warn); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; border: 1px solid var(--warn);">
+                  ${area}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+          <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; font-size: 0.875rem; color: var(--muted);">
+            <strong style="color: var(--warn);">Hinweis:</strong> ${system.notes}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    window.requestAccess = function() {
+      const email = 'info@tel1.nl';
+      const subject = encodeURIComponent('Zugang zum Verschlüsselungslabor anfragen');
+      const body = encodeURIComponent(`Sehr geehrter Producer,
+
+ich möchte Zugang zum experimentellen Verschlüsselungslabor anfragen.
+
+Institut/Organisation: [Bitte ausfüllen]
+Forschungsbereich: [Bitte ausfüllen]
+Zweck: [Bitte ausfüllen]
+
+Mit freundlichen Grüßen
+[Bitte ausfüllen]`);
+      
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    };
+
+    window.contactProducer = function() {
+      const whatsapp = '31613803782';
+      const message = encodeURIComponent('Hallo, ich möchte Zugang zum Verschlüsselungslabor anfragen.');
+      window.open(`https://wa.me/${whatsapp}?text=${message}`, '_blank');
+    };
+
+    // Initialisierung
+    renderLaboratoryList();
+  </script>
+  <script src="./css/da-vinci-enterprise-standard-init.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+# ============================================================================
+# CONSOLES CONFIGURATION
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Konsolen-Konfiguration für Error Bus Routing
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Consoles Configuration"
+branding: "T,.&T,,.&T,,,.T."
+
+# ============================================================================
+# SOURCES
+# ============================================================================
+
+sources:
+  debug:
+    capture: [stderr, exceptions, stacktrace]
+    severity_map:
+      error: high
+      warning: medium
+      info: low
+    fixer: "syntax-fixer"
+    auto_fix: true
+    priority: 1
+  
+  problems:
+    capture: [compiler, linter, typecheck]
+    severity_map:
+      error: high
+      warning: medium
+    fixer: "policy-fixer"
+    auto_fix: true
+    priority: 2
+  
+  output:
+    capture: [app_logs, perf_logs]
+    severity_map:
+      error: high
+      warning: medium
+      info: low
+    fixer: "performance-fixer"
+    auto_fix: false
+    priority: 3
+  
+  terminal:
+    capture: [process_exit, signals, retries]
+    severity_map:
+      error: high
+      warning: medium
+    fixer: "self-healing"
+    auto_fix: true
+    priority: 1
+  
+  ports:
+    capture: [bind_fail, conflicts, timeouts]
+    severity_map:
+      error: high
+      warning: medium
+    fixer: "self-healing"
+    auto_fix: true
+    priority: 2
+  
+  playwright:
+    capture: [test_fail, accessibility_violation, contrast_ratio]
+    severity_map:
+      error: high
+      warning: medium
+    fixer: "accessibility-fixer"
+    auto_fix: true
+    priority: 1
+  
+  build:
+    capture: [compile_errors, build_warnings]
+    severity_map:
+      error: high
+      warning: medium
+    fixer: "syntax-fixer"
+    auto_fix: true
+    priority: 1
+  
+  test:
+    capture: [test_failures, coverage_issues]
+    severity_map:
+      error: high
+      warning: medium
+    fixer: "test-fixer"
+    auto_fix: true
+    priority: 2
+
+# ============================================================================
+# ROUTING
+# ============================================================================
+
+routing:
+  to_error_bus: true
+  event_format:
+    timestamp: "ISO 8601"
+    source: "string"
+    severity: "debug|info|warn|error|fatal"
+    message: "string"
+    meta: "object"
+  dedupe_window_ms: 200
+  throttle:
+    max_events_per_sec: 500
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T20:37:00Z"
+  updated: "2025-01-15T20:37:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

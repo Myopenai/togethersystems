@@ -1,0 +1,99 @@
+# ============================================================================
+# ENCODING POLICY
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# T,. Encoding-Policy - UTF-8 Enforced
+# ============================================================================
+
+version: "1.0.0"
+name: "T,. Encoding Policy"
+branding: "T,.&T,,.&T,,,.T."
+enforce: true
+fail_fast: true
+
+# ============================================================================
+# REQUIREMENTS
+# ============================================================================
+
+requirements:
+  - name: "utf8-enforcement"
+    description: "T,. UTF-8 auf allen Ebenen erzwungen"
+    levels:
+      - file: true
+      - editor: true
+      - server: true
+      - database: true
+      - ci_cd: true
+    enforce: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "file-encoding"
+    description: "T,. Alle Dateien müssen UTF-8 sein"
+    check_on_commit: true
+    check_on_build: true
+    allowed_encodings: ["UTF-8", "UTF-8-BOM"]
+    forbidden_encodings: ["ISO-8859-1", "Windows-1252", "Latin1", "ANSI"]
+    enforce: true
+    fail_fast: true
+  
+  - name: "html-meta-charset"
+    description: "T,. HTML muss <meta charset='utf-8'> haben"
+    required: true
+    position: "head-first"
+    enforce: true
+    fail_fast: true
+  
+  - name: "server-headers"
+    description: "T,. Server muss Content-Type: text/html; charset=utf-8 senden"
+    required: true
+    enforce: true
+    fail_fast: true
+  
+  - name: "database-encoding"
+    description: "T,. Datenbank muss utf8mb4 verwenden"
+    required: true
+    charset: "utf8mb4"
+    collation: "utf8mb4_unicode_ci"
+    enforce: true
+    fail_fast: true
+
+# ============================================================================
+# TOOLS
+# ============================================================================
+
+tools:
+  - name: "encoding-lint"
+    path: "tools/encoding-lint.js"
+    check_on_commit: true
+    check_on_build: true
+  
+  - name: "charset-validator"
+    path: "tools/charset-validator.js"
+    check_html: true
+    check_server: true
+
+# ============================================================================
+# GATES
+# ============================================================================
+
+gates:
+  - name: "utf8-compliance"
+    required: true
+    fail_fast: true
+    auto_fix: false
+  
+  - name: "html-charset-meta"
+    required: true
+    fail_fast: true
+    auto_fix: true  # Kann automatisch hinzugefügt werden
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created: "2025-01-15T14:30:00Z"
+  updated: "2025-01-15T14:30:00Z"
+  version: "1.0.0"
+  branding: "T,.&T,,.&T,,,.T."
+

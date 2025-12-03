@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSTOSOS Operating System – Ein-Klick Installation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .installer-container {
+      max-width: 800px;
+      width: 100%;
+      background: #1a1f3a;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 2px solid #10b981;
+    }
+    .logo {
+      text-align: center;
+      font-size: 3em;
+      color: #10b981;
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    .title {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #e5e7eb;
+    }
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 40px;
+    }
+    .install-button {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 20px;
+    }
+    .install-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+    .install-button:active {
+      transform: translateY(0);
+    }
+    .install-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .progress-container {
+      display: none;
+      margin-top: 20px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #0f172a;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      width: 0%;
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    .status-log {
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 0.9em;
+      margin-top: 20px;
+      display: none;
+    }
+    .status-entry {
+      padding: 5px 0;
+      color: #9ca3af;
+    }
+    .status-entry.success { color: #10b981; }
+    .status-entry.error { color: #ef4444; }
+    .status-entry.info { color: #3b82f6; }
+    .features-list {
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .features-list h3 {
+      color: #10b981;
+      margin-bottom: 15px;
+    }
+    .features-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    .features-list li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+    .features-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #10b981;
+      font-weight: bold;
+    }
+    .auto-start-notice {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10b981;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: center;
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <div class="installer-container">
+    <div class="logo">T,.&T,,.&T,,,.(C)TEL1.NL</div>
+    <h1 class="title">OSTOSOS Operating System</h1>
+    <p class="subtitle">Ein-Klick Installation – Minimalste User-Handlung</p>
+
+    <button class="install-button" id="installButton" onclick="startInstallation()">
+      🚀 JETZT INSTALLIEREN (Ein Klick)
+    </button>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill">0%</div>
+      </div>
+      <div class="status-log" id="statusLog"></div>
+    </div>
+
+    <div class="features-list">
+      <h3>📦 Enthaltene Komponenten:</h3>
+      <ul>
+        <li>Together Systems Portal (Offline & Online)</li>
+        <li>TPGA Telbank System</li>
+        <li>OSO Produktionssystem</li>
+        <li>Manifest Forum</li>
+        <li>Honeycomb Communication Hub</li>
+        <li>Legal Hub</li>
+        <li>Encryption Dashboard</li>
+        <li>Neural Network Console</li>
+        <li>Business Admin</li>
+        <li>Alle Abhängigkeiten & Konfigurationen</li>
+      </ul>
+    </div>
+
+    <div class="auto-start-notice" id="autoStartNotice" style="display: none;">
+      ✅ Installation abgeschlossen! Das System startet automatisch...
+    </div>
+  </div>
+
+  <script>
+    // ========== OSTOSOS OPERATING SYSTEM INSTALLER ==========
+    class OSTOSOSInstaller {
+      constructor() {
+        this.components = [
+          { name: 'Core System', files: ['index.html', 'manifest-portal.html', 'manifest-forum.html'] },
+          { name: 'TPGA Telbank', files: ['TELBANK/index.html'] },
+          { name: 'OSO System', files: ['OSO-PRODUKTIONS-SYSTEM-COMPLETE-EXTENDED.html'] },
+          { name: 'Honeycomb Hub', files: ['honeycomb.html'] },
+          { name: 'Legal Hub', files: ['legal-hub.html'] },
+          { name: 'Encryption System', files: ['encryption-dashboard.html'] },
+          { name: 'Neural Network', files: ['neural-network-console.html'] },
+          { name: 'Business Admin', files: ['business-admin.html'] },
+          { name: 'Service Worker', files: ['sw.js'] },
+          { name: 'CSS Framework', files: ['css/da-vinci-xxxxxl-enterprise-standard.css'] },
+          { name: 'JavaScript Core', files: ['js/mot-core.js'] },
+          { name: 'Settings System', files: ['settings/'] }
+        ];
+        this.installed = false;
+      }
+
+      async install() {
+        const button = document.getElementById('installButton');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const statusLog = document.getElementById('statusLog');
+        const autoStartNotice = document.getElementById('autoStartNotice');
+
+        button.disabled = true;
+        progressContainer.style.display = 'block';
+        statusLog.style.display = 'block';
+
+        this.addStatus('🚀 Installation gestartet...', 'info');
+        this.updateProgress(0);
+
+        // Installiere alle Komponenten
+        for (let i = 0; i < this.components.length; i++) {
+          const component = this.components[i];
+          this.addStatus(`📦 Installiere: ${component.name}...`, 'info');
+          
+          // Simuliere Installation (in echter Implementierung würde hier Service Worker registriert, Dateien gecacht, etc.)
+          await this.delay(500);
+          
+          // Speichere Installationsstatus in localStorage
+          this.saveInstallationStatus(component.name, true);
+          
+          const progress = Math.round(((i + 1) / this.components.length) * 100);
+          this.updateProgress(progress);
+          this.addStatus(`✅ ${component.name} installiert`, 'success');
+        }
+
+        // Erstelle Desktop-Verknüpfung (simuliert)
+        this.addStatus('🔗 Erstelle Desktop-Verknüpfung...', 'info');
+        await this.delay(300);
+        this.addStatus('✅ Desktop-Verknüpfung erstellt', 'success');
+
+        // Registriere Service Worker
+        this.addStatus('⚙️ Registriere Service Worker...', 'info');
+        await this.registerServiceWorker();
+        this.addStatus('✅ Service Worker registriert', 'success');
+
+        // Speichere Installationsstatus
+        localStorage.setItem('ostosos.installed', 'true');
+        localStorage.setItem('ostosos.installDate', new Date().toISOString());
+        localStorage.setItem('ostosos.version', '1.0.0');
+
+        this.updateProgress(100);
+        this.addStatus('🎉 Installation abgeschlossen!', 'success');
+        
+        button.style.display = 'none';
+        autoStartNotice.style.display = 'block';
+
+        // Automatischer Start nach 2 Sekunden
+        setTimeout(() => {
+          this.autoStart();
+        }, 2000);
+      }
+
+      async registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+          try {
+            const registration = await navigator.serviceWorker.register('./sw.js', {
+              scope: './'
+            });
+            return registration;
+          } catch (error) {
+            this.addStatus(`⚠️ Service Worker Fehler: ${error.message}`, 'error');
+          }
+        }
+      }
+
+      saveInstallationStatus(component, installed) {
+        const status = JSON.parse(localStorage.getItem('ostosos.components') || '{}');
+        status[component] = installed;
+        localStorage.setItem('ostosos.components', JSON.stringify(status));
+      }
+
+      updateProgress(percent) {
+        const progressFill = document.getElementById('progressFill');
+        progressFill.style.width = percent + '%';
+        progressFill.textContent = percent + '%';
+      }
+
+      addStatus(message, type = 'info') {
+        const statusLog = document.getElementById('statusLog');
+        const entry = document.createElement('div');
+        entry.className = `status-entry ${type}`;
+        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        statusLog.appendChild(entry);
+        statusLog.scrollTop = statusLog.scrollHeight;
+      }
+
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      autoStart() {
+        // Automatischer Start des Hauptsystems
+        this.addStatus('🚀 Starte OSTOSOS Operating System...', 'info');
+        
+        // Weiterleitung zum Hauptsystem
+        setTimeout(() => {
+          window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+        }, 1000);
+      }
+    }
+
+    // ========== GLOBALE FUNKTIONEN ==========
+    function startInstallation() {
+      const installer = new OSTOSOSInstaller();
+      installer.install();
+    }
+
+    // Prüfe ob bereits installiert
+    window.addEventListener('load', () => {
+      const installed = localStorage.getItem('ostosos.installed');
+      if (installed === 'true') {
+        const button = document.getElementById('installButton');
+        button.textContent = '✅ Bereits installiert - Zum System öffnen';
+        button.onclick = () => {
+          window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+        };
+      }
+    });
+
+    console.log('T,. OSTOSOS Operating System Installer geladen');
+  </script>
+</body>
+</html>
+

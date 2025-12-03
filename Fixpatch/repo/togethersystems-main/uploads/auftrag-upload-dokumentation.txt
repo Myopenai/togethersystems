@@ -1,0 +1,589 @@
+# UPLOAD-FUNKTIONALITÄT - DOKUMENTATION
+# Together Systems - Upload APIs und Funktionalität
+
+## ÜBERSICHT
+
+Das System bietet zwei Haupt-Upload-Endpunkte:
+1. Contracts Upload - für Verträge und Dokumente
+2. Media Upload - für CMS-Medien (Bilder, Videos, etc.)
+
+---
+
+## 1. CONTRACTS UPLOAD API
+### Endpunkt: POST /api/contracts/upload
+
+### Beschreibung:
+Lädt Verträge und Dokumente hoch, speichert sie in R2 (CONTRACTS_BUCKET) 
+und speichert Metadaten + Verknüpfungen in D1.
+
+### Authentifizierung:
+- Header: `X-TS-APIKEY` (optional, falls TS_API_KEY in env gesetzt)
+
+### Request-Format:
+- Content-Type: `multipart/form-data`
+- Felder:
+  - `file` (erforderlich): Die hochzuladende Datei (Blob/File)
+  - `name` (optional): Name des Vertrags (Standard: Dateiname oder "contract")
+  - `voucherId` (optional): Voucher-ID für Verknüpfung
+  - `roomId` (optional): Raum-ID für Verknüpfung
+  - `actorId` (optional): ID des Benutzers, der den Upload durchführt
+
+### Response (Erfolg - 200):
+```json
+{
+  "ok": true,
+  "contract": {
+    "id": "ct-...",
+    "name": "Vertragsname",
+    "mimeType": "application/pdf",
+    "byteSize": 12345,
+    "storageUrl": "contracts/ct-.../dateiname.pdf",
+    "hashSha256": "abc123...",
+    "createdBy": "user-id",
+    "createdAt": "2025-01-01T12:00:00Z"
+  },
+  "linkId": "cl-..." // Nur wenn voucherId oder roomId angegeben
+}
+```
+
+### Response (Fehler):
+- 400: Fehlende Datei oder ungültiges Format
+- 401: Ungültiger API-Key
+- 500: Server-Fehler oder CONTRACTS_BUCKET nicht konfiguriert
+
+### Funktionen:
+- Automatische SHA-256 Hash-Berechnung
+- Speicherung in R2 mit strukturiertem Pfad: `contracts/{contractId}/{filename}`
+- Automatische Verknüpfung mit Voucher/Raum (wenn angegeben)
+- Event-Logging: `contract.upload` Event wird erstellt
+
+---
+
+## 2. MEDIA UPLOAD API (CMS)
+### Endpunkt: POST /api/cms/media/upload
+
+### Beschreibung:
+Lädt Medien-Dateien für CMS-Seiten hoch (Bilder, Videos, Audio, etc.)
+
+### Authentifizierung:
+- Header: `X-TS-APIKEY` (optional, falls TS_API_KEY in env gesetzt)
+
+### Request-Format:
+- Content-Type: `multipart/form-data`
+- Felder:
+  - `file` (erforderlich): Die hochzuladende Datei
+  - `site_id` (erforderlich): ID der CMS-Site
+
+### Response (Erfolg - 200):
+```json
+{
+  "ok": true,
+  "data": {
+    "media": {
+      "id": "media-...",
+      "site_id": "site-123",
+      "filename": "bild.jpg",
+      "mime_type": "image/jpeg",
+      "size_bytes": 45678,
+      "storage_path": "sites/site-123/media/media-.../bild.jpg",
+      "url": "/api/cms/media/media-...",
+      "created_at": "2025-01-01T12:00:00Z"
+    }
+  }
+}
+```
+
+### Hinweis:
+- Aktuell werden nur Metadaten in D1 gespeichert
+- TODO: R2/S3 Storage-Integration für tatsächliche Datei-Speicherung
+
+---
+
+## 3. FRONTEND-INTEGRATION
+
+### 3.1. Legal Hub (legal-hub.html) - Contract Upload
+
+**Funktionalität:**
+- Dual-Mode: Offline (localStorage) und Online (API) Upload
+- Toggle-Switch zwischen Offline/Online-Modus
+- Verknüpfung mit Voucher-IDs und Raum-IDs
+- Automatische Anzeige von Online-Contracts aus D1/R2
+
+**Offline-Modus:**
+- Speichert Verknüpfungen lokal in `localStorage` (Key: `ts_legal_contract_links_v1`)
+- Funktioniert ohne Backend-Verbindung
+- Struktur: `{ id, fileName, fileSize, voucherId, roomId }`
+
+**Online-Modus:**
+- Upload via `POST /api/contracts/upload`
+- Automatische `actorId`-Erkennung aus `localStorage.mot_user_id_v1`
+- Verknüpfung mit Voucher/Raum wird automatisch erstellt
+- Anzeige von Online-Contracts aus `/api/contracts/list`
+
+**Wichtig:**
+- GitHub Pages: Online-Upload nicht verfügbar (nur Cloudflare Pages)
+- Mindestens eine Datei ODER Voucher/Raum-ID erforderlich
+
+**Code-Beispiel:**
+```javascript
+// Legal Hub Upload-Logik
+const formData = new FormData();
+if(file) formData.append('file', file);
+if(voucherId) formData.append('voucherId', voucherId);
+if(roomId) formData.append('roomId', roomId);
+
+// Automatische actorId aus localStorage
+const uid = localStorage.getItem('mot_user_id_v1') || '';
+if(uid) formData.append('actorId', uid);
+
+fetch('/api/contracts/upload', {
+  method: 'POST',
+  body: formData
+})
+```
+
+---
+
+### 3.2. Manifest Forum (manifest-forum.html) - Rich-Media Upload
+
+**Funktionalität:**
+- ✅ UNBEGRENZTER Upload (keine Größenbeschränkungen)
+- Multi-File-Upload (mehrere Dateien gleichzeitig)
+- Unterstützte Formate: Bilder, Videos, Audio
+- Live-Vorschau mit Thumbnails
+- Einzelne Dateien können entfernt werden
+
+**Rich-Media Upload Details:**
+- Input: `<input type="file" accept="image/*,video/*,audio/*" multiple>`
+- Speicherung: Data URLs in `localStorage` (verstecktes Input-Feld)
+- Vorschau: Automatische Generierung von Bild-, Video- und Audio-Vorschauen
+- Warnung bei Dateien > 100MB (nur Info, kein Block)
+
+**Struktur der gespeicherten Media:**
+```javascript
+{
+  dataUrl: "data:image/jpeg;base64,...",
+  type: "image", // oder "video", "audio"
+  name: "bild.jpg",
+  size: 12345,
+  mimeType: "image/jpeg"
+}
+```
+
+**Vorschau-Funktionen:**
+- Bilder: `<img>` mit max-width/height 200px
+- Videos: `<video>` mit Controls
+- Audio: `<audio>` mit Controls + Dateiname-Label
+- Entfernen-Button (×) für jedes Medium
+
+---
+
+### 3.3. Manifest Forum - Logo Upload
+
+**Funktionalität:**
+- Einzeldatei-Upload für Logos
+- Unterstützte Formate: Bilder (PNG, JPG, SVG, etc.)
+- Automatische Vorschau
+- Option: EU-Logo als Standard verwenden
+- URL-Alternative: Logo kann auch per URL eingefügt werden
+
+**Logo-Upload Details:**
+- Input: `<input type="file" accept="image/*">`
+- Validierung: Nur Bildformate
+- Vorschau: Automatische Anzeige nach Upload
+- Entfernen-Funktion verfügbar
+
+---
+
+### 3.4. Manifest Portal (manifest-portal.html) - P2P File Sharing
+
+**Funktionalität:**
+- P2P File Input für Peer-to-Peer Dateiübertragung
+- Multi-File-Auswahl möglich
+- Checkbox: "hochladen" für permanente Speicherung
+- Integration mit WebRTC/Signaling-Server
+
+**Details:**
+- Input: `<input type="file" multiple id="p2pFileInput">`
+- Option: `<input type="checkbox" id="permUpload">` für permanenten Upload
+- Status-Anzeige: Anzahl ausgewählter Dateien
+
+---
+
+### 3.5. Admin Panel (admin.html) - Backup Upload
+
+**Funktionalität:**
+- Backup-Dateien laden (.json Format)
+- Restore-Funktionalität für System-Backups
+
+**Details:**
+- Input: `<input type="file" accept=".json" id="backupLoad">`
+- Verarbeitung: JSON-Parsing und System-Restore
+
+---
+
+## 4. STORAGE-STRUKTUR
+
+### 4.1. Contracts Storage
+
+**Online (Cloudflare R2 + D1):**
+- R2 Bucket: `CONTRACTS_BUCKET`
+- Pfad-Struktur: `contracts/{contractId}/{encodeURIComponent(filename)}`
+- Metadaten in D1: `contracts` Tabelle
+  - Felder: `id, name, mime_type, byte_size, storage_url, hash_sha256, created_by, created_at`
+- Verknüpfungen: `contract_links` Tabelle
+  - Felder: `id, contract_id, voucher_id, room_id, role, created_at`
+
+**Offline (localStorage):**
+- Key: `ts_legal_contract_links_v1`
+- Format: JSON-Array von Verknüpfungen
+- Struktur: `[{ id, fileName, fileSize, voucherId, roomId }]`
+
+---
+
+### 4.2. Media Storage
+
+**Rich-Media (Manifest Forum):**
+- Speicherung: Data URLs in verstecktem Input-Feld
+- Key: `uploadedMediaStorage` (dataset.media)
+- Format: JSON-Array von Media-Objekten
+- Lokal: Im HTML-Export enthalten
+
+**CMS Media (geplant):**
+- R2/S3 Storage (noch nicht implementiert)
+- Pfad-Struktur: `sites/{siteId}/media/{mediaId}/{filename}`
+- Metadaten in D1: `cms_media_items` Tabelle
+  - Felder: `id, site_id, filename, mime_type, size_bytes, storage_path, created_at`
+
+---
+
+### 4.3. Logo Storage
+
+**Manifest Forum:**
+- Speicherung: Data URL im Post-Objekt
+- Alternativ: URL-String (externes Logo)
+- Im Export: Als Data URL oder URL im JSON
+
+---
+
+## 5. SICHERHEIT & BESCHRÄNKUNGEN
+
+### 5.1. Authentifizierung
+- API-Key: `X-TS-APIKEY` Header (optional, falls `TS_API_KEY` in env gesetzt)
+- Actor-ID: Automatisch aus `localStorage.mot_user_id_v1` (Frontend)
+- Keine klassische Benutzer-Authentifizierung erforderlich
+
+### 5.2. Datei-Integrität
+- SHA-256 Hash-Berechnung für alle Contracts
+- Hash wird in D1 gespeichert (`hash_sha256` Feld)
+- Verifikation bei Download möglich
+
+### 5.3. Größenbeschränkungen
+- ✅ **KEINE GRENZEN** - Unbegrenzter Upload implementiert
+- Warnung bei Dateien > 100MB (nur Info, kein Block)
+- Browser-Limits gelten weiterhin (localStorage ~5-10MB)
+
+### 5.4. Plattform-Unterschiede
+
+**GitHub Pages:**
+- ❌ Online-Upload nicht verfügbar (keine Server-Funktionen)
+- ✅ Offline-Upload funktioniert (localStorage)
+- Hinweis: "Online-Upload ist auf GitHub Pages nicht verfügbar. Bitte deploye auf Cloudflare Pages für volle Funktionalität."
+
+**Cloudflare Pages:**
+- ✅ Vollständige Online-Upload-Funktionalität
+- ✅ R2 Storage verfügbar
+- ✅ D1 Datenbank verfügbar
+- ✅ API-Endpunkte funktionsfähig
+
+### 5.5. Content-Type-Validierung
+- Frontend: `accept` Attribute in File-Inputs
+- Backend: MIME-Type wird gespeichert, aber nicht strikt validiert
+- Empfehlung: Serverseitige Validierung implementieren
+
+---
+
+## 6. BEISPIEL-ANWENDUNGEN
+
+### 6.1. Contracts Upload (Legal Hub)
+
+```javascript
+// Online-Upload mit automatischer actorId
+const formData = new FormData();
+if(file) formData.append('file', file);
+if(voucherId) formData.append('voucherId', voucherId);
+if(roomId) formData.append('roomId', roomId);
+
+// Automatische actorId aus localStorage
+const uid = localStorage.getItem('mot_user_id_v1') || '';
+if(uid) formData.append('actorId', uid);
+
+fetch('/api/contracts/upload', {
+  method: 'POST',
+  body: formData
+})
+.then(r => r.json().catch(() => null))
+.then(data => {
+  if(!data || !data.ok) {
+    alert('Upload fehlgeschlagen: ' + (data?.error || 'Unbekannter Fehler'));
+    return;
+  }
+  alert('Vertrag wurde online gespeichert und verknüpft.');
+  // UI aktualisieren...
+})
+.catch(err => {
+  alert('Online-Upload nicht erreichbar: ' + (err?.message || String(err)));
+});
+```
+
+### 6.2. Rich-Media Upload (Manifest Forum)
+
+```javascript
+// Multi-File-Upload mit Vorschau
+const mediaUploadEl = document.getElementById('mediaUpload');
+let uploadedMedia = [];
+
+mediaUploadEl.addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  
+  for (const file of files) {
+    const fileType = file.type.split('/')[0];
+    
+    // Warnung bei großen Dateien (nur Info)
+    if (file.size > 100 * 1024 * 1024) {
+      console.warn(`Große Datei: ${file.name} (${Math.round(file.size / 1024 / 1024)}MB)`);
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      uploadedMedia.push({
+        dataUrl,
+        type: fileType,
+        name: file.name,
+        size: file.size,
+        mimeType: file.type
+      });
+      // Vorschau erstellen...
+    };
+    reader.readAsDataURL(file);
+  }
+});
+```
+
+### 6.3. Offline Storage (localStorage)
+
+```javascript
+// Contracts Links speichern
+const STORAGE_KEY = 'ts_legal_contract_links_v1';
+
+function saveLinks(list) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch(e) {
+    console.error('Fehler beim Speichern:', e);
+  }
+}
+
+function loadLinks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return [];
+    return JSON.parse(raw);
+  } catch(e) {
+    return [];
+  }
+}
+
+// Verknüpfung hinzufügen
+const links = loadLinks();
+links.push({
+  id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8),
+  fileName: file.name,
+  fileSize: file.size,
+  voucherId: voucherId,
+  roomId: roomId
+});
+saveLinks(links);
+```
+
+### 6.4. Contracts Liste abrufen
+
+```javascript
+// Online-Contracts aus D1/R2 laden
+if(!location.hostname.includes('github.io') && !location.hostname.includes('github.com')) {
+  fetch('/api/contracts/list')
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if(!data || !Array.isArray(data.items) || !data.items.length) return;
+      
+      // Contracts anzeigen
+      data.items.forEach(contract => {
+        const fn = (contract.name || 'Contract') + 
+                   (contract.byteSize ? ' (' + Math.round(contract.byteSize/1024) + ' KB)' : '');
+        // UI aktualisieren...
+      });
+    })
+    .catch(() => { /* optional / offline */ });
+}
+```
+
+---
+
+## 7. EVENT-LOGGING
+
+Bei erfolgreichem Contract-Upload wird automatisch ein Event erstellt:
+- Type: `contract.upload`
+- Subject: `contract` (contractId)
+- Meta: { voucherId, roomId, storageUrl }
+
+---
+
+## 8. API-ENDPUNKTE ÜBERSICHT
+
+### 8.1. Contracts API
+
+**POST /api/contracts/upload**
+- Upload eines Vertrags/Dokuments
+- Siehe Abschnitt 1 für Details
+
+**GET /api/contracts/list**
+- Liste aller Contracts abrufen
+- Response: `{ items: [{ id, name, mimeType, byteSize, storageUrl, ... }] }`
+- Optional: Filterung nach `voucherId` oder `roomId`
+
+### 8.2. CMS Media API
+
+**POST /api/cms/media/upload**
+- Upload eines Media-Elements
+- Siehe Abschnitt 2 für Details
+
+---
+
+## 9. OFFLINE vs. ONLINE MODUS
+
+### 9.1. Offline-Modus (localStorage)
+- ✅ Funktioniert ohne Backend
+- ✅ Funktioniert auf GitHub Pages
+- ✅ Keine API-Calls erforderlich
+- ❌ Nur lokal verfügbar (nicht synchronisiert)
+- ❌ Begrenzt durch Browser-Storage (~5-10MB)
+
+**Verwendung:**
+- Legal Hub: Toggle auf "Offline"
+- Manifest Forum: Immer offline (Data URLs)
+
+### 9.2. Online-Modus (API + R2/D1)
+- ✅ Zentral gespeichert
+- ✅ Synchronisiert über alle Geräte
+- ✅ Unbegrenzte Speicherkapazität
+- ❌ Erfordert Cloudflare Pages
+- ❌ API-Endpunkte müssen verfügbar sein
+
+**Verwendung:**
+- Legal Hub: Toggle auf "Online"
+- Automatische Erkennung: GitHub Pages → Offline, Cloudflare → Online
+
+---
+
+## 10. ZUKÜNFTIGE ERWEITERUNGEN
+
+### Geplante Features:
+- [ ] R2/S3 Integration für Media-Upload (aktuell nur Metadaten)
+- [ ] Progress-Tracking für große Uploads (XHR/Fetch mit Progress-Events)
+- [ ] Thumbnail-Generierung für Bilder (automatisch bei Upload)
+- [ ] Virus-Scanning Integration (optional, für Produktion)
+- [ ] Batch-Upload (mehrere Dateien in einem Request)
+- [ ] Download-Funktionalität für Contracts
+- [ ] Versionskontrolle für hochgeladene Dateien
+- [ ] Automatische Komprimierung für große Bilder
+- [ ] CDN-Integration für schnelle Auslieferung
+
+### Verbesserungen:
+- [ ] Datei-Größenbeschränkungen konfigurierbar machen (optional)
+- [ ] Erweiterte Fehlerbehandlung mit Retry-Mechanismus
+- [ ] Upload-Queue für mehrere Dateien
+- [ ] Drag & Drop Interface
+- [ ] Datei-Vorschau vor Upload
+
+---
+
+## KONTAKT & SUPPORT
+
+Bei Fragen zur Upload-Funktionalität:
+- Siehe: functions/api/contracts/upload.js
+- Siehe: functions/api/cms/media/upload.js
+- Dokumentation: README.md
+
+---
+
+---
+
+## 11. TROUBLESHOOTING
+
+### Problem: Upload schlägt auf GitHub Pages fehl
+**Lösung:** Das ist erwartetes Verhalten. GitHub Pages unterstützt keine Server-Funktionen.
+- Verwende Offline-Modus (Toggle auf "Offline")
+- Oder deploye auf Cloudflare Pages für Online-Upload
+
+### Problem: "CONTRACTS_BUCKET binding is not configured"
+**Lösung:** R2 Bucket muss in Cloudflare Pages konfiguriert werden.
+- Gehe zu Cloudflare Dashboard → Pages → Settings → Functions
+- Füge R2 Bucket Binding hinzu: `CONTRACTS_BUCKET`
+
+### Problem: localStorage voll
+**Lösung:** Offline-Storage ist begrenzt (~5-10MB).
+- Verwende Online-Upload für größere Dateien
+- Oder exportiere/lösche alte Daten
+
+### Problem: Große Dateien laden langsam
+**Lösung:** Das ist normal. System zeigt Warnung bei >100MB.
+- Upload läuft weiter (kein Block)
+- Für sehr große Dateien: Progress-Tracking implementieren
+
+---
+
+## 12. DATENSTRUKTUREN
+
+### Contract Link (Offline)
+```javascript
+{
+  id: "string",           // Eindeutige ID
+  fileName: "string",     // Dateiname (optional)
+  fileSize: number,      // Größe in Bytes (optional)
+  voucherId: "string",   // Voucher-ID (optional)
+  roomId: "string"       // Raum-ID (optional)
+}
+```
+
+### Media Item (Manifest Forum)
+```javascript
+{
+  dataUrl: "string",     // Data URL (base64)
+  type: "image|video|audio",
+  name: "string",        // Dateiname
+  size: number,          // Größe in Bytes
+  mimeType: "string"    // MIME-Type
+}
+```
+
+### Contract (API Response)
+```javascript
+{
+  id: "ct-...",
+  name: "string",
+  mimeType: "string",
+  byteSize: number,
+  storageUrl: "string",
+  hashSha256: "string",
+  createdBy: "string",
+  createdAt: "ISO-Date"
+}
+```
+
+---
+
+Erstellt: 2025-11-25
+Aktualisiert: 2025-11-25
+Version: 2.0 (Erweitert mit Frontend-Details)
+

@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Heilungsspirale Studio – Hollywood Universe XXL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #0b1020;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #3b82f6;
+      --gold: #f59e0b;
+      --muted: #9ca3af;
+      --text: #e5e7eb;
+      --radius-xl: 20px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(
+        circle at top,
+        #020617 0%,
+        #020617 30%,
+        #020817 55%,
+        #020617 100%
+      );
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .root {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      max-width: 1440px;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .canvas-wrap {
+      flex: 1.4;
+      min-width: 0;
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at top, #020617 0%, #020617 35%, #020617 100%);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .badge {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.8);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      backdrop-filter: blur(12px);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .badge span.icon {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle at center, #4ade80, #15803d);
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+    }
+
+    .mode-pill {
+      position: absolute;
+      bottom: 14px;
+      left: 16px;
+      padding: 6px 12px;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      backdrop-filter: blur(12px);
+      font-size: 11px;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .mode-pill span.mode {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .side-panel {
+      flex: 0.9;
+      min-width: 330px;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+      overflow-y: auto; /* Fix: alles im Panel scrollbar sichtbar */
+    }
+
+    .card {
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.14), transparent 38%),
+        linear-gradient(135deg, #020617 0%, #020617 50%, #020617 100%);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow-soft);
+      padding: 14px 14px 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        circle at top right,
+        rgba(248, 250, 252, 0.12),
+        transparent 55%
+      );
+      opacity: 0.9;
+      mix-blend-mode: screen;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .card-title h1 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .card-title span.subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chip {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .chip.gold {
+      border-color: rgba(245, 158, 11, 0.8);
+      color: #fed7aa;
+      background: radial-gradient(
+        circle at left,
+        rgba(245, 158, 11, 0.25),
+        rgba(15, 23, 42, 0.95)
+      );
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin: 8px 0 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 26px;
+      height: 1px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0.6;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .control-group label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .control-group label span.value {
+      font-variant-numeric: tabular-nums;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background: radial-gradient(
+        circle at left,
+        rgba(59, 130, 246, 0.7),
+        rgba(15, 23, 42, 1)
+      );
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid #93c5fd;
+      background: #e5f0ff;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid #93c5fd;
+      background: #e5f0ff;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+      cursor: pointer;
+    }
+
+    select,
+    input[type="text"],
+    input[type="color"],
+    textarea {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text);
+      font-size: 12px;
+      padding: 5px 10px;
+      outline: none;
+    }
+
+    input[type="color"] {
+      padding: 0 4px;
+      height: 26px;
+    }
+
+    select:focus,
+    input[type="text"]:focus,
+    input[type="color"]:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35);
+    }
+
+    textarea {
+      border-radius: 10px;
+      resize: vertical;
+      min-height: 60px;
+      font-size: 12px;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 5px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(
+        circle at top,
+        rgba(15, 23, 42, 0.2),
+        rgba(15, 23, 42, 0.95)
+      );
+      color: var(--text);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      border-color: rgba(59, 130, 246, 0.9);
+      background: radial-gradient(
+        circle at top left,
+        rgba(59, 130, 246, 0.4),
+        rgba(15, 23, 42, 0.95)
+      );
+      color: #e5f0ff;
+    }
+
+    .btn.danger {
+      border-color: rgba(248, 113, 113, 0.8);
+      background: radial-gradient(
+        circle at top left,
+        rgba(248, 113, 113, 0.3),
+        rgba(15, 23, 42, 0.95)
+      );
+      color: #fee2e2;
+    }
+
+    .btn.small {
+      padding: 3px 8px;
+      font-size: 10px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill-row .btn {
+      padding: 4px 9px;
+      font-size: 10px;
+    }
+
+    .small-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .element-list {
+      max-height: 140px;
+      overflow-y: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(
+        circle at top,
+        rgba(15, 23, 42, 0.9),
+        rgba(15, 23, 42, 0.98)
+      );
+      padding: 4px;
+      margin-top: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .element-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--muted);
+      border: 1px solid transparent;
+      margin-bottom: 3px;
+    }
+
+    .element-item span.label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .element-item span.meta {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    .element-item.active {
+      border-color: rgba(59, 130, 246, 0.9);
+      background: radial-gradient(
+        circle at left,
+        rgba(59, 130, 246, 0.35),
+        rgba(15, 23, 42, 1)
+      );
+      color: #e5f0ff;
+    }
+
+    .element-item .type-tag {
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .row > * {
+      flex: 1;
+    }
+
+    .preset-select {
+      width: 100%;
+    }
+
+    .footer-note {
+      margin-top: 8px;
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-note span {
+      color: #e5f0ff;
+    }
+
+    @media (max-width: 980px) {
+      .root {
+        flex-direction: column;
+      }
+      .side-panel {
+        max-width: 100%;
+        min-width: 0;
+      }
+      .canvas-wrap {
+        min-height: 340px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .root {
+        padding: 8px;
+      }
+      .card {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="root">
+    <div class="canvas-wrap">
+      <div class="badge">
+        <span class="icon"></span>
+        <span>Spiral · Quantum Healing Canvas</span>
+      </div>
+      <div class="mode-pill">
+        <span>Modus:</span>
+        <span class="mode" id="modeDisplay">2D</span>
+      </div>
+      <canvas id="mainCanvas"></canvas>
+    </div>
+
+    <div class="side-panel">
+      <div class="card" id="controlsCard">
+        <div class="card-header">
+          <div class="card-title">
+            <h1>Heilungsspirale Studio</h1>
+            <span class="subtitle">Hollywood · Enterprise Universe XXL</span>
+          </div>
+        </div>
+
+        <div class="chip-row">
+          <div class="chip">2D · 3D · Morph</div>
+          <div class="chip">Cinematic Kamera</div>
+          <div class="chip gold">Orbs · Beams · Text</div>
+          <div class="chip">Universe Randomizer</div>
+        </div>
+
+        <!-- Spiral-Grundstruktur -->
+        <div class="section-title">Spiral Geometry</div>
+
+        <div class="control-group">
+          <label for="arms">
+            <span>Arme</span>
+            <span class="value" id="armsValue">8</span>
+          </label>
+          <input id="arms" type="range" min="2" max="24" step="1" value="8" />
+        </div>
+
+        <div class="control-group">
+          <label for="twist">
+            <span>Drehung</span>
+            <span class="value" id="twistValue">3.0</span>
+          </label>
+          <input id="twist" type="range" min="0.5" max="8" step="0.1" value="3" />
+        </div>
+
+        <div class="control-group">
+          <label for="density">
+            <span>Dichte</span>
+            <span class="value" id="densityValue">900</span>
+          </label>
+          <input
+            id="density"
+            type="range"
+            min="200"
+            max="2000"
+            step="50"
+            value="900"
+          />
+        </div>
+
+        <div class="control-group">
+          <label for="mode">
+            <span>Visualisierung</span>
+          </label>
+          <select id="mode">
+            <option value="2d">2D · Energiespirale</option>
+            <option value="3d">3D · Raumtorus</option>
+            <option value="morph">Morphing · Portal</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="speed">
+            <span>Animationsgeschwindigkeit</span>
+            <span class="value" id="speedValue">1.0x</span>
+          </label>
+          <input
+            id="speed"
+            type="range"
+            min="0.25"
+            max="3"
+            step="0.05"
+            value="1"
+          />
+        </div>
+
+        <div class="control-group">
+          <label>
+            <span>Loop / Zyklus</span>
+          </label>
+          <label style="font-size: 11px; color: var(--muted);">
+            <input type="checkbox" id="autoCycle" />
+            &nbsp;Alle Modi im Loop durchlaufen
+          </label>
+          <label style="font-size: 11px; color: var(--muted);">
+            <input type="checkbox" id="pulseMorph" checked />
+            &nbsp;Morph zentriert pulsiert
+          </label>
+        </div>
+
+        <!-- Hollywood / Cinema -->
+        <div class="section-title">Hollywood / Cinema</div>
+
+        <div class="control-group">
+          <label>
+            <span>Hollywood Modus</span>
+          </label>
+          <label style="font-size: 11px; color: var(--muted);">
+            <input type="checkbox" id="hollywoodMode" />
+            &nbsp;Cinematic Effekte aktiv
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label for="cameraOrbit">
+            <span>Kamera Orbit</span>
+            <span class="value" id="cameraOrbitValue">1.0</span>
+          </label>
+          <input
+            id="cameraOrbit"
+            type="range"
+            min="0"
+            max="3"
+            step="0.1"
+            value="1"
+          />
+        </div>
+
+        <div class="control-group">
+          <label for="cameraZoom">
+            <span>Kamera Zoom</span>
+            <span class="value" id="cameraZoomValue">1.0</span>
+          </label>
+          <input
+            id="cameraZoom"
+            type="range"
+            min="1"
+            max="2"
+            step="0.05"
+            value="1"
+          />
+        </div>
+
+        <div class="control-group">
+          <label for="grainStrength">
+            <span>Filmgrain</span>
+            <span class="value" id="grainStrengthValue">0.20</span>
+          </label>
+          <input
+            id="grainStrength"
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value="0.2"
+          />
+        </div>
+
+        <!-- Spiral Presets -->
+        <div class="section-title">Spiral Presets</div>
+
+        <div class="row">
+          <select id="presetSelect" class="preset-select">
+            <option value="healing">Healing Core · Blaugold</option>
+            <option value="yinYang">Yin & Yang · Dual</option>
+            <option value="lotus">Lotus Bloom · Herzraum</option>
+            <option value="galaxy">Galaxy Gate · Sterne</option>
+          </select>
+          <button class="btn small" id="applyPresetBtn">Laden</button>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" id="randomPresetBtn">✧ Zufall</button>
+          <button class="btn" id="universeRandomBtn">✨ Universe</button>
+          <button class="btn" id="exportPresetBtn">⇢ Projekt exportieren</button>
+          <button class="btn" id="importPresetBtn">⇠ Projekt importieren</button>
+        </div>
+
+        <!-- Cinematic Universes -->
+        <div class="section-title">Cinematic Universes</div>
+        <div class="row">
+          <select id="universePresetSelect" class="preset-select">
+            <option value="neutral">Neutral · Healing</option>
+            <option value="marvel">Marvelverse</option>
+            <option value="starwars">Star Wars</option>
+            <option value="avatar">Avatar World</option>
+          </select>
+          <button class="btn small" id="applyUniversePresetBtn">Universe laden</button>
+        </div>
+
+        <!-- Healing Module Presets -->
+        <div class="section-title">Healing Module</div>
+        <div class="row">
+          <select id="healingPresetSelect" class="preset-select"></select>
+          <button class="btn small" id="applyHealingPresetBtn">Modul laden</button>
+        </div>
+        <div class="row">
+          <input
+            type="text"
+            id="customHealingName"
+            placeholder="Eigenes Modul: Name eingeben…"
+          />
+          <button class="btn small primary" id="saveHealingPresetBtn">Speichern</button>
+        </div>
+
+        <!-- Elemente / Canvas -->
+        <div class="section-title">Canvas · Elemente</div>
+        <div class="small-label">Elemente hinzufügen</div>
+        <div class="pill-row">
+          <button class="btn" id="addTextBtn">＋ Text</button>
+          <button class="btn" id="addImageBtn">＋ Bild</button>
+          <button class="btn" id="addVideoBtn">＋ Video</button>
+          <button class="btn" id="addOrbBtn">＋ Orb</button>
+          <button class="btn" id="addBeamBtn">＋ Lichtstrahl</button>
+        </div>
+
+        <div class="small-label" style="margin-top: 6px;">Elemente im Canvas</div>
+        <div class="element-list" id="elementList"></div>
+
+        <div class="section-title">Element · Animation & Mixing</div>
+
+        <div class="small-label">Animationsprofil (pro Element)</div>
+        <select id="animationProfile">
+          <option value="none">Keine</option>
+          <option value="float">Schweben</option>
+          <option value="rotate">Rotieren</option>
+          <option value="pulse">Pulsieren</option>
+          <option value="orbit">Orbit</option>
+          <option value="shake">Shake</option>
+          <option value="flicker">Flicker</option>
+        </select>
+
+        <div class="control-group">
+          <label for="animIntensity">
+            <span>Intensität</span>
+            <span class="value" id="animIntensityValue">1.0</span>
+          </label>
+          <input
+            id="animIntensity"
+            type="range"
+            min="0"
+            max="3"
+            step="0.1"
+            value="1"
+          />
+        </div>
+
+        <div class="control-group">
+          <label for="elementOpacity">
+            <span>Deckkraft (Element)</span>
+            <span class="value" id="elementOpacityValue">1.00</span>
+          </label>
+          <input
+            id="elementOpacity"
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value="1"
+          />
+        </div>
+
+        <div class="small-label">Blend-Modus</div>
+        <select id="elementBlendMode">
+          <option value="source-over">Normal</option>
+          <option value="screen">Screen</option>
+          <option value="add">Additiv</option>
+        </select>
+
+        <!-- Beam Farb-Editor & Presets -->
+        <div class="section-title">Beam Farben & Presets</div>
+        <div class="row">
+          <select id="beamPresetSelect" class="preset-select">
+            <option value="custom">– Beam Preset wählen –</option>
+            <option value="lightsaberBlue">Lightsaber Blue</option>
+            <option value="lightsaberRed">Lightsaber Red</option>
+            <option value="infinityBeam">Infinity Beam</option>
+            <option value="healingRay">Healing Ray</option>
+          </select>
+          <button class="btn small" id="applyBeamPresetBtn">auf Beam</button>
+        </div>
+        <div class="row">
+          <div>
+            <div class="small-label">Außenfarbe</div>
+            <input type="color" id="beamOuterColor" value="#f97316" />
+          </div>
+          <div>
+            <div class="small-label">Kernfarbe</div>
+            <input type="color" id="beamCoreColor" value="#ffffff" />
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn danger" id="deleteElementBtn">✕ Element löschen</button>
+          <button class="btn" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="footer-note">
+          <span>Alles</span> ist frei mit der Maus bewegbar · Drag & Drop
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("mainCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const armsInput = document.getElementById("arms");
+      const twistInput = document.getElementById("twist");
+      const densityInput = document.getElementById("density");
+      const modeSelect = document.getElementById("mode");
+      const speedInput = document.getElementById("speed");
+      const autoCycleInput = document.getElementById("autoCycle");
+      const pulseMorphInput = document.getElementById("pulseMorph");
+
+      const armsValue = document.getElementById("armsValue");
+      const twistValue = document.getElementById("twistValue");
+      const densityValue = document.getElementById("densityValue");
+      const speedValue = document.getElementById("speedValue");
+      const modeDisplay = document.getElementById("modeDisplay");
+
+      const hollywoodModeInput = document.getElementById("hollywoodMode");
+      const cameraOrbitInput = document.getElementById("cameraOrbit");
+      const cameraOrbitValue = document.getElementById("cameraOrbitValue");
+      const cameraZoomInput = document.getElementById("cameraZoom");
+      const cameraZoomValue = document.getElementById("cameraZoomValue");
+      const grainStrengthInput = document.getElementById("grainStrength");
+      const grainStrengthValue = document.getElementById("grainStrengthValue");
+
+      const presetSelect = document.getElementById("presetSelect");
+      const applyPresetBtn = document.getElementById("applyPresetBtn");
+      const randomPresetBtn = document.getElementById("randomPresetBtn");
+      const universeRandomBtn = document.getElementById("universeRandomBtn");
+      const exportPresetBtn = document.getElementById("exportPresetBtn");
+      const importPresetBtn = document.getElementById("importPresetBtn");
+      const resetBtn = document.getElementById("resetBtn");
+
+      const universePresetSelect = document.getElementById("universePresetSelect");
+      const applyUniversePresetBtn = document.getElementById("applyUniversePresetBtn");
+
+      const healingPresetSelect = document.getElementById("healingPresetSelect");
+      const applyHealingPresetBtn = document.getElementById("applyHealingPresetBtn");
+      const customHealingNameInput = document.getElementById("customHealingName");
+      const saveHealingPresetBtn = document.getElementById("saveHealingPresetBtn");
+
+      const addTextBtn = document.getElementById("addTextBtn");
+      const addImageBtn = document.getElementById("addImageBtn");
+      const addVideoBtn = document.getElementById("addVideoBtn");
+      const addOrbBtn = document.getElementById("addOrbBtn");
+      const addBeamBtn = document.getElementById("addBeamBtn");
+
+      const elementList = document.getElementById("elementList");
+      const animationProfileSelect = document.getElementById("animationProfile");
+      const animIntensity = document.getElementById("animIntensity");
+      const animIntensityValue = document.getElementById("animIntensityValue");
+      const elementOpacityInput = document.getElementById("elementOpacity");
+      const elementOpacityValue = document.getElementById("elementOpacityValue");
+      const elementBlendModeSelect = document.getElementById("elementBlendMode");
+      const deleteElementBtn = document.getElementById("deleteElementBtn");
+
+      const beamPresetSelect = document.getElementById("beamPresetSelect");
+      const applyBeamPresetBtn = document.getElementById("applyBeamPresetBtn");
+      const beamOuterColorInput = document.getElementById("beamOuterColor");
+      const beamCoreColorInput = document.getElementById("beamCoreColor");
+
+      let currentMode = "2d";
+      let currentPalette = {
+        base: "#020617",
+        primary: "#60a5fa",
+        secondary: "#f97316",
+      };
+
+      const spiralPresets = {
+        healing: {
+          arms: 8,
+          twist: 3,
+          density: 900,
+          mode: "2d",
+          speed: 1,
+          palette: {
+            base: "#020617",
+            primary: "#60a5fa",
+            secondary: "#fbbf24",
+          },
+        },
+        yinYang: {
+          arms: 2,
+          twist: 2.5,
+          density: 700,
+          mode: "morph",
+          speed: 1.2,
+          palette: {
+            base: "#020617",
+            primary: "#f9fafb",
+            secondary: "#0f172a",
+          },
+        },
+        lotus: {
+          arms: 12,
+          twist: 5,
+          density: 1200,
+          mode: "2d",
+          speed: 0.8,
+          palette: {
+            base: "#020617",
+            primary: "#a855f7",
+            secondary: "#f97316",
+          },
+        },
+        galaxy: {
+          arms: 6,
+          twist: 4.8,
+          density: 1500,
+          mode: "3d",
+          speed: 1.6,
+          palette: {
+            base: "#020617",
+            primary: "#38bdf8",
+            secondary: "#f97316",
+          },
+        },
+      };
+
+      const universePresets = {
+        neutral: {
+          label: "Neutral · Healing",
+          spiral: spiralPresets.healing,
+          hollywood: { enabled: false, cameraOrbit: 1, cameraZoom: 1, grain: 0.1 },
+          title: null,
+        },
+        marvel: {
+          label: "Marvelverse · Cosmic Hero",
+          spiral: {
+            arms: 10,
+            twist: 4.5,
+            density: 1300,
+            mode: "3d",
+            speed: 1.4,
+            palette: {
+              base: "#020617",
+              primary: "#ef4444",
+              secondary: "#60a5fa",
+            },
+          },
+          hollywood: { enabled: true, cameraOrbit: 1.8, cameraZoom: 1.35, grain: 0.35 },
+          title: "COSMIC HERO",
+        },
+        starwars: {
+          label: "Star Wars · Twin Suns",
+          spiral: {
+            arms: 4,
+            twist: 3.8,
+            density: 1100,
+            mode: "morph",
+            speed: 1.2,
+            palette: {
+              base: "#020617",
+              primary: "#38bdf8",
+              secondary: "#e5e7eb",
+            },
+          },
+          hollywood: { enabled: true, cameraOrbit: 1.2, cameraZoom: 1.25, grain: 0.45 },
+          title: "THE FORCE",
+        },
+        avatar: {
+          label: "Avatar · Pandora Forest",
+          spiral: {
+            arms: 12,
+            twist: 5.2,
+            density: 1500,
+            mode: "2d",
+            speed: 0.9,
+            palette: {
+              base: "#020617",
+              primary: "#22c55e",
+              secondary: "#a855f7",
+            },
+          },
+          hollywood: { enabled: true, cameraOrbit: 0.9, cameraZoom: 1.2, grain: 0.3 },
+          title: "PANDORA SPIRIT",
+        },
+      };
+
+      const baseHealingPresets = [
+        {
+          key: "heart",
+          label: "Herzraum-Heilung",
+          spiral: {
+            arms: 8,
+            twist: 3.4,
+            density: 1100,
+            mode: "morph",
+            speed: 0.9,
+            palette: {
+              base: "#020617",
+              primary: "#fb7185",
+              secondary: "#f97316",
+            },
+          },
+          hollywood: { enabled: true, cameraOrbit: 0.8, cameraZoom: 1.15, grain: 0.25 },
+          affirmations: [
+            "Ich öffne meinen Herzraum.",
+            "Ich bin sicher, geliebt und getragen.",
+          ],
+        },
+        {
+          key: "abundance",
+          label: "Fülle & Geldfluss",
+          spiral: {
+            arms: 6,
+            twist: 4.2,
+            density: 1300,
+            mode: "3d",
+            speed: 1.1,
+            palette: {
+              base: "#020617",
+              primary: "#22c55e",
+              secondary: "#facc15",
+            },
+          },
+          hollywood: { enabled: true, cameraOrbit: 1.3, cameraZoom: 1.25, grain: 0.3 },
+          affirmations: [
+            "Ich öffne mich für Fülle.",
+            "Geld darf leicht zu mir fließen.",
+          ],
+        },
+        {
+          key: "ancestors",
+          label: "Ahnenheilung",
+          spiral: {
+            arms: 5,
+            twist: 2.8,
+            density: 900,
+            mode: "2d",
+            speed: 0.8,
+            palette: {
+              base: "#020617",
+              primary: "#f97316",
+              secondary: "#fed7aa",
+            },
+          },
+          hollywood: { enabled: false, cameraOrbit: 0.6, cameraZoom: 1.05, grain: 0.2 },
+          affirmations: [
+            "Ich ehre meine Ahnen.",
+            "Alte Muster dürfen jetzt heilen.",
+          ],
+        },
+        {
+          key: "innerchild",
+          label: "Inneres Kind",
+          spiral: {
+            arms: 7,
+            twist: 3.1,
+            density: 1000,
+            mode: "morph",
+            speed: 1.0,
+            palette: {
+              base: "#020617",
+              primary: "#38bdf8",
+              secondary: "#f9a8d4",
+            },
+          },
+          hollywood: { enabled: true, cameraOrbit: 1.0, cameraZoom: 1.15, grain: 0.2 },
+          affirmations: [
+            "Ich sehe und liebe mein inneres Kind.",
+            "Ich erlaube mir Freude.",
+          ],
+        },
+        {
+          key: "dragon",
+          label: "Drachenkraft",
+          spiral: {
+            arms: 9,
+            twist: 5.5,
+            density: 1400,
+            mode: "3d",
+            speed: 1.5,
+            palette: {
+              base: "#020617",
+              primary: "#ef4444",
+              secondary: "#facc15",
+            },
+          },
+          hollywood: { enabled: true, cameraOrbit: 1.7, cameraZoom: 1.3, grain: 0.4 },
+          affirmations: [
+            "Ich aktiviere meine Drachenkraft.",
+            "Ich stehe mutig in meiner Power.",
+          ],
+        },
+      ];
+
+      let customHealingPresets = [];
+      try {
+        const stored = localStorage.getItem("healingPresetsCustom");
+        if (stored) {
+          customHealingPresets = JSON.parse(stored);
+        }
+      } catch {
+        customHealingPresets = [];
+      }
+
+      function refreshHealingPresetSelect() {
+        healingPresetSelect.innerHTML = "";
+        const all = [...baseHealingPresets, ...customHealingPresets];
+        all.forEach((p) => {
+          const opt = document.createElement("option");
+          opt.value = p.key;
+          opt.textContent = p.label;
+          healingPresetSelect.appendChild(opt);
+        });
+      }
+
+      const beamPresets = {
+        lightsaberBlue: {
+          outer: "#38bdf8",
+          core: "#e5f0ff",
+        },
+        lightsaberRed: {
+          outer: "#ef4444",
+          core: "#fee2e2",
+        },
+        infinityBeam: {
+          outer: "#a855f7",
+          core: "#facc15",
+        },
+        healingRay: {
+          outer: "#22c55e",
+          core: "#bbf7d0",
+        },
+      };
+
+      let globalTime = 0;
+      let cycleTime = 0;
+
+      let cameraOffsetX = 0;
+      let cameraOffsetY = 0;
+      let cameraZoom = 1;
+
+      let elements = [];
+      let elementIdCounter = 1;
+      let activeElementId = null;
+
+      let isDragging = false;
+      let dragOffsetX = 0;
+      let dragOffsetY = 0;
+
+      const hollywoodStars = Array.from({ length: 180 }, () => ({
+        x: Math.random(),
+        y: Math.random(),
+        size: 0.3 + Math.random() * 1.7,
+        phase: Math.random() * Math.PI * 2,
+      }));
+
+      function randomInRange(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function updateLabelValues() {
+        armsValue.textContent = armsInput.value;
+        twistValue.textContent = parseFloat(twistInput.value).toFixed(1);
+        densityValue.textContent = densityInput.value;
+        speedValue.textContent = parseFloat(speedInput.value).toFixed(1) + "x";
+        animIntensityValue.textContent = parseFloat(animIntensity.value).toFixed(1);
+        cameraOrbitValue.textContent = parseFloat(cameraOrbitInput.value).toFixed(1);
+        cameraZoomValue.textContent = parseFloat(cameraZoomInput.value).toFixed(2);
+        grainStrengthValue.textContent = parseFloat(grainStrengthInput.value).toFixed(2);
+        elementOpacityValue.textContent = parseFloat(elementOpacityInput.value).toFixed(2);
+      }
+
+      [
+        armsInput,
+        twistInput,
+        densityInput,
+        speedInput,
+        animIntensity,
+        cameraOrbitInput,
+        cameraZoomInput,
+        grainStrengthInput,
+        elementOpacityInput,
+      ].forEach((input) => input.addEventListener("input", updateLabelValues));
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+      updateLabelValues();
+
+      function setMode(mode) {
+        currentMode = mode;
+        modeSelect.value = mode;
+        modeDisplay.textContent =
+          mode === "2d" ? "2D" : mode === "3d" ? "3D" : "Morph";
+      }
+
+      modeSelect.addEventListener("change", () => setMode(modeSelect.value));
+
+      function applyPreset(key) {
+        const p = spiralPresets[key];
+        if (!p) return;
+        armsInput.value = p.arms;
+        twistInput.value = p.twist;
+        densityInput.value = p.density;
+        speedInput.value = p.speed;
+        setMode(p.mode);
+        currentPalette = p.palette;
+        updateLabelValues();
+      }
+
+      applyPresetBtn.addEventListener("click", () => applyPreset(presetSelect.value));
+
+      randomPresetBtn.addEventListener("click", () => {
+        const keys = Object.keys(spiralPresets);
+        const key = keys[Math.floor(Math.random() * keys.length)];
+        applyPreset(key);
+      });
+
+      universeRandomBtn.addEventListener("click", () => {
+        const baseHue = randomInRange(190, 260);
+
+        armsInput.value = Math.floor(randomInRange(3, 20));
+        twistInput.value = randomInRange(0.8, 7.0).toFixed(1);
+        densityInput.value = Math.floor(randomInRange(400, 1800));
+
+        const modes = ["2d", "3d", "morph"];
+        setMode(modes[Math.floor(Math.random() * modes.length)]);
+
+        currentPalette = {
+          base: "#020617",
+          primary: `hsl(${baseHue}, 100%, 65%)`,
+          secondary: `hsl(${(baseHue + randomInRange(40, 80)) % 360}, 100%, 60%)`,
+        };
+
+        hollywoodModeInput.checked = true;
+        cameraOrbitInput.value = randomInRange(0.6, 2.2).toFixed(1);
+        cameraZoomInput.value = randomInRange(1.0, 1.6).toFixed(2);
+        grainStrengthInput.value = randomInRange(0.1, 0.7).toFixed(2);
+
+        elements = [];
+
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+
+        const orbCount = Math.floor(randomInRange(1, 4));
+        for (let i = 0; i < orbCount; i++) {
+          elements.push({
+            id: elementIdCounter++,
+            type: "orb",
+            x: w * randomInRange(0.25, 0.75),
+            y: h * randomInRange(0.25, 0.7),
+            scale: 1,
+            rotation: 0,
+            opacity: randomInRange(0.7, 1),
+            radius: randomInRange(40, 90),
+            innerColor: "#f9fafb",
+            outerColor: "rgba(59,130,246,0)",
+            blend: "screen",
+            animationProfile: "pulse",
+            animIntensity: randomInRange(0.6, 1.6),
+          });
+        }
+
+        const beamCount = Math.floor(randomInRange(1, 3));
+        for (let i = 0; i < beamCount; i++) {
+          const hue = baseHue + randomInRange(-20, 40);
+          elements.push({
+            id: elementIdCounter++,
+            type: "beam",
+            x: w * randomInRange(0.3, 0.7),
+            y: h * randomInRange(0.2, 0.6),
+            scale: 1,
+            rotation: randomInRange(-0.4, 0.4),
+            opacity: randomInRange(0.5, 0.9),
+            length: randomInRange(220, 320),
+            width: randomInRange(30, 70),
+            color: `hsl(${hue}, 100%, 60%)`,
+            outerColor: `hsla(${hue}, 100%, 60%, 0.7)`,
+            coreColor: "#ffffff",
+            blend: "screen",
+            animationProfile: "shake",
+            animIntensity: randomInRange(0.8, 1.4),
+          });
+        }
+
+        const titles = [
+          "AWAKENING",
+          "COSMIC HEAL",
+          "QUANTUM SPIRAL",
+          "STARCODE",
+          "INFINITE",
+        ];
+        const title = titles[Math.floor(Math.random() * titles.length)];
+        elements.push({
+          id: elementIdCounter++,
+          type: "text",
+          text: title,
+          x: w * 0.5,
+          y: h * 0.85,
+          scale: 1,
+          rotation: 0,
+          opacity: 1,
+          color: "#e5e7eb",
+          fontSize: 32,
+          animationProfile: "flicker",
+          animIntensity: 1.5,
+          blend: "source-over",
+        });
+
+        updateLabelValues();
+        renderElementList();
+      });
+
+      function exportProject() {
+        const data = {
+          spiral: {
+            arms: parseInt(armsInput.value, 10),
+            twist: parseFloat(twistInput.value),
+            density: parseInt(densityInput.value, 10),
+            mode: currentMode,
+            speed: parseFloat(speedInput.value),
+            palette: currentPalette,
+          },
+          hollywood: {
+            enabled: !!hollywoodModeInput.checked,
+            cameraOrbit: parseFloat(cameraOrbitInput.value || "1"),
+            cameraZoom: parseFloat(cameraZoomInput.value || "1"),
+            grain: parseFloat(grainStrengthInput.value || "0.2"),
+          },
+          elements: elements.map((el) => ({
+            ...el,
+            _image: undefined,
+            _video: undefined,
+            _renderX: undefined,
+            _renderY: undefined,
+            _renderScale: undefined,
+            _renderRotation: undefined,
+          })),
+        };
+        const json = JSON.stringify(data, null, 2);
+        window.prompt("Projekt JSON (kopieren):", json);
+      }
+
+      function importProject() {
+        const json = window.prompt("Projekt JSON einfügen:");
+        if (!json) return;
+        try {
+          const data = JSON.parse(json);
+          if (data.spiral) {
+            armsInput.value = data.spiral.arms ?? 8;
+            twistInput.value = data.spiral.twist ?? 3;
+            densityInput.value = data.spiral.density ?? 900;
+            speedInput.value = data.spiral.speed ?? 1;
+            currentPalette = data.spiral.palette || currentPalette;
+            setMode(data.spiral.mode || "2d");
+          }
+          if (data.hollywood) {
+            hollywoodModeInput.checked = !!data.hollywood.enabled;
+            cameraOrbitInput.value = data.hollywood.cameraOrbit ?? 1;
+            cameraZoomInput.value = data.hollywood.cameraZoom ?? 1;
+            grainStrengthInput.value = data.hollywood.grain ?? 0.2;
+          }
+
+          elements = [];
+          (data.elements || []).forEach((raw) => {
+            if (!raw.type) return;
+            const common = {
+              id: raw.id || elementIdCounter++,
+              x: raw.x,
+              y: raw.y,
+              scale: raw.scale ?? 1,
+              rotation: raw.rotation ?? 0,
+              opacity: raw.opacity ?? 1,
+              animationProfile: raw.animationProfile || "none",
+              animIntensity: raw.animIntensity ?? 1,
+              blend: raw.blend || "source-over",
+              fromHealing: !!raw.fromHealing,
+            };
+            if (raw.type === "text") {
+              elements.push({
+                ...common,
+                type: "text",
+                text: raw.text || "Text",
+                color: raw.color || "#e5e7eb",
+                fontSize: raw.fontSize || 24,
+              });
+            } else if (raw.type === "image") {
+              const img = new Image();
+              img.crossOrigin = "anonymous";
+              img.src = raw.url || "";
+              elements.push({
+                ...common,
+                type: "image",
+                url: raw.url || "",
+                _image: img,
+              });
+            } else if (raw.type === "video") {
+              const video = document.createElement("video");
+              video.src = raw.url || "";
+              video.muted = true;
+              video.loop = true;
+              video.play().catch(() => {});
+              elements.push({
+                ...common,
+                type: "video",
+                url: raw.url || "",
+                _video: video,
+              });
+            } else if (raw.type === "orb") {
+              elements.push({
+                ...common,
+                type: "orb",
+                radius: raw.radius ?? 60,
+                innerColor: raw.innerColor || "#f9fafb",
+                outerColor: raw.outerColor || "rgba(59,130,246,0)",
+              });
+            } else if (raw.type === "beam") {
+              elements.push({
+                ...common,
+                type: "beam",
+                length: raw.length ?? 260,
+                width: raw.width ?? 40,
+                color: raw.color || "#f97316",
+                outerColor: raw.outerColor || raw.color || "#f97316",
+                coreColor: raw.coreColor || "#ffffff",
+              });
+            }
+          });
+
+          updateLabelValues();
+          renderElementList();
+        } catch (e) {
+          alert("Import fehlgeschlagen: " + e.message);
+        }
+      }
+
+      exportPresetBtn.addEventListener("click", exportProject);
+      importPresetBtn.addEventListener("click", importProject);
+
+      resetBtn.addEventListener("click", () => {
+        applyPreset("healing");
+        autoCycleInput.checked = false;
+        pulseMorphInput.checked = true;
+        hollywoodModeInput.checked = false;
+        cameraOrbitInput.value = 1;
+        cameraZoomInput.value = 1;
+        grainStrengthInput.value = 0.2;
+        elements = [];
+        activeElementId = null;
+        updateLabelValues();
+        renderElementList();
+      });
+
+      function createTextElement() {
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+        const txt = window.prompt("Text eingeben:", "Heilungsspirale");
+        if (!txt) return;
+        const el = {
+          id: elementIdCounter++,
+          type: "text",
+          text: txt,
+          x: w * 0.5,
+          y: h * 0.12,
+          scale: 1,
+          rotation: 0,
+          opacity: 1,
+          color: "#e5e7eb",
+          fontSize: 24,
+          animationProfile: "float",
+          animIntensity: 0.8,
+          blend: "source-over",
+        };
+        elements.push(el);
+        activeElementId = el.id;
+        renderElementList();
+      }
+
+      function createImageElement() {
+        const url = window.prompt("Bild-URL eingeben:");
+        if (!url) return;
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = url;
+        const el = {
+          id: elementIdCounter++,
+          type: "image",
+          x: w * 0.5,
+          y: h * 0.5,
+          scale: 1,
+          rotation: 0,
+          opacity: 1,
+          url,
+          _image: img,
+          animationProfile: "none",
+          animIntensity: 1,
+          blend: "screen",
+        };
+        elements.push(el);
+        activeElementId = el.id;
+        renderElementList();
+      }
+
+      function createVideoElement() {
+        const url = window.prompt("Video-URL (mp4/webm) eingeben:");
+        if (!url) return;
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+        const video = document.createElement("video");
+        video.src = url;
+        video.muted = true;
+        video.loop = true;
+        video.play().catch(() => {});
+        const el = {
+          id: elementIdCounter++,
+          type: "video",
+          x: w * 0.5,
+          y: h * 0.5,
+          scale: 1,
+          rotation: 0,
+          opacity: 1,
+          url,
+          _video: video,
+          animationProfile: "float",
+          animIntensity: 1,
+          blend: "screen",
+        };
+        elements.push(el);
+        activeElementId = el.id;
+        renderElementList();
+      }
+
+      function createOrbElement() {
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+        const el = {
+          id: elementIdCounter++,
+          type: "orb",
+          x: w * 0.5,
+          y: h * 0.5,
+          scale: 1,
+          rotation: 0,
+          opacity: 0.9,
+          radius: 60,
+          innerColor: "#f9fafb",
+          outerColor: "rgba(59,130,246,0)",
+          blend: "screen",
+          animationProfile: "pulse",
+          animIntensity: 1.2,
+        };
+        elements.push(el);
+        activeElementId = el.id;
+        renderElementList();
+      }
+
+      function createBeamElement() {
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+        const el = {
+          id: elementIdCounter++,
+          type: "beam",
+          x: w * 0.5,
+          y: h * 0.3,
+          scale: 1,
+          rotation: 0,
+          opacity: 0.85,
+          length: 260,
+          width: 40,
+          color: beamOuterColorInput.value || "#f97316",
+          outerColor: beamOuterColorInput.value || "#f97316",
+          coreColor: beamCoreColorInput.value || "#ffffff",
+          blend: "screen",
+          animationProfile: "float",
+          animIntensity: 1,
+        };
+        elements.push(el);
+        activeElementId = el.id;
+        renderElementList();
+      }
+
+      addTextBtn.addEventListener("click", createTextElement);
+      addImageBtn.addEventListener("click", createImageElement);
+      addVideoBtn.addEventListener("click", createVideoElement);
+      addOrbBtn.addEventListener("click", createOrbElement);
+      addBeamBtn.addEventListener("click", createBeamElement);
+
+      function getElementById(id) {
+        return elements.find((e) => e.id === id) || null;
+      }
+
+      function syncBeamColorControlsFromElement(el) {
+        if (!el || el.type !== "beam") return;
+        if (el.outerColor && /^#/.test(el.outerColor)) {
+          beamOuterColorInput.value = el.outerColor;
+        }
+        if (el.coreColor && /^#/.test(el.coreColor)) {
+          beamCoreColorInput.value = el.coreColor;
+        }
+      }
+
+      function renderElementList() {
+        elementList.innerHTML = "";
+        const active = getElementById(activeElementId);
+        elements.forEach((el) => {
+          const div = document.createElement("div");
+          div.className =
+            "element-item" + (el.id === activeElementId ? " active" : "");
+          const label = document.createElement("span");
+          label.className = "label";
+          label.textContent = el.type.toUpperCase();
+
+          const meta = document.createElement("span");
+          meta.className = "meta";
+          if (el.type === "text") {
+            meta.textContent = " \"" + (el.text || "").slice(0, 16) + "\"";
+          } else if (el.type === "image") {
+            meta.textContent = " Bild";
+          } else if (el.type === "video") {
+            meta.textContent = " Video";
+          } else if (el.type === "orb") {
+            meta.textContent = " Energy Orb";
+          } else if (el.type === "beam") {
+            meta.textContent = " Lichtstrahl";
+          }
+
+          const typeTag = document.createElement("span");
+          typeTag.className = "type-tag";
+          typeTag.textContent = "#" + el.id;
+
+          const left = document.createElement("div");
+          left.style.display = "flex";
+          left.style.alignItems = "center";
+          left.style.gap = "6px";
+          left.appendChild(label);
+          left.appendChild(meta);
+
+          div.appendChild(left);
+          div.appendChild(typeTag);
+
+          div.addEventListener("click", () => {
+            activeElementId = el.id;
+            animationProfileSelect.value = el.animationProfile || "none";
+            animIntensity.value = el.animIntensity ?? 1;
+            elementOpacityInput.value = el.opacity ?? 1;
+            elementBlendModeSelect.value = el.blend || "source-over";
+            updateLabelValues();
+            if (el.type === "beam") {
+              syncBeamColorControlsFromElement(el);
+            }
+            renderElementList();
+          });
+
+          elementList.appendChild(div);
+        });
+      }
+
+      animationProfileSelect.addEventListener("change", () => {
+        const el = getElementById(activeElementId);
+        if (!el) return;
+        el.animationProfile = animationProfileSelect.value;
+        renderElementList();
+      });
+
+      animIntensity.addEventListener("input", () => {
+        const el = getElementById(activeElementId);
+        if (!el) return;
+        el.animIntensity = parseFloat(animIntensity.value);
+      });
+
+      elementOpacityInput.addEventListener("input", () => {
+        const el = getElementById(activeElementId);
+        if (!el) return;
+        el.opacity = parseFloat(elementOpacityInput.value);
+        updateLabelValues();
+      });
+
+      elementBlendModeSelect.addEventListener("change", () => {
+        const el = getElementById(activeElementId);
+        if (!el) return;
+        el.blend = elementBlendModeSelect.value;
+      });
+
+      deleteElementBtn.addEventListener("click", () => {
+        if (!activeElementId) return;
+        elements = elements.filter((e) => e.id !== activeElementId);
+        activeElementId = null;
+        renderElementList();
+      });
+
+      function pickElementAt(x, y) {
+        for (let i = elements.length - 1; i >= 0; i--) {
+          const el = elements[i];
+          const sc = el.scale || 1;
+          let wEl = 200;
+          let hEl = 120;
+          if (el.type === "text") {
+            const len = el.text?.length || 4;
+            const fs = el.fontSize || 24;
+            wEl = fs * len * 0.5;
+            hEl = fs * 1.8;
+          } else if (el.type === "image" || el.type === "video") {
+            wEl = 260;
+            hEl = 260;
+          } else if (el.type === "orb") {
+            const r = el.radius || 60;
+            wEl = hEl = r * 2.2;
+          } else if (el.type === "beam") {
+            wEl = el.length || 260;
+            hEl = (el.width || 40) * 2;
+          }
+          const dx = x - el.x;
+          const dy = y - el.y;
+          if (Math.abs(dx) <= (wEl * sc) / 2 && Math.abs(dy) <= (hEl * sc) / 2) {
+            return el;
+          }
+        }
+        return null;
+      }
+
+      canvas.addEventListener("mousedown", (ev) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = ev.clientX - rect.left;
+        const y = ev.clientY - rect.top;
+        const el = pickElementAt(x, y);
+        if (el) {
+          activeElementId = el.id;
+          isDragging = true;
+          dragOffsetX = x - el.x;
+          dragOffsetY = y - el.y;
+          animationProfileSelect.value = el.animationProfile || "none";
+          animIntensity.value = el.animIntensity ?? 1;
+          elementOpacityInput.value = el.opacity ?? 1;
+          elementBlendModeSelect.value = el.blend || "source-over";
+          if (el.type === "beam") {
+            syncBeamColorControlsFromElement(el);
+          }
+          updateLabelValues();
+          renderElementList();
+        }
+      });
+
+      canvas.addEventListener("mousemove", (ev) => {
+        if (!isDragging || !activeElementId) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = ev.clientX - rect.left;
+        const y = ev.clientY - rect.top;
+        const el = getElementById(activeElementId);
+        if (!el) return;
+        el.x = x - dragOffsetX;
+        el.y = y - dragOffsetY;
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      canvas.addEventListener("dblclick", (ev) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = ev.clientX - rect.left;
+        const y = ev.clientY - rect.top;
+        const el = pickElementAt(x, y);
+        if (el && el.type === "text") {
+          const newText = window.prompt("Text bearbeiten:", el.text || "");
+          if (newText !== null) el.text = newText;
+        }
+      });
+
+      function drawBackground(w, h) {
+        const g = ctx.createRadialGradient(w * 0.5, 0, 0, w * 0.5, 0, h * 1.2);
+        g.addColorStop(0, "#020617");
+        g.addColorStop(0.5, "#020617");
+        g.addColorStop(1, "#020617");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+
+        const cx = w * 0.5;
+        const cy = h * 0.5;
+        const radius = Math.min(w, h) * 0.4;
+        const gradRing = ctx.createRadialGradient(
+          cx,
+          cy,
+          radius * 0.2,
+          cx,
+          cy,
+          radius
+        );
+        gradRing.addColorStop(0, "rgba(15,23,42,0)");
+        gradRing.addColorStop(0.7, "rgba(56,189,248,0.18)");
+        gradRing.addColorStop(1, "rgba(15,23,42,1)");
+        ctx.fillStyle = gradRing;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.strokeStyle = "rgba(148,163,184,0.2)";
+        ctx.setLineDash([4, 8]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * 0.9, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawBackgroundHollywood(w, h, t) {
+        drawBackground(w, h);
+        ctx.save();
+        ctx.globalAlpha = 0.6;
+        hollywoodStars.forEach((star) => {
+          const x = star.x * w;
+          const y = star.y * h;
+          const flicker = 0.6 + 0.4 * Math.sin(t * 2 + star.phase);
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(248,250,252,${(0.2 * flicker).toFixed(3)})`;
+          ctx.arc(x, y, star.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(
+          w * 0.5 + cameraOffsetX * 0.5,
+          h * 0.5 + cameraOffsetY * 0.6
+        );
+        ctx.rotate(Math.sin(t * 0.5) * 0.1);
+        const flareW = w * 0.7;
+        const flareH = h * 0.05;
+        const grad = ctx.createLinearGradient(-flareW / 2, 0, flareW / 2, 0);
+        grad.addColorStop(0, "rgba(0,0,0,0)");
+        grad.addColorStop(0.4, "rgba(59,130,246,0)");
+        grad.addColorStop(0.5, "rgba(248,250,252,0.95)");
+        grad.addColorStop(0.6, "rgba(59,130,246,0)");
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = grad;
+        ctx.fillRect(-flareW / 2, -flareH / 2, flareW, flareH);
+        ctx.restore();
+
+        const strength = parseFloat(grainStrengthInput.value) || 0;
+        if (strength > 0) {
+          ctx.save();
+          const count = Math.floor(600 * strength);
+          ctx.globalAlpha = 0.18 * strength;
+          for (let i = 0; i < count; i++) {
+            const x = Math.random() * w;
+            const y = Math.random() * h;
+            const s = 1 + Math.random() * 2;
+            ctx.fillStyle =
+              Math.random() > 0.5
+                ? "rgba(15,23,42,1)"
+                : "rgba(248,250,252,1)";
+            ctx.fillRect(x, y, s, s);
+          }
+          ctx.restore();
+        }
+      }
+
+      function drawSpiral2D(w, h, time) {
+        const A = parseInt(armsInput.value, 10);
+        const T = parseFloat(twistInput.value);
+        const N = parseInt(densityInput.value, 10);
+        const cx = w * 0.5 + cameraOffsetX;
+        const cy = h * 0.5 + cameraOffsetY;
+        const rMax = Math.min(w, h) * 0.3 * cameraZoom; // etwas kleiner, damit alles sichtbar bleibt
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        const baseHue = 210;
+        const tShift = time * 0.3;
+        for (let arm = 0; arm < A; arm++) {
+          const armPhase = (arm / A) * Math.PI * 2;
+          for (let i = 0; i < N; i++) {
+            const t = i / (N - 1);
+            const angle = armPhase + t * T * Math.PI * 2 + tShift;
+            const radius = rMax * Math.pow(t, 1.2);
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+
+            const pulse = 0.8 + 0.2 * Math.sin(time * 2 + t * 10);
+            const hue = baseHue + 60 * t;
+            const light = 55 + 15 * pulse;
+
+            const alpha = 0.15 + 0.8 * t * pulse;
+            ctx.fillStyle = `hsla(${hue}, 100%, ${light}%, ${alpha})`;
+            const size = 1.2 + 4.5 * (1 - t);
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        ctx.restore();
+      }
+
+      function drawSpiral3D(w, h, time) {
+        const A = parseInt(armsInput.value, 10);
+        const T = parseFloat(twistInput.value);
+        const N = parseInt(densityInput.value, 10);
+        const cx = w * 0.5 + cameraOffsetX;
+        const cy = h * 0.5 + cameraOffsetY;
+        const rMax = Math.min(w, h) * 0.32 * cameraZoom;
+
+        const rotY = time * 0.6;
+        const rotX = 0.6 + Math.sin(time * 0.5) * 0.25;
+
+        const points = [];
+        for (let arm = 0; arm < A; arm++) {
+          const armPhase = (arm / A) * Math.PI * 2;
+          for (let i = 0; i < N; i++) {
+            const t = i / (N - 1);
+            const angle = armPhase + t * T * Math.PI * 2;
+            const radius = rMax * Math.pow(t, 1.1);
+            let x = Math.cos(angle) * radius;
+            let y = (t - 0.5) * rMax * 1.4;
+            let z = Math.sin(angle) * radius;
+
+            let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+            let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+            let y1 = y;
+
+            let y2 = y1 * Math.cos(rotX) - z1 * Math.sin(rotX);
+            let z2 = y1 * Math.sin(rotX) + z1 * Math.cos(rotX);
+            let x2 = x1;
+
+            const dist = 600;
+            const proj = dist / (dist + z2);
+            const sx = cx + x2 * proj;
+            const sy = cy + y2 * proj;
+            const depth = (proj - 0.3) / 0.7;
+
+            points.push({ sx, sy, depth, t, arm });
+          }
+        }
+
+        points.sort((a, b) => a.depth - b.depth);
+
+        points.forEach((p) => {
+          const hue = 210 + 100 * p.t + p.arm * 8;
+          const light = 40 + 30 * p.depth;
+          const alpha = 0.08 + 0.8 * p.depth;
+          const size = 1 + 4 * p.depth;
+          ctx.fillStyle = `hsla(${hue}, 100%, ${light}%, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(p.sx, p.sy, size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      function drawSpiralMorph(w, h, time) {
+        const tMorph = (Math.sin(time * 0.7) + 1) * 0.5;
+        const A = parseInt(armsInput.value, 10);
+        const T = parseFloat(twistInput.value);
+        const N = parseInt(densityInput.value, 10);
+
+        const cx = w * 0.5 + cameraOffsetX * 0.5;
+        const cy =
+          h * (pulseMorphInput.checked ? 0.5 : 0.48) + cameraOffsetY * 0.5;
+        const rMax = Math.min(w, h) * 0.3 * (0.9 + 0.3 * Math.sin(time * 1.2)) * cameraZoom;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        const baseHue = 260 + 40 * Math.sin(time * 0.5);
+
+        for (let arm = 0; arm < A; arm++) {
+          const armPhase = (arm / A) * Math.PI * 2;
+          for (let i = 0; i < N; i++) {
+            const tt = i / (N - 1);
+            const angle2d = armPhase + tt * T * Math.PI * 2;
+            const radius2d = rMax * Math.pow(tt, 1.1);
+
+            const angle3d = armPhase + tt * T * Math.PI * 2;
+            const radius3d = rMax * Math.pow(tt, 1.0);
+            const y3d = (tt - 0.5) * rMax * 1.3;
+
+            const rotY = time * 0.5;
+            const rotX = 0.8;
+
+            let x3 = Math.cos(angle3d) * radius3d;
+            let y3 = y3d;
+            let z3 = Math.sin(angle3d) * radius3d;
+
+            let x1 = x3 * Math.cos(rotY) - z3 * Math.sin(rotY);
+            let z1 = x3 * Math.sin(rotY) + z3 * Math.cos(rotY);
+            let y1 = y3;
+
+            let y2 = y1 * Math.cos(rotX) - z1 * Math.sin(rotX);
+            let z2 = y1 * Math.sin(rotX) + z1 * Math.cos(rotX);
+            let x2 = x1;
+
+            const dist = 600;
+            const proj = dist / (dist + z2);
+            const sx3 = x2 * proj;
+            const sy3 = y2 * proj;
+
+            const x2d = Math.cos(angle2d) * radius2d;
+            const y2d = Math.sin(angle2d) * radius2d;
+
+            const mx = x2d * (1 - tMorph) + sx3 * tMorph;
+            const my = y2d * (1 - tMorph) + sy3 * tMorph;
+
+            const pulse = 0.7 + 0.3 * Math.sin(time * 2 + tt * 10);
+            const hue = baseHue + 80 * tt;
+            const light = 45 + 25 * pulse;
+            const alpha = 0.12 + 0.9 * tt;
+            const size = 1.5 + 4 * tt * pulse;
+            ctx.fillStyle = `hsla(${hue}, 100%, ${light}%, ${alpha})`;
+            ctx.beginPath();
+            ctx.arc(mx, my, size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        ctx.restore();
+      }
+
+      function applyAnimationToElement(el, t) {
+        const prof = el.animationProfile || "none";
+        const intensity = el.animIntensity ?? 1;
+        el._renderX = el.x;
+        el._renderY = el.y;
+        el._renderScale = el.scale;
+        el._renderRotation = el.rotation;
+
+        if (prof === "float") {
+          el._renderY = el.y + Math.sin(t * 0.9 + el.id) * 10 * intensity;
+        } else if (prof === "rotate") {
+          el._renderRotation = el.rotation + t * 0.4 * intensity;
+        } else if (prof === "pulse") {
+          const s = 1 + 0.15 * Math.sin(t * 2.2 + el.id);
+          el._renderScale = el.scale * (1 + (s - 1) * intensity);
+        } else if (prof === "orbit") {
+          const r = 15 * intensity;
+          el._renderY = el.y + Math.sin(t * 1.3 + el.id) * r;
+          el._renderRotation = el.rotation + t * 0.4 * intensity;
+        } else if (prof === "shake") {
+          const amp = 2.5 * intensity;
+          el._renderY = el.y + (Math.random() - 0.5) * amp;
+          el._renderRotation =
+            el.rotation + (Math.random() - 0.5) * 0.02 * intensity;
+        } else if (prof === "flicker") {
+          const base = el.scale;
+          const flick = 0.1 * intensity;
+          const factor = 1 + flick * (Math.random() - 0.5);
+          el._renderScale = base * factor;
+        }
+      }
+
+      function drawElements(t) {
+        elements.forEach((el) => applyAnimationToElement(el, t));
+
+        elements.forEach((el) => {
+          const x = el._renderX ?? el.x;
+          const y = el._renderY ?? el.y;
+          const sc = el._renderScale ?? el.scale;
+          const rot = el._renderRotation ?? el.rotation;
+
+          ctx.save();
+          ctx.translate(x + cameraOffsetX * 0.1, y + cameraOffsetY * 0.1);
+          ctx.rotate(rot);
+          ctx.scale(sc, sc);
+
+          ctx.globalAlpha = el.opacity ?? 1;
+          if (el.blend === "screen") ctx.globalCompositeOperation = "screen";
+          else if (el.blend === "add") ctx.globalCompositeOperation = "lighter";
+          else ctx.globalCompositeOperation = "source-over";
+
+          if (el.type === "text") {
+            ctx.font = (el.fontSize || 24) + "px system-ui";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = el.color || "#e5e7eb";
+            ctx.fillText(el.text || "", 0, 0);
+          } else if (el.type === "image") {
+            const img = el._image;
+            if (img && img.complete) {
+              const w = img.naturalWidth || 400;
+              const h = img.naturalHeight || 400;
+              const scale = 180 / Math.max(w, h);
+              ctx.drawImage(img, -w * scale / 2, -h * scale / 2, w * scale, h * scale);
+            }
+          } else if (el.type === "video") {
+            const video = el._video;
+            if (video && video.readyState >= 2) {
+              const w = video.videoWidth || 400;
+              const h = video.videoHeight || 300;
+              const scale = 260 / Math.max(w, h);
+              ctx.drawImage(
+                video,
+                -w * scale / 2,
+                -h * scale / 2,
+                w * scale,
+                h * scale
+              );
+            }
+          } else if (el.type === "orb") {
+            const r = el.radius || 60;
+            const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+            grad.addColorStop(0, el.innerColor || "#ffffff");
+            grad.addColorStop(1, el.outerColor || "rgba(59,130,246,0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (el.type === "beam") {
+            const len = el.length || 260;
+            const wBeam = el.width || 40;
+            const outer = el.outerColor || el.color || "#f97316";
+            const core = el.coreColor || "#ffffff";
+            const grad = ctx.createLinearGradient(-len * 0.5, 0, len * 0.5, 0);
+            grad.addColorStop(0, "rgba(0,0,0,0)");
+            grad.addColorStop(0.25, outer);
+            grad.addColorStop(0.5, core);
+            grad.addColorStop(0.75, outer);
+            grad.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(-len * 0.5, -wBeam * 0.5);
+            ctx.lineTo(len * 0.5, 0);
+            ctx.lineTo(-len * 0.5, wBeam * 0.5);
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          ctx.restore();
+        });
+      }
+
+      let lastTs = null;
+      function renderFrame(timestamp) {
+        if (!lastTs) lastTs = timestamp;
+        const dt = (timestamp - lastTs) / 1000;
+        lastTs = timestamp;
+
+        const speed = parseFloat(speedInput.value) || 1;
+        globalTime += dt * speed;
+        cycleTime += dt * speed;
+
+        const w = canvas.width / (window.devicePixelRatio || 1);
+        const h = canvas.height / (window.devicePixelRatio || 1);
+
+        cameraOffsetX = 0;
+        cameraOffsetY = 0;
+        cameraZoom = 1;
+
+        if (hollywoodModeInput.checked) {
+          const orbit = parseFloat(cameraOrbitInput.value || "1") || 1;
+          const zoomStrength = parseFloat(cameraZoomInput.value || "1") || 1;
+          const a = globalTime * orbit * 0.6;
+          cameraOffsetX = Math.cos(a) * w * 0.04;
+          cameraOffsetY = Math.sin(a * 1.4) * h * 0.03;
+          cameraZoom = 1 + (zoomStrength - 1) * 0.35;
+        }
+
+        if (autoCycleInput.checked) {
+          const cycleDur = 16;
+          const phase = (cycleTime % cycleDur) / cycleDur;
+          if (phase < 1 / 3) setMode("2d");
+          else if (phase < 2 / 3) setMode("3d");
+          else setMode("morph");
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (hollywoodModeInput.checked) drawBackgroundHollywood(w, h, globalTime);
+        else drawBackground(w, h);
+
+        if (currentMode === "2d") drawSpiral2D(w, h, globalTime);
+        else if (currentMode === "3d") drawSpiral3D(w, h, globalTime);
+        else drawSpiralMorph(w, h, globalTime);
+
+        drawElements(globalTime);
+        requestAnimationFrame(renderFrame);
+      }
+
+      function applyUniversePreset(key) {
+        const cfg = universePresets[key];
+        if (!cfg) return;
+
+        const s = cfg.spiral;
+        armsInput.value = s.arms;
+        twistInput.value = s.twist;
+        densityInput.value = s.density;
+        speedInput.value = s.speed;
+        currentPalette = s.palette;
+        setMode(s.mode);
+
+        hollywoodModeInput.checked = cfg.hollywood.enabled;
+        cameraOrbitInput.value = cfg.hollywood.cameraOrbit;
+        cameraZoomInput.value = cfg.hollywood.cameraZoom;
+        grainStrengthInput.value = cfg.hollywood.grain;
+
+        elements = [];
+
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+
+        if (cfg.title) {
+          elements.push({
+            id: elementIdCounter++,
+            type: "text",
+            text: cfg.title,
+            x: w * 0.5,
+            y: h * 0.86,
+            scale: 1,
+            rotation: 0,
+            opacity: 1,
+            color: "#e5e7eb",
+            fontSize: 30,
+            animationProfile: "flicker",
+            animIntensity: 1.3,
+            blend: "source-over",
+          });
+        }
+
+        if (key === "marvel") {
+          elements.push({
+            id: elementIdCounter++,
+            type: "orb",
+            x: w * 0.5,
+            y: h * 0.45,
+            scale: 1,
+            rotation: 0,
+            opacity: 0.95,
+            radius: 80,
+            innerColor: "#fee2e2",
+            outerColor: "rgba(239,68,68,0)",
+            blend: "screen",
+            animationProfile: "pulse",
+            animIntensity: 1.4,
+          });
+          elements.push({
+            id: elementIdCounter++,
+            type: "beam",
+            x: w * 0.5,
+            y: h * 0.4,
+            scale: 1,
+            rotation: 0.15,
+            opacity: 0.9,
+            length: 320,
+            width: 60,
+            color: "#f97316",
+            outerColor: "#f97316",
+            coreColor: "#ffffff",
+            blend: "add",
+            animationProfile: "shake",
+            animIntensity: 1.2,
+          });
+        } else if (key === "starwars") {
+          elements.push({
+            id: elementIdCounter++,
+            type: "beam",
+            x: w * 0.4,
+            y: h * 0.5,
+            scale: 1,
+            rotation: -0.25,
+            opacity: 0.9,
+            length: 280,
+            width: 32,
+            color: "#38bdf8",
+            outerColor: "#38bdf8",
+            coreColor: "#e5f0ff",
+            blend: "add",
+            animationProfile: "shake",
+            animIntensity: 1.0,
+          });
+          elements.push({
+            id: elementIdCounter++,
+            type: "beam",
+            x: w * 0.6,
+            y: h * 0.5,
+            scale: 1,
+            rotation: 0.25,
+            opacity: 0.9,
+            length: 280,
+            width: 32,
+            color: "#ef4444",
+            outerColor: "#ef4444",
+            coreColor: "#fee2e2",
+            blend: "add",
+            animationProfile: "shake",
+            animIntensity: 1.0,
+          });
+        } else if (key === "avatar") {
+          elements.push({
+            id: elementIdCounter++,
+            type: "orb",
+            x: w * 0.5,
+            y: h * 0.45,
+            scale: 1,
+            rotation: 0,
+            opacity: 0.95,
+            radius: 90,
+            innerColor: "#bbf7d0",
+            outerColor: "rgba(34,197,94,0)",
+            blend: "screen",
+            animationProfile: "pulse",
+            animIntensity: 1.2,
+          });
+        }
+
+        updateLabelValues();
+        renderElementList();
+      }
+
+      applyUniversePresetBtn.addEventListener("click", () => {
+        applyUniversePreset(universePresetSelect.value);
+      });
+
+      function findHealingPresetByKey(key) {
+        return (
+          [...baseHealingPresets, ...customHealingPresets].find((p) => p.key === key) ||
+          null
+        );
+      }
+
+      function clearHealingTexts() {
+        elements = elements.filter((el) => !el.fromHealing);
+      }
+
+      function applyHealingPreset(key) {
+        const cfg = findHealingPresetByKey(key);
+        if (!cfg) return;
+        const s = cfg.spiral;
+        armsInput.value = s.arms;
+        twistInput.value = s.twist;
+        densityInput.value = s.density;
+        speedInput.value = s.speed;
+        currentPalette = s.palette;
+        setMode(s.mode);
+
+        hollywoodModeInput.checked = cfg.hollywood.enabled;
+        cameraOrbitInput.value = cfg.hollywood.cameraOrbit;
+        cameraZoomInput.value = cfg.hollywood.cameraZoom;
+        grainStrengthInput.value = cfg.hollywood.grain;
+
+        updateLabelValues();
+        clearHealingTexts();
+
+        const w = canvas.clientWidth || 1024;
+        const h = canvas.clientHeight || 600;
+
+        const affs = cfg.affirmations?.length
+          ? cfg.affirmations
+          : [cfg.label || "Healing Modul", "Ich erlaube mir Heilung."];
+
+        affs.forEach((text, idx) => {
+          elements.push({
+            id: elementIdCounter++,
+            type: "text",
+            text,
+            x: w * 0.5,
+            y: h * 0.78 + idx * 24,
+            scale: 1,
+            rotation: 0,
+            opacity: 1,
+            color: "#e5e7eb",
+            fontSize: idx === 0 ? 20 : 14,
+            animationProfile: idx === 0 ? "float" : "none",
+            animIntensity: 1,
+            blend: "source-over",
+            fromHealing: true,
+          });
+        });
+
+        renderElementList();
+      }
+
+      applyHealingPresetBtn.addEventListener("click", () => {
+        const key = healingPresetSelect.value;
+        if (!key) return;
+        applyHealingPreset(key);
+      });
+
+      saveHealingPresetBtn.addEventListener("click", () => {
+        const name = (customHealingNameInput.value || "").trim();
+        if (!name) {
+          alert("Bitte gib einen Namen für dein Modul ein.");
+          return;
+        }
+
+        const key = "user_" + Date.now();
+        const newPreset = {
+          key,
+          label: name,
+          spiral: {
+            arms: parseInt(armsInput.value, 10),
+            twist: parseFloat(twistInput.value),
+            density: parseInt(densityInput.value, 10),
+            mode: currentMode,
+            speed: parseFloat(speedInput.value),
+            palette: currentPalette,
+          },
+          hollywood: {
+            enabled: !!hollywoodModeInput.checked,
+            cameraOrbit: parseFloat(cameraOrbitInput.value || "1"),
+            cameraZoom: parseFloat(cameraZoomInput.value || "1"),
+            grain: parseFloat(grainStrengthInput.value || "0"),
+          },
+        };
+
+        customHealingPresets.push(newPreset);
+        try {
+          localStorage.setItem(
+            "healingPresetsCustom",
+            JSON.stringify(customHealingPresets)
+          );
+        } catch {}
+
+        customHealingNameInput.value = "";
+        refreshHealingPresetSelect();
+        healingPresetSelect.value = key;
+      });
+
+      applyBeamPresetBtn.addEventListener("click", () => {
+        const key = beamPresetSelect.value;
+        if (!key || key === "custom") return;
+        const preset = beamPresets[key];
+        if (!preset) return;
+        beamOuterColorInput.value = preset.outer;
+        beamCoreColorInput.value = preset.core;
+        const el = getElementById(activeElementId);
+        if (el && el.type === "beam") {
+          el.outerColor = preset.outer;
+          el.color = preset.outer;
+          el.coreColor = preset.core;
+        }
+      });
+
+      function applyBeamColorInputsToElement() {
+        const el = getElementById(activeElementId);
+        if (!el || el.type !== "beam") return;
+        el.outerColor = beamOuterColorInput.value;
+        el.color = beamOuterColorInput.value;
+        el.coreColor = beamCoreColorInput.value;
+      }
+
+      beamOuterColorInput.addEventListener("input", applyBeamColorInputsToElement);
+      beamCoreColorInput.addEventListener("input", applyBeamColorInputsToElement);
+
+      refreshHealingPresetSelect();
+      requestAnimationFrame(renderFrame);
+      applyPreset("healing");
+      renderElementList();
+    })();
+  </script>
+</body>
+</html>

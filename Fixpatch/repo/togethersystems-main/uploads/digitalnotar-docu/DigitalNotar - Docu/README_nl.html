@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>README_nl</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>📘 Digitaal Notariaat – Gebruikershandleiding (Nederlands)</h1>
+<p>Welkom bij <strong>Digitaal Notariaat</strong> – een modern hulpmiddel voor het ondersteunen van notariële procedures.  
+Het bevat ook krachtige browser-tools voor dagelijks gebruik.</p>
+<p>---</p>
+<h2>🧰 Functies Overzicht</h2>
+<h3>🏛️ Notariële Functies</h3>
+| Functie | Beschrijving |
+|---------|--------------|
+| ✅ Identiteitsverificatie | Verificatie van persoonsgegevens en documenten (voor- en achterkant) |
+| 📄 Documentnotarisering | Digitale notarisering en certificering met blockchain-hash |
+| ✍️ Handtekeningauthenticatie | Gekwalificeerde elektronische handtekeningen (versleuteld) |
+| 📦 Digitaal Archief | Veilige opslag van alle documenten met AES-256 |
+| 📤 Export & Rapporten | Data-export voor autoriteiten (PDF, XML, JSON, Audit-Log) |
+| 🔐 Twee-Factor Authenticatie | TOTP-gebaseerde beveiliging voor kritieke acties |
+| 💾 Automatische Backups | 24u backups met checksum-validatie |
+| 👥 Klantenbeheer | Ondersteuning voor 100.000+ klanten met indexering |
+| 📊 Prestatie-Monitoring | Real-time systeemprestatie monitoring |
+<h3>🌐 Browser-Tools</h3>
+| Functie | Beschrijving |
+|---------|--------------|
+| 🔐 Wachtwoordbeheer | Beheer van inloggegevens, lokaal opgeslagen |
+| 🚫 Advertentieblokkeerder | Blokkeert tracking- en advertentiescripts |
+| 📸 Screenshot-Tool | Maakt screenshots van de website |
+| 📊 SEO-Checker | Controleert paginastructuur (titel, meta, koppen) |
+| ⚙️ Autofill-Engine | Vult formulieren automatisch in |
+| 📤 Bestandsupload | Ondersteunt bestandsselectie & weergave |
+<p>---</p>
+<h2>🚀 One-Click Installatie</h2>
+<h3>Windows (install.bat)</h3>
+<pre><code>@echo off
+echo ========================================
+echo    Digitaal Notariaat - Installatie
+echo ========================================
+echo.
+echo [INFO] Start installatie...
+echo [INFO] Controleer Node.js installatie...
+node --version >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Node.js niet gevonden! Installeer Node.js van https://nodejs.org
+    pause
+    exit /b 1
+)
+echo [SUCCESS] Node.js gevonden!
+echo.
+echo [INFO] Installeer afhankelijkheden...
+call pnpm install
+if errorlevel 1 (
+    echo [ERROR] Installatie mislukt!
+    pause
+    exit /b 1
+)
+echo [SUCCESS] Afhankelijkheden geïnstalleerd!
+echo.
+echo [INFO] Start ontwikkelingsserver...
+echo [INFO] Browser opent automatisch...
+echo [INFO] Server draait op: http://localhost:5173
+echo.
+echo [SUCCESS] Installatie voltooid!
+echo [INFO] Druk op STRG+C om te stoppen
+echo.
+call pnpm run dev
+</code></pre>
+<h3>Linux/macOS (install.sh)</h3>
+<pre><code>#!/bin/bash
+<p>echo "========================================"
+echo "   Digitaal Notariaat - Installatie"
+echo "========================================"
+echo</p>
+<h1>Kleuren voor logging</h1>
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+<h1>Log-functie</h1>
+log() {
+    local level=$1
+    local message=$2
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    
+    case $level in
+        "INFO")
+            echo -e "${BLUE}[${timestamp}] [INFO]${NC} $message"
+            ;;
+        "SUCCESS")
+            echo -e "${GREEN}[${timestamp}] [SUCCESS]${NC} $message"
+            ;;
+        "WARNING")
+            echo -e "${YELLOW}[${timestamp}] [WARNING]${NC} $message"
+            ;;
+        "ERROR")
+            echo -e "${RED}[${timestamp}] [ERROR]${NC} $message"
+            ;;
+    esac
+}
+<p>log "INFO" "Start installatie..."</p>
+<h1>Controleer Node.js</h1>
+log "INFO" "Controleer Node.js installatie..."
+if ! command -v node &> /dev/null; then
+    log "ERROR" "Node.js niet gevonden! Installeer Node.js van https://nodejs.org"
+    exit 1
+fi
+<p>log "SUCCESS" "Node.js gevonden! Versie: $(node --version)"</p>
+<h1>Controleer pnpm</h1>
+log "INFO" "Controleer pnpm installatie..."
+if ! command -v pnpm &> /dev/null; then
+    log "WARNING" "pnpm niet gevonden! Installeer pnpm..."
+    npm install -g pnpm
+    if [ $? -ne 0 ]; then
+        log "ERROR" "pnpm installatie mislukt!"
+        exit 1
+    fi
+fi
+<p>log "SUCCESS" "pnpm gevonden! Versie: $(pnpm --version)"</p>
+<h1>Installeer afhankelijkheden</h1>
+log "INFO" "Installeer afhankelijkheden..."
+pnpm install
+if [ $? -ne 0 ]; then
+    log "ERROR" "Installatie mislukt!"
+    exit 1
+fi
+<p>log "SUCCESS" "Afhankelijkheden geïnstalleerd!"</p>
+<h1>Start ontwikkelingsserver</h1>
+log "INFO" "Start ontwikkelingsserver..."
+log "INFO" "Browser opent automatisch..."
+log "INFO" "Server draait op: http://localhost:5173"
+log "SUCCESS" "Installatie voltooid!"
+log "INFO" "Druk op STRG+C om te stoppen"
+echo
+<p>pnpm run dev
+</code></pre></p>
+<p>---</p>
+<h2>🖥️ Desktop-app gebruiken (Electron voor Windows/macOS/Linux)</h2>
+<h3>Vereisten:</h3>
+- <a href="https://nodejs.org">Node.js installeren</a> (aanbevolen versie 18 of hoger)
+- <a href="https://pnpm.io/installation">pnpm installeren</a> (wordt automatisch geïnstalleerd)
+<h3>1. Installatie</h3>
+- <strong>Windows</strong>: Dubbelklik op `install.bat`
+- <strong>Mac/Linux</strong>: Open terminal en voer in:
+<pre><code>chmod +x install.sh
+./install.sh
+</code></pre>
+<h3>2. Applicatie starten</h3>
+Na de installatie opent het hoofdvenster automatisch.
+<p>---</p>
+<h2>🌐 Browser-extensie gebruiken</h2>
+<h3>Voor Google Chrome:</h3>
+1. Open `chrome://extensions/`
+2. "Ontwikkelaarsmodus" inschakelen
+3. "Uitgepakte extensie laden"
+4. Selecteer map `DigitalNotary_InstallerReady`
+<h3>Voor Firefox:</h3>
+1. Open `about:debugging#/runtime/this-firefox`
+2. "Tijdelijke add-on laden"
+3. Selecteer `manifest.json` in projectmap
+<p>---</p>
+<h2>🔐 Beveiligingsfuncties</h2>
+<h3>Twee-Factor Authenticatie (2FA)</h3>
+- <strong>TOTP-gebaseerd</strong> - Compatibel met Google Authenticator, Authy
+- <strong>Kritieke acties beschermd</strong>: Identiteitsverificatie, documentnotarisering, handtekeningen, export, verwijderingen
+- <strong>Eenmalige verificatie</strong> - Sessie blijft actief tot browser-sluiting
+- <strong>Demo-codes</strong>: 6-cijferige codes die eindigen op "123" (bijv. 000123)
+<h3>Automatische Backups</h3>
+- <strong>24-uurs interval</strong> - Automatische backups elke 24 uur
+- <strong>Handmatige backups</strong> - Onmiddellijke backup-aanmaak op verzoek
+- <strong>JSON-formaat</strong> - Volledige data-exports met metadata
+- <strong>Checksum-validatie</strong> - Data-integriteit wordt gecontroleerd
+- <strong>Tijdstempel</strong> - Backup-geschiedenis met datum/tijd
+<h3>Versleutelde Dataopslag</h3>
+- <strong>AES-256 versleuteling</strong> - Militaire versleuteling voor alle data
+- <strong>Versleutelde handtekeningen</strong> - Digitale handtekeningen worden extra versleuteld
+- <strong>Salt-gebaseerde versleuteling</strong> - Verhoogde beveiliging door salt-generatie
+- <strong>Lokale opslag</strong> - Alle data blijft op uw systeem
+<p>---</p>
+<h2>👥 Klantenbeheer</h2>
+<h3>Schaalbaarheid</h3>
+- <strong>100.000+ klanten</strong> - Ondersteuning voor grote notariskantoren
+- <strong>Klant-indexering</strong> - Snelle zoekacties en filtering
+- <strong>Prestatie-optimalisatie</strong> - Automatische database-optimalisatie
+- <strong>Prioriteitsbeheer</strong> - Categoriseer klanten op prioriteit
+<h3>Geavanceerde functies</h3>
+- <strong>Klantzoekactie</strong> - Volledige tekstzoekactie in alle klantgegevens
+- <strong>Prioriteitsfilters</strong> - Filter op urgentie (laag, gemiddeld, hoog, dringend)
+- <strong>Afsprakenbeheer</strong> - Overzicht van aankomende afspraken
+- <strong>Notaris-toewijzing</strong> - Wijs klanten toe aan specifieke notarissen
+<p>---</p>
+<h2>📊 Prestatie-Monitoring</h2>
+<h3>Systeemstatus</h3>
+- <strong>Real-time monitoring</strong> - Live status van alle systeemcomponenten
+- <strong>Prestatiemetrieken</strong> - Zoektijden, filtertijden, opslaggrootte
+- <strong>Optimalisatie-aanbevelingen</strong> - Automatische verbeteringsvoorstellen
+- <strong>Database-statistieken</strong> - Gedetailleerde database-prestatieanalyse
+<h3>Compliance</h3>
+- <strong>AVG-conform</strong> - Volledige AVG-compliance
+- <strong>eIDAS-verordening</strong> - Vervulling van eIDAS-vereisten
+- <strong>Notarisreglement</strong> - Conformiteit met Nederlandse notarisvoorschriften
+<p>---</p>
+<h2>🌐 Browser-Tools</h2>
+<p>De applicatie bevat ook krachtige browser-tools:</p>
+<h3>🔐 Wachtwoordbeheer</h3>
+- Veilige lokale opslag van inloggegevens
+- Automatische wachtwoordgeneratie
+- Zoekfunctie en categorisering
+- Versleutelde dataopslag
+<h3>🚫 Advertentieblokkeerder</h3>
+- Blokkeert tracking- en advertentiescripts
+- Real-time statistieken over geblokkeerde verzoeken
+- Aanpasbare blokkeringsregels
+- Bescherming tegen malware en phishing
+<h3>📸 Screenshot-Tool</h3>
+- Volledige pagina-screenshots
+- Verschillende formaten (PNG, JPEG, WebP)
+- Responsieve weergaven (Desktop, Tablet, Mobile)
+- Automatische download
+<h3>📊 SEO-Checker</h3>
+- Paginastructuuranalyse
+- Controle van meta-tags en koppen
+- Prestatie-evaluatie
+- Toegankelijkheidscontroles
+<h3>⚙️ Autofill-Engine</h3>
+- Intelligente formulierherkenning
+- Meerdere gebruikersprofielen
+- Automatisch invullen van contactgegevens
+- Ondersteuning voor creditcardgegevens
+<h3>📤 Bestandsupload</h3>
+- Drag & Drop ondersteuning
+- Meerdere bestandsformaten (PDF, afbeeldingen, documenten)
+- Voorvertoning en validatie
+- Voortgangsindicator
+<p>---</p>
+<h2>🔧 Technische Details</h2>
+<h3>Systeemvereisten</h3>
+- <strong>Node.js</strong>: Versie 18 of hoger
+- <strong>pnpm</strong>: Versie 8 of hoger
+- <strong>Browser</strong>: Chrome 90+, Firefox 88+, Safari 14+
+- <strong>Besturingssysteem</strong>: Windows 10+, macOS 10.15+, Linux (Ubuntu 20.04+)
+<h3>Architectuur</h3>
+- <strong>Frontend</strong>: React 18 met TypeScript
+- <strong>Backend</strong>: Node.js met Express
+- <strong>Database</strong>: Lokale SQLite met versleuteling
+- <strong>Versleuteling</strong>: AES-256 met Salt
+- <strong>Authenticatie</strong>: TOTP-gebaseerde 2FA
+<h3>Beveiliging</h3>
+- <strong>Versleuteling</strong>: AES-256 voor alle gevoelige data
+- <strong>Authenticatie</strong>: Twee-factor authenticatie
+- <strong>Backups</strong>: Automatische versleutelde backups
+- <strong>Compliance</strong>: AVG, eIDAS, Notarisreglement
+<p>---</p>
+<h2>📞 Ondersteuning</h2>
+<p>Voor vragen of problemen:
+- <strong>E-mail</strong>: support@digitaal-notariaat.nl
+- <strong>Documentatie</strong>: Volledige documentatie in project
+- <strong>Issues</strong>: GitHub Issues voor bug-rapporten</p>
+<p>---</p>
+<h2>📄 Licentie</h2>
+<p>Dit project is gelicentieerd onder de MIT-licentie. Zie LICENSE-bestand voor details.</p>
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

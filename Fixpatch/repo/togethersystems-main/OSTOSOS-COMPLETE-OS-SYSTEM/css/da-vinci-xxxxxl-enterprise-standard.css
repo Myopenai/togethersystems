@@ -1,0 +1,1138 @@
+/**
+ * DA VINCI XXXXXXL ENTERPRISE STANDARD
+ * Together Systems - Global Design System
+ * Version: 1.2.0-XXXL-STANDARD-PHOSPHORESCENT
+ * Branding: T,.&T,,.&T,,,.(C)TEL1.NL
+ * 
+ * Hollywood Studio Max Design - 360° Kino Ball
+ * 16K Rendering - Pixel-by-Pixel Animation
+ * Enterprise Standard für ALLE Programme, Tools & Apps
+ * 
+ * Updates (2025-01-15):
+ * - Phosphoreszierende Effekte hinzugefügt (maximale Qualität)
+ * - 6 verschiedene Phosphoreszenz-Typen implementiert
+ * - Glow-Afterglow, Energy, Neon, Particle, Surface, Ambient Phosphorescence
+ * - Alle Paletten und Aspekte der Darstellungen erweitert
+ * - Kombinierte Phosphoreszenz-Effekte
+ * 
+ * Updates (2025-01-15):
+ * - Flussfördernde Animationen als Standard hinzugefügt
+ * - Expressive Animationen integriert
+ * - Selbstexponierende Animationen implementiert
+ * - Fluid Motion System aktiviert
+ * - Alle bestehenden Effekte mit Flow-Enhancement erweitert
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ============================================
+   DA VINCI XXXXXXL DESIGN TOKENS
+   ============================================ */
+
+:root {
+  /* Brand Colors - Da Vinci Standard */
+  --davinci-bg: #0a0e27;
+  --davinci-card: #1a1f3a;
+  --davinci-accent-primary: #10b981;
+  --davinci-accent-secondary: #3b82f6;
+  --davinci-text: #ffffff;
+  --davinci-muted: #d1d5db;
+  --davinci-danger: #ef4444;
+  --davinci-warn: #f59e0b;
+  --davinci-success: #22c55e;
+  --davinci-border: #223040;
+  --davinci-focus: #3b82f6;
+
+  /* Da Vinci Gradient Stops */
+  --davinci-gradient-start: #0a0e27;
+  --davinci-gradient-mid: #1a1f3a;
+  --davinci-gradient-end: #0a0e27;
+
+  /* Shadows & Effects */
+  --davinci-shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+  --davinci-shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --davinci-shadow-hard: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --davinci-glow-accent: 0 0 20px rgba(16, 185, 129, 0.4);
+  --davinci-glow-secondary: 0 0 20px rgba(59, 130, 246, 0.4);
+
+  /* Typography */
+  --davinci-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, sans-serif;
+  --davinci-font-mono: 'Fira Code', 'Monaco', 'Courier New', monospace;
+
+  /* Spacing */
+  --davinci-space-xs: 4px;
+  --davinci-space-sm: 8px;
+  --davinci-space-md: 16px;
+  --davinci-space-lg: 24px;
+  --davinci-space-xl: 32px;
+  --davinci-space-xxl: 48px;
+
+  /* Border Radius */
+  --davinci-radius-sm: 6px;
+  --davinci-radius-md: 12px;
+  --davinci-radius-lg: 18px;
+  --davinci-radius-xl: 24px;
+  --davinci-radius-full: 9999px;
+
+  /* Transitions */
+  --davinci-transition-fast: 150ms ease;
+  --davinci-transition-normal: 300ms ease;
+  --davinci-transition-slow: 500ms ease;
+
+  /* Z-Index Layers */
+  --davinci-z-base: 1;
+  --davinci-z-dropdown: 100;
+  --davinci-z-sticky: 200;
+  --davinci-z-modal: 300;
+  --davinci-z-tooltip: 400;
+  --davinci-z-notification: 500;
+}
+
+/* Light Theme Variant */
+:root.light {
+  --davinci-bg: #f7fafc;
+  --davinci-card: #ffffff;
+  --davinci-accent-primary: #0ea5e9;
+  --davinci-accent-secondary: #2563eb;
+  --davinci-text: #111827;
+  --davinci-muted: #4b5563;
+  --davinci-danger: #dc2626;
+  --davinci-warn: #d97706;
+  --davinci-success: #16a34a;
+  --davinci-border: #e5e7eb;
+  --davinci-shadow-soft: 0 10px 30px rgba(2, 6, 23, 0.08);
+  --davinci-shadow-medium: 0 4px 12px rgba(2, 6, 23, 0.1);
+}
+
+/* ============================================
+   GLOBAL RESET & BASE STYLES
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--davinci-font);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--davinci-text);
+  background: radial-gradient(circle at top, var(--davinci-gradient-start) 0%, var(--davinci-gradient-mid) 55%, var(--davinci-gradient-end) 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Text-Kontrast erhöhen */
+h1, h2, h3, h4, h5, h6, p, span, div, a, button, label, input, textarea, select {
+  color: var(--davinci-text) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+.davinci-text-muted {
+  color: var(--davinci-muted) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ============================================
+   DA VINCI ANIMATIONS & EFFECTS
+   ============================================ */
+
+/* Pixel-by-Pixel Animation Base */
+@keyframes davinci-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes davinci-glow {
+  0%, 100% {
+    box-shadow: var(--davinci-glow-accent);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+  }
+}
+
+@keyframes davinci-spiral {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
+
+@keyframes davinci-morph {
+  0%, 100% {
+    border-radius: var(--davinci-radius-md);
+  }
+  50% {
+    border-radius: var(--davinci-radius-xl);
+  }
+}
+
+@keyframes davinci-particle-float {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100px);
+    opacity: 0;
+  }
+}
+
+/* Hologram Effect */
+@keyframes davinci-hologram-scan {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+
+/* ============================================
+   FLUSSFÖRDERNDE ANIMATIONEN (STANDARD)
+   ============================================ */
+
+/* Expressive Flow - Flussfördernde Animationen */
+@keyframes davinci-expressive-flow {
+  0% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 0.8;
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    transform: translateX(10px) translateY(-5px) scale(1.05);
+    opacity: 1;
+    filter: hue-rotate(90deg);
+  }
+  50% {
+    transform: translateX(0) translateY(-10px) scale(1.1);
+    opacity: 0.9;
+    filter: hue-rotate(180deg);
+  }
+  75% {
+    transform: translateX(-10px) translateY(-5px) scale(1.05);
+    opacity: 1;
+    filter: hue-rotate(270deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 0.8;
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* Self-Exposing - Selbstexponierende Animationen */
+@keyframes davinci-self-exposing {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    filter: blur(10px);
+  }
+  30% {
+    opacity: 0.5;
+    transform: scale(0.9) translateY(10px);
+    filter: blur(5px);
+  }
+  60% {
+    opacity: 0.8;
+    transform: scale(1.0) translateY(0);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-5px);
+    filter: blur(0);
+  }
+}
+
+/* Animated Expressions - Expressive Animationen */
+@keyframes davinci-animated-expressions {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1) saturate(1);
+  }
+  25% {
+    transform: scale(1.1) rotate(2deg);
+    filter: brightness(1.2) saturate(1.3);
+  }
+  50% {
+    transform: scale(1.15) rotate(0deg);
+    filter: brightness(1.3) saturate(1.5);
+  }
+  75% {
+    transform: scale(1.1) rotate(-2deg);
+    filter: brightness(1.2) saturate(1.3);
+  }
+}
+
+/* Fluid Motion - Flüssige Bewegungen */
+@keyframes davinci-fluid-motion {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(50px) translateY(-30px);
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(100px) translateY(-60px);
+    opacity: 0;
+  }
+}
+
+/* Flow-Enhanced Spiral */
+@keyframes davinci-flow-spiral {
+  0% {
+    transform: rotate(0deg) scale(1) translateX(0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2) translateX(20px);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg) scale(1) translateX(0);
+    opacity: 0.8;
+  }
+}
+
+/* Flow-Enhanced Morphing */
+@keyframes davinci-flow-morph {
+  0%, 100% {
+    border-radius: var(--davinci-radius-md);
+    transform: scale(1);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    border-radius: var(--davinci-radius-lg);
+    transform: scale(1.05);
+    filter: hue-rotate(90deg);
+  }
+  50% {
+    border-radius: var(--davinci-radius-xl);
+    transform: scale(1.1);
+    filter: hue-rotate(180deg);
+  }
+  75% {
+    border-radius: var(--davinci-radius-lg);
+    transform: scale(1.05);
+    filter: hue-rotate(270deg);
+  }
+}
+
+/* CSS-Klassen für Flow-Animationen */
+.davinci-flow-expressive {
+  animation: davinci-expressive-flow 3s ease-in-out infinite;
+}
+
+.davinci-flow-self-exposing {
+  animation: davinci-self-exposing 2s ease-out forwards;
+}
+
+.davinci-flow-animated-expressions {
+  animation: davinci-animated-expressions 2s ease-in-out infinite;
+}
+
+.davinci-flow-fluid-motion {
+  animation: davinci-fluid-motion 4s ease-in-out infinite;
+}
+
+.davinci-flow-spiral-enhanced {
+  animation: davinci-flow-spiral 5s linear infinite;
+}
+
+.davinci-flow-morph-enhanced {
+  animation: davinci-flow-morph 4s ease-in-out infinite;
+}
+
+/* Kombinierte Flow-Animationen */
+.davinci-flow-complete {
+  animation: 
+    davinci-expressive-flow 3s ease-in-out infinite,
+    davinci-animated-expressions 2s ease-in-out infinite;
+}
+
+.davinci-flow-self-exposing-complete {
+  animation: 
+    davinci-self-exposing 2s ease-out forwards,
+    davinci-animated-expressions 2s ease-in-out infinite;
+}
+
+/* ============================================
+   PHOSPHORESZIERENDE EFFEKTE (MAXIMALE QUALITÄT)
+   ============================================ */
+
+/* Glow-Afterglow - Nachleuchtender Glüheffekt (4x langsamer, transparenter) */
+@keyframes davinci-phosphorescent-glow-afterglow {
+  0% {
+    opacity: 0.15;
+    filter: brightness(1) drop-shadow(0 0 5px currentColor);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.1), 0 0 15px rgba(16, 185, 129, 0.05);
+  }
+  50% {
+    opacity: 0.12;
+    filter: brightness(0.95) drop-shadow(0 0 4px currentColor);
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.08), 0 0 12px rgba(16, 185, 129, 0.04);
+  }
+  100% {
+    opacity: 0.1;
+    filter: brightness(0.9) drop-shadow(0 0 3px currentColor);
+    box-shadow: 0 0 4px rgba(16, 185, 129, 0.06), 0 0 8px rgba(16, 185, 129, 0.03);
+  }
+}
+
+/* Energy Phosphorescence - Energie-basierte Leuchteffekte (4x langsamer, transparenter) */
+@keyframes davinci-phosphorescent-energy {
+  0%, 100% {
+    opacity: 0.12;
+    filter: brightness(1) hue-rotate(0deg) drop-shadow(0 0 6px rgba(0, 255, 255, 0.2));
+    box-shadow: 
+      0 0 8px rgba(0, 255, 255, 0.1),
+      0 0 15px rgba(0, 255, 255, 0.05),
+      inset 0 0 5px rgba(0, 255, 255, 0.05);
+  }
+  25% {
+    opacity: 0.1;
+    filter: brightness(0.98) hue-rotate(90deg) drop-shadow(0 0 8px rgba(255, 0, 255, 0.15));
+    box-shadow: 
+      0 0 10px rgba(255, 0, 255, 0.08),
+      0 0 20px rgba(255, 0, 255, 0.04),
+      inset 0 0 8px rgba(255, 0, 255, 0.06);
+  }
+  50% {
+    opacity: 0.11;
+    filter: brightness(0.99) hue-rotate(180deg) drop-shadow(0 0 7px rgba(255, 255, 0, 0.18));
+    box-shadow: 
+      0 0 9px rgba(255, 255, 0, 0.09),
+      0 0 18px rgba(255, 255, 0, 0.045),
+      inset 0 0 6px rgba(255, 255, 0, 0.07);
+  }
+  75% {
+    opacity: 0.1;
+    filter: brightness(0.97) hue-rotate(270deg) drop-shadow(0 0 8px rgba(0, 255, 0, 0.16));
+    box-shadow: 
+      0 0 10px rgba(0, 255, 0, 0.08),
+      0 0 19px rgba(0, 255, 0, 0.04),
+      inset 0 0 7px rgba(0, 255, 0, 0.06);
+  }
+}
+
+/* Neon Phosphorescence - Neon-Röhren-Effekte (4x langsamer, transparenter) */
+@keyframes davinci-phosphorescent-neon {
+  0%, 100% {
+    opacity: 0.1;
+    filter: brightness(1) saturate(1) drop-shadow(0 0 5px currentColor);
+    box-shadow: 
+      0 0 6px rgba(16, 185, 129, 0.15),
+      0 0 12px rgba(16, 185, 129, 0.08),
+      inset 0 0 4px rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    opacity: 0.12;
+    filter: brightness(1.05) saturate(1.1) drop-shadow(0 0 7px currentColor);
+    box-shadow: 
+      0 0 9px rgba(16, 185, 129, 0.18),
+      0 0 18px rgba(16, 185, 129, 0.09),
+      inset 0 0 6px rgba(255, 255, 255, 0.07);
+  }
+}
+
+/* Particle Phosphorescence - Leuchtende Partikel */
+@keyframes davinci-phosphorescent-particle {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(0);
+    filter: brightness(0) drop-shadow(0 0 0px currentColor);
+  }
+  20% {
+    opacity: 0.5;
+    transform: scale(0.5) translateY(-10px);
+    filter: brightness(0.7) drop-shadow(0 0 10px currentColor);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) translateY(-30px);
+    filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+    box-shadow: 0 0 25px currentColor, 0 0 50px currentColor;
+  }
+  80% {
+    opacity: 0.6;
+    transform: scale(0.8) translateY(-50px);
+    filter: brightness(0.8) drop-shadow(0 0 15px currentColor);
+    box-shadow: 0 0 15px currentColor, 0 0 30px currentColor;
+  }
+  100% {
+    opacity: 0.2;
+    transform: scale(0.3) translateY(-70px);
+    filter: brightness(0.4) drop-shadow(0 0 5px currentColor);
+    box-shadow: 0 0 5px currentColor;
+  }
+}
+
+/* Surface Phosphorescence - Leuchtende Oberflächen */
+@keyframes davinci-phosphorescent-surface {
+  0%, 100% {
+    opacity: 0.7;
+    filter: brightness(0.9) drop-shadow(0 0 15px currentColor);
+    box-shadow: 
+      inset 0 0 20px rgba(255, 255, 255, 0.1),
+      0 0 25px currentColor,
+      0 0 50px currentColor;
+  }
+  50% {
+    opacity: 0.9;
+    filter: brightness(1.1) drop-shadow(0 0 25px currentColor);
+    box-shadow: 
+      inset 0 0 30px rgba(255, 255, 255, 0.2),
+      0 0 35px currentColor,
+      0 0 70px currentColor;
+  }
+}
+
+/* Ambient Phosphorescence - Umgebungsleuchten */
+@keyframes davinci-phosphorescent-ambient {
+  0%, 100% {
+    opacity: 0.6;
+    filter: brightness(0.8) blur(2px) drop-shadow(0 0 20px currentColor);
+    box-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+  }
+  50% {
+    opacity: 0.8;
+    filter: brightness(1.0) blur(1px) drop-shadow(0 0 30px currentColor);
+    box-shadow: 0 0 40px currentColor, 0 0 80px currentColor;
+  }
+}
+
+/* CSS-Klassen für Phosphoreszierende Effekte (4x langsamer, transparenter) */
+.davinci-phosphorescent-glow-afterglow {
+  animation: davinci-phosphorescent-glow-afterglow 20s ease-out infinite;
+  will-change: opacity, filter, box-shadow;
+}
+
+.davinci-phosphorescent-energy {
+  animation: davinci-phosphorescent-energy 12s ease-in-out infinite;
+  will-change: opacity, filter, box-shadow;
+}
+
+.davinci-phosphorescent-neon {
+  animation: davinci-phosphorescent-neon 8s ease-in-out infinite;
+  will-change: opacity, filter, box-shadow;
+}
+
+.davinci-phosphorescent-particle {
+  animation: davinci-phosphorescent-particle 4s ease-out infinite;
+  will-change: opacity, transform, filter, box-shadow;
+}
+
+.davinci-phosphorescent-surface {
+  animation: davinci-phosphorescent-surface 3s ease-in-out infinite;
+  will-change: opacity, filter, box-shadow;
+}
+
+.davinci-phosphorescent-ambient {
+  animation: davinci-phosphorescent-ambient 4s ease-in-out infinite;
+  will-change: opacity, filter, box-shadow;
+}
+
+/* Kombinierte Phosphoreszenz-Effekte (4x langsamer, transparenter) */
+.davinci-phosphorescent-complete {
+  animation: 
+    davinci-phosphorescent-glow-afterglow 20s ease-out infinite,
+    davinci-phosphorescent-energy 12s ease-in-out infinite,
+    davinci-phosphorescent-neon 8s ease-in-out infinite;
+  will-change: opacity, filter, box-shadow;
+}
+
+/* Phosphoreszenz mit Flow-Animationen kombiniert (4x langsamer, transparenter) */
+.davinci-phosphorescent-flow {
+  animation: 
+    davinci-expressive-flow 12s ease-in-out infinite,
+    davinci-phosphorescent-glow-afterglow 20s ease-out infinite,
+    davinci-phosphorescent-energy 12s ease-in-out infinite;
+  will-change: opacity, transform, filter, box-shadow;
+}
+
+/* Effekt-Kontrolle: Deaktiviert */
+.davinci-effects-disabled * {
+  animation: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Effekt-Kontrolle: Reduziert */
+.davinci-effects-reduced * {
+  animation-duration: calc(var(--davinci-animation-duration, 1s) * 4) !important;
+  opacity: calc(var(--davinci-effect-opacity, 1) * 0.1) !important;
+}
+
+/* ============================================
+   DA VINCI COMPONENTS
+   ============================================ */
+
+/* ============================================
+   DA VINCI BRANDING - T,. LOGO
+   ============================================ */
+
+/* Logo Element */
+.davinci-logo {
+  font-family: var(--davinci-font-mono);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  letter-spacing: -0.05em;
+  display: inline-block;
+  position: relative;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  animation: davinci-logo-glow 2s ease-in-out infinite;
+  text-decoration: none;
+  transition: all var(--davinci-transition-normal);
+  cursor: pointer;
+}
+.davinci-logo:hover {
+  color: var(--davinci-accent-secondary);
+  text-shadow: 0 0 15px var(--davinci-accent-primary), 0 0 30px var(--davinci-accent-primary);
+  transform: scale(1.05);
+}
+.davinci-logo:active {
+  transform: scale(0.95);
+}
+
+.davinci-logo::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--davinci-accent-primary), transparent);
+  animation: davinci-logo-scan 3s linear infinite;
+}
+
+@keyframes davinci-logo-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 30px rgba(16, 185, 129, 0.4);
+  }
+}
+
+@keyframes davinci-logo-scan {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Brand Banner */
+.ts-brand-banner {
+  background: linear-gradient(90deg, var(--davinci-gradient-start), var(--davinci-gradient-mid) 50%, #111827);
+  color: var(--davinci-text);
+  padding: var(--davinci-space-xs) var(--davinci-space-md);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--davinci-space-sm);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+  position: sticky;
+  top: 0;
+  z-index: var(--davinci-z-sticky);
+}
+
+.ts-brand-banner::before {
+  content: "T,.";
+  font-family: var(--davinci-font-mono);
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  margin-right: var(--davinci-space-sm);
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.ts-brand-banner strong {
+  font-weight: 600;
+}
+
+.ts-brand-sub {
+  opacity: 0.78;
+  display: block;
+}
+
+.ts-brand-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--davinci-space-xs);
+}
+
+.ts-brand-links a {
+  color: #a5b4fc;
+  text-decoration: none;
+  font-size: 11px;
+  margin-left: var(--davinci-space-sm);
+  white-space: nowrap;
+  transition: color var(--davinci-transition-fast);
+  position: relative;
+}
+
+.ts-brand-links a::before {
+  content: "T,.";
+  display: inline-block;
+  margin-right: 4px;
+  font-weight: 700;
+  color: var(--davinci-accent-primary);
+  font-size: 0.9em;
+  font-family: var(--davinci-font-mono);
+}
+
+.ts-brand-links a:hover {
+  color: var(--davinci-accent-primary);
+  text-decoration: underline;
+}
+
+.ts-brand-links a:hover::before {
+  animation: davinci-logo-glow 1s ease-in-out infinite;
+}
+
+/* Text Opening Standard - T,. Logo vor jedem Text */
+.davinci-text-opening::before {
+  content: "T,. ";
+  font-family: var(--davinci-font-mono);
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  margin-right: 0.25em;
+  display: inline-block;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Paragraph Standard */
+p.davinci-text-opening,
+.davinci-text p:first-child::before,
+h1.davinci-text-opening::before,
+h2.davinci-text-opening::before,
+h3.davinci-text-opening::before {
+  content: "T,. ";
+  font-family: var(--davinci-font-mono);
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  margin-right: 0.25em;
+  display: inline-block;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Cards */
+.davinci-card {
+  background: var(--davinci-card);
+  border: 1px solid var(--davinci-border);
+  border-radius: var(--davinci-radius-lg);
+  padding: var(--davinci-space-lg);
+  margin-bottom: var(--davinci-space-md);
+  box-shadow: var(--davinci-shadow-soft);
+  transition: transform var(--davinci-transition-normal), box-shadow var(--davinci-transition-normal);
+}
+
+.davinci-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--davinci-shadow-medium), var(--davinci-glow-accent);
+}
+
+/* Buttons */
+.davinci-btn {
+  background: var(--davinci-accent-primary);
+  color: #00100a;
+  border: none;
+  padding: var(--davinci-space-sm) var(--davinci-space-md);
+  border-radius: var(--davinci-radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all var(--davinci-transition-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--davinci-space-xs);
+  box-shadow: var(--davinci-shadow-hard);
+}
+
+.davinci-btn:hover {
+  background: #0ea5e9;
+  transform: translateY(-2px);
+  box-shadow: var(--davinci-shadow-medium), var(--davinci-glow-accent);
+}
+
+.davinci-btn:active {
+  transform: translateY(0);
+}
+
+.davinci-btn-secondary {
+  background: var(--davinci-accent-secondary);
+  color: white;
+}
+
+.davinci-btn-danger {
+  background: var(--davinci-danger);
+  color: white;
+}
+
+.davinci-btn-ghost {
+  background: transparent;
+  color: var(--davinci-text);
+  border: 1px solid var(--davinci-border);
+}
+
+/* Input Fields */
+.davinci-input {
+  width: 100%;
+  padding: var(--davinci-space-sm) var(--davinci-space-md);
+  background: transparent;
+  color: var(--davinci-text);
+  border: 1px solid var(--davinci-border);
+  border-radius: var(--davinci-radius-md);
+  font-family: var(--davinci-font);
+  font-size: 14px;
+  transition: all var(--davinci-transition-fast);
+}
+
+.davinci-input:focus {
+  outline: none;
+  border-color: var(--davinci-accent-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Typography */
+.davinci-heading-1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--davinci-text);
+  margin-bottom: var(--davinci-space-lg);
+  background: linear-gradient(135deg, var(--davinci-accent-primary), var(--davinci-accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.davinci-heading-1::before {
+  content: "T,. ";
+  font-family: var(--davinci-font-mono);
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  margin-right: 0.5em;
+  display: inline-block;
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+  -webkit-text-fill-color: var(--davinci-accent-primary);
+  background: none;
+  background-clip: unset;
+  cursor: pointer;
+  transition: all var(--davinci-transition-normal);
+}
+.davinci-heading-1:hover::before,
+.davinci-heading-2:hover::before,
+.davinci-heading-3:hover::before {
+  color: var(--davinci-accent-secondary);
+  text-shadow: 0 0 20px var(--davinci-accent-primary), 0 0 40px var(--davinci-accent-primary);
+  transform: scale(1.1);
+}
+
+.davinci-heading-2 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--davinci-text);
+  margin-bottom: var(--davinci-space-md);
+}
+
+.davinci-heading-2::before {
+  content: "T,. ";
+  font-family: var(--davinci-font-mono);
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  margin-right: 0.4em;
+  display: inline-block;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  cursor: pointer;
+  transition: all var(--davinci-transition-normal);
+}
+
+.davinci-heading-3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--davinci-text);
+  margin-bottom: var(--davinci-space-md);
+}
+
+.davinci-heading-3::before {
+  content: "T,. ";
+  font-family: var(--davinci-font-mono);
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  margin-right: 0.3em;
+  display: inline-block;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  cursor: pointer;
+  transition: all var(--davinci-transition-normal);
+}
+
+.davinci-text {
+  color: var(--davinci-text);
+  line-height: 1.6;
+}
+
+.davinci-text-muted {
+  color: var(--davinci-muted);
+  font-size: 0.9em;
+}
+
+/* Standard Text Opening - T,. Logo */
+.davinci-text-opening,
+.davinci-text p:first-of-type {
+  position: relative;
+}
+
+.davinci-text-opening::before,
+.davinci-text p:first-of-type::before {
+  content: "T,. ";
+  font-family: var(--davinci-font-mono);
+  font-weight: 900;
+  color: var(--davinci-accent-primary);
+  margin-right: 0.25em;
+  display: inline-block;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  cursor: pointer;
+  transition: all var(--davinci-transition-normal);
+}
+.davinci-text-opening:hover::before,
+.davinci-text p:first-of-type:hover::before {
+  color: var(--davinci-accent-secondary);
+  text-shadow: 0 0 15px var(--davinci-accent-primary), 0 0 30px var(--davinci-accent-primary);
+  transform: scale(1.1);
+}
+
+/* Particles Background Effect */
+.davinci-particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--davinci-z-base);
+  overflow: hidden;
+}
+
+.davinci-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--davinci-accent-primary);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: davinci-particle-float 10s infinite linear;
+}
+
+/* Hologram Effect */
+.davinci-hologram {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(16, 185, 129, 0.1) 0%,
+    transparent 50%,
+    rgba(59, 130, 246, 0.1) 100%
+  );
+  background-size: 100% 200%;
+  animation: davinci-hologram-scan 3s linear infinite;
+}
+
+/* Spiral Effect */
+.davinci-spiral {
+  position: relative;
+  overflow: hidden;
+}
+
+.davinci-spiral::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    var(--davinci-accent-primary),
+    transparent
+  );
+  animation: davinci-spiral 10s linear infinite;
+  opacity: 0.3;
+}
+
+/* Morphing Effect */
+.davinci-morph {
+  animation: davinci-morph 4s ease-in-out infinite;
+}
+
+/* Glow Effect */
+.davinci-glow {
+  animation: davinci-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
+
+.davinci-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--davinci-space-md);
+}
+
+.davinci-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--davinci-space-lg);
+}
+
+.davinci-flex {
+  display: flex;
+  gap: var(--davinci-space-md);
+}
+
+.davinci-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+
+  .davinci-heading-1 {
+    font-size: 2rem;
+  }
+
+  .davinci-heading-2 {
+    font-size: 1.5rem;
+  }
+
+  .davinci-container {
+    padding: var(--davinci-space-sm);
+  }
+
+  .davinci-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .davinci-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .davinci-btn {
+    display: none;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus Styles for Keyboard Navigation */
+*:focus-visible {
+  outline: 2px solid var(--davinci-accent-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.davinci-hidden {
+  display: none !important;
+}
+
+.davinci-visible {
+  display: block !important;
+}
+
+.davinci-text-center {
+  text-align: center;
+}
+
+.davinci-text-right {
+  text-align: right;
+}
+
+.davinci-mt-sm { margin-top: var(--davinci-space-sm); }
+.davinci-mt-md { margin-top: var(--davinci-space-md); }
+.davinci-mt-lg { margin-top: var(--davinci-space-lg); }
+.davinci-mb-sm { margin-bottom: var(--davinci-space-sm); }
+.davinci-mb-md { margin-bottom: var(--davinci-space-md); }
+.davinci-mb-lg { margin-bottom: var(--davinci-space-lg); }
+

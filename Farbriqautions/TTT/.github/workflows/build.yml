@@ -1,0 +1,137 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║  BUILD & VERIFY WORKFLOW                                                  ║
+# ║  [.TTT T,.&T,,.T,,,.T.] TOGETHERSYSTEMS                                   ║
+# ║                                                                           ║
+# ║  Continuous Integration: Build, Lint, Link-Check, Deploy                  ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+name: 🔨 Build & Verify
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # BUILD
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
+  build:
+    name: 📦 Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+        
+      - name: Make Scripts Executable
+        run: chmod +x scripts/*.sh
+        
+      - name: Build
+        run: make docs
+        
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-build
+          path: docs_build
+          retention-days: 7
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # LINT
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
+  lint:
+    name: 🔍 Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Markdown Lint
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
+          fix: false
+        continue-on-error: true
+        
+      - name: HTML Validate
+        run: |
+          npx html-validate "*.html" --formatter stylish || true
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # LINK CHECK
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
+  links:
+    name: 🔗 Link Check
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Download Build
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-build
+          path: docs_build
+          
+      - name: Link Check
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --verbose --no-progress './docs_build/**/*.html'
+          fail: false
+          
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # DEPLOY (nur main Branch)
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
+  deploy:
+    name: 🚀 Deploy
+    needs: [build, lint, links]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download Build
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-build
+          path: docs_build
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs_build
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

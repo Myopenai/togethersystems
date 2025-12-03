@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BACKEND-ARCHITECTURE-DB-MONITORING-FEES</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h2>Backend-Architektur für DB, Monitoring & Fees (1:1 übernehmbar)</h2>
+
+Dieses Dokument beschreibt, wie die aktuell In‑Memory arbeitenden Module (Presence, Voucher, Hypothek, Telbank)
+in eine echte relationale Datenbank (z. B. Postgres/Supabase, Cloudflare D1) und ein Monitoring/Fee‑System
+überführt werden können – so, dass die bestehenden HTTP‑APIs weitgehend unverändert bleiben.
+
+---
+
+<h3>1. Kern-Tabellen (Datenmodell)</h3>
+
+<h4>1.1 Identitäten & Sessions</h4>
+
+- <strong>thinkers</strong>
+  - `id               uuid PK` – interne ID
+  - `public_id        text UNIQUE` – abgeleitet aus Token (z. B. hashed)
+  - `created_at       timestamptz`
+  - `meta             jsonb` – optionale Profilinfos
+
+- <strong>presence_sessions</strong>
+  - `id               uuid PK`
+  - `thinker_id       uuid FK -> thinkers(id)`
+  - `pair_code        text` – Stichwort (projekt_alpha, familie, …)
+  - `status           text` – 'online' | 'offline'
+  - `room_id          text` – aktuell zugewiesener Raum (z. B. voucher:V-..., wabe:A-1)
+  - `last_seen_at     timestamptz`
+  - `created_at       timestamptz`
+
+- <strong>rooms</strong>
+  - `id               text PK` – z. B. 'mortgage:offer:O-2025-0001'
+  - `type             text` – 'text' | 'video' | 'file' | 'contract' | 'mixed'
+  - `owner_id         uuid FK -> thinkers(id)`
+  - `meta             jsonb` – z. B. { "source": "mortgage", "voucher_id": "v-..." }
+  - `created_at       timestamptz`
+
+<h4>1.2 Voucher & Slots</h4>
+
+- <strong>vouchers</strong>
+  - `id               text PK` – z. B. v-<ts>-<rand> (wie aktuell)
+  - `issuer_id        uuid FK -> thinkers(id)`
+  - `holder_id        uuid FK -> thinkers(id) NULL`
+  - `service_type     text` – z. B. consulting.session, realestate.viewing
+  - `title            text`
+  - `description      text`
+  - `duration_minutes integer`
+  - `valid_from       timestamptz`
+  - `valid_until      timestamptz`
+  - `price_amount     bigint NULL` – cents
+  - `price_currency   text NULL` – 'EUR', 'USD', …
+  - `status           text` – 'issued' | 'booked' | 'consumed' | 'cancelled' | 'expired'
+  - `transferable     boolean`
+  - `terms            jsonb` – AGB, Branchen‑Template‑ID, etc.
+  - `created_at       timestamptz`
+
+- <strong>voucher_bookings</strong>
+  - `id               text PK` – b-<ts>-<rand>
+  - `voucher_id       text FK -> vouchers(id)`
+  - `issuer_id        uuid FK -> thinkers(id)`
+  - `holder_id        uuid FK -> thinkers(id)`
+  - `slot_start       timestamptz`
+  - `slot_end         timestamptz`
+  - `status           text` – 'booked' | 'cancelled'
+  - `cancel_reason    text NULL`
+  - `created_at       timestamptz`
+  - `cancelled_at     timestamptz NULL`
+
+- <strong>voucher_templates</strong>
+  - `id               text PK` – 'consulting', 'therapy', …
+  - `service_type     text`
+  - `title            text`
+  - `default_duration integer`
+  - `default_terms    jsonb`
+
+> Mapping: Der aktuelle In‑Memory‑Voucher‑Server liest/schreibt in `vouchers` und `voucher_bookings`.
+> Die neuen Branchen‑Templates im Portal entsprechen Einträgen in `voucher_templates`.
+
+<h4>1.3 Verträge (Legal Hub)</h4>
+
+- <strong>contracts</strong>
+  - `id               uuid PK`
+  - `name             text` – Anzeigename (z. B. „Hypothekenvertrag #123“)
+  - `mime_type        text`
+  - `byte_size        bigint`
+  - `storage_url      text` – z. B. S3/Backblaze/Cloudflare R2 Pfad
+  - `hash_sha256      text` – Integritäts‑Prüfsumme
+  - `created_by       uuid FK -> thinkers(id)`
+  - `created_at       timestamptz`
+
+- <strong>contract_links</strong>
+  - `id               uuid PK`
+  - `contract_id      uuid FK -> contracts(id)`
+  - `voucher_id       text FK -> vouchers(id) NULL`
+  - `room_id          text FK -> rooms(id) NULL`
+  - `role             text` – 'primary', 'annex', 'offer', 'application'
+  - `created_at       timestamptz`
+
+> Der aktuelle Legal‑Hub speichert nur eine lokale Liste in `localStorage`. 
+> In Produktion würden Uploads in `contracts` landen, die Zuordnung zu Voucher/Raum in `contract_links`.
+
+<h4>1.4 Hypotheken‑Vertical</h4>
+
+- <strong>properties</strong>
+  - `id               text PK` – 'house-123'
+  - `address          text`
+  - `meta             jsonb`
+
+- <strong>mortgage_applications</strong>
+  - `id               text PK`
+  - `property_id      text FK -> properties(id)`
+  - `borrower_id      uuid FK -> thinkers(id)`
+  - `desired_loan     bigint` – in cents
+  - `currency         text`
+  - `duration_years   integer`
+  - `rate_type        text` – 'fixed' | 'variable'
+  - `max_interest     numeric(6,4)`
+  - `status           text` – 'open' | 'offered' | 'accepted' | 'rejected'
+  - `meta             jsonb`
+  - `created_at       timestamptz`
+
+- <strong>mortgage_offers</strong>
+  - `id               text PK`
+  - `application_id   text FK -> mortgage_applications(id)`
+  - `lender_id        uuid FK -> thinkers(id)`
+  - `interest_rate    numeric(6,4)`
+  - `monthly_payment  bigint` – cents
+  - `status           text` – 'open' | 'accepted' | 'withdrawn'
+  - `created_at       timestamptz`
+
+- <strong>mortgage_contracts</strong>
+  - `id               text PK`
+  - `offer_id         text FK -> mortgage_offers(id)`
+  - `contract_id      uuid FK -> contracts(id)`
+  - `status           text` – 'draft' | 'signed' | 'archived'
+  - `created_at       timestamptz`
+
+<h4>1.5 Telbank & Transfers</h4>
+
+- <strong>transfers</strong>
+  - `id               text PK` – tx‑… (wie aktueller Cloudflare‑Store)
+  - `direction        text` – 'in' | 'out'
+  - `wallet_address   text`
+  - `network          text` – 'Ethereum Mainnet', 'Polygon', …
+  - `crypto_amount    numeric(36,18)`
+  - `crypto_symbol    text`
+  - `fiat_amount      bigint` – cents
+  - `fiat_currency    text`
+  - `external_account text` – IBAN, Skrill‑Konto, Referenz
+  - `meta             jsonb`
+  - `status           text` – 'logged' | 'settled'
+  - `created_at       timestamptz`
+  - `updated_at       timestamptz`
+
+---
+
+<h3>2. Monitoring & Logging</h3>
+
+<h4>2.1 Ereignis-Log</h4>
+
+- <strong>events</strong>
+  - `id               uuid PK`
+  - `type             text` – z. B. 'presence.heartbeat', 'voucher.book', 'mortgage.offer', 'transfer.logged'
+  - `actor_id         uuid FK -> thinkers(id) NULL`
+  - `subject_type     text` – 'voucher' | 'room' | 'contract' | 'transfer'
+  - `subject_id       text`
+  - `meta             jsonb`
+  - `created_at       timestamptz`
+
+Alle bestehenden Endpunkte können beim Erfolg einen Eintrag in `events` erzeugen:
+
+- `/api/presence/heartbeat` → `type='presence.heartbeat'`
+- `/api/presence/match` → `type='presence.match'`
+- `/api/voucher/book` → `type='voucher.book'`
+- `/api/telbank/transfers` (POST) → `type='transfer.logged'`
+
+<h4>2.2 Statistiken / Dashboards</h4>
+
+Auf Basis der Tabellen:
+
+- <strong>Presence Dashboard</strong>
+  - Aktive Sessions: `SELECT COUNT(*) FROM presence_sessions WHERE status='online' AND last_seen_at > now() - interval '1 minute';`
+  - Beliebte Pair‑Codes: `SELECT pair_code, COUNT(<em>) FROM presence_sessions GROUP BY pair_code ORDER BY COUNT(</em>) DESC;`
+
+- <strong>Voucher & Termine Dashboard</strong>
+  - Buchungen pro Tag: `SELECT date_trunc('day', created_at) AS day, COUNT(*) FROM voucher_bookings GROUP BY day ORDER BY day DESC;`
+  - Auslastung pro Template: Join `vouchers` mit `voucher_templates`.
+
+- <strong>Hypotheken Dashboard</strong>
+  - Offene Anträge, angenommene Angebote, durchschnittliche Zins‑Sätze.
+
+- <strong>Telbank Dashboard</strong>
+  - Summe In/Out pro Tag/Netzwerk/Währung.
+
+Diese Queries können in Supabase‑Dashboards, Metabase, Grafana oder als einfache Admin‑Views im Portal verwendet werden.
+
+---
+
+<h3>3. Fees & Abrechnung</h3>
+
+<h4>3.1 Fee-Konfiguration</h4>
+
+- <strong>fees</strong>
+  - `id               text PK` – 'voucher.booking', 'transfer.logged', …
+  - `scope            text` – 'voucher', 'transfer', 'room', 'mortgage'
+  - `percentage       numeric(6,4)` – z. B. 0.02 für 2 %
+  - `fixed_amount     bigint` – fixer Betrag in cents (optional)
+  - `currency         text` – Standardwährung für fixe Fees
+  - `active           boolean`
+  - `meta             jsonb`
+
+<h4>3.2 Fee-Events & Settlements</h4>
+
+- <strong>fee_events</strong>
+  - `id               uuid PK`
+  - `fee_id           text FK -> fees(id)`
+  - `subject_type     text` – 'voucher_booking' | 'transfer' | …
+  - `subject_id       text`
+  - `amount_cents     bigint`
+  - `currency         text`
+  - `created_at       timestamptz`
+
+- <strong>settlements</strong>
+  - `id               uuid PK`
+  - `beneficiary_id   uuid FK -> thinkers(id)` – wer bekommt die Fee (z. B. TogetherSystems‑Pfeiler)
+  - `period_from      date`
+  - `period_to        date`
+  - `total_cents      bigint`
+  - `currency         text`
+  - `status           text` – 'open' | 'invoiced' | 'paid'
+  - `created_at       timestamptz`
+
+> Beispiel: Beim erfolgreichen `/api/voucher/book` wird:
+> 1) Die Buchung geschrieben.
+> 2) Aus `fees` der passende Eintrag (z. B. 'voucher.booking') geladen.
+> 3) Ein `fee_events`‑Eintrag erzeugt (z. B. 2 % des Voucher‑Preises).
+> 4) Später fasst ein Cron‑Job alle Fee‑Events zu einem `settlement` zusammen.
+
+---
+
+<h3>4. Migration von In-Memory zu DB (Schritt-für-Schritt)</h3>
+
+1. <strong>Tabellen anlegen</strong>  
+   - DDL in Postgres/Supabase oder D1 anlegen (siehe obige Tabellen).
+
+2. <strong>Backends umstellen</strong>
+   - `presence-api-server.js`: `Map` → Queries auf `thinkers` + `presence_sessions`.
+   - `voucher-api-server.js`: Arrays `vouchers`, `bookings` → Tabellen `vouchers`, `voucher_bookings`.
+   - `mortgage-api-server.js`: interne Maps → Tabellen `properties`, `mortgage_applications`, `mortgage_offers`, `mortgage_contracts`.
+   - `functions/api/telbank/transfers.js`: `memoryStore` → Tabelle `transfers`.
+
+3. <strong>APIs stabil halten</strong>
+   - JSON‑Formate der Responses beibehalten (Feldnamen aus den Tabellen direkt spiegeln).
+   - Nur interne Speicherung ändern, nicht die äußeren Routen.
+
+4. <strong>Monitoring aktivieren</strong>
+   - In jedem Endpunkt nach dem erfolgreichen Write zusätzlich einen `events`‑Eintrag erzeugen.
+   - Optionale Export‑Pfade (`/api/admin/stats/...`) können reine SELECT‑Abfragen sein.
+
+5. <strong>Fees schichtweise einschalten</strong>
+   - Zuerst nur `fees`/`fee_events` füllen, aber keine echten Abbuchungen durchführen.
+   - Nach Testphase `settlements` erstellen und im Portal‑Admin sichtbar machen.
+
+Damit ist der Weg von der aktuellen Demo‑Infrastruktur (In‑Memory, Cloudflare‑Function, Node‑Server) zu einer stabilen,
+abrechnungsfähigen Plattform klar und 1:1 in eine reale Datenbank übertragbar.
+<p>---
+
+<h2>🏢 Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

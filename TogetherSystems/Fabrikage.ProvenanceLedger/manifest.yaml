@@ -1,0 +1,150 @@
+# ============================================================================
+# FABRIKAGE.PROVENANCELEDGER - HERKUNFT UND SIGNATUREN
+# TOGETHERSYSTEMS. INTERNATIONAL TTT
+# Industrielle Softwarefabrik - SBOM, Signaturen, Attestations
+# ============================================================================
+
+version: "1.0.0"
+name: "Fabrikage.ProvenanceLedger"
+description: "SBOM, Signaturen, Attestations, Chain-of-Custody"
+status: "PERMANENT-ACTIVE"
+mandatory: true
+
+# ============================================================================
+# SBOM (SOFTWARE BILL OF MATERIALS)
+# ============================================================================
+
+sbom:
+  format: "CycloneDX"
+  version: "1.5"
+  
+  include:
+    - dependencies
+    - devDependencies
+    - system_packages
+    - build_tools
+    - generators
+  
+  output:
+    - path: "sbom/sbom.json"
+      format: "json"
+    - path: "sbom/sbom.xml"
+      format: "xml"
+  
+  required: true
+  enforce: true
+
+# ============================================================================
+# SIGNATUREN
+# ============================================================================
+
+signatures:
+  enabled: true
+  algorithm: "RSA-4096"
+  
+  artifacts:
+    - code
+    - binaries
+    - configs
+    - policies
+    - sbom
+  
+  storage:
+    path: "provenance/signatures/"
+    format: "detached"
+
+# ============================================================================
+# ATTESTATIONS
+# ============================================================================
+
+attestations:
+  format: "SLSA"
+  level: 2
+  
+  types:
+    - build
+    - source
+    - test
+    - security_scan
+    - accessibility_audit
+  
+  signer: "${SIGNING_KEY}"
+  output: "provenance/attestations/*.sig"
+
+# ============================================================================
+# CHAIN-OF-CUSTODY
+# ============================================================================
+
+chain_of_custody:
+  enabled: true
+  visualization: true
+  
+  tracking:
+    - input_hash
+    - transformation
+    - output_hash
+    - timestamp
+    - actor
+    - toolchain
+    - policy_status
+  
+  graph:
+    format: "json"
+    path: "provenance/chain-of-custody/"
+
+# ============================================================================
+# CODE-STEMPEL
+# ============================================================================
+
+code_stamps:
+  enabled: true
+  path: "provenance/code-stamps/"
+  
+  content:
+    - timestamp
+    - author
+    - hash
+    - policy_status
+    - affected_files
+    - trace_id
+  
+  format: "json"
+  required: true
+
+# ============================================================================
+# ZEICHEN-LEVEL-DIFF
+# ============================================================================
+
+character_level_diff:
+  enabled: true
+  path: "reports/diff-charlevel/"
+  
+  tracking:
+    - normalized_diff
+    - character_level
+    - error_quotient
+    - per_change_analysis
+  
+  format: "json"
+
+# ============================================================================
+# FREQUENZ-SIGNATUREN (RF/SDR)
+# ============================================================================
+
+rf_signatures:
+  enabled: true
+  path: "provenance/rf/"
+  
+  validation:
+    - spectrum
+    - channel_profiles
+    - modulation_checks
+    - compliance_proofs
+  
+  linking:
+    - devices
+    - regions
+    - rules
+  
+  format: "json"
+
