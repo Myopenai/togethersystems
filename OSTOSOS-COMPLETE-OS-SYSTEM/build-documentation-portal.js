@@ -1,4 +1,4 @@
-// T,. OSTOSOS - Luxus-Dokumentationsportal Builder
+﻿// T,. OSTOSOS - Luxus-Dokumentationsportal Builder
 // Erfasst alle Dokumente im Root (jeden Ordner und Unterordner komplett)
 
 import fs from 'fs';
@@ -402,3 +402,4 @@ try {
   process.exit(1);
 }
 
+]]

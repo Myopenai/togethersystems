@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSOTOSOS – Verifizierungs- und Portalarchitektur</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: #1a1f3a;
+      border-radius: 20px;
+      border: 2px solid #10b981;
+    }
+    .logo {
+      font-size: 3em;
+      color: #10b981;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .title {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .language-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .lang-btn {
+      padding: 10px 20px;
+      background: #1a1f3a;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      color: #10b981;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .lang-btn:hover, .lang-btn.active {
+      background: #10b981;
+      color: white;
+    }
+    .content {
+      background: #1a1f3a;
+      padding: 30px;
+      border-radius: 15px;
+      border: 2px solid #223040;
+      margin-bottom: 30px;
+    }
+    .content h2 {
+      color: #10b981;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+    .content ol {
+      list-style: none;
+      counter-reset: item;
+    }
+    .content ol li {
+      counter-increment: item;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: #0f172a;
+      border-radius: 12px;
+      border-left: 4px solid #10b981;
+      position: relative;
+      padding-left: 60px;
+    }
+    .content ol li::before {
+      content: counter(item);
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      background: #10b981;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .content ol li strong {
+      color: #10b981;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+    .verification-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .option-card {
+      background: #0f172a;
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid #223040;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .option-card:hover {
+      border-color: #10b981;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+    }
+    .option-icon {
+      font-size: 3em;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .option-title {
+      color: #10b981;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .option-features {
+      list-style: none;
+      padding: 0;
+    }
+    .option-features li {
+      padding: 8px 0;
+      color: #9ca3af;
+      border: none;
+      padding-left: 0;
+    }
+    .option-features li::before {
+      content: '✓ ';
+      color: #10b981;
+      font-weight: bold;
+    }
+    .action-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s;
+    }
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+    }
+    .verification-status {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 30px;
+      border: 2px solid #10b981;
+    }
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #223040;
+    }
+    .status-item:last-child {
+      border-bottom: none;
+    }
+    .status-label {
+      color: #9ca3af;
+    }
+    .status-value {
+      color: #10b981;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">T,.&T,,.&T,,,.</div>
+      <h1 class="title" data-translate="title">OSOTOSOS – Verifizierungs- und Portalarchitektur</h1>
+    </div>
+
+    <div class="language-switcher">
+      <button title="🇩🇪 Deutsch - Klicke hier um diese Aktion auszufÃ¼hren" class="lang-btn active" onclick="switchLang('de')">🇩🇪 Deutsch</button>
+      <button title="🇬🇧 English - Klicke hier um diese Aktion auszufÃ¼hren" class="lang-btn" onclick="switchLang('en')">🇬🇧 English</button>
+      <button title="🇳🇱 Nederlands - Klicke hier um diese Aktion auszufÃ¼hren" class="lang-btn" onclick="switchLang('nl')">🇳🇱 Nederlands</button>
+    </div>
+
+    <!-- Deutsch -->
+    <div class="content" data-lang="de">
+      <h2>OSOTOSOS – Verifizierungs- und Portalarchitektur</h2>
+      
+      <ol>
+        <li>
+          <strong>Auto-Verifizierung beim Download</strong><br>
+          <ul class="option-features">
+            <li>Signierte ISO</li>
+            <li>Hash-Manifest</li>
+            <li>Geräte-Token</li>
+          </ul>
+          <p style="margin-top: 10px; color: #9ca3af; font-style: italic;">👉 Der User muss nichts tun, die Verifizierung läuft automatisch.</p>
+        </li>
+
+        <li>
+          <strong>Post-Install Opt-in Verifizierung</strong><br>
+          <ul class="option-features">
+            <li>Maschinen-ID</li>
+            <li>Projektbindung</li>
+            <li>Zero-Knowledge</li>
+          </ul>
+          <p style="margin-top: 10px; color: #9ca3af; font-style: italic;">👉 User bleibt anonym, hat aber eine technische Identität.</p>
+        </li>
+
+        <li>
+          <strong>Optionale notarielle Bindung</strong><br>
+          <ul class="option-features">
+            <li>Notar-Attest</li>
+            <li>Portal-Upgrade</li>
+          </ul>
+          <p style="margin-top: 10px; color: #9ca3af; font-style: italic;">👉 Wer mehr Verantwortung will, kann sie offiziell übernehmen.</p>
+        </li>
+
+        <li>
+          <strong>Portalbindung mit echtem Nutzen</strong><br>
+          <ul class="option-features">
+            <li>Push-Updates</li>
+            <li>Lizenz-Wallet</li>
+            <li>Reputation</li>
+            <li>Ressourcen</li>
+          </ul>
+          <p style="margin-top: 10px; color: #9ca3af; font-style: italic;">👉 User bleibt freiwillig gebunden, weil das Portal echten Mehrwert liefert.</p>
+        </li>
+
+        <li>
+          <strong>Visualisierung & Zeitangaben</strong><br>
+          <ul class="option-features">
+            <li>Kuchendiagramm</li>
+            <li>Säulen</li>
+            <li>Aquarium-Ansicht</li>
+          </ul>
+          <p style="margin-top: 10px; color: #9ca3af; font-style: italic;">👉 User sieht den gesamten Prozess wie ein lebendiges Ökosystem.</p>
+        </li>
+
+        <li>
+          <strong>Nutzerpfade</strong><br>
+          <ul class="option-features">
+            <li>Einsteiger</li>
+            <li>Teams/Lehre</li>
+            <li>Unternehmen</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="verification-options">
+        <div class="option-card" onclick="performOptInVerification()">
+          <div class="option-icon">🔐</div>
+          <div class="option-title">Opt-in Verifizierung</div>
+          <p style="color: #9ca3af; text-align: center; margin-top: 10px;">Maschinen-ID erhalten</p>
+          <button title="Jetzt verifizieren - Klicke hier um diese Aktion auszufÃ¼hren" class="action-btn">Jetzt verifizieren</button>
+        </div>
+
+        <div class="option-card" onclick="showNotarialBinding()">
+          <div class="option-icon">📜</div>
+          <div class="option-title">Notarische Bindung</div>
+          <p style="color: #9ca3af; text-align: center; margin-top: 10px;">Höhere Rechte erhalten</p>
+          <button title="Notar-Attest hochladen - Klicke hier um diese Aktion auszufÃ¼hren" class="action-btn">Notar-Attest hochladen</button>
+        </div>
+
+        <div class="option-card" onclick="showPortalFeatures()">
+          <div class="option-icon">🌐</div>
+          <div class="option-title">Portal-Features</div>
+          <p style="color: #9ca3af; text-align: center; margin-top: 10px;">Verfügbare Funktionen</p>
+          <button title="Anzeigen - Klicke hier um diese Aktion auszufÃ¼hren" class="action-btn">Anzeigen</button>
+        </div>
+      </div>
+
+      <div class="verification-status" id="verificationStatus">
+        <h3 style="color: #10b981; margin-bottom: 15px;">Verifizierungs-Status</h3>
+        <div id="statusContent">Lädt...</div>
+      </div>
+    </div>
+
+    <!-- English -->
+    <div class="content" data-lang="en" style="display: none;">
+      <h2>OSOTOSOS – Verification and Portal Architecture</h2>
+      <ol>
+        <li><strong>Auto-Verification during Download</strong><br>Signed ISO, Hash Manifest, Device Token<br><small>👉 User does nothing, verification runs automatically.</small></li>
+        <li><strong>Post-Install Opt-in Verification</strong><br>Machine ID, Project Binding, Zero-Knowledge<br><small>👉 User remains anonymous but has a technical identity.</small></li>
+        <li><strong>Optional Notarial Binding</strong><br>Notary Attestation, Portal Upgrade<br><small>👉 Those seeking responsibility can officially claim it.</small></li>
+        <li><strong>Portal Binding with Real Value</strong><br>Push Updates, License Wallet, Reputation, Resources<br><small>👉 Users stay voluntarily because the portal offers real value.</small></li>
+        <li><strong>Visualization & Time Tracking</strong><br>Pie, Columns, Aquarium<br><small>👉 User sees the entire process as a living ecosystem.</small></li>
+        <li><strong>User Paths</strong><br>Beginner, Teams/Education, Enterprises</li>
+      </ol>
+    </div>
+
+    <!-- Nederlands -->
+    <div class="content" data-lang="nl" style="display: none;">
+      <h2>OSOTOSOS – Verificatie- en portaalarchitectuur</h2>
+      <ol>
+        <li><strong>Automatische verificatie bij download</strong><br>Ondertekende ISO, Hash-manifest, Apparaattoken<br><small>👉 Gebruiker hoeft niets te doen, verificatie verloopt automatisch.</small></li>
+        <li><strong>Opt-in verificatie na installatie</strong><br>Machine-ID, Projectbinding, Zero-Knowledge<br><small>👉 Gebruiker blijft anoniem maar heeft een technische identiteit.</small></li>
+        <li><strong>Optionele notariële binding</strong><br>Notarisattest, Portaalupgrade<br><small>👉 Wie verantwoordelijkheid wil, kan die officieel claimen.</small></li>
+        <li><strong>Portaalbinding met echte waarde</strong><br>Push-updates, Licentieportemonnee, Reputatie, Hulpbronnen<br><small>👉 Gebruikers blijven vrijwillig verbonden door echte meerwaarde.</small></li>
+        <li><strong>Visualisatie & tijdsweergave</strong><br>Taart, Kolommen, Aquarium<br><small>👉 Gebruiker ziet het hele proces als een levend ecosysteem.</small></li>
+        <li><strong>Gebruikerspaden</strong><br>Beginner, Teams/Onderwijs, Bedrijven</li>
+      </ol>
+    </div>
+  </div>
+
+  <script src="./verification-core.js"></script>
+  <script>
+    function switchLang(lang) {
+      document.querySelectorAll('.content').forEach(el => {
+        el.style.display = el.dataset.lang === lang ? 'block' : 'none';
+      });
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      updateVerificationStatus();
+    }
+    
+    function performOptInVerification() {
+      if (window.OSOTOSOSVerify) {
+        const projectId = prompt('Projekt-ID (optional):');
+        window.OSOTOSOSVerify.performOptInVerification(projectId || null).then(result => {
+          alert('Opt-in Verifizierung erfolgreich!\n\nMaschinen-ID: ' + result.machineId);
+          updateVerificationStatus();
+        }).catch(err => {
+          alert('Fehler: ' + err.message);
+        });
+      }
+    }
+    
+    function showNotarialBinding() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.txt,.json,.pdf';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file && window.OSOTOSOSVerify) {
+          window.OSOTOSOSVerify.performNotarialBinding(file).then(success => {
+            if (success) {
+              alert('Notarische Bindung erfolgreich!');
+              updateVerificationStatus();
+            } else {
+              alert('Notar-Attest ungültig!');
+            }
+          });
+        }
+      };
+      input.click();
+    }
+    
+    function showPortalFeatures() {
+      if (window.OSOTOSOSVerify) {
+        const status = window.OSOTOSOSVerify.getVerificationStatus();
+        const features = status.portalFeatures;
+        
+        let message = 'Verfügbare Portal-Features:\n\n';
+        Object.keys(features).forEach(key => {
+          message += (features[key] ? '✓' : '✗') + ' ' + key + '\n';
+        });
+        
+        alert(message);
+      }
+    }
+    
+    function updateVerificationStatus() {
+      if (window.OSOTOSOSVerify) {
+        const status = window.OSOTOSOSVerify.getVerificationStatus();
+        const statusContent = document.getElementById('statusContent');
+        
+        if (statusContent) {
+          statusContent.innerHTML = `
+            <div class="status-item">
+              <span class="status-label">Verifizierungs-Level:</span>
+              <span class="status-value">${status.level || 'Keine'}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Geräte-Token:</span>
+              <span class="status-value">${status.deviceToken ? status.deviceToken.substring(0, 20) + '...' : 'Nicht erstellt'}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Maschinen-ID:</span>
+              <span class="status-value">${status.machineId ? status.machineId.substring(0, 30) + '...' : 'Nicht erstellt'}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Projekt-Bindung:</span>
+              <span class="status-value">${status.projectBinding ? status.projectBinding.projectId : 'Keine'}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Notar-Attest:</span>
+              <span class="status-value">${status.notaryAttest ? 'Vorhanden' : 'Nicht vorhanden'}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Reputation:</span>
+              <span class="status-value">${status.reputation || 0} Punkte</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Lizenz-Tokens:</span>
+              <span class="status-value">${status.licenseTokens || 0}</span>
+            </div>
+          `;
+        }
+      }
+    }
+    
+    // Initialisiere Status
+    window.addEventListener('load', () => {
+      updateVerificationStatus();
+      
+      // Auto-update alle 5 Sekunden
+      setInterval(updateVerificationStatus, 5000);
+    });
+  </script>
+<script src="./fix-popup-errors.js" onerror="console.warn('fix-popup-errors.js nicht gefunden')"></script>
+<script src="./universal-auto-init.js" onerror="console.warn('universal-auto-init.js nicht gefunden')"></script>
+<script src="./universal-dummy-help.js" onerror="console.warn('universal-dummy-help.js nicht gefunden')"></script>
+<script src="./dashboard-auto-start.js" onerror="console.warn('dashboard-auto-start.js nicht gefunden')"></script>
+</body>
+</html>
+

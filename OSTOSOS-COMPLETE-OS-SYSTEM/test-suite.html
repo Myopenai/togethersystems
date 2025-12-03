@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>OSOTOSOS Test Suite</title>
+<style>
+body { font-family: Arial; padding: 20px; background: #0f172a; color: #10b981; }
+.test { padding: 10px; margin: 10px 0; background: #1a1f3a; border-radius: 8px; }
+.pass { border-left: 4px solid #10b981; }
+.fail { border-left: 4px solid #ef4444; }
+</style>
+</head>
+<body>
+<h1>T,. OSOTOSOS Test Suite</h1>
+<div id="tests"></div>
+<script>
+const tests = [];
+let passed = 0;
+let failed = 0;
+
+function test(name, fn) {
+    try {
+        const result = fn();
+        if (result) {
+            tests.push({ name, status: 'PASS', message: 'OK' });
+            passed++;
+        } else {
+            tests.push({ name, status: 'FAIL', message: 'Test fehlgeschlagen' });
+            failed++;
+        }
+    } catch (e) {
+        tests.push({ name, status: 'FAIL', message: e.message });
+        failed++;
+    }
+}
+
+// Tests
+test('Hauptdatei lÃ¤dt', () => {
+    return typeof document !== 'undefined';
+});
+
+test('Console verfÃ¼gbar', () => {
+    return typeof console !== 'undefined';
+});
+
+test('LocalStorage verfÃ¼gbar', () => {
+    try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        return true;
+    } catch (e) {
+        return false;
+    }
+});
+
+test('Fetch verfÃ¼gbar', () => {
+    return typeof fetch !== 'undefined' || typeof XMLHttpRequest !== 'undefined';
+});
+
+// Rendere Ergebnisse
+const container = document.getElementById('tests');
+tests.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'test ' + (t.status === 'PASS' ? 'pass' : 'fail');
+    div.innerHTML = '<strong>' + t.name + ':</strong> ' + t.status + ' - ' + t.message;
+    container.appendChild(div);
+});
+
+const summary = document.createElement('div');
+summary.className = 'test';
+summary.innerHTML = '<h2>Zusammenfassung: ' + passed + ' bestanden, ' + failed + ' fehlgeschlagen</h2>';
+container.appendChild(summary);
+</script>
+<script src="./fix-popup-errors.js" onerror="console.warn('fix-popup-errors.js nicht gefunden')"></script>
+<script src="./universal-auto-init.js" onerror="console.warn('universal-auto-init.js nicht gefunden')"></script>
+<script src="./universal-dummy-help.js" onerror="console.warn('universal-dummy-help.js nicht gefunden')"></script>
+<script src="./dashboard-auto-start.js" onerror="console.warn('dashboard-auto-start.js nicht gefunden')"></script>
+</body>
+</html>

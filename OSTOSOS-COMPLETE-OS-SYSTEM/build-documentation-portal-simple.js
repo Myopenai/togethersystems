@@ -1,4 +1,4 @@
-// T,. OSTOSOS - Einfache Dokumentationsportal Builder (ohne Dependencies)
+﻿// T,. OSTOSOS - Einfache Dokumentationsportal Builder (ohne Dependencies)
 // Funktioniert mit Node.js ohne zusätzliche Packages
 
 const fs = require('fs');
@@ -438,3 +438,4 @@ try {
   process.exit(1);
 }
 
+]]

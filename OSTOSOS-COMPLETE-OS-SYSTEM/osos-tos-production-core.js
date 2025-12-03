@@ -22,12 +22,70 @@ async function genKeypair() {
     document.getElementById('algo').textContent = "ECDSA-P256";
   }
   const pub = await crypto.subtle.exportKey("spki", keypair.publicKey);
-  document.getElementById('pubkey').textContent = b64(pub);
+  const pubkeyB64 = b64(pub);
+  const pubkeyEl = document.getElementById('pubkey');
+  if (pubkeyEl) {
+    pubkeyEl.textContent = pubkeyB64;
+    pubkeyEl.style.wordBreak = 'break-all';
+    pubkeyEl.style.maxWidth = '400px';
+    pubkeyEl.style.overflowWrap = 'break-word';
+    pubkeyEl.style.display = 'inline-block';
+    pubkeyEl.style.paddingRight = '100px';
+    // Zeige Copy-Button
+    const copyBtn = document.getElementById('copyPubKey');
+    if (copyBtn) {
+      copyBtn.style.display = 'inline-block';
+      copyBtn.onclick = function() {
+        const textToCopy = pubkeyB64;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = '✅ Kopiert!';
+            copyBtn.style.background = '#10b981';
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+              copyBtn.style.background = '#10b981';
+            }, 2000);
+          }).catch(() => {
+            // Fallback
+            fallbackCopy(textToCopy, copyBtn);
+          });
+        } else {
+          fallbackCopy(textToCopy, copyBtn);
+        }
+      };
+    }
+  }
+  
+  function fallbackCopy(text, btn) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      const originalText = btn.textContent;
+      btn.textContent = '✅ Kopiert!';
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '#10b981';
+      }, 2000);
+    } catch(e) {
+      alert('Kopieren fehlgeschlagen. Bitte manuell kopieren: ' + text.substring(0, 50) + '...');
+    }
+    document.body.removeChild(textarea);
+  }
   const universe = localStorage.getItem('tos.universe') || uuid();
   localStorage.setItem('tos.universe', universe);
-  document.getElementById('universe').textContent = universe;
-  document.getElementById('devclass').textContent = /Mobi|Android|iPhone/.test(navigator.userAgent) ? "mobile" : "desktop";
-  document.getElementById('idStatus').textContent = "Schlüssel aktiv";
+  const universeEl = document.getElementById('universe');
+  if (universeEl) universeEl.textContent = universe;
+  const devclassEl = document.getElementById('devclass');
+  if (devclassEl) devclassEl.textContent = /Mobi|Android|iPhone/.test(navigator.userAgent) ? "mobile" : "desktop";
+  const idStatusEl = document.getElementById('idStatus');
+  if (idStatusEl) idStatusEl.textContent = "Schlüssel aktiv";
 }
 
 async function signBytes(bytes) {
@@ -165,12 +223,12 @@ const Search = (() => {
 })();
 
 const docs = [
-  { id:"manifest", title:"Manifest & Identität", tags:["identity","signatur","audit","schlüssel"], content:"Erzeuge Schlüssel, signiere Manifest, exportiere Audit-Log, versiegelte Snapshots." },
-  { id:"perf", title:"Performance Uplift", tags:["fps","latency","durchsatz","coalesce","optimierer"], content:"Messe Baseline, wende Optimierer an, erfasse Beweise als signierte Visuals." },
-  { id:"security", title:"Sicherheit & Verifikation", tags:["hash-kette","verify","rotation","snapshot","compliance"], content:"Prüfe Hash-Kette, rotiere Schlüssel, versiegel lokale Zustände, Compliance." },
-  { id:"mesh", title:"Netzwerk & Mesh", tags:["presence","hmac","p2p","publish","sync","bandbreite"], content:"Erzeuge Presence-Token, aktiviere P2P, veröffentliche selektiv." },
-  { id:"apps", title:"Apps Hub", tags:["telbank","voucher","legal","honeycomb"], content:"Signiere Transaktionen, verwalte Verträge, starte Produktionsflüsse." },
-  { id:"dev", title:"Developer Superkiste", tags:["profiler","crypto","solver","diagramm","runner","dataset"], content:"Profiler, Krypto, Solver, Diagramme, Code Runner, Dataset-Sandbox, Netz-Graph." }
+  { id:"manifest", title:"Manifest & Identität", tags:["identity","signatur","audit","schlüssel","www","web"], content:"Erzeuge Schlüssel, signiere Manifest, exportiere Audit-Log, versiegelte Snapshots. Web, WWW, Internet, Browser." },
+  { id:"perf", title:"Performance Uplift", tags:["fps","latency","durchsatz","coalesce","optimierer","www","web"], content:"Messe Baseline, wende Optimierer an, erfasse Beweise als signierte Visuals. Web Performance, WWW Performance." },
+  { id:"security", title:"Sicherheit & Verifikation", tags:["hash-kette","verify","rotation","snapshot","compliance","www","web"], content:"Prüfe Hash-Kette, rotiere Schlüssel, versiegel lokale Zustände, Compliance. Web Security, WWW Security." },
+  { id:"mesh", title:"Netzwerk & Mesh", tags:["presence","hmac","p2p","publish","sync","bandbreite","www","web","netzwerk"], content:"Erzeuge Presence-Token, aktiviere P2P, veröffentliche selektiv. Web Mesh, WWW Mesh, Netzwerk." },
+  { id:"apps", title:"Apps Hub", tags:["telbank","voucher","legal","honeycomb","www","web","apps"], content:"Signiere Transaktionen, verwalte Verträge, starte Produktionsflüsse. Web Apps, WWW Apps." },
+  { id:"dev", title:"Developer Superkiste", tags:["profiler","crypto","solver","diagramm","runner","dataset","www","web","developer"], content:"Profiler, Krypto, Solver, Diagramme, Code Runner, Dataset-Sandbox, Netz-Graph. Web Development, WWW Development." }
 ];
 
 docs.forEach(Search.addDoc);
@@ -178,42 +236,87 @@ docs.forEach(Search.addDoc);
 function attachSearchUI(){
   const input = document.getElementById('searchBox');
   const res = document.getElementById('searchOut');
+  if (!input || !res) return; // Exit if elements not found
   input.addEventListener('input', ()=>{
-    const q = input.value;
+    const q = input.value.toLowerCase().trim();
     if (!q){ res.innerHTML = ""; return; }
+    
+    // Erweiterte Suche - auch Teilstrings finden
     const out = Search.search(q);
-    res.innerHTML = out.results.map(r=>`<a class="pill" href="#${r.doc.id}">${r.doc.title} <span class="muted">(${r.score})</span></a>`).join(' ');
+    
+    // Wenn keine Ergebnisse, suche auch in Teilstrings
+    if (out.results.length === 0) {
+      const allDocs = docs.filter(doc => {
+        const searchText = (doc.title + ' ' + doc.tags.join(' ') + ' ' + doc.content).toLowerCase();
+        return searchText.includes(q);
+      });
+      if (allDocs.length > 0) {
+        res.innerHTML = allDocs.map(doc=>`<a class="pill" href="#${doc.id}">${doc.title}</a>`).join(' ');
+        return;
+      }
+    }
+    
+    // Zeige Ergebnisse
+    if (out.results.length > 0) {
+      res.innerHTML = out.results.map(r=>`<a class="pill" href="#${r.doc.id}">${r.doc.title} <span class="muted">(${r.score.toFixed(2)})</span></a>`).join(' ');
+    } else {
+      res.innerHTML = `<span class="muted">Keine Ergebnisse für "${q}". Versuche: identität, performance, sicherheit, mesh, telbank, diagramm</span>`;
+    }
   });
 }
 
 (async function init(){
   await openDB();
-  attachSearchUI();
   
-  document.getElementById('genKey').onclick = genKeypair;
-  document.getElementById('writeManifest').onclick = async ()=>{
+  // Warte auf DOM ready
+  function setupEventListeners() {
+    attachSearchUI();
+    
+    const genKeyBtn = document.getElementById('genKey');
+    if (genKeyBtn) genKeyBtn.onclick = genKeypair;
+    
+    const writeManifestBtn = document.getElementById('writeManifest');
+    if (writeManifestBtn) writeManifestBtn.onclick = async ()=>{
     const manifest = { name:"OSOS · tOS", universe: localStorage.getItem('tos.universe'), device: document.getElementById('devclass').textContent, ts: new Date().toISOString(), version: document.getElementById('version').textContent };
     const entry = await writeLog("manifest", manifest);
-    document.getElementById('idStatus').textContent = "Manifest signiert: " + entry.id;
-  };
+      const idStatusEl = document.getElementById('idStatus');
+      if (idStatusEl) idStatusEl.textContent = "Manifest signiert: " + entry.id;
+    };
+    
+    const startBaselineBtn = document.getElementById('startBaseline');
+    if (startBaselineBtn) startBaselineBtn.onclick = async ()=>{
+      const rttWin=[];
+      for (let i=0;i<6;i++){ await pingRTT(); rttWin.push(metrics.rttSamples.at(-1)); }
+      const baseline = { latency: (rttWin.reduce((a,b)=>a+b,0)/rttWin.length)||50, throughput: 1000, cpuIdle: Math.min(100, Math.max(0, 100 - metrics.fps)), coalesce: (metrics.coalesce.coalesced/Math.max(1,metrics.coalesce.total))||0.2 };
+      const fpsEl = document.getElementById('fps');
+      if (fpsEl) fpsEl.textContent = metrics.fps;
+      const rtt50El = document.getElementById('rtt50');
+      if (rtt50El) rtt50El.textContent = Math.round(rttWin[Math.floor(rttWin.length*0.5)]||0);
+      const rtt95El = document.getElementById('rtt95');
+      if (rtt95El) rtt95El.textContent = Math.round(rttWin[Math.floor(rttWin.length*0.95)]||0);
+      const downlinkEl = document.getElementById('downlink');
+      if (downlinkEl) downlinkEl.textContent = metrics.downlink||"–";
+      await writeLog("performance_baseline", baseline);
+    };
+    
+    const profilerBtn = document.getElementById('profiler');
+    if (profilerBtn) profilerBtn.onclick = ()=>{
+      performance.mark('A'); 
+      const arr = [];
+      for(let i=0;i<1e6;i++) arr.push(i^((i<<3)&255));
+      performance.mark('B'); 
+      performance.measure('loop','A','B');
+      const m = performance.getEntriesByName('loop')[0];
+      const devoutEl = document.getElementById('devout');
+      if (devoutEl && m) devoutEl.textContent = `Profiler: ${m.duration.toFixed(2)} ms, heap ~ ${Math.round(arr.length*8/1024/1024)} MB`;
+    };
+  }
   
-  document.getElementById('startBaseline').onclick = async ()=>{
-    const rttWin=[];
-    for (let i=0;i<6;i++){ await pingRTT(); rttWin.push(metrics.rttSamples.at(-1)); }
-    const baseline = { latency: (rttWin.reduce((a,b)=>a+b,0)/rttWin.length)||50, throughput: 1000, cpuIdle: Math.min(100, Math.max(0, 100 - metrics.fps)), coalesce: (metrics.coalesce.coalesced/Math.max(1,metrics.coalesce.total))||0.2 };
-    document.getElementById('fps').textContent = metrics.fps;
-    document.getElementById('rtt50').textContent = Math.round(rttWin[Math.floor(rttWin.length*0.5)]||0);
-    document.getElementById('rtt95').textContent = Math.round(rttWin[Math.floor(rttWin.length*0.95)]||0);
-    document.getElementById('downlink').textContent = metrics.downlink||"–";
-    await writeLog("performance_baseline", baseline);
-  };
-  
-  document.getElementById('profiler').onclick = ()=>{
-    performance.mark('A'); const arr = [];
-    for(let i=0;i<1e6;i++) arr.push(i^((i<<3)&255));
-    performance.mark('B'); performance.measure('loop','A','B');
-    const m = performance.getEntriesByName('loop')[0];
-    document.getElementById('devout').textContent = `Profiler: ${m.duration.toFixed(2)} ms, heap ~ ${Math.round(arr.length*8/1024/1024)} MB`;
-  };
+  // Warte auf DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupEventListeners);
+  } else {
+    setupEventListeners();
+  }
 })();
 

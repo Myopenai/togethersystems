@@ -1,0 +1,639 @@
+openapi: 3.0.3
+info:
+  title: OSTOSOS Operating System API
+  description: |
+    Vollständige OpenAPI 3.0 Spezifikation für das OSTOSOS Operating System.
+    
+    T,.&T,,.&T,,,.(C)TEL1.NL - Together Systems, Startup Systems
+    
+    Diese API ermöglicht den vollständigen Zugriff auf alle OSTOSOS Funktionen.
+  version: 1.0.0
+  contact:
+    name: OSTOSOS Support
+    email: gentlyoverdone@outlook.com
+    url: https://tel1.jouwweb.nl/servicesoftware
+  license:
+    name: Proprietary
+    url: https://tel1.jouwweb.nl
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local Development Server
+  - url: https://api.ostosos.tel1.nl/v1
+    description: Production Server
+
+tags:
+  - name: System
+    description: System-Management Endpoints
+  - name: Windows
+    description: Window Management Endpoints
+  - name: Taskbar
+    description: Taskbar Management Endpoints
+  - name: Surveys
+    description: Survey Management Endpoints
+  - name: Donations
+    description: Donation Management Endpoints
+  - name: Portal
+    description: Portal Management Endpoints
+  - name: Sync
+    description: Cross-Device Sync Endpoints
+  - name: Updates
+    description: Update Management Endpoints
+
+paths:
+  /system/status:
+    get:
+      tags:
+        - System
+      summary: System Status abrufen
+      description: Gibt den aktuellen System-Status zurück
+      responses:
+        '200':
+          description: System Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemStatus'
+  
+  /windows:
+    get:
+      tags:
+        - Windows
+      summary: Alle Fenster auflisten
+      description: Gibt eine Liste aller offenen Fenster zurück
+      responses:
+        '200':
+          description: Liste der Fenster
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Window'
+    
+    post:
+      tags:
+        - Windows
+      summary: Neues Fenster erstellen
+      description: Erstellt ein neues Fenster
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWindowRequest'
+      responses:
+        '201':
+          description: Fenster erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Window'
+  
+  /windows/{windowId}:
+    get:
+      tags:
+        - Windows
+      summary: Fenster-Details abrufen
+      parameters:
+        - name: windowId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fenster-Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Window'
+    
+    put:
+      tags:
+        - Windows
+      summary: Fenster aktualisieren
+      parameters:
+        - name: windowId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWindowRequest'
+      responses:
+        '200':
+          description: Fenster aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Window'
+    
+    delete:
+      tags:
+        - Windows
+      summary: Fenster schließen
+      parameters:
+        - name: windowId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Fenster geschlossen
+  
+  /windows/{windowId}/minimize:
+    post:
+      tags:
+        - Windows
+      summary: Fenster minimieren
+      parameters:
+        - name: windowId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fenster minimiert
+  
+  /windows/{windowId}/maximize:
+    post:
+      tags:
+        - Windows
+      summary: Fenster maximieren
+      parameters:
+        - name: windowId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fenster maximiert
+  
+  /windows/{windowId}/snap:
+    post:
+      tags:
+        - Windows
+      summary: Fenster snap
+      parameters:
+        - name: windowId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                position:
+                  type: string
+                  enum: [left, right, top, bottom, fullscreen]
+      responses:
+        '200':
+          description: Fenster gesnapped
+  
+  /taskbar/apps:
+    get:
+      tags:
+        - Taskbar
+      summary: Verfügbare Apps auflisten
+      responses:
+        '200':
+          description: Liste der Apps
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/App'
+  
+  /surveys:
+    get:
+      tags:
+        - Surveys
+      summary: Alle Umfragen auflisten
+      responses:
+        '200':
+          description: Liste der Umfragen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Survey'
+    
+    post:
+      tags:
+        - Surveys
+      summary: Neue Umfrage erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSurveyRequest'
+      responses:
+        '201':
+          description: Umfrage erstellt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Survey'
+  
+  /surveys/{surveyId}:
+    get:
+      tags:
+        - Surveys
+      summary: Umfrage-Details abrufen
+      parameters:
+        - name: surveyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Umfrage-Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Survey'
+  
+  /surveys/{surveyId}/responses:
+    get:
+      tags:
+        - Surveys
+      summary: Umfrage-Antworten abrufen
+      parameters:
+        - name: surveyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Liste der Antworten
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SurveyResponse'
+    
+    post:
+      tags:
+        - Surveys
+      summary: Umfrage-Antwort absenden
+      parameters:
+        - name: surveyId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitSurveyResponse'
+      responses:
+        '201':
+          description: Antwort gespeichert
+  
+  /surveys/{surveyId}/analytics:
+    get:
+      tags:
+        - Surveys
+      summary: Umfrage-Analytics abrufen
+      parameters:
+        - name: surveyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analytics-Daten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurveyAnalytics'
+  
+  /donations:
+    get:
+      tags:
+        - Donations
+      summary: Donation-Informationen abrufen
+      responses:
+        '200':
+          description: Donation-Informationen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonationInfo'
+  
+  /donations/goals:
+    get:
+      tags:
+        - Donations
+      summary: Donation-Ziele auflisten
+      responses:
+        '200':
+          description: Liste der Ziele
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DonationGoal'
+  
+  /sync/devices:
+    get:
+      tags:
+        - Sync
+      summary: Verbundene Devices auflisten
+      responses:
+        '200':
+          description: Liste der Devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Device'
+  
+  /updates/check:
+    get:
+      tags:
+        - Updates
+      summary: Auf Updates prüfen
+      responses:
+        '200':
+          description: Update-Informationen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateInfo'
+
+components:
+  schemas:
+    SystemStatus:
+      type: object
+      properties:
+        version:
+          type: string
+          example: "1.0.0"
+        uptime:
+          type: integer
+          format: int64
+        windowsCount:
+          type: integer
+        memoryUsage:
+          type: object
+          properties:
+            used:
+              type: integer
+            total:
+              type: integer
+    
+    Window:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        state:
+          type: string
+          enum: [normal, minimized, maximized]
+        position:
+          $ref: '#/components/schemas/Position'
+        size:
+          $ref: '#/components/schemas/Size'
+        zIndex:
+          type: integer
+    
+    Position:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+    
+    Size:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+    
+    CreateWindowRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+        content:
+          type: string
+        width:
+          type: integer
+          default: 800
+        height:
+          type: integer
+          default: 600
+        x:
+          type: integer
+          default: 100
+        y:
+          type: integer
+          default: 100
+        icon:
+          type: string
+    
+    UpdateWindowRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        position:
+          $ref: '#/components/schemas/Position'
+        size:
+          $ref: '#/components/schemas/Size'
+    
+    App:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+        url:
+          type: string
+    
+    Survey:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        settings:
+          $ref: '#/components/schemas/SurveySettings'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [text, textarea, radio, checkbox, select, rating, scale]
+        text:
+          type: string
+        required:
+          type: boolean
+        options:
+          type: array
+          items:
+            type: string
+        placeholder:
+          type: string
+    
+    SurveySettings:
+      type: object
+      properties:
+        allowMultipleSubmissions:
+          type: boolean
+        showProgress:
+          type: boolean
+        anonymous:
+          type: boolean
+    
+    CreateSurveyRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+    
+    SurveyResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        surveyId:
+          type: string
+        answers:
+          type: object
+        submittedAt:
+          type: string
+          format: date-time
+    
+    SubmitSurveyResponse:
+      type: object
+      required:
+        - answers
+      properties:
+        answers:
+          type: object
+    
+    SurveyAnalytics:
+      type: object
+      properties:
+        totalResponses:
+          type: integer
+        questionStats:
+          type: object
+    
+    DonationInfo:
+      type: object
+      properties:
+        total:
+          type: number
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/DonationGoal'
+        platforms:
+          type: array
+          items:
+            type: string
+    
+    DonationGoal:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        amount:
+          type: number
+        current:
+          type: number
+        description:
+          type: string
+    
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        lastSeen:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [online, offline]
+    
+    UpdateInfo:
+      type: object
+      properties:
+        currentVersion:
+          type: string
+        latestVersion:
+          type: string
+        available:
+          type: boolean
+        changelog:
+          type: string
+

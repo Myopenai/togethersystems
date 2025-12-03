@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSOTOSOS - One-Click Setup</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>T,.</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .setup-container {
+      background: #1a1f3a;
+      border: 2px solid #10b981;
+      border-radius: 20px;
+      padding: 60px;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(16, 185, 129, 0.3);
+    }
+    .logo {
+      font-size: 4em;
+      color: #10b981;
+      margin-bottom: 20px;
+      font-weight: 900;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #10b981;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #9ca3af;
+      font-size: 1.2em;
+      margin-bottom: 40px;
+    }
+    .setup-button {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 20px 60px;
+      font-size: 1.5em;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+    .setup-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(16, 185, 129, 0.6);
+    }
+    .setup-button:active {
+      transform: scale(0.98);
+    }
+    .status {
+      margin-top: 30px;
+      padding: 20px;
+      background: #0f172a;
+      border-radius: 12px;
+      display: none;
+    }
+    .status.show {
+      display: block;
+    }
+    .status.success {
+      border: 2px solid #10b981;
+      color: #10b981;
+    }
+    .status.error {
+      border: 2px solid #ef4444;
+      color: #ef4444;
+    }
+    .progress {
+      width: 100%;
+      height: 8px;
+      background: #2d3748;
+      border-radius: 4px;
+      margin-top: 20px;
+      overflow: hidden;
+      display: none;
+    }
+    .progress.show {
+      display: block;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      width: 0%;
+      transition: width 0.3s;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="setup-container">
+    <div class="logo">T,.&T,,.&T,,,.</div>
+    <h1>OSOTOSOS Operating System</h1>
+    <p>One-Click Setup - Alles automatisch</p>
+    
+    <button title="▶ Betriebssystem starten - Klicke hier um diese Aktion auszufÃ¼hren" class="setup-button" onclick="startSetup()">
+      ▶ Betriebssystem starten
+    </button>
+    
+    <div class="progress" id="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    function startSetup() {
+      const button = document.querySelector('.setup-button');
+      const status = document.getElementById('status');
+      const progress = document.getElementById('progress');
+      const progressBar = document.getElementById('progressBar');
+      
+      button.disabled = true;
+      button.textContent = 'Lädt...';
+      progress.classList.add('show');
+      status.classList.add('show');
+      status.textContent = 'Starte Betriebssystem...';
+      status.className = 'status show';
+      
+      // Simuliere Progress
+      let progressValue = 0;
+      const interval = setInterval(() => {
+        progressValue += 10;
+        progressBar.style.width = progressValue + '%';
+        
+        if (progressValue >= 100) {
+          clearInterval(interval);
+          
+          // Öffne Hauptsystem
+          setTimeout(() => {
+            window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+          }, 500);
+        }
+      }, 100);
+    }
+
+    // Auto-Start wenn Parameter vorhanden
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('auto') === 'true') {
+      startSetup();
+    }
+  </script>
+<script src="./fix-popup-errors.js" onerror="console.warn('fix-popup-errors.js nicht gefunden')"></script>
+<script src="./universal-auto-init.js" onerror="console.warn('universal-auto-init.js nicht gefunden')"></script>
+<script src="./universal-dummy-help.js" onerror="console.warn('universal-dummy-help.js nicht gefunden')"></script>
+<script src="./dashboard-auto-start.js" onerror="console.warn('dashboard-auto-start.js nicht gefunden')"></script>
+</body>
+</html>
+

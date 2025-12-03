@@ -97,11 +97,11 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 <div class="filter-group">
 <label>Datum:</label>
-<input type="date" id="dateFilter" onchange="filterBuilds()">
+<input autocomplete="on" type="date" id="dateFilter" onchange="filterBuilds()">
 </div>
 <div class="filter-group">
 <label>Suche:</label>
-<input type="text" id="searchFilter" placeholder="Build-Name suchen..." oninput="filterBuilds()">
+<input autocomplete="on" type="text" id="searchFilter" placeholder="Build-Name suchen..." oninput="filterBuilds()">
 </div>
 </div>
 
@@ -268,10 +268,10 @@ function renderBuilds() {
         ${build.notes}
       </div>
       <div class="build-actions">
-        <button class="btn btn-primary" onclick="openBuild('${build.id}')">📂 Öffnen</button>
-        <button class="btn btn-secondary" onclick="downloadBuild('${build.id}')">💾 Download</button>
-        ${build.tests && build.tests.failed > 0 ? `<button class="btn btn-secondary" onclick="fixBuild('${build.id}')">🔧 Auto-Fix</button>` : ''}
-        <button class="btn btn-secondary" onclick="deleteBuild('${build.id}')">🗑️ Löschen</button>
+        <button title="📂 Öffnen - Klicke hier um diese Aktion auszufÃ¼hren" class="btn btn-primary" onclick="openBuild('${build.id}')">📂 Öffnen</button>
+        <button title="💾 Download - Klicke hier um diese Aktion auszufÃ¼hren" class="btn btn-secondary" onclick="downloadBuild('${build.id}')">💾 Download</button>
+        ${build.tests && build.tests.failed > 0 ? `<button title="🔧 Auto-Fix - Klicke hier um diese Aktion auszufÃ¼hren" class="btn btn-secondary" onclick="fixBuild('${build.id}')">🔧 Auto-Fix</button>` : ''}
+        <button title="🗑️ Löschen - Klicke hier um diese Aktion auszufÃ¼hren" class="btn btn-secondary" onclick="deleteBuild('${build.id}')">🗑️ Löschen</button>
       </div>
     </div>
   `).join('');
@@ -331,6 +331,10 @@ function deleteBuild(buildId) {
 // Initialisierung
 scanBuilds();
 </script>
+<script src="./fix-popup-errors.js" onerror="console.warn('fix-popup-errors.js nicht gefunden')"></script>
+<script src="./universal-auto-init.js" onerror="console.warn('universal-auto-init.js nicht gefunden')"></script>
+<script src="./universal-dummy-help.js" onerror="console.warn('universal-dummy-help.js nicht gefunden')"></script>
+<script src="./dashboard-auto-start.js" onerror="console.warn('dashboard-auto-start.js nicht gefunden')"></script>
 </body>
 </html>
 

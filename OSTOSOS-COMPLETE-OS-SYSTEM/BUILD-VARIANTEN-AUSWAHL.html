@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T,. OSOTOSOS - Build-Varianten Auswahl</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0c0f14 0%, #1a1f3a 100%);
+      color: #e7eef5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      width: 100%;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 2.5em;
+      color: #10b981;
+      margin-bottom: 10px;
+    }
+    .header p {
+      font-size: 1.2em;
+      color: #9ca3af;
+    }
+    .variants {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    .variant-card {
+      background: linear-gradient(135deg, #1a1f3a 0%, #2d3748 100%);
+      border: 2px solid #10b981;
+      border-radius: 16px;
+      padding: 30px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .variant-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+      border-color: #3b82f6;
+    }
+    .variant-card.selected {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    }
+    .variant-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .variant-icon {
+      font-size: 3em;
+    }
+    .variant-title {
+      font-size: 1.8em;
+      color: #10b981;
+      font-weight: bold;
+    }
+    .variant-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      margin-left: 10px;
+    }
+    .badge-new {
+      background: #3b82f6;
+      color: white;
+    }
+    .badge-classic {
+      background: #10b981;
+      color: white;
+    }
+    .variant-description {
+      color: #cbd5e0;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .variant-features {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    .variant-features li {
+      padding: 8px 0;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .variant-features li:before {
+      content: "✓";
+      color: #10b981;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    .variant-commands {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+      color: #66cc66;
+      margin-top: 15px;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .btn {
+      padding: 15px 40px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #10b981;
+      border: 2px solid #10b981;
+    }
+    .btn-secondary:hover {
+      background: #10b981;
+      color: white;
+    }
+    .comparison {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      border-radius: 16px;
+      margin-top: 40px;
+    }
+    .comparison h2 {
+      color: #10b981;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    th {
+      color: #10b981;
+      font-weight: bold;
+    }
+    td {
+      color: #cbd5e0;
+    }
+    .check {
+      color: #10b981;
+      font-weight: bold;
+    }
+    .cross {
+      color: #ff4d4d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>T,. OSOTOSOS Build-Varianten</h1>
+      <p>Wähle deine bevorzugte Variante zur Erstellung von Software-Produkten</p>
+    </div>
+
+    <div class="variants">
+      <!-- Variante 1: HTML/JavaScript (Klassisch) -->
+      <div class="variant-card" id="variant-html" onclick="selectVariant('html')">
+        <div class="variant-header">
+          <div class="variant-icon">🌐</div>
+          <div>
+            <span class="variant-title">HTML/JavaScript Variante</span>
+            <span class="variant-badge badge-classic">KLASSISCH</span>
+          </div>
+        </div>
+        <div class="variant-description">
+          Vollständige Browser-basierte Lösung mit HTML, CSS und JavaScript. 
+          Keine Installation erforderlich, läuft direkt im Browser.
+        </div>
+        <ul class="variant-features">
+          <li>Vollständige OSOTOSOS-OS-COMPLETE-SYSTEM.html</li>
+          <li>Alle Module integriert (Window Manager, Taskbar, etc.)</li>
+          <li>Offline-fähig (Service Worker)</li>
+          <li>Multi-Platform (Windows, macOS, Linux, Web)</li>
+          <li>DaVinci-Effekte und Themes</li>
+          <li>Self-Healing Console Integration</li>
+        </ul>
+        <div class="variant-commands">
+          <strong>Start:</strong><br>
+          Öffne <code>OSTOSOS-OS-COMPLETE-SYSTEM.html</code> im Browser
+        </div>
+      </div>
+
+      <!-- Variante 2: Python One-File (Neu) -->
+      <div class="variant-card selected" id="variant-python" onclick="selectVariant('python')">
+        <div class="variant-header">
+          <div class="variant-icon">🐍</div>
+          <div>
+            <span class="variant-title">Python One-File Variante</span>
+            <span class="variant-badge badge-new">NEU</span>
+          </div>
+        </div>
+        <div class="variant-description">
+          Einzelne Python-Datei mit sealed core und offenen Rändern. 
+          Keine externen Abhängigkeiten, nur Python Standard Library.
+        </div>
+        <ul class="variant-features">
+          <li>One-File Lösung (osotosos.py)</li>
+          <li>Web UI + CLI Dashboard</li>
+          <li>Audit-Fragebogen integriert</li>
+          <li>Prometheus-Metriken (optional)</li>
+          <li>Plugin-System (Overlay-Plugins)</li>
+          <li>4 Themes (Serious, Classic, High-Contrast, Kids)</li>
+          <li>Self-Healing Guards & Logging</li>
+          <li>Explainability-Ansicht</li>
+        </ul>
+        <div class="variant-commands">
+          <strong>Web UI:</strong> <code>python osotosos.py</code><br>
+          <strong>CLI Dashboard:</strong> <code>python osotosos.py --cli</code><br>
+          <strong>Theme:</strong> <code>python osotosos.py --theme high_contrast</code><br>
+          <strong>Dev Mode:</strong> <code>python osotosos.py --dev</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary" id="btn-start" onclick="startSelectedVariant()">
+        Ausgewählte Variante starten
+      </button>
+      <button class="btn btn-secondary" onclick="showComparison()">
+        Vergleich anzeigen
+      </button>
+    </div>
+
+    <div class="comparison" id="comparison" style="display: none;">
+      <h2>Vergleich: HTML/JavaScript vs. Python One-File</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>HTML/JavaScript</th>
+            <th>Python One-File</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Installation</td>
+            <td><span class="check">✓</span> Keine (Browser)</td>
+            <td><span class="check">✓</span> Nur Python</td>
+          </tr>
+          <tr>
+            <td>Abhängigkeiten</td>
+            <td><span class="check">✓</span> Keine</td>
+            <td><span class="check">✓</span> Nur stdlib</td>
+          </tr>
+          <tr>
+            <td>Offline-Fähigkeit</td>
+            <td><span class="check">✓</span> Service Worker</td>
+            <td><span class="cross">✗</span> Server erforderlich</td>
+          </tr>
+          <tr>
+            <td>CLI Dashboard</td>
+            <td><span class="cross">✗</span> Nein</td>
+            <td><span class="check">✓</span> Ja</td>
+          </tr>
+          <tr>
+            <td>Audit-Fragebogen</td>
+            <td><span class="check">✓</span> Integriert</td>
+            <td><span class="check">✓</span> Integriert</td>
+          </tr>
+          <tr>
+            <td>Prometheus Integration</td>
+            <td><span class="cross">✗</span> Nein</td>
+            <td><span class="check">✓</span> Optional</td>
+          </tr>
+          <tr>
+            <td>Plugin-System</td>
+            <td><span class="check">✓</span> Erweiterungen</td>
+            <td><span class="check">✓</span> Overlay-Plugins</td>
+          </tr>
+          <tr>
+            <td>Themes</td>
+            <td><span class="check">✓</span> DaVinci + Custom</td>
+            <td><span class="check">✓</span> 4 Presets</td>
+          </tr>
+          <tr>
+            <td>Explainability</td>
+            <td><span class="cross">✗</span> Nein</td>
+            <td><span class="check">✓</span> Ja</td>
+          </tr>
+          <tr>
+            <td>Multi-Platform</td>
+            <td><span class="check">✓</span> Browser überall</td>
+            <td><span class="check">✓</span> Python überall</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let selectedVariant = 'python';
+
+    function selectVariant(variant) {
+      selectedVariant = variant;
+      document.querySelectorAll('.variant-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      document.getElementById(`variant-${variant}`).classList.add('selected');
+    }
+
+    function startSelectedVariant() {
+      if (selectedVariant === 'html') {
+        window.location.href = './OSTOSOS-OS-COMPLETE-SYSTEM.html';
+      } else if (selectedVariant === 'python') {
+        // Versuche Python-Script zu starten
+        const message = `
+Python One-File Variante starten:
+
+1. Öffne ein Terminal/Command Prompt
+2. Navigiere zu diesem Ordner:
+   cd "${window.location.pathname.replace(/\/[^/]*$/, '')}"
+3. Führe aus:
+   python osotosos.py
+
+Oder für CLI Dashboard:
+   python osotosos.py --cli
+
+Web UI läuft dann auf: http://127.0.0.1:9876
+        `;
+        alert(message);
+        // Optional: Versuche Python direkt zu starten (funktioniert nur in manchen Browsern)
+        if (confirm('Möchtest du versuchen, Python direkt zu starten? (Funktioniert nur wenn Python im PATH ist)')) {
+          // Fallback: Öffne Terminal-Anleitung
+          window.open('https://www.python.org/downloads/', '_blank');
+        }
+      }
+    }
+
+    function showComparison() {
+      const comparison = document.getElementById('comparison');
+      comparison.style.display = comparison.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
+

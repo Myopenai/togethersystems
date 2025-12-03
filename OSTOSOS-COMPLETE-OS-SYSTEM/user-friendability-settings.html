@@ -35,7 +35,7 @@ body{font-family:system-ui,monospace;background:radial-gradient(circle at top,va
 <div class="analysis-section">
 <h3>🧠 Psychologische Analyse</h3>
 <textarea id="promptInput" placeholder="Gib einen Prompt ein für psychologische Analyse..." style="width:100%;min-height:100px;padding:15px;background:var(--davinci-bg,#0f172a);border:1px solid var(--davinci-border,#223040);border-radius:10px;color:var(--davinci-text,#ffffff);font-size:1em;margin-bottom:15px"></textarea>
-<button class="davinci-btn" onclick="analyzePrompt()">Analysieren</button>
+<button title="Analysieren - Klicke hier um diese Aktion auszufÃ¼hren" class="davinci-btn" onclick="analyzePrompt()">Analysieren</button>
 <div id="analysisResult" style="margin-top:20px"></div>
 </div>
 </div>
@@ -113,7 +113,7 @@ async function analyzePrompt() {
       <div class="recommendation">
         <h4>💡 Empfohlener Modus: ${window.USER_FRIENDABILITY_MODES.modes[suggestedMode].name}</h4>
         <p>${window.USER_FRIENDABILITY_MODES.modes[suggestedMode].description}</p>
-        <button class="davinci-btn" onclick="selectMode('${suggestedMode}')" style="margin-top:10px">Modus aktivieren</button>
+        <button title="Modus aktivieren - Klicke hier um diese Aktion auszufÃ¼hren" class="davinci-btn" onclick="selectMode('${suggestedMode}')" style="margin-top:10px">Modus aktivieren</button>
       </div>
       
       ${analysis.recommendations.length > 0 ? `
@@ -137,6 +137,10 @@ window.addEventListener('load', () => {
   displayModes();
 });
 </script>
+<script src="./fix-popup-errors.js" onerror="console.warn('fix-popup-errors.js nicht gefunden')"></script>
+<script src="./universal-auto-init.js" onerror="console.warn('universal-auto-init.js nicht gefunden')"></script>
+<script src="./universal-dummy-help.js" onerror="console.warn('universal-dummy-help.js nicht gefunden')"></script>
+<script src="./dashboard-auto-start.js" onerror="console.warn('dashboard-auto-start.js nicht gefunden')"></script>
 </body>
 </html>
 

@@ -1,0 +1,50 @@
+name: TÜV-Grade Verification Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  tuv-verification:
+    name: TÜV-Grade Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Make scripts executable
+      run: |
+        chmod +x tuv.sh
+        chmod +x scripts/*.sh
+        
+    - name: Run TÜV-Grade Pipeline
+      run: |
+        cd OSTOSOS-COMPLETE-OS-SYSTEM || cd .
+        bash tuv.sh all
+        
+    - name: Upload artifacts
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: |
+          OSTOSOS-COMPLETE-OS-SYSTEM/build/
+          OSTOSOS-COMPLETE-OS-SYSTEM/artifacts/
+        retention-days: 30
+        
+    - name: Upload report
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-report
+        path: OSTOSOS-COMPLETE-OS-SYSTEM/artifacts/*.md
+        retention-days: 90
+
