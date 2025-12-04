@@ -192,3 +192,5 @@ Von der Erfindung bis zur letzten Ursache ist alles dokumentiert, verifiziert un
 
 **Industrial Supermax IBM Industrial ID Brand Machine Code Production Fabrications Software Science Outer Space Licensed**
 
+
+

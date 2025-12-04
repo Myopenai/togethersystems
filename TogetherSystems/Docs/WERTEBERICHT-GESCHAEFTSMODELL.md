@@ -247,3 +247,5 @@ Fabrikage als **universelles Produktionssystem**, das Erde und Universum umfasst
 
 **Industrial Supermax IBM Industrial ID Brand Machine Code Production Fabrications Software Science Outer Space Licensed**
 
+
+
