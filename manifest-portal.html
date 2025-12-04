@@ -2749,12 +2749,105 @@ document.getElementById('navExpert')?.addEventListener('click', ()=>{
 	if(navExpert) navExpert.textContent = expertModeActive ? 'âš™ï¸ Expertenmodus' : 'âš™ï¸';
 });
 
+// CSV Import Event Listener
+const csvContactsFile = document.getElementById('csvContactsFile');
+const importCsvBtn = document.getElementById('importCsvBtn');
+const csvFileStatus = document.getElementById('csvFileStatus');
+
+if (csvContactsFile && importCsvBtn && csvFileStatus) {
+	csvContactsFile.addEventListener('change', (e) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			csvFileStatus.textContent = `✅ Datei ausgewählt: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+			importCsvBtn.disabled = false;
+		} else {
+			csvFileStatus.textContent = 'Noch keine CSV-Datei ausgewählt.';
+			importCsvBtn.disabled = true;
+		}
+	});
+	
+	importCsvBtn.addEventListener('click', async () => {
+		const file = csvContactsFile.files?.[0];
+		if (!file) {
+			alert('Bitte wähle zuerst eine CSV-Datei aus.');
+			return;
+		}
+		
+		try {
+			const csvText = await file.text();
+			importCsvToContacts(csvText);
+			// Reset
+			csvContactsFile.value = '';
+			csvFileStatus.textContent = 'Noch keine CSV-Datei ausgewählt.';
+			importCsvBtn.disabled = true;
+		} catch (error) {
+			alert('❌ Fehler beim Lesen der Datei: ' + error.message);
+		}
+	});
+}
+
 // Navigation-Buttons
 document.getElementById('navHome')?.addEventListener('click', ()=> {
 	document.getElementById('communicationCockpit')?.scrollIntoView({behavior:'smooth'});
 });
+// CSV Import Funktion
+function importCsvToContacts(csvText) {
+	try {
+		const lines = csvText.split('\n').filter(line => line.trim());
+		if (lines.length < 2) {
+			throw new Error('CSV muss mindestens eine Kopfzeile und eine Datenzeile enthalten');
+		}
+		
+		// Parse CSV (einfache Implementierung)
+		const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+		const contacts = [];
+		
+		for (let i = 1; i < lines.length; i++) {
+			const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+			if (values.length === headers.length) {
+				const contact = {};
+				headers.forEach((header, idx) => {
+					contact[header] = values[idx];
+				});
+				contacts.push(contact);
+			}
+		}
+		
+		// Speichere Kontakte in localStorage
+		const existingContacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+		const updatedContacts = [...existingContacts, ...contacts];
+		localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+		
+		// Zeige Erfolg
+		alert(`✅ ${contacts.length} Kontakte erfolgreich importiert!\nGesamt: ${updatedContacts.length} Kontakte`);
+		
+		// Lade Kontakte-Ansicht falls vorhanden
+		if (typeof window.renderContacts === 'function') {
+			window.renderContacts();
+		}
+		
+		return contacts;
+	} catch (error) {
+		alert('❌ CSV-Import Fehler: ' + error.message);
+		console.error('CSV Import Error:', error);
+		return null;
+	}
+}
+
 document.getElementById('navContacts')?.addEventListener('click', ()=> {
-	alert('Kontakte-Bereich wird spÃ¤ter implementiert');
+	// Zeige Kontakte-Panel oder Cockpit-Overlay
+	const contactsPanel = document.getElementById('contacts-panel');
+	const cockpitOverlay = document.getElementById('cockpitOverlay');
+	
+	if (contactsPanel) {
+		contactsPanel.style.display = 'block';
+		contactsPanel.scrollIntoView({ behavior: 'smooth' });
+	} else if (cockpitOverlay) {
+		cockpitOverlay.hidden = false;
+	} else {
+		// Erstelle Kontakte-Panel falls nicht vorhanden
+		showContactsPanel();
+	}
 });
 document.getElementById('navRooms')?.addEventListener('click', ()=> {
 	window.location.href = './honeycomb.html';
