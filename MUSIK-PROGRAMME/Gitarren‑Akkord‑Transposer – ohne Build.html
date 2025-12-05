@@ -4,7 +4,31 @@
   <meta charset="utf-8" />
   <meta http-equiv="Permissions-Policy" content="autoplay=*, encrypted-media=*, fullscreen=*, picture-in-picture=*, clipboard-write=*" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+  <!-- Error-Handling für fehlende Scripts und APIs -->
+  <script>
+    // YouTube Player Fallback
+    if (typeof _yt_player === 'undefined') {
+      window._yt_player = {
+        play: function() { console.warn('YouTube player not available (file:// mode)'); },
+        pause: function() { console.warn('YouTube player not available (file:// mode)'); },
+        stop: function() { console.warn('YouTube player not available (file:// mode)'); }
+      };
+    }
+    
+    // API Error-Handling für file:// Protokoll
+    if (typeof fetch !== 'undefined') {
+      const originalFetch = window.fetch;
+      window.fetch = function(...args) {
+        return originalFetch.apply(this, args).catch(err => {
+          if (err.message && (err.message.includes('CORS') || err.message.includes('file://'))) {
+            console.warn('API call blocked by CORS (expected in file:// mode):', args[0]);
+            return Promise.reject(err);
+          }
+          throw err;
+        });
+      };
+    }
+  </script>
       <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gitarren‑Akkord‑Transposer – ohne Build</title>
     
@@ -377,11 +401,19 @@
         console.log('VexFlow via ESM erfolgreich geladen');
         
         // Jetzt deine App initialisieren
-        initializeApp();
+        if (typeof initializeApp === 'function') {
+          initializeApp();
+        } else {
+          console.warn('initializeApp function not found');
+        }
       } catch (e) {
         console.warn('VexFlow ESM-Laden fehlgeschlagen, aktiviere Mock:', e);
         activateMockVexFlow();
-        initializeApp();
+        if (typeof initializeApp === 'function') {
+          initializeApp();
+        } else {
+          console.warn('initializeApp function not found');
+        }
       }
     });
     
