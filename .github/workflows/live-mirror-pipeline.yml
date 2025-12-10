@@ -1,0 +1,299 @@
+name: Live Mirror Pipeline
+# BRANDING: .T. TogetherSystems - ModularFlux Architecture
+# VERSION: 3.0.0
+# STANDARD: IBM STANDARD - PERMANENT AKTIV
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+  schedule:
+    # Run every hour to check for drift
+    - cron: '0 * * * *'
+
+jobs:
+  # PHASE 1: SENSE - Update Spec Mirror
+  sense:
+    name: Sense - Update Spec Mirror
+    runs-on: ubuntu-latest
+    outputs:
+      spec_changes: ${{ steps.detect.outputs.changes }}
+      breaking_changes: ${{ steps.detect.outputs.breaking }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Detect Spec Changes
+        id: detect
+        run: |
+          echo "Detecting spec changes..."
+          # Check for spec file changes
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^specs/"; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+            # Check for breaking changes in OpenAPI
+            if git diff ${{ github.event.before }} ${{ github.sha }} -- specs/api/openapi.yaml | grep -q "breaking"; then
+              echo "breaking=true" >> $GITHUB_OUTPUT
+            else
+              echo "breaking=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "breaking=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Validate Specs
+        run: |
+          # Validate OpenAPI spec
+          npx @apidevtools/swagger-cli validate specs/api/openapi.yaml
+          
+          # Validate JSON Schemas
+          npx ajv-cli validate -s specs/events/event-schemas.json -d "{}"
+      
+      - name: Generate Dependency Graph
+        run: |
+          # Generate AST and dependency graphs
+          node ci/spec-mirror/generate-graphs.js
+      
+      - name: Upload Spec Mirror
+        uses: actions/upload-artifact@v4
+        with:
+          name: spec-mirror
+          path: |
+            specs/
+            ci/spec-mirror/graphs/
+          retention-days: 30
+
+  # PHASE 2: PROPOSE - Model Ensemble Code Generation
+  propose:
+    name: Propose - Model Ensemble
+    runs-on: ubuntu-latest
+    needs: sense
+    if: github.event_name == 'workflow_dispatch' || needs.sense.outputs.spec_changes == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download Spec Mirror
+        uses: actions/download-artifact@v4
+        with:
+          name: spec-mirror
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Route Changes to Models
+        run: |
+          node ci/model-ensemble/route-changes.js
+      
+      - name: Generate Code Proposals
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          # This would call LLM APIs with constraints from spec mirror
+          node ci/model-ensemble/generate-proposals.js
+      
+      - name: Upload Proposals
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-proposals
+          path: proposals/
+          retention-days: 7
+
+  # PHASE 3: VERIFY - Verifier Mesh
+  verify:
+    name: Verify - Verifier Mesh
+    runs-on: ubuntu-latest
+    needs: sense
+    strategy:
+      matrix:
+        gate: [formatting, lint, types, contracts, branding, version, unit, integration, property, mutation, security, build]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download Spec Mirror
+        uses: actions/download-artifact@v4
+        with:
+          name: spec-mirror
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: npm ci
+      
+      - name: Sync Mirror
+        run: |
+          node ci/spec-mirror/sync.js
+          node ci/spec-mirror/generate-graphs.js
+      
+      - name: Run Gate - ${{ matrix.gate }}
+        id: gate
+        run: |
+          if [[ "${{ matrix.gate }}" == "formatting" ]] || [[ "${{ matrix.gate }}" == "lint" ]]; then
+            node ci/verifier-mesh/run-gate.js --gate=${{ matrix.gate }} --autofix=true
+          elif [[ "${{ matrix.gate }}" == "unit" ]]; then
+            node ci/verifier-mesh/run-gate.js --gate=${{ matrix.gate }} --min-lines=80 --min-branches=70
+          elif [[ "${{ matrix.gate }}" == "integration" ]]; then
+            node ci/verifier-mesh/run-gate.js --gate=${{ matrix.gate }} --min-lines=80
+          elif [[ "${{ matrix.gate }}" == "mutation" ]]; then
+            node ci/verifier-mesh/run-gate.js --gate=${{ matrix.gate }} --min-score=70
+          else
+            node ci/verifier-mesh/run-gate.js --gate=${{ matrix.gate }}
+          fi
+      
+      - name: Upload Gate Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate-${{ matrix.gate }}-results
+          path: ci/verifier-mesh/results/
+          retention-days: 7
+
+  # PHASE 4: SHIP - Orchestrator Decision
+  ship:
+    name: Ship - Orchestrator Decision
+    runs-on: ubuntu-latest
+    needs: [sense, verify]
+    if: always()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download All Gate Results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: gate-*-results
+          merge-multiple: true
+      
+      - name: Evaluate All Gates
+        id: evaluate
+        run: |
+          node ci/orchestrator/evaluate-gates.js
+      
+      - name: Auto-fixes
+        if: steps.evaluate.outputs.all_passed == 'true'
+        run: |
+          node js/error-fix-system.js --apply --patterns=settings/error-patterns.json
+      
+      - name: Generate Evidence Pack
+        if: steps.evaluate.outputs.all_passed == 'true'
+        run: |
+          node ci/orchestrator/generate-evidence.js
+      
+      - name: Store to Mirror (only on green)
+        if: steps.evaluate.outputs.all_passed == 'true'
+        run: |
+          node ci/spec-mirror/store.js --source=./ --meta=3.0.0 --branding=".T. TogetherSystems - ModularFlux Architecture" --standard="IBM STANDARD - PERMANENT AKTIV"
+      
+      - name: Create Green Bundle
+        if: steps.evaluate.outputs.all_passed == 'true'
+        run: |
+          # Generate SBOM, checksums, coverage report
+          node ci/orchestrator/create-bundle.js
+      
+      - name: Residual Errors Check
+        if: steps.evaluate.outputs.all_passed == 'true'
+        run: |
+          pwsh -File FABRIKAGE-MIRROR-VALIDATE-ALL-ERRORS.ps1 || echo "Validation script completed with warnings"
+      
+      - name: Upload Evidence Pack
+        if: steps.evaluate.outputs.all_passed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-pack
+          path: ci/orchestrator/evidence/
+          retention-days: 90
+      
+      - name: Auto-Merge on Green
+        if: |
+          steps.evaluate.outputs.all_passed == 'true' &&
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              merge_method: 'squash'
+            })
+      
+      - name: Comment PR Status
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ steps.evaluate.outputs.all_passed }}' === 'true' ? '✅ ALL GATES PASSED' : '❌ SOME GATES FAILED';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## Live Mirror Pipeline Status\n\n${status}\n\nSee workflow run for details.`
+            })
+
+  # PHASE 5: DEPLOY - Canary Release
+  deploy:
+    name: Deploy - Canary Release
+    runs-on: ubuntu-latest
+    needs: [ship]
+    if: |
+      needs.ship.result == 'success' &&
+      (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+    environment:
+      name: production
+      url: https://api.togethersystems.com
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download Evidence Pack
+        uses: actions/download-artifact@v4
+        with:
+          name: evidence-pack
+      
+      - name: Canary Deploy
+        run: |
+          # Deploy with feature flags, canary percentage
+          node ci/runtime-guardrails/canary-deploy.js --percentage=10
+      
+      - name: Monitor SLOs
+        run: |
+          # Monitor for 5 minutes, check SLOs
+          node ci/runtime-guardrails/monitor-slos.js --duration=300
+      
+      - name: Rollout or Rollback
+        id: rollout
+        run: |
+          node ci/runtime-guardrails/decide-rollout.js
+      
+      - name: Full Rollout
+        if: steps.rollout.outputs.decision == 'rollout'
+        run: |
+          node ci/runtime-guardrails/full-rollout.js
+      
+      - name: Rollback
+        if: steps.rollout.outputs.decision == 'rollback'
+        run: |
+          node ci/runtime-guardrails/rollback.js

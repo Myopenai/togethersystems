@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Entscheidungsmatrix – [.SYSTEMS.T.SYSTEMS.]</title>
+	<script>
+		const BASE_URL = window.location.origin || 'https://myopenai.github.io/togethersystems';
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+	<style>
+		:root {
+			--bg: #0f1419;
+			--card: #151b23;
+			--text: #e6eef3;
+			--muted: #9fb3c8;
+			--accent: #10b981;
+			--danger: #ef4444;
+			--warn: #f59e0b;
+			--border: #223040;
+			--success: #34d399;
+			--notar: #8b5cf6;
+		}
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			padding: 20px;
+			min-height: 100vh;
+		}
+		.container {
+			max-width: 1600px;
+			margin: 0 auto;
+		}
+		header {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+		}
+		h1 {
+			font-size: 28px;
+			margin-bottom: 10px;
+			color: var(--accent);
+		}
+		.brand {
+			font-size: 12px;
+			color: var(--muted);
+			margin-top: 10px;
+		}
+		.grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			margin-bottom: 20px;
+		}
+		@media (max-width: 1200px) {
+			.grid { grid-template-columns: 1fr; }
+		}
+		.card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 20px;
+		}
+		.card h2 {
+			font-size: 18px;
+			margin-bottom: 15px;
+			border-bottom: 1px solid var(--border);
+			padding-bottom: 10px;
+		}
+		.input-group {
+			margin-bottom: 15px;
+		}
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-size: 13px;
+			color: var(--muted);
+		}
+		input, textarea, select {
+			width: 100%;
+			padding: 10px;
+			border-radius: 8px;
+			border: 1px solid var(--border);
+			background: var(--bg);
+			color: var(--text);
+			font-size: 14px;
+		}
+		textarea {
+			min-height: 100px;
+			font-family: monospace;
+			resize: vertical;
+		}
+		.btn {
+			padding: 12px 24px;
+			border-radius: 8px;
+			border: none;
+			background: var(--accent);
+			color: #00100a;
+			cursor: pointer;
+			font-weight: 600;
+			transition: all 0.3s;
+			margin-right: 10px;
+			margin-bottom: 10px;
+		}
+		.btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+		}
+		.btn.secondary {
+			background: var(--notar);
+			color: white;
+		}
+		.btn.danger {
+			background: var(--danger);
+			color: white;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 15px;
+		}
+		th, td {
+			padding: 10px;
+			text-align: left;
+			border-bottom: 1px solid var(--border);
+		}
+		th {
+			background: var(--bg);
+			font-weight: 600;
+			position: sticky;
+			top: 0;
+		}
+		tr:hover {
+			background: rgba(16, 185, 129, 0.1);
+		}
+		.result {
+			background: var(--card);
+			border: 1px solid var(--accent);
+			border-radius: 8px;
+			padding: 15px;
+			margin-top: 20px;
+		}
+		.result h3 {
+			color: var(--accent);
+			margin-bottom: 10px;
+		}
+		.mermaid {
+			background: var(--bg);
+			border-radius: 8px;
+			padding: 20px;
+			margin-top: 20px;
+		}
+		.excel-formula {
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 10px;
+			font-family: monospace;
+			font-size: 12px;
+			margin-top: 10px;
+			overflow-x: auto;
+		}
+		.badge {
+			display: inline-block;
+			padding: 4px 8px;
+			border-radius: 4px;
+			font-size: 11px;
+			font-weight: 600;
+			margin-left: 10px;
+		}
+		.badge.match {
+			background: var(--success);
+			color: #00110b;
+		}
+		.badge.no-match {
+			background: var(--muted);
+			color: var(--bg);
+		}
+	</style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>🧠 Universelle Entscheidungsmatrix</h1>
+			<div class="brand">[.SYSTEMS.T.SYSTEMS.] TogetherSystems International TTT</div>
+			<p style="margin-top: 15px; color: var(--muted); font-size: 14px;">
+				Systematische Erfassung aller Möglichkeiten · Excel-Logik · Flowchart · Bug-Fix-System
+			</p>
+		</header>
+
+		<div class="grid">
+			<div class="card">
+				<h2>1. Einflussfaktoren definieren</h2>
+				<div class="input-group">
+					<label>Faktor A (z.B. Kundentyp, Bug-Typ, Status)</label>
+					<input type="text" id="factorA" placeholder="z.B. Kundentyp">
+				</div>
+				<div class="input-group">
+					<label>Ausprägungen A (kommagetrennt)</label>
+					<input type="text" id="valuesA" placeholder="Neu, Bestandskunde, VIP">
+				</div>
+				<div class="input-group">
+					<label>Faktor B (z.B. Umsatz, Priorität, Schweregrad)</label>
+					<input type="text" id="factorB" placeholder="z.B. Umsatz">
+				</div>
+				<div class="input-group">
+					<label>Ausprägungen B (kommagetrennt)</label>
+					<input type="text" id="valuesB" placeholder="0, 10000, 50000">
+				</div>
+				<div class="input-group">
+					<label>Faktor C (optional)</label>
+					<input type="text" id="factorC" placeholder="z.B. Land">
+				</div>
+				<div class="input-group">
+					<label>Ausprägungen C (kommagetrennt)</label>
+					<input type="text" id="valuesC" placeholder="DE, AT, CH">
+				</div>
+				<button class="btn" onclick="createMatrix()">📊 Matrix erstellen</button>
+			</div>
+
+			<div class="card">
+				<h2>2. Regeln definieren</h2>
+				<div class="input-group">
+					<label>Regel-ID</label>
+					<input type="text" id="ruleId" placeholder="R1">
+				</div>
+				<div class="input-group">
+					<label>Bedingung A</label>
+					<select id="conditionA">
+						<option value="*">Beliebig (*)</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<label>Bedingung B</label>
+					<select id="conditionB">
+						<option value="*">Beliebig (*)</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<label>Bedingung C (optional)</label>
+					<select id="conditionC">
+						<option value="*">Beliebig (*)</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<label>Ergebnis</label>
+					<input type="text" id="result" placeholder="z.B. Premium, Standard, VIP-Handling">
+				</div>
+				<button class="btn secondary" onclick="addRule()">➕ Regel hinzufügen</button>
+				<button class="btn danger" onclick="clearRules()">🗑️ Alle Regeln löschen</button>
+			</div>
+		</div>
+
+		<div class="card" style="margin-top: 20px;">
+			<h2>3. Regeltabelle</h2>
+			<table id="rulesTable">
+				<thead>
+					<tr>
+						<th>Regel-ID</th>
+						<th id="headerA">Faktor A</th>
+						<th id="headerB">Faktor B</th>
+						<th id="headerC">Faktor C</th>
+						<th>Ergebnis</th>
+						<th>Aktion</th>
+					</tr>
+				</thead>
+				<tbody id="rulesBody">
+					<tr><td colspan="6" style="text-align: center; color: var(--muted);">Keine Regeln definiert</td></tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="grid" style="margin-top: 20px;">
+			<div class="card">
+				<h2>4. Test-Eingabe</h2>
+				<div class="input-group">
+					<label id="testLabelA">Faktor A</label>
+					<select id="testA"></select>
+				</div>
+				<div class="input-group">
+					<label id="testLabelB">Faktor B</label>
+					<select id="testB"></select>
+				</div>
+				<div class="input-group">
+					<label id="testLabelC">Faktor C</label>
+					<select id="testC"></select>
+				</div>
+				<button class="btn" onclick="evaluate()">🔍 Ergebnis berechnen</button>
+				<div id="testResult" class="result" style="display: none;">
+					<h3>Ergebnis</h3>
+					<p id="resultText"></p>
+					<div class="excel-formula" id="excelFormula"></div>
+				</div>
+			</div>
+
+			<div class="card">
+				<h2>5. Flowchart (Mermaid)</h2>
+				<div id="mermaidContainer" class="mermaid">
+					flowchart TD
+						A[Start] --> B[Eingaben laden]
+						B --> C{Erste Entscheidung}
+						C -->|Ja| D[Ergebnis 1]
+						C -->|Nein| E[Ergebnis 2]
+						D --> F[Ende]
+						E --> F
+				</div>
+				<button class="btn secondary" onclick="generateFlowchart()">🔄 Flowchart generieren</button>
+			</div>
+		</div>
+
+		<div class="card" style="margin-top: 20px;">
+			<h2>6. Excel-Formeln</h2>
+			<div id="excelFormulas">
+				<p style="color: var(--muted);">Erstelle zuerst eine Matrix und Regeln, dann werden hier die Excel-Formeln angezeigt.</p>
+			</div>
+		</div>
+
+		<div class="card" style="margin-top: 20px;">
+			<h2>7. Export & Integration</h2>
+			<button class="btn" onclick="exportJSON()">💾 Als JSON exportieren</button>
+			<button class="btn secondary" onclick="exportExcel()">📊 Als Excel-Formel exportieren</button>
+			<button class="btn secondary" onclick="exportMermaid()">📈 Als Mermaid exportieren</button>
+			<button class="btn" onclick="checkExisting()">🔍 Vorhandene Lösungen prüfen</button>
+		</div>
+	</div>
+
+	<script>
+		// [.SYSTEMS.T.SYSTEMS.] UNIVERSAL DECISION MATRIX
+		
+		mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { primaryColor: '#10b981' } });
+		
+		let factors = { A: null, B: null, C: null };
+		let factorValues = { A: [], B: [], C: [] };
+		let rules = [];
+		
+		// Matrix erstellen
+		function createMatrix() {
+			try {
+				factors.A = document.getElementById('factorA').value.trim();
+				factors.B = document.getElementById('factorB').value.trim();
+				factors.C = document.getElementById('factorC').value.trim();
+				
+				factorValues.A = document.getElementById('valuesA').value.split(',').map(v => v.trim()).filter(v => v);
+				factorValues.B = document.getElementById('valuesB').value.split(',').map(v => v.trim()).filter(v => v);
+				factorValues.C = document.getElementById('valuesC').value.split(',').map(v => v.trim()).filter(v => v);
+				
+				// Header aktualisieren
+				document.getElementById('headerA').textContent = factors.A || 'Faktor A';
+				document.getElementById('headerB').textContent = factors.B || 'Faktor B';
+				document.getElementById('headerC').textContent = factors.C || 'Faktor C';
+				
+				// Test-Labels aktualisieren
+				document.getElementById('testLabelA').textContent = factors.A || 'Faktor A';
+				document.getElementById('testLabelB').textContent = factors.B || 'Faktor B';
+				document.getElementById('testLabelC').textContent = factors.C || 'Faktor C';
+				
+				// Dropdowns aktualisieren
+				updateDropdowns();
+				
+				// Regeln rendern
+				renderRules();
+				
+				console.log('[FABRIKAGE] Matrix erstellt:', factors, factorValues);
+				alert('Matrix erstellt! Jetzt können Sie Regeln hinzufügen.');
+			} catch(e) {
+				console.error('[FABRIKAGE] createMatrix error:', e);
+				alert('Fehler: ' + e.message);
+			}
+		}
+		
+		// Dropdowns aktualisieren
+		function updateDropdowns() {
+			// Condition A
+			const selectA = document.getElementById('conditionA');
+			selectA.innerHTML = '<option value="*">Beliebig (*)</option>';
+			factorValues.A.forEach(v => {
+				const opt = document.createElement('option');
+				opt.value = v;
+				opt.textContent = v;
+				selectA.appendChild(opt);
+			});
+			
+			// Condition B
+			const selectB = document.getElementById('conditionB');
+			selectB.innerHTML = '<option value="*">Beliebig (*)</option>';
+			factorValues.B.forEach(v => {
+				const opt = document.createElement('option');
+				opt.value = v;
+				opt.textContent = v;
+				selectB.appendChild(opt);
+			});
+			
+			// Condition C
+			const selectC = document.getElementById('conditionC');
+			selectC.innerHTML = '<option value="*">Beliebig (*)</option>';
+			factorValues.C.forEach(v => {
+				const opt = document.createElement('option');
+				opt.value = v;
+				opt.textContent = v;
+				selectC.appendChild(opt);
+			});
+			
+			// Test Dropdowns
+			const testA = document.getElementById('testA');
+			testA.innerHTML = '<option value="">-- Wählen --</option>';
+			factorValues.A.forEach(v => {
+				const opt = document.createElement('option');
+				opt.value = v;
+				opt.textContent = v;
+				testA.appendChild(opt);
+			});
+			
+			const testB = document.getElementById('testB');
+			testB.innerHTML = '<option value="">-- Wählen --</option>';
+			factorValues.B.forEach(v => {
+				const opt = document.createElement('option');
+				opt.value = v;
+				opt.textContent = v;
+				testB.appendChild(opt);
+			});
+			
+			const testC = document.getElementById('testC');
+			testC.innerHTML = '<option value="">-- Wählen --</option>';
+			factorValues.C.forEach(v => {
+				const opt = document.createElement('option');
+				opt.value = v;
+				opt.textContent = v;
+				testC.appendChild(opt);
+			});
+		}
+		
+		// Regel hinzufügen
+		function addRule() {
+			try {
+				const ruleId = document.getElementById('ruleId').value.trim();
+				const conditionA = document.getElementById('conditionA').value;
+				const conditionB = document.getElementById('conditionB').value;
+				const conditionC = document.getElementById('conditionC').value;
+				const result = document.getElementById('result').value.trim();
+				
+				if (!ruleId || !result) {
+					alert('Bitte Regel-ID und Ergebnis ausfüllen.');
+					return;
+				}
+				
+				rules.push({
+					id: ruleId,
+					conditionA,
+					conditionB,
+					conditionC,
+					result
+				});
+				
+				// Formular zurücksetzen
+				document.getElementById('ruleId').value = 'R' + (rules.length + 1);
+				document.getElementById('result').value = '';
+				
+				renderRules();
+				generateExcelFormulas();
+				
+				console.log('[FABRIKAGE] Regel hinzugefügt:', rules[rules.length - 1]);
+			} catch(e) {
+				console.error('[FABRIKAGE] addRule error:', e);
+				alert('Fehler: ' + e.message);
+			}
+		}
+		
+		// Regeln rendern
+		function renderRules() {
+			const tbody = document.getElementById('rulesBody');
+			
+			if (rules.length === 0) {
+				tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted);">Keine Regeln definiert</td></tr>';
+				return;
+			}
+			
+			tbody.innerHTML = rules.map((rule, idx) => `
+				<tr>
+					<td>${escapeHtml(rule.id)}</td>
+					<td>${escapeHtml(rule.conditionA)}</td>
+					<td>${escapeHtml(rule.conditionB)}</td>
+					<td>${escapeHtml(rule.conditionC)}</td>
+					<td><strong>${escapeHtml(rule.result)}</strong></td>
+					<td>
+						<button class="btn danger" style="padding: 4px 8px; font-size: 12px;" onclick="deleteRule(${idx})">🗑️</button>
+					</td>
+				</tr>
+			`).join('');
+		}
+		
+		// Regel löschen
+		function deleteRule(idx) {
+			if (confirm('Regel wirklich löschen?')) {
+				rules.splice(idx, 1);
+				renderRules();
+				generateExcelFormulas();
+			}
+		}
+		
+		// Alle Regeln löschen
+		function clearRules() {
+			if (confirm('Alle Regeln wirklich löschen?')) {
+				rules = [];
+				renderRules();
+				generateExcelFormulas();
+			}
+		}
+		
+		// Ergebnis berechnen
+		function evaluate() {
+			try {
+				const testA = document.getElementById('testA').value;
+				const testB = document.getElementById('testB').value;
+				const testC = document.getElementById('testC').value;
+				
+				if (!testA || !testB) {
+					alert('Bitte mindestens Faktor A und B auswählen.');
+					return;
+				}
+				
+				// Finde passende Regel
+				let matchedRule = null;
+				for (const rule of rules) {
+					const matchA = rule.conditionA === '*' || rule.conditionA === testA;
+					const matchB = rule.conditionB === '*' || rule.conditionB === testB;
+					const matchC = rule.conditionC === '*' || rule.conditionC === testC || !testC;
+					
+					if (matchA && matchB && matchC) {
+						matchedRule = rule;
+						break; // Erste passende Regel
+					}
+				}
+				
+				const resultEl = document.getElementById('testResult');
+				const resultText = document.getElementById('resultText');
+				const excelFormula = document.getElementById('excelFormula');
+				
+				if (matchedRule) {
+					resultText.innerHTML = `
+						<strong>Ergebnis:</strong> ${escapeHtml(matchedRule.result)}<br>
+						<span class="badge match">✓ Regel ${escapeHtml(matchedRule.id)} passt</span>
+					`;
+					
+					// Excel-Formel generieren
+					const formula = generateExcelFormulaForRule(matchedRule);
+					excelFormula.textContent = formula;
+				} else {
+					resultText.innerHTML = `
+						<strong>Keine passende Regel gefunden</strong><br>
+						<span class="badge no-match">✗ Kein Match</span>
+					`;
+					excelFormula.textContent = 'Keine passende Regel';
+				}
+				
+				resultEl.style.display = 'block';
+			} catch(e) {
+				console.error('[FABRIKAGE] evaluate error:', e);
+				alert('Fehler: ' + e.message);
+			}
+		}
+		
+		// Excel-Formel für Regel generieren
+		function generateExcelFormulaForRule(rule) {
+			const conditions = [];
+			
+			if (rule.conditionA !== '*') {
+				conditions.push(`A2="${rule.conditionA}"`);
+			}
+			if (rule.conditionB !== '*') {
+				conditions.push(`B2="${rule.conditionB}"`);
+			}
+			if (rule.conditionC !== '*' && factors.C) {
+				conditions.push(`C2="${rule.conditionC}"`);
+			}
+			
+			if (conditions.length === 0) {
+				return `="${rule.result}"`;
+			}
+			
+			return `=WENN(UND(${conditions.join(';')});"${rule.result}";"")`;
+		}
+		
+		// Excel-Formeln generieren
+		function generateExcelFormulas() {
+			const container = document.getElementById('excelFormulas');
+			
+			if (rules.length === 0) {
+				container.innerHTML = '<p style="color: var(--muted);">Erstelle zuerst eine Matrix und Regeln.</p>';
+				return;
+			}
+			
+			// Vollständige verschachtelte WENN-Formel
+			let nestedFormula = '=WENN(';
+			const formulaParts = [];
+			
+			rules.forEach((rule, idx) => {
+				const conditions = [];
+				if (rule.conditionA !== '*') conditions.push(`A2="${rule.conditionA}"`);
+				if (rule.conditionB !== '*') conditions.push(`B2="${rule.conditionB}"`);
+				if (rule.conditionC !== '*' && factors.C) conditions.push(`C2="${rule.conditionC}"`);
+				
+				if (conditions.length > 0) {
+					formulaParts.push(`UND(${conditions.join(';')});"${rule.result}"`);
+				} else {
+					formulaParts.push(`WAHR;"${rule.result}"`);
+				}
+			});
+			
+			formulaParts.forEach((part, idx) => {
+				if (idx < formulaParts.length - 1) {
+					nestedFormula += part + ';WENN(';
+				} else {
+					nestedFormula += part;
+				}
+			});
+			
+			nestedFormula += ';"Keine passende Regel")' + ')'.repeat(formulaParts.length - 1);
+			
+			// XLOOKUP-Variante (moderne Excel)
+			let xlookupFormula = '=XLOOKUP(WAHR;';
+			const matchArray = rules.map(rule => {
+				const conditions = [];
+				if (rule.conditionA !== '*') conditions.push(`A2="${rule.conditionA}"`);
+				if (rule.conditionB !== '*') conditions.push(`B2="${rule.conditionB}"`);
+				if (rule.conditionC !== '*' && factors.C) conditions.push(`C2="${rule.conditionC}"`);
+				
+				if (conditions.length > 0) {
+					return `UND(${conditions.join(';')})`;
+				}
+				return 'WAHR';
+			}).join(';');
+			
+			const resultArray = rules.map(rule => `"${rule.result}"`).join(';');
+			xlookupFormula += `{${matchArray}};{${resultArray}};"Keine passende Regel")`;
+			
+			container.innerHTML = `
+				<h3>Verschachtelte WENN-Formel (klassisch)</h3>
+				<div class="excel-formula">${escapeHtml(nestedFormula)}</div>
+				
+				<h3 style="margin-top: 20px;">XLOOKUP-Formel (moderne Excel)</h3>
+				<div class="excel-formula">${escapeHtml(xlookupFormula)}</div>
+				
+				<h3 style="margin-top: 20px;">Regeltabelle (empfohlen)</h3>
+				<p style="color: var(--muted); margin-top: 10px;">
+					Erstelle eine Regeltabelle in Excel mit Spalten: Regel-ID, ${factors.A || 'Faktor A'}, ${factors.B || 'Faktor B'}, ${factors.C ? factors.C + ', ' : ''}Ergebnis<br>
+					Dann verwende: <code>=INDEX(Ergebnis-Spalte;VERGLEICH(WAHR;Regel_passt-Spalte;0))</code>
+				</p>
+			`;
+		}
+		
+		// Flowchart generieren
+		function generateFlowchart() {
+			if (rules.length === 0) {
+				alert('Erstelle zuerst Regeln.');
+				return;
+			}
+			
+			let mermaidCode = 'flowchart TD\n';
+			mermaidCode += '    A[Start] --> B[Eingaben laden]\n';
+			
+			let nodeCounter = 0;
+			let lastNode = 'B';
+			
+			rules.forEach((rule, idx) => {
+				const nodeId = `N${nodeCounter++}`;
+				const resultId = `R${idx}`;
+				
+				// Entscheidungsknoten
+				const conditions = [];
+				if (rule.conditionA !== '*') conditions.push(`${factors.A || 'A'}=${rule.conditionA}`);
+				if (rule.conditionB !== '*') conditions.push(`${factors.B || 'B'}=${rule.conditionB}`);
+				if (rule.conditionC !== '*' && factors.C) conditions.push(`${factors.C}=${rule.conditionC}`);
+				
+				const conditionText = conditions.length > 0 ? conditions.join(' UND ') : 'Beliebig';
+				
+				mermaidCode += `    ${lastNode} --> ${nodeId}{${conditionText}?}\n`;
+				mermaidCode += `    ${nodeId} -->|Ja| ${resultId}[${rule.result}]\n`;
+				mermaidCode += `    ${resultId} --> Z[Ende]\n`;
+				
+				if (idx < rules.length - 1) {
+					mermaidCode += `    ${nodeId} -->|Nein| `;
+					lastNode = `N${nodeCounter}`;
+				} else {
+					mermaidCode += `    ${nodeId} -->|Nein| Z[Ende]\n`;
+				}
+			});
+			
+			// Mermaid neu rendern
+			const container = document.getElementById('mermaidContainer');
+			container.innerHTML = `<div class="mermaid">${mermaidCode}</div>`;
+			mermaid.init(undefined, container.querySelector('.mermaid'));
+		}
+		
+		// Export JSON
+		function exportJSON() {
+			const data = {
+				factors,
+				factorValues,
+				rules,
+				exportedAt: new Date().toISOString()
+			};
+			
+			const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `decision-matrix-${new Date().toISOString().split('T')[0]}.json`;
+			a.click();
+			URL.revokeObjectURL(url);
+		}
+		
+		// Export Excel-Formel
+		function exportExcel() {
+			generateExcelFormulas();
+			const formulas = document.getElementById('excelFormulas').innerText;
+			
+			const blob = new Blob([formulas], { type: 'text/plain' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `excel-formulas-${new Date().toISOString().split('T')[0]}.txt`;
+			a.click();
+			URL.revokeObjectURL(url);
+		}
+		
+		// Export Mermaid
+		function exportMermaid() {
+			generateFlowchart();
+			const mermaidCode = document.getElementById('mermaidContainer').querySelector('.mermaid').textContent;
+			
+			const blob = new Blob([mermaidCode], { type: 'text/plain' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `flowchart-${new Date().toISOString().split('T')[0]}.mmd`;
+			a.click();
+			URL.revokeObjectURL(url);
+		}
+		
+		// Vorhandene Lösungen prüfen
+		function checkExisting() {
+			try {
+				// Prüfe localStorage
+				const existing = localStorage.getItem('decisionMatrix.data');
+				if (existing) {
+					const data = JSON.parse(existing);
+					if (confirm('Vorhandene Matrix gefunden. Laden?')) {
+						factors = data.factors || factors;
+						factorValues = data.factorValues || factorValues;
+						rules = data.rules || [];
+						
+						// UI aktualisieren
+						document.getElementById('factorA').value = factors.A || '';
+						document.getElementById('factorB').value = factors.B || '';
+						document.getElementById('factorC').value = factors.C || '';
+						document.getElementById('valuesA').value = factorValues.A.join(', ');
+						document.getElementById('valuesB').value = factorValues.B.join(', ');
+						document.getElementById('valuesC').value = factorValues.C.join(', ');
+						
+						createMatrix();
+						renderRules();
+						generateExcelFormulas();
+					}
+				} else {
+					alert('Keine vorhandene Matrix gefunden.');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] checkExisting error:', e);
+				alert('Fehler beim Prüfen: ' + e.message);
+			}
+		}
+		
+		// Helper
+		function escapeHtml(text) {
+			const div = document.createElement('div');
+			div.textContent = text;
+			return div.innerHTML;
+		}
+		
+		// Auto-Save
+		setInterval(() => {
+			if (rules.length > 0) {
+				const data = { factors, factorValues, rules };
+				localStorage.setItem('decisionMatrix.data', JSON.stringify(data));
+			}
+		}, 5000);
+		
+		// Initialisierung
+		checkExisting();
+		
+		console.log('[FABRIKAGE] Entscheidungsmatrix geladen');
+		console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+	</script>
+</body>
+</html>

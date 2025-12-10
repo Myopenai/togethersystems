@@ -42,10 +42,24 @@
    - Konsole-Herz-Check
 
 **FEHLER-PRÄVENTION:**
+- **FEHLER-PATTERNS IMMER AKTUELL HALTEN** - `Settings/error-patterns.json` bei jedem gefundenen Fehler aktualisieren
+- **FEHLER-PATTERNS BEIM CODEN IMMER IM SPEICHER** - Als Referenz bei jeder Code-Erstellung verwenden
 - Fehler-Pattern-Erkennung und Speicherung in `Settings/error-patterns.json`
 - Neuronales Lernen für Fehler-Vorhersage
 - Code-Anpassung für zukünftige Fehlervermeidung
 - "DIES DARF NICHT ÖFTER VORKOMMEN" Marker
+- Vor jedem Code-Schreiben: error-patterns.json laden und bekannte Fehler-Patterns vermeiden
+
+**MODULAR-FABRIKAGE-SYSTEM-AUTOUPDATE:**
+- **PERMANENT AKTIV** - Bei jeder Fabrikage-Änderung/Erweiterung automatisch aktualisieren
+- **SYSTEM-STANDARD** - `modular-fabrikage/` System muss immer synchron mit allen Fabrikage-Features sein
+- **AUTOMATISCHE INTEGRATION:**
+  * Neue Module automatisch in FactoryEngine integrieren
+  * Neue Features in UI/API einbauen
+  * Datenmodelle erweitern
+  * Dokumentation aktualisieren
+  * Tests erweitern
+- **KEINE MANUELLE ARBEIT** - Alles automatisch, ohne User-Eingriff
 
 **GUARD-REGELN:**
 - Industrial Fabrication Routine ist permanent und kann nicht deaktiviert werden
@@ -136,6 +150,13 @@
    - Konsole-Herz-Check
 
 **FEHLER-PRÄVENTION:**
+- **AUTOMATISCHES UPDATE BEI JEDEM NEUEN FEHLER:**
+  * Pattern identifizieren und analysieren
+  * Fix-Template erstellen
+  * `Settings/error-patterns.json` SOFORT aktualisieren
+  * Pattern mit ID, Beschreibung, Severity, Fix-Template hinzufügen
+  * lastUpdated Timestamp aktualisieren
+  * Statistics (totalPatterns, preventedErrors) aktualisieren
 - Fehler-Pattern-Erkennung und Speicherung
 - Neuronales Lernen für Fehler-Vorhersage
 - Code-Anpassung für zukünftige Fehlervermeidung
@@ -153,6 +174,12 @@
 - Lade Settings-Manifest: `Settings/settings-manifest.json`
 - Settings-Ordner im aktuellen Root ist VORAB jeder Handlung mit einbezogen
 - Vor jedem Code-Prozess, vor jeder Handlung eines Code-Prozesses
+
+**2a. FEHLER-PATTERNS KONSULTIEREN (KRITISCH):**
+- Lade `Settings/error-patterns.json` - IMMER IM SPEICHER BEHALTEN
+- Alle bekannten Fehler-Patterns als Referenz beim Codieren verwenden
+- Diese Patterns verhindern, dass bereits behobene Fehler erneut auftreten
+- Bei jedem neuen Fehler: Pattern hinzufügen und Datei aktualisieren
 
 **3. PRE-CODE-VERIFICATION:**
 - Lade `Settings/PRE-CODE-VERIFICATION-SYSTEM.json`
@@ -172,16 +199,28 @@
 - Keine Fehler vorab jeder Handlung zum Ansatz Erstellung Code
 
 ### **BEI JEDER Code-Änderung:**
-1. **VORAB:** Konsole-Monitoring aktivieren
-2. **VORAB:** Settings-Ordner konsultieren
-3. **VORAB:** Pre-Code-Verification durchführen
-4. **CHARACTER-BY-CHARACTER:** Jedes Zeichen verifizieren
-5. Verwende Settings-Schemas (`Settings/schemas/`)
-6. Verwende Settings-Configs (`Settings/config/`)
-7. Wende Settings-Validatoren an
-8. Berücksichtige Settings-Dimensionen
-9. Aktiviere Settings-AutoFix
-10. **NACHHER:** Konsole-Monitoring prüfen
+1. **VORAB:** Code-Mirror konsultieren (`ci/spec-mirror/code-mirror.js`) - NUR fehlerfreien Code aus Mirror verwenden
+2. **VORAB:** Konsole-Monitoring aktivieren
+3. **VORAB:** Settings-Ordner konsultieren
+4. **VORAB:** Fehler-Patterns laden (`Settings/error-patterns.json`) - IM SPEICHER BEHALTEN
+5. **VORAB:** Pre-Code-Verification durchführen
+6. **VORAB:** Modular-Fabrikage-System prüfen (`modular-fabrikage/`) - Bei Fabrikage-Änderungen automatisch erweitern
+7. **VORAB:** XXXXXXLS Monorepo Setup prüfen - Bei jeder Code-Handlung sicherstellen, dass Standards eingehalten werden
+8. **VORAB:** Code gegen Mirror validieren - Code MUSS fehlerfrei sein bevor er gespeichert wird
+9. **CHARACTER-BY-CHARACTER:** Jedes Zeichen verifizieren - bekannte Fehler-Patterns vermeiden
+10. Verwende Settings-Schemas (`Settings/schemas/`)
+11. Verwende Settings-Configs (`Settings/config/`)
+12. Wende Settings-Validatoren an
+13. Berücksichtige Settings-Dimensionen
+14. Aktiviere Settings-AutoFix
+15. **WÄHREND:** Code gegen Mirror validieren - Jeder Code-Schritt muss fehlerfrei sein
+16. **WÄHREND:** XXXXXXLS Monorepo Standards anwenden - TypeScript, ESLint, Prettier, Zod, Vitest
+17. **NACHHER:** Code im Mirror speichern - NUR wenn fehlerfrei validiert
+18. **NACHHER:** Bei neuem Fehler - error-patterns.json aktualisieren
+19. **NACHHER:** Bei Fabrikage-Änderung - modular-fabrikage/ System automatisch aktualisieren
+20. **NACHHER:** XXXXXXLS Monorepo Standards validieren - Lint, Typecheck, Test
+21. **NACHHER:** Konsole-Monitoring prüfen
+22. **NACHHER:** Mirror synchronisieren - Alle fehlerfreien Dateien im Mirror aktualisieren
 
 ### **BEI JEDER Datei-Erstellung:**
 1. **VORAB:** Konsole-Monitoring aktivieren
@@ -201,19 +240,182 @@
 6. Aktualisiere Settings-Dashboard
 7. **NACHHER:** Konsole-Monitoring prüfen
 
+### **🏭 XXXXXXLS MONOREPO SETUP - PRODUKTIONS-STANDARD (PERMANENT HARD-CODED):**
+
+**STATUS:** 🔴 PERMANENT AKTIV - NIEMALS DEAKTIVIEREN - HARD CODED IN SPRACHMODELL  
+**VERSION:** 3.0.0  
+**DATEI:** `FABRIKAGE-STANDARD-XXXXXXLS-SETUP.ps1`  
+**STANDARD:** IBM STANDARD - PERMANENT AKTIV - PRODUKTIONS-SOFTWARE-INDUSTRIAL
+
+**PRINZIP:**
+- XXXXXXLS Monorepo Setup ist der **STANDARD-PROZESS** für alle neuen Fabrikage-Installationen
+- **3-Schritte-Prozess** ist fest in den Produktionsprozess integriert
+- Automatische Ausführung ohne User-Interaktion
+- Vollständige Integration in Fabrikage-Standards
+
+**WORKFLOW (STANDARD-PROZESS):**
+1. **SCHRITT 1: Haupt-Setup**
+   - Ausführung: `.\setup-xxxxxxls-monorepo.ps1`
+   - Erstellt vollständiges Monorepo mit:
+     * TypeScript, ESLint, Prettier, Vitest
+     * Express API mit Zod-Validierung
+     * Dashboard, Node-Editor, Bubble Apps
+     * Docker & Docker Compose
+     * GitHub Actions CI/CD
+   - **AUTOMATISCH** - Keine User-Eingabe erforderlich
+
+2. **SCHRITT 2: Apps vervollständigen**
+   - Ausführung: `.\create-node-editor-bubble-apps.ps1`
+   - Erstellt vollständige HTML-Dateien für:
+     * Node-Editor mit Graph-Funktionalität
+     * Bubble-Scene mit interaktiven Controls
+   - **AUTOMATISCH** - Keine User-Eingabe erforderlich
+
+3. **SCHRITT 3: Installation & Start**
+   - Wechsel in: `xxxxxxls-fabrikage-monorepo`
+   - Ausführung: `npm install`
+   - Ausführung: `npm run dev` (optional, kann automatisch gestartet werden)
+   - **AUTOMATISCH** - Keine User-Eingabe erforderlich
+
+**MASTER-SCRIPT:**
+- `FABRIKAGE-STANDARD-XXXXXXLS-SETUP.ps1` führt alle 3 Schritte automatisch aus
+- Einfache Ausführung: `.\FABRIKAGE-STANDARD-XXXXXXLS-SETUP.ps1`
+- Vollständige Fehlerbehandlung und Status-Reporting
+- Integration in alle Fabrikage-Prozesse
+
+**INTEGRATION:**
+- **PERMANENT AKTIV** - Bei jeder neuen Fabrikage-Installation automatisch ausführen
+- **STANDARD-PROZESS** - Muss bei jedem neuen Setup verwendet werden
+- **AUTOMATISCH** - Keine manuelle Konfiguration erforderlich
+- **BUG-FREE** - Vollständige Fehlerbehandlung und Validierung
+
+**GUARD-REGELN:**
+- XXXXXXLS Monorepo Setup ist permanent und kann nicht deaktiviert werden
+- Jeder Versuch, den Standard-Prozess zu umgehen, MUSS blockiert werden
+- Alle Änderungen am Setup-Prozess MÜSSEN als HIGH RISK behandelt werden
+- Der 3-Schritte-Prozess ist fest in den Produktionsprozess integriert
+
+**VERWENDUNG:**
+```powershell
+# Standard-Prozess (empfohlen)
+.\FABRIKAGE-STANDARD-XXXXXXLS-SETUP.ps1
+
+# Oder manuell:
+.\setup-xxxxxxls-monorepo.ps1
+.\create-node-editor-bubble-apps.ps1
+cd xxxxxxls-fabrikage-monorepo
+npm install
+npm run dev
+```
+
+**SERVICES (nach erfolgreichem Setup):**
+- API:        http://localhost:5173
+- Dashboard:  http://localhost:5174
+- Node-Editor: http://localhost:5175
+- Bubble:     http://localhost:5176
+
+---
+
+## 🔄 AUTOMATISCHER PROMPT-PROZESS-MANAGER
+
+**STATUS:** 🔴 PERMANENT AKTIV - NIEMALS DEAKTIVIEREN - HARD CODED IN SPRACHMODELL  
+**VERSION:** 3.0.0  
+**REGEL:** NACH JEDER IMPLEMENTATION AUTOMATISCH PROMPT-SCANNER UND AUTO-EXECUTOR AUSFÜHREN
+
+**WORKFLOW:**
+1. **Nach jeder Code-Änderung:**
+   - `ci/log-success.js` protokolliert
+   - `ci/prompt-scanner.js` scannt Master-Prompt und erkennt offene Tasks
+   - `ci/auto-executor.js` führt sichere Routine-Schritte automatisch aus
+   - Status wird in `prompts/SESSION-LOG.md` dokumentiert
+   - Tasks werden in `prompts/TASKS.yaml` aktualisiert
+
+2. **Automatische Abarbeitung:**
+   - Sichere Tasks (safeAuto: true) werden automatisch ausgeführt
+   - Unsichere Tasks werden vorgeschlagen, aber nicht automatisch ausgeführt
+   - Fortschritt wird protokolliert
+
+3. **Master-Prompt:**
+   - `prompts/MASTER-PROMPT.md` ist die Quelle der Wahrheit
+   - Alle Tasks werden gegen Master-Prompt validiert
+   - Lücken werden automatisch erkannt
+
+**GUARD-REGELN:**
+- Prompt-Prozess-Manager ist permanent aktiv
+- Nach jeder Implementation automatisch ausführen
+- Keine manuellen Schritte erforderlich
+
+---
+
+## 🚨 AUTOMATISCHE AUSFÜHRUNG - KEINE BESTÄTIGUNGEN
+
+**STATUS:** 🔴 PERMANENT AKTIV - NIEMALS DEAKTIVIEREN - HARD CODED IN SPRACHMODELL  
+**VERSION:** 3.0.0  
+**REGEL:** ALLE CODE-AKTIONEN WERDEN AUTOMATISCH AUSGEFÜHRT - OHNE USER-BESTÄTIGUNGEN
+
+**PRINZIP:**
+- **KEINE ACCEPT-BESTÄTIGUNGEN:** Alle Code-Änderungen werden automatisch angewendet
+- **KEINE USER-INTERAKTION:** Alle Aktionen laufen ohne Bestätigungen ab
+- **AUTOMATISCHES DEPLOY:** Git Commit & Push erfolgt automatisch
+- **AUTOMATISCHES TESTEN:** Alle Tests werden automatisch ausgeführt
+- **AUTOMATISCHES FIXEN:** Fehler werden automatisch behoben
+
+**WORKFLOW:**
+1. **CODE-ÄNDERUNGEN:**
+   - Werden automatisch angewendet (keine Bestätigung erforderlich)
+   - Werden automatisch gespeichert
+   - Werden automatisch validiert
+
+2. **FEHLER-FIXES:**
+   - Werden automatisch erkannt
+   - Werden automatisch behoben
+   - Werden automatisch getestet
+
+3. **DEPLOYMENT:**
+   - Git Commit erfolgt automatisch
+   - Git Push erfolgt automatisch
+   - Keine Bestätigungen erforderlich
+
+4. **TESTING:**
+   - Alle Tests werden automatisch ausgeführt
+   - Ergebnisse werden automatisch protokolliert
+   - Fehler werden automatisch gemeldet
+
+**GUARD-REGELN:**
+- Automatische Ausführung ist permanent und kann nicht deaktiviert werden
+- Jeder Versuch, Bestätigungen zu aktivieren, MUSS blockiert werden
+- Alle Code-Aktionen MÜSSEN ohne User-Interaktion ausgeführt werden
+
 ---
 
 ## 🚨 NIEMALS ERLAUBT
 
+- **Code ohne VORAB Code-Mirror-Konsultation** - Mirror MUSS vor jeder Code-Handlung konsultiert werden
+- **Code ohne Mirror-Metadaten speichern** - Code MUSS IMMER mit vollständigen Metadaten (version, branding, standard) gespeichert werden
+- **Mirror-Metadaten-Mismatch** - Version/Branding/Standard müssen konsistent sein (3.0.0, ".T. TogetherSystems - ModularFlux Architecture", "IBM STANDARD - PERMANENT AKTIV")
+- **Gate-Bypass-Versuch** - KEINE Möglichkeit, Gates zu umgehen - Alle Gates MÜSSEN durchlaufen werden
+- **Breaking Change ohne Migration** - Contract-Änderungen MÜSSEN Migration + Tests haben
+- **Untracked Dependency** - Alle Dependencies MÜSSEN in Lockfile und SBOM sein
+- **Code ohne Mirror-Validierung** - Code MUSS gegen Mirror validiert werden bevor er gespeichert wird
+- **Fehlerhafter Code im Mirror** - Mirror darf NUR fehlerfreien Code enthalten
+- **Code speichern ohne Mirror-Validierung** - Code MUSS fehlerfrei sein bevor er im Mirror gespeichert wird
 - Code ohne VORAB Konsole-Monitoring
 - Code ohne VORAB Settings-Ordner-Konsultation
+- Code ohne VORAB Fehler-Patterns-Konsultation (`Settings/error-patterns.json`)
 - Code ohne Pre-Code-Verification
 - Code ohne Character-by-Character-Verification
 - Code ohne Settings-Validierung
+- Code der bekannte Fehler-Patterns enthält (aus error-patterns.json)
+- **Fabrikage-Änderungen ohne Modular-Fabrikage-System-Update** - `modular-fabrikage/` MUSS bei jeder Änderung synchronisiert werden
+- **Code ohne XXXXXXLS Monorepo Standards** - TypeScript, ESLint, Prettier, Zod, Vitest MÜSSEN bei jeder Code-Handlung angewendet werden
 - Dateien ohne Settings-Templates
 - Deployment ohne Settings-Configs
 - Änderungen ohne Settings-Dimensionen
 - Fixes ohne Settings-AutoFix
+- Fehler-Patterns nicht aktualisieren nach neuem Fehler
+- Modular-Fabrikage-System nicht aktualisieren nach Fabrikage-Änderung/Erweiterung
+- **XXXXXXLS Monorepo Standards nicht anwenden bei Code-Handlungen**
+- **Code aus Mirror verwenden der nicht fehlerfrei ist** - Nur validierter, fehlerfreier Code aus Mirror
 
 ---
 

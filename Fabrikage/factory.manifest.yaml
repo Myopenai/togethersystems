@@ -1,0 +1,36 @@
+version: 1
+modules:
+  coreProtocols: 3.2.0
+  autoExecution: 2.5.1
+  intelligenceMatrix: 1.4.0
+  provenanceLedger: 2.3.3
+  observabilityAtlas: 2.1.0
+
+environments:
+  dev:
+    region: auto
+    features: [canary, shadowLedger]
+  stage:
+    region: eu-central
+    features: [canary]
+  prod:
+    region: multi
+    features: [blueGreen]
+
+policies:
+  cveGate:
+    maxSeverity: "medium"
+  licensesAllowlist:
+    allow: ["MIT", "Apache-2.0", "BSD-3-Clause"]
+
+security:
+  keyRotationDays: 90
+  signatures:
+    format: "DSSE"
+    signer: "sigstore"
+
+ledger:
+  storage:
+    blob: "r2"
+    index: "kv"
+    journal: "postgres"

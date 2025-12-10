@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:2.11
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --entrypoints.websecure.address=:443
+    ports:
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/certs:ro
+    networks:
+      - apple-pi
+
+  notary-core:
+    build: ../services/notary-core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.notary.rule=Host(`apple-pi.local`) && PathPrefix(`/notary`)"
+      - "traefik.http.routers.notary.entrypoints=websecure"
+      - "traefik.http.routers.notary.tls=true"
+      - "traefik.http.services.notary.loadbalancer.server.port=8085"
+    environment:
+      - PORT=8085
+      - DATA_DIR=/data/notary
+    volumes:
+      - notary-data:/data/notary
+    networks:
+      - apple-pi
+
+  startup-core:
+    build: ../services/startup-core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.startup.rule=Host(`apple-pi.local`) && PathPrefix(`/startup`)"
+      - "traefik.http.routers.startup.entrypoints=websecure"
+      - "traefik.http.routers.startup.tls=true"
+      - "traefik.http.services.startup.loadbalancer.server.port=8086"
+    environment:
+      - PORT=8086
+    networks:
+      - apple-pi
+
+volumes:
+  notary-data:
+
+networks:
+  apple-pi:
+    driver: bridge
+
+

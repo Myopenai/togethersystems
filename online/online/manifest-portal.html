@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -69,6 +69,8 @@ body.public-view{ --cursor: not-allowed }
 
   <link rel="stylesheet" href="../../css/teladia-complete-design-system.css">
   <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
 </head>
 <body class="public-view">
 	<div class="wr">
@@ -109,10 +111,11 @@ body.public-view{ --cursor: not-allowed }
 					<p class="muted">FÃ¼r Live-Betrieb kann hier eine API-Quelle konfiguriert werden.</p>
 					<div style="margin-top:10px">
 						<input id="apiUrl" type="url" placeholder="https://deine-seite.tld/api/manifest/list">
-						<div class="row" style="margin-top:8px">
-							<button class="btn" id="fetchBtn">Von API laden</button>
-							<button class="btn alt" id="clearBtn">Feed leeren</button>
-						</div>
+					<div class="row" style="margin-top:8px">
+						<button class="btn" id="fetchBtn">Von API laden</button>
+						<button class="btn alt" id="clearBtn">Feed leeren</button>
+						<button class="btn danger" id="clearAllDataBtn" title="Alle importierten Daten löschen">🗑️ Alle Daten löschen</button>
+					</div>
 					</div>
 					<pre class="kbd" id="payloadBox" hidden></pre>
 				</div>
@@ -259,6 +262,34 @@ document.getElementById('fetchBtn').addEventListener('click', async ()=>{
 });
 document.getElementById('clearBtn').addEventListener('click', ()=>{
 	renderFeed({posts:[]}); payloadBox.hidden=true; payloadBox.textContent='';
+});
+
+/* Clear all imported data */
+document.getElementById('clearAllDataBtn').addEventListener('click', ()=>{
+	if (confirm('Möchten Sie wirklich ALLE importierten Daten löschen?\n\nDies löscht:\n- Alle Feed-Einträge\n- Importierte JSON-Daten\n- Alle lokal gespeicherten Daten\n\nDiese Aktion kann nicht rückgängig gemacht werden.')) {
+		try {
+			// Lösche Feed
+			renderFeed({posts:[]});
+			payloadBox.hidden=true;
+			payloadBox.textContent='';
+			
+			// Lösche localStorage (außer Theme)
+			const theme = localStorage.getItem('portal.theme');
+			localStorage.clear();
+			if (theme) {
+				localStorage.setItem('portal.theme', theme);
+			}
+			
+			// Lösche sessionStorage
+			sessionStorage.clear();
+			
+			console.log('[FABRIKAGE] Alle importierten Daten gelöscht');
+			alert('Alle Daten wurden erfolgreich gelöscht.');
+		} catch(e) {
+			console.error('[FABRIKAGE] clearAllData error:', e);
+			alert('Fehler beim Löschen der Daten: ' + e.message);
+		}
+	}
 });
 
 /* Live feature stubs (activated post-verify) */

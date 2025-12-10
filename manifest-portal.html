@@ -1058,6 +1058,16 @@ if (typeof window.safeFetchJson === 'undefined') {
       
       return await response.json();
     } catch (error) {
+      if (window.fabrikageErrorBus) {
+        window.fabrikageErrorBus.publish({
+          module: 'manifest-portal',
+          stage: 'runtime',
+          level: 'warning',
+          class: 'ibm.fetch-fallback',
+          message: 'Fetch failed - using fallback',
+          context: { url: url, error: String(error) }
+        });
+      }
       console.warn('[IBM] Fetch failed for', url, '- using fallback');
       return getDemoData(url);
     }
@@ -1173,7 +1183,24 @@ function isUserVerified(){
 	try{
 		const raw = localStorage.getItem(MOT_STORAGE_KEYS.VERIFIED);
 		if(!raw) return false;
-		const data = (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })();
+		const data = (function() { 
+			try { 
+				return JSON.parse(raw); 
+			} catch(e) { 
+				if (window.fabrikageErrorBus) {
+					window.fabrikageErrorBus.publish({
+						module: 'manifest-portal',
+						stage: 'runtime',
+						level: 'error',
+						class: 'json.parse.error',
+						message: 'JSON parse error: ' + (e.message || String(e)),
+						context: { error: String(e) }
+					});
+				}
+				console.error('JSON parse error:', e); 
+				return null; 
+			} 
+		})();
 		return !!(data && data.uid);
 	}catch{
 		return false;
@@ -2829,6 +2856,16 @@ function importCsvToContacts(csvText) {
 		return contacts;
 	} catch (error) {
 		alert('❌ CSV-Import Fehler: ' + error.message);
+		if (window.fabrikageErrorBus) {
+			window.fabrikageErrorBus.publish({
+				module: 'manifest-portal',
+				stage: 'runtime',
+				level: 'error',
+				class: 'csv.import.error',
+				message: 'CSV Import Error: ' + (error.message || String(error)),
+				context: { error: String(error) }
+			});
+		}
 		console.error('CSV Import Error:', error);
 		return null;
 	}
@@ -3035,6 +3072,16 @@ window.submitFeedback = function(){
 // router.js Fallback - funktioniert auch ohne router.js
 if (typeof window.loadProviders === 'undefined') {
   window.loadProviders = async function() {
+    if (window.fabrikageErrorBus) {
+		window.fabrikageErrorBus.publish({
+			module: 'manifest-portal',
+			stage: 'runtime',
+			level: 'warning',
+			class: 'ibm.router-fallback',
+			message: 'router.js not available, using fallback',
+			context: {}
+		});
+	}
     console.warn('[IBM] router.js not available, using fallback');
     return [];
   };
@@ -3051,6 +3098,16 @@ if (typeof window.loadProviders === 'undefined') {
     }
   } catch (error) {
     // Fallback bereits oben definiert
+    if (window.fabrikageErrorBus) {
+		window.fabrikageErrorBus.publish({
+			module: 'manifest-portal',
+			stage: 'runtime',
+			level: 'warning',
+			class: 'ibm.router-fallback',
+			message: 'router.js not available, using fallback',
+			context: {}
+		});
+	}
     console.warn('[IBM] router.js not available, using fallback');
   }
 })();
@@ -3263,8 +3320,32 @@ renderSuppliers().catch(() => {});
 // Fallback fÃ¼r portal-ui.js wenn nicht verfÃ¼gbar
 if (typeof window.portalUI === 'undefined') {
   window.portalUI = {
-    bind: function() { console.warn('[IBM] portal-ui.js not loaded, using fallback'); },
-    update: function() { console.warn('[IBM] portal-ui.js not loaded, using fallback'); }
+    bind: function() { 
+		if (window.fabrikageErrorBus) {
+			window.fabrikageErrorBus.publish({
+				module: 'manifest-portal',
+				stage: 'runtime',
+				level: 'warning',
+				class: 'ibm.portal-ui-fallback',
+				message: 'portal-ui.js not loaded, using fallback',
+				context: {}
+			});
+		}
+		console.warn('[IBM] portal-ui.js not loaded, using fallback'); 
+	},
+    update: function() { 
+		if (window.fabrikageErrorBus) {
+			window.fabrikageErrorBus.publish({
+				module: 'manifest-portal',
+				stage: 'runtime',
+				level: 'warning',
+				class: 'ibm.portal-ui-fallback',
+				message: 'portal-ui.js not loaded, using fallback',
+				context: {}
+			});
+		}
+		console.warn('[IBM] portal-ui.js not loaded, using fallback'); 
+	}
   };
 }
 </script>
@@ -3276,6 +3357,16 @@ try {
     window.portalUI = module.default;
   }
 } catch (error) {
+  if (window.fabrikageErrorBus) {
+	window.fabrikageErrorBus.publish({
+		module: 'manifest-portal',
+		stage: 'runtime',
+		level: 'error',
+		class: 'ibm.portal-ui-load-error',
+		message: 'portal-ui.js failed to load: ' + (error.message || String(error)),
+		context: { error: String(error) }
+	});
+  }
   console.warn('[IBM] portal-ui.js failed to load:', error.message);
   // Fallback bereits oben definiert
 }

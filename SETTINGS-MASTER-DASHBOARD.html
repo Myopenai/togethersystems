@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -245,6 +245,8 @@
 
   <link rel="stylesheet" href="css/teladia-complete-design-system.css">
   <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+  <script src="./console-monitor.js"></script>
+  <script src="./http-resource-monitor-browser.js"></script>
 </head>
 <body>
   <div class="header">
@@ -844,8 +846,19 @@
 
     // Export settings
     function exportSettings() {
+      let verification = {};
+      try {
+        const saved = localStorage.getItem('settings-verification');
+        if (saved) {
+          verification = JSON.parse(saved);
+        }
+      } catch(e) {
+        console.error('JSON parse error:', e);
+        verification = {};
+      }
+      
       const settings = {
-        verification: (function() { try { return JSON.parse(localStorage.getItem('settings-verification') || '{}'); } catch(e) { console.error('JSON parse error:', e); return {}; } })(),
+        verification: verification,
         timestamp: new Date().toISOString(),
         version: '1.0.0'
       };
@@ -864,14 +877,44 @@
       loadStatistics();
       const saved = localStorage.getItem('settings-verification');
       if (saved) {
-        const verifications = (function() { try { return JSON.parse(saved); } catch(e) { console.error('JSON parse error:', e); return null; } })();
-        Object.keys(verifications).forEach(key => {
-          const checkbox = document.getElementById(`verify-${key}`);
-          if (checkbox) checkbox.checked = verifications[key];
-        });
+        let verifications = null;
+        try {
+          verifications = JSON.parse(saved);
+        } catch(e) {
+          console.error('JSON parse error:', e);
+          verifications = null;
+        }
+        
+        if (verifications) {
+          Object.keys(verifications).forEach(key => {
+            const checkbox = document.getElementById(`verify-${key}`);
+            if (checkbox) checkbox.checked = verifications[key];
+          });
+        }
       }
     });
+    
+    // Ensure functions are available globally
+    window.editAutoFix = editAutoFix;
+    window.verifyAutoFix = verifyAutoFix;
+    window.editDeployment = editDeployment;
+    window.verifyDeployment = verifyDeployment;
+    window.editNeuralNetwork = editNeuralNetwork;
+    window.verifyNeuralNetwork = verifyNeuralNetwork;
+    window.editEncryption = editEncryption;
+    window.verifyEncryption = verifyEncryption;
+    window.verifyCore = verifyCore;
+    window.verifyMCP = verifyMCP;
+    window.verifyRobot = verifyRobot;
+    window.verifyDimensions = verifyDimensions;
+    window.verifyDevices = verifyDevices;
+    window.verifyAPIs = verifyAPIs;
+    window.testAPIs = testAPIs;
+    window.saveVerification = saveVerification;
+    window.exportSettings = exportSettings;
   </script>
+  <script src="js/error-fix-system.js"></script>
+  <script src="js/console-error-controller.js"></script>
   <script src="./css/da-vinci-enterprise-standard-init.js"></script>
 </body>
 </html>

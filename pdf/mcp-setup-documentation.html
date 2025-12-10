@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Setup Dokumentation - Fabrikation Centrale</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            page-break-after: avoid;
+        }
+        
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 20px;
+            page-break-after: avoid;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .header h1 {
+            color: white;
+            border: none;
+            margin: 0;
+        }
+        
+        .logo-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .logo-large {
+            font-size: 4em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+            margin: 20px 0;
+        }
+        
+        .company-branding {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin: 15px 0;
+            letter-spacing: 1px;
+        }
+        
+        .branding-symbol {
+            color: #a5b4fc;
+            font-weight: 700;
+        }
+        
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            page-break-inside: avoid;
+        }
+        
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .capability-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .capability-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        
+        .badge-success {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .badge-info {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo-large">T,.&T,,.&T,,,.</div>
+        </div>
+        <div class="company-branding">
+            <span class="branding-symbol">T,.&T,,.&T,,,.</span> TOGETHERSYSTEMS. INTERNATIONAL TTT
+        </div>
+        <h1>🏭 MCP Setup Dokumentation</h1>
+        <p><strong>Fabrikation Centrale - Industrial Software Factory</strong></p>
+        <p>Version 1.0.0 | 2025-01-27</p>
+    </div>
+
+    <div class="status-box">
+        <h2>✅ Setup Status: ERFOLGREICH ABGESCHLOSSEN</h2>
+        <p>Die MCP-Verbindung zur Fabrikation Centrale wurde erfolgreich eingerichtet und ist betriebsbereit.</p>
+    </div>
+
+    <h2>📊 Systemübersicht</h2>
+    
+    <table>
+        <tr>
+            <th>Metrik</th>
+            <th>Wert</th>
+        </tr>
+        <tr>
+            <td>Gesamt MCPs</td>
+            <td><span class="badge badge-info">1</span></td>
+        </tr>
+        <tr>
+            <td>Verbunden</td>
+            <td><span class="badge badge-success">1</span></td>
+        </tr>
+        <tr>
+            <td>Verfügbar</td>
+            <td><span class="badge badge-success">1</span></td>
+        </tr>
+        <tr>
+            <td>XXXXL MCPs</td>
+            <td><span class="badge badge-warning">1</span></td>
+        </tr>
+        <tr>
+            <td>Registry Version</td>
+            <td>1.0.0</td>
+        </tr>
+        <tr>
+            <td>Letzte Aktualisierung</td>
+            <td>2025-01-27T12:00:00.000Z</td>
+        </tr>
+    </table>
+
+    <h2>🔌 Verbundene MCP Server</h2>
+
+    <h3>1. Fabrikation Centrale (XXXXL)</h3>
+    
+    <div class="info-box">
+        <p><strong>Status:</strong> <span class="badge badge-success">VERBUNDEN</span></p>
+        <p><strong>Typ:</strong> Industrial Factory MCP</p>
+        <p><strong>MCP ID:</strong> <code>fabrikation-centrale-001</code></p>
+        <p><strong>Endpoint:</strong> <code>http://localhost:8080</code></p>
+        <p><strong>Factory Path:</strong> <code>Farbriqautions/TTT</code></p>
+        <p><strong>Version:</strong> 1.0.0</p>
+        <p><strong>Netzwerk:</strong> localhost</p>
+        <p><strong>Letzte Verifizierung:</strong> 2025-01-27T12:00:00.000Z</p>
+    </div>
+
+    <h3>Verfügbare Capabilities</h3>
+    
+    <div class="capability-list">
+        <div class="capability-item">
+            <strong>factory_build</strong><br>
+            Build factory artifacts
+        </div>
+        <div class="capability-item">
+            <strong>factory_validate</strong><br>
+            Validate factory configurations
+        </div>
+        <div class="capability-item">
+            <strong>factory_deploy</strong><br>
+            Deploy factory outputs
+        </div>
+        <div class="capability-item">
+            <strong>factory_monitor</strong><br>
+            Monitor factory operations
+        </div>
+        <div class="capability-item">
+            <strong>factory_audit</strong><br>
+            Audit factory processes
+        </div>
+        <div class="capability-item">
+            <strong>manifest_parse</strong><br>
+            Parse factory manifest files
+        </div>
+        <div class="capability-item">
+            <strong>pipeline_execute</strong><br>
+            Execute factory pipelines
+        </div>
+        <div class="capability-item">
+            <strong>toolchain_detect</strong><br>
+            Detect available toolchains
+        </div>
+        <div class="capability-item">
+            <strong>sbom_generate</strong><br>
+            Generate Software Bill of Materials
+        </div>
+        <div class="capability-item">
+            <strong>provenance_sign</strong><br>
+            Sign provenance attestations
+        </div>
+    </div>
+
+    <h3>Factory Konfiguration</h3>
+    
+    <table>
+        <tr>
+            <th>Parameter</th>
+            <th>Wert</th>
+        </tr>
+        <tr>
+            <td>Manifest Datei</td>
+            <td><code>factory.manifest.yaml</code></td>
+        </tr>
+        <tr>
+            <td>Bootstrap Script</td>
+            <td><code>bootstrap/start.sh</code></td>
+        </tr>
+        <tr>
+            <td>Umgebungen</td>
+            <td>dev, staging, prod</td>
+        </tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h2>📁 Konfigurationsdateien</h2>
+
+    <h3>Erstellte/Aktualisierte Dateien</h3>
+    
+    <table>
+        <tr>
+            <th>Datei</th>
+            <th>Zweck</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td><code>settings/config/mcp-config.json</code></td>
+            <td>Basis MCP Server Konfiguration</td>
+            <td><span class="badge badge-success">✓</span></td>
+        </tr>
+        <tr>
+            <td><code>settings/config/mcp-config-extended.json</code></td>
+            <td>Erweiterte Tool Registry</td>
+            <td><span class="badge badge-success">✓</span></td>
+        </tr>
+        <tr>
+            <td><code>settings/mcp/mcp-registry.json</code></td>
+            <td>Aktive MCP Registry</td>
+            <td><span class="badge badge-success">✓</span></td>
+        </tr>
+        <tr>
+            <td><code>settings/mcp/connect-fabrikation-centrale-simple.js</code></td>
+            <td>Verbindungsscript</td>
+            <td><span class="badge badge-success">✓</span></td>
+        </tr>
+        <tr>
+            <td><code>settings/mcp/detect-all-mcps.js</code></td>
+            <td>Vollständiger MCP Detector</td>
+            <td><span class="badge badge-success">✓</span></td>
+        </tr>
+        <tr>
+            <td><code>settings/mcp/run-detector.js</code></td>
+            <td>MCP Detector Runner</td>
+            <td><span class="badge badge-success">✓</span></td>
+        </tr>
+    </table>
+
+    <h3>Dokumentation</h3>
+    
+    <table>
+        <tr>
+            <th>Datei</th>
+            <th>Beschreibung</th>
+        </tr>
+        <tr>
+            <td><code>MCP-CONNECTION-STATUS.md</code></td>
+            <td>Detaillierte Verbindungsinformationen</td>
+        </tr>
+        <tr>
+            <td><code>MCP-SYSTEM-OVERVIEW.md</code></td>
+            <td>Vollständige Systemübersicht</td>
+        </tr>
+        <tr>
+            <td><code>QUICK-START.md</code></td>
+            <td>Schnellstart-Anleitung</td>
+        </tr>
+        <tr>
+            <td><code>SETUP-COMPLETE.md</code></td>
+            <td>Setup-Zusammenfassung</td>
+        </tr>
+    </table>
+
+    <h2>🚀 Verwendung</h2>
+
+    <h3>Schnellstart-Befehle</h3>
+    
+    <div class="info-box">
+        <h4>MCP Status prüfen</h4>
+        <pre><code>cat settings/mcp/mcp-registry.json</code></pre>
+    </div>
+
+    <div class="info-box">
+        <h4>Zu Fabrikation Centrale verbinden</h4>
+        <pre><code>node settings/mcp/connect-fabrikation-centrale-simple.js</code></pre>
+    </div>
+
+    <div class="info-box">
+        <h4>Alle verfügbaren MCPs erkennen</h4>
+        <pre><code>node settings/mcp/detect-all-mcps.js</code></pre>
+    </div>
+
+    <h3>Verfügbare Tools</h3>
+    
+    <table>
+        <tr>
+            <th>Tool</th>
+            <th>Version</th>
+            <th>Scope</th>
+            <th>Latenz</th>
+            <th>Zuverlässigkeit</th>
+        </tr>
+        <tr>
+            <td>Playwright</td>
+            <td>1.45.0</td>
+            <td>global</td>
+            <td>300ms</td>
+            <td>93%</td>
+        </tr>
+        <tr>
+            <td>Cursor IDE Browser</td>
+            <td>1.0.0</td>
+            <td>global</td>
+            <td>200ms</td>
+            <td>95%</td>
+        </tr>
+        <tr>
+            <td>Fabrikation Centrale</td>
+            <td>1.0.0</td>
+            <td>global, industrial</td>
+            <td>500ms</td>
+            <td>98%</td>
+        </tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h2>🌐 Netzwerk-Verteilung</h2>
+
+    <h3>Localhost MCPs</h3>
+    <ul>
+        <li><strong>Fabrikation Centrale</strong> - <code>http://localhost:8080</code></li>
+    </ul>
+
+    <h3>Cloudflare Functions (Verfügbar)</h3>
+    <ul>
+        <li><code>/api/presence/*</code> - Presence API Endpunkte</li>
+        <li><code>/api/telbank/*</code> - Telbank Finanzdienstleistungen</li>
+        <li><code>/api/voucher/*</code> - Voucher Management</li>
+        <li><code>/api/mortgage/*</code> - Hypothekenservices</li>
+        <li><code>/api/contracts/*</code> - Vertragsmanagement</li>
+        <li><code>/api/mcp/*</code> - MCP-spezifische Endpunkte</li>
+        <li><code>/api/settings/*</code> - Settings Management</li>
+    </ul>
+
+    <h3>Lokale Node.js Server (Verfügbar)</h3>
+    <ul>
+        <li><code>presence-api-server.js</code> - Presence API Server</li>
+        <li><code>voucher-api-server.js</code> - Voucher API Server</li>
+        <li><code>mortgage-api-server.js</code> - Hypotheken API Server</li>
+        <li><code>signal-server.js</code> - WebSocket Signaling Server</li>
+        <li><code>telbank-transfer-server.js</code> - Telbank Transfer Server</li>
+    </ul>
+
+    <h2>🔄 Routing-Richtlinien</h2>
+
+    <h3>Browser-Automatisierung</h3>
+    <ul>
+        <li><strong>Bevorzugt:</strong> Playwright</li>
+        <li><strong>Fallback:</strong> Cursor IDE Browser</li>
+    </ul>
+
+    <h3>Factory-Operationen</h3>
+    <ul>
+        <li><strong>Bevorzugt:</strong> Fabrikation Centrale</li>
+        <li><strong>Scope:</strong> Industrielle Operationen</li>
+    </ul>
+
+    <h2>📝 Nächste Schritte</h2>
+
+    <div class="info-box">
+        <h3>1. MCP verwenden</h3>
+        <p>Die Fabrikation Centrale kann jetzt für folgende Operationen verwendet werden:</p>
+        <ul>
+            <li>Industrielle Software-Factory-Operationen</li>
+            <li>Automatisierte Build-Pipelines</li>
+            <li>Factory-Validierung und Deployment</li>
+            <li>SBOM-Generierung</li>
+            <li>Provenance-Signierung</li>
+        </ul>
+    </div>
+
+    <div class="info-box">
+        <h3>2. Weitere MCPs entdecken</h3>
+        <p>Führen Sie den Detector aus, um alle verfügbaren MCPs zu finden:</p>
+        <pre><code>node settings/mcp/detect-all-mcps.js</code></pre>
+    </div>
+
+    <div class="info-box">
+        <h3>3. Status überwachen</h3>
+        <p>Überprüfen Sie den aktuellen MCP-Status:</p>
+        <pre><code># Registry anzeigen
+cat settings/mcp/mcp-registry.json
+
+# Oder über API (wenn Server läuft)
+curl http://localhost:8080/api/mcp/status</code></pre>
+    </div>
+
+    <h2>✨ Zusammenfassung</h2>
+
+    <div class="status-box">
+        <h3>Was funktioniert:</h3>
+        <ul>
+            <li>✅ MCP-Konfigurationssystem</li>
+            <li>✅ Fabrikation Centrale Verbindung</li>
+            <li>✅ Registry Management</li>
+            <li>✅ Netzwerk-Verteilungs-Tracking</li>
+            <li>✅ Dokumentationssystem</li>
+            <li>✅ Verbindungsscripts</li>
+            <li>✅ Erkennungssystem</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <div class="logo-container">
+            <div class="logo-large" style="color: #7f8c8d; font-size: 3em;">T,.&T,,.&T,,,.</div>
+        </div>
+        <p><strong>MCP Setup Dokumentation</strong></p>
+        <p class="company-branding" style="color: #7f8c8d; font-size: 1em;">
+            <span class="branding-symbol" style="color: #9ca3af;">T,.&T,,.&T,,,.</span> TOGETHERSYSTEMS. INTERNATIONAL TTT
+        </p>
+        <p>Version 1.0.0 | Erstellt am 2025-01-27</p>
+        <p style="font-size: 0.85em; color: #95a5a6;">T,.&T,,.&T,,,.(C)(R) | URL: TEL1.NL | (+31) 613 803 782</p>
+    </div>
+</body>
+</html>
+

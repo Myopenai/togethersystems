@@ -1,0 +1,47 @@
+# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE PRODUCTION STANDARD PROCESS
+# GitHub Actions Workflow - Frequentivest wiederholt
+# Um das System up-to-date zu halten im Production-Prozess
+
+name: Fabrikage Production Standard Process
+
+on:
+  schedule:
+    # Führt den Prozess täglich um 2:00 UTC aus (frequentivest)
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Manuell auslösbar
+  push:
+    branches:
+      - main
+
+jobs:
+  production-standard-process:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v5
+      
+      - name: Run Fabrikage Production Standard Process
+        run: |
+          pwsh -ExecutionPolicy Bypass -File ./FABRIKAGE-PRODUCTION-STANDARD-PROCESS.ps1
+      
+      - name: Upload Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fabrikage-production-reports
+          path: |
+            FABRIKAGE-PRODUCTION-REPORT-*.md
+            FABRIKAGE-PRODUCTION-RESULTS-*.json
+          retention-days: 30
+      
+      - name: Commit and Push Changes
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "fabrikage@togethersystems"
+          git config --local user.name "Fabrikage Bot"
+          git add -A
+          git diff --staged --quiet || git commit -m "Fabrikage Production Standard Process: Auto-Fixes + Tests - $(date +'%Y%m%d-%H%M%S')"
+          git push origin main

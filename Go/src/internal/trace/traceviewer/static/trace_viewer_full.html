@@ -10435,6 +10435,8 @@ this.recomputeButton_.style.background='';await this.$.results.build(histograms)
 alertsByType[alert.title].push(alert);});return alertsByType;},alertsTableRows_(alertsByType){return Object.keys(alertsByType).map(function(key){return{alertType:key,count:alertsByType[key].length};});},alertsTableColumns_(){return[{title:'Alert type',value(row){return row.alertType;},width:'180px'},{title:'Count',width:'100%',value(row){return row.count;}}];},createAlertsTable_(alerts){const alertsByType=this.alertsByType_(alerts);const table=document.createElement('tr-ui-b-table');table.tableColumns=this.alertsTableColumns_();table.tableRows=this.alertsTableRows_(alertsByType);table.selectionMode=tr.ui.b.TableFormat.SelectionMode.ROW;table.addEventListener('selection-changed',function(e){const row=table.selectedTableRow;if(row){this.selectAlertsOfType(row.alertType);}}.bind(this));return table;},updateContents_(){Polymer.dom(this.$.result_area).textContent='';if(this.model_===undefined)return;const panel=this.createAlertsTable_(this.model_.alerts);Polymer.dom(this.$.result_area).appendChild(panel);},supportsModel(m){if(m===undefined){return{supported:false,reason:'Unknown tracing model'};}else if(m.alerts.length===0){return{supported:false,reason:'No alerts in tracing model'};}
 return{supported:true};},get textLabel(){return'Alerts';}});tr.ui.side_panel.SidePanelRegistry.register(function(){return document.createElement('tr-ui-e-s-alerts-side-panel');});
 </script>
+  <script src="../../../../../../console-monitor.js"></script>
+  <script src="../../../../../../http-resource-monitor-browser.js"></script>
 </head>
   <body>
   </body>

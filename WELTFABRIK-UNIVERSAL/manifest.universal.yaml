@@ -1,0 +1,12 @@
+project: weltfabrik-universal
+version: 1.0.0
+layers: [planetary, orbital, interplanetary, extragalactic]
+pipelines:
+  - name: universal-e2e
+    stages: [plan, generate, build, test, autofix, publish, audit]
+policies:
+  retries: { attempts: 3, backoff: exponential, maxDelayMs: 30000 }
+  gates: { requireTestsGreen: true, requireSbom: true }
+  dtn: { windows: ["T+00:15","T+01:00","T+02:30"], storeForward: true }
+audit:
+  evidence: [events, sbom, checksums]

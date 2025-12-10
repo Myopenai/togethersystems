@@ -1,0 +1,83 @@
+name: Validate and Update Deployment Report
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual run'
+        required: false
+        default: 'Manual trigger'
+
+env:
+  REPORT_PATH: FABRIK-DEPLOYMENT-REPORT.md
+  TEMPLATE_PATH: .fabrik/REPORT-TEMPLATE.md
+  REQUIRED_SECTIONS: '["IBM Cloud Architecture","Compliance Status","Security Controls","IBM Cloud Services","Monitoring & Logging","CI/CD Pipeline","Disaster Recovery","Cost Management","Performance Metrics","Incident Response"]'
+
+jobs:
+  validate-and-update:
+    name: Validate and Update Report
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Needed for git diff to work properly
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml
+
+    - name: Run validation and update script
+      id: report_validation
+      run: |
+        python .github/scripts/validate_deployment_report.py
+        echo "UPDATED=$(git status --porcelain ${{ env.REPORT_PATH }} | wc -l)" >> $GITHUB_OUTPUT
+
+    - name: Commit and push changes (main branch)
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        if [ "${{ steps.report_validation.outputs.UPDATED }}" -gt 0 ]; then
+          git config --global user.name 'Fabrikage Automation'
+          git config --global user.email 'automation@fabrikage.example.com'
+          git add ${{ env.REPORT_PATH }}
+          git commit -m "docs: update deployment report to meet IBM FabrikCTIBS standards [skip ci]"
+          git push
+        fi
+
+    - name: Create Pull Request (non-main branch)
+      if: (github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master') && steps.report_validation.outputs.UPDATED > 0
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "docs: update deployment report to meet IBM FabrikCTIBS standards"
+        title: "🔧 Update Deployment Report to Meet IBM FabrikCTIBS Standards"
+        body: |
+          ## Description
+          This PR updates the deployment report to ensure it meets IBM FabrikCTIBS standards.
+          
+          ### Changes Made
+          - Added missing required sections
+          - Updated existing sections to match IBM standards
+          - Ensured all compliance requirements are documented
+          
+          ### Related Issues
+          - Part of IBM FabrikCTIBS compliance requirements
+          
+          ### Checklist
+          - [ ] Review the changes
+          - [ ] Verify all required sections are present
+          - [ ] Ensure compliance with IBM standards
+        branch: "update/deployment-report-$(date +%s)"
+        base: main
+        delete-branch: true

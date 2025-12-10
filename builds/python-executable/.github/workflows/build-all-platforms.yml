@@ -1,0 +1,42 @@
+name: Build Python All Platforms
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        arch: [amd64, arm64]
+        include:
+          - os: ubuntu-latest
+            arch: 386
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install pyinstaller
+    
+    - name: Build executable
+      run: |
+        cd builds/python-executable
+        pyinstaller --onefile --name ostosos-server --clean python-server.py
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ostosos-server-${{ matrix.os }}-${{ matrix.arch }}
+        path: builds/python-executable/dist/ostosos-server*
+

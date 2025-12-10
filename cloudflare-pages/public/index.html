@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>OSOTODOS Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Language" content="de">
+  <link rel="stylesheet" href="/assets/osoto.css">
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body class="osoto-app">
+  <div class="osoto-shell">
+    <header class="osoto-topbar">
+      <div class="osoto-logo"><span class="osoto-brand-token">.T.</span> OSOTO<span>PORTAL</span></div>
+      <div class="osoto-topbar-center">
+        <input type="search" placeholder="Konten, Buchungen, Voucher suchen…">
+      </div>
+      <div class="osoto-topbar-right">
+        <button onclick="location.href='/manifest-portal.html'" class="osoto-btn osoto-btn-primary"><span class="osoto-brand-token">.T.</span> Manifest</button>
+        <button onclick="location.href='/downloads/'" class="osoto-btn osoto-btn-outline">Downloads</button>
+      </div>
+    </header>
+    <aside class="osoto-sidenav">
+      <nav class="osoto-nav">
+        <div class="osoto-nav-label">Portal</div>
+        <a href="/" class="osoto-nav-item osoto-nav-item--active"><span class="osoto-brand-token">⬢</span>Dashboard</a>
+        <a href="/manifest-portal.html" class="osoto-nav-item">Manifest</a>
+        <a href="/downloads/" class="osoto-nav-item">Downloads</a>
+      </nav>
+    </aside>
+    <main class="osoto-main">
+      <section class="osoto-page-header">
+        <div><h1>Finanz-Cockpit</h1><p>Alle Konten, Voucher und Haushaltsbudgets in einem UI.</p></div>
+        <div><button onclick="location.href='/downloads/'" class="osoto-btn osoto-btn-outline">Export</button></div>
+      </section>
+      <section class="kpi">
+        <div class="kpi-card"><div>Konten</div><strong id="kpi-accounts">—</strong></div>
+        <div class="kpi-card"><div>Offene Voucher</div><strong id="kpi-vouchers">—</strong></div>
+        <div class="kpi-card"><div>Monatsbudget</div><strong>€ 4.000</strong></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    async function loadKPIs(){
+      try{
+        const acc = await fetch('/api/presence/status').then(r=>r.json());
+        document.getElementById('kpi-accounts').textContent = acc.users ?? 0;
+      }catch{ document.getElementById('kpi-accounts').textContent = 'offline'; }
+      try{
+        const v = await fetch('/api/voucher/list').then(r=>r.json());
+        document.getElementById('kpi-vouchers').textContent = v.length ?? 0;
+      }catch{ document.getElementById('kpi-vouchers').textContent = 'offline'; }
+    }
+    loadKPIs();
+  </script>
+</body>
+</html>
+

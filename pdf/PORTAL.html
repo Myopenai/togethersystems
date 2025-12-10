@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[.SYSTEMS.T.SYSTEMS.] PDF System Portal</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #0b1020;
+      color: #e5e7eb;
+    }
+    .page {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: #020617;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+      color: #a5b4fc;
+      letter-spacing: 0.05em;
+    }
+    .brand {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+    .brand a {
+      color: #a5b4fc;
+      text-decoration: none;
+    }
+    .search-bar {
+      margin-bottom: 20px;
+    }
+    .search-bar input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 16px;
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+    .search-bar input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99,102,241,0.3);
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .filter-btn {
+      padding: 8px 16px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      background: #374151;
+    }
+    .filter-btn.active {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: white;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: radial-gradient(circle at top left, #111827, #020617);
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+    .stat-card .number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #a5b4fc;
+      margin-bottom: 5px;
+    }
+    .stat-card .label {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .category {
+      margin-bottom: 40px;
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #1f2937;
+    }
+    .category-header h2 {
+      font-size: 18px;
+      margin: 0;
+      color: #bfdbfe;
+    }
+    .category-header .count {
+      background: #6366f1;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 15px;
+    }
+    .file-card {
+      background: radial-gradient(circle at top left, #111827, #020617);
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 15px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .file-card:hover {
+      border-color: #6366f1;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.2);
+      transform: translateY(-2px);
+    }
+    .file-card.hidden {
+      display: none;
+    }
+    .file-card .icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .file-card .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+    .file-card .description {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .file-card .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #6b7280;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #1f2937;
+    }
+    .file-card .type {
+      background: #1f2937;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: #9ca3af;
+    }
+    .file-card .link {
+      color: #a5b4fc;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .file-card .link:hover {
+      text-decoration: underline;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #9ca3af;
+    }
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+  </style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="page">
+    <h1>[.SYSTEMS.T.SYSTEMS.] PDF System Portal</h1>
+    <div class="brand">
+      Zentrale Übersicht aller Systeme, Dokumentationen und Tools | 
+      <a href="https://tinyurl.com/BUGCOMPANY" target="_blank">Original</a> | 
+      TogetherSystems International TTT
+    </div>
+
+    <!-- Statistiken -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="number" id="statTotal">0</div>
+        <div class="label">Gesamt Dateien</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="statHTML">0</div>
+        <div class="label">HTML Anwendungen</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="statMD">0</div>
+        <div class="label">Dokumentationen</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="statPS1">0</div>
+        <div class="label">PowerShell Scripts</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="statPY">0</div>
+        <div class="label">Python Scripts</div>
+      </div>
+    </div>
+
+    <!-- Suche -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍 Suche nach Dateien, Funktionen, Systemen...">
+    </div>
+
+    <!-- Filter -->
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Alle</button>
+      <button class="filter-btn" data-filter="html">HTML</button>
+      <button class="filter-btn" data-filter="md">Dokumentation</button>
+      <button class="filter-btn" data-filter="ps1">PowerShell</button>
+      <button class="filter-btn" data-filter="py">Python</button>
+      <button class="filter-btn" data-filter="json">JSON</button>
+      <button class="filter-btn" data-filter="system">Systeme</button>
+      <button class="filter-btn" data-filter="pdf">PDF Tools</button>
+      <button class="filter-btn" data-filter="banking">Banking</button>
+    </div>
+
+    <!-- Kategorien -->
+    <div id="categoriesContainer"></div>
+  </div>
+
+  <script>
+    // ============================================
+    // ROBUSTE VALIDIERUNGS-FUNKTIONEN
+    // ============================================
+    function validateFormula(value, min = 0, max = Infinity, defaultValue = 0) {
+      const num = parseFloat(value);
+      if (!isFinite(num) || isNaN(num)) return defaultValue;
+      return Math.max(min, Math.min(max, num));
+    }
+
+    // ============================================
+    // DATEI-DATEN
+    // ============================================
+    const files = [
+      // HTML Anwendungen
+      {
+        name: "DECISION-MATRIX-SYSTEM.html",
+        type: "html",
+        category: "system",
+        icon: "🎯",
+        description: "Entscheidungsmatrix-System mit Regeltabellen, Scoring-Modell und Flowchart-Visualisierung. Vollständig fehlerkorrigiert.",
+        tags: ["Entscheidung", "Matrix", "Regeln", "Scoring", "Flowchart"]
+      },
+      {
+        name: "EXCEL-DECISION-LOGIC.html",
+        type: "html",
+        category: "system",
+        icon: "📊",
+        description: "Excel-ähnliches Entscheidungssystem mit FILTER/XLOOKUP, WENN-Verschachtelung und SUMMENPRODUKT. Fehlerkorrigiert.",
+        tags: ["Excel", "Formeln", "XLOOKUP", "WENN", "SUMMENPRODUKT"]
+      },
+      {
+        name: "bank-statement-universal.html",
+        type: "html",
+        category: "pdf",
+        icon: "🏦",
+        description: "Universal Bank Statement Template für dynamische PDF-Generierung mit TogetherSystems Branding.",
+        tags: ["Bank", "Statement", "PDF", "Template", "Branding"]
+      },
+      {
+        name: "mcp-integration.html",
+        type: "html",
+        category: "system",
+        icon: "🔌",
+        description: "MCP-Server Integration Seite mit Details zu Benefits, technischen Aspekten und Kontaktinformationen.",
+        tags: ["MCP", "Integration", "Server", "Partizipation"]
+      },
+      {
+        name: "spenden-system.html",
+        type: "html",
+        category: "system",
+        icon: "💝",
+        description: "Spenden-System Seite mit Tiers, Benefits, Transparenz und Links für Beiträge.",
+        tags: ["Spenden", "Donation", "Tiers", "Benefits"]
+      },
+      {
+        name: "branding-integration.html",
+        type: "html",
+        category: "system",
+        icon: "🎨",
+        description: "Branding-Integration Seite mit strategischen Partnerschaften, Levels, Benefits und Kontaktdaten.",
+        tags: ["Branding", "Integration", "Partnerschaft", "Corporate"]
+      },
+      {
+        name: "mcp-setup-documentation.html",
+        type: "html",
+        category: "system",
+        icon: "📚",
+        description: "MCP Setup Dokumentation mit detaillierten Anleitungen für Installation und Konfiguration.",
+        tags: ["MCP", "Setup", "Dokumentation", "Anleitung"]
+      },
+      {
+        name: "dynamic-pdf-template.html",
+        type: "html",
+        category: "pdf",
+        icon: "📄",
+        description: "Dynamisches PDF-Template mit interaktiven Elementen und kontrollierten visuellen Effekten.",
+        tags: ["PDF", "Template", "Dynamisch", "Interaktiv"]
+      },
+      {
+        name: "mitarbeiter-bankauszuege/bank-statement-dynamic.html",
+        type: "html",
+        category: "pdf",
+        icon: "👥",
+        description: "Bank Statement Template für Mitarbeiter mit dynamischer PDF-Generierung.",
+        tags: ["Mitarbeiter", "Bank", "Statement", "PDF"]
+      },
+      
+      // Dokumentationen (.md)
+      {
+        name: "DECISION-MATRIX-SYSTEM.md",
+        type: "md",
+        category: "system",
+        icon: "📖",
+        description: "Vollständige Dokumentation des Decision Matrix Systems mit allen Features und Funktionen.",
+        tags: ["Dokumentation", "Matrix", "System"]
+      },
+      {
+        name: "EXCEL-DECISION-LOGIC.md",
+        type: "md",
+        category: "system",
+        icon: "📖",
+        description: "Dokumentation des Excel Decision Logic Systems mit Formeln und Validierung.",
+        tags: ["Dokumentation", "Excel", "Formeln"]
+      },
+      {
+        name: "UniverseAllEnterprises-Budget-Statement-System.md",
+        type: "md",
+        category: "system",
+        icon: "📖",
+        description: "Umfassende Dokumentation des Budget & Statement Systems mit allen Funktionen und technischen Details.",
+        tags: ["Dokumentation", "Budget", "Statement", "System"]
+      },
+      {
+        name: "BANKING-OPTIONS.md",
+        type: "md",
+        category: "banking",
+        icon: "🏦",
+        description: "Banking-Optionen Dokumentation: Wise (UK/EU), Rabobank (NL), Vergleich und Empfehlungen.",
+        tags: ["Banking", "Wise", "Rabobank", "IBAN", "Optionen"]
+      },
+      {
+        name: "IBAN-UPDATE-DOKUMENTATION.md",
+        type: "md",
+        category: "banking",
+        icon: "🔄",
+        description: "IBAN-Update Dokumentation: Aktuelle IBAN-Informationen und Integration im System.",
+        tags: ["IBAN", "Update", "Rabobank"]
+      },
+      {
+        name: "FORMULA-VALIDATION-SYSTEM.md",
+        type: "md",
+        category: "system",
+        icon: "✅",
+        description: "Formel-Validierung System: Dokumentation aller Logik-Fehler-Korrekturen und robusten Validierungsfunktionen.",
+        tags: ["Validierung", "Formeln", "Fehlerkorrektur", "Robustheit"]
+      },
+      {
+        name: "BRANDING-PROCEDURE.md",
+        type: "md",
+        category: "pdf",
+        icon: "🎨",
+        description: "Branding-Prozedur: TogetherSystems Brand Identity, Farben, Typografie, Layout-Regeln.",
+        tags: ["Branding", "TogetherSystems", "Corporate", "Design"]
+      },
+      {
+        name: "SPENDEN-SYSTEM.md",
+        type: "md",
+        category: "system",
+        icon: "💝",
+        description: "Spenden-System Dokumentation: Free Standard Branding vs. Premium Custom Branding, Tiers und Transparenz.",
+        tags: ["Spenden", "Donation", "Tiers", "Branding"]
+      },
+      {
+        name: "UNIVERSAL-DYNAMIC-PDF-SYSTEM.md",
+        type: "md",
+        category: "pdf",
+        icon: "📄",
+        description: "Universal Dynamic PDF System: Kompletter Workflow für PDF-Verarbeitung, Branding und Generierung.",
+        tags: ["PDF", "Universal", "Dynamisch", "System"]
+      },
+      {
+        name: "VOLLSTÄNDIGER-PROZESS.md",
+        type: "md",
+        category: "pdf",
+        icon: "🔄",
+        description: "Vollständiger Prozess: Schritt-für-Schritt Anleitung für PDF-zu-dynamische-PDF Konvertierung.",
+        tags: ["Prozess", "PDF", "Anleitung", "Workflow"]
+      },
+      {
+        name: "SYSTEM-ZUSAMMENFASSUNG.md",
+        type: "md",
+        category: "system",
+        icon: "📋",
+        description: "System-Zusammenfassung: Schnelle Übersicht über alle erstellten PDF-Systeme und Features.",
+        tags: ["Zusammenfassung", "System", "Übersicht"]
+      },
+      {
+        name: "ALLE-PDF-SYSTEME.md",
+        type: "md",
+        category: "pdf",
+        icon: "📚",
+        description: "Alle PDF-Systeme: Umfassende Markdown-Dokumentation aller PDF-bezogenen Systeme und Links.",
+        tags: ["PDF", "Systeme", "Dokumentation", "Übersicht"]
+      },
+      {
+        name: "SYSTEM-ORDNER-STRUKTUR.md",
+        type: "md",
+        category: "system",
+        icon: "📁",
+        description: "System-Ordner-Struktur: Vollständige Übersicht aller Ordner und Dateien im Projekt.",
+        tags: ["Ordner", "Struktur", "Übersicht", "Projekt"]
+      },
+      {
+        name: "QUICK-START-DYNAMIC-PDF.md",
+        type: "md",
+        category: "pdf",
+        icon: "⚡",
+        description: "Quick Start Dynamic PDF: Schnellstart-Anleitung für dynamische PDF-Generierung.",
+        tags: ["Quick Start", "PDF", "Anleitung"]
+      },
+      {
+        name: "DYNAMIC-PDF-GUIDE.md",
+        type: "md",
+        category: "pdf",
+        icon: "📖",
+        description: "Dynamic PDF Guide: Detaillierter Guide für dynamische PDFs mit Branding und Effekten.",
+        tags: ["PDF", "Guide", "Dynamisch", "Branding"]
+      },
+      {
+        name: "MACRO-ECONOMIC-ANALYSIS.md",
+        type: "md",
+        category: "pdf",
+        icon: "📊",
+        description: "Macro-Economic Analysis: Dokumentation der makroökonomischen Analyse für Bank Statements.",
+        tags: ["Makroökonomie", "Analyse", "Bank", "Statement"]
+      },
+      {
+        name: "BANK-STATEMENT-PROCESSING.md",
+        type: "md",
+        category: "pdf",
+        icon: "🏦",
+        description: "Bank Statement Processing: Dokumentation der Bank Statement Verarbeitung und Analyse.",
+        tags: ["Bank", "Statement", "Processing", "Analyse"]
+      },
+      {
+        name: "ANLEITUNG-PDF-ERSTELLEN.md",
+        type: "md",
+        category: "pdf",
+        icon: "📝",
+        description: "Anleitung PDF Erstellen: Schritt-für-Schritt Anleitung zur PDF-Erstellung.",
+        tags: ["Anleitung", "PDF", "Erstellen"]
+      },
+      {
+        name: "README.md",
+        type: "md",
+        category: "system",
+        icon: "📖",
+        description: "README: Hauptdokumentation des PDF-Systems mit Übersicht und Links.",
+        tags: ["README", "Dokumentation", "Übersicht"]
+      },
+      {
+        name: "mitarbeiter-bankauszuege/ANLEITUNG.md",
+        type: "md",
+        category: "pdf",
+        icon: "👥",
+        description: "Mitarbeiter Anleitung: Anleitung für Mitarbeiter zur Verarbeitung von Bankauszügen.",
+        tags: ["Mitarbeiter", "Anleitung", "Bank", "Statement"]
+      },
+      {
+        name: "mitarbeiter-bankauszuege/README-MITARBEITER.md",
+        type: "md",
+        category: "pdf",
+        icon: "👥",
+        description: "Mitarbeiter README: README für Mitarbeiter mit spezifischen Anweisungen.",
+        tags: ["Mitarbeiter", "README", "Anleitung"]
+      },
+      
+      // PowerShell Scripts
+      {
+        name: "universal-pdf-processor.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Universal PDF Processor: PowerShell Script zur Verarbeitung beliebiger PDFs in dynamische HTML-Templates.",
+        tags: ["PowerShell", "PDF", "Processor", "Universal"]
+      },
+      {
+        name: "create-dynamic-pdf.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Create Dynamic PDF: Script zur Erstellung dynamischer PDFs mit Branding.",
+        tags: ["PowerShell", "PDF", "Dynamisch", "Branding"]
+      },
+      {
+        name: "process-bank-statement.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Process Bank Statement: Script zur Verarbeitung von Bankauszügen.",
+        tags: ["PowerShell", "Bank", "Statement", "Processing"]
+      },
+      {
+        name: "process-with-macro-analysis.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Process with Macro Analysis: Script zur Verarbeitung mit makroökonomischer Analyse.",
+        tags: ["PowerShell", "PDF", "Makroökonomie", "Analyse"]
+      },
+      {
+        name: "generate-mcp-pdf.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Generate MCP PDF: Script zur Generierung von MCP-PDFs.",
+        tags: ["PowerShell", "PDF", "MCP", "Generierung"]
+      },
+      {
+        name: "run_fabrikage.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Run Fabrikage: Script zur Ausführung der Fabrikage PDF-Verarbeitung.",
+        tags: ["PowerShell", "Fabrikage", "PDF"]
+      },
+      {
+        name: "run_fabrikage_pdf.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Run Fabrikage PDF: Script zur Ausführung der Fabrikage PDF-Generierung.",
+        tags: ["PowerShell", "Fabrikage", "PDF"]
+      },
+      {
+        name: "mitarbeiter-bankauszuege/process-bank-statement-dynamic.ps1",
+        type: "ps1",
+        category: "pdf",
+        icon: "⚙️",
+        description: "Process Bank Statement Dynamic: Script für Mitarbeiter zur dynamischen Verarbeitung von Bankauszügen.",
+        tags: ["PowerShell", "Mitarbeiter", "Bank", "Statement", "Dynamisch"]
+      },
+      
+      // Python Scripts
+      {
+        name: "macro-economic-analyzer.py",
+        type: "py",
+        category: "pdf",
+        icon: "🐍",
+        description: "Macro-Economic Analyzer: Python Script zur makroökonomischen Analyse von Bank Statements.",
+        tags: ["Python", "Makroökonomie", "Analyse", "Bank"]
+      },
+      {
+        name: "fabrikage_pdf.py",
+        type: "py",
+        category: "pdf",
+        icon: "🐍",
+        description: "Fabrikage PDF: Python Script für Fabrikage PDF-Verarbeitung.",
+        tags: ["Python", "Fabrikage", "PDF"]
+      },
+      {
+        name: "extract_pdf_info.py",
+        type: "py",
+        category: "pdf",
+        icon: "🐍",
+        description: "Extract PDF Info: Python Script zur Extraktion von Informationen aus PDFs.",
+        tags: ["Python", "PDF", "Extraction", "Info"]
+      },
+      
+      // JSON/Config
+      {
+        name: "brand-style-guide.json",
+        type: "json",
+        category: "pdf",
+        icon: "🎨",
+        description: "Brand Style Guide: JSON-Konfiguration für Corporate Branding (Farben, Typografie, Layout).",
+        tags: ["JSON", "Branding", "Style Guide", "Config"]
+      },
+      {
+        name: "requirements.txt",
+        type: "txt",
+        category: "system",
+        icon: "📦",
+        description: "Requirements: Python Dependencies für PDF-Verarbeitung und Analyse.",
+        tags: ["Python", "Dependencies", "Requirements"]
+      },
+      {
+        name: "generate-pdf.js",
+        type: "js",
+        category: "pdf",
+        icon: "📜",
+        description: "Generate PDF: JavaScript für PDF-Generierung im Browser.",
+        tags: ["JavaScript", "PDF", "Generierung"]
+      }
+    ];
+
+    // ============================================
+    // FUNKTIONEN
+    // ============================================
+    
+    let currentFilter = 'all';
+    let currentSearch = '';
+
+    function getFileExtension(filename) {
+      return filename.split('.').pop().toLowerCase();
+    }
+
+    function getFileType(filename) {
+      const ext = getFileExtension(filename);
+      const typeMap = {
+        'html': 'HTML',
+        'md': 'Markdown',
+        'ps1': 'PowerShell',
+        'py': 'Python',
+        'json': 'JSON',
+        'js': 'JavaScript',
+        'txt': 'Text'
+      };
+      return typeMap[ext] || ext.toUpperCase();
+    }
+
+    function matchesSearch(file, search) {
+      if (!search) return true;
+      const searchLower = search.toLowerCase();
+      return file.name.toLowerCase().includes(searchLower) ||
+             file.description.toLowerCase().includes(searchLower) ||
+             file.tags.some(tag => tag.toLowerCase().includes(searchLower));
+    }
+
+    function matchesFilter(file, filter) {
+      if (filter === 'all') return true;
+      if (filter === file.type) return true;
+      if (filter === file.category) return true;
+      return false;
+    }
+
+    function updateStats() {
+      const visible = files.filter(f => matchesSearch(f, currentSearch) && matchesFilter(f, currentFilter));
+      const stats = {
+        total: visible.length,
+        html: visible.filter(f => f.type === 'html').length,
+        md: visible.filter(f => f.type === 'md').length,
+        ps1: visible.filter(f => f.type === 'ps1').length,
+        py: visible.filter(f => f.type === 'py').length
+      };
+      
+      document.getElementById('statTotal').textContent = stats.total;
+      document.getElementById('statHTML').textContent = stats.html;
+      document.getElementById('statMD').textContent = stats.md;
+      document.getElementById('statPS1').textContent = stats.ps1;
+      document.getElementById('statPY').textContent = stats.py;
+    }
+
+    function renderFiles() {
+      const visible = files.filter(f => matchesSearch(f, currentSearch) && matchesFilter(f, currentFilter));
+      
+      // Gruppiere nach Typ
+      const grouped = {};
+      visible.forEach(file => {
+        const type = file.type;
+        if (!grouped[type]) grouped[type] = [];
+        grouped[type].push(file);
+      });
+
+      const container = document.getElementById('categoriesContainer');
+      container.innerHTML = '';
+
+      const typeLabels = {
+        'html': 'HTML Anwendungen',
+        'md': 'Dokumentationen',
+        'ps1': 'PowerShell Scripts',
+        'py': 'Python Scripts',
+        'json': 'Konfigurationen',
+        'js': 'JavaScript',
+        'txt': 'Text Dateien'
+      };
+
+      Object.keys(grouped).sort().forEach(type => {
+        const category = document.createElement('div');
+        category.className = 'category';
+        
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.innerHTML = `
+          <h2>${typeLabels[type] || type.toUpperCase()}</h2>
+          <span class="count">${grouped[type].length}</span>
+        `;
+        category.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'file-grid';
+        
+        grouped[type].forEach(file => {
+          const card = document.createElement('div');
+          card.className = 'file-card';
+          card.innerHTML = `
+            <div class="icon">${file.icon}</div>
+            <div class="title">${file.name}</div>
+            <div class="description">${file.description}</div>
+            <div class="meta">
+              <span class="type">${getFileType(file.name)}</span>
+              <a href="${file.name}" class="link" target="_blank">Öffnen →</a>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        
+        category.appendChild(grid);
+        container.appendChild(category);
+      });
+
+      if (visible.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🔍</div>
+            <div>Keine Dateien gefunden</div>
+            <div style="font-size: 11px; margin-top: 10px; opacity: 0.7;">
+              Versuche andere Suchbegriffe oder Filter
+            </div>
+          </div>
+        `;
+      }
+
+      updateStats();
+    }
+
+    // Event Listeners
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      currentSearch = e.target.value;
+      renderFiles();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderFiles();
+      });
+    });
+
+    // Initialisierung
+    renderFiles();
+  </script>
+</body>
+</html>
+

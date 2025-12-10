@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fabrikage - Simple Version</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f0f2f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #2563eb; 
+            text-align: center;
+        }
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover { 
+            background: #1d4ed8; 
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 4px;
+            min-height: 100px;
+            border-left: 4px solid #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fabrikage - Simple Version</h1>
+        <p>This is a simple version that runs directly in your browser.</p>
+        
+        <div>
+            <button class="btn" onclick="runDemo()">Run Demo</button>
+            <button class="btn" onclick="clearOutput()">Clear</button>
+            <div id="output">Ready to start...</div>
+        </div>
+    </div>
+
+    <script>
+        function runDemo() {
+            const output = document.getElementById('output');
+            output.innerHTML = 'Starting Fabrikage...<br>';
+            
+            const steps = [
+                '✓ Initializing system...',
+                '✓ Loading modules...',
+                '✓ Setting up environment...',
+                '✓ Ready to use!'
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < steps.length) {
+                    output.innerHTML += steps[i] + '<br>';
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    output.innerHTML += '<br><strong>Fabrikage is ready!</strong><br>';
+                }
+            }, 800);
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = 'Output cleared. Ready to start...';
+        }
+    </script>
+</body>
+</html>

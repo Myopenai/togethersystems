@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Kassenbuch – [.SYSTEMS.T.SYSTEMS.]</title>
+	<script>
+		const BASE_URL = 'https://myopenai.github.io/togethersystems';
+	</script>
+	<script src="../KASSENBUCH-COMMUNICATION-LAYER.js"></script>
+	<!-- [.SYSTEMS.T.SYSTEMS.] FABRIKAGE Console-Bypass Integration -->
+	<script src="../FABRIKAGE-CONSOLE-BYPASS-INTEGRATION.js"></script>
+	<style>
+		:root {
+			--bg: #0f1419;
+			--card: #151b23;
+			--text: #e6eef3;
+			--muted: #9fb3c8;
+			--accent: #10b981;
+			--danger: #ef4444;
+			--warn: #f59e0b;
+			--border: #223040;
+			--success: #34d399;
+		}
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			padding: 20px;
+			min-height: 100vh;
+		}
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+		header {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 20px;
+			margin-bottom: 20px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		h1 {
+			font-size: 24px;
+			margin: 0;
+		}
+		.brand {
+			font-size: 12px;
+			color: var(--muted);
+		}
+		.toolbar {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+		.btn {
+			padding: 8px 16px;
+			border-radius: 8px;
+			border: 1px solid var(--border);
+			background: var(--accent);
+			color: #00100a;
+			cursor: pointer;
+			font-weight: 600;
+			transition: all 0.3s;
+		}
+		.btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+		}
+		.btn.secondary {
+			background: transparent;
+			color: var(--text);
+		}
+		.btn.danger {
+			background: var(--danger);
+			color: white;
+		}
+		.grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+		}
+		@media (max-width: 1000px) {
+			.grid { grid-template-columns: 1fr; }
+		}
+		.card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 20px;
+		}
+		.card h2 {
+			font-size: 18px;
+			margin-bottom: 15px;
+			border-bottom: 1px solid var(--border);
+			padding-bottom: 10px;
+		}
+		.input-group {
+			margin-bottom: 15px;
+		}
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-size: 13px;
+			color: var(--muted);
+		}
+		input, textarea, select {
+			width: 100%;
+			padding: 10px;
+			border-radius: 8px;
+			border: 1px solid var(--border);
+			background: var(--bg);
+			color: var(--text);
+			font-size: 14px;
+		}
+		textarea {
+			min-height: 120px;
+			font-family: monospace;
+			resize: vertical;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 15px;
+		}
+		th, td {
+			padding: 10px;
+			text-align: left;
+			border-bottom: 1px solid var(--border);
+		}
+		th {
+			background: var(--bg);
+			font-weight: 600;
+			position: sticky;
+			top: 0;
+		}
+		tr:hover {
+			background: rgba(16, 185, 129, 0.1);
+		}
+		.amount {
+			font-weight: 600;
+		}
+		.amount.income {
+			color: var(--success);
+		}
+		.amount.expense {
+			color: var(--danger);
+		}
+		.stats {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 15px;
+			margin-bottom: 20px;
+		}
+		.stat-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 15px;
+			text-align: center;
+		}
+		.stat-card .value {
+			font-size: 24px;
+			font-weight: 700;
+			margin: 5px 0;
+		}
+		.stat-card .label {
+			font-size: 12px;
+			color: var(--muted);
+		}
+		.sync-status {
+			display: inline-block;
+			padding: 4px 8px;
+			border-radius: 6px;
+			font-size: 11px;
+			margin-left: 10px;
+		}
+		.sync-status.synced {
+			background: var(--success);
+			color: #00110b;
+		}
+		.sync-status.pending {
+			background: var(--warn);
+			color: #150f00;
+		}
+		.sync-status.error {
+			background: var(--danger);
+			color: white;
+		}
+	</style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<div>
+				<h1>📖 Kassenbuch</h1>
+				<div class="brand">[.SYSTEMS.T.SYSTEMS.] TogetherSystems International TTT</div>
+			</div>
+			<div class="toolbar">
+				<button class="btn" onclick="syncWithApps()">🔄 Mit Apps synchronisieren</button>
+				<button class="btn secondary" onclick="exportData()">💾 Exportieren</button>
+				<button class="btn secondary" onclick="importData()">📥 Importieren</button>
+				<button class="btn danger" onclick="clearAllData()">🗑️ Alle Daten löschen</button>
+			</div>
+		</header>
+
+		<div class="stats">
+			<div class="stat-card">
+				<div class="label">Einnahmen</div>
+				<div class="value income" id="statIncome">€ 0,00</div>
+			</div>
+			<div class="stat-card">
+				<div class="label">Ausgaben</div>
+				<div class="value expense" id="statExpense">€ 0,00</div>
+			</div>
+			<div class="stat-card">
+				<div class="label">Saldo</div>
+				<div class="value" id="statBalance">€ 0,00</div>
+			</div>
+		</div>
+
+		<div class="grid">
+			<div class="card">
+				<h2>Neuer Eintrag</h2>
+				<div class="input-group">
+					<label>Datum</label>
+					<input type="date" id="entryDate" value="">
+				</div>
+				<div class="input-group">
+					<label>Beschreibung</label>
+					<input type="text" id="entryDescription" placeholder="z.B. Miete, Supermarkt, Gehalt">
+				</div>
+				<div class="input-group">
+					<label>Kategorie</label>
+					<select id="entryCategory">
+						<option value="">-- Kategorie wählen --</option>
+						<option value="einnahme">Einnahme</option>
+						<option value="wohnen">Wohnen (Miete, Nebenkosten)</option>
+						<option value="lebensmittel">Lebensmittel</option>
+						<option value="transport">Transport</option>
+						<option value="gesundheit">Gesundheit</option>
+						<option value="bildung">Bildung</option>
+						<option value="freizeit">Freizeit</option>
+						<option value="sonstiges">Sonstiges</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<label>Betrag (€)</label>
+					<input type="number" id="entryAmount" step="0.01" placeholder="z.B. -550 für Ausgabe, 2500 für Einnahme">
+				</div>
+				<button class="btn" onclick="addEntry()" style="width: 100%; margin-top: 10px;">➕ Eintrag hinzufügen</button>
+			</div>
+
+			<div class="card">
+				<h2>CSV/Text Import
+					<span class="sync-status" id="syncStatus" style="display:none;"></span>
+				</h2>
+				<div class="input-group">
+					<label>Bankkassenbuch-Daten einfügen (CSV oder Text)</label>
+					<textarea id="csvInput" placeholder="Format: 2025-12-01;Supermarkt;-23,40&#10;2025-12-02;Miete;-550&#10;2025-12-03;Gehalt;2500"></textarea>
+				</div>
+				<button class="btn" onclick="importCSV()" style="width: 100%;">📥 CSV importieren</button>
+				<button class="btn danger" onclick="clearImportedData()" style="width: 100%; margin-top: 10px;">🗑️ Importierte Daten löschen</button>
+			</div>
+		</div>
+
+		<div class="card" style="margin-top: 20px;">
+			<h2>Einträge
+				<select id="filterCategory" style="width: auto; display: inline-block; margin-left: 15px;">
+					<option value="">Alle Kategorien</option>
+					<option value="einnahme">Einnahme</option>
+					<option value="wohnen">Wohnen</option>
+					<option value="lebensmittel">Lebensmittel</option>
+					<option value="transport">Transport</option>
+					<option value="gesundheit">Gesundheit</option>
+					<option value="bildung">Bildung</option>
+					<option value="freizeit">Freizeit</option>
+					<option value="sonstiges">Sonstiges</option>
+				</select>
+				<input type="text" id="searchInput" placeholder="Suchen..." style="width: auto; display: inline-block; margin-left: 15px;">
+			</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Datum</th>
+						<th>Beschreibung</th>
+						<th>Kategorie</th>
+						<th>Betrag</th>
+						<th>Aktion</th>
+					</tr>
+				</thead>
+				<tbody id="entriesTable">
+					<tr><td colspan="5" style="text-align: center; color: var(--muted);">Keine Einträge vorhanden</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script>
+		// [.SYSTEMS.T.SYSTEMS.] KASSENBUCH - Kommunikations-Layer
+		
+		// Storage Keys
+		const STORAGE_KEY = 'kassenbuch.entries';
+		const SYNC_KEY = 'kassenbuch.lastSync';
+		
+		// Kommunikations-Interface für andere Apps
+		window.kassenbuchModule = {
+			// Andere Apps können Daten senden
+			setData: function(data) {
+				try {
+					if (Array.isArray(data.entries)) {
+						const existing = loadEntries();
+						const merged = [...existing, ...data.entries];
+						saveEntries(merged);
+						renderEntries();
+						updateStats();
+						console.log('[FABRIKAGE] Kassenbuch: Daten von App erhalten', data);
+						return true;
+					}
+				} catch(e) {
+					console.error('[FABRIKAGE] Kassenbuch setData error:', e);
+				}
+				return false;
+			},
+			
+			// Andere Apps können Daten abrufen
+			getData: function() {
+				try {
+					return {
+						entries: loadEntries(),
+						stats: calculateStats()
+					};
+				} catch(e) {
+					console.error('[FABRIKAGE] Kassenbuch getData error:', e);
+					return { entries: [], stats: {} };
+				}
+			},
+			
+			// Event-Listener für Datenänderungen
+			onDataChange: function(callback) {
+				if (typeof callback === 'function') {
+					window.addEventListener('kassenbuch:dataChanged', callback);
+				}
+			}
+		};
+		
+		// Daten laden/speichern
+		function loadEntries() {
+			try {
+				const raw = localStorage.getItem(STORAGE_KEY);
+				if (!raw) return [];
+				const entries = JSON.parse(raw);
+				return Array.isArray(entries) ? entries : [];
+			} catch(e) {
+				console.error('[FABRIKAGE] loadEntries error:', e);
+				return [];
+			}
+		}
+		
+		function saveEntries(entries) {
+			try {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+				// Event auslösen für andere Apps
+				window.dispatchEvent(new CustomEvent('kassenbuch:dataChanged', { 
+					detail: { entries, stats: calculateStats() } 
+				}));
+			} catch(e) {
+				console.error('[FABRIKAGE] saveEntries error:', e);
+			}
+		}
+		
+		// Eintrag hinzufügen
+		function addEntry() {
+			try {
+				const date = document.getElementById('entryDate').value;
+				const description = document.getElementById('entryDescription').value.trim();
+				const category = document.getElementById('entryCategory').value;
+				const amount = parseFloat(document.getElementById('entryAmount').value);
+				
+				if (!date || !description || !amount || isNaN(amount)) {
+					alert('Bitte alle Felder ausfüllen.');
+					return;
+				}
+				
+				const entries = loadEntries();
+				entries.push({
+					id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+					date,
+					description,
+					category,
+					amount,
+					createdAt: new Date().toISOString()
+				});
+				
+				saveEntries(entries);
+				renderEntries();
+				updateStats();
+				
+				// Formular zurücksetzen
+				document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+				document.getElementById('entryDescription').value = '';
+				document.getElementById('entryCategory').value = '';
+				document.getElementById('entryAmount').value = '';
+				
+				console.log('[FABRIKAGE] Eintrag hinzugefügt');
+			} catch(e) {
+				console.error('[FABRIKAGE] addEntry error:', e);
+				alert('Fehler beim Hinzufügen: ' + e.message);
+			}
+		}
+		
+		// CSV importieren
+		function importCSV() {
+			try {
+				const text = document.getElementById('csvInput').value.trim();
+				if (!text) {
+					alert('Bitte CSV-Daten eingeben.');
+					return;
+				}
+				
+				const lines = text.split('\n').filter(l => l.trim());
+				const entries = loadEntries();
+				const today = new Date().toISOString().split('T')[0];
+				
+				lines.forEach(line => {
+					const parts = line.split(/[;,\t]/).map(p => p.trim());
+					if (parts.length >= 2) {
+						let date = today;
+						let description = '';
+						let amount = 0;
+						
+						// Versuche Datum zu erkennen
+						if (parts[0].match(/^\d{4}-\d{2}-\d{2}$/)) {
+							date = parts[0];
+							description = parts[1] || '';
+							amount = parseFloat(parts[2]?.replace(',', '.') || '0');
+						} else {
+							description = parts[0] || '';
+							amount = parseFloat(parts[1]?.replace(',', '.') || '0');
+						}
+						
+						if (description && !isNaN(amount) && amount !== 0) {
+							// Kategorie automatisch erkennen
+							let category = 'sonstiges';
+							const descLower = description.toLowerCase();
+							if (descLower.includes('miete') || descLower.includes('wohnen')) category = 'wohnen';
+							else if (descLower.includes('supermarkt') || descLower.includes('lebensmittel') || descLower.includes('essen')) category = 'lebensmittel';
+							else if (descLower.includes('bus') || descLower.includes('bahn') || descLower.includes('transport')) category = 'transport';
+							else if (amount > 0) category = 'einnahme';
+							
+							entries.push({
+								id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+								date,
+								description,
+								category,
+								amount,
+								createdAt: new Date().toISOString(),
+								imported: true
+							});
+						}
+					}
+				});
+				
+				saveEntries(entries);
+				renderEntries();
+				updateStats();
+				document.getElementById('csvInput').value = '';
+				
+				console.log('[FABRIKAGE] CSV importiert:', lines.length, 'Zeilen');
+				alert(`${lines.length} Zeilen importiert.`);
+			} catch(e) {
+				console.error('[FABRIKAGE] importCSV error:', e);
+				alert('Fehler beim Import: ' + e.message);
+			}
+		}
+		
+		// Einträge rendern
+		function renderEntries() {
+			try {
+				const entries = loadEntries();
+				const filterCategory = document.getElementById('filterCategory').value;
+				const searchText = document.getElementById('searchInput').value.toLowerCase();
+				
+				let filtered = entries;
+				if (filterCategory) {
+					filtered = filtered.filter(e => e.category === filterCategory);
+				}
+				if (searchText) {
+					filtered = filtered.filter(e => 
+						e.description.toLowerCase().includes(searchText) ||
+						e.category.toLowerCase().includes(searchText)
+					);
+				}
+				
+				// Sortieren nach Datum (neueste zuerst)
+				filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+				
+				const tbody = document.getElementById('entriesTable');
+				if (filtered.length === 0) {
+					tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--muted);">Keine Einträge vorhanden</td></tr>';
+					return;
+				}
+				
+				tbody.innerHTML = filtered.map(entry => `
+					<tr>
+						<td>${entry.date}</td>
+						<td>${escapeHtml(entry.description)}</td>
+						<td>${escapeHtml(entry.category || 'sonstiges')}</td>
+						<td class="amount ${entry.amount >= 0 ? 'income' : 'expense'}">
+							${entry.amount >= 0 ? '+' : ''}€ ${entry.amount.toFixed(2).replace('.', ',')}
+						</td>
+						<td>
+							<button class="btn danger" style="padding: 4px 8px; font-size: 12px;" onclick="deleteEntry('${entry.id}')">🗑️</button>
+						</td>
+					</tr>
+				`).join('');
+			} catch(e) {
+				console.error('[FABRIKAGE] renderEntries error:', e);
+			}
+		}
+		
+		// Eintrag löschen
+		function deleteEntry(id) {
+			try {
+				if (!confirm('Eintrag wirklich löschen?')) return;
+				
+				const entries = loadEntries();
+				const filtered = entries.filter(e => e.id !== id);
+				saveEntries(filtered);
+				renderEntries();
+				updateStats();
+				
+				console.log('[FABRIKAGE] Eintrag gelöscht:', id);
+			} catch(e) {
+				console.error('[FABRIKAGE] deleteEntry error:', e);
+			}
+		}
+		
+		// Statistiken berechnen
+		function calculateStats() {
+			try {
+				const entries = loadEntries();
+				let income = 0;
+				let expense = 0;
+				
+				entries.forEach(entry => {
+					if (entry.amount > 0) {
+						income += entry.amount;
+					} else {
+						expense += Math.abs(entry.amount);
+					}
+				});
+				
+				return {
+					income,
+					expense,
+					balance: income - expense
+				};
+			} catch(e) {
+				console.error('[FABRIKAGE] calculateStats error:', e);
+				return { income: 0, expense: 0, balance: 0 };
+			}
+		}
+		
+		// Statistiken aktualisieren
+		function updateStats() {
+			try {
+				const stats = calculateStats();
+				document.getElementById('statIncome').textContent = `€ ${stats.income.toFixed(2).replace('.', ',')}`;
+				document.getElementById('statExpense').textContent = `€ ${stats.expense.toFixed(2).replace('.', ',')}`;
+				document.getElementById('statBalance').textContent = `€ ${stats.balance.toFixed(2).replace('.', ',')}`;
+				document.getElementById('statBalance').className = 'value ' + (stats.balance >= 0 ? 'income' : 'expense');
+			} catch(e) {
+				console.error('[FABRIKAGE] updateStats error:', e);
+			}
+		}
+		
+		// Mit anderen Apps synchronisieren
+		function syncWithApps() {
+			try {
+				const statusEl = document.getElementById('syncStatus');
+				statusEl.style.display = 'inline-block';
+				statusEl.className = 'sync-status pending';
+				statusEl.textContent = 'Synchronisiere...';
+				
+				// Lese Daten aus anderen Apps
+				const apps = ['budget', 'contract', 'flowcashx', 'indexortal'];
+				let synced = 0;
+				
+				apps.forEach(appName => {
+					try {
+						const appData = localStorage.getItem(`${appName}.data`);
+						if (appData) {
+							const data = JSON.parse(appData);
+							// Konvertiere App-Daten zu Kassenbuch-Format
+							if (data.entries || data.transactions || data.items) {
+								const entries = loadEntries();
+								const newEntries = convertAppDataToEntries(data, appName);
+								const merged = [...entries, ...newEntries];
+								saveEntries(merged);
+								synced++;
+							}
+						}
+					} catch(e) {
+						console.error(`[FABRIKAGE] Sync error for ${appName}:`, e);
+					}
+				});
+				
+				// Sende Kassenbuch-Daten an andere Apps
+				const kassenbuchData = {
+					entries: loadEntries(),
+					stats: calculateStats()
+				};
+				
+				apps.forEach(appName => {
+					try {
+						if (window[`${appName}Module`] && typeof window[`${appName}Module`].setFromKassenbuch === 'function') {
+							window[`${appName}Module`].setFromKassenbuch(kassenbuchData);
+						}
+					} catch(e) {
+						console.error(`[FABRIKAGE] Send to ${appName} error:`, e);
+					}
+				});
+				
+				renderEntries();
+				updateStats();
+				
+				statusEl.className = 'sync-status synced';
+				statusEl.textContent = `✓ ${synced} Apps synchronisiert`;
+				
+				setTimeout(() => {
+					statusEl.style.display = 'none';
+				}, 3000);
+				
+				console.log('[FABRIKAGE] Synchronisation abgeschlossen');
+			} catch(e) {
+				console.error('[FABRIKAGE] syncWithApps error:', e);
+				const statusEl = document.getElementById('syncStatus');
+				statusEl.className = 'sync-status error';
+				statusEl.textContent = '✗ Fehler';
+			}
+		}
+		
+		// App-Daten zu Kassenbuch-Einträgen konvertieren
+		function convertAppDataToEntries(data, appName) {
+			const entries = [];
+			const today = new Date().toISOString().split('T')[0];
+			
+			try {
+				if (data.entries && Array.isArray(data.entries)) {
+					data.entries.forEach(item => {
+						if (item.amount || item.value) {
+							entries.push({
+								id: `${appName}-${item.id || Date.now()}`,
+								date: item.date || item.createdAt?.split('T')[0] || today,
+								description: item.description || item.title || `${appName} Eintrag`,
+								category: item.category || 'sonstiges',
+								amount: item.amount || item.value || 0,
+								createdAt: new Date().toISOString(),
+								source: appName
+							});
+						}
+					});
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] convertAppDataToEntries error:', e);
+			}
+			
+			return entries;
+		}
+		
+		// Exportieren
+		function exportData() {
+			try {
+				const entries = loadEntries();
+				const data = {
+					entries,
+					stats: calculateStats(),
+					exportedAt: new Date().toISOString()
+				};
+				
+				const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = `kassenbuch-export-${new Date().toISOString().split('T')[0]}.json`;
+				a.click();
+				URL.revokeObjectURL(url);
+				
+				console.log('[FABRIKAGE] Daten exportiert');
+			} catch(e) {
+				console.error('[FABRIKAGE] exportData error:', e);
+				alert('Fehler beim Export: ' + e.message);
+			}
+		}
+		
+		// Importieren
+		function importData() {
+			try {
+				const input = document.createElement('input');
+				input.type = 'file';
+				input.accept = '.json';
+				input.onchange = (e) => {
+					const file = e.target.files[0];
+					if (!file) return;
+					
+					const reader = new FileReader();
+					reader.onload = (event) => {
+						try {
+							const data = JSON.parse(event.target.result);
+							if (data.entries && Array.isArray(data.entries)) {
+								const existing = loadEntries();
+								const merged = [...existing, ...data.entries];
+								saveEntries(merged);
+								renderEntries();
+								updateStats();
+								alert(`${data.entries.length} Einträge importiert.`);
+							} else {
+								alert('Ungültiges Format.');
+							}
+						} catch(err) {
+							alert('Fehler beim Lesen der Datei: ' + err.message);
+						}
+					};
+					reader.readAsText(file);
+				};
+				input.click();
+			} catch(e) {
+				console.error('[FABRIKAGE] importData error:', e);
+			}
+		}
+		
+		// Importierte Daten löschen
+		function clearImportedData() {
+			try {
+				if (!confirm('Möchten Sie wirklich alle importierten Daten löschen?\n\nDies löscht nur importierte Einträge, nicht manuell erstellte.')) {
+					return;
+				}
+				
+				const entries = loadEntries();
+				const filtered = entries.filter(e => !e.imported && !e.source);
+				saveEntries(filtered);
+				renderEntries();
+				updateStats();
+				
+				document.getElementById('csvInput').value = '';
+				
+				console.log('[FABRIKAGE] Importierte Daten gelöscht');
+				alert('Importierte Daten wurden gelöscht.');
+			} catch(e) {
+				console.error('[FABRIKAGE] clearImportedData error:', e);
+			}
+		}
+		
+		// Alle Daten löschen
+		function clearAllData() {
+			try {
+				if (!confirm('Möchten Sie wirklich ALLE Daten löschen?\n\nDiese Aktion kann nicht rückgängig gemacht werden.')) {
+					return;
+				}
+				
+				localStorage.removeItem(STORAGE_KEY);
+				localStorage.removeItem(SYNC_KEY);
+				renderEntries();
+				updateStats();
+				document.getElementById('csvInput').value = '';
+				
+				console.log('[FABRIKAGE] Alle Daten gelöscht');
+				alert('Alle Daten wurden gelöscht.');
+			} catch(e) {
+				console.error('[FABRIKAGE] clearAllData error:', e);
+			}
+		}
+		
+		// Helper
+		function escapeHtml(text) {
+			const div = document.createElement('div');
+			div.textContent = text;
+			return div.innerHTML;
+		}
+		
+		// Event Listeners
+		document.getElementById('filterCategory').addEventListener('change', renderEntries);
+		document.getElementById('searchInput').addEventListener('input', renderEntries);
+		
+		// Initialisierung
+		document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+		renderEntries();
+		updateStats();
+		
+		// Auto-Sync alle 30 Sekunden
+		setInterval(() => {
+			syncWithApps();
+		}, 30000);
+		
+		// Event-Listener für Datenänderungen von anderen Apps
+		window.addEventListener('storage', (e) => {
+			if (e.key && (e.key.startsWith('budget.') || e.key.startsWith('contract.') || e.key.startsWith('flowcashx.') || e.key.startsWith('uae.'))) {
+				syncWithApps();
+			}
+		});
+		
+		// Registriere Kassenbuch-Modul im Hub
+		if (window.cashflowHub) {
+			window.cashflowHub.registerApp('kassenbuch', window.kassenbuchModule);
+		}
+		
+		console.log('[FABRIKAGE] Kassenbuch geladen');
+		console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+		console.log('[FABRIKAGE] Kassenbuch-Modul registriert');
+	</script>
+</body>
+</html>
+

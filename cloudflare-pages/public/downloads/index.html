@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Downloads – OSOTODOS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/assets/osoto.css">
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+</head>
+<body class="osoto-app">
+  <div class="osoto-shell">
+    <header class="osoto-topbar">
+      <div class="osoto-logo"><span class="osoto-brand-token">.T.</span> OSOTODOS<span>DOWNLOADS</span></div>
+      <div class="osoto-topbar-right"><button onclick="location.href='/'" class="osoto-btn osoto-btn-outline">Zurück</button></div>
+    </header>
+    <aside class="osoto-sidenav"><nav class="osoto-nav"><div class="osoto-nav-label">Bereiche</div><a href="/" class="osoto-nav-item">Portal</a><a href="/manifest-portal.html" class="osoto-nav-item">Manifest</a></nav></aside>
+    <main class="osoto-main">
+      <section class="osoto-page-header"><div><h1>Downloads</h1><p>Checksums & One‑click bundle.</p></div></section>
+      <section>
+        <button class="osoto-btn osoto-btn-primary" onclick="location.href='bundle.zip'"><span class="osoto-brand-token">.T.</span> Alles herunterladen</button>
+        <h2>Checksums</h2>
+        <pre id="checksums">Lade…</pre>
+      </section>
+    </main>
+  </div>
+  <script>
+    fetch('checksums.json').then(r=>r.json()).then(j=>{
+      document.getElementById('checksums').textContent = JSON.stringify(j,null,2);
+    }).catch(()=>{ document.getElementById('checksums').textContent = 'checksums.json nicht gefunden'; });
+  </script>
+</body>
+</html>
+

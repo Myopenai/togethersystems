@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Prompt-to-Program Portal [.SYSTEMS.T.SYSTEMS.]</title>
+    <link rel="manifest" href="/manifest.json">
+    <script src="../js/console-error-controller.js"></script>
+    <script src="../js/console-cache-system.js"></script>
+    <style>
+        :root {
+            --bg: #0f1419;
+            --card: #151b23;
+            --text: #e6eef3;
+            --muted: #9fb3c8;
+            --accent: #10b981;
+            --border: #223040;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header {
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h1 { font-size: 28px; margin-bottom: 10px; color: var(--accent); }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 16px;
+            min-height: 150px;
+            font-family: inherit;
+        }
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .btn:hover { background: #059669; }
+        #result { margin-top: 20px; }
+        .result-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+        }
+    </style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Universal Prompt-to-Program Portal</h1>
+            <p style="color: var(--muted); margin-top: 10px;">
+                Beschreibe dein Programm in natürlicher Sprache
+            </p>
+            <p class="branding" style="margin-top: 10px; font-size: 12px; color: var(--muted);">
+                [.SYSTEMS.T.SYSTEMS.] - .T. TogetherSystems - ModularFlux Architecture
+            </p>
+        </header>
+
+        <div class="card">
+            <h2>📝 Prompt eingeben</h2>
+            <textarea id="promptInput" placeholder="z.B.: Erstelle ein Haushaltsbuch mit Solar-Energie-Berechnung und Finanz-Analyse"></textarea>
+            <button class="btn" onclick="generateProgram()">⚙️ Programm generieren</button>
+        </div>
+
+        <div class="card" id="result" style="display: none;">
+            <h2>📊 Ergebnis</h2>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        async function generateProgram() {
+            const prompt = document.getElementById('promptInput').value;
+            if (!prompt.trim()) {
+                alert('Bitte geben Sie einen Prompt ein');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            const contentDiv = document.getElementById('resultContent');
+            resultDiv.style.display = 'block';
+            contentDiv.innerHTML = '<p>⏳ Generiere Programm...</p>';
+
+            try {
+                const response = await generateProgram(prompt);
+                
+                if (response.ok) {
+                    const result = response.result;
+                    contentDiv.innerHTML = `
+                        <div class="result-item">
+                            <h3>✅ Programm generiert!</h3>
+                            <p><strong>Kategorie:</strong> ${result.category}</p>
+                            <p><strong>Domains:</strong> ${result.domains.join(', ')}</p>
+                            <p><strong>Targets:</strong> ${result.targets.join(', ')}</p>
+                            <p><strong>Dateien:</strong> ${result.files.map(f => f.language).join(', ')}</p>
+                            ${result.hasUI ? '<p><strong>UI:</strong> Web PWA verfügbar</p>' : ''}
+                        </div>
+                        <div class="result-item">
+                            <h3>📥 Download</h3>
+                            <button class="btn" onclick="downloadProgram(${JSON.stringify(result).replace(/"/g, '&quot;')})">📦 Programm herunterladen</button>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(response.error || 'Unbekannter Fehler');
+                }
+            } catch (e) {
+                contentDiv.innerHTML = `<p style="color: #ef4444;">❌ Fehler: ${e.message}</p>`;
+            }
+        }
+
+        async function downloadProgram(result) {
+            try {
+                await downloadProgram(result);
+            } catch (e) {
+                alert('Download-Funktion wird implementiert');
+            }
+        }
+    </script>
+</body>
+</html>
+
+

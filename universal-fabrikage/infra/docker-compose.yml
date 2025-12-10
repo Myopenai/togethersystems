@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  gateway:
+    image: traefik:2.11
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/certs:ro
+    networks:
+      - universal
+
+  engine-node:
+    build: ../engine/runtime-node
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.engine.rule=Host(`apple-pi.local`) && PathPrefix(`/meta`)"
+      - "traefik.http.routers.engine.entrypoints=websecure"
+      - "traefik.http.routers.engine.tls=true"
+      - "traefik.http.services.engine.loadbalancer.server.port=8080"
+    environment:
+      - PORT=8080
+    networks:
+      - universal
+
+  portal:
+    build: ../portal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal.rule=Host(`apple-pi.local`)"
+      - "traefik.http.routers.portal.entrypoints=websecure"
+      - "traefik.http.routers.portal.tls=true"
+      - "traefik.http.services.portal.loadbalancer.server.port=8088"
+    networks:
+      - universal
+
+  control:
+    build: ../control
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.control.rule=Host(`apple-pi.local`) && PathPrefix(`/healthz`,`/readyz`,`/status`,`/ruhestand`,`/aktiv`)"
+      - "traefik.http.routers.control.entrypoints=websecure"
+      - "traefik.http.routers.control.tls=true"
+      - "traefik.http.services.control.loadbalancer.server.port=8090"
+    networks:
+      - universal
+
+networks:
+  universal:
+    driver: bridge
+
+

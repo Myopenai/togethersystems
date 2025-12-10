@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Wissenschaftliche Excel-Formeln - Haushaltsbuch [.SYSTEMS.T.SYSTEMS.]</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+	<script src="../js/console-error-controller.js"></script>
+	<script src="../js/console-cache-system.js"></script>
+	<style>
+		:root {
+			--bg: #0f1419;
+			--card: #151b23;
+			--text: #e6eef3;
+			--muted: #9fb3c8;
+			--accent: #10b981;
+			--border: #223040;
+			--success: #34d399;
+		}
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			padding: 20px;
+		}
+		.container { max-width: 1400px; margin: 0 auto; }
+		header {
+			background: var(--card);
+			border: 1px solid var(--accent);
+			border-radius: 12px;
+			padding: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+		}
+		h1 { font-size: 28px; margin-bottom: 10px; color: var(--accent); }
+		.card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 20px;
+			margin-bottom: 20px;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 15px;
+		}
+		th, td {
+			padding: 10px;
+			text-align: left;
+			border: 1px solid var(--border);
+		}
+		th { background: var(--bg); color: var(--accent); }
+		input[type="number"] {
+			width: 100%;
+			padding: 8px;
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			color: var(--text);
+		}
+		.formula-display {
+			background: var(--bg);
+			padding: 10px;
+			border-radius: 6px;
+			font-family: monospace;
+			color: var(--accent);
+			margin: 10px 0;
+		}
+	</style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>🔬 Wissenschaftliche Excel-Formeln</h1>
+			<p style="color: var(--muted); margin-top: 10px;">
+				Haushaltsbuch · Solar · Brennstoffzelle · Ökonomische Ministrukturen
+			</p>
+		</header>
+
+		<!-- Solar-Berechnung -->
+		<div class="card">
+			<h2>☀️ Solar-Energie</h2>
+			<table>
+				<tr>
+					<th>Parameter</th>
+					<th>Wert</th>
+					<th>Einheit</th>
+					<th>Formel</th>
+				</tr>
+				<tr>
+					<td>Fläche</td>
+					<td><input type="number" id="solarArea" value="50" onchange="calculateSolar()"></td>
+					<td>m²</td>
+					<td>A</td>
+				</tr>
+				<tr>
+					<td>Wirkungsgrad</td>
+					<td><input type="number" id="solarEfficiency" value="20" onchange="calculateSolar()"></td>
+					<td>%</td>
+					<td>η</td>
+				</tr>
+				<tr>
+					<td>Einstrahlung</td>
+					<td><input type="number" id="solarIrradiance" value="1000" onchange="calculateSolar()"></td>
+					<td>W/m²</td>
+					<td>G</td>
+				</tr>
+				<tr>
+					<td><strong>Leistung</strong></td>
+					<td><strong id="solarPower">0</strong></td>
+					<td><strong>kW</strong></td>
+					<td><strong>P = A × η × G / 1000</strong></td>
+				</tr>
+				<tr>
+					<td><strong>Ertrag (pro Jahr)</strong></td>
+					<td><strong id="solarYield">0</strong></td>
+					<td><strong>kWh</strong></td>
+					<td><strong>E = P × 8760 × 0.8</strong></td>
+				</tr>
+			</table>
+			<div class="formula-display" id="solarFormula"></div>
+		</div>
+
+		<!-- Brennstoffzelle -->
+		<div class="card">
+			<h2>⚡ Brennstoffzelle</h2>
+			<table>
+				<tr>
+					<th>Parameter</th>
+					<th>Wert</th>
+					<th>Einheit</th>
+					<th>Formel</th>
+				</tr>
+				<tr>
+					<td>Wasserstoff-Verbrauch</td>
+					<td><input type="number" id="fuelCellH2" value="1" onchange="calculateFuelCell()"></td>
+					<td>kg/h</td>
+					<td>m_H2</td>
+				</tr>
+				<tr>
+					<td>Wirkungsgrad</td>
+					<td><input type="number" id="fuelCellEfficiency" value="60" onchange="calculateFuelCell()"></td>
+					<td>%</td>
+					<td>η</td>
+				</tr>
+				<tr>
+					<td>Heizwert H2</td>
+					<td>33.3</td>
+					<td>kWh/kg</td>
+					<td>H</td>
+				</tr>
+				<tr>
+					<td><strong>Leistung</strong></td>
+					<td><strong id="fuelCellPower">0</strong></td>
+					<td><strong>kW</strong></td>
+					<td><strong>P = m_H2 × H × η / 100</strong></td>
+				</tr>
+			</table>
+			<div class="formula-display" id="fuelCellFormula"></div>
+		</div>
+
+		<!-- Haushaltsbuch -->
+		<div class="card">
+			<h2>💰 Haushaltsbuch</h2>
+			<table>
+				<tr>
+					<th>Kategorie</th>
+					<th>Einnahmen</th>
+					<th>Ausgaben</th>
+					<th>Saldo</th>
+				</tr>
+				<tr>
+					<td>Gehalt</td>
+					<td><input type="number" id="incomeSalary" value="3000" onchange="calculateHousehold()"></td>
+					<td>-</td>
+					<td id="balanceSalary">0</td>
+				</tr>
+				<tr>
+					<td>Energie (Solar)</td>
+					<td><input type="number" id="incomeSolar" value="0" onchange="calculateHousehold()"></td>
+					<td>-</td>
+					<td id="balanceSolar">0</td>
+				</tr>
+				<tr>
+					<td>Miete</td>
+					<td>-</td>
+					<td><input type="number" id="expenseRent" value="800" onchange="calculateHousehold()"></td>
+					<td id="balanceRent">0</td>
+				</tr>
+				<tr>
+					<td>Strom</td>
+					<td>-</td>
+					<td><input type="number" id="expensePower" value="100" onchange="calculateHousehold()"></td>
+					<td id="balancePower">0</td>
+				</tr>
+				<tr>
+					<td><strong>Gesamt</strong></td>
+					<td><strong id="totalIncome">0</strong></td>
+					<td><strong id="totalExpense">0</strong></td>
+					<td><strong id="totalBalance">0</strong></td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Export -->
+		<div class="card">
+			<h2>📥 Export</h2>
+			<button class="btn" onclick="exportToExcel()" style="background: var(--accent); padding: 12px 24px; border: none; border-radius: 6px; color: white; cursor: pointer;">📊 Als Excel exportieren</button>
+		</div>
+	</div>
+
+	<script>
+		function calculateSolar() {
+			const A = parseFloat(document.getElementById('solarArea').value) || 0;
+			const η = parseFloat(document.getElementById('solarEfficiency').value) || 0;
+			const G = parseFloat(document.getElementById('solarIrradiance').value) || 0;
+			
+			const P = (A * η * G) / 1000; // kW
+			const E = P * 8760 * 0.8; // kWh pro Jahr (0.8 = Verfügbarkeitsfaktor)
+			
+			document.getElementById('solarPower').textContent = P.toFixed(2);
+			document.getElementById('solarYield').textContent = E.toFixed(2);
+			
+			document.getElementById('solarFormula').textContent = 
+				`P = ${A} × ${η}% × ${G} / 1000 = ${P.toFixed(2)} kW | E = ${P.toFixed(2)} × 8760 × 0.8 = ${E.toFixed(2)} kWh/a`;
+			
+			// Aktualisiere Haushaltsbuch
+			document.getElementById('incomeSolar').value = (E * 0.10).toFixed(2); // 10 Cent pro kWh Einspeisevergütung
+			calculateHousehold();
+		}
+
+		function calculateFuelCell() {
+			const m_H2 = parseFloat(document.getElementById('fuelCellH2').value) || 0;
+			const η = parseFloat(document.getElementById('fuelCellEfficiency').value) || 0;
+			const H = 33.3; // kWh/kg
+			
+			const P = (m_H2 * H * η) / 100; // kW
+			
+			document.getElementById('fuelCellPower').textContent = P.toFixed(2);
+			
+			document.getElementById('fuelCellFormula').textContent = 
+				`P = ${m_H2} × ${H} × ${η}% / 100 = ${P.toFixed(2)} kW`;
+		}
+
+		function calculateHousehold() {
+			const incomeSalary = parseFloat(document.getElementById('incomeSalary').value) || 0;
+			const incomeSolar = parseFloat(document.getElementById('incomeSolar').value) || 0;
+			const expenseRent = parseFloat(document.getElementById('expenseRent').value) || 0;
+			const expensePower = parseFloat(document.getElementById('expensePower').value) || 0;
+			
+			const totalIncome = incomeSalary + incomeSolar;
+			const totalExpense = expenseRent + expensePower;
+			const totalBalance = totalIncome - totalExpense;
+			
+			document.getElementById('totalIncome').textContent = totalIncome.toFixed(2) + ' €';
+			document.getElementById('totalExpense').textContent = totalExpense.toFixed(2) + ' €';
+			document.getElementById('totalBalance').textContent = totalBalance.toFixed(2) + ' €';
+			document.getElementById('totalBalance').style.color = totalBalance >= 0 ? 'var(--success)' : 'var(--danger)';
+			
+			document.getElementById('balanceSalary').textContent = incomeSalary.toFixed(2) + ' €';
+			document.getElementById('balanceSolar').textContent = incomeSolar.toFixed(2) + ' €';
+			document.getElementById('balanceRent').textContent = '-' + expenseRent.toFixed(2) + ' €';
+			document.getElementById('balancePower').textContent = '-' + expensePower.toFixed(2) + ' €';
+		}
+
+		function exportToExcel() {
+			const wb = XLSX.utils.book_new();
+			
+			// Solar-Daten
+			const solarData = [
+				['Parameter', 'Wert', 'Einheit'],
+				['Fläche', document.getElementById('solarArea').value, 'm²'],
+				['Wirkungsgrad', document.getElementById('solarEfficiency').value, '%'],
+				['Leistung', document.getElementById('solarPower').textContent, 'kW'],
+				['Ertrag (pro Jahr)', document.getElementById('solarYield').textContent, 'kWh']
+			];
+			const ws1 = XLSX.utils.aoa_to_sheet(solarData);
+			XLSX.utils.book_append_sheet(wb, ws1, 'Solar');
+			
+			// Haushaltsbuch
+			const householdData = [
+				['Kategorie', 'Einnahmen', 'Ausgaben', 'Saldo'],
+				['Gehalt', document.getElementById('incomeSalary').value, '', document.getElementById('balanceSalary').textContent],
+				['Energie (Solar)', document.getElementById('incomeSolar').value, '', document.getElementById('balanceSolar').textContent],
+				['Miete', '', document.getElementById('expenseRent').value, document.getElementById('balanceRent').textContent],
+				['Strom', '', document.getElementById('expensePower').value, document.getElementById('balancePower').textContent],
+				['Gesamt', document.getElementById('totalIncome').textContent, document.getElementById('totalExpense').textContent, document.getElementById('totalBalance').textContent]
+			];
+			const ws2 = XLSX.utils.aoa_to_sheet(householdData);
+			XLSX.utils.book_append_sheet(wb, ws2, 'Haushaltsbuch');
+			
+			XLSX.writeFile(wb, 'wissenschaftliche-formeln.xlsx');
+		}
+
+		// Initial berechnen
+		calculateSolar();
+		calculateFuelCell();
+		calculateHousehold();
+	</script>
+</body>
+</html>
+
+

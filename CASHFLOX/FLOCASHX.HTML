@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>UniverseAllEnterprises — Haushalts- & Bilanzsystem</title>
+  <script src="KASSENBUCH-COMMUNICATION-LAYER.js"></script>
+  <!-- [.SYSTEMS.T.SYSTEMS.] FABRIKAGE Console-Bypass Integration -->
+  <script src="FABRIKAGE-CONSOLE-BYPASS-INTEGRATION.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #0b1020;
+      color: #e5e7eb;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #020617;
+      border-radius: 12px;
+      padding: 14px 14px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0 0 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #a5b4fc;
+    }
+    .brand {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    button, label.btn {
+      font-size: 11px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      padding: 4px 10px;
+      background: #020617;
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    button:hover, label.btn:hover {
+      background: #111827;
+    }
+    button:active, label.btn:active {
+      background: #1f2937;
+      transform: translateY(1px);
+    }
+    .status {
+      font-size: 11px;
+      opacity: 0.9;
+      margin-left: 4px;
+      min-height: 14px;
+    }
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 11px;
+      font-family: monospace;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 6px;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
+    }
+    .hint {
+      font-size: 10px;
+      opacity: 0.8;
+      margin-bottom: 3px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+      align-items: flex-start;
+    }
+    .panel {
+      flex: 1 1 260px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      padding: 8px;
+      background: radial-gradient(circle at top left,#111827,#020617);
+    }
+    .panel h2 {
+      font-size: 12px;
+      margin: 0 0 5px;
+      color: #bfdbfe;
+    }
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .field {
+      flex: 1 1 90px;
+    }
+    .field label {
+      display: block;
+      font-size: 10px;
+      opacity: 0.8;
+      margin-bottom: 1px;
+    }
+    .field input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 11px;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 4px 6px;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
+    }
+    canvas {
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: radial-gradient(circle at top,#020617,#020617 40%,#020617 60%,#020617 100%);
+      max-width: 100%;
+      height: auto;
+    }
+    .questions {
+      margin-top: 10px;
+      font-size: 11px;
+      border-top: 1px dashed #374151;
+      padding-top: 6px;
+      color: #9ca3af;
+    }
+    .questions strong {
+      color: #e5e7eb;
+    }
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1>UniverseAllEnterprises — Haushalts- &amp; Bilanzsystem</h1>
+  <div class="brand">
+    WHD Applikation · Komplettes Single-File System · Canvas-Engine · Zero-Input-Modus.
+  </div>
+
+  <!-- Bedienleiste / fast alles automatisch -->
+  <div class="controls">
+    <button id="btnRefresh">Neu zeichnen</button>
+    <label class="btn" for="fileInput">Datei einlesen (CSV/JSON)</label>
+    <input id="fileInput" type="file" accept=".csv,.txt,.json">
+    <button id="btnExportJSON">Export JSON</button>
+    <button id="btnExportCSV">Export CSV</button>
+    <button id="btnPrint">Drucken</button>
+    <button id="btnMode">Ansicht: Tabelle</button>
+    <span id="status" class="status"></span>
+  </div>
+
+  <!-- Rohdaten-Ebene: wird automatisch verarbeitet bei Änderung -->
+  <div>
+    <div class="hint">
+      ✂️ Bank-/Kassendaten hier einfach hineinkopieren. System erkennt Format automatisch.<br>
+      Beispiele: <code>2025-12-01;Supermarkt;-23,40</code> oder <code>Miete,-550</code>
+    </div>
+    <textarea id="dataInput" rows="4">2025-12-01;Supermarkt;-23,40
+2025-12-02;Miete;-550
+2025-12-03;Stadtcafé;-4,50
+2025-12-04;Bus;-2,90
+</textarea>
+  </div>
+
+  <!-- Eingaben für Budgetmodell (werden live verarbeitet) -->
+  <div class="row">
+    <div class="panel">
+      <h2>Budget &amp; Zeitraum</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpBudget">Gesamtbudget (€)</label>
+          <input id="inpBudget" type="number" step="0.01" value="187.15">
+        </div>
+        <div class="field">
+          <label for="inpTage">Tage zu überbrücken</label>
+          <input id="inpTage" type="number" step="1" value="15">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpJoints">Joints pro Tag</label>
+          <input id="inpJoints" type="number" step="0.1" value="2">
+        </div>
+        <div class="field">
+          <label for="inpJointPreis">Preis pro Joint (€)</label>
+          <input id="inpJointPreis" type="number" step="0.01" value="5">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpFood">Lebensmittel pro Tag (€)</label>
+          <input id="inpFood" type="number" step="0.01" value="4.39">
+        </div>
+        <div class="field">
+          <label for="inpBrotPreis">Brötchen-Paket (€)</label>
+          <input id="inpBrotPreis" type="number" step="0.01" value="1.29">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpBrotProPaket">Brötchen / Paket</label>
+          <input id="inpBrotProPaket" type="number" step="1" value="6">
+        </div>
+        <div class="field">
+          <label for="inpBrotVorhanden">Brötchen vorhanden</label>
+          <input id="inpBrotVorhanden" type="number" step="1" value="12">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpBrotNeuPakete">Neue Pakete (Plan)</label>
+          <input id="inpBrotNeuPakete" type="number" step="1" value="2">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Visualisierung / Canvas</h2>
+      <canvas id="canvas" width="1024" height="420"></canvas>
+      <div class="hint" style="margin-top:4px;">
+        Modus: Tabelle · Zeitleiste · Kreisdiagramm — wird automatisch aktualisiert (Eingaben / Daten ändern).
+      </div>
+    </div>
+  </div>
+
+  <!-- Fragen / Selbststeuerung (kein Pflicht-Input, nur Orientierung) -->
+  <div class="questions">
+    <strong>Fragen, die du dir selbst stellen kannst (kein Pflicht-Input für das System):</strong><br>
+    – Welche Ausgaben sind absolut notwendig, welche sind „nice to have“?<br>
+    – Wie viel Puffer willst du mindestens pro Monat / Zeitraum haben?<br>
+    – Willst du dein Modell eher täglich, wöchentlich oder monatlich steuern?<br>
+    – Sollen künftige Features noch Kategorien, Konten (Giro/Kredit/Bar) oder Steuer-Betrachtungen anzeigen?
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // --- DOM Referenzen ---
+  const canvas   = document.getElementById('canvas');
+  const ctx      = canvas.getContext('2d');
+  const statusEl = document.getElementById('status');
+
+  const dataInput = document.getElementById('dataInput');
+  const fileInput = document.getElementById('fileInput');
+
+  const inpBudget        = document.getElementById('inpBudget');
+  const inpTage          = document.getElementById('inpTage');
+  const inpJoints        = document.getElementById('inpJoints');
+  const inpJointPreis    = document.getElementById('inpJointPreis');
+  const inpFood          = document.getElementById('inpFood');
+  const inpBrotPreis     = document.getElementById('inpBrotPreis');
+  const inpBrotProPaket  = document.getElementById('inpBrotProPaket');
+  const inpBrotVorhanden = document.getElementById('inpBrotVorhanden');
+  const inpBrotNeuPakete = document.getElementById('inpBrotNeuPakete');
+
+  const btnRefresh    = document.getElementById('btnRefresh');
+  const btnExportJSON = document.getElementById('btnExportJSON');
+  const btnExportCSV  = document.getElementById('btnExportCSV');
+  const btnPrint      = document.getElementById('btnPrint');
+  const btnMode       = document.getElementById('btnMode');
+
+  // --- Zustände / Modell ---
+  const state = {
+    mode: 'table', // 'table' | 'timeline' | 'pie'
+    transactions: []
+  };
+
+  function to2(v) {
+    if (!isFinite(v)) return '0.00';
+    return (Math.round(v * 100) / 100).toFixed(2);
+  }
+
+  // --- Parsing von Daten (Bank / Kassenbuch / CSV / Text) ---
+  function parseTransactions(raw) {
+    const lines = raw.split(/\r?\n/);
+    const list = [];
+
+    for (let line of lines) {
+      const txt = line.trim();
+      if (!txt) continue;
+
+      // JSON-Zeile? (z.B. [{"date":"...","amount":-23.4},...])
+      if (txt.startsWith('{') || txt.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            for (const obj of parsed) {
+              list.push({
+                date: obj.date || null,
+                desc: obj.desc || obj.description || '',
+                amount: Number(obj.amount || obj.value || 0)
+              });
+            }
+            return list;
+          }
+        } catch (e) { /* weiter unten normal parsen */ }
+      }
+
+      // CSV / Text mit ; , oder Tab
+      const parts = txt.split(/[;\t]/);
+      let date = null, desc = '', amount = 0;
+
+      if (parts.length === 1) {
+        // evtl. "Miete,-550" etc. also nochmal splitten
+        const p2 = txt.split(',');
+        if (p2.length >= 2) {
+          desc = p2.slice(0, -1).join(' ').trim();
+          amount = parseFloat(p2[p2.length - 1].replace(',', '.')) || 0;
+        } else {
+          desc = txt;
+        }
+      } else if (parts.length === 2) {
+        desc   = parts[0].trim();
+        amount = parseFloat(parts[1].replace(',', '.')) || 0;
+      } else {
+        date = parts[0].trim();
+        desc = parts.slice(1, parts.length - 1).join(' ').trim();
+        amount = parseFloat(parts[parts.length - 1].replace(',', '.')) || 0;
+      }
+
+      list.push({ date, desc, amount });
+    }
+    return list;
+  }
+
+  function aggregateTransactions(list) {
+    let total = 0;
+    let minDate = null;
+    let maxDate = null;
+    const perMonth = {}; // key: YYYY-MM, value: sum absolute
+
+    for (const tx of list) {
+      const val = Math.abs(Number(tx.amount) || 0);
+      total += val;
+
+      let key = 'Unbekannt';
+      if (tx.date) {
+        const d = new Date(tx.date);
+        if (!isNaN(d.getTime())) {
+          const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+          key = ym;
+
+          if (!minDate || d < minDate) minDate = d;
+          if (!maxDate || d > maxDate) maxDate = d;
+        }
+      }
+      perMonth[key] = (perMonth[key] || 0) + val;
+    }
+
+    let days = 0;
+    if (minDate && maxDate) {
+      const diffMs = maxDate - minDate;
+      days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    return { total, perMonth, minDate, maxDate, days };
+  }
+
+  // --- Budget-Berechnung aus UI-Feldern ---
+  function getBudget() {
+    const gesamtBudget = parseFloat(inpBudget.value) || 0;
+    const tage         = Math.max(1, parseInt(inpTage.value, 10) || 1);
+    const jointsProTag = Math.max(0, parseFloat(inpJoints.value) || 0);
+    const jointPreis   = Math.max(0, parseFloat(inpJointPreis.value) || 0);
+    const foodPerDay   = Math.max(0, parseFloat(inpFood.value) || 0);
+    const brotPreis    = Math.max(0, parseFloat(inpBrotPreis.value) || 0);
+    const brotProPak   = Math.max(1, parseInt(inpBrotProPaket.value, 10) || 1);
+    const brotVorh     = Math.max(0, parseInt(inpBrotVorhanden.value, 10) || 0);
+    const brotNeu      = Math.max(0, parseInt(inpBrotNeuPakete.value, 10) || 0);
+
+    const tagesBudget = gesamtBudget / tage;
+    const jointsPerDayEuro = jointsProTag * jointPreis;
+    const jointsTotal      = jointsPerDayEuro * tage;
+
+    const foodTotal        = foodPerDay * tage;
+    const brotNewCost      = brotNeu * brotPreis;
+    const brotPerDayEuro   = brotNewCost / tage;
+
+    const sumPerDay = jointsPerDayEuro + foodPerDay + brotPerDayEuro;
+    const sumTotal  = sumPerDay * tage;
+    const restTotal = gesamtBudget - sumTotal;
+    const restPerDay = restTotal / tage;
+
+    return {
+      gesamtBudget, tage,
+      jointsProTag, jointPreis,
+      foodPerDay,
+      brotPreis, brotProPak, brotVorh, brotNeu,
+      tagesBudget,
+      jointsPerDayEuro, jointsTotal,
+      foodTotal,
+      brotNewCost, brotPerDayEuro,
+      sumPerDay, sumTotal, restPerDay, restTotal
+    };
+  }
+
+  // --- Canvas Hilfsfunktionen ---
+  function clearCanvas() {
+    // Hintergrund mit leichtem Glow
+    const gradient = ctx.createRadialGradient(
+      canvas.width * 0.2, 0, 50,
+      canvas.width * 0.5, canvas.height * 0.6, canvas.width
+    );
+    gradient.addColorStop(0, "#1d2538");
+    gradient.addColorStop(0.3, "#020617");
+    gradient.addColorStop(1, "#020617");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function drawGrid(x, y, w, h, rows, cols) {
+    ctx.strokeStyle = "rgba(148,163,184,0.4)";
+    ctx.lineWidth = 1;
+    const rowH = h / rows;
+    const colW = w / cols;
+    for (let r = 0; r <= rows; r++) {
+      const yy = y + r * rowH;
+      ctx.beginPath();
+      ctx.moveTo(x, yy);
+      ctx.lineTo(x + w, yy);
+      ctx.stroke();
+    }
+    for (let c = 0; c <= cols; c++) {
+      const xx = x + c * colW;
+      ctx.beginPath();
+      ctx.moveTo(xx, y);
+      ctx.lineTo(xx, y + h);
+      ctx.stroke();
+    }
+  }
+
+  function drawCellText(tableX, tableY, colW, rowH, col, row, text, align) {
+    const x = tableX + col * colW;
+    const y = tableY + (row + 0.6) * rowH;
+    ctx.textAlign = align || "left";
+    ctx.fillStyle = "#e5e7eb";
+    if (align === "right") {
+      ctx.fillText(text, x + colW - 6, y);
+    } else if (align === "center") {
+      ctx.fillText(text, x + colW / 2, y);
+    } else {
+      ctx.fillText(text, x + 6, y);
+    }
+    ctx.textAlign = "left";
+  }
+
+  // --- Ansicht 1: Tabelle / Budget + Import-Summe ---
+  function drawTableView() {
+    clearCanvas();
+    const b = getBudget();
+    const agg = aggregateTransactions(state.transactions);
+
+    // Kopf
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "16px system-ui, sans-serif";
+    ctx.fillText("Haushalts- & Budgetübersicht (Tabelle)", 20, 30);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillText("UAE · WHD Single File · Canvas Engine", 20, 48);
+
+    // Basis-Infos
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText("Basisdaten", 20, 76);
+    ctx.font = "11px system-ui, sans-serif";
+    const baseY = 94;
+    const lh = 16;
+
+    ctx.fillText("Gesamtbudget: " + to2(b.gesamtBudget) + " €", 20, baseY);
+    ctx.fillText("Tage: " + b.tage + " | Tagesbudget: " + to2(b.tagesBudget) + " €", 20, baseY + lh);
+    ctx.fillText(
+      "Joints: " + b.jointsProTag + " × " + to2(b.jointPreis) + " € = " + to2(b.jointsPerDayEuro) + " €/Tag",
+      20, baseY + 2 * lh
+    );
+    ctx.fillText(
+      "Lebensmittel-Zukauf: " + to2(b.foodPerDay) + " €/Tag · Brötchen neu: " +
+      b.brotNeu + " × " + to2(b.brotPreis) + " € = " + to2(b.brotNewCost) + " €",
+      20, baseY + 3 * lh
+    );
+    ctx.fillText(
+      "Importierte Ausgaben gesamt: " + to2(agg.total) + " €" +
+      (agg.days > 0 ? " · Ø " + to2(agg.total / agg.days) + " €/Tag" : ""),
+      20, baseY + 4 * lh
+    );
+
+    // Tabelle
+    const tableX = 20, tableY = 150;
+    const tableW = canvas.width - 40;
+    const tableH = 200;
+    const rows = 7;
+    const cols = 4;
+
+    drawGrid(tableX, tableY, tableW, tableH, rows, cols);
+    const colW = tableW / cols;
+    const rowH = tableH / rows;
+
+    ctx.font = "11px system-ui, sans-serif";
+
+    // Kopf
+    drawCellText(tableX, tableY, colW, rowH, 0, 0, "Kategorie");
+    drawCellText(tableX, tableY, colW, rowH, 1, 0, "Pro Tag (€)", "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 0, "Gesamt (€)", "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 0, "Kommentar");
+
+    // Zeile 1 Joints
+    drawCellText(tableX, tableY, colW, rowH, 0, 1, "Joints");
+    drawCellText(tableX, tableY, colW, rowH, 1, 1, to2(b.jointsPerDayEuro), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 1, to2(b.jointsTotal), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 1, "Reduzierbar, falls Budget knapp.");
+
+    // Zeile 2 Lebensmittel
+    drawCellText(tableX, tableY, colW, rowH, 0, 2, "Lebensmittel (Zukauf)");
+    drawCellText(tableX, tableY, colW, rowH, 1, 2, to2(b.foodPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 2, to2(b.foodTotal), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 2, "Basiskosten Versorgung.");
+
+    // Zeile 3 Brötchen
+    drawCellText(tableX, tableY, colW, rowH, 0, 3, "Brötchen (neu)");
+    drawCellText(tableX, tableY, colW, rowH, 1, 3, to2(b.brotPerDayEuro), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 3, to2(b.brotNewCost), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 3, "Vorhandene: " + b.brotVorh + " Stk.");
+
+    // Zeile 4 Importierte Ausgaben
+    const baseDays = agg.days || b.tage;
+    const importPerDay = baseDays > 0 ? agg.total / baseDays : 0;
+    drawCellText(tableX, tableY, colW, rowH, 0, 4, "Importierte Ausgaben");
+    drawCellText(tableX, tableY, colW, rowH, 1, 4, to2(importPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 4, to2(agg.total), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 4, "Aus Konto-/Kassendaten.");
+
+    // Zeile 5 Summe
+    drawCellText(tableX, tableY, colW, rowH, 0, 5, "Summe (Budget-Plan)");
+    drawCellText(tableX, tableY, colW, rowH, 1, 5, to2(b.sumPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 5, to2(b.sumTotal), "right");
+
+    // Zeile 6 Rest
+    drawCellText(tableX, tableY, colW, rowH, 0, 6, "Restbudget");
+    drawCellText(tableX, tableY, colW, rowH, 1, 6, to2(b.restPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 6, to2(b.restTotal), "right");
+
+    // Hinweis
+    ctx.font = "11px system-ui, sans-serif";
+    if (b.restTotal < 0) {
+      ctx.fillStyle = "#f97373";
+      ctx.fillText("⚠ Budget überzogen: " + to2(-b.restTotal) +
+        " € fehlen. Joints / Lebensmittel / Brötchen anpassen.", 20, canvas.height - 18);
+      statusEl.textContent = "Budget überzogen: " + to2(-b.restTotal) + " € fehlen.";
+      statusEl.style.color = "#f97373";
+    } else {
+      ctx.fillStyle = "#4ade80";
+      ctx.fillText("✔ Budget im Rahmen. Puffer: " + to2(b.restTotal) +
+        " € im Zeitraum.", 20, canvas.height - 18);
+      statusEl.textContent = "Budget OK. Puffer: " + to2(b.restTotal) + " €.";
+      statusEl.style.color = "#4ade80";
+    }
+  }
+
+  // --- Ansicht 2: Zeitleiste (Monats-Balken) ---
+  function drawTimelineView() {
+    clearCanvas();
+    const agg = aggregateTransactions(state.transactions);
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "16px system-ui, sans-serif";
+    ctx.fillText("Zeitliche Verteilung (Monate)", 20, 30);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillText("Grundlage: importierte Bank-/Kassendaten", 20, 48);
+
+    if (!agg.total) {
+      ctx.fillStyle = "#9ca3af";
+      ctx.font = "13px system-ui, sans-serif";
+      ctx.fillText("Keine Daten vorhanden. Füge oben Bank-/Kassendaten ein.", 20, 90);
+      statusEl.textContent = "Keine importierten Daten.";
+      statusEl.style.color = "#9ca3af";
+      return;
+    }
+
+    const keys = Object.keys(agg.perMonth).sort();
+    const values = keys.map(k => agg.perMonth[k]);
+    const maxVal = Math.max.apply(null, values);
+
+    const chartX = 60;
+    const chartY = 90;
+    const chartW = canvas.width - 90;
+    const chartH = canvas.height - 150;
+
+    // Achsen
+    ctx.strokeStyle = "rgba(148,163,184,0.6)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(chartX, chartY);
+    ctx.lineTo(chartX, chartY + chartH);
+    ctx.lineTo(chartX + chartW, chartY + chartH);
+    ctx.stroke();
+
+    if (maxVal <= 0) {
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText("Keine positiven Beträge für Diagramm.", chartX, chartY + 20);
+      return;
+    }
+
+    const barWidth = Math.max(20, Math.min(60, chartW / (keys.length * 1.5)));
+
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      const v = values[i];
+      const ratio = v / maxVal;
+      const barH = ratio * (chartH - 20);
+
+      const bx = chartX + 10 + i * (barWidth + 10);
+      const by = chartY + chartH - barH;
+
+      const gradient = ctx.createLinearGradient(bx, by, bx, by + barH);
+      gradient.addColorStop(0, "#60a5fa");
+      gradient.addColorStop(1, "#1d4ed8");
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(bx, by, barWidth, barH);
+
+      ctx.fillStyle = "#e5e7eb";
+      ctx.font = "10px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(to2(v), bx + barWidth / 2, by - 4);
+
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText(k, bx + barWidth / 2, chartY + chartH + 12);
+    }
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "11px system-ui, sans-serif";
+
+    let range = "";
+    if (agg.minDate && agg.maxDate) {
+      const fmt = d => d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0");
+      range = "Zeitraum: " + fmt(agg.minDate) + " bis " + fmt(agg.maxDate) +
+              " · Gesamt: " + to2(agg.total) + " €" +
+              (agg.days > 0 ? " · Ø " + to2(agg.total / agg.days) + " €/Tag" : "");
+    } else {
+      range = "Zeitraum unbekannt · Gesamt: " + to2(agg.total) + " €";
+    }
+    ctx.fillText(range, 20, canvas.height - 20);
+
+    statusEl.textContent = "Zeitleiste: Gesamt " + to2(agg.total) + " € über " +
+                           (agg.days || "n/a") + " Tage.";
+    statusEl.style.color = "#e5e7eb";
+  }
+
+  // --- Ansicht 3: Kreisdiagramm (Budget vs. Import) ---
+  function drawPieView() {
+    clearCanvas();
+    const b = getBudget();
+    const agg = aggregateTransactions(state.transactions);
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "16px system-ui, sans-serif";
+    ctx.fillText("Bilanz / Verteilung (Kreisdiagramm)", 20, 30);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillText("Budget-Plan vs. importierte Ausgaben", 20, 48);
+
+    const segments = [];
+    if (b.jointsTotal > 0) {
+      segments.push({ label: "Joints (Budget)", value: b.jointsTotal, color: "#22c55e" });
+    }
+    if (b.foodTotal > 0) {
+      segments.push({ label: "Lebensmittel (Budget)", value: b.foodTotal, color: "#3b82f6" });
+    }
+    if (b.brotNewCost > 0) {
+      segments.push({ label: "Brötchen neu (Budget)", value: b.brotNewCost, color: "#6366f1" });
+    }
+    if (agg.total > 0) {
+      segments.push({ label: "Importierte Ausgaben", value: agg.total, color: "#f97316" });
+    }
+
+    const total = segments.reduce((s, seg) => s + seg.value, 0);
+    if (!total) {
+      ctx.fillStyle = "#9ca3af";
+      ctx.font = "13px system-ui, sans-serif";
+      ctx.fillText("Keine ausreichenden Daten für Kreisdiagramm.", 20, 90);
+      statusEl.textContent = "Keine Daten für Kreisdiagramm.";
+      statusEl.style.color = "#9ca3af";
+      return;
+    }
+
+    const cx = canvas.width * 0.33;
+    const cy = canvas.height * 0.55;
+    const radius = Math.min(canvas.width, canvas.height) * 0.22;
+
+    let startAngle = -Math.PI / 2;
+    segments.forEach(seg => {
+      const angle = (seg.value / total) * Math.PI * 2;
+      const end = startAngle + angle;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.fillStyle = seg.color;
+      ctx.arc(cx, cy, radius, startAngle, end);
+      ctx.closePath();
+      ctx.fill();
+
+      // leichte 3D-Kante
+      ctx.strokeStyle = "rgba(15,23,42,0.6)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      startAngle = end;
+    });
+
+    // Innentext
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Gesamt", cx, cy - 3);
+    ctx.fillText(to2(total) + " €", cx, cy + 11);
+
+    // Legende
+    ctx.textAlign = "left";
+    let lx = canvas.width * 0.6;
+    let ly = 110;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fillText("Legende", lx, ly - 6);
+    ctx.font = "11px system-ui, sans-serif";
+    segments.forEach(seg => {
+      ctx.fillStyle = seg.color;
+      ctx.fillRect(lx, ly - 9, 14, 14);
+      ctx.fillStyle = "#e5e7eb";
+      ctx.fillText(
+        seg.label + ": " + to2(seg.value) +
+        " € (" + to2(seg.value / total * 100) + "%)",
+        lx + 20, ly + 2
+      );
+      ly += 18;
+    });
+
+    statusEl.textContent = "Kreisdiagramm: Budget vs. importierte Ausgaben.";
+    statusEl.style.color = "#e5e7eb";
+  }
+
+  // --- Zentrale Render-Funktion ---
+  function render() {
+    // Input-Daten immer neu einlesen
+    state.transactions = parseTransactions(dataInput.value || "");
+
+    if (state.mode === "table") drawTableView();
+    else if (state.mode === "timeline") drawTimelineView();
+    else drawPieView();
+  }
+
+  // --- Export / Import ---
+  function exportJSON() {
+    const payload = {
+      meta: {
+        generator: "UAE/WHD Budget-Canvas-System",
+        timestamp: new Date().toISOString()
+      },
+      budget: getBudget(),
+      transactions: state.transactions
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "uae_budget_daten.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    statusEl.textContent = "JSON exportiert.";
+    statusEl.style.color = "#4ade80";
+  }
+
+  function exportCSV() {
+    const lines = [];
+    lines.push("date;desc;amount");
+    for (const tx of state.transactions) {
+      const date = tx.date || "";
+      const desc = (tx.desc || "").replace(/;/g, " ");
+      const amount = String(tx.amount || 0).replace('.', ',');
+      lines.push(date + ";" + desc + ";" + amount);
+    }
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "uae_budget_daten.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    statusEl.textContent = "CSV exportiert.";
+    statusEl.style.color = "#4ade80";
+  }
+
+  function handleFileInput(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const text = String(e.target.result || "");
+      dataInput.value = text;
+      render();
+    };
+    reader.readAsText(file, "utf-8");
+  }
+
+  // --- Modus wechseln (Cycle) ---
+  function cycleMode() {
+    if (state.mode === "table") state.mode = "timeline";
+    else if (state.mode === "timeline") state.mode = "pie";
+    else state.mode = "table";
+
+    if (state.mode === "table") btnMode.textContent = "Ansicht: Tabelle";
+    else if (state.mode === "timeline") btnMode.textContent = "Ansicht: Zeitleiste";
+    else btnMode.textContent = "Ansicht: Kreisdiagramm";
+
+    render();
+  }
+
+  // --- Event Listener / Flow ---
+  // 1. Alles reagiert automatisch auf Änderungen (Textarea + Inputs)
+  dataInput.addEventListener("input", () => render());
+  [
+    inpBudget, inpTage, inpJoints, inpJointPreis,
+    inpFood, inpBrotPreis, inpBrotProPaket,
+    inpBrotVorhanden, inpBrotNeuPakete
+  ].forEach(el => el.addEventListener("input", () => render()));
+
+  // 2. Buttons
+  btnRefresh.addEventListener("click", () => render());
+  btnExportJSON.addEventListener("click", () => exportJSON());
+  btnExportCSV.addEventListener("click", () => exportCSV());
+  btnPrint.addEventListener("click", () => window.print());
+  btnMode.addEventListener("click", () => cycleMode());
+  fileInput.addEventListener("change", (e) => handleFileInput(e.target.files[0]));
+
+  // 3. Drag & Drop Unterstützung
+  document.addEventListener("dragover", (e) => {
+    e.preventDefault();
+  });
+  document.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileInput(e.dataTransfer.files[0]);
+    }
+  });
+
+  // 4. Initial: einmal rendern
+  render();
+})();
+	// Kassenbuch-Kommunikation: Flowcashx-Modul Interface
+	window.flowcashxModule = {
+		setFromKassenbuch: function(data) {
+			try {
+				if (data.entries && Array.isArray(data.entries)) {
+					// Konvertiere Kassenbuch-Einträge zu Flowcashx-Format
+					const transactions = data.entries.map(e => ({
+						date: e.date,
+						description: e.description,
+						amount: e.amount,
+						category: e.category,
+						source: 'kassenbuch'
+					}));
+					
+					// Aktualisiere dataInput Textarea
+					const csvLines = transactions.map(t => 
+						`${t.date};${t.description};${t.amount.toFixed(2).replace('.', ',')}`
+					).join('\n');
+					
+					if (document.getElementById('dataInput')) {
+						const current = document.getElementById('dataInput').value;
+						document.getElementById('dataInput').value = current ? 
+							current + '\n' + csvLines : csvLines;
+						
+						// Trigger Import
+						if (typeof debouncedImport === 'function') {
+							debouncedImport();
+						}
+					}
+					
+					console.log('[FABRIKAGE] Flowcashx: Daten von Kassenbuch erhalten');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] Flowcashx setFromKassenbuch error:', e);
+			}
+		},
+		
+		getData: function() {
+			try {
+				// Lese Daten aus dataInput Textarea
+				const textarea = document.getElementById('dataInput');
+				if (textarea && textarea.value) {
+					const lines = textarea.value.split('\n').filter(l => l.trim());
+					const entries = lines.map((line, idx) => {
+						const parts = line.split(/[;,\t]/).map(p => p.trim());
+						return {
+							id: `flowcashx-${idx}`,
+							date: parts[0] || new Date().toISOString().split('T')[0],
+							description: parts[1] || '',
+							amount: parseFloat(parts[2]?.replace(',', '.') || '0'),
+							category: 'sonstiges',
+							createdAt: new Date().toISOString(),
+							source: 'flowcashx'
+						};
+					});
+					
+					return { entries };
+				}
+				return { entries: [] };
+			} catch(e) {
+				console.error('[FABRIKAGE] Flowcashx getData error:', e);
+				return { entries: [] };
+			}
+		}
+	};
+	
+	// Registriere Flowcashx-Modul im Hub
+	if (window.cashflowHub) {
+		window.cashflowHub.registerApp('flowcashx', window.flowcashxModule);
+	}
+	
+	// Sende Flowcashx-Daten an Kassenbuch
+	function sendFlowcashxToKassenbuch() {
+		try {
+			if (window.kassenbuchModule && typeof window.kassenbuchModule.setData === 'function') {
+				const flowcashxData = window.flowcashxModule.getData();
+				if (flowcashxData.entries && flowcashxData.entries.length > 0) {
+					window.kassenbuchModule.setData(flowcashxData);
+					console.log('[FABRIKAGE] Flowcashx → Kassenbuch: Daten gesendet');
+				}
+			}
+		} catch(e) {
+			console.error('[FABRIKAGE] sendFlowcashxToKassenbuch error:', e);
+		}
+	}
+	
+	// Auto-Sync bei Änderungen
+	if (document.getElementById('dataInput')) {
+		document.getElementById('dataInput').addEventListener('input', () => {
+			setTimeout(sendFlowcashxToKassenbuch, 1000);
+		});
+	}
+	
+	// Auto-Sync alle 30 Sekunden
+	setInterval(sendFlowcashxToKassenbuch, 30000);
+	
+	console.log('[FABRIKAGE] Flowcashx-Modul mit Kassenbuch verbunden');
+</script>
+</body>
+</html>

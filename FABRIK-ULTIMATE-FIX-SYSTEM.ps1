@@ -34,10 +34,10 @@ $fixesApplied = @()
 # FIX 1: Permissions Policy (aus D:\RB)
 # ========================================
 Write-Host "[2/15] Prüfe Permissions Policy..." -ForegroundColor Yellow
-if ($content -notmatch 'http-equiv\s*=\s*["']Permissions-Policy["']') {
+if ($content -notmatch 'http-equiv\s*=\s*["'']Permissions-Policy["'']') {
     $permissionsPolicy = '<meta http-equiv="Permissions-Policy" content="autoplay=*, encrypted-media=*, fullscreen=*, picture-in-picture=*, clipboard-write=*, accelerometer=*, gyroscope=*" />'
-      if ($content -match '<meta\s+charset\s*=\s*["']utf-8["']') {
-        $content = $content -replace '(<meta\s+charset\s*=\s*["']utf-8["']\s*/>)', "$1`n  $permissionsPolicy"
+      if ($content -match '<meta\s+charset\s*=\s*[`"`']utf-8[`"`']') {
+        $content = $content -replace '(<meta\s+charset\s*=\s*[`"`']utf-8[`"`']\s*/>)', "$1`n  $permissionsPolicy"
         $modified = $true
         $fixesApplied += "Permissions Policy hinzugefügt"
         Write-Host "  ✅ Permissions Policy hinzugefügt" -ForegroundColor Green
@@ -118,7 +118,7 @@ $inputMatches = [regex]::Matches($content, '<input[^>]*>')
 $autocompleteAdded = 0
 foreach ($match in $inputMatches) {
     $inputHtml = $match.Value
-    if ($inputHtml -notmatch 'autocomplete\s*=' -and $inputHtml -notmatch 'type\s*=\s*["'](submit|button|checkbox|radio|file|hidden)') {
+    if ($inputHtml -notmatch 'autocomplete\s*=' -and $inputHtml -notmatch 'type\s*=\s*[`"`'](submit|button|checkbox|radio|file|hidden)') {
         $newInputHtml = $inputHtml -replace '<input', '<input autocomplete="on"'
         $content = $content -replace [regex]::Escape($inputHtml), $newInputHtml
         $modified = $true
@@ -134,7 +134,7 @@ if ($autocompleteAdded -gt 0) {
 # FIX 6: initializeApp Type-Check
 # ========================================
 Write-Host "[7/15] Verbessere initializeApp Type-Check..." -ForegroundColor Yellow
-if ($content -match 'initializeApp\(\)' -and $content -notmatch 'if\s*\(\s*typeof\s+initializeApp\s*===\s*["']function["']') {
+if ($content -match 'initializeApp\(\)' -and $content -notmatch 'if\s*\(\s*typeof\s+initializeApp\s*===\s*[`"`']function[`"`']') {
     $content = $content -replace '(\s+)initializeApp\(\);', '$1if (typeof initializeApp === ''function'') { initializeApp(); } else { console.warn(''initializeApp function not found''); }'
     $modified = $true
     $fixesApplied += "initializeApp Type-Check"
@@ -212,7 +212,7 @@ if ($htmlIssues.Count -gt 0) {
 # FIX 10: getElementById null-checks (aus D:\RB\COMPLETE-ERROR-FIX-ALL.ps1)
 # ========================================
 Write-Host "[11/15] Prüfe getElementById null-checks..." -ForegroundColor Yellow
-$nullCheckIssues = ([regex]::Matches($content, 'getElementById\s*\(\s*["']([^"\']+)["']\s*\)')).Count
+$nullCheckIssues = ([regex]::Matches($content, 'getElementById\s*\(\s*[`"`']([^"\']+)[`"`']\s*\)')).Count
 if ($nullCheckIssues -gt 0) {
     Write-Host "  ⚠️  $nullCheckIssues getElementById Aufrufe gefunden (manuelle Prüfung empfohlen)" -ForegroundColor Yellow
 } else {
@@ -280,7 +280,7 @@ if ($content -match '<script' -and $content -notmatch 'DOMContentLoaded|addEvent
 # ========================================
 Write-Host "[14/15] Prüfe CSS/JS-Referenzen..." -ForegroundColor Yellow
 $missingRefs = @()
-$cssMatches = [regex]::Matches($content, 'href\s*=\s*["']([^"\']+\.css)["']')
+$cssMatches = [regex]::Matches($content, 'href\s*=\s*[`"`']([^"\']+\.css)[`"`']')
 foreach ($match in $cssMatches) {
     $cssPath = $match.Groups[1].Value
     if ($cssPath -notmatch '^https?://' -and -not (Test-Path $cssPath)) {
@@ -288,7 +288,7 @@ foreach ($match in $cssMatches) {
     }
 }
 
-$jsMatches = [regex]::Matches($content, 'src\s*=\s*["']([^"\']+\.js)["']')
+$jsMatches = [regex]::Matches($content, 'src\s*=\s*[`"`']([^"\']+\.js)[`"`']')
 foreach ($match in $jsMatches) {
     $jsPath = $match.Groups[1].Value
     if ($jsPath -notmatch '^https?://' -and $jsPath -notmatch '^//' -and -not (Test-Path $jsPath)) {
@@ -329,6 +329,7 @@ foreach ($fix in $fixesApplied) {
 }
 Write-Host ""
 Write-Host "T,.&T,,.&T,,,.].T,,,,.(C)(R).T,,.} - TEL1.NL - Together Systems" -ForegroundColor Green
+
 
 
 

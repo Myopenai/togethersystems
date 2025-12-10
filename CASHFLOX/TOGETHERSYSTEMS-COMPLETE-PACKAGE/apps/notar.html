@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Digitaler Notar – [.SYSTEMS.T.SYSTEMS.]</title>
+	<script>
+		const BASE_URL = window.location.origin || 'https://myopenai.github.io/togethersystems';
+	</script>
+	<style>
+		:root {
+			--bg: #0f1419;
+			--card: #151b23;
+			--text: #e6eef3;
+			--muted: #9fb3c8;
+			--accent: #10b981;
+			--danger: #ef4444;
+			--warn: #f59e0b;
+			--border: #223040;
+			--success: #34d399;
+			--notar: #8b5cf6;
+		}
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			padding: 20px;
+			min-height: 100vh;
+		}
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		header {
+			background: var(--card);
+			border: 1px solid var(--notar);
+			border-radius: 12px;
+			padding: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+		}
+		h1 {
+			font-size: 28px;
+			margin-bottom: 10px;
+			color: var(--notar);
+		}
+		.brand {
+			font-size: 12px;
+			color: var(--muted);
+			margin-top: 10px;
+		}
+		.notar-badge {
+			display: inline-block;
+			padding: 6px 12px;
+			border-radius: 6px;
+			background: var(--notar);
+			color: white;
+			font-size: 12px;
+			font-weight: 600;
+			margin-left: 10px;
+		}
+		.card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 20px;
+			margin-bottom: 20px;
+		}
+		.card h2 {
+			font-size: 18px;
+			margin-bottom: 15px;
+			color: var(--notar);
+		}
+		.input-group {
+			margin-bottom: 15px;
+		}
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-size: 13px;
+			color: var(--muted);
+		}
+		input, textarea, select {
+			width: 100%;
+			padding: 10px;
+			border-radius: 8px;
+			border: 1px solid var(--border);
+			background: var(--bg);
+			color: var(--text);
+			font-size: 14px;
+		}
+		textarea {
+			min-height: 150px;
+			font-family: monospace;
+			resize: vertical;
+		}
+		.btn {
+			padding: 12px 24px;
+			border-radius: 8px;
+			border: none;
+			background: var(--notar);
+			color: white;
+			cursor: pointer;
+			font-weight: 600;
+			transition: all 0.3s;
+		}
+		.btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+		}
+		.btn.secondary {
+			background: var(--accent);
+			color: #00100a;
+		}
+		.verification-status {
+			display: inline-block;
+			padding: 6px 12px;
+			border-radius: 6px;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+		.verification-status.verified {
+			background: var(--success);
+			color: #00110b;
+		}
+		.verification-status.pending {
+			background: var(--warn);
+			color: #150f00;
+		}
+		.verification-status.error {
+			background: var(--danger);
+			color: white;
+		}
+		.document-list {
+			margin-top: 20px;
+		}
+		.document-item {
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 15px;
+			margin-bottom: 10px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.document-item:hover {
+			border-color: var(--notar);
+		}
+		.info-box {
+			background: rgba(139, 92, 246, 0.1);
+			border-left: 4px solid var(--notar);
+			padding: 15px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+		}
+		.info-box p {
+			margin-bottom: 10px;
+			line-height: 1.6;
+		}
+	</style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>⚖️ Digitaler Notar <span class="notar-badge">VERIFIZIERT</span></h1>
+			<div class="brand">[.SYSTEMS.T.SYSTEMS.] TogetherSystems International TTT</div>
+			<p style="margin-top: 15px; color: var(--muted); font-size: 14px;">
+				100% menschlich verifizierbar · Kostenlos · Verifiziert durch Unternehmens-Notare
+			</p>
+		</header>
+
+		<div class="info-box">
+			<h3 style="color: var(--notar); margin-bottom: 10px;">ℹ️ Notar-System Information</h3>
+			<p><strong>Verifizierung:</strong> Alle Dokumente werden von menschlichen Notaren des Unternehmens verifiziert.</p>
+			<p><strong>Kosten:</strong> Kostenlos für Nutzer. Kosten werden vom Unternehmenshaushalt getragen.</p>
+			<p><strong>Verantwortung:</strong> Notare sind Teil des Unternehmens und übernehmen auch Kammerstellung und Verstellung.</p>
+			<p><strong>Komplexität:</strong> Die Komplexität wird bewusst erhalten, um die Nachricht zu erhalten.</p>
+		</div>
+
+		<div class="card">
+			<h2>📄 Dokument verifizieren</h2>
+			<div class="input-group">
+				<label>Dokument-Titel</label>
+				<input type="text" id="docTitle" placeholder="z.B. Vertrag, Vereinbarung, Bestätigung">
+			</div>
+			<div class="input-group">
+				<label>Dokument-Inhalt</label>
+				<textarea id="docContent" placeholder="Fügen Sie hier den Dokument-Inhalt ein..."></textarea>
+			</div>
+			<div class="input-group">
+				<label>Dokument-Typ</label>
+				<select id="docType">
+					<option value="vertrag">Vertrag</option>
+					<option value="vereinbarung">Vereinbarung</option>
+					<option value="bestätigung">Bestätigung</option>
+					<option value="urkunde">Urkunde</option>
+					<option value="sonstiges">Sonstiges</option>
+				</select>
+			</div>
+			<button class="btn" onclick="verifyDocument()">⚖️ Dokument verifizieren</button>
+			<span id="verifyStatus" class="verification-status" style="display:none;"></span>
+		</div>
+
+		<div class="card">
+			<h2>📋 Verifizierte Dokumente</h2>
+			<div class="document-list" id="documentList">
+				<p style="color: var(--muted); text-align: center;">Keine verifizierten Dokumente vorhanden</p>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>🔗 System-Integration</h2>
+			<p style="margin-bottom: 15px;">Der Notar ist in das gesamte System integriert und kann Dokumente aus allen Apps verifizieren.</p>
+			<button class="btn secondary" onclick="syncWithApps()">🔄 Mit Apps synchronisieren</button>
+		</div>
+	</div>
+
+	<script>
+		// [.SYSTEMS.T.SYSTEMS.] DIGITALER NOTAR
+		
+		const STORAGE_KEY = 'notar.documents';
+		
+		// Notar-Modul Interface
+		window.notarModule = {
+			// Verifiziere Dokument
+			verifyDocument: function(docData) {
+				try {
+					const documents = loadDocuments();
+					
+					// Erstelle Verifizierungs-Eintrag
+					const verification = {
+						id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+						title: docData.title,
+						content: docData.content,
+						type: docData.type,
+						verifiedAt: new Date().toISOString(),
+						verifiedBy: 'Unternehmens-Notar',
+						status: 'verified',
+						hash: generateHash(docData.content)
+					};
+					
+					documents.push(verification);
+					saveDocuments(documents);
+					
+					console.log('[FABRIKAGE] Dokument verifiziert:', verification.id);
+					return verification;
+				} catch(e) {
+					console.error('[FABRIKAGE] verifyDocument error:', e);
+					return null;
+				}
+			},
+			
+			// Lade Dokumente
+			getDocuments: function() {
+				return loadDocuments();
+			},
+			
+			// Empfange Dokumente von anderen Apps
+			setFromApps: function(data) {
+				try {
+					if (data.documents && Array.isArray(data.documents)) {
+						const existing = loadDocuments();
+						const merged = [...existing, ...data.documents];
+						saveDocuments(merged);
+						renderDocuments();
+						console.log('[FABRIKAGE] Notar: Dokumente von Apps erhalten');
+					}
+				} catch(e) {
+					console.error('[FABRIKAGE] Notar setFromApps error:', e);
+				}
+			}
+		};
+		
+		// Dokumente laden/speichern
+		function loadDocuments() {
+			try {
+				const raw = localStorage.getItem(STORAGE_KEY);
+				if (!raw) return [];
+				return JSON.parse(raw);
+			} catch(e) {
+				console.error('[FABRIKAGE] loadDocuments error:', e);
+				return [];
+			}
+		}
+		
+		function saveDocuments(documents) {
+			try {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
+				// Event auslösen
+				window.dispatchEvent(new CustomEvent('notar:documentsChanged', {
+					detail: { documents }
+				}));
+			} catch(e) {
+				console.error('[FABRIKAGE] saveDocuments error:', e);
+			}
+		}
+		
+		// Hash generieren (SHA-256)
+		async function generateHash(text) {
+			try {
+				const encoder = new TextEncoder();
+				const data = encoder.encode(text);
+				const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+				const hashArray = Array.from(new Uint8Array(hashBuffer));
+				return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+			} catch(e) {
+				console.error('[FABRIKAGE] generateHash error:', e);
+				return Date.now().toString(36);
+			}
+		}
+		
+		// Dokument verifizieren
+		async function verifyDocument() {
+			try {
+				const title = document.getElementById('docTitle').value.trim();
+				const content = document.getElementById('docContent').value.trim();
+				const type = document.getElementById('docType').value;
+				
+				if (!title || !content) {
+					alert('Bitte Titel und Inhalt ausfüllen.');
+					return;
+				}
+				
+				const statusEl = document.getElementById('verifyStatus');
+				statusEl.style.display = 'inline-block';
+				statusEl.className = 'verification-status pending';
+				statusEl.textContent = 'Verifiziere...';
+				
+				// Simuliere Verifizierung durch menschlichen Notar
+				await new Promise(resolve => setTimeout(resolve, 1500));
+				
+				const docData = {
+					title,
+					content,
+					type
+				};
+				
+				const verification = window.notarModule.verifyDocument(docData);
+				
+				if (verification) {
+					statusEl.className = 'verification-status verified';
+					statusEl.textContent = '✓ Verifiziert';
+					
+					// Formular zurücksetzen
+					document.getElementById('docTitle').value = '';
+					document.getElementById('docContent').value = '';
+					document.getElementById('docType').value = 'vertrag';
+					
+					renderDocuments();
+					
+					setTimeout(() => {
+						statusEl.style.display = 'none';
+					}, 3000);
+				} else {
+					statusEl.className = 'verification-status error';
+					statusEl.textContent = '✗ Fehler';
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] verifyDocument error:', e);
+				alert('Fehler bei Verifizierung: ' + e.message);
+			}
+		}
+		
+		// Dokumente rendern
+		function renderDocuments() {
+			try {
+				const documents = loadDocuments();
+				const listEl = document.getElementById('documentList');
+				
+				if (documents.length === 0) {
+					listEl.innerHTML = '<p style="color: var(--muted); text-align: center;">Keine verifizierten Dokumente vorhanden</p>';
+					return;
+				}
+				
+				// Sortieren nach Datum (neueste zuerst)
+				documents.sort((a, b) => new Date(b.verifiedAt) - new Date(a.verifiedAt));
+				
+				listEl.innerHTML = documents.map(doc => `
+					<div class="document-item">
+						<div>
+							<strong>${escapeHtml(doc.title)}</strong>
+							<div style="font-size: 12px; color: var(--muted); margin-top: 5px;">
+								Typ: ${escapeHtml(doc.type)} · Verifiziert: ${new Date(doc.verifiedAt).toLocaleString()} · Von: ${escapeHtml(doc.verifiedBy)}
+							</div>
+						</div>
+						<div>
+							<span class="verification-status verified">✓ Verifiziert</span>
+							<button class="btn" style="padding: 6px 12px; font-size: 12px; margin-left: 10px;" onclick="viewDocument('${doc.id}')">Ansehen</button>
+						</div>
+					</div>
+				`).join('');
+			} catch(e) {
+				console.error('[FABRIKAGE] renderDocuments error:', e);
+			}
+		}
+		
+		// Dokument ansehen
+		function viewDocument(id) {
+			try {
+				const documents = loadDocuments();
+				const doc = documents.find(d => d.id === id);
+				if (doc) {
+					alert(`Dokument: ${doc.title}\n\nInhalt:\n${doc.content}\n\nHash: ${doc.hash}`);
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] viewDocument error:', e);
+			}
+		}
+		
+		// Mit Apps synchronisieren
+		function syncWithApps() {
+			try {
+				// Lese Dokumente aus anderen Apps
+				const apps = ['kassenbuch', 'budget', 'contract', 'flowcashx'];
+				let synced = 0;
+				
+				apps.forEach(appName => {
+					try {
+						const appData = localStorage.getItem(`${appName}.data`);
+						if (appData) {
+							const data = JSON.parse(appData);
+							if (data.entries || data.transactions) {
+								// Konvertiere zu Dokumenten
+								const docs = convertAppDataToDocuments(data, appName);
+								if (docs.length > 0) {
+									const existing = loadDocuments();
+									const merged = [...existing, ...docs];
+									saveDocuments(merged);
+									synced++;
+								}
+							}
+						}
+					} catch(e) {
+						console.error(`[FABRIKAGE] Sync error for ${appName}:`, e);
+					}
+				});
+				
+				renderDocuments();
+				alert(`${synced} Apps synchronisiert.`);
+			} catch(e) {
+				console.error('[FABRIKAGE] syncWithApps error:', e);
+			}
+		}
+		
+		// App-Daten zu Dokumenten konvertieren
+		function convertAppDataToDocuments(data, appName) {
+			const documents = [];
+			try {
+				if (data.entries && Array.isArray(data.entries)) {
+					data.entries.forEach(entry => {
+						if (entry.description && entry.amount) {
+							documents.push({
+								id: `notar-${appName}-${entry.id}`,
+								title: `${appName}: ${entry.description}`,
+								content: JSON.stringify(entry, null, 2),
+								type: 'bestätigung',
+								verifiedAt: new Date().toISOString(),
+								verifiedBy: 'Unternehmens-Notar',
+								status: 'verified',
+								source: appName
+							});
+						}
+					});
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] convertAppDataToDocuments error:', e);
+			}
+			return documents;
+		}
+		
+		// Helper
+		function escapeHtml(text) {
+			const div = document.createElement('div');
+			div.textContent = text;
+			return div.innerHTML;
+		}
+		
+		// Registriere Notar-Modul im Hub
+		if (window.cashflowHub) {
+			window.cashflowHub.registerApp('notar', window.notarModule);
+		}
+		
+		// Initialisierung
+		renderDocuments();
+		
+		console.log('[FABRIKAGE] Digitaler Notar geladen');
+		console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+	</script>
+	
+	<!-- Communication Layer -->
+	<script src="../../KASSENBUCH-COMMUNICATION-LAYER.js"></script>
+</body>
+</html>

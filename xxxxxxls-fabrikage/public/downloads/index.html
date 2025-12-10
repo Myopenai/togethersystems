@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Downloads · XXXXXXLS · TogetherSystems</title>
+  <link rel="stylesheet" href="/assets/ultra.css">
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="logo"><span class="brand">.XLS.</span> Downloads</div>
+      <div>
+        <button class="btn" onclick="location.href='/'">Zurück</button>
+      </div>
+    </header>
+    
+    <aside class="sidenav">
+      <nav class="nav">
+        <div class="nav-label">Downloads</div>
+        <a href="#" class="active">Artifacts</a>
+        <a href="#" onclick="exportAPI(); return false;">API Export</a>
+        <a href="#" onclick="exportConfig(); return false;">Config Export</a>
+      </nav>
+    </aside>
+    
+    <main class="main">
+      <section class="card">
+        <h2>Artifacts & Dokumentation</h2>
+        <pre id="artifacts" style="max-height:400px;overflow:auto;"></pre>
+      </section>
+      
+      <section class="card" style="margin-top:24px;">
+        <h2>API Endpoints</h2>
+        <ul>
+          <li><a href="/api/nodes" target="_blank">/api/nodes</a> - Alle Knoten</li>
+          <li><a href="/api/links" target="_blank">/api/links</a> - Alle Verbindungen</li>
+          <li><a href="/api/events" target="_blank">/api/events</a> - Event-Log</li>
+          <li><a href="/api/energy-ledger" target="_blank">/api/energy-ledger</a> - Energie-Ledger</li>
+          <li><a href="/api/universal/layers" target="_blank">/api/universal/layers</a> - Universal-Layer</li>
+          <li><a href="/api/health" target="_blank">/api/health</a> - System Health</li>
+        </ul>
+      </section>
+      
+      <section class="card" style="margin-top:24px;">
+        <h2>Apps</h2>
+        <ul>
+          <li><a href="/apps/node.html">Node-Editor</a> - Interaktiver Graph-Editor</li>
+          <li><a href="/apps/bubble.html">Bubble-Hydrosphäre</a> - Visuelle Bubble-Scene</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  
+  <script>
+    const artifacts = {
+      "README": "XXXXXXLS Fabrikage scaffold (dimensionless modular factory)",
+      "Version": "1.0.0",
+      "Branding": ".T. TogetherSystems - ModularFlux Architecture",
+      "API": [
+        "/api/nodes",
+        "/api/links",
+        "/api/events",
+        "/api/energy-ledger",
+        "/api/universal/layers",
+        "/api/morph (POST)",
+        "/api/nodes (POST)",
+        "/api/health"
+      ],
+      "Apps": [
+        "/apps/node.html",
+        "/apps/bubble.html"
+      ],
+      "Features": [
+        "Dimensionless modular architecture",
+        "Infinite scalability",
+        "Self-generating production principles",
+        "Multi-dimensional operation",
+        "Universal layer system",
+        "Energy ledger tracking",
+        "Interactive node editor",
+        "Bubble hydrosphäre visualization"
+      ],
+      "Architecture": {
+        "Layers": [
+          "NANO",
+          "MESO",
+          "PLANET_SPHERE",
+          "SOLAR_SPHERE",
+          "GALACTIC",
+          "SUPERCLUSTER",
+          "UNIVERSAL",
+          "TRANSUNIVERSAL_META",
+          "CONTINUUM_FIELD"
+        ],
+        "Ports": ["material", "energy", "info", "meta"],
+        "LinkTypes": ["MATERIAL", "ENERGY", "INFORMATION", "META"]
+      }
+    };
+    
+    document.getElementById('artifacts').textContent = JSON.stringify(artifacts, null, 2);
+    
+    async function exportAPI() {
+      try {
+        const [nodes, links, events, energy, layers] = await Promise.all([
+          fetch('/api/nodes').then(r => r.json()),
+          fetch('/api/links').then(r => r.json()),
+          fetch('/api/events').then(r => r.json()),
+          fetch('/api/energy-ledger').then(r => r.json()),
+          fetch('/api/universal/layers').then(r => r.json())
+        ]);
+        
+        const data = { nodes, links, events, energy, layers, timestamp: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `xxxxxxls-api-export-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        alert('Fehler beim Export: ' + e.message);
+      }
+    }
+    
+    function exportConfig() {
+      const config = {
+        system: "XXXXXXLS-Fabrikage",
+        version: "1.0.0",
+        timestamp: new Date().toISOString(),
+        settings: {
+          defaultPort: 5173,
+          layers: artifacts.Architecture.Layers,
+          ports: artifacts.Architecture.Ports
+        }
+      };
+      const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `xxxxxxls-config-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Zentrale Fabrikage – Einzelklick-Bericht | [.SYSTEMS.T.SYSTEMS.]</title>
+	<meta name="description" content="Der Final Stone: Absolute Stabilität, totale Transparenz und eine lebendige Gemeinschaft. Kompletter Verlauf dokumentiert.">
+	<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+	<script>
+		const BASE_URL = 'https://myopenai.github.io/togethersystems';
+		mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { primaryColor: '#0f3460' } });
+	</script>
+	<style>
+		:root {
+			--primary: #1a1a2e;
+			--secondary: #16213e;
+			--accent: #0f3460;
+			--text: #eaeaea;
+			--text-muted: #b8b8b8;
+			--border: #2a2a3e;
+			--code-bg: #0d1117;
+			--link: #58a6ff;
+			--link-hover: #79c0ff;
+			--success: #238636;
+			--warning: #d29922;
+			--error: #da3633;
+		}
+		
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+			background: var(--primary);
+			color: var(--text);
+			line-height: 1.6;
+			padding: 2rem;
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+		
+		.light {
+			--primary: #ffffff;
+			--secondary: #f6f8fa;
+			--accent: #0969da;
+			--text: #24292f;
+			--text-muted: #57606a;
+			--border: #d0d7de;
+			--code-bg: #f6f8fa;
+			--link: #0969da;
+			--link-hover: #0550ae;
+		}
+		
+		.light .mermaid {
+			filter: invert(1) hue-rotate(180deg);
+		}
+		
+		header {
+			border-bottom: 2px solid var(--border);
+			padding-bottom: 2rem;
+			margin-bottom: 3rem;
+		}
+		
+		h1 {
+			font-size: 2.5rem;
+			margin-bottom: 1rem;
+			color: var(--accent);
+		}
+		
+		h2 {
+			font-size: 1.8rem;
+			margin-top: 2.5rem;
+			margin-bottom: 1rem;
+			color: var(--accent);
+			border-bottom: 1px solid var(--border);
+			padding-bottom: 0.5rem;
+		}
+		
+		h3 {
+			font-size: 1.4rem;
+			margin-top: 1.5rem;
+			margin-bottom: 0.75rem;
+			color: var(--text);
+		}
+		
+		p {
+			margin-bottom: 1rem;
+		}
+		
+		.branding {
+			background: var(--secondary);
+			padding: 1.5rem;
+			border-radius: 8px;
+			margin: 2rem 0;
+			border-left: 4px solid var(--accent);
+		}
+		
+		.branding strong {
+			color: var(--accent);
+			font-size: 1.1rem;
+		}
+		
+		code {
+			background: var(--code-bg);
+			padding: 0.2rem 0.4rem;
+			border-radius: 4px;
+			font-family: 'Courier New', monospace;
+			font-size: 0.9em;
+			color: var(--link);
+		}
+		
+		pre {
+			background: var(--code-bg);
+			padding: 1rem;
+			border-radius: 8px;
+			overflow-x: auto;
+			margin: 1rem 0;
+			border: 1px solid var(--border);
+		}
+		
+		pre code {
+			background: none;
+			padding: 0;
+			color: var(--text);
+		}
+		
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 1.5rem 0;
+		}
+		
+		th, td {
+			padding: 0.75rem;
+			text-align: left;
+			border-bottom: 1px solid var(--border);
+		}
+		
+		th {
+			background: var(--secondary);
+			font-weight: 600;
+			color: var(--accent);
+		}
+		
+		tr:hover {
+			background: var(--secondary);
+		}
+		
+		.manifest-box {
+			background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+			padding: 2rem;
+			border-radius: 12px;
+			margin: 2rem 0;
+			text-align: center;
+			border: 2px solid var(--border);
+		}
+		
+		.manifest-box blockquote {
+			font-size: 1.3rem;
+			font-style: italic;
+			color: var(--text);
+			margin: 0;
+			border-left: none;
+		}
+		
+		.quickstart {
+			background: var(--secondary);
+			padding: 1.5rem;
+			border-radius: 8px;
+			margin: 1.5rem 0;
+			border-left: 4px solid var(--success);
+		}
+		
+		.workflow-box {
+			background: var(--code-bg);
+			padding: 1.5rem;
+			border-radius: 8px;
+			margin: 1.5rem 0;
+			border: 1px solid var(--border);
+		}
+		
+		.org-chart {
+			background: var(--secondary);
+			padding: 1.5rem;
+			border-radius: 8px;
+			margin: 1.5rem 0;
+			text-align: center;
+		}
+		
+		.org-chart code {
+			font-size: 1.1rem;
+			display: block;
+			margin: 0.5rem 0;
+		}
+		
+		.language-selector {
+			display: flex;
+			gap: 1rem;
+			margin: 2rem 0;
+			flex-wrap: wrap;
+		}
+		
+		.language-selector a {
+			padding: 0.5rem 1rem;
+			background: var(--secondary);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			text-decoration: none;
+			color: var(--link);
+			transition: all 0.3s;
+		}
+		
+		.language-selector a:hover {
+			background: var(--accent);
+			color: var(--text);
+			border-color: var(--accent);
+		}
+		
+		.language-selector a.active {
+			background: var(--accent);
+			color: var(--text);
+			border-color: var(--accent);
+		}
+		
+		footer {
+			margin-top: 4rem;
+			padding-top: 2rem;
+			border-top: 2px solid var(--border);
+			text-align: center;
+			color: var(--text-muted);
+		}
+		
+		.toc {
+			background: var(--secondary);
+			padding: 1.5rem;
+			border-radius: 8px;
+			margin: 2rem 0;
+			border-left: 4px solid var(--accent);
+		}
+		
+		.toc ul {
+			list-style: none;
+			padding-left: 0;
+		}
+		
+		.toc li {
+			margin: 0.5rem 0;
+		}
+		
+		.toc a {
+			color: var(--link);
+			text-decoration: none;
+		}
+		
+		.toc a:hover {
+			text-decoration: underline;
+		}
+		
+		.emoji {
+			font-size: 1.2em;
+		}
+		
+		.theme-toggle {
+			position: fixed;
+			top: 1rem;
+			right: 1rem;
+			background: var(--secondary);
+			border: 1px solid var(--border);
+			color: var(--text);
+			padding: 0.5rem 1rem;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 0.9rem;
+			z-index: 1000;
+			transition: all 0.3s;
+		}
+		
+		.theme-toggle:hover {
+			background: var(--accent);
+		}
+		
+		.copy-button {
+			position: fixed;
+			top: 1rem;
+			right: 8rem;
+			background: var(--secondary);
+			border: 1px solid var(--border);
+			color: var(--text);
+			padding: 0.5rem 1rem;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 0.9rem;
+			z-index: 1000;
+			transition: all 0.3s;
+		}
+		
+		.copy-button:hover {
+			background: var(--success);
+		}
+		
+		.mermaid {
+			background: var(--code-bg);
+			padding: 1rem;
+			border-radius: 8px;
+			margin: 1rem 0;
+		}
+		
+		.section {
+			margin: 2rem 0;
+			padding: 1.5rem;
+			background: var(--secondary);
+			border-radius: 8px;
+			border: 1px solid var(--border);
+		}
+		
+		ul, ol {
+			margin-left: 2rem;
+			margin-bottom: 1rem;
+		}
+		
+		li {
+			margin: 0.5rem 0;
+		}
+		
+		@media print {
+			.theme-toggle, .copy-button {
+				display: none;
+			}
+			body {
+				background: white;
+				color: black;
+			}
+		}
+	</style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+	<button class="theme-toggle" onclick="toggleTheme()" title="Theme umschalten">🌓 Theme</button>
+	<button class="copy-button" onclick="copyAllContent()" title="Gesamten Inhalt kopieren">📋 Kopieren</button>
+	
+	<header>
+		<h1>🪨 Zentrale Fabrikage – Einzelklick-Bericht</h1>
+		<div class="branding">
+			<strong>[.SYSTEMS.T.SYSTEMS.]</strong> | BRANÐ: TTT.T,.3T | Kennung: [.T.4T.]
+		</div>
+		<p style="color: var(--text-muted); margin-top: 1rem;">
+			<strong>Kompletter Verlauf dokumentiert</strong> | Zentrale Fabrikage exklusiv abgebildet | 
+			Einzelklick-Bericht für Canvas & Weiterverwendung
+		</p>
+	</header>
+	
+	<main>
+		<!-- 📚 Visuelles Inhaltsverzeichnis -->
+		<section id="toc" class="section">
+			<h2>📚 Inhaltsverzeichnis – Visuell</h2>
+			<div class="mermaid">
+graph TD
+    A[🪨 Zentrale Fabrikage] --> B[🪨 Manifest]
+    A --> C[🚀 Quickstart]
+    A --> D[📑 Governance & Mitarbeit]
+    A --> E[🌟 Branding & Vision]
+    A --> F[🌍 Globale Mitarbeit]
+    A --> G[🌐 Sprachumschaltblock]
+    A --> H[📜 Footer]
+    
+    B --> B1[Final Stone]
+    B --> B2[Prinzipien]
+    B --> B3[Ziel]
+    
+    C --> C1[Install]
+    C --> C2[Init]
+    C --> C3[Status]
+    C --> C4[Factory]
+    C --> C5[CMS]
+    
+    D --> D1[LICENSE]
+    D --> D2[CONTRIBUTING]
+    D --> D3[CODE_OF_CONDUCT]
+    D --> D4[ASCII Workflow]
+    D --> D5[Mermaid Workflow]
+    
+    E --> E1[Marke]
+    E --> E2[Kennung]
+    E --> E3[Leitgedanken]
+    E --> E4[Einladung]
+    
+    F --> F1[Rollen]
+    F --> F2[ASCII Organigramm]
+    F --> F3[Mermaid Organigramm]
+    
+    G --> G1[🇩🇪 Deutsch]
+    G --> G2[🇳🇱 Nederlands]
+    G --> G3[🇬🇧 English]
+    
+    H --> H1[Credits]
+    H --> H2[Lizenz]
+    H --> H3[Legacy Statement]
+			</div>
+		</section>
+		
+		<!-- 🪨 Manifest -->
+		<section id="manifest" class="section">
+			<h2>🪨 Manifest</h2>
+			
+			<h3>Final Stone</h3>
+			<div class="manifest-box">
+				<blockquote>
+					"Kein Gerät, kein Mensch, keine Generation ausgeschlossen – der Final Stone garantiert Stabilität und Transparenz."
+				</blockquote>
+			</div>
+			
+			<h3>Prinzipien</h3>
+			<ul>
+				<li><strong>Universell</strong> – Kein Gerät, kein Mensch, keine Generation ausgeschlossen</li>
+				<li><strong>Auditierbar</strong> – Vollständige Transparenz und Nachvollziehbarkeit</li>
+				<li><strong>Selbstheilend</strong> – System erkennt und behebt eigene Schwächen</li>
+				<li><strong>Gemeinschaftlich</strong> – Lebendige Gemeinschaft trägt das System</li>
+			</ul>
+			
+			<h3>Ziel</h3>
+			<p>
+				Der Final Stone ist ein Versprechen: <strong>Absolute Stabilität, totale Transparenz und eine lebendige Gemeinschaft</strong>, 
+				die das System trägt und weiterführt.
+			</p>
+			<p>
+				<em>"Ein System ist erst dann vollständig, wenn es seine eigenen Schwächen erkennt, dokumentiert und heilt."</em>
+			</p>
+		</section>
+		
+		<!-- 🚀 Quickstart -->
+		<section id="quickstart" class="section">
+			<h2>🚀 Quickstart</h2>
+			<div class="quickstart">
+				<h3>Installation & Initialisierung</h3>
+				<pre><code>npm install
+npm run komsec -- init
+npm run komsec -- status
+npm run komsec -- factory
+npm run cms
+
+Browser öffnen: http://localhost:4000</code></pre>
+			</div>
+			
+			<h3>Befehlsübersicht</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Befehl</th>
+						<th>Beschreibung</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><code>npm install</code></td>
+						<td>Installiert alle Dependencies</td>
+					</tr>
+					<tr>
+						<td><code>npm run komsec -- init</code></td>
+						<td>Initialisiert das System</td>
+					</tr>
+					<tr>
+						<td><code>npm run komsec -- status</code></td>
+						<td>Zeigt Systemstatus an</td>
+					</tr>
+					<tr>
+						<td><code>npm run komsec -- factory</code></td>
+						<td>Startet Fabrikage-Prozess</td>
+					</tr>
+					<tr>
+						<td><code>npm run cms</code></td>
+						<td>Startet CMS-Server</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+		
+		<!-- 📑 Governance & Mitarbeit -->
+		<section id="governance" class="section">
+			<h2>📑 Governance & Mitarbeit</h2>
+			
+			<h3>Dokumente</h3>
+			<ul>
+				<li><strong>LICENSE</strong> – MIT License (siehe Footer)</li>
+				<li><strong>CONTRIBUTING.md</strong> – Richtlinien für Beiträge</li>
+				<li><strong>CODE_OF_CONDUCT.md</strong> – Verhaltenskodex</li>
+			</ul>
+			
+			<h3>ASCII‑Workflow: Änderung → Gate 1 → Gate 2 → Gate 3 → Gate 4 → Release</h3>
+			<div class="workflow-box">
+				<pre><code>flowchart TD
+  A[Änderung] --> B{Gate 1: Vertrag/Sicherheit}
+  B --> C{Gate 2: Tests}
+  C --> D{Gate 3: Compliance}
+  D --> E{Gate 4: Reporting}
+  E --> F[Release]</code></pre>
+			</div>
+			
+			<h3>Mermaid‑Workflow</h3>
+			<div class="mermaid">
+flowchart TD
+    A[Änderung] --> B{Gate 1:<br/>Vertrag/Sicherheit}
+    B -->|✅ Freigegeben| C{Gate 2:<br/>Tests}
+    B -->|❌ Abgelehnt| A
+    C -->|✅ Bestanden| D{Gate 3:<br/>Compliance}
+    C -->|❌ Fehlgeschlagen| A
+    D -->|✅ Konform| E{Gate 4:<br/>Reporting}
+    D -->|❌ Nicht konform| A
+    E -->|✅ Dokumentiert| F[Release]
+    E -->|❌ Unvollständig| A
+    F --> G[Deployment]
+			</div>
+			
+			<h3>TÜV-Gates</h3>
+			<p>
+				<strong>Vier bis fünf TÜV‑Gates vor Livegang</strong> – Jede Änderung durchläuft eine strenge Prüfung:
+			</p>
+			<ol>
+				<li><strong>Gate 1: Vertrag/Sicherheit</strong> – Rechtliche und sicherheitstechnische Prüfung</li>
+				<li><strong>Gate 2: Tests</strong> – Automatisierte und manuelle Tests</li>
+				<li><strong>Gate 3: Compliance</strong> – Einhaltung von Standards und Richtlinien</li>
+				<li><strong>Gate 4: Reporting</strong> – Vollständige Dokumentation</li>
+				<li><strong>Gate 5: Final Review</strong> (optional) – Abschließende Prüfung durch Maintainer</li>
+			</ol>
+		</section>
+		
+		<!-- 🌟 Branding & Vision -->
+		<section id="branding" class="section">
+			<h2>🌟 Branding & Vision</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Element</th>
+						<th>Inhalt</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Marke</strong></td>
+						<td>BRANÐ: TTT.T,.3T</td>
+					</tr>
+					<tr>
+						<td><strong>Kennung</strong></td>
+						<td>[.T.4T.]</td>
+					</tr>
+					<tr>
+						<td><strong>Vision</strong></td>
+						<td>Kein Gerät, kein Mensch, keine Generation ausgeschlossen.</td>
+					</tr>
+					<tr>
+						<td><strong>Leitgedanken</strong></td>
+						<td>Universell · Auditierbar · Transparent · Menschlich</td>
+					</tr>
+					<tr>
+						<td><strong>Governance</strong></td>
+						<td>Vier bis fünf TÜV‑Gates vor Livegang</td>
+					</tr>
+					<tr>
+						<td><strong>Einladung</strong></td>
+						<td>Zukünftige Mitarbeitende [.T.T.T.T,.T.] weltweit willkommen 🌍</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+		
+		<!-- 🌍 Globale Mitarbeit -->
+		<section id="global-contribution" class="section">
+			<h2>🌍 Globale Mitarbeit</h2>
+			
+			<h3>Rollen & Verantwortlichkeiten</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Rolle</th>
+						<th>Verantwortlichkeiten</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Contributor</strong></td>
+						<td>PRs, Dokumentation, Tests</td>
+					</tr>
+					<tr>
+						<td><strong>Reviewer</strong></td>
+						<td>Änderungen prüfen, Gates freigeben</td>
+					</tr>
+					<tr>
+						<td><strong>Maintainer</strong></td>
+						<td>Merge & Release, CI/CD</td>
+					</tr>
+					<tr>
+						<td><strong>Compliance Lead</strong></td>
+						<td>Policies, Sicherheit</td>
+					</tr>
+					<tr>
+						<td><strong>Operator</strong></td>
+						<td>Portal, Monitoring, Reporting</td>
+					</tr>
+					<tr>
+						<td><strong>Community</strong></td>
+						<td>Feedback, Diskussionen</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3>ASCII‑Organigramm</h3>
+			<div class="org-chart">
+				<code>Community → Contributor → Reviewer → Maintainer → Compliance Lead → Operator</code>
+			</div>
+			
+			<h3>Mermaid‑Organigramm</h3>
+			<div class="mermaid">
+graph TD
+    A[Community] -->|Feedback| B[Contributor]
+    B -->|PRs| C[Reviewer]
+    C -->|Prüfung| D[Maintainer]
+    D -->|Merge| E[Compliance Lead]
+    E -->|Freigabe| F[Operator]
+    F -->|Deployment| G[Live System]
+    
+    style A fill:#667eea
+    style B fill:#764ba2
+    style C fill:#f093fb
+    style D fill:#4facfe
+    style E fill:#00f2fe
+    style F fill:#43e97b
+    style G fill:#38f9d7
+			</div>
+		</section>
+		
+		<!-- 🌐 Sprachumschaltblock -->
+		<section id="language" class="section">
+			<h2>🌐 Sprache wählen</h2>
+			<div class="language-selector">
+				<a href="#de" onclick="setLanguage('de'); return false;" class="active" id="lang-de">🇩🇪 Deutsch</a>
+				<a href="#nl" onclick="setLanguage('nl'); return false;" id="lang-nl">🇳🇱 Nederlands</a>
+				<a href="#en" onclick="setLanguage('en'); return false;" id="lang-en">🇬🇧 English</a>
+			</div>
+			<p style="margin-top: 1rem; color: var(--text-muted);">
+				<em>Sprachumschaltung wird in zukünftigen Versionen vollständig implementiert.</em>
+			</p>
+		</section>
+	</main>
+	
+	<!-- 📜 Footer -->
+	<footer>
+		<section id="credits" class="section">
+			<h3>👥 Credits</h3>
+			<p><strong>Initiator & Architekt:</strong> Gently</p>
+			<p><strong>Community:</strong> Alle Contributor:innen, Reviewer:innen, Maintainer:innen, Compliance Leads und Operator:innen weltweit</p>
+		</section>
+		
+		<section id="license" class="section">
+			<h3>📄 Lizenz</h3>
+			<p>Dieses Projekt steht unter der <strong>MIT License</strong>. Siehe LICENSE für Details.</p>
+		</section>
+		
+		<section id="legacy" class="section">
+			<h3>🪨 Legacy‑Statement</h3>
+			<div class="manifest-box" style="margin-top: 2rem;">
+				<blockquote>
+					"Dieses System ist nicht nur Code – es ist ein Vermächtnis. Jeder Beitrag, jede Prüfung, jede Erweiterung ist Teil des Final Stone. Absolute Stabilität, totale Transparenz und eine Gemeinschaft, die das System trägt und weiterführt."
+				</blockquote>
+			</div>
+		</section>
+		
+		<div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-muted);">
+			<p>[.SYSTEMS.T.SYSTEMS.] TogetherSystems International TTT</p>
+			<p>BRANÐ: TTT.T,.3T | Kennung: [.T.4T.]</p>
+			<p style="margin-top: 1rem;">
+				<strong>Einzelklick-Bericht</strong> | Generiert: <span id="generated-date"></span>
+			</p>
+		</div>
+	</footer>
+	
+	<script>
+		// BASE_URL für Online-Zugriff (Fabrikage-Routine)
+		const BASE_URL = 'https://myopenai.github.io/togethersystems';
+		const PDF_BASE_URL = BASE_URL + '/pdf/';
+		
+		// Theme-Toggle (Fabrikage-Routine)
+		function toggleTheme() {
+			try {
+				document.documentElement.classList.toggle('light');
+				const isLight = document.documentElement.classList.contains('light');
+				localStorage.setItem('fabrikage.theme', isLight ? 'light' : 'dark');
+				
+				// Mermaid Theme anpassen
+				if (isLight) {
+					mermaid.initialize({ startOnLoad: false, theme: 'default', themeVariables: { primaryColor: '#0969da' } });
+				} else {
+					mermaid.initialize({ startOnLoad: false, theme: 'dark', themeVariables: { primaryColor: '#0f3460' } });
+				}
+				
+				// Mermaid-Diagramme neu rendern
+				document.querySelectorAll('.mermaid').forEach(el => {
+					const id = el.id || 'mermaid-' + Math.random().toString(36).substr(2, 9);
+					el.id = id;
+					mermaid.init(undefined, el);
+				});
+				
+				console.log('[FABRIKAGE] Theme gewechselt zu:', isLight ? 'light' : 'dark');
+			} catch(e) {
+				console.error('[FABRIKAGE] Theme-Toggle Fehler:', e);
+			}
+		}
+		
+		// Theme wiederherstellen
+		(function() {
+			try {
+				const savedTheme = localStorage.getItem('fabrikage.theme') || 'dark';
+				if (savedTheme === 'light') {
+					document.documentElement.classList.add('light');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] Theme-Restore Fehler:', e);
+			}
+		})();
+		
+		// Sprachumschaltung
+		function setLanguage(lang) {
+			try {
+				document.querySelectorAll('.language-selector a').forEach(a => a.classList.remove('active'));
+				document.getElementById('lang-' + lang).classList.add('active');
+				localStorage.setItem('fabrikage.language', lang);
+				console.log('[FABRIKAGE] Sprache gewechselt zu:', lang);
+			} catch(e) {
+				console.error('[FABRIKAGE] Sprachumschaltung Fehler:', e);
+			}
+		}
+		
+		// Gesamten Inhalt kopieren
+		function copyAllContent() {
+			try {
+				const content = document.body.innerText || document.body.textContent;
+				navigator.clipboard.writeText(content).then(() => {
+					const btn = document.querySelector('.copy-button');
+					const originalText = btn.textContent;
+					btn.textContent = '✅ Kopiert!';
+					btn.style.background = 'var(--success)';
+					setTimeout(() => {
+						btn.textContent = originalText;
+						btn.style.background = '';
+					}, 2000);
+					console.log('[FABRIKAGE] Inhalt kopiert');
+				}).catch(err => {
+					console.error('[FABRIKAGE] Kopieren fehlgeschlagen:', err);
+					alert('Kopieren fehlgeschlagen. Bitte manuell auswählen und kopieren.');
+				});
+			} catch(e) {
+				console.error('[FABRIKAGE] Copy-Funktion Fehler:', e);
+			}
+		}
+		
+		// Smooth Scrolling für Anker-Links
+		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+			anchor.addEventListener('click', function (e) {
+				e.preventDefault();
+				const target = document.querySelector(this.getAttribute('href'));
+				if (target) {
+					target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}
+			});
+		});
+		
+		// Generierungsdatum setzen
+		document.getElementById('generated-date').textContent = new Date().toLocaleString('de-DE');
+		
+		// Fabrikage-Logging
+		console.log('[FABRIKAGE] Zentrale Fabrikage – Einzelklick-Bericht geladen');
+		console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+		console.log('[FABRIKAGE] PDF_BASE_URL:', PDF_BASE_URL);
+		console.log('[FABRIKAGE] Mermaid initialisiert');
+	</script>
+</body>
+</html>
+

@@ -1,0 +1,2495 @@
+<!-- [.SYSTEMS.T.SYSTEMS.] FABRIKAGE Console-Bypass Integration -->
+<script src="FABRIKAGE-CONSOLE-BYPASS-INTEGRATION.js"></script>
+
+<!-- UAE / WHD: Erweiterter Budget- & Bilanzplaner (Canvas-Modul) -->
+<section id="uae-budget-module" style="margin:12px 0; font-family: system-ui, sans-serif;">
+  <h2 style="font-size:14px; margin:4px 0;">
+    UAE — Budget-, Bilanz- &amp; Haushaltsplaner
+    <span style="font-size:11px; opacity:0.7;">(Canvas-Modul, Single-File kompatibel)</span>
+  </h2>
+
+  <!-- Bedienleiste -->
+  <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:4px;">
+    <button id="uaeBudgetRun" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Ansicht neu zeichnen
+    </button>
+    <button id="uaeBudgetEdit" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Budget-Eingaben bearbeiten
+    </button>
+    <button id="uaeBudgetImport" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Bank-/Kassendaten einlesen
+    </button>
+    <button id="uaeBudgetExport" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Daten als JSON exportieren
+    </button>
+    <button id="uaeBudgetPrint" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Drucken
+    </button>
+    <button id="uaeBudgetMode" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Ansicht wechseln
+    </button>
+    <button id="uaeBudgetCategories" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Kategorien verwalten
+    </button>
+    <button id="uaeBudgetAnalysis" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Vorzugsanalyse
+    </button>
+    <button id="uaeBudgetOptimal" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Optimale Nutzung
+    </button>
+    <button id="uaeBudgetFavorites" style="font-size:11px; padding:3px 8px; border-radius:999px;">
+      Lieblingsprodukte
+    </button>
+    <span id="uaeBudgetStatus" style="font-size:11px; opacity:0.8;"></span>
+  </div>
+  
+  <!-- Kategorien-Verwaltung (Excel-funktional) -->
+  <div id="uaeCategoriesOverlay" style="display:none; position:fixed; inset:0; background:rgba(17,24,39,0.5); z-index:9999;">
+    <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(600px,90vw); background:#fff; border-radius:8px; border:1px solid #e5e7eb; box-shadow:0 10px 30px rgba(0,0,0,0.15); font-family:system-ui, sans-serif; padding:16px; max-height:80vh; overflow-y:auto;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div style="font-size:14px; font-weight:600;">Kategorien verwalten (Excel-funktional)</div>
+        <button id="uaeCategoriesClose" style="font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid #ddd; background:#fff; cursor:pointer;">Schließen</button>
+      </div>
+      <div style="margin-bottom:12px; font-size:11px; color:#6b7280;">
+        Standard-Kategorien können nicht gelöscht werden. Sie können eigene Kategorien hinzufügen, bearbeiten und löschen.
+      </div>
+      <div id="uaeCategoriesList" style="margin-bottom:12px;"></div>
+      <div style="display:flex; gap:6px; margin-bottom:12px;">
+        <input id="uaeNewCategoryName" type="text" placeholder="Neue Kategorie" style="flex:1; padding:6px; border:1px solid #ddd; border-radius:4px; font-size:11px;">
+        <input id="uaeNewCategoryKeys" type="text" placeholder="Suchbegriffe (kommagetrennt)" style="flex:1; padding:6px; border:1px solid #ddd; border-radius:4px; font-size:11px;">
+        <button id="uaeAddCategory" style="padding:6px 12px; border-radius:4px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-size:11px;">Hinzufügen</button>
+      </div>
+      <div style="font-size:10px; color:#6b7280;">
+        💡 Tipp: Diese Kategorien werden in Excel-Formaten exportiert und können in Excel weiterverarbeitet werden.
+      </div>
+    </div>
+  </div>
+  
+  <!-- Vorzugsanalyse & Optimale Nutzung Overlay -->
+  <div id="uaeAnalysisOverlay" style="display:none; position:fixed; inset:0; background:rgba(17,24,39,0.5); z-index:9999;">
+    <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(700px,90vw); background:#fff; border-radius:8px; border:1px solid #e5e7eb; box-shadow:0 10px 30px rgba(0,0,0,0.15); font-family:system-ui, sans-serif; padding:16px; max-height:80vh; overflow-y:auto;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div style="font-size:14px; font-weight:600;" id="uaeAnalysisTitle">Vorzugsanalyse</div>
+        <button id="uaeAnalysisClose" style="font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid #ddd; background:#fff; cursor:pointer;">Schließen</button>
+      </div>
+      <div id="uaeAnalysisContent" style="font-size:12px; line-height:1.6;"></div>
+    </div>
+  </div>
+  
+  <!-- Lieblingsprodukte Overlay -->
+  <div id="uaeFavoritesOverlay" style="display:none; position:fixed; inset:0; background:rgba(17,24,39,0.5); z-index:9999;">
+    <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(700px,90vw); background:#fff; border-radius:8px; border:1px solid #e5e7eb; box-shadow:0 10px 30px rgba(0,0,0,0.15); font-family:system-ui, sans-serif; padding:16px; max-height:80vh; overflow-y:auto;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div style="font-size:14px; font-weight:600;">Lieblingsprodukte verwalten</div>
+        <button id="uaeFavoritesClose" style="font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid #ddd; background:#fff; cursor:pointer;">Schließen</button>
+      </div>
+      <div style="margin-bottom:12px; font-size:11px; color:#6b7280;">
+        Lebensnotwendige Produkte werden ZUERST berechnet. Lieblingsprodukte werden danach aus dem Restbudget finanziert.
+      </div>
+      <div id="uaeFavoritesList" style="margin-bottom:12px;"></div>
+      <div style="border-top:1px solid #e5e7eb; padding-top:12px; margin-top:12px;">
+        <div style="font-size:12px; font-weight:600; margin-bottom:8px;">Neues Lieblingsprodukt hinzufügen:</div>
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; gap:6px; margin-bottom:8px;">
+          <input id="uaeFavName" type="text" placeholder="Produktname" style="padding:6px; border:1px solid #ddd; border-radius:4px; font-size:11px;">
+          <input id="uaeFavPreis" type="number" step="0.01" placeholder="Preis (€)" style="padding:6px; border:1px solid #ddd; border-radius:4px; font-size:11px;">
+          <input id="uaeFavMenge" type="number" step="1" value="1" placeholder="Menge" style="padding:6px; border:1px solid #ddd; border-radius:4px; font-size:11px;">
+          <select id="uaeFavFrequenz" style="padding:6px; border:1px solid #ddd; border-radius:4px; font-size:11px;">
+            <option value="täglich">Täglich</option>
+            <option value="wöchentlich">Wöchentlich</option>
+            <option value="monatlich">Monatlich</option>
+          </select>
+          <input id="uaeFavPrioritaet" type="number" step="1" min="1" max="10" value="5" placeholder="Priorität (1-10)" style="padding:6px; border:1px solid #ddd; border-radius:4px; font-size:11px;">
+        </div>
+        <button id="uaeFavAdd" style="padding:6px 12px; border-radius:4px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-size:11px;">Hinzufügen</button>
+      </div>
+    </div>
+  </div>
+  <input id="uaeFileInput" type="file" accept=".txt,.csv,.json" style="display:none;" />
+  <input id="uaeOcrInput" type="file" accept="image/*,application/pdf" style="display:none;" />
+
+  <!-- Inline-Einstellungs-Panel (ersetzt Prompt), UI-Layout bleibt unverändert -->
+  <div id="uaeEditOverlay" style="display:none; position:fixed; inset:0; background:rgba(17,24,39,0.5); z-index:9999;">
+    <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(560px,90vw); background:#fff; border-radius:8px; border:1px solid #e5e7eb; box-shadow:0 10px 30px rgba(0,0,0,0.15); font-family:system-ui, sans-serif; padding:12px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+        <div style="font-size:13px; font-weight:600;">Budget-Einstellungen</div>
+        <button id="uaeEditClose" style="font-size:11px; padding:3px 8px; border-radius:999px;">Schließen</button>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <label style="font-size:11px;">Gesamtbudget (€)
+          <input id="fldGesamtBudget" type="number" step="0.01" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Tage
+          <input id="fldTage" type="number" step="1" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Joints/Tag
+          <input id="fldJointsProTag" type="number" step="1" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Preis/Joint (€)
+          <input id="fldJointPreis" type="number" step="0.01" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Lebensmittel/Tag (€)
+          <input id="fldLebensmittelProTag" type="number" step="0.01" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Preis Brötchen-Paket (€)
+          <input id="fldPreisBroetchenPaket" type="number" step="0.01" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Brötchen pro Paket
+          <input id="fldBroetchenProPaket" type="number" step="1" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Vorhandene Brötchen
+          <input id="fldVorhandeneBroetchen" type="number" step="1" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+        <label style="font-size:11px;">Neue Pakete
+          <input id="fldNeuePakete" type="number" step="1" style="width:100%; font-size:11px; padding:4px; border:1px solid #ddd; border-radius:4px;">
+        </label>
+      </div>
+      <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:10px;">
+        <button id="uaeEditSave" style="font-size:11px; padding:4px 10px; border-radius:999px;">Speichern</button>
+        <button id="uaeEditCancel" style="font-size:11px; padding:4px 10px; border-radius:999px;">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info-Popup beim Laden -->
+  <div id="uaeInfoPopup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:24px; max-width:500px; margin:20px;">
+      <h3 style="margin:0 0 12px; font-size:16px;">💡 Hinweis</h3>
+      <p style="margin:0 0 16px; font-size:13px; line-height:1.5;">
+        Diese Anwendung kann als <strong>Kalkulationsrechner</strong> verwendet werden.<br>
+        Sie können einfach ein Budget eingeben und die restlichen Daten ausfüllen.<br>
+        <strong>Belege hochladen ist nicht zwingend notwendig.</strong><br>
+        Sie können auch Belege, Kassenbons oder DIN-A4-Blätter als Foto hochladen - das System erkennt diese automatisch mittels OCR.
+      </p>
+      <button id="uaeInfoClose" style="padding:8px 16px; border-radius:6px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-weight:600;">Verstanden</button>
+    </div>
+  </div>
+
+  <!-- Rohdaten-Eingabe (z.B. Kontoauszüge) -->
+  <div style="margin-bottom:6px;">
+    <div style="font-size:11px; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center;">
+      <span>
+        Bank-/Kassenbuch-Daten (z.B. aus CSV oder Kontoauszug einkopieren).<br>
+        Format-Beispiele: <code>2025-12-01;Supermarkt;-23,40</code> oder <code>Miete,-550</code>
+      </span>
+      <button id="uaeClearDataBtn" style="font-size:10px; padding:4px 8px; border-radius:4px; border:1px solid #dc2626; background:#fee2e2; color:#dc2626; cursor:pointer;">🗑️ Alle Daten löschen</button>
+    </div>
+    <textarea id="uaeDataInput" rows="4"
+      style="width:100%; box-sizing:border-box; font-size:11px; font-family:monospace; border-radius:4px; border:1px solid #ddd;"></textarea>
+  </div>
+
+  <!-- Canvas-Ausgabe -->
+  <canvas id="uaeBudgetCanvas" width="960" height="420"
+          style="border:1px solid #ddd; border-radius:6px; max-width:100%; height:auto; background:#f9fafb;">
+    Dein Browser unterstützt kein Canvas.
+  </canvas>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('uaeBudgetCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const btnRun    = document.getElementById('uaeBudgetRun');
+      const btnEdit   = document.getElementById('uaeBudgetEdit');
+      const btnImport = document.getElementById('uaeBudgetImport');
+      const btnExport = document.getElementById('uaeBudgetExport');
+      const btnPrint  = document.getElementById('uaeBudgetPrint');
+      const btnMode   = document.getElementById('uaeBudgetMode');
+      const btnCategories = document.getElementById('uaeBudgetCategories');
+      const btnAnalysis = document.getElementById('uaeBudgetAnalysis');
+      const btnOptimal = document.getElementById('uaeBudgetOptimal');
+      const btnFavorites = document.getElementById('uaeBudgetFavorites');
+      const btnClearData = document.getElementById('uaeClearDataBtn');
+      const statusEl  = document.getElementById('uaeBudgetStatus');
+      const inputArea = document.getElementById('uaeDataInput');
+      const fileInput = document.getElementById('uaeFileInput');
+      const ocrInput = document.getElementById('uaeOcrInput');
+      const editOverlay = document.getElementById('uaeEditOverlay');
+      const editClose = document.getElementById('uaeEditClose');
+      const editSave = document.getElementById('uaeEditSave');
+      const editCancel = document.getElementById('uaeEditCancel');
+      const infoPopup = document.getElementById('uaeInfoPopup');
+      const infoClose = document.getElementById('uaeInfoClose');
+      const categoriesOverlay = document.getElementById('uaeCategoriesOverlay');
+      const categoriesClose = document.getElementById('uaeCategoriesClose');
+      const categoriesList = document.getElementById('uaeCategoriesList');
+      const newCategoryName = document.getElementById('uaeNewCategoryName');
+      const newCategoryKeys = document.getElementById('uaeNewCategoryKeys');
+      const addCategoryBtn = document.getElementById('uaeAddCategory');
+      const analysisOverlay = document.getElementById('uaeAnalysisOverlay');
+      const analysisClose = document.getElementById('uaeAnalysisClose');
+      const analysisTitle = document.getElementById('uaeAnalysisTitle');
+      const analysisContent = document.getElementById('uaeAnalysisContent');
+      const favoritesOverlay = document.getElementById('uaeFavoritesOverlay');
+      const favoritesClose = document.getElementById('uaeFavoritesClose');
+      const favoritesList = document.getElementById('uaeFavoritesList');
+      const favName = document.getElementById('uaeFavName');
+      const favPreis = document.getElementById('uaeFavPreis');
+      const favMenge = document.getElementById('uaeFavMenge');
+      const favFrequenz = document.getElementById('uaeFavFrequenz');
+      const favPrioritaet = document.getElementById('uaeFavPrioritaet');
+      const favAdd = document.getElementById('uaeFavAdd');
+      const fldGesamtBudget = document.getElementById('fldGesamtBudget');
+      const fldTage = document.getElementById('fldTage');
+      const fldJointsProTag = document.getElementById('fldJointsProTag');
+      const fldJointPreis = document.getElementById('fldJointPreis');
+      const fldLebensmittelProTag = document.getElementById('fldLebensmittelProTag');
+      const fldPreisBroetchenPaket = document.getElementById('fldPreisBroetchenPaket');
+      const fldBroetchenProPaket = document.getElementById('fldBroetchenProPaket');
+      const fldVorhandeneBroetchen = document.getElementById('fldVorhandeneBroetchen');
+      const fldNeuePakete = document.getElementById('fldNeuePakete');
+
+      // --- interner Zustand / Modell ---
+      const state = {
+        brand: 'UniverseAllEnterprises — TogetherSystems',
+        gesamtBudget: 187.15,
+        tage: 15,
+        jointsProTag: 2,
+        jointPreis: 5,
+        lebensmittelProTag: 4.39,
+        preisBroetchenPaket: 1.29,
+        broetchenProPaket: 6,
+        vorhandeneBroetchen: 12,
+        neuePakete: 2,
+        // importierte Transaktionen: {date, desc, amount}
+        transactions: [],
+        // aktuelle Ansicht: 'budget' | 'timeline' | 'pie'
+        mode: 'budget',
+        // Lieblingsprodukte: {name, preis, frequenz: 'täglich'|'wöchentlich', menge, prioritaet: 1-10}
+        lieblingsprodukte: []
+      };
+
+      // --- i18n (Button-Beschriftungen), Auto-Lokalisierung ---
+      const i18n = {
+        de: {
+          redraw: 'Ansicht neu zeichnen',
+          edit: 'Budget-Eingaben bearbeiten',
+          import: 'Bank-/Kassendaten einlesen',
+          export: 'Daten als JSON exportieren',
+          print: 'Drucken',
+          switch: 'Ansicht wechseln'
+        },
+        en: {
+          redraw: 'Redraw view',
+          edit: 'Edit budget inputs',
+          import: 'Import bank/cash data',
+          export: 'Export data as JSON',
+          print: 'Print',
+          switch: 'Switch view'
+        },
+        nl: {
+          redraw: 'Weergave opnieuw tekenen',
+          edit: 'Budgetinvoer bewerken',
+          import: 'Bank-/kasgegevens importeren',
+          export: 'Gegevens exporteren als JSON',
+          print: 'Afdrukken',
+          switch: 'Weergave wisselen'
+        }
+      };
+      function getLocale() {
+        const n = (navigator.language || 'de').toLowerCase();
+        if (n.startsWith('de')) return 'de';
+        if (n.startsWith('en')) return 'en';
+        if (n.startsWith('nl')) return 'nl';
+        return 'de';
+      }
+      function setLabels(locale) {
+        const L = i18n[locale] || i18n.de;
+        btnRun.textContent = L.redraw;
+        btnEdit.textContent = L.edit;
+        btnImport.textContent = L.import;
+        btnExport.textContent = L.export;
+        btnPrint.textContent = L.print;
+        // btnMode dynamisch per Ansicht
+      }
+
+      // --- Telemetrie (nur lokal) ---
+      const telemetry = {
+        events: []
+      };
+      function logEvent(type, detail) {
+        try {
+          telemetry.events.push({
+            type,
+            detail: detail || null,
+            ts: new Date().toISOString()
+          });
+          if (telemetry.events.length > 5000) telemetry.events.shift();
+        } catch(e) { /* ignore */ }
+      }
+
+      // --- Persistenz (lokal) ---
+      const LS_KEYS = {
+        state: 'uaeBudgetStateV1',
+        txs: 'uaeBudgetTxV1',
+        raw: 'uaeBudgetRawV1',
+        deleted: 'uaeBudgetDeletedV1', // Flag für gelöschte Daten
+        categories: 'uaeBudgetCategoriesV1', // Excel-Kategorien
+        infoShown: 'uaeInfoShownV1' // Info-Popup bereits gezeigt
+      };
+
+      function saveLocal() {
+        try {
+          // Prüfe ob Daten gelöscht wurden
+          const deleted = localStorage.getItem(LS_KEYS.deleted);
+          if (deleted === 'true') {
+            // Daten wurden gelöscht, nicht speichern
+            return;
+          }
+          
+          const saved = {
+            brand: state.brand,
+            gesamtBudget: state.gesamtBudget,
+            tage: state.tage,
+            jointsProTag: state.jointsProTag,
+            jointPreis: state.jointPreis,
+            lebensmittelProTag: state.lebensmittelProTag,
+            preisBroetchenPaket: state.preisBroetchenPaket,
+            broetchenProPaket: state.broetchenProPaket,
+            vorhandeneBroetchen: state.vorhandeneBroetchen,
+            neuePakete: state.neuePakete,
+            mode: state.mode,
+            lieblingsprodukte: state.lieblingsprodukte || []
+          };
+          localStorage.setItem(LS_KEYS.state, JSON.stringify(saved));
+          localStorage.setItem(LS_KEYS.txs, JSON.stringify(state.transactions || []));
+          localStorage.setItem(LS_KEYS.raw, inputArea.value || '');
+          localStorage.setItem(LS_KEYS.categories, JSON.stringify(state.customCategories || []));
+        } catch (e) {
+          // Fabrikage Error Bus Integration
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'runtime',
+              level: 'error',
+              class: 'saveLocal.error',
+              message: 'Fehler beim Speichern: ' + (e.message || String(e)),
+              context: { error: String(e) }
+            });
+          }
+          // Status anzeigen
+          if (statusEl) {
+            statusEl.textContent = 'Speicherfehler: ' + (e.message || 'Unbekannter Fehler');
+            statusEl.style.color = '#b91c1c';
+          }
+        }
+      }
+
+      function loadLocal() {
+        try {
+          // Prüfe ob Daten gelöscht wurden
+          const deleted = localStorage.getItem(LS_KEYS.deleted);
+          if (deleted === 'true') {
+            // Daten wurden gelöscht, nicht laden
+            inputArea.value = '';
+            state.transactions = [];
+            return;
+          }
+          
+          const savedState = localStorage.getItem(LS_KEYS.state);
+          const savedTxs = localStorage.getItem(LS_KEYS.txs);
+          const savedRaw = localStorage.getItem(LS_KEYS.raw);
+          const savedCategories = localStorage.getItem(LS_KEYS.categories);
+          
+          if (savedState) {
+            const s = JSON.parse(savedState);
+            Object.assign(state, s);
+            // Sicherstellen dass lieblingsprodukte existiert
+            if (!state.lieblingsprodukte) {
+              state.lieblingsprodukte = [];
+            }
+          }
+          if (savedTxs) {
+            state.transactions = JSON.parse(savedTxs) || [];
+          }
+          if (typeof savedRaw === 'string' && savedRaw.trim()) {
+            inputArea.value = savedRaw;
+          }
+          if (savedCategories) {
+            state.customCategories = JSON.parse(savedCategories) || [];
+          } else {
+            state.customCategories = [];
+          }
+        } catch (e) {
+          // Fabrikage Error Bus Integration
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'runtime',
+              level: 'error',
+              class: 'loadLocal.error',
+              message: 'Fehler beim Laden: ' + (e.message || String(e)),
+              context: { error: String(e) }
+            });
+          }
+        }
+      }
+      
+      function clearAllImportedData() {
+        try {
+          if (confirm('Möchten Sie wirklich ALLE importierten Daten löschen? Dies kann nicht rückgängig gemacht werden.')) {
+            // Setze Delete-Flag
+            localStorage.setItem(LS_KEYS.deleted, 'true');
+            
+            // Lösche alle Daten
+            localStorage.removeItem(LS_KEYS.state);
+            localStorage.removeItem(LS_KEYS.txs);
+            localStorage.removeItem(LS_KEYS.raw);
+            
+            // Lösche auch aus State
+            state.transactions = [];
+            inputArea.value = '';
+            
+            // Reset zu Standard-Werten
+            state.gesamtBudget = 187.15;
+            state.tage = 15;
+            state.jointsProTag = 2;
+            state.jointPreis = 5;
+            state.lebensmittelProTag = 4.39;
+            state.preisBroetchenPaket = 1.29;
+            state.broetchenProPaket = 6;
+            state.vorhandeneBroetchen = 12;
+            state.neuePakete = 2;
+            
+            statusEl.textContent = 'Alle importierten Daten gelöscht.';
+            statusEl.style.color = '#15803d';
+            
+            draw();
+            
+            // Event loggen
+            try { logEvent('data-cleared', {}); } catch(e) {}
+            
+            if (window.fabrikageErrorBus) {
+              window.fabrikageErrorBus.publish({
+                module: 'chflox',
+                stage: 'runtime',
+                level: 'info',
+                class: 'data.cleared',
+                message: 'Alle importierten Daten gelöscht',
+                context: {}
+              });
+            }
+          }
+        } catch(e) {
+          statusEl.textContent = 'Fehler beim Löschen: ' + (e.message || e);
+          statusEl.style.color = '#b91c1c';
+        }
+      }
+
+      function to2(v) {
+        return (Math.round(v * 100) / 100).toFixed(2);
+      }
+
+      // --- Bankformat-Erkennung & Parser ---
+      function parseMT940(raw) {
+        const lines = raw.split(/\r?\n/);
+        const txs = [];
+        let lastDesc = '';
+        for (let line of lines) {
+          if (line.startsWith(':86:')) {
+            lastDesc = line.substring(4).trim();
+          }
+          if (line.startsWith(':61:')) {
+            const body = line.substring(4).trim();
+            const m = body.match(/^(\d{6})([DC])([\d,]+).*$/);
+            if (m) {
+              const yymmdd = m[1];
+              const dc = m[2];
+              const amtStr = m[3].replace(',', '.');
+              const amount = parseFloat(amtStr) || 0;
+              const sign = dc === 'D' ? -1 : 1;
+              const date = '20' + yymmdd.substring(0,2) + '-' +
+                yymmdd.substring(2,4) + '-' + yymmdd.substring(4,6);
+              txs.push({ date, desc: lastDesc || 'MT940', amount: sign * Math.abs(amount) });
+              lastDesc = '';
+            }
+          }
+        }
+        return txs;
+      }
+
+      function parseISO20022(raw) {
+        try {
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(raw, 'application/xml');
+          const err = xml.querySelector('parsererror');
+          if (err) return [];
+          const txs = [];
+          const ntries = Array.from(xml.getElementsByTagName('Ntry'));
+          if (ntries.length) {
+            for (const n of ntries) {
+              const amtEl = n.getElementsByTagName('Amt')[0];
+              const amtTxt = amtEl ? (amtEl.textContent || '').trim() : '0';
+              const indEl = n.getElementsByTagName('CdtDbtInd')[0];
+              const ind = indEl ? (indEl.textContent || '').trim() : 'DBIT';
+              const bookDt = n.getElementsByTagName('BookgDt')[0] || n.getElementsByTagName('ValDt')[0];
+              let date = null;
+              if (bookDt) {
+                const dEl = bookDt.getElementsByTagName('Dt')[0] || bookDt.getElementsByTagName('DtTm')[0];
+                if (dEl) {
+                  const t = (dEl.textContent || '').trim();
+                  date = t.substring(0,10);
+                }
+              }
+              let desc = '';
+              const rmtInf = n.getElementsByTagName('RmtInf')[0];
+              if (rmtInf) {
+                const ustrd = rmtInf.getElementsByTagName('Ustrd')[0];
+                if (ustrd) desc = (ustrd.textContent || '').trim();
+              }
+              const sign = /CRDT/i.test(ind) ? 1 : -1;
+              const amount = sign * Math.abs(parseFloat(amtTxt) || 0);
+              txs.push({ date, desc: desc || 'ISO20022', amount });
+            }
+          }
+          return txs;
+        } catch(e) {
+          return [];
+        }
+      }
+
+      function tryParseBankFormats(raw) {
+        const t = raw.trim();
+        if (!t) return null;
+        if (/:20:/.test(t) && /:61:/.test(t)) {
+          const txs = parseMT940(t);
+          if (txs && txs.length) return txs;
+        }
+        if (t.startsWith('<') && /Document/.test(t)) {
+          const txs = parseISO20022(t);
+          if (txs && txs.length) return txs;
+        }
+        return null;
+      }
+
+      // --- Auto-Kategorisierung (mit Excel-funktionalen benutzerdefinierten Kategorien) ---
+      const defaultCategoryRules = [
+        { cat: 'Miete', keys: [/miete/i, /rent/i], editable: false },
+        { cat: 'Lebensmittel', keys: [/supermarkt/i, /aldi/i, /lidl/i, /rewe/i, /edeka/i, /grocer/i], editable: false },
+        { cat: 'Transport', keys: [/bus/i, /bahn/i, /train/i, /uber/i, /taxi/i, /fuel|tank/i], editable: false },
+        { cat: 'Restaurant', keys: [/café|cafe|restaurant|imbiss|bistro/i], editable: false },
+        { cat: 'Energie', keys: [/strom|gas|energie/i], editable: false },
+        { cat: 'Gehalt', keys: [/lohn|gehalt|salary|payroll/i], editable: false },
+        { cat: 'Sonstiges', keys: [], editable: false }
+      ];
+      
+      // Benutzerdefinierte Kategorien (Excel-funktional)
+      if (!state.customCategories) {
+        state.customCategories = [];
+      }
+      
+      function getAllCategories() {
+        return [...defaultCategoryRules, ...state.customCategories];
+      }
+      
+      function addCustomCategory(name, keys) {
+        if (!name || name.trim() === '') return false;
+        // Prüfe ob bereits existiert
+        if (defaultCategoryRules.some(r => r.cat === name) || 
+            state.customCategories.some(r => r.cat === name)) {
+          return false;
+        }
+        state.customCategories.push({
+          cat: name,
+          keys: keys || [],
+          editable: true
+        });
+        saveLocal();
+        return true;
+      }
+      
+      function removeCustomCategory(name) {
+        const idx = state.customCategories.findIndex(r => r.cat === name);
+        if (idx >= 0) {
+          state.customCategories.splice(idx, 1);
+          saveLocal();
+          return true;
+        }
+        return false;
+      }
+      
+      function updateCustomCategory(oldName, newName, keys) {
+        const idx = state.customCategories.findIndex(r => r.cat === oldName);
+        if (idx >= 0) {
+          state.customCategories[idx] = {
+            cat: newName,
+            keys: keys || state.customCategories[idx].keys,
+            editable: true
+          };
+          saveLocal();
+          return true;
+        }
+        return false;
+      }
+      
+      function categorize(tx) {
+        const d = (tx.desc || '').toString();
+        const allRules = getAllCategories();
+        
+        for (const rule of allRules) {
+          for (const k of rule.keys) {
+            if (k.test(d)) return rule.cat;
+          }
+        }
+        if ((tx.amount || 0) > 0) return 'Einnahme';
+        return 'Sonstiges';
+      }
+      
+      function assignCategories(txs) {
+        for (const tx of txs) {
+          tx.category = categorize(tx);
+        }
+      }
+      
+      // Vorzugslebensmittel-Analyse (maximale Ausgaben)
+      function analyzePreferredItems() {
+        const txs = state.transactions || [];
+        const categoryTotals = {};
+        
+        txs.forEach(tx => {
+          const cat = tx.category || 'Sonstiges';
+          const amount = Math.abs(tx.amount || 0);
+          categoryTotals[cat] = (categoryTotals[cat] || 0) + amount;
+        });
+        
+        const sorted = Object.entries(categoryTotals)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+        
+        return {
+          topCategories: sorted.map(([cat, total]) => ({ category: cat, total: to2(total) })),
+          totalSpent: Object.values(categoryTotals).reduce((sum, val) => sum + val, 0)
+        };
+      }
+      
+      // Optimale Budgetnutzung
+      function calculateOptimalBudget() {
+        const analysis = analyzePreferredItems();
+        const budget = state.gesamtBudget;
+        const recommendations = [];
+        
+        analysis.topCategories.forEach(({ category, total }) => {
+          const percentage = (parseFloat(total) / budget) * 100;
+          if (percentage > 30) {
+            recommendations.push({
+              category,
+              current: total,
+              percentage: to2(percentage),
+              suggestion: `Reduzieren Sie Ausgaben für "${category}" um ${to2(percentage - 25)}% für bessere Budgetverteilung`
+            });
+          }
+        });
+        
+        return {
+          analysis,
+          recommendations,
+          budgetUtilization: to2((analysis.totalSpent / budget) * 100)
+        };
+      }
+
+      // --- Budget-Berechnung aus den manuellen Eingaben ---
+      // PRIORISIERUNG: Lebensnotwendige ZUERST, dann Lieblingsprodukte
+      // ERWEITERT: Sammelbeträge über mehrere Tage, automatische Verteilung
+      function berechneBudget() {
+        try {
+          const tage = state.tage > 0 ? state.tage : 1;
+          const tagesBudget = state.gesamtBudget / tage;
+
+          // === PHASE 1: LEBENSNOTWENDIGE MITTEL (ZUERST) ===
+          const jointsProTagEuro = state.jointsProTag * state.jointPreis;
+          const jointsGesamtEuro = jointsProTagEuro * tage;
+
+          const lebensmittelGesamtEuro = state.lebensmittelProTag * tage;
+
+          const kostenNeuePakete = state.neuePakete * state.preisBroetchenPaket;
+          const broetchenProTagEuro = kostenNeuePakete / tage;
+
+          // Lebensnotwendige Gesamtkosten
+          const lebensnotwendigProTag = jointsProTagEuro + state.lebensmittelProTag + broetchenProTagEuro;
+          const lebensnotwendigGesamt = lebensnotwendigProTag * tage;
+
+          // === PHASE 2: LIEBLINGSPRODUKTE (NACH LEBENSNOTWENDIGEN) ===
+          const lieblingsprodukte = state.lieblingsprodukte || [];
+          let lieblingsKostenProTag = 0;
+          let lieblingsKostenGesamt = 0;
+          const lieblingsDetails = [];
+          const lieblingsVerteilung = []; // NEU: Verteilung über Tage
+
+          // Verfügbares Budget nach Lebensnotwendigen
+          const verfuegbarFuerLieblings = state.gesamtBudget - lebensnotwendigGesamt;
+          const verfuegbarProTag = verfuegbarFuerLieblings / tage;
+
+          // Sortiere nach Priorität (höchste zuerst)
+          const sortedFavs = [...lieblingsprodukte].sort((a, b) => (b.prioritaet || 5) - (a.prioritaet || 5));
+
+          sortedFavs.forEach((prod, idx) => {
+            if (!prod || !prod.name || !prod.preis || prod.preis <= 0) return;
+            
+            const menge = Math.max(0, prod.menge || 1);
+            const frequenz = prod.frequenz || 'täglich';
+            const einzelpreis = prod.preis * menge;
+            
+            let kostenProTag = 0;
+            let kostenGesamt = 0;
+            let verteilung = []; // NEU: Wann wird das Produkt gekauft?
+            let sammelBetrag = 0; // NEU: Sammelbetrag über mehrere Tage
+            let sammelTage = []; // NEU: Tage, an denen gesammelt wird
+            let kaufTage = []; // NEU: Tage, an denen gekauft wird
+            let verfuegbar = verfuegbarProTag;
+            
+            if (frequenz === 'täglich') {
+              kostenProTag = einzelpreis;
+              kostenGesamt = einzelpreis * tage;
+              
+              // Prüfe ob täglich möglich
+              if (einzelpreis <= verfuegbarProTag) {
+                // Täglich möglich
+                for (let t = 0; t < tage; t++) {
+                  verteilung.push({ tag: t + 1, kauf: true, betrag: einzelpreis });
+                  kaufTage.push(t + 1);
+                }
+              } else {
+                // NICHT täglich möglich - Sammelbetrag über mehrere Tage
+                const tageProKauf = Math.ceil(einzelpreis / verfuegbarProTag);
+                sammelBetrag = einzelpreis;
+                let aktuellerSammelBetrag = 0;
+                let sammelStartTag = 1;
+                
+                for (let t = 0; t < tage; t++) {
+                  const tag = t + 1;
+                  aktuellerSammelBetrag += verfuegbarProTag;
+                  
+                  if (aktuellerSammelBetrag >= einzelpreis) {
+                    // Kauf möglich
+                    verteilung.push({ tag: tag, kauf: true, betrag: einzelpreis, sammelTage: tageProKauf });
+                    kaufTage.push(tag);
+                    sammelTage.push({ start: sammelStartTag, ende: tag, betrag: einzelpreis });
+                    aktuellerSammelBetrag = aktuellerSammelBetrag - einzelpreis;
+                    sammelStartTag = tag + 1;
+                  } else {
+                    // Sammeln
+                    verteilung.push({ tag: tag, kauf: false, betrag: verfuegbarProTag, sammel: true });
+                  }
+                }
+                
+                // Wenn am Ende noch nicht genug gesammelt, reduziere oder entferne
+                if (aktuellerSammelBetrag < einzelpreis && kaufTage.length === 0) {
+                  // Kann nicht einmal gekauft werden - Vorschlag zur Reduzierung
+                  const vorgeschlageneReduzierung = einzelpreis - verfuegbarFuerLieblings;
+                  lieblingsDetails.push({
+                    name: prod.name,
+                    preis: prod.preis,
+                    menge: menge,
+                    frequenz: frequenz,
+                    kostenProTag: 0,
+                    kostenGesamt: 0,
+                    prioritaet: prod.prioritaet || 5,
+                    moeglich: false,
+                    vorschlag: `Reduzieren um ${to2(vorgeschlageneReduzierung)} € oder ${to2((vorgeschlageneReduzierung / prod.preis) * 100)}%`,
+                    verteilung: [],
+                    sammelBetrag: 0
+                  });
+                  return; // Überspringe dieses Produkt
+                }
+              }
+            } else if (frequenz === 'wöchentlich') {
+              kostenProTag = einzelpreis / 7;
+              kostenGesamt = (einzelpreis / 7) * tage;
+              
+              // Wöchentlich: alle 7 Tage
+              const anzahlKaeufe = Math.floor(tage / 7);
+              const restTage = tage % 7;
+              
+              if (einzelpreis <= verfuegbarProTag * 7) {
+                // Wöchentlich möglich
+                for (let w = 0; w < anzahlKaeufe; w++) {
+                  const kaufTag = (w + 1) * 7;
+                  if (kaufTag <= tage) {
+                    verteilung.push({ tag: kaufTag, kauf: true, betrag: einzelpreis, woche: w + 1 });
+                    kaufTage.push(kaufTag);
+                  }
+                }
+              } else {
+                // NICHT wöchentlich möglich - Sammelbetrag über mehrere Wochen
+                const wochenProKauf = Math.ceil(einzelpreis / (verfuegbarProTag * 7));
+                sammelBetrag = einzelpreis;
+                let aktuellerSammelBetrag = 0;
+                let sammelStartWoche = 1;
+                
+                for (let t = 0; t < tage; t++) {
+                  const tag = t + 1;
+                  const woche = Math.ceil(tag / 7);
+                  aktuellerSammelBetrag += verfuegbarProTag;
+                  
+                  if (tag % 7 === 0 && aktuellerSammelBetrag >= einzelpreis) {
+                    // Kauf möglich
+                    verteilung.push({ tag: tag, kauf: true, betrag: einzelpreis, woche: woche, sammelWochen: wochenProKauf });
+                    kaufTage.push(tag);
+                    sammelTage.push({ start: sammelStartWoche, ende: woche, betrag: einzelpreis, typ: 'wochen' });
+                    aktuellerSammelBetrag = aktuellerSammelBetrag - einzelpreis;
+                    sammelStartWoche = woche + 1;
+                  } else if (tag % 7 === 0) {
+                    // Sammeln
+                    verteilung.push({ tag: tag, kauf: false, betrag: aktuellerSammelBetrag, sammel: true, woche: woche });
+                  }
+                }
+              }
+            } else if (frequenz === 'monatlich') {
+              // Monatlich: einmal pro Monat (angenommen 30 Tage)
+              kostenProTag = einzelpreis / 30;
+              kostenGesamt = (einzelpreis / 30) * tage;
+              
+              if (einzelpreis <= verfuegbarProTag * 30) {
+                // Monatlich möglich
+                const anzahlKaeufe = Math.floor(tage / 30);
+                for (let m = 0; m < anzahlKaeufe; m++) {
+                  const kaufTag = (m + 1) * 30;
+                  if (kaufTag <= tage) {
+                    verteilung.push({ tag: kaufTag, kauf: true, betrag: einzelpreis, monat: m + 1 });
+                    kaufTage.push(kaufTag);
+                  }
+                }
+              } else {
+                // NICHT monatlich möglich - Vorschlag zur Reduzierung
+                const vorgeschlageneReduzierung = einzelpreis - (verfuegbarProTag * 30);
+                lieblingsDetails.push({
+                  name: prod.name,
+                  preis: prod.preis,
+                  menge: menge,
+                  frequenz: frequenz,
+                  kostenProTag: 0,
+                  kostenGesamt: 0,
+                  prioritaet: prod.prioritaet || 5,
+                  moeglich: false,
+                  vorschlag: `Reduzieren um ${to2(vorgeschlageneReduzierung)} € oder monatlich nicht möglich`,
+                  verteilung: [],
+                  sammelBetrag: 0
+                });
+                return;
+              }
+            }
+            
+            lieblingsKostenProTag += kostenProTag;
+            lieblingsKostenGesamt += kostenGesamt;
+            
+            lieblingsDetails.push({
+              name: prod.name,
+              preis: prod.preis,
+              menge: menge,
+              frequenz: frequenz,
+              kostenProTag: kostenProTag,
+              kostenGesamt: kostenGesamt,
+              prioritaet: prod.prioritaet || 5,
+              moeglich: true,
+              verteilung: verteilung,
+              sammelBetrag: sammelBetrag,
+              sammelTage: sammelTage,
+              kaufTage: kaufTage
+            });
+          });
+
+          // === GESAMTBILANZ ===
+          const summeProTag = lebensnotwendigProTag + lieblingsKostenProTag;
+          const summeGesamt = lebensnotwendigGesamt + lieblingsKostenGesamt;
+          const restGesamt = state.gesamtBudget - summeGesamt;
+          const restProTag = restGesamt / tage;
+
+          // === BERECHNUNG: WIE LANGE KANN MAN SICH LIEBLINGSPRODUKTE LEISTEN? ===
+          // Berechne maximale Laufzeit für Lieblingsprodukte
+          let maximaleLaufzeitLieblings = tage;
+          if (lieblingsKostenProTag > 0) {
+            const budgetFuerLieblings = state.gesamtBudget - lebensnotwendigGesamt;
+            if (budgetFuerLieblings > 0) {
+              maximaleLaufzeitLieblings = Math.floor(budgetFuerLieblings / lieblingsKostenProTag);
+            } else {
+              maximaleLaufzeitLieblings = 0;
+            }
+          }
+
+          return {
+            tage,
+            tagesBudget,
+            // Lebensnotwendige
+            jointsProTagEuro,
+            jointsGesamtEuro,
+            lebensmittelGesamtEuro,
+            kostenNeuePakete,
+            broetchenProTagEuro,
+            lebensnotwendigProTag,
+            lebensnotwendigGesamt,
+            // Lieblingsprodukte
+            lieblingsKostenProTag,
+            lieblingsKostenGesamt,
+            lieblingsDetails,
+            maximaleLaufzeitLieblings,
+            verfuegbarFuerLieblings,
+            verfuegbarProTag,
+            // Gesamt
+            summeProTag,
+            summeGesamt,
+            restGesamt,
+            restProTag
+          };
+        } catch (e) {
+          // Fehlerbehandlung - Fabrikage Error Bus
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'runtime',
+              level: 'error',
+              class: 'berechneBudget.error',
+              message: 'Fehler in berechneBudget: ' + (e.message || String(e)),
+              context: { error: String(e), stack: e.stack }
+            });
+          }
+          // Fallback: Basis-Berechnung ohne Lieblingsprodukte
+          const tage = state.tage > 0 ? state.tage : 1;
+          const tagesBudget = state.gesamtBudget / tage;
+          const jointsProTagEuro = state.jointsProTag * state.jointPreis;
+          const jointsGesamtEuro = jointsProTagEuro * tage;
+          const lebensmittelGesamtEuro = state.lebensmittelProTag * tage;
+          const kostenNeuePakete = state.neuePakete * state.preisBroetchenPaket;
+          const broetchenProTagEuro = kostenNeuePakete / tage;
+          const summeProTag = jointsProTagEuro + state.lebensmittelProTag + broetchenProTagEuro;
+          const summeGesamt = summeProTag * tage;
+          const restGesamt = state.gesamtBudget - summeGesamt;
+          const restProTag = restGesamt / tage;
+          return {
+            tage, tagesBudget, jointsProTagEuro, jointsGesamtEuro,
+            lebensmittelGesamtEuro, kostenNeuePakete, broetchenProTagEuro,
+            summeProTag, summeGesamt, restGesamt, restProTag,
+            lieblingsKostenProTag: 0, lieblingsKostenGesamt: 0,
+            lieblingsDetails: [], maximaleLaufzeitLieblings: 0
+          };
+        }
+      }
+
+      // --- Importierte Daten aus Text / CSV / Kontoauszug ---
+      function parseImportedData(raw) {
+        const lines = raw.split(/\r?\n/);
+        const txs = [];
+
+        for (let line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+          if (/^#/.test(trimmed)) continue; // Kommentare ignorieren
+          // Trenne nach ; , oder Tab
+          const parts = trimmed.split(/[;\t,]/);
+          let date = null;
+          let desc = '';
+          let amount = 0;
+
+          if (parts.length === 1) {
+            desc = trimmed;
+          } else if (parts.length === 2) {
+            desc = parts[0].trim();
+            amount = parseFloat(parts[1].replace(',', '.')) || 0;
+          } else {
+            date = parts[0].trim();
+            desc = parts.slice(1, parts.length - 1).join(' ').trim();
+            amount = parseFloat(parts[parts.length - 1].replace(',', '.')) || 0;
+          }
+
+          txs.push({ date, desc, amount });
+        }
+        return txs;
+      }
+
+      function importData(rawOverride) {
+        const raw = typeof rawOverride === 'string' ? rawOverride : (inputArea.value || '');
+        let txs = [];
+        // JSON direkt versuchen
+        try {
+          const j = JSON.parse(raw);
+          if (Array.isArray(j)) txs = j;
+          else if (j && (Array.isArray(j.transactions) || Array.isArray(j.txs))) txs = j.transactions || j.txs;
+        } catch(_e) { /* not json */ }
+        // Bankformate
+        if (!txs.length) {
+          const bankTx = tryParseBankFormats(raw);
+          if (bankTx && bankTx.length) txs = bankTx;
+        }
+        // Fallback CSV/Zeilen
+        if (!txs.length) {
+          txs = parseImportedData(raw);
+        }
+        assignCategories(txs);
+        state.transactions = txs;
+        statusEl.textContent = 'Importiert: ' + state.transactions.length + ' Buchungen.';
+        draw();
+        saveLocal();
+        try { logEvent('import', { count: state.transactions.length }); } catch(e) {}
+      }
+
+      // OCR-Funktionalität (versteckt, ohne UI-Änderungen)
+      let tesseractWorker = null;
+      async function initOCR() {
+        try {
+          if (typeof Tesseract === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js';
+            script.onload = () => {
+              console.log('[FABRIKAGE] OCR-Bibliothek geladen');
+            };
+            document.head.appendChild(script);
+          }
+        } catch(e) {
+          // Fabrikage Error Bus Integration
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'init',
+              level: 'error',
+              class: 'ocr.init.error',
+              message: 'OCR-Init-Fehler: ' + (e.message || String(e)),
+              context: { error: String(e), stack: e.stack }
+            });
+          } else {
+            console.error('[FABRIKAGE] OCR-Init-Fehler:', e);
+          }
+        }
+      }
+      
+      async function handleOCRFile(file) {
+        try {
+          statusEl.textContent = 'OCR läuft...';
+          statusEl.style.color = '#6b7280';
+          
+          // Browser-OCR mit Tesseract.js
+          if (typeof Tesseract !== 'undefined') {
+            const { createWorker } = Tesseract;
+            const worker = await createWorker();
+            await worker.loadLanguage('deu');
+            await worker.initialize('deu');
+            
+            const img = URL.createObjectURL(file);
+            const { data: { text, confidence } } = await worker.recognize(img);
+            await worker.terminate();
+            URL.revokeObjectURL(img);
+            
+            if (text && text.trim()) {
+              // Server-Analyse anfordern
+              const BASE_URL = window.location.origin || 'https://myopenai.github.io/togethersystems';
+              try {
+                const analyzeRes = await fetch(`${BASE_URL}/api/ocr/analyze`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ ocrText: text, language: 'de', confidence })
+                });
+                
+                if (analyzeRes.ok) {
+                  const analysis = await analyzeRes.json();
+                  if (analysis.ok && analysis.extraction) {
+                    // Human-basierte OCR-Qualitätsbeurteilung
+                    const quality = analysis.ocrQualityAssessment;
+                    if (quality && quality.quality === 'poor') {
+                      statusEl.textContent = `⚠️ OCR-Qualität schlecht: ${quality.recommendation}`;
+                      statusEl.style.color = '#f59e0b';
+                      
+                      if (window.fabrikageErrorBus) {
+                        window.fabrikageErrorBus.publish({
+                          module: 'chflox',
+                          stage: 'ocr',
+                          level: 'warning',
+                          class: 'ocr.quality.poor',
+                          message: `OCR-Qualität als schlecht beurteilt: ${quality.recommendation}`,
+                          context: { confidence, humanContext: analysis.humanContext }
+                        });
+                      }
+                    }
+                    
+                    // Extrahiere Transaktionen aus OCR-Text
+                    const lines = text.split(/\n+/).filter(l => l.trim());
+                    const txs = [];
+                    for (const line of lines) {
+                      const amountMatch = line.match(/([0-9.,]+)\s*€/i) || line.match(/€\s*([0-9.,]+)/i);
+                      const dateMatch = line.match(/(\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2})/);
+                      if (amountMatch || dateMatch) {
+                        const amount = amountMatch ? parseFloat(amountMatch[1].replace(/\./g,'').replace(',','.')) : 0;
+                        const date = dateMatch ? dateMatch[1] : null;
+                        const desc = line.replace(/([0-9.,]+)\s*€/gi, '').replace(/(\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2})/g, '').trim();
+                        if (amount !== 0 || desc) {
+                          txs.push({ 
+                            date, 
+                            desc: desc || 'OCR-Eintrag', 
+                            amount: -Math.abs(amount),
+                            ocrQuality: quality?.quality,
+                            humanContext: analysis.humanContext?.primaryDomain
+                          });
+                        }
+                      }
+                    }
+                    
+                    if (txs.length > 0) {
+                      assignCategories(txs);
+                      state.transactions = state.transactions.concat(txs);
+                      const newData = txs.map(t => `${t.date || ''};${t.desc};${t.amount}`).join('\n');
+                      inputArea.value = (inputArea.value.trim() ? inputArea.value + '\n' : '') + newData;
+                      
+                      let statusMsg = `OCR abgeschlossen (${txs.length} Einträge, Confidence: ${(confidence*100).toFixed(0)}%)`;
+                      if (analysis.humanContext) {
+                        statusMsg += ` | Kontext: ${analysis.humanContext.primaryDomain}`;
+                      }
+                      statusEl.textContent = statusMsg;
+                      statusEl.style.color = quality?.quality === 'poor' ? '#f59e0b' : '#15803d';
+                      draw();
+                      saveLocal();
+                      logEvent('ocr-import', { count: txs.length, confidence, quality: quality?.quality, humanContext: analysis.humanContext?.primaryDomain });
+                    } else {
+                      statusEl.textContent = 'OCR abgeschlossen, aber keine Transaktionen gefunden.';
+                      statusEl.style.color = '#f59e0b';
+                    }
+                  }
+                } else {
+                  // Fallback: OCR-Text direkt verwenden
+                  inputArea.value = inputArea.value + '\n' + text;
+                  importData(text);
+                  statusEl.textContent = `OCR abgeschlossen (Confidence: ${(confidence*100).toFixed(0)}%)`;
+                  statusEl.style.color = '#15803d';
+                  draw();
+                  saveLocal();
+                }
+              } catch(apiErr) {
+                // Fallback: OCR-Text direkt verwenden
+                inputArea.value = inputArea.value + '\n' + text;
+                importData(text);
+                statusEl.textContent = `OCR abgeschlossen (Confidence: ${(confidence*100).toFixed(0)}%, Server-Analyse fehlgeschlagen)`;
+                statusEl.style.color = '#f59e0b';
+                draw();
+                saveLocal();
+              }
+            } else {
+              statusEl.textContent = 'OCR: Kein Text erkannt.';
+              statusEl.style.color = '#b91c1c';
+            }
+          } else {
+            statusEl.textContent = 'OCR-Bibliothek nicht verfügbar.';
+            statusEl.style.color = '#b91c1c';
+          }
+        } catch (e) {
+          statusEl.textContent = 'OCR-Fehler: ' + (e && e.message ? e.message : e);
+          statusEl.style.color = '#b91c1c';
+          logEvent('error', { where: 'handleOCRFile', message: (e && e.message) || String(e) });
+        }
+      }
+
+      // Datei-Import (txt/csv/json)
+      async function handleFile(file) {
+        try {
+          // Prüfe ob Bild/PDF für OCR
+          if (file.type && (file.type.startsWith('image/') || file.type === 'application/pdf')) {
+            await handleOCRFile(file);
+            return;
+          }
+          
+          const text = await file.text();
+          // Versuche JSON → {transactions:[]} oder Array
+          let used = false;
+          try {
+            const j = JSON.parse(text);
+            if (Array.isArray(j)) {
+              state.transactions = j;
+              statusEl.textContent = 'Importiert (JSON Array): ' + j.length + ' Buchungen.';
+              used = true;
+            } else if (j && (Array.isArray(j.transactions) || Array.isArray(j.txs))) {
+              const arr = j.transactions || j.txs;
+              state.transactions = arr;
+              statusEl.textContent = 'Importiert (JSON Objekt): ' + arr.length + ' Buchungen.';
+              used = true;
+            }
+          } catch(_jsonErr) {
+            /* not json */
+          }
+          if (!used) {
+            inputArea.value = text;
+            importData(text);
+            statusEl.textContent = 'Importiert (Text/CSV): ' + (state.transactions?.length || 0) + ' Buchungen.';
+          }
+          draw();
+          saveLocal();
+          try { logEvent('file-import', { name: file && file.name, size: file && file.size, count: state.transactions?.length || 0 }); } catch(e) {}
+        } catch (e) {
+          statusEl.textContent = 'Fehler beim Datei-Import: ' + (e && e.message ? e.message : e);
+          statusEl.style.color = '#b91c1c';
+          try { logEvent('error', { where: 'handleFile', message: (e && e.message) || String(e) }); } catch(_ee) {}
+        }
+      }
+
+      // Drag & Drop für Dateien (inkl. OCR)
+      function setupDragAndDrop() {
+        function prevent(e) { e.preventDefault(); e.stopPropagation(); }
+        ['dragenter','dragover','dragleave','drop'].forEach(ev => {
+          document.addEventListener(ev, prevent, false);
+        });
+        document.addEventListener('drop', (e) => {
+          const files = e.dataTransfer && e.dataTransfer.files;
+          if (files && files.length) {
+            handleFile(files[0]);
+          }
+        }, false);
+      }
+      
+      // OCR initialisieren beim Laden
+      initOCR();
+
+      // Eingabe-Parsing (debounced)
+      function debounce(fn, ms) {
+        let t = null;
+        return function(...args) {
+          if (t) clearTimeout(t);
+          t = setTimeout(() => fn.apply(this, args), ms);
+        };
+      }
+      const debouncedImport = debounce(() => importData(), 300);
+
+      // --- Aggregation der importierten Daten ---
+      function aggregateImported() {
+        const txs = state.transactions || [];
+        let total = 0;
+        let minDate = null;
+        let maxDate = null;
+        const buckets = {}; // nach Monat (YYYY-MM) aggregiert
+        const categories = {}; // kategorien-aggregation
+
+        for (let tx of txs) {
+          const val = Math.abs(tx.amount || 0);
+          total += val;
+
+          let key = 'Unbekannt';
+          if (tx.date) {
+            const d = new Date(tx.date);
+            if (!isNaN(d.getTime())) {
+              const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+              key = ym;
+
+              if (!minDate || d < minDate) minDate = d;
+              if (!maxDate || d > maxDate) maxDate = d;
+            }
+          }
+          buckets[key] = (buckets[key] || 0) + val;
+
+          const cat = tx.category || 'Sonstiges';
+          categories[cat] = (categories[cat] || 0) + val;
+        }
+
+        let days = 0;
+        if (minDate && maxDate) {
+          const diffMs = maxDate.getTime() - minDate.getTime();
+          days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+        }
+
+        const topCategories = Object.entries(categories)
+          .sort((a,b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([name]) => name);
+
+        return { total, buckets, minDate, maxDate, days, categories, topCategories };
+      }
+
+      // --- Canvas-Helfer ---
+      function clearCanvas() {
+        ctx.fillStyle = '#f9fafb';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function drawGrid(x, y, w, h, rows, cols) {
+        ctx.strokeStyle = '#d1d5db';
+        ctx.lineWidth = 1;
+        const rowH = h / rows;
+        const colW = w / cols;
+
+        for (let r = 0; r <= rows; r++) {
+          const yy = y + r * rowH;
+          ctx.beginPath();
+          ctx.moveTo(x, yy);
+          ctx.lineTo(x + w, yy);
+          ctx.stroke();
+        }
+
+        for (let c = 0; c <= cols; c++) {
+          const xx = x + c * colW;
+          ctx.beginPath();
+          ctx.moveTo(xx, y);
+          ctx.lineTo(xx, y + h);
+          ctx.stroke();
+        }
+      }
+
+      // --- Ansicht 1: Budget-Tabelle (wie vorher, erweitert um importierte Summe) ---
+      function drawBudgetView() {
+        const r = berechneBudget();
+        const agg = aggregateImported();
+
+        clearCanvas();
+
+        // Kopf
+        ctx.fillStyle = '#111827';
+        ctx.font = '16px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText('Budget- & Haushaltsübersicht (Tabelle)', 20, 30);
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.fillStyle = '#4b5563';
+        ctx.fillText(state.brand, 20, 48);
+
+        // Basisdaten
+        ctx.font = '12px system-ui, sans-serif';
+        ctx.fillStyle = '#111827';
+        ctx.fillText('Basisdaten:', 20, 78);
+        ctx.font = '11px system-ui, sans-serif';
+        const lineBase = 96;
+        const lh = 16;
+
+        ctx.fillText('Gesamtbudget: ' + to2(state.gesamtBudget) + ' €', 20, lineBase);
+        ctx.fillText('Tage zu überbrücken: ' + r.tage, 20, lineBase + lh);
+        ctx.fillText('Tagesbudget: ' + to2(r.tagesBudget) + ' €', 20, lineBase + 2 * lh);
+
+        ctx.fillText(
+          'Joints: ' + state.jointsProTag + ' × ' + to2(state.jointPreis) +
+          ' € = ' + to2(r.jointsProTagEuro) + ' €/Tag',
+          320, lineBase
+        );
+        ctx.fillText('Lebensmittel (Zukauf): ' + to2(state.lebensmittelProTag) + ' €/Tag',
+          320, lineBase + lh);
+        ctx.fillText(
+          'Brötchen: ' + state.vorhandeneBroetchen + ' Stk. vorhanden, ' +
+          state.neuePakete + ' neue Pakete × ' + to2(state.preisBroetchenPaket) +
+          ' € = ' + to2(r.kostenNeuePakete) + ' €',
+          320, lineBase + 2 * lh
+        );
+        ctx.fillText(
+          'Importierte Ausgaben: ' + to2(agg.total) + ' € ('
+          + (agg.days > 0 ? 'Ø ' + to2(agg.total / agg.days) + ' €/Tag' : 'ohne Datumsbasis') + ')',
+          320, lineBase + 3 * lh
+        );
+
+        // Tabelle (erweitert für Lieblingsprodukte)
+        const lieblingsCount = (r.lieblingsDetails && r.lieblingsDetails.length) || 0;
+        const tableX = 20;
+        const tableY = 150;
+        const tableW = canvas.width - 40;
+        const tableH = Math.max(190, 150 + (lieblingsCount * 25)); // Dynamische Höhe
+        const rows = 6 + lieblingsCount;  // Kopf + 4 Positionen + Lieblingsprodukte + Summe + Rest
+        const cols = 4;  // Kategorie, €/Tag, Gesamt, Kommentar
+
+        drawGrid(tableX, tableY, tableW, tableH, rows, cols);
+        const colW = tableW / cols;
+        const rowH = tableH / rows;
+
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.fillStyle = '#111827';
+
+        function cell(col, row, text, align) {
+          const x = tableX + col * colW;
+          const y = tableY + (row + 0.6) * rowH;
+          ctx.textAlign = align || 'left';
+          if (align === 'right') {
+            ctx.fillText(text, x + colW - 6, y);
+          } else {
+            ctx.fillText(text, x + 6, y);
+          }
+        }
+
+        // Kopfzeile
+        cell(0, 0, 'Kategorie');
+        cell(1, 0, 'Pro Tag (€)', 'right');
+        cell(2, 0, 'Gesamt (€)', 'right');
+        cell(3, 0, 'Kommentar');
+
+        // Zeile 1: Joints
+        cell(0, 1, 'Joints');
+        cell(1, 1, to2(r.jointsProTagEuro), 'right');
+        cell(2, 1, to2(r.jointsGesamtEuro), 'right');
+        cell(3, 1, 'Konsum ggf. reduzieren, falls Budget zu eng.');
+
+        // Zeile 2: Lebensmittel
+        cell(0, 2, 'Lebensmittel (Zukauf)');
+        cell(1, 2, to2(state.lebensmittelProTag), 'right');
+        cell(2, 2, to2(r.lebensmittelGesamtEuro), 'right');
+        cell(3, 2, 'Vorräte + Angebote nutzen.');
+
+        // Zeile 3: Brötchen
+        cell(0, 3, 'Brötchen (neue Pakete)');
+        cell(1, 3, to2(r.broetchenProTagEuro), 'right');
+        cell(2, 3, to2(r.kostenNeuePakete), 'right');
+        cell(3, 3, 'Vorhandene Brötchen sind bereits bezahlt.');
+
+        // Zeile 4: Importierte Ausgaben (gesamt)
+        const tageImportBasis = agg.days > 0 ? agg.days : r.tage;
+        const importProTag = tageImportBasis > 0 ? agg.total / tageImportBasis : 0;
+        cell(0, 4, 'Importierte Ausgaben');
+        cell(1, 4, to2(importProTag), 'right');
+        cell(2, 4, to2(agg.total), 'right');
+        const top = (agg.topCategories && agg.topCategories.length) ? ('Top: ' + agg.topCategories.join(', ')) : 'Aus Konto-/Kassenbuchdaten aggregiert.';
+        cell(3, 4, top);
+
+        // Lieblingsprodukte (dynamisch)
+        let currentRow = 5;
+        if (r.lieblingsDetails && r.lieblingsDetails.length > 0) {
+          r.lieblingsDetails.forEach((fav, idx) => {
+            if (fav.moeglich === false) {
+              cell(0, currentRow, `⚠️ ${fav.name} (nicht möglich)`);
+              cell(1, currentRow, '0,00', 'right');
+              cell(2, currentRow, '0,00', 'right');
+              cell(3, currentRow, fav.vorschlag || 'Budget zu gering');
+            } else {
+              cell(0, currentRow, `⭐ ${fav.name} (${fav.frequenz})`);
+              cell(1, currentRow, to2(fav.kostenProTag), 'right');
+              cell(2, currentRow, to2(fav.kostenGesamt), 'right');
+              let kommentar = `Priorität: ${fav.prioritaet}`;
+              if (fav.sammelBetrag > 0) {
+                kommentar += ` | Sammelbetrag: ${to2(fav.sammelBetrag)} €`;
+                if (fav.sammelTage && fav.sammelTage.length > 0) {
+                  kommentar += ` | Sammelzeit: ${fav.sammelTage.map(s => s.start + '-' + s.ende).join(', ')}`;
+                }
+              }
+              if (fav.kaufTage && fav.kaufTage.length > 0) {
+                kommentar += ` | Kauf: Tag ${fav.kaufTage.join(', ')}`;
+              }
+              cell(3, currentRow, kommentar);
+            }
+            currentRow++;
+          });
+        }
+
+        // Summe (Budget-Plan)
+        cell(0, currentRow, 'Summe (Budget-Plan)');
+        cell(1, currentRow, to2(r.summeProTag), 'right');
+        cell(2, currentRow, to2(r.summeGesamt), 'right');
+        currentRow++;
+
+        // Rest
+        cell(0, currentRow, 'Restbudget (Budget-Plan)');
+        cell(1, currentRow, to2(r.restProTag), 'right');
+        cell(2, currentRow, to2(r.restGesamt), 'right');
+
+        // Hinweis
+        ctx.textAlign = 'left';
+        if (r.restGesamt < 0) {
+          ctx.fillStyle = '#b91c1c';
+          ctx.fillText(
+            'Warnung: Budget-Plan überzieht das Budget um ' + to2(-r.restGesamt) + ' €. Verbrauch oder Zeitraum anpassen.',
+            20, canvas.height - 16
+          );
+          statusEl.textContent = 'Plan über Budget (' + to2(-r.restGesamt) + ' € fehlen).';
+          statusEl.style.color = '#b91c1c';
+        } else {
+          ctx.fillStyle = '#15803d';
+          ctx.fillText(
+            'OK: Budget-Plan innerhalb des Budgets. Puffer: ' + to2(r.restGesamt) + ' €.',
+            20, canvas.height - 16
+          );
+          statusEl.textContent = 'Plan innerhalb Budget. Puffer: ' + to2(r.restGesamt) + ' €.';
+          statusEl.style.color = '#15803d';
+        }
+      }
+
+      // --- Ansicht 2: Zeitachse (Monatsbalken aus Bank-/Kassendaten) ---
+      function drawTimelineView() {
+        const agg = aggregateImported();
+        clearCanvas();
+
+        ctx.fillStyle = '#111827';
+        ctx.font = '16px system-ui, sans-serif';
+        ctx.fillText('Importierte Ausgaben nach Monaten (Zeitleiste)', 20, 30);
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.fillStyle = '#4b5563';
+        ctx.fillText('Grundlage: eingelesene Bank-/Kassendaten', 20, 48);
+
+        if (!agg.total) {
+          ctx.fillStyle = '#6b7280';
+          ctx.font = '13px system-ui, sans-serif';
+          ctx.fillText('Keine importierten Daten vorhanden. Bitte Daten einlesen.', 20, 80);
+          statusEl.textContent = 'Keine importierten Daten.';
+          statusEl.style.color = '#6b7280';
+          return;
+        }
+
+        const keys = Object.keys(agg.buckets).sort();
+        const values = keys.map(k => agg.buckets[k]);
+        const maxVal = Math.max.apply(null, values);
+
+        const chartX = 60;
+        const chartY = 90;
+        const chartW = canvas.width - 90;
+        const chartH = canvas.height - 140;
+
+        // Achsen
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(chartX, chartY);
+        ctx.lineTo(chartX, chartY + chartH);
+        ctx.lineTo(chartX + chartW, chartY + chartH);
+        ctx.stroke();
+
+        if (maxVal <= 0) {
+          ctx.fillStyle = '#6b7280';
+          ctx.fillText('Keine positiven Beträge für Balkendiagramm.', chartX, chartY + 20);
+          return;
+        }
+
+        const barWidth = Math.max(20, Math.min(60, chartW / (keys.length * 1.3)));
+
+        for (let i = 0; i < keys.length; i++) {
+          const k = keys[i];
+          const v = agg.buckets[k];
+          const ratio = v / maxVal;
+          const barH = ratio * (chartH - 20);
+
+          const bx = chartX + 10 + i * (barWidth + 10);
+          const by = chartY + chartH - barH;
+
+          // Balken
+          ctx.fillStyle = '#3b82f6';
+          ctx.fillRect(bx, by, barWidth, barH);
+
+          // Beschriftung Betrag
+          ctx.fillStyle = '#111827';
+          ctx.font = '10px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(to2(v), bx + barWidth / 2, by - 4);
+
+          // Beschriftung Monat
+          ctx.fillStyle = '#4b5563';
+          ctx.font = '10px system-ui, sans-serif';
+          ctx.fillText(k, bx + barWidth / 2, chartY + chartH + 12);
+        }
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#111827';
+        ctx.font = '11px system-ui, sans-serif';
+        let rangeText = '';
+        if (agg.minDate && agg.maxDate) {
+          const fmt = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+          rangeText = 'Zeitraum: ' + fmt(agg.minDate) + ' bis ' + fmt(agg.maxDate) +
+            ' — Ø ' + (agg.days > 0 ? to2(agg.total / agg.days) + ' €/Tag' : '–');
+        } else {
+          rangeText = 'Zeitraum: ohne Datumsbasis — Gesamt: ' + to2(agg.total) + ' €';
+        }
+        ctx.fillText(rangeText, 20, canvas.height - 20);
+
+        statusEl.textContent = 'Monatsübersicht aus importierten Daten. Gesamt: ' + to2(agg.total) + ' €';
+        statusEl.style.color = '#111827';
+      }
+
+      // --- Ansicht 3: Kreisdiagramm Budget vs. importierte Ausgaben ---
+      // ERWEITERT: Visualisierung mit Scheiben, Kuchen, Türmen
+      function drawPieView() {
+        const r = berechneBudget();
+        const agg = aggregateImported();
+        clearCanvas();
+
+        ctx.fillStyle = '#111827';
+        ctx.font = '16px system-ui, sans-serif';
+        ctx.fillText('Bilanz / Verteilung (Kreisdiagramm + Türme)', 20, 30);
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.fillStyle = '#4b5563';
+        ctx.fillText('Vergleich: Budget-Plan vs. importierte Ausgaben | Visualisierung: Scheiben, Kuchen, Türme', 20, 48);
+
+        // Segmente definieren
+        const segments = [];
+
+        // Budget-Segmente (geplanter Zeitraum) - Lebensnotwendige ZUERST
+        if (r.jointsGesamtEuro > 0) {
+          segments.push({ label: 'Joints (Lebensnotwendig)', value: r.jointsGesamtEuro, color: '#10b981' });
+        }
+        if (r.lebensmittelGesamtEuro > 0) {
+          segments.push({ label: 'Lebensmittel (Lebensnotwendig)', value: r.lebensmittelGesamtEuro, color: '#3b82f6' });
+        }
+        if (r.kostenNeuePakete > 0) {
+          segments.push({ label: 'Brötchen neu (Lebensnotwendig)', value: r.kostenNeuePakete, color: '#6366f1' });
+        }
+        
+        // Lieblingsprodukte (NACH Lebensnotwendigen) - EINZELN für bessere Visualisierung
+        if (r.lieblingsDetails && r.lieblingsDetails.length > 0) {
+          r.lieblingsDetails.forEach((fav, idx) => {
+            if (fav.moeglich && fav.kostenGesamt > 0) {
+              const colors = ['#f59e0b', '#f97316', '#fb923c', '#fdba74', '#fbbf24'];
+              segments.push({ 
+                label: `⭐ ${fav.name} (${fav.frequenz})`, 
+                value: fav.kostenGesamt, 
+                color: colors[idx % colors.length],
+                sammelBetrag: fav.sammelBetrag,
+                kaufTage: fav.kaufTage
+              });
+            }
+          });
+        }
+
+        // Importierte Ausgaben als eigenes Segment
+        if (agg.total > 0) {
+          segments.push({ label: 'Importierte Ausgaben', value: agg.total, color: '#f97316' });
+        }
+
+        const total = segments.reduce((s, seg) => s + seg.value, 0);
+
+        if (total <= 0) {
+          ctx.fillStyle = '#6b7280';
+          ctx.font = '13px system-ui, sans-serif';
+          ctx.fillText('Keine ausreichenden Daten für Kreisdiagramm.', 20, 80);
+          statusEl.textContent = 'Keine Daten für Kreisdiagramm.';
+          statusEl.style.color = '#6b7280';
+          return;
+        }
+
+        const centerX = canvas.width * 0.33;
+        const centerY = canvas.height * 0.5;
+        const radius  = Math.min(canvas.width, canvas.height) * 0.22;
+
+        let startAngle = -Math.PI / 2;
+
+        // Segmente (FARBE für Druck) - KREISDIAGRAMM
+        for (let seg of segments) {
+          const angle = (seg.value / total) * Math.PI * 2;
+          const endAngle = startAngle + angle;
+
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.fillStyle = seg.color;
+          ctx.strokeStyle = seg.color;
+          ctx.lineWidth = 2;
+          ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke(); // Rand für bessere Druckqualität
+
+          startAngle = endAngle;
+        }
+
+        // Kreis-Innenbeschriftung
+        ctx.fillStyle = '#111827';
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Gesamt', centerX, centerY - 4);
+        ctx.fillText(to2(total) + ' €', centerX, centerY + 10);
+
+        // NEU: TURM-VISUALISIERUNG (rechts neben Kreisdiagramm)
+        const towerX = canvas.width * 0.65;
+        const towerY = canvas.height * 0.3;
+        const towerW = 40;
+        const maxTowerH = 200;
+        const towerSpacing = 50;
+        const maxValue = Math.max(...segments.map(s => s.value));
+
+        segments.forEach((seg, idx) => {
+          const towerH = (seg.value / maxValue) * maxTowerH;
+          const x = towerX + (idx * towerSpacing);
+          
+          // Turm zeichnen
+          ctx.fillStyle = seg.color;
+          ctx.fillRect(x, towerY + maxTowerH - towerH, towerW, towerH);
+          
+          // Rahmen
+          ctx.strokeStyle = '#111827';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x, towerY + maxTowerH - towerH, towerW, towerH);
+          
+          // Beschriftung
+          ctx.fillStyle = '#111827';
+          ctx.font = '9px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(to2(seg.value), x + towerW / 2, towerY + maxTowerH - towerH - 4);
+          
+          // Sammelbetrag-Hinweis
+          if (seg.sammelBetrag && seg.sammelBetrag > 0) {
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = '8px system-ui, sans-serif';
+            ctx.fillText('📦', x + towerW / 2, towerY + maxTowerH + 12);
+          }
+        });
+
+        // Legende
+        ctx.textAlign = 'left';
+        const legendX = canvas.width * 0.6;
+        let legendY = 110;
+
+        ctx.font = '12px system-ui, sans-serif';
+        ctx.fillStyle = '#111827';
+        ctx.fillText('Legende / Bilanz', legendX, legendY - 10);
+
+        ctx.font = '11px system-ui, sans-serif';
+        for (let seg of segments) {
+          // Farbfeld
+          ctx.fillStyle = seg.color;
+          ctx.fillRect(legendX, legendY - 8, 12, 12);
+          // Text
+          ctx.fillStyle = '#111827';
+          let labelText = seg.label + ': ' + to2(seg.value) + ' € (' + to2((seg.value / total) * 100) + '%)';
+          if (seg.sammelBetrag && seg.sammelBetrag > 0) {
+            labelText += ' 📦 Sammelbetrag: ' + to2(seg.sammelBetrag) + ' €';
+          }
+          if (seg.kaufTage && seg.kaufTage.length > 0) {
+            labelText += ' | Kauf: Tag ' + seg.kaufTage.join(', ');
+          }
+          ctx.fillText(labelText, legendX + 18, legendY + 2);
+          legendY += 18;
+        }
+
+        statusEl.textContent = 'Kreisverteilung Budget / importierte Ausgaben.';
+        statusEl.style.color = '#111827';
+      }
+
+      // --- zentrale draw-Funktion, wechselt nach Modus ---
+      function draw() {
+        try {
+          if (state.mode === 'budget') {
+            drawBudgetView();
+          } else if (state.mode === 'timeline') {
+            drawTimelineView();
+          } else if (state.mode === 'pie') {
+            drawPieView();
+          }
+          
+          // Speichern nur wenn keine Fehler aufgetreten sind (mit Flag, um Loops zu vermeiden)
+          if (!window._drawSaving) {
+            window._drawSaving = true;
+            try {
+              saveLocal();
+            } catch (saveErr) {
+              // Fehler beim Speichern ignorieren, aber loggen
+              if (window.fabrikageErrorBus) {
+                window.fabrikageErrorBus.publish({
+                  module: 'chflox',
+                  stage: 'runtime',
+                  level: 'warning',
+                  class: 'draw.saveLocal.warning',
+                  message: 'Speichern in draw() fehlgeschlagen: ' + (saveErr.message || String(saveErr)),
+                  context: { error: String(saveErr) }
+                });
+              }
+            } finally {
+              window._drawSaving = false;
+            }
+          }
+          
+          try { logEvent('draw', { mode: state.mode }); } catch(e) {}
+        } catch (e) {
+          // Fehlerbehandlung für draw()
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'runtime',
+              level: 'error',
+              class: 'draw.error',
+              message: 'Fehler in draw(): ' + (e.message || String(e)),
+              context: { error: String(e), stack: e.stack, mode: state.mode }
+            });
+          }
+          if (statusEl) {
+            statusEl.textContent = 'Zeichnungsfehler: ' + (e.message || 'Unbekannter Fehler');
+            statusEl.style.color = '#b91c1c';
+          }
+          // Flag zurücksetzen bei Fehler
+          window._drawSaving = false;
+        }
+      }
+
+      // --- Budget-Eingaben via prompt bearbeiten ---
+      function editState() {
+        openEditOverlay();
+      }
+
+      function openEditOverlay() {
+        try {
+          fldGesamtBudget.value = String(state.gesamtBudget);
+          fldTage.value = String(state.tage);
+          fldJointsProTag.value = String(state.jointsProTag);
+          fldJointPreis.value = String(state.jointPreis);
+          fldLebensmittelProTag.value = String(state.lebensmittelProTag);
+          fldPreisBroetchenPaket.value = String(state.preisBroetchenPaket);
+          fldBroetchenProPaket.value = String(state.broetchenProPaket);
+          fldVorhandeneBroetchen.value = String(state.vorhandeneBroetchen);
+          fldNeuePakete.value = String(state.neuePakete);
+          editOverlay.style.display = 'block';
+          logEvent('edit-open');
+        } catch(e) { /* ignore */ }
+      }
+      function closeEditOverlay() {
+        editOverlay.style.display = 'none';
+        logEvent('edit-close');
+      }
+      function saveEditOverlay() {
+        try {
+          function toNum(v, fallback, allowZero) {
+            const n = parseFloat(String(v).replace(',', '.'));
+            if (isNaN(n)) return fallback;
+            if (!allowZero && n <= 0) return fallback;
+            return n;
+          }
+          
+          // Validierung und Speicherung mit Fehlerbehandlung
+          state.gesamtBudget = toNum(fldGesamtBudget.value, state.gesamtBudget, false);
+          state.tage = Math.max(1, Math.floor(toNum(fldTage.value, state.tage, false)));
+          state.jointsProTag = Math.max(0, Math.floor(toNum(fldJointsProTag.value, state.jointsProTag, true)));
+          state.jointPreis = Math.max(0, toNum(fldJointPreis.value, state.jointPreis, true));
+          state.lebensmittelProTag = Math.max(0, toNum(fldLebensmittelProTag.value, state.lebensmittelProTag, true));
+          state.preisBroetchenPaket = Math.max(0, toNum(fldPreisBroetchenPaket.value, state.preisBroetchenPaket, true));
+          state.broetchenProPaket = Math.max(1, Math.floor(toNum(fldBroetchenProPaket.value, state.broetchenProPaket, false)));
+          state.vorhandeneBroetchen = Math.max(0, Math.floor(toNum(fldVorhandeneBroetchen.value, state.vorhandeneBroetchen, true)));
+          state.neuePakete = Math.max(0, Math.floor(toNum(fldNeuePakete.value, state.neuePakete, true)));
+          
+          // Speichern mit Fehlerbehandlung
+          try {
+            saveLocal();
+          } catch (saveErr) {
+            if (window.fabrikageErrorBus) {
+              window.fabrikageErrorBus.publish({
+                module: 'chflox',
+                stage: 'runtime',
+                level: 'error',
+                class: 'saveEditOverlay.saveLocal.error',
+                message: 'Fehler beim Speichern: ' + (saveErr.message || String(saveErr)),
+                context: { error: String(saveErr) }
+              });
+            }
+            if (statusEl) {
+              statusEl.textContent = 'Speicherfehler: ' + (saveErr.message || 'Unbekannter Fehler');
+              statusEl.style.color = '#b91c1c';
+            }
+          }
+          
+          // Zeichnen mit Fehlerbehandlung (OHNE saveLocal() zu rufen, um Loop zu vermeiden)
+          try {
+            // Zeichnen OHNE saveLocal() - das wird in draw() selbst gemacht
+            if (state.mode === 'budget') {
+              drawBudgetView();
+            } else if (state.mode === 'timeline') {
+              drawTimelineView();
+            } else if (state.mode === 'pie') {
+              drawPieView();
+            }
+            // saveLocal() wird NICHT hier aufgerufen, um Endlos-Loops zu vermeiden
+            try { logEvent('draw', { mode: state.mode }); } catch(e) {}
+          } catch (drawErr) {
+            if (window.fabrikageErrorBus) {
+              window.fabrikageErrorBus.publish({
+                module: 'chflox',
+                stage: 'runtime',
+                level: 'error',
+                class: 'saveEditOverlay.draw.error',
+                message: 'Fehler beim Zeichnen: ' + (drawErr.message || String(drawErr)),
+                context: { error: String(drawErr), stack: drawErr.stack }
+              });
+            }
+            if (statusEl) {
+              statusEl.textContent = 'Zeichnungsfehler: ' + (drawErr.message || 'Unbekannter Fehler');
+              statusEl.style.color = '#b91c1c';
+            }
+            // Overlay trotzdem schließen
+            closeEditOverlay();
+            return; // Früh beenden bei Fehler
+          }
+          
+          closeEditOverlay();
+          
+          // Erfolgsmeldung
+          if (statusEl) {
+            statusEl.textContent = 'Einstellungen gespeichert.';
+            statusEl.style.color = '#15803d';
+          }
+        } catch (e) {
+          // Oberste Fehlerbehandlung
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'runtime',
+              level: 'error',
+              class: 'saveEditOverlay.error',
+              message: 'Kritischer Fehler in saveEditOverlay: ' + (e.message || String(e)),
+              context: { error: String(e), stack: e.stack }
+            });
+          }
+          if (statusEl) {
+            statusEl.textContent = 'Kritischer Fehler: ' + (e.message || 'Unbekannter Fehler');
+            statusEl.style.color = '#b91c1c';
+          }
+          alert('Fehler beim Speichern. Bitte versuchen Sie es erneut.');
+        }
+      }
+
+      // --- Tastaturkürzel ---
+      function setupShortcuts() {
+        document.addEventListener('keydown', (e) => {
+          if (e.target && (e.target === inputArea)) return; // Eingabe nicht stören
+          if (e.key === 'r' || e.key === 'R') { draw(); }
+          if (e.key === 'e' || e.key === 'E') { editState(); }
+          if (e.key === 'm' || e.key === 'M') { switchMode(); }
+          if (e.key === 'i' || e.key === 'I') { fileInput && fileInput.click(); }
+          if (e.key === 'p' || e.key === 'P') { window.print(); }
+          if (e.key === 's' || e.key === 'S') { saveLocal(); statusEl.textContent = 'Gespeichert.'; }
+        });
+      }
+
+      // --- JSON-Export (maschinenlesbare Bestandsform) ---
+      async function exportData() {
+        const payload = {
+          meta: {
+            generator: 'UAE/WHD Budget-Canvas-Modul',
+            timestamp: new Date().toISOString()
+          },
+          state: {
+            brand: state.brand,
+            gesamtBudget: state.gesamtBudget,
+            tage: state.tage,
+            jointsProTag: state.jointsProTag,
+            jointPreis: state.jointPreis,
+            lebensmittelProTag: state.lebensmittelProTag,
+            preisBroetchenPaket: state.preisBroetchenPaket,
+            broetchenProPaket: state.broetchenProPaket,
+            vorhandeneBroetchen: state.vorhandeneBroetchen,
+            neuePakete: state.neuePakete
+          },
+          transactions: state.transactions,
+          telemetry
+        };
+
+        try {
+          const dataStr = JSON.stringify(payload, null, 2);
+          const enc = new TextEncoder().encode(dataStr);
+          const hashBuf = (crypto && crypto.subtle) ? await crypto.subtle.digest('SHA-256', enc) : null;
+          let hashHex = '';
+          if (hashBuf) {
+            const arr = Array.from(new Uint8Array(hashBuf));
+            hashHex = arr.map(b => b.toString(16).padStart(2, '0')).join('');
+          }
+          const stamped = {
+            ...payload,
+            stamp: {
+              version: '1.0.0-replica',
+              signature: 'T,.&T,,.&T,,,.T.',
+              documentId: 'UAE-TTT-BAU-REPL-2025-12-04-001',
+              repo: 'https://github.com/Myopenai/universeallenterprises',
+              timestampUtc: new Date().toISOString(),
+              sha256: hashHex || null
+            }
+          };
+          const stampedStr = JSON.stringify(stamped, null, 2);
+          // Hauptdaten
+          const blob = new Blob([stampedStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'uae-budget-daten.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          // Report
+          const agg = aggregateImported();
+          const report = {
+            summary: {
+              transactions: stamped.transactions.length,
+              totalImportedAbs: agg.total,
+              days: agg.days,
+              topCategories: agg.topCategories
+            },
+            categories: agg.categories,
+            months: agg.buckets,
+            stamp: stamped.stamp
+          };
+          const repStr = JSON.stringify(report, null, 2);
+          const blob2 = new Blob([repStr], { type: 'application/json' });
+          const url2 = URL.createObjectURL(blob2);
+          const a2 = document.createElement('a');
+          a2.href = url2;
+          a2.download = 'uae-budget-report.json';
+          document.body.appendChild(a2);
+          a2.click();
+          document.body.removeChild(a2);
+          URL.revokeObjectURL(url2);
+
+          statusEl.textContent = 'Export abgeschlossen (Daten + Report).';
+          statusEl.style.color = '#15803d';
+          try { logEvent('export', { hash: hashHex, count: stamped.transactions.length }); } catch(e) {}
+        } catch (e) {
+          statusEl.textContent = 'Export-Fehler: ' + (e && e.message ? e.message : e);
+          statusEl.style.color = '#b91c1c';
+          try { logEvent('error', { where: 'exportData', message: (e && e.message) || String(e) }); } catch(_ee) {}
+        }
+      }
+
+      // --- Moduswechsel: Budget / Zeitleiste / Kreisdiagramm ---
+      function switchMode() {
+        if (state.mode === 'budget') {
+          state.mode = 'timeline';
+          btnMode.textContent = 'Ansicht wechseln (aktuell: Zeitleiste)';
+        } else if (state.mode === 'timeline') {
+          state.mode = 'pie';
+          btnMode.textContent = 'Ansicht wechseln (aktuell: Kreisdiagramm)';
+        } else {
+          state.mode = 'budget';
+          btnMode.textContent = 'Ansicht wechseln (aktuell: Tabelle)';
+        }
+        draw();
+      }
+
+      // --- Event-Handler ---
+      btnRun.addEventListener('click', draw);
+      btnEdit.addEventListener('click', editState);
+      btnImport.addEventListener('click', function() {
+        if (fileInput) fileInput.click();
+        else importData();
+      });
+      if (fileInput) {
+        fileInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            handleFile(this.files[0]);
+            this.value = '';
+          }
+        });
+      }
+      if (ocrInput) {
+        ocrInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            handleOCRFile(this.files[0]);
+            this.value = '';
+          }
+        });
+      }
+      // OCR-Input auch über Drag & Drop
+      setupDragAndDrop();
+      btnExport.addEventListener('click', exportData);
+      btnPrint.addEventListener('click', function () { window.print(); });
+      btnMode.addEventListener('click', switchMode);
+      inputArea.addEventListener('input', debouncedImport);
+      if (editClose) editClose.addEventListener('click', closeEditOverlay);
+      if (editCancel) editCancel.addEventListener('click', closeEditOverlay);
+      if (editSave) editSave.addEventListener('click', saveEditOverlay);
+      if (btnClearData) btnClearData.addEventListener('click', clearAllImportedData);
+      if (infoClose) infoClose.addEventListener('click', () => {
+        infoPopup.style.display = 'none';
+        localStorage.setItem(LS_KEYS.infoShown, 'true');
+      });
+      if (btnCategories) btnCategories.addEventListener('click', openCategoriesOverlay);
+      if (categoriesClose) categoriesClose.addEventListener('click', () => categoriesOverlay.style.display = 'none');
+      if (addCategoryBtn) addCategoryBtn.addEventListener('click', addNewCategory);
+      if (btnAnalysis) btnAnalysis.addEventListener('click', () => showAnalysis('preferred'));
+      if (btnOptimal) btnOptimal.addEventListener('click', () => showAnalysis('optimal'));
+      if (analysisClose) analysisClose.addEventListener('click', () => analysisOverlay.style.display = 'none');
+      if (btnFavorites) btnFavorites.addEventListener('click', openFavoritesOverlay);
+      if (favoritesClose) favoritesClose.addEventListener('click', () => favoritesOverlay.style.display = 'none');
+      if (favAdd) favAdd.addEventListener('click', addFavorite);
+      
+      // Kategorien-Overlay Funktionen
+      function openCategoriesOverlay() {
+        renderCategoriesList();
+        categoriesOverlay.style.display = 'flex';
+      }
+      
+      function renderCategoriesList() {
+        const allCats = getAllCategories();
+        categoriesList.innerHTML = '<table style="width:100%; border-collapse:collapse; font-size:11px;"><thead><tr style="border-bottom:1px solid #ddd;"><th style="text-align:left; padding:6px;">Kategorie</th><th style="text-align:left; padding:6px;">Suchbegriffe</th><th style="text-align:center; padding:6px;">Aktionen</th></tr></thead><tbody>';
+        
+        allCats.forEach(rule => {
+          const keysStr = rule.keys.map(k => k.toString().replace(/[\/\^$]/g, '')).join(', ');
+          const editable = rule.editable !== false;
+          categoriesList.innerHTML += `<tr style="border-bottom:1px solid #f3f4f6;">
+            <td style="padding:6px;">${rule.cat}</td>
+            <td style="padding:6px; color:#6b7280;">${keysStr || '-'}</td>
+            <td style="padding:6px; text-align:center;">
+              ${editable ? `<button onclick="removeCategory('${rule.cat}')" style="padding:2px 6px; font-size:10px; border:1px solid #dc2626; background:#fee2e2; color:#dc2626; border-radius:4px; cursor:pointer;">Löschen</button>` : '<span style="color:#9ca3af; font-size:10px;">Standard</span>'}
+            </td>
+          </tr>`;
+        });
+        
+        categoriesList.innerHTML += '</tbody></table>';
+        
+        // Globale Funktionen für Buttons
+        window.removeCategory = function(name) {
+          if (confirm(`Kategorie "${name}" wirklich löschen?`)) {
+            removeCustomCategory(name);
+            renderCategoriesList();
+          }
+        };
+      }
+      
+      function addNewCategory() {
+        const name = newCategoryName.value.trim();
+        const keysStr = newCategoryKeys.value.trim();
+        const keys = keysStr ? keysStr.split(',').map(k => new RegExp(k.trim(), 'i')) : [];
+        
+        if (addCustomCategory(name, keys)) {
+          newCategoryName.value = '';
+          newCategoryKeys.value = '';
+          renderCategoriesList();
+          statusEl.textContent = `Kategorie "${name}" hinzugefügt.`;
+          statusEl.style.color = '#15803d';
+        } else {
+          statusEl.textContent = 'Kategorie existiert bereits oder Name ungültig.';
+          statusEl.style.color = '#b91c1c';
+        }
+      }
+      
+      function showAnalysis(type) {
+        if (type === 'preferred') {
+          const analysis = analyzePreferredItems();
+          analysisTitle.textContent = 'Vorzugslebensmittel-Analyse';
+          analysisContent.innerHTML = `
+            <h4 style="margin:0 0 12px; font-size:13px;">Top 5 Kategorien nach Ausgaben:</h4>
+            <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:16px;">
+              <thead><tr style="border-bottom:2px solid #ddd;"><th style="text-align:left; padding:8px;">Kategorie</th><th style="text-align:right; padding:8px;">Ausgaben (€)</th></tr></thead>
+              <tbody>
+                ${analysis.topCategories.map(({category, total}) => `<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:8px;">${category}</td><td style="text-align:right; padding:8px; font-weight:600;">${total} €</td></tr>`).join('')}
+              </tbody>
+            </table>
+            <div style="padding:12px; background:#f3f4f6; border-radius:6px; font-size:11px;">
+              <strong>Gesamtausgaben:</strong> ${to2(analysis.totalSpent)} €
+            </div>
+          `;
+        } else if (type === 'optimal') {
+          const optimal = calculateOptimalBudget();
+          analysisTitle.textContent = 'Optimale Budgetnutzung';
+          analysisContent.innerHTML = `
+            <div style="margin-bottom:16px;">
+              <h4 style="margin:0 0 8px; font-size:13px;">Budget-Auslastung:</h4>
+              <div style="padding:12px; background:#f3f4f6; border-radius:6px; font-size:12px;">
+                <strong>${optimal.budgetUtilization}%</strong> des Budgets verwendet
+              </div>
+            </div>
+            ${optimal.recommendations.length > 0 ? `
+              <h4 style="margin:0 0 8px; font-size:13px;">Empfehlungen:</h4>
+              <ul style="margin:0; padding-left:20px; font-size:11px; line-height:1.8;">
+                ${optimal.recommendations.map(r => `<li>${r.suggestion}</li>`).join('')}
+              </ul>
+            ` : '<div style="padding:12px; background:#d1fae5; border-radius:6px; font-size:11px; color:#065f46;">✓ Ihre Budgetverteilung ist optimal!</div>'}
+          `;
+        }
+        analysisOverlay.style.display = 'flex';
+      }
+      
+      // Lieblingsprodukte-Funktionen
+      function openFavoritesOverlay() {
+        renderFavoritesList();
+        favoritesOverlay.style.display = 'flex';
+        logEvent('favorites-open');
+      }
+      
+      function renderFavoritesList() {
+        const favs = state.lieblingsprodukte || [];
+        if (favs.length === 0) {
+          favoritesList.innerHTML = '<div style="padding:12px; text-align:center; color:#6b7280; font-size:11px;">Noch keine Lieblingsprodukte hinzugefügt.</div>';
+          return;
+        }
+        
+        const r = berechneBudget();
+        favoritesList.innerHTML = '<table style="width:100%; border-collapse:collapse; font-size:11px;"><thead><tr style="border-bottom:1px solid #ddd;"><th style="text-align:left; padding:6px;">Produkt</th><th style="text-align:right; padding:6px;">Preis</th><th style="text-align:center; padding:6px;">Menge</th><th style="text-align:center; padding:6px;">Frequenz</th><th style="text-align:center; padding:6px;">Priorität</th><th style="text-align:right; padding:6px;">€/Tag</th><th style="text-align:right; padding:6px;">Gesamt</th><th style="text-align:center; padding:6px;">Aktion</th></tr></thead><tbody>';
+        
+        favs.forEach((fav, idx) => {
+          const detail = r.lieblingsDetails && r.lieblingsDetails.find(d => d.name === fav.name);
+          const kostenProTag = detail ? detail.kostenProTag : 0;
+          const kostenGesamt = detail ? detail.kostenGesamt : 0;
+          
+          favoritesList.innerHTML += `<tr style="border-bottom:1px solid #f3f4f6;">
+            <td style="padding:6px;">${fav.name || '-'}</td>
+            <td style="text-align:right; padding:6px;">${to2(fav.preis || 0)} €</td>
+            <td style="text-align:center; padding:6px;">${fav.menge || 1}</td>
+            <td style="text-align:center; padding:6px;">${fav.frequenz || 'täglich'}</td>
+            <td style="text-align:center; padding:6px;">${fav.prioritaet || 5}</td>
+            <td style="text-align:right; padding:6px; font-weight:600;">${to2(kostenProTag)} €</td>
+            <td style="text-align:right; padding:6px; font-weight:600;">${to2(kostenGesamt)} €</td>
+            <td style="text-align:center; padding:6px;">
+              <button onclick="removeFavorite(${idx})" style="padding:2px 6px; font-size:10px; border:1px solid #dc2626; background:#fee2e2; color:#dc2626; border-radius:4px; cursor:pointer;">Löschen</button>
+            </td>
+          </tr>`;
+        });
+        
+        favoritesList.innerHTML += '</tbody></table>';
+        
+        // Zusätzliche Info
+        if (r.maximaleLaufzeitLieblings > 0) {
+          favoritesList.innerHTML += `<div style="margin-top:12px; padding:12px; background:#fef3c7; border-radius:6px; font-size:11px;">
+            <strong>Maximale Laufzeit für Lieblingsprodukte:</strong> ${r.maximaleLaufzeitLieblings} Tage<br>
+            <strong>Verfügbares Budget nach Lebensnotwendigen:</strong> ${to2(state.gesamtBudget - r.lebensnotwendigGesamt)} €<br>
+            <strong>Kosten pro Tag (Lieblingsprodukte):</strong> ${to2(r.lieblingsKostenProTag)} €
+          </div>`;
+        }
+        
+        // Globale Funktion für Löschen
+        window.removeFavorite = function(idx) {
+          if (confirm(`Lieblingsprodukt "${state.lieblingsprodukte[idx].name}" wirklich löschen?`)) {
+            state.lieblingsprodukte.splice(idx, 1);
+            saveLocal();
+            renderFavoritesList();
+            draw();
+            statusEl.textContent = 'Lieblingsprodukt gelöscht.';
+            statusEl.style.color = '#15803d';
+          }
+        };
+      }
+      
+      function addFavorite() {
+        try {
+          const name = favName.value.trim();
+          const preis = parseFloat(favPreis.value);
+          const menge = parseInt(favMenge.value) || 1;
+          const frequenz = favFrequenz.value || 'täglich';
+          const prioritaet = parseInt(favPrioritaet.value) || 5;
+          
+          if (!name || name.length === 0) {
+            alert('Bitte geben Sie einen Produktnamen ein.');
+            return;
+          }
+          
+          if (isNaN(preis) || preis <= 0) {
+            alert('Bitte geben Sie einen gültigen Preis ein.');
+            return;
+          }
+          
+          if (prioritaet < 1 || prioritaet > 10) {
+            alert('Priorität muss zwischen 1 und 10 liegen.');
+            return;
+          }
+          
+          if (!state.lieblingsprodukte) {
+            state.lieblingsprodukte = [];
+          }
+          
+          state.lieblingsprodukte.push({
+            name: name,
+            preis: preis,
+            menge: menge,
+            frequenz: frequenz,
+            prioritaet: prioritaet
+          });
+          
+          // Felder leeren
+          favName.value = '';
+          favPreis.value = '';
+          favMenge.value = '1';
+          favFrequenz.value = 'täglich';
+          favPrioritaet.value = '5';
+          
+          saveLocal();
+          renderFavoritesList();
+          draw();
+          
+          statusEl.textContent = 'Lieblingsprodukt hinzugefügt.';
+          statusEl.style.color = '#15803d';
+          logEvent('favorite-added', { name, preis, menge, frequenz, prioritaet });
+        } catch (e) {
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'runtime',
+              level: 'error',
+              class: 'addFavorite.error',
+              message: 'Fehler beim Hinzufügen: ' + (e.message || String(e)),
+              context: { error: String(e) }
+            });
+          }
+          alert('Fehler beim Hinzufügen: ' + (e.message || 'Unbekannter Fehler'));
+        }
+      }
+      
+      // Info-Popup beim ersten Laden anzeigen
+      function showInfoPopup() {
+        const shown = localStorage.getItem(LS_KEYS.infoShown);
+        if (!shown || shown !== 'true') {
+          setTimeout(() => {
+            if (infoPopup) infoPopup.style.display = 'flex';
+          }, 500);
+        }
+      }
+
+      // Initialer Zustand / Standard-Beschriftung Modus
+      btnMode.textContent = 'Ansicht wechseln (aktuell: Tabelle)';
+      setupDragAndDrop();
+      setupShortcuts();
+      setLabels(getLocale());
+      loadLocal();
+      
+      // Prüfe ob Daten gelöscht wurden - wenn ja, keine Beispiel-Daten laden
+      const deleted = localStorage.getItem(LS_KEYS.deleted);
+      if (deleted !== 'true') {
+        if (!state.transactions || state.transactions.length === 0) {
+          // Nur wenn Textarea leer ist, Beispiel-Daten setzen
+          if (!inputArea.value || inputArea.value.trim() === '') {
+            inputArea.value = '2025-12-01;Supermarkt;-23,40\n2025-12-02;Miete;-550\n2025-12-03;Stadtcafé;-4,50\n2025-12-04;Bus;-2,90';
+          }
+        } else {
+          statusEl.textContent = 'Geladene Sitzung: ' + state.transactions.length + ' Buchungen.';
+        }
+      } else {
+        // Daten wurden gelöscht - Textarea leer lassen
+        inputArea.value = '';
+        state.transactions = [];
+      }
+      
+      draw();
+      showInfoPopup();
+      
+      // UAE-Modul Interface für DaVinci-Integration
+      window.uaeBudgetModule = {
+        setFromDaVinci: function(model) {
+          // Empfängt Modell von DaVinci-Sphere (budget.html)
+          // Übernimmt Monatsbudget und Basis-Lebensmittelkosten
+          try {
+            if (model && typeof model === 'object') {
+              // Monatsbudget übernehmen
+              if (model.budget !== undefined) {
+                state.gesamtBudget = model.budget;
+                if (fldGesamtBudget) fldGesamtBudget.value = String(model.budget);
+              }
+              
+              // Basis-Lebensmittelkosten leicht anpassen (falls vorhanden)
+              if (model.fixed !== undefined && model.fixed > 0) {
+                // Optional: Lebensmittelkosten basierend auf fixed anpassen
+                // state.lebensmittelProTag = Math.max(0, model.fixed * 0.15); // Beispiel: 15% von fixed
+              }
+              
+              // Status aktualisieren
+              if (statusEl) {
+                statusEl.textContent = 'Daten von DaVinci-Sphere übernommen. Budget: ' + to2(model.budget || state.gesamtBudget) + ' €.';
+                statusEl.style.color = '#15803d';
+              }
+              
+              // Neu zeichnen
+              saveLocal();
+              draw();
+              
+              // Event loggen
+              try { logEvent('davinci-sync', { budget: model.budget, fixed: model.fixed }); } catch(e) {}
+            }
+          } catch(e) {
+            console.error('[UAE] Fehler bei setFromDaVinci:', e);
+            if (statusEl) {
+              statusEl.textContent = 'Fehler bei Datenübernahme von DaVinci.';
+              statusEl.style.color = '#b91c1c';
+            }
+          }
+        },
+        
+        // Kassenbuch-Kommunikation: Empfange Daten vom Kassenbuch
+        setFromKassenbuch: function(data) {
+          try {
+            if (data.entries && Array.isArray(data.entries)) {
+              // Konvertiere Kassenbuch-Einträge zu UAE-Format
+              const income = data.entries
+                .filter(e => e.amount > 0)
+                .reduce((sum, e) => sum + e.amount, 0);
+              
+              if (income > 0 && fldGesamtBudget) {
+                fldGesamtBudget.value = String(income);
+                state.gesamtBudget = income;
+                saveLocal();
+                draw();
+                
+                if (statusEl) {
+                  statusEl.textContent = 'Daten von Kassenbuch übernommen. Budget: ' + to2(income) + ' €.';
+                  statusEl.style.color = '#15803d';
+                }
+              }
+              
+              console.log('[FABRIKAGE] UAE: Daten von Kassenbuch erhalten');
+            }
+          } catch(e) {
+            // Fabrikage Error Bus Integration
+            if (window.fabrikageErrorBus) {
+              window.fabrikageErrorBus.publish({
+                module: 'chflox',
+                stage: 'runtime',
+                level: 'error',
+                class: 'kassenbuch-sync.error',
+                message: 'Fehler bei setFromKassenbuch: ' + (e.message || String(e)),
+                context: { error: String(e), stack: e.stack }
+              });
+            } else {
+              console.error('[FABRIKAGE] UAE setFromKassenbuch error:', e);
+            }
+          }
+        },
+        
+        // Sende UAE-Daten an Kassenbuch
+        getData: function() {
+          try {
+            const entries = [];
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (state.gesamtBudget > 0) {
+              entries.push({
+                id: `uae-income-${Date.now()}`,
+                date: today,
+                description: 'Monatsbudget (UAE)',
+                category: 'einnahme',
+                amount: state.gesamtBudget,
+                createdAt: new Date().toISOString(),
+                source: 'uae'
+              });
+            }
+            
+            if (state.transactions && Array.isArray(state.transactions)) {
+              state.transactions.forEach(t => {
+                entries.push({
+                  id: `uae-${t.id || Date.now()}`,
+                  date: t.date || today,
+                  description: t.description || 'UAE Transaktion',
+                  category: 'sonstiges',
+                  amount: -(t.amount || 0),
+                  createdAt: new Date().toISOString(),
+                  source: 'uae'
+                });
+              });
+            }
+            
+            return { entries };
+          } catch(e) {
+            console.error('[FABRIKAGE] UAE getData error:', e);
+            return { entries: [] };
+          }
+        }
+      };
+      
+      // Registriere UAE-Modul im Hub
+      if (window.cashflowHub) {
+        window.cashflowHub.registerApp('uae', window.uaeBudgetModule);
+      }
+      
+      // Sende UAE-Daten an Kassenbuch
+      function sendUAEToKassenbuch() {
+        try {
+          if (window.kassenbuchModule && typeof window.kassenbuchModule.setData === 'function') {
+            const uaeData = window.uaeBudgetModule.getData();
+            if (uaeData.entries && uaeData.entries.length > 0) {
+              window.kassenbuchModule.setData(uaeData);
+              // Fabrikage Error Bus Integration
+              if (window.fabrikageErrorBus) {
+                window.fabrikageErrorBus.publish({
+                  module: 'chflox',
+                  stage: 'runtime',
+                  level: 'info',
+                  class: 'uae-send-kassenbuch.success',
+                  message: 'UAE → Kassenbuch: Daten gesendet'
+                });
+              } else {
+                console.log('[FABRIKAGE] UAE → Kassenbuch: Daten gesendet');
+              }
+            }
+          }
+        } catch(e) {
+          // Fabrikage Error Bus Integration
+          if (window.fabrikageErrorBus) {
+            window.fabrikageErrorBus.publish({
+              module: 'chflox',
+              stage: 'runtime',
+              level: 'error',
+              class: 'uae-send-kassenbuch.error',
+              message: 'Fehler bei sendUAEToKassenbuch: ' + (e.message || String(e)),
+              context: { error: String(e), stack: e.stack }
+            });
+          } else {
+            console.error('[FABRIKAGE] sendUAEToKassenbuch error:', e);
+          }
+        }
+      }
+      
+      // Auto-Sync alle 30 Sekunden
+      setInterval(sendUAEToKassenbuch, 30000);
+      
+      // Sende bei Änderungen
+      if (fldGesamtBudget) {
+        fldGesamtBudget.addEventListener('input', () => {
+          setTimeout(sendUAEToKassenbuch, 1000);
+        });
+      }
+    })();
+  </script>
+</section>

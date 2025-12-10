@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wabenraum - dd5be Broadcast</title>
+  <!-- BRANDING: .T. TogetherSystems - ModularFlux Architecture -->
+  <!-- VERSION: 3.0.0 -->
+  <!-- STANDARD: IBM STANDARD - PERMANENT AKTIV -->
+  <script src="../../js/console-error-controller.js"></script>
+  <script src="../../js/console-cache-system.js"></script>
+  <script src="../love-score-engine.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --accent2: #f59e0b;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #0f1419 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      color: var(--accent);
+      font-size: 24px;
+    }
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr 300px;
+      gap: 16px;
+      padding: 16px;
+      flex: 1;
+      overflow: hidden;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .panel h2 {
+      color: var(--accent);
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      padding: 8px;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+    .message {
+      margin-bottom: 12px;
+      padding: 12px;
+      background: var(--bg);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+    }
+    .message-author {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    .message-text {
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .message-lovescore {
+      margin-top: 8px;
+      padding: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .chat-input {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .chat-input button {
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      color: #00100a;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .communication-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .comm-btn {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      font-size: 12px;
+    }
+    .comm-btn.active {
+      background: var(--accent);
+      color: #00100a;
+    }
+    .game-board {
+      flex: 1;
+      background: var(--bg);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+    }
+    .nostalgie-panel {
+      flex: 1;
+      overflow-y: auto;
+    }
+    .nostalgie-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+    .nostalgie-item:hover {
+      border-color: var(--accent);
+    }
+    .nostalgie-item h3 {
+      color: var(--accent);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .lovescore-widget {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .lovescore-widget h3 {
+      color: var(--accent);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .score-mini {
+      width: 100%;
+      height: 20px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .score-mini-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.3s;
+    }
+    .participants {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .participants h3 {
+      color: var(--accent);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .participant {
+      padding: 8px;
+      background: var(--card);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .video-container {
+      flex: 1;
+      background: #000;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      position: relative;
+    }
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h1>🐝 Wabe <span id="roomNumber">777</span></h1>
+    <div>
+      <button onclick="toggleVoice()" id="voiceBtn" class="comm-btn">🎤 Audio</button>
+      <button onclick="toggleVideo()" id="videoBtn" class="comm-btn">📹 Video</button>
+      <button onclick="window.location.href='dating-portal.html'" style="background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; color: var(--text); cursor: pointer;">Zurück</button>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- Linke Spalte: Chat & Kommunikation -->
+    <div class="panel">
+      <h2>💬 Chat & Kommunikation</h2>
+      <div class="communication-buttons">
+        <button class="comm-btn active" onclick="setCommMode('text')">📝 Text</button>
+        <button class="comm-btn" onclick="setCommMode('voice')">🎤 Voice</button>
+        <button class="comm-btn" onclick="setCommMode('video')">📹 Video</button>
+      </div>
+      
+      <div id="textChat" class="chat-messages">
+        <div class="message">
+          <div class="message-author">System</div>
+          <div class="message-text">Willkommen in der Wabe! Respektvolle Kommunikation ist wichtig.</div>
+        </div>
+      </div>
+      
+      <div id="voicePanel" class="hidden">
+        <div style="text-align: center; padding: 40px; color: var(--muted);">
+          🎤 Voice-Chat wird initialisiert...
+        </div>
+      </div>
+      
+      <div id="videoPanel" class="hidden">
+        <div class="video-container">
+          <div>📹 Video-Chat wird initialisiert...</div>
+        </div>
+      </div>
+      
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Nachricht eingeben..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">Senden</button>
+      </div>
+    </div>
+
+    <!-- Mittlere Spalte: Spiele & Nostalgie -->
+    <div class="panel">
+      <h2>🎮 Spiele & Nostalgie</h2>
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <button onclick="showGameBoard()" style="flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; color: var(--text); cursor: pointer;">🎮 Spiele</button>
+        <button onclick="showNostalgie()" style="flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; color: var(--text); cursor: pointer;">📚 Nostalgie</button>
+      </div>
+      
+      <div id="gameBoard" class="game-board">
+        <div style="text-align: center;">
+          <p style="margin-bottom: 16px; color: var(--muted);">Wähle ein Spiel:</p>
+          <button onclick="startGame('chess')" style="background: var(--accent); border: none; border-radius: 8px; padding: 12px 24px; color: #00100a; font-weight: 700; cursor: pointer; margin: 4px;">♟️ Schach</button>
+          <button onclick="startGame('uno')" style="background: var(--accent); border: none; border-radius: 8px; padding: 12px 24px; color: #00100a; font-weight: 700; cursor: pointer; margin: 4px;">🃏 UNO</button>
+          <button onclick="startGame('hive')" style="background: var(--accent); border: none; border-radius: 8px; padding: 12px 24px; color: #00100a; font-weight: 700; cursor: pointer; margin: 4px;">🐝 HiveStrategy</button>
+        </div>
+      </div>
+      
+      <div id="nostalgiePanel" class="nostalgie-panel hidden">
+        <div class="nostalgie-item" onclick="loadNostalgieItem('fantomas_1913')">
+          <h3>Fantômas (1913)</h3>
+          <p style="color: var(--muted); font-size: 12px;">Stummfilm - Public Domain</p>
+        </div>
+        <div class="nostalgie-item" onclick="loadNostalgieItem('apollo_11')">
+          <h3>Apollo 11 Mondlandung</h3>
+          <p style="color: var(--muted); font-size: 12px;">1969 - NASA Archiv</p>
+        </div>
+        <div class="nostalgie-item" onclick="loadNostalgieItem('woodstock')">
+          <h3>Woodstock Festival</h3>
+          <p style="color: var(--muted); font-size: 12px;">1969 - Musikclips</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rechte Spalte: Sidebar -->
+    <div class="sidebar">
+      <div class="lovescore-widget">
+        <h3>💚 Live LoveScore</h3>
+        <div id="liveScoreDisplay">
+          <div class="score-mini">
+            <div id="liveScoreFill" class="score-mini-fill" style="width: 0%;"></div>
+          </div>
+          <div style="font-size: 11px; color: var(--muted); text-align: center;">
+            Warte auf Nachrichten...
+          </div>
+        </div>
+      </div>
+      
+      <div class="participants">
+        <h3>👥 Teilnehmer</h3>
+        <div id="participantsList">
+          <div class="participant">Du (Du)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin + '/api';
+    const loveEngine = new LoveScoreEngine();
+    let currentCommMode = 'text';
+    let localStream = null;
+    let peerConnections = [];
+
+    // URL-Parameter lesen
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('id') || '777';
+    document.getElementById('roomNumber').textContent = roomId;
+
+    // Kommunikationsmodus setzen
+    function setCommMode(mode) {
+      currentCommMode = mode;
+      document.querySelectorAll('.comm-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      document.getElementById('textChat').classList.add('hidden');
+      document.getElementById('voicePanel').classList.add('hidden');
+      document.getElementById('videoPanel').classList.add('hidden');
+      
+      if (mode === 'text') {
+        document.getElementById('textChat').classList.remove('hidden');
+      } else if (mode === 'voice') {
+        document.getElementById('voicePanel').classList.remove('hidden');
+        initVoice();
+      } else if (mode === 'video') {
+        document.getElementById('videoPanel').classList.remove('hidden');
+        initVideo();
+      }
+    }
+
+    // Voice initialisieren
+    async function initVoice() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        localStream = stream;
+        // WebRTC Peer Connection würde hier initialisiert werden
+        console.log('Voice aktiviert');
+      } catch (e) {
+        console.error('Voice error:', e);
+        alert('Mikrofon-Zugriff verweigert');
+      }
+    }
+
+    // Video initialisieren
+    async function initVideo() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        localStream = stream;
+        const videoContainer = document.getElementById('videoPanel').querySelector('.video-container');
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.autoplay = true;
+        video.muted = true;
+        videoContainer.innerHTML = '';
+        videoContainer.appendChild(video);
+        console.log('Video aktiviert');
+      } catch (e) {
+        console.error('Video error:', e);
+        alert('Kamera-Zugriff verweigert');
+      }
+    }
+
+    // Nachricht senden
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      
+      // Nachricht anzeigen
+      addMessage('Du', text);
+      input.value = '';
+      
+      // LoveScore berechnen
+      const score = loveEngine.calculateLoveScore(text);
+      updateLiveScore(score);
+      
+      // Optional: An Server senden (WebSocket)
+      // ws.send(JSON.stringify({ type: 'chat', text, roomId }));
+    }
+
+    function addMessage(author, text, lovescore = null) {
+      const messagesDiv = document.getElementById('textChat');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message';
+      messageDiv.innerHTML = `
+        <div class="message-author">${author}</div>
+        <div class="message-text">${text}</div>
+        ${lovescore ? `<div class="message-lovescore">💚 LoveScore: ${lovescore.score} - ${lovescore.interpretation}</div>` : ''}
+      `;
+      messagesDiv.appendChild(messageDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function updateLiveScore(result) {
+      const fill = document.getElementById('liveScoreFill');
+      fill.style.width = result.score + '%';
+      
+      const display = document.getElementById('liveScoreDisplay');
+      display.innerHTML = `
+        <div class="score-mini">
+          <div class="score-mini-fill" style="width: ${result.score}%;"></div>
+        </div>
+        <div style="font-size: 11px; color: var(--muted); text-align: center; margin-top: 4px;">
+          ${result.score}/100 - ${result.interpretation}
+        </div>
+      `;
+    }
+
+    function showGameBoard() {
+      document.getElementById('gameBoard').classList.remove('hidden');
+      document.getElementById('nostalgiePanel').classList.add('hidden');
+    }
+
+    function showNostalgie() {
+      document.getElementById('gameBoard').classList.add('hidden');
+      document.getElementById('nostalgiePanel').classList.remove('hidden');
+    }
+
+    function startGame(gameType) {
+      alert(`Spiel ${gameType} wird gestartet...`);
+      // Hier würde das Spiel initialisiert werden
+    }
+
+    function loadNostalgieItem(itemId) {
+      window.location.href = `../nblockbuster/frontend/item-view.html?id=${itemId}`;
+    }
+
+    function toggleVoice() {
+      // Voice toggle logic
+    }
+
+    function toggleVideo() {
+      // Video toggle logic
+    }
+
+    // WebSocket Connection (wenn verfügbar)
+    // const ws = new WebSocket(`ws://${window.location.host}/ws?room=${roomId}`);
+    // ws.onmessage = (event) => {
+    //   const data = JSON.parse(event.data);
+    //   if (data.type === 'chat') {
+    //     addMessage(data.author, data.text, data.lovescore);
+    //   }
+    // };
+  </script>
+</body>
+</html>
+
+

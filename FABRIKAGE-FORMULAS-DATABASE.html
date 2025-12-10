@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formelsammlungsdatenbank - Fabrikage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(57, 208, 255, 0.1), rgba(245, 101, 255, 0.1));
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 2px solid rgba(57, 208, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(57, 208, 255, 0.4);
+        }
+
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .formula-card {
+            background: rgba(20, 25, 35, 0.8);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .formula-card:hover {
+            border-color: #39d0ff;
+            box-shadow: 0 8px 32px rgba(57, 208, 255, 0.3);
+        }
+
+        .formula-card h3 {
+            color: #39d0ff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .formula-equation {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #39d0ff;
+            border-left: 4px solid #39d0ff;
+        }
+
+        .formula-description {
+            color: #aaa;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .formula-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .meta-item {
+            padding: 5px 10px;
+            background: rgba(57, 208, 255, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(57, 208, 255, 0.3);
+        }
+
+        .complexity-high {
+            color: #ef4444;
+        }
+
+        .complexity-medium {
+            color: #f59e0b;
+        }
+
+        .complexity-low {
+            color: #10b981;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(20, 25, 35, 0.8);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #39d0ff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+    </style>
+  <script src="./console-monitor.js"></script>
+  <script src="./http-resource-monitor-browser.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📐 Formelsammlungsdatenbank</h1>
+            <p style="color: #aaa; margin-top: 10px;">
+                Altwissenschaftliche Formelzeichnung aller Fabrikage-Funktionen
+            </p>
+            <p style="color: #39d0ff; margin-top: 5px;">
+                BRANDING: .T. TogetherSystems - ModularFlux Architecture | VERSION: 3.0.0
+            </p>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="analyzeAllFunctions()">🔍 Alle Funktionen analysieren</button>
+            <button class="btn" onclick="exportFormulas('json')">📥 Export JSON</button>
+            <button class="btn" onclick="exportFormulas('latex')">📥 Export LaTeX</button>
+            <button class="btn" onclick="exportFormulas('mathml')">📥 Export MathML</button>
+            <button class="btn" onclick="showReport()">📊 Bericht anzeigen</button>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="total-formulas">0</div>
+                <div class="stat-label">Formeln</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-functions">0</div>
+                <div class="stat-label">Funktionen</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avg-complexity">0</div>
+                <div class="stat-label">Ø Komplexität</div>
+            </div>
+        </div>
+
+        <div class="formula-grid" id="formula-grid">
+            <div style="grid-column: 1 / -1; text-align: center; color: #aaa; padding: 40px;">
+                Klicke auf "Alle Funktionen analysieren" um Formeln zu generieren
+            </div>
+        </div>
+    </div>
+
+    <script src="js/formula-generator.js"></script>
+    <script>
+        function analyzeAllFunctions() {
+            if (!window.formulaGenerator) {
+                alert('Formula Generator nicht verfügbar');
+                return;
+            }
+
+            const results = window.formulaGenerator.analyzeAllFunctions();
+            
+            // Speichere Formeln
+            window.formulaGenerator.saveFormulas();
+            
+            // Zeige Formeln
+            displayFormulas();
+            
+            alert(`✅ ${results.length} Funktionen analysiert und in Formeln umgewandelt!`);
+        }
+
+        function displayFormulas() {
+            if (!window.formulaGenerator) return;
+            
+            const formulas = Array.from(window.formulaGenerator.formulas.values());
+            const grid = document.getElementById('formula-grid');
+            
+            // Update Stats
+            document.getElementById('total-formulas').textContent = formulas.length;
+            document.getElementById('total-functions').textContent = formulas.length;
+            
+            const avgComplexity = formulas.length > 0 
+                ? (formulas.reduce((sum, f) => sum + (f.formula.complexity || 0), 0) / formulas.length).toFixed(1)
+                : 0;
+            document.getElementById('avg-complexity').textContent = avgComplexity;
+            
+            // Zeige Formeln
+            grid.innerHTML = formulas.map(formula => {
+                const complexityClass = formula.formula.complexity > 10 ? 'complexity-high' : 
+                                       formula.formula.complexity > 5 ? 'complexity-medium' : 'complexity-low';
+                
+                return `
+                    <div class="formula-card">
+                        <h3>${formula.function}</h3>
+                        <div class="formula-equation">${formula.formula.equation}</div>
+                        <div class="formula-description">${formula.formula.description}</div>
+                        <div class="formula-meta">
+                            <div class="meta-item ${complexityClass}">
+                                Komplexität: ${formula.formula.complexity} ${formula.formula.complexitySymbol}
+                            </div>
+                            <div class="meta-item">
+                                Klasse: ${formula.analysis.context.class || 'global'}
+                            </div>
+                            <div class="meta-item">
+                                Parameter: ${formula.analysis.parameters.length}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportFormulas(format) {
+            if (!window.formulaGenerator) {
+                alert('Formula Generator nicht verfügbar');
+                return;
+            }
+
+            const exported = window.formulaGenerator.exportFormulas(format);
+            
+            if (typeof exported === 'string') {
+                const blob = new Blob([exported], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `fabrikage-formulas-${format}-${Date.now()}.${format === 'json' ? 'json' : format === 'latex' ? 'tex' : 'xml'}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert(`✅ Formeln als ${format.toUpperCase()} exportiert!`);
+            } else {
+                alert('Export fehlgeschlagen');
+            }
+        }
+
+        function showReport() {
+            if (!window.formulaGenerator) {
+                alert('Formula Generator nicht verfügbar');
+                return;
+            }
+
+            const report = window.formulaGenerator.getFormulaReport();
+            const reportText = `
+FORMEL-BERICHT
+==============
+
+Gesamt: ${report.total} Formeln
+
+Nach Komplexität:
+- Niedrig (< 5): ${report.byComplexity.low}
+- Mittel (5-10): ${report.byComplexity.medium}
+- Hoch (> 10): ${report.byComplexity.high}
+
+Nach Klasse:
+${Object.entries(report.byClass).map(([cls, formulas]) => `- ${cls}: ${formulas.length}`).join('\n')}
+            `;
+            
+            alert(reportText);
+        }
+
+        // Lade vorhandene Formeln beim Start
+        window.addEventListener('load', () => {
+            if (window.formulaGenerator) {
+                displayFormulas();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+

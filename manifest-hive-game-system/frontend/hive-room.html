@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manifest-Hive: Wabenraum</title>
+  <!-- BRANDING: .T. TogetherSystems - ModularFlux Architecture -->
+  <!-- VERSION: 3.0.0 -->
+  <!-- STANDARD: IBM STANDARD - PERMANENT AKTIV -->
+  <script src="../js/console-error-controller.js"></script>
+  <script src="../js/console-cache-system.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --accent2: #f59e0b;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #0f1419 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      gap: 20px;
+      padding: 20px;
+    }
+    @media (max-width: 1200px) {
+      body { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .panel h3 {
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .participant {
+      padding: 8px;
+      margin-bottom: 8px;
+      background: var(--bg);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .chat-messages {
+      height: 400px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+    .chat-message {
+      padding: 8px;
+      margin-bottom: 8px;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+    .chat-input {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #00100a;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #059669;
+    }
+    .game-area {
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+    .game-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .game-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .game-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+  </style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <!-- Left Panel: Participants -->
+  <div class="panel">
+    <h3>🐝 Teilnehmer</h3>
+    <div id="participants"></div>
+  </div>
+  
+  <!-- Center Panel: Game Area -->
+  <div class="panel">
+    <h3>🎮 Spielbereich</h3>
+    <div style="margin-bottom: 16px;">
+      <button class="btn" onclick="showGameCatalog()" style="margin-right: 8px;">Spiele-Katalog</button>
+      <button class="btn secondary" onclick="suggestGame()">Spiel vorschlagen</button>
+      <select id="gameFilter" onchange="filterGames()" style="margin-left: 8px; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text);">
+        <option value="">Alle Spiele</option>
+        <option value="STRATEGY">Strategie</option>
+        <option value="COMMUNICATION">Kommunikation</option>
+        <option value="CARD">Karten</option>
+        <option value="MOVEMENT">Bewegung</option>
+        <option value="SOCIAL">Sozial</option>
+      </select>
+    </div>
+    <div id="gameSelector" class="game-selector">
+      <!-- Games werden hier geladen -->
+    </div>
+    <div id="gameArea" class="game-area" style="display: none;">
+      <p>Spiel wird geladen...</p>
+    </div>
+  </div>
+  
+  <!-- Right Panel: Chat & Communication -->
+  <div class="panel">
+    <h3>💬 Kommunikation</h3>
+    <div style="margin-bottom: 12px; display: flex; gap: 8px;">
+      <button class="btn" onclick="toggleVoice()" id="voiceBtn" style="flex: 1; padding: 8px; font-size: 12px;">🎤 Audio</button>
+      <button class="btn" onclick="toggleVideo()" id="videoBtn" style="flex: 1; padding: 8px; font-size: 12px;">📹 Video</button>
+      <button class="btn secondary" onclick="toggleWhiteboard()" id="whiteboardBtn" style="flex: 1; padding: 8px; font-size: 12px;">✏️ Whiteboard</button>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Nachricht eingeben..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+      <button class="btn" onclick="sendChatMessage()">Senden</button>
+    </div>
+    <div id="whiteboardArea" style="display: none; margin-top: 16px; border: 1px solid var(--border); border-radius: 8px; height: 200px; background: var(--bg);">
+      <canvas id="whiteboardCanvas" width="100%" height="200" style="cursor: crosshair;"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin.replace(/:\d+$/, ':3000');
+    const WS_BASE = API_BASE.replace('http', 'ws');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room_id') || localStorage.getItem('hive_room_id');
+    const userId = localStorage.getItem('user_id') || 'user-' + Date.now();
+    
+    let ws = null;
+    let currentGameSession = null;
+    let voiceEnabled = false;
+    let videoEnabled = false;
+    let whiteboardEnabled = false;
+    let localStream = null;
+    let peerConnections = new Map();
+    
+    // WebSocket Verbindung
+    function connectWebSocket() {
+      ws = new WebSocket(`${WS_BASE}`);
+      
+      ws.onopen = () => {
+        ws.send(JSON.stringify({
+          type: 'join_room',
+          hive_room_id: roomId,
+          user_id: userId
+        }));
+        loadParticipants();
+        loadGames();
+        
+        // Community-Mus beim Eintritt
+        if (window.CommunityMusicSystem) {
+          const music = new window.CommunityMusicSystem();
+          music.init();
+          // Hole Style vom Raum
+          music.playEntryTone('ruhig'); // In Produktion: Style vom Raum
+        }
+      };
+      
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'chat_message') {
+          addChatMessage(data.user_id, data.message, data.timestamp);
+        }
+        
+        if (data.type === 'game_action') {
+          handleGameAction(data);
+        }
+        
+        if (data.type === 'system_event') {
+          addSystemMessage(data.message);
+        }
+      };
+      
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+    }
+    
+    // Teilnehmer laden
+    async function loadParticipants() {
+      try {
+        // Mock - in Produktion: API-Call
+        const participants = [
+          { id: userId, alias: 'Du', role: 'OWNER' },
+          { id: 'user-2', alias: 'Spieler 2', role: 'PLAYER' }
+        ];
+        
+        const container = document.getElementById('participants');
+        container.innerHTML = '';
+        participants.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'participant';
+          div.innerHTML = `<strong>${p.alias}</strong> <span style="color: var(--muted); font-size: 12px;">${p.role}</span>`;
+          container.appendChild(div);
+        });
+      } catch (e) {
+        console.error('Load participants error:', e);
+      }
+    }
+    
+    // Spiele laden
+    async function loadGames(filter = '') {
+      try {
+        let url = `${API_BASE}/games/catalog`;
+        if (filter) {
+          url += `?category=${filter}`;
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        const container = document.getElementById('gameSelector');
+        container.innerHTML = '';
+        
+        if (data.games && data.games.length === 0) {
+          container.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 40px;">Keine Spiele gefunden.</p>';
+          return;
+        }
+        
+        data.games.forEach(game => {
+          const card = document.createElement('div');
+          card.className = 'game-card';
+          
+          const epoch = game.epoch || 'UNKNOWN';
+          const culture = game.culture || 'UNIVERSAL';
+          const seriousness = game.ui_hints?.seriousness || 'medium';
+          const commFocus = game.ui_hints?.communication_focus ? '💬' : '';
+          
+          card.innerHTML = `
+            <h4>${game.name} ${commFocus}</h4>
+            <p style="color: var(--muted); font-size: 12px; margin-top: 8px;">${game.description}</p>
+            <p style="color: var(--muted); font-size: 11px; margin-top: 4px;">
+              ${game.min_players}-${game.max_players} Spieler | ${epoch} | ${culture}
+            </p>
+            <p style="color: var(--accent); font-size: 10px; margin-top: 4px;">
+              ${seriousness === 'high' || seriousness === 'very_high' ? '⚖️ Seriös' : '🎮 Spielerisch'}
+            </p>
+          `;
+          card.onclick = () => startGame(game.id);
+          container.appendChild(card);
+        });
+      } catch (e) {
+        console.error('Load games error:', e);
+      }
+    }
+    
+    function filterGames() {
+      const filter = document.getElementById('gameFilter').value;
+      loadGames(filter);
+    }
+    
+    async function suggestGame() {
+      try {
+        const response = await fetch(`${API_BASE}/games/suggest?context=silence`);
+        const data = await response.json();
+        
+        if (data.suggestions && data.suggestions.length > 0) {
+          const randomSuggestion = data.suggestions[Math.floor(Math.random() * data.suggestions.length)];
+          if (confirm(`Spiel vorschlagen: ${randomSuggestion.name}?\n\n${randomSuggestion.description}`)) {
+            startGame(randomSuggestion.id);
+          }
+        }
+      } catch (e) {
+        console.error('Suggest game error:', e);
+      }
+    }
+    
+    function showGameCatalog() {
+      document.getElementById('gameSelector').style.display = 'grid';
+      document.getElementById('gameArea').style.display = 'none';
+      loadGames();
+    }
+    
+    // Audio/Video/Whiteboard
+    async function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+      document.getElementById('voiceBtn').textContent = voiceEnabled ? '🎤 Audio ON' : '🎤 Audio';
+      
+      if (voiceEnabled) {
+        try {
+          localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          // In Produktion: WebRTC für Audio-Übertragung
+        } catch (e) {
+          console.error('Audio error:', e);
+          voiceEnabled = false;
+        }
+      } else {
+        if (localStream) {
+          localStream.getTracks().forEach(track => track.stop());
+          localStream = null;
+        }
+      }
+    }
+    
+    async function toggleVideo() {
+      videoEnabled = !videoEnabled;
+      document.getElementById('videoBtn').textContent = videoEnabled ? '📹 Video ON' : '📹 Video';
+      
+      if (videoEnabled) {
+        try {
+          localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+          // In Produktion: WebRTC für Video-Übertragung
+        } catch (e) {
+          console.error('Video error:', e);
+          videoEnabled = false;
+        }
+      } else {
+        if (localStream) {
+          localStream.getTracks().forEach(track => track.stop());
+          localStream = null;
+        }
+      }
+    }
+    
+    function toggleWhiteboard() {
+      whiteboardEnabled = !whiteboardEnabled;
+      const whiteboardArea = document.getElementById('whiteboardArea');
+      whiteboardArea.style.display = whiteboardEnabled ? 'block' : 'none';
+      
+      if (whiteboardEnabled) {
+        initWhiteboard();
+      }
+    }
+    
+    function initWhiteboard() {
+      const canvas = document.getElementById('whiteboardCanvas');
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+      
+      canvas.addEventListener('mousedown', (e) => {
+        drawing = true;
+        const rect = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+      });
+      
+      canvas.addEventListener('mousemove', (e) => {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+      
+      canvas.addEventListener('mouseup', () => {
+        drawing = false;
+      });
+    }
+    
+    // Spiel starten
+    async function startGame(gameId) {
+      try {
+        const response = await fetch(`${API_BASE}/games/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hive_room_id: roomId, game_id: gameId })
+        });
+        
+        const data = await response.json();
+        currentGameSession = data.session_id;
+        
+        document.getElementById('gameSelector').style.display = 'none';
+        document.getElementById('gameArea').style.display = 'flex';
+        document.getElementById('gameArea').innerHTML = `
+          <div>
+            <h3>${data.game.name}</h3>
+            <p>Spiel wird geladen...</p>
+            <button class="btn" onclick="leaveGame()" style="margin-top: 16px;">Spiel verlassen</button>
+          </div>
+        `;
+      } catch (e) {
+        console.error('Start game error:', e);
+        alert('Fehler beim Starten des Spiels');
+      }
+    }
+    
+    function leaveGame() {
+      document.getElementById('gameSelector').style.display = 'grid';
+      document.getElementById('gameArea').style.display = 'none';
+      currentGameSession = null;
+    }
+    
+    // Chat
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+      
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'chat_message',
+          message: message
+        }));
+        input.value = '';
+      }
+    }
+    
+    function addChatMessage(userId, message, timestamp) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'chat-message';
+      div.innerHTML = `<strong>${userId}:</strong> ${message}`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    function addSystemMessage(message) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'chat-message';
+      div.style.color = 'var(--accent)';
+      div.innerHTML = `<em>System: ${message}</em>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    function handleGameAction(data) {
+      // Game-Action-Handler
+      console.log('Game action:', data);
+    }
+    
+    // Initialisiere
+    connectWebSocket();
+  </script>
+</body>
+</html>
+
+

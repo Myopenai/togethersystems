@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formel-Calculator - Raumloses Mikrokosmos-Ökosystem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Raumloses Mikrokosmos-Ökosystem - Keine Wände */
+        .cosmic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(57, 208, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(245, 101, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            animation: cosmicFlow 20s ease-in-out infinite;
+        }
+
+        @keyframes cosmicFlow {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(20, 25, 35, 0.6);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .panel {
+            background: rgba(20, 25, 35, 0.7);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel h2 {
+            color: #39d0ff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .formula-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .formula-item {
+            background: rgba(57, 208, 255, 0.1);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .formula-item:hover {
+            background: rgba(57, 208, 255, 0.2);
+            border-color: #39d0ff;
+            transform: translateX(5px);
+        }
+
+        .formula-item.selected {
+            background: rgba(245, 101, 255, 0.2);
+            border-color: #f565ff;
+        }
+
+        .formula-equation {
+            font-family: 'Courier New', monospace;
+            color: #39d0ff;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        .calculator-workspace {
+            min-height: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px dashed rgba(57, 208, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .mixed-formula-display {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            color: #10b981;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(57, 208, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .generated-program {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #39d0ff;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(57, 208, 255, 0.1);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #39d0ff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+    </style>
+  <script src="./console-monitor.js"></script>
+  <script src="./http-resource-monitor-browser.js"></script>
+</head>
+<body>
+    <div class="cosmic-background"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>📐 Formel-Calculator</h1>
+            <p style="color: #aaa; font-size: 0.9rem;">
+                Raumloses Mikrokosmos-Ökosystem für Formel-Mischung und Programm-Generierung
+            </p>
+            <p style="color: #39d0ff; font-size: 0.8rem; margin-top: 5px;">
+                BRANDING: .T. TogetherSystems - ModularFlux Architecture | VERSION: 3.0.0
+            </p>
+        </div>
+
+        <div class="main-content">
+            <!-- Linke Seite: Formeln -->
+            <div class="panel">
+                <h2>📚 Verfügbare Formeln</h2>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-formulas">0</div>
+                        <div class="stat-label">Formeln</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="selected-count">0</div>
+                        <div class="stat-label">Ausgewählt</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="loadAllFormulas()">🔄 Alle Formeln laden</button>
+                <div class="formula-list" id="formula-list">
+                    <div style="text-align: center; color: #aaa; padding: 40px;">
+                        Lade Formeln...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rechte Seite: Calculator & Generator -->
+            <div class="panel">
+                <h2>🧮 Formel-Calculator</h2>
+                <div class="calculator-workspace" id="calculator-workspace">
+                    <p style="color: #aaa; text-align: center; padding: 40px;">
+                        Wähle Formeln aus der Liste, um sie zu mischen
+                    </p>
+                </div>
+                <button class="btn" onclick="mixSelectedFormulas()">🔀 Formeln mischen</button>
+                <button class="btn btn-secondary" onclick="generateProgramFromMixed()">⚙️ Programm generieren</button>
+                <button class="btn" onclick="clearSelection()">🗑️ Auswahl löschen</button>
+                
+                <div id="mixed-formula-display" style="display: none;">
+                    <h3 style="color: #10b981; margin: 15px 0 10px;">Gemischte Formel:</h3>
+                    <div class="mixed-formula-display" id="mixed-formula"></div>
+                </div>
+
+                <div id="generated-program-display" style="display: none;">
+                    <h3 style="color: #39d0ff; margin: 15px 0 10px;">Generiertes Programm:</h3>
+                    <div class="generated-program" id="generated-program"></div>
+                    <button class="btn" onclick="exportGeneratedProgram()">📥 Programm exportieren</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/formula-generator.js"></script>
+    <script src="js/formula-to-program-generator.js"></script>
+    <script>
+        let selectedFormulas = new Set();
+        let currentMixedFormula = null;
+        let currentGeneratedProgram = null;
+
+        function loadAllFormulas() {
+            if (!window.formulaGenerator) {
+                alert('Formula Generator nicht verfügbar. Analysiere zuerst alle Funktionen.');
+                return;
+            }
+
+            // Analysiere alle Funktionen
+            const results = window.formulaGenerator.analyzeAllFunctions();
+            window.formulaGenerator.saveFormulas();
+
+            // Lade Formeln
+            displayFormulas();
+        }
+
+        function displayFormulas() {
+            if (!window.formulaGenerator) return;
+
+            const formulas = Array.from(window.formulaGenerator.formulas.values());
+            const list = document.getElementById('formula-list');
+            const totalEl = document.getElementById('total-formulas');
+
+            totalEl.textContent = formulas.length;
+
+            if (formulas.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #aaa; padding: 40px;">Keine Formeln gefunden. Klicke auf "Alle Formeln laden".</div>';
+                return;
+            }
+
+            list.innerHTML = formulas.map(formula => {
+                const isSelected = selectedFormulas.has(formula.id);
+                return `
+                    <div class="formula-item ${isSelected ? 'selected' : ''}" onclick="toggleFormula('${formula.id}')">
+                        <div style="font-weight: bold; color: #39d0ff; margin-bottom: 5px;">${formula.function}</div>
+                        <div class="formula-equation">${formula.formula.equation}</div>
+                        <div style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">
+                            Komplexität: ${formula.formula.complexity} ${formula.formula.complexitySymbol}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleFormula(formulaId) {
+            if (selectedFormulas.has(formulaId)) {
+                selectedFormulas.delete(formulaId);
+            } else {
+                selectedFormulas.add(formulaId);
+            }
+            updateSelection();
+            displayFormulas();
+        }
+
+        function updateSelection() {
+            document.getElementById('selected-count').textContent = selectedFormulas.size;
+            
+            const workspace = document.getElementById('calculator-workspace');
+            if (selectedFormulas.size === 0) {
+                workspace.innerHTML = '<p style="color: #aaa; text-align: center; padding: 40px;">Wähle Formeln aus der Liste, um sie zu mischen</p>';
+            } else {
+                const formulas = Array.from(selectedFormulas).map(id => {
+                    if (window.formulaGenerator) {
+                        return window.formulaGenerator.formulas.get(id);
+                    }
+                    return null;
+                }).filter(f => f);
+
+                workspace.innerHTML = `
+                    <h3 style="color: #39d0ff; margin-bottom: 10px;">Ausgewählte Formeln (${formulas.length}):</h3>
+                    ${formulas.map(f => `
+                        <div style="background: rgba(57, 208, 255, 0.1); padding: 10px; border-radius: 6px; margin: 5px 0;">
+                            <strong style="color: #39d0ff;">${f.function}</strong>
+                            <div style="font-size: 0.85rem; color: #aaa; margin-top: 3px;">${f.formula.equation}</div>
+                        </div>
+                    `).join('')}
+                `;
+            }
+        }
+
+        function mixSelectedFormulas() {
+            if (selectedFormulas.size < 2) {
+                alert('Wähle mindestens 2 Formeln zum Mischen');
+                return;
+            }
+
+            if (!window.formulaToProgramGenerator) {
+                alert('Formula to Program Generator nicht verfügbar');
+                return;
+            }
+
+            const formulaIds = Array.from(selectedFormulas);
+            const result = window.formulaToProgramGenerator.mixFormulas(formulaIds);
+
+            if (result.success) {
+                currentMixedFormula = result.mixedFormula;
+                document.getElementById('mixed-formula').textContent = result.mixedFormula.formula.equation;
+                document.getElementById('mixed-formula-display').style.display = 'block';
+                alert(`✅ ${formulaIds.length} Formeln erfolgreich gemischt!`);
+            } else {
+                alert(`❌ Fehler: ${result.error}`);
+            }
+        }
+
+        function generateProgramFromMixed() {
+            if (!currentMixedFormula) {
+                alert('Erstelle zuerst eine gemischte Formel');
+                return;
+            }
+
+            if (!window.formulaToProgramGenerator) {
+                alert('Formula to Program Generator nicht verfügbar');
+                return;
+            }
+
+            // Erstelle temporäre Formel-ID
+            const tempId = `TEMP-${Date.now()}`;
+            window.formulaGenerator.formulas.set(tempId, currentMixedFormula);
+
+            const result = window.formulaToProgramGenerator.generateProgramFromFormula(tempId);
+
+            if (result.success) {
+                currentGeneratedProgram = result.programId;
+                document.getElementById('generated-program').textContent = result.program;
+                document.getElementById('generated-program-display').style.display = 'block';
+                alert('✅ Programm erfolgreich generiert!');
+            } else {
+                alert(`❌ Fehler: ${result.error}`);
+            }
+        }
+
+        function exportGeneratedProgram() {
+            if (!currentGeneratedProgram) {
+                alert('Kein Programm zum Exportieren');
+                return;
+            }
+
+            if (!window.formulaToProgramGenerator) {
+                alert('Formula to Program Generator nicht verfügbar');
+                return;
+            }
+
+            const result = window.formulaToProgramGenerator.exportProgram(currentGeneratedProgram, 'file');
+            if (result.success) {
+                alert('✅ Programm erfolgreich exportiert!');
+            } else {
+                alert(`❌ Fehler: ${result.error}`);
+            }
+        }
+
+        function clearSelection() {
+            selectedFormulas.clear();
+            currentMixedFormula = null;
+            currentGeneratedProgram = null;
+            document.getElementById('mixed-formula-display').style.display = 'none';
+            document.getElementById('generated-program-display').style.display = 'none';
+            updateSelection();
+            displayFormulas();
+        }
+
+        // Auto-Load beim Start
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.formulaGenerator) {
+                    displayFormulas();
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+
+
+

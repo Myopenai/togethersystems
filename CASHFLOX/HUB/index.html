@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="TogetherSystems CASHFLOX Hub - Alle Apps in einem System">
+	<title>CASHFLOX Hub – [.SYSTEMS.T.SYSTEMS.]</title>
+	<script>
+		const BASE_URL = 'https://myopenai.github.io/togethersystems';
+	</script>
+	<style>
+		:root {
+			--bg: #0a0e1a;
+			--card: #111827;
+			--text: #e5e7eb;
+			--muted: #9ca3af;
+			--accent: #10b981;
+			--accent2: #3b82f6;
+			--danger: #ef4444;
+			--border: #1f2937;
+			--gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		}
+		
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		
+		body {
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			min-height: 100vh;
+			overflow-x: hidden;
+		}
+		
+		.background-animation {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			background: 
+				radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+				radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+				radial-gradient(circle at 40% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+				var(--bg);
+			animation: pulse 20s ease-in-out infinite;
+		}
+		
+		@keyframes pulse {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0.8; }
+		}
+		
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+		
+		header {
+			text-align: center;
+			padding: 40px 20px;
+			position: relative;
+		}
+		
+		.brand {
+			font-size: 14px;
+			color: var(--muted);
+			margin-bottom: 10px;
+			letter-spacing: 2px;
+		}
+		
+		h1 {
+			font-size: 48px;
+			margin: 10px 0;
+			background: var(--gradient);
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			font-weight: 800;
+		}
+		
+		.subtitle {
+			font-size: 18px;
+			color: var(--muted);
+			margin-top: 10px;
+		}
+		
+		.stats-bar {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 20px;
+			margin: 40px 0;
+		}
+		
+		.stat-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 20px;
+			text-align: center;
+			transition: transform 0.3s, box-shadow 0.3s;
+		}
+		
+		.stat-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+		}
+		
+		.stat-value {
+			font-size: 32px;
+			font-weight: 700;
+			color: var(--accent);
+			margin: 10px 0;
+		}
+		
+		.stat-label {
+			font-size: 14px;
+			color: var(--muted);
+		}
+		
+		.apps-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 20px;
+			margin: 40px 0;
+		}
+		
+		.app-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			padding: 30px;
+			transition: all 0.3s;
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		.app-card::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 4px;
+			background: var(--gradient);
+			transform: scaleX(0);
+			transition: transform 0.3s;
+		}
+		
+		.app-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+			border-color: var(--accent);
+		}
+		
+		.app-card:hover::before {
+			transform: scaleX(1);
+		}
+		
+		.app-icon {
+			font-size: 48px;
+			margin-bottom: 15px;
+		}
+		
+		.app-title {
+			font-size: 24px;
+			margin-bottom: 10px;
+			color: var(--text);
+		}
+		
+		.app-description {
+			font-size: 14px;
+			color: var(--muted);
+			margin-bottom: 20px;
+			line-height: 1.6;
+		}
+		
+		.app-features {
+			list-style: none;
+			margin: 15px 0;
+		}
+		
+		.app-features li {
+			font-size: 12px;
+			color: var(--muted);
+			margin: 5px 0;
+			padding-left: 20px;
+			position: relative;
+		}
+		
+		.app-features li::before {
+			content: '✓';
+			position: absolute;
+			left: 0;
+			color: var(--accent);
+		}
+		
+		.btn {
+			display: inline-block;
+			padding: 12px 24px;
+			background: var(--accent);
+			color: #00110b;
+			border: none;
+			border-radius: 8px;
+			font-weight: 600;
+			cursor: pointer;
+			text-decoration: none;
+			transition: all 0.3s;
+			margin-top: 10px;
+		}
+		
+		.btn:hover {
+			background: #059669;
+			transform: scale(1.05);
+		}
+		
+		.btn.secondary {
+			background: transparent;
+			color: var(--text);
+			border: 1px solid var(--border);
+		}
+		
+		.btn.secondary:hover {
+			background: var(--card);
+			border-color: var(--accent);
+		}
+		
+		.sync-status {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 15px 20px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			display: none;
+		}
+		
+		.sync-status.active {
+			display: block;
+			animation: slideIn 0.3s;
+		}
+		
+		@keyframes slideIn {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+		
+		.footer {
+			text-align: center;
+			padding: 40px 20px;
+			margin-top: 60px;
+			border-top: 1px solid var(--border);
+			color: var(--muted);
+			font-size: 12px;
+		}
+		
+		@media (max-width: 768px) {
+			h1 {
+				font-size: 32px;
+			}
+			
+			.apps-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+	<div class="background-animation"></div>
+	
+	<div class="container">
+		<header>
+			<div class="brand">[.SYSTEMS.T.SYSTEMS.] TogetherSystems International</div>
+			<h1>CASHFLOX Hub</h1>
+			<div class="subtitle">Alle Apps in einem System • Universell • Plattformübergreifend</div>
+		</header>
+		
+		<div class="stats-bar">
+			<div class="stat-card">
+				<div class="stat-value" id="statApps">5</div>
+				<div class="stat-label">Apps integriert</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-value" id="statSync">✓</div>
+				<div class="stat-label">Automatische Synchronisation</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-value" id="statPlatforms">∞</div>
+				<div class="stat-label">Alle Plattformen</div>
+			</div>
+		</div>
+		
+		<div class="apps-grid">
+			<div class="app-card" onclick="openApp('kassenbuch')">
+				<div class="app-icon">📖</div>
+				<div class="app-title">Kassenbuch</div>
+				<div class="app-description">Eigenständiges Kassenbuch mit automatischer Synchronisation</div>
+				<ul class="app-features">
+					<li>CSV/Text Import</li>
+					<li>JSON Export</li>
+					<li>Automatische Kategorisierung</li>
+					<li>Statistiken & Analysen</li>
+				</ul>
+				<button class="btn">Öffnen</button>
+			</div>
+			
+			<div class="app-card" onclick="openApp('budget')">
+				<div class="app-icon">💰</div>
+				<div class="app-title">Budget</div>
+				<div class="app-description">DaVinci Budget Sphere - 4D Haushaltsbilanz</div>
+				<ul class="app-features">
+					<li>3D Visualisierung</li>
+					<li>Spiral-Animation</li>
+					<li>Monatsbudget-Planung</li>
+					<li>Automatische Synchronisation</li>
+				</ul>
+				<button class="btn">Öffnen</button>
+			</div>
+			
+			<div class="app-card" onclick="openApp('contract')">
+				<div class="app-icon">📄</div>
+				<div class="app-title">Contract</div>
+				<div class="app-description">UniverseAllEnterprises Budget & Statement System</div>
+				<ul class="app-features">
+					<li>Vertragsverwaltung</li>
+					<li>Dokumenten-Management</li>
+					<li>Multi-Language Support</li>
+					<li>Export-Funktionen</li>
+				</ul>
+				<button class="btn">Öffnen</button>
+			</div>
+			
+			<div class="app-card" onclick="openApp('flowcashx')">
+				<div class="app-icon">💸</div>
+				<div class="app-title">Flowcashx</div>
+				<div class="app-description">Haushalts- & Bilanzsystem mit Canvas-Engine</div>
+				<ul class="app-features">
+					<li>CSV/JSON Import</li>
+					<li>Canvas-Visualisierung</li>
+					<li>Zero-Input-Modus</li>
+					<li>Automatische Datenverarbeitung</li>
+				</ul>
+				<button class="btn">Öffnen</button>
+			</div>
+			
+			<div class="app-card" onclick="openApp('uae')">
+				<div class="app-icon">🌐</div>
+				<div class="app-title">UAE / Chflox</div>
+				<div class="app-description">Budget-, Bilanz- & Haushaltsplaner (Canvas-Modul)</div>
+				<ul class="app-features">
+					<li>Canvas-Modul</li>
+					<li>DaVinci-Integration</li>
+					<li>Budget-Planung</li>
+					<li>Timeline-Visualisierung</li>
+				</ul>
+				<button class="btn">Öffnen</button>
+			</div>
+		</div>
+		
+		<div class="footer">
+			<div>[.SYSTEMS.T.SYSTEMS.] TogetherSystems International TTT</div>
+			<div style="margin-top: 10px;">BRANÐ: TTT.T,.3T | Kennung: [.T.4T.]</div>
+			<div style="margin-top: 10px; font-size: 11px;">
+				Universell • Auditierbar • Transparent • Menschlich
+			</div>
+		</div>
+	</div>
+	
+	<div class="sync-status" id="syncStatus">
+		<div style="font-weight: 600; margin-bottom: 5px;">🔄 Synchronisation</div>
+		<div style="font-size: 12px; color: var(--muted);" id="syncMessage">Alle Apps synchronisiert</div>
+	</div>
+	
+	<script src="../KASSENBUCH-COMMUNICATION-LAYER.js"></script>
+	<script>
+		// [.SYSTEMS.T.SYSTEMS.] CASHFLOX HUB - Zentrale Steuerung
+		
+		const APP_PATHS = {
+			kassenbuch: '../Kassenbuch/kassenbuch.html',
+			budget: '../budget.html',
+			contract: '../contract.html',
+			flowcashx: '../FLOCASHX.HTML',
+			uae: '../chflox.html'
+		};
+		
+		function openApp(appName) {
+			try {
+				const path = APP_PATHS[appName];
+				if (!path) {
+					console.error('[FABRIKAGE] App nicht gefunden:', appName);
+					alert('App nicht gefunden: ' + appName);
+					return;
+				}
+				
+				// Öffne in neuem Tab/Fenster
+				window.open(path, '_blank');
+				
+				// Oder im selben Fenster (für Electron/Desktop)
+				// window.location.href = path;
+				
+				console.log('[FABRIKAGE] App geöffnet:', appName);
+			} catch(e) {
+				console.error('[FABRIKAGE] openApp error:', e);
+				alert('Fehler beim Öffnen der App: ' + e.message);
+			}
+		}
+		
+		// Synchronisations-Status anzeigen
+		function showSyncStatus(message) {
+			const statusEl = document.getElementById('syncStatus');
+			const messageEl = document.getElementById('syncMessage');
+			
+			if (statusEl && messageEl) {
+				messageEl.textContent = message;
+				statusEl.classList.add('active');
+				
+				setTimeout(() => {
+					statusEl.classList.remove('active');
+				}, 3000);
+			}
+		}
+		
+		// Initialisierung
+		document.addEventListener('DOMContentLoaded', () => {
+			console.log('[FABRIKAGE] CASHFLOX Hub geladen');
+			console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+			
+			// Prüfe Kommunikations-Layer
+			if (window.cashflowHub) {
+				console.log('[FABRIKAGE] Kommunikations-Layer aktiv');
+				showSyncStatus('Kommunikations-Layer aktiv');
+			} else {
+				console.warn('[FABRIKAGE] Kommunikations-Layer nicht gefunden');
+			}
+			
+			// Keyboard Shortcuts
+			document.addEventListener('keydown', (e) => {
+				// Strg/Cmd + 1-5 für Apps
+				if ((e.ctrlKey || e.metaKey) && e.key >= '1' && e.key <= '5') {
+					const apps = ['kassenbuch', 'budget', 'contract', 'flowcashx', 'uae'];
+					const index = parseInt(e.key) - 1;
+					if (apps[index]) {
+						e.preventDefault();
+						openApp(apps[index]);
+					}
+				}
+			});
+		});
+		
+		// Event-Listener für Synchronisation
+		window.addEventListener('cashflow:dataChanged', () => {
+			showSyncStatus('Daten synchronisiert');
+		});
+		
+		// Service Worker für PWA (falls verfügbar)
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/sw.js').catch(() => {
+				// Service Worker optional
+			});
+		}
+	</script>
+</body>
+</html>

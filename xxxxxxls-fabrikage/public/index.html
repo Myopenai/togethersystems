@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XXXXXXLS Fabrikage — Dimensionless Modular Factory · TogetherSystems</title>
+  <link rel="stylesheet" href="/assets/ultra.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="logo"><span class="brand">.XLS.</span> XXXXXXLS Fabrikage</div>
+      <div>
+        <button class="btn" onclick="location.href='/apps/node.html'">Node-Editor</button>
+        <button class="btn" onclick="location.href='/apps/bubble.html'">Bubble-Scene</button>
+        <button class="btn btn-primary" onclick="location.href='/downloads/'">Downloads</button>
+      </div>
+    </header>
+    
+    <aside class="sidenav">
+      <nav class="nav">
+        <div class="nav-label">Navigation</div>
+        <a href="#dashboard" class="active" onclick="showSection('dashboard')">Dashboard</a>
+        <a href="#nodes" onclick="showSection('nodes')">Knoten</a>
+        <a href="#links" onclick="showSection('links')">Verbindungen</a>
+        <a href="#energy" onclick="showSection('energy')">Energie</a>
+        <a href="#events" onclick="showSection('events')">Events</a>
+        <a href="#universal" onclick="showSection('universal')">Universal-Layer</a>
+      </nav>
+    </aside>
+    
+    <main class="main">
+      <section id="dashboard" class="section">
+        <div class="kpi">
+          <div class="card">
+            <div class="small">Gesamtenergie</div>
+            <strong id="kpi-energy">—</strong>
+          </div>
+          <div class="card">
+            <div class="small">Knoten</div>
+            <strong id="kpi-nodes">—</strong>
+          </div>
+          <div class="card">
+            <div class="small">Links</div>
+            <strong id="kpi-links">—</strong>
+          </div>
+          <div class="card">
+            <div class="small">Events</div>
+            <strong id="kpi-events">—</strong>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h2>System Status</h2>
+          <p class="small">XXXXXXLS Fabrikage - Dimensionless, infinite, absolute production architecture</p>
+          <p class="small" style="margin-top: 8px;">Status: <span style="color: var(--accent);">🟢 OPERATIONAL</span></p>
+        </div>
+      </section>
+      
+      <section id="nodes" class="section" style="display:none;">
+        <div class="grid grid-2">
+          <article class="card">
+            <h2>Knoten</h2>
+            <table class="table" id="nodes-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Level</th>
+                  <th>Ports</th>
+                  <th>Holo</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </article>
+          <article class="card">
+            <h2>Knoten · Verteilung</h2>
+            <canvas id="chart-nodes"></canvas>
+          </article>
+        </div>
+      </section>
+      
+      <section id="links" class="section" style="display:none;">
+        <div class="grid grid-2">
+          <article class="card">
+            <h2>Verbindungen</h2>
+            <table class="table" id="links-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Von</th>
+                  <th>Nach</th>
+                  <th>Typ</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </article>
+          <article class="card">
+            <h2>Topologie · Bar</h2>
+            <canvas id="chart-links"></canvas>
+          </article>
+        </div>
+      </section>
+      
+      <section id="energy" class="section" style="display:none;">
+        <div class="grid grid-2">
+          <article class="card">
+            <h2>Energie Ledger</h2>
+            <pre id="energy-ledger" style="max-height:240px;overflow:auto"></pre>
+          </article>
+          <article class="card">
+            <h2>Energie · Gauge</h2>
+            <div class="gauge" id="gauge" style="--p:64%"></div>
+            <div class="small" style="text-align:center;margin-top:8px;">Leistungsgrad (Demo)</div>
+          </article>
+        </div>
+      </section>
+      
+      <section id="events" class="section" style="display:none;">
+        <div class="grid grid-2">
+          <article class="card">
+            <h2>Events</h2>
+            <pre id="events-out" style="max-height:240px;overflow:auto"></pre>
+          </article>
+          <article class="card">
+            <h2>Universal-Layer</h2>
+            <pre id="layers-out" style="max-height:240px;overflow:auto"></pre>
+          </article>
+        </div>
+      </section>
+      
+      <section id="universal" class="section" style="display:none;">
+        <div class="card">
+          <h2>Aktion: Morph</h2>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <input id="m-action" value="replicate" class="btn" style="width:160px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);">
+            <input id="m-target" value="N-PLANT-A" class="btn" style="width:160px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);">
+            <button class="btn btn-primary" onclick="doMorph()">Ausführen</button>
+          </div>
+          <pre id="morph-out" style="margin-top:12px;max-height:220px;overflow:auto"></pre>
+        </div>
+      </section>
+      
+      <section class="card" style="margin-top:24px;">
+        <h2>Links</h2>
+        <ul>
+          <li><a href="/apps/node.html">Node-Editor</a> - Interaktiver Graph-Editor</li>
+          <li><a href="/apps/bubble.html">Bubble-Hydrosphäre Szene</a> - Visuelle Bubble-Scene</li>
+          <li><a href="/downloads/">Downloads</a> - Artifacts & Dokumentation</li>
+          <li><a href="/api/health">/api/health</a> - System Health Check</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  
+  <script>
+    async function q(u) {
+      try {
+        const r = await fetch(u);
+        return r.ok ? await r.json() : null;
+      } catch (e) {
+        console.error('Fetch error:', e);
+        return null;
+      }
+    }
+    
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+    
+    let chartNodes = null;
+    let chartLinks = null;
+    
+    (async function init() {
+      const nodes = await q('/api/nodes') || [];
+      const links = await q('/api/links') || [];
+      const events = await q('/api/events') || [];
+      const energy = await q('/api/energy-ledger') || { sources: [], sinks: [] };
+      const layers = await q('/api/universal/layers') || { layers: [] };
+      
+      // KPIs
+      document.getElementById('kpi-nodes').textContent = nodes.length;
+      document.getElementById('kpi-links').textContent = links.length;
+      document.getElementById('kpi-events').textContent = events.length;
+      const totalMW = (energy.sources || []).reduce((s, x) => s + (x.mw || 0), 0);
+      document.getElementById('kpi-energy').textContent = Intl.NumberFormat('de-DE').format(totalMW) + " MW";
+      
+      // Nodes Table
+      document.querySelector('#nodes-table tbody').innerHTML = nodes.map(n => 
+        `<tr><td>${n.id}</td><td>${n.level}</td><td>${(n.ports || []).join(', ')}</td><td>${n.holoState}</td></tr>`
+      ).join('');
+      
+      // Nodes Chart
+      const ctxNodes = document.getElementById('chart-nodes');
+      if (ctxNodes && Chart) {
+        const levelCounts = {};
+        nodes.forEach(n => {
+          levelCounts[n.level] = (levelCounts[n.level] || 0) + 1;
+        });
+        chartNodes = new Chart(ctxNodes, {
+          type: 'pie',
+          data: {
+            labels: Object.keys(levelCounts),
+            datasets: [{
+              data: Object.values(levelCounts),
+              backgroundColor: [
+                'rgba(57, 208, 255, 0.8)',
+                'rgba(255, 107, 203, 0.8)',
+                'rgba(74, 222, 128, 0.8)',
+                'rgba(251, 191, 36, 0.8)',
+                'rgba(139, 92, 246, 0.8)'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                labels: { color: '#e9ecff' }
+              }
+            }
+          }
+        });
+      }
+      
+      // Links Table
+      document.querySelector('#links-table tbody').innerHTML = links.map(l => 
+        `<tr><td>${l.id}</td><td>${l.from}</td><td>${l.to}</td><td>${l.type}</td></tr>`
+      ).join('');
+      
+      // Links Chart
+      const ctxLinks = document.getElementById('chart-links');
+      if (ctxLinks && Chart) {
+        const linkTypes = Array.from(new Set(links.map(l => l.type)));
+        const counts = linkTypes.map(t => links.filter(l => l.type === t).length);
+        chartLinks = new Chart(ctxLinks, {
+          type: 'bar',
+          data: {
+            labels: linkTypes,
+            datasets: [{
+              label: 'Anzahl',
+              data: counts,
+              backgroundColor: 'rgba(57, 208, 255, 0.8)'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: { display: false },
+              legend: {
+                labels: { color: '#e9ecff' }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { color: '#e9ecff' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              },
+              x: {
+                ticks: { color: '#e9ecff' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+              }
+            }
+          }
+        });
+      }
+      
+      // Energy Ledger
+      document.getElementById('energy-ledger').textContent = JSON.stringify(energy, null, 2);
+      
+      // Events
+      document.getElementById('events-out').textContent = JSON.stringify(events, null, 2);
+      
+      // Layers
+      document.getElementById('layers-out').textContent = JSON.stringify(layers, null, 2);
+    })();
+    
+    async function doMorph() {
+      const result = await fetch('/api/morph', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: document.getElementById('m-action').value,
+          target: document.getElementById('m-target').value
+        })
+      }).then(r => r.json()).catch(() => ({ ok: false, error: 'Request failed' }));
+      
+      document.getElementById('morph-out').textContent = JSON.stringify(result, null, 2);
+    }
+  </script>
+</body>
+</html>
+
+
+

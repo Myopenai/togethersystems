@@ -1,0 +1,91 @@
+# Fabrikation Standard TÜV MCP
+# Source Maps System - Automatische Fabrikation
+
+version: "1.0.0"
+name: "source-maps-fabrikation"
+standard: "TÜV MCP"
+autoFix: true
+autoSolve: true
+ongoing: true
+
+fabrikation:
+  rules:
+    - name: "Source Maps müssen generiert werden"
+      check: "source-maps/*.map"
+      action: "auto-generate"
+      ongoing: true
+    
+    - name: "Source Mapping URL muss vorhanden sein"
+      check: "dist/*.js"
+      action: "auto-add-comment"
+      ongoing: true
+    
+    - name: "CORS Headers müssen gesetzt sein"
+      check: "source-maps/.htaccess"
+      action: "auto-create-headers"
+      ongoing: true
+    
+    - name: "Source Maps müssen erreichbar sein"
+      check: "source-maps/index.html"
+      action: "auto-create-index"
+      ongoing: true
+
+build:
+  tools:
+    - webpack
+    - vite
+    - esbuild
+    - rollup
+  
+  sourceMaps:
+    enabled: true
+    inline: false
+    sourceRoot: "/source-maps"
+    publicPath: "/source-maps"
+
+hosting:
+  local:
+    enabled: true
+    path: "./source-maps"
+    url: "http://localhost:9323/source-maps"
+    ongoing: true
+  
+  cursa:
+    enabled: true
+    path: "./source-maps"
+    url: "https://cursa.com/your-project/source-maps"
+    ongoing: true
+  
+  webserver:
+    enabled: true
+    path: "./source-maps"
+    url: "https://tel1.nl/source-maps"
+    ongoing: true
+
+mcp:
+  server: "fabrikation-centrale"
+  autoSync: true
+  ongoing: true
+
+cursor:
+  enabled: true
+  autoDetect: true
+  ongoing: true
+
+devTools:
+  edge: true
+  chrome: true
+  firefox: false
+  autoDetect: true
+  ongoing: true
+
+autoFix:
+  enabled: true
+  interval: "on-change"
+  checks:
+    - source-maps-directory
+    - source-mapping-urls
+    - cors-headers
+    - hosting-availability
+  ongoing: true
+

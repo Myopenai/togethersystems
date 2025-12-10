@@ -1,0 +1,48 @@
+# Fabrikage PDF Processor
+
+Redact text across a PDF (e.g., “6544 WS”, “NIJMEGEN”), add a Fabrikage header/logo, and stamp metadata + report.
+
+Requirements (Windows/PowerShell 7):
+
+```powershell
+python --version
+pip install -r tools/pdf/requirements.txt
+```
+
+Usage:
+
+```powershell
+# Example: replace the file name below with your RABO PDF path
+$in  = "D:\path\RA_A_NL42RABO0157848272_EUR_20250101_20251204.pdf"
+$out = "D:\path\RA_A_NL42RABO0157848272_EUR_20250101_20251204.FABRIKAGE.pdf"
+
+python tools/pdf/fabrikage_pdf.py `
+  --input  $in `
+  --output $out `
+  --config "config/fabrikage_pdf.config.json"
+```
+
+One‑shot (installs Python 3.12 if needed, creates venv, installs deps, runs tool):
+
+```powershell
+.\tools\pdf\run_fabrikage_pdf.ps1 `
+  -Input  "D:\path\RA_A_NL42RABO0157848272_EUR_20250101_20251204.pdf" `
+  -Output "D:\path\RA_A_NL42RABO0157848272_EUR_20250101_20251204.FABRIKAGE.pdf"
+```
+
+Results:
+- Output PDF with removed text fragments and Fabrikage header.
+- Side-car JSON report: same name as output with `.report.json`, including SHA-256 and stamp.
+
+Notes:
+- Configure patterns and header in `config/fabrikage_pdf.config.json`.
+- To use a custom logo image, set `"logo.path"` to an existing image path (PNG recommended).
+- The tool preserves original content; redaction is done via overlay redactions.
+```json
+{
+  "remove_text_patterns": ["6544 WS", "NIJMEGEN"],
+  "header": { "enabled": true, "label": "FABRIKAGE — TogetherSystems" }
+}
+```
+
+

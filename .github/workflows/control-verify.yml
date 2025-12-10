@@ -1,0 +1,33 @@
+name: Control Verify
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+  schedule:
+    - cron: '*/10 * * * *' # alle 10 Minuten
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install
+        run: npm ci
+      
+      - name: Readiness Gates
+        run: bash control/ready.sh
+      
+      - name: Synthetic Probes
+        run: node control/probes.ts
+      
+      - name: Generate Evidence
+        run: node ci/orchestrator/generate-evidence.js

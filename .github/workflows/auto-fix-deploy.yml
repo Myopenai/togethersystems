@@ -1,0 +1,74 @@
+name: Auto-Fix Deploy
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  verify_and_fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install
+        run: npm ci
+      
+      - name: Fast Gates + Auto-Fix
+        run: |
+          node ci/verifier-mesh/run-gate.js --gate=formatting --autofix=true
+          node ci/verifier-mesh/run-gate.js --gate=lint --autofix=true
+          node ci/verifier-mesh/run-gate.js --gate=types
+          node js/error-fix-system.js --apply --patterns=settings/error-patterns.json
+      
+      - name: Commit Auto-Fixes (if changes)
+        run: |
+          git config user.name "Fabrikage Bot"
+          git config user.email "bot@together.systems"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "auto-fix: apply patterns + gates"
+            git push
+          fi
+      
+      - name: Full Gates
+        run: |
+          node ci/spec-mirror/generate-graphs.js
+          node ci/verifier-mesh/run-gate.js --gate=unit --min-lines=80 --min-branches=70
+          node ci/verifier-mesh/run-gate.js --gate=integration --min-lines=80
+          node ci/verifier-mesh/run-gate.js --gate=property
+          node ci/verifier-mesh/run-gate.js --gate=mutation --min-score=70
+          node ci/verifier-mesh/run-gate.js --gate=contracts
+          node ci/verifier-mesh/run-gate.js --gate=security
+          node ci/verifier-mesh/run-gate.js --gate=build
+      
+      - name: Mirror Store (green only)
+        run: node ci/spec-mirror/store.js --source=./ --meta=3.0.0 --branding=".T. TogetherSystems - ModularFlux Architecture"
+      
+      - name: Evidence Pack
+        run: node ci/orchestrator/generate-evidence.js
+
+  canary_and_deploy:
+    needs: verify_and_fix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Canary Deploy
+        run: node ci/orchestrator/canary-deploy.js --percent=10
+      
+      - name: Monitor SLOs
+        run: node ci/orchestrator/monitor-slo.js --windowMin=5
+      
+      - name: Rollout or Rollback
+        run: node ci/orchestrator/decide-rollout.js

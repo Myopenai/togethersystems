@@ -1,0 +1,22 @@
+meta:
+  name: "UAE Fabrikage"
+  version: "1.0.0"
+  description: "A-Start manifest for automated PDF redaction/stamping pipeline"
+
+inputs:
+  # Search for the RABO statement PDF; adjust or add more entries as needed
+  - id: bank_statement_pdf
+    pattern: "RA_A_*.pdf"
+    search_roots:
+      - "C:\\Users\\Gebruiker\\Documents\\01db.com"
+      - "D:\\"
+
+pipeline:
+  - id: redact_and_stamp
+    type: pdf_redaction
+    tool: "tools\\pdf\\run_fabrikage.ps1"
+    config: "config\\fabrikage_pdf.config.json"
+    output_suffix: ".FABRIKAGE.pdf"
+    report_suffix: ".FABRIKAGE.report.json"
+
+

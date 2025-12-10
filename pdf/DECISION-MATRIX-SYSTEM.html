@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[.SYSTEMS.T.SYSTEMS.] Decision Matrix System</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #0b1020;
+      color: #e5e7eb;
+    }
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #020617;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      font-size: 20px;
+      margin: 0 0 8px;
+      color: #a5b4fc;
+      letter-spacing: 0.05em;
+    }
+    .brand {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-bottom: 15px;
+    }
+    .brand a {
+      color: #a5b4fc;
+      text-decoration: none;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #1f2937;
+    }
+    .tab {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      color: #a5b4fc;
+      border-bottom-color: #a5b4fc;
+    }
+    .tab:hover {
+      color: #e5e7eb;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .panel {
+      background: radial-gradient(circle at top left, #111827, #020617);
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 15px;
+    }
+    .panel h2 {
+      font-size: 14px;
+      margin: 0 0 12px;
+      color: #bfdbfe;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 8px;
+    }
+    .field {
+      margin-bottom: 12px;
+    }
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .field select,
+    .field input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px 10px;
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      color: #e5e7eb;
+      font-size: 12px;
+    }
+    .field select:focus,
+    .field input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
+    }
+    .result {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border: 2px solid #6366f1;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .result h3 {
+      font-size: 16px;
+      color: #a5b4fc;
+      margin: 0 0 10px;
+    }
+    .result-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4ade80;
+      margin: 10px 0;
+    }
+    .result-details {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 11px;
+    }
+    table th {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #374151;
+    }
+    table td {
+      padding: 8px;
+      border: 1px solid #1f2937;
+      color: #e5e7eb;
+    }
+    table tr:nth-child(even) {
+      background: rgba(31, 41, 55, 0.3);
+    }
+    .btn {
+      padding: 8px 16px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #4f46e5;
+    }
+    .btn-secondary {
+      background: #374151;
+    }
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+    .scoring-table {
+      margin: 15px 0;
+    }
+    .scoring-table input {
+      width: 80px;
+      text-align: center;
+    }
+    .flowchart {
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      min-height: 400px;
+      overflow-x: auto;
+    }
+    .flowchart-node {
+      background: #1f2937;
+      border: 2px solid #6366f1;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px;
+      display: inline-block;
+      min-width: 150px;
+      text-align: center;
+      color: #e5e7eb;
+      font-size: 12px;
+    }
+    .flowchart-node.start {
+      background: #065f46;
+      border-color: #10b981;
+    }
+    .flowchart-node.decision {
+      background: #7c2d12;
+      border-color: #f97316;
+    }
+    .flowchart-node.result {
+      background: #1e3a8a;
+      border-color: #3b82f6;
+    }
+    .flowchart-arrow {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 16px;
+      margin: 5px 0;
+    }
+    .rules-table {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .status {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin: 10px 0;
+    }
+    .status.success {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+    .status.warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid #f59e0b;
+    }
+    .status.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      color: #e5e7eb;
+      font-family: monospace;
+      font-size: 11px;
+      resize: vertical;
+      min-height: 100px;
+    }
+  </style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="page">
+    <h1>[.SYSTEMS.T.SYSTEMS.] Decision Matrix System</h1>
+    <div class="brand">
+      Entscheidungsmatrix · Regeltabellen · Flowchart · Scoring-Modell | 
+      <a href="https://tinyurl.com/BUGCOMPANY" target="_blank">Original</a> | 
+      TogetherSystems International TTT
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="input">Eingaben</button>
+      <button class="tab" data-tab="rules">Regeln</button>
+      <button class="tab" data-tab="scoring">Scoring</button>
+      <button class="tab" data-tab="flowchart">Flowchart</button>
+      <button class="tab" data-tab="export">Export</button>
+    </div>
+
+    <!-- Tab: Eingaben -->
+    <div class="tab-content active" id="tab-input">
+      <div class="grid">
+        <div class="panel">
+          <h2>Parameter A – Struktur / Kontext</h2>
+          <div class="field">
+            <label>Kundentyp</label>
+            <select id="customerType">
+              <option value="">-- Bitte wählen --</option>
+              <option value="Neu">Neu</option>
+              <option value="Bestandskunde">Bestandskunde</option>
+              <option value="VIP">VIP</option>
+              <option value="Partner">Partner</option>
+              <option value="Reseller">Reseller</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Produkt</label>
+            <select id="product">
+              <option value="">-- Bitte wählen --</option>
+              <option value="Standard">Standard</option>
+              <option value="Premium">Premium</option>
+              <option value="SaaS">SaaS</option>
+              <option value="Hardware">Hardware</option>
+              <option value="Service">Service</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Land</label>
+            <select id="country">
+              <option value="">-- Bitte wählen --</option>
+              <option value="DE">DE</option>
+              <option value="AT">AT</option>
+              <option value="CH">CH</option>
+              <option value="NL">NL</option>
+              <option value="EU">EU</option>
+              <option value="Non-EU">Non-EU</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="status">
+              <option value="">-- Bitte wählen --</option>
+              <option value="Aktiv">Aktiv</option>
+              <option value="Inaktiv">Inaktiv</option>
+              <option value="Gesperrt">Gesperrt</option>
+              <option value="Testkunde">Testkunde</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Parameter B – Werte / Mengen</h2>
+          <div class="field">
+            <label>Umsatzhöhe (€)</label>
+            <input type="number" id="revenue" value="0" step="1000">
+          </div>
+          <div class="field">
+            <label>Menge / Stückzahl</label>
+            <input type="number" id="quantity" value="0" step="1">
+          </div>
+          <div class="field">
+            <label>Score (0-100)</label>
+            <input type="number" id="score" value="0" min="0" max="100" step="1">
+          </div>
+          <div class="field">
+            <label>Rabattklasse (%)</label>
+            <select id="discount">
+              <option value="0">0%</option>
+              <option value="5">5%</option>
+              <option value="10">10%</option>
+              <option value="20">20%</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Parameter C – Zeit / Priorität</h2>
+          <div class="field">
+            <label>Vertragsbeginn</label>
+            <input type="date" id="contractStart">
+          </div>
+          <div class="field">
+            <label>Laufzeit (Monate)</label>
+            <input type="number" id="duration" value="0" step="1">
+          </div>
+          <div class="field">
+            <label>Priorität</label>
+            <select id="priority">
+              <option value="">-- Bitte wählen --</option>
+              <option value="Hoch">Hoch</option>
+              <option value="Mittel">Mittel</option>
+              <option value="Niedrig">Niedrig</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Phase</label>
+            <select id="phase">
+              <option value="">-- Bitte wählen --</option>
+              <option value="Onboarding">Onboarding</option>
+              <option value="Betrieb">Betrieb</option>
+              <option value="Kündigung">Kündigung</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        <h3>Ergebnis</h3>
+        <div class="result-value" id="resultValue">--</div>
+        <div class="result-details" id="resultDetails"></div>
+      </div>
+
+      <div style="text-align: center; margin: 20px 0;">
+        <button class="btn" onclick="calculate()">Berechnen</button>
+        <button class="btn btn-secondary" onclick="reset()">Zurücksetzen</button>
+      </div>
+    </div>
+
+    <!-- Tab: Regeln -->
+    <div class="tab-content" id="tab-rules">
+      <div class="panel">
+        <h2>Regeltabelle</h2>
+        <div class="rules-table">
+          <table id="rulesTable">
+            <thead>
+              <tr>
+                <th>Regel-ID</th>
+                <th>Kundentyp</th>
+                <th>Umsatz ≥</th>
+                <th>Land</th>
+                <th>Priorität</th>
+                <th>Ergebnis</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="rulesBody">
+            </tbody>
+          </table>
+        </div>
+        <button class="btn" onclick="addRule()" style="margin-top: 10px;">Neue Regel hinzufügen</button>
+      </div>
+    </div>
+
+    <!-- Tab: Scoring -->
+    <div class="tab-content" id="tab-scoring">
+      <div class="panel">
+        <h2>Scoring-Modell</h2>
+        <table class="scoring-table">
+          <thead>
+            <tr>
+              <th>Kriterium</th>
+              <th>Gewicht</th>
+              <th>Wert (Input)</th>
+              <th>Punkte</th>
+              <th>Berechnet</th>
+            </tr>
+          </thead>
+          <tbody id="scoringBody">
+            <tr>
+              <td>Kundentyp</td>
+              <td><input type="number" id="weight1" value="3" min="0" max="10"></td>
+              <td id="value1">--</td>
+              <td id="points1">0</td>
+              <td id="calc1">0</td>
+            </tr>
+            <tr>
+              <td>Umsatzklasse</td>
+              <td><input type="number" id="weight2" value="2" min="0" max="10"></td>
+              <td id="value2">--</td>
+              <td id="points2">0</td>
+              <td id="calc2">0</td>
+            </tr>
+            <tr>
+              <td>Land-Risiko</td>
+              <td><input type="number" id="weight3" value="1" min="0" max="10"></td>
+              <td id="value3">--</td>
+              <td id="points3">0</td>
+              <td id="calc3">0</td>
+            </tr>
+            <tr>
+              <td>Priorität</td>
+              <td><input type="number" id="weight4" value="1" min="0" max="10"></td>
+              <td id="value4">--</td>
+              <td id="points4">0</td>
+              <td id="calc4">0</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr style="background: #1f2937; font-weight: bold;">
+              <td>Gesamtpunkte</td>
+              <td colspan="3"></td>
+              <td id="totalScore">0</td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="result" style="margin-top: 20px;">
+          <h3>Scoring-Ergebnis</h3>
+          <div class="result-value" id="scoringResult">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Flowchart -->
+    <div class="tab-content" id="tab-flowchart">
+      <div class="panel">
+        <h2>Flowchart-Visualisierung</h2>
+        <div class="flowchart" id="flowchart">
+          <!-- Wird dynamisch generiert -->
+        </div>
+        <button class="btn" onclick="updateFlowchart()">Flowchart aktualisieren</button>
+      </div>
+    </div>
+
+    <!-- Tab: Export -->
+    <div class="tab-content" id="tab-export">
+      <div class="panel">
+        <h2>Export</h2>
+        <div class="field">
+          <label>JSON Export</label>
+          <textarea id="jsonExport" readonly></textarea>
+        </div>
+        <button class="btn" onclick="exportJSON()">Als JSON speichern</button>
+        <button class="btn btn-secondary" onclick="exportCSV()" style="margin-left: 10px;">Als CSV speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // ROBUSTE VALIDIERUNGS-FUNKTIONEN
+    // (aus Budget & Statement System übernommen)
+    // ============================================
+    
+    // Formel-Validierung & Auto-Fix
+    function validateFormula(value, min = 0, max = Infinity, defaultValue = 0) {
+      const num = parseFloat(value);
+      if (!isFinite(num) || isNaN(num)) return defaultValue;
+      return Math.max(min, Math.min(max, num));
+    }
+
+    function safeDivide(numerator, denominator, defaultValue = 0) {
+      if (!isFinite(numerator) || !isFinite(denominator) || denominator === 0 || isNaN(numerator) || isNaN(denominator)) {
+        return defaultValue;
+      }
+      return numerator / denominator;
+    }
+
+    function safeParseInt(value, defaultValue = 0) {
+      const num = parseInt(value);
+      if (!isFinite(num) || isNaN(num)) return defaultValue;
+      return num;
+    }
+
+    function safeParseFloat(value, defaultValue = 0) {
+      const num = parseFloat(value);
+      if (!isFinite(num) || isNaN(num)) return defaultValue;
+      return num;
+    }
+
+    // ============================================
+    // REGELN & SCORING
+    // ============================================
+    
+    // Regeln speichern
+    let rules = [
+      { id: 'R1', customerType: '*', revenueMin: 0, country: '*', priority: '*', result: 'Standard' },
+      { id: 'R2', customerType: 'Bestandskunde', revenueMin: 10000, country: 'DE', priority: '*', result: 'Premium' },
+      { id: 'R3', customerType: 'VIP', revenueMin: 0, country: '*', priority: '*', result: 'VIP-Handling' },
+      { id: 'R4', customerType: '*', revenueMin: 50000, country: '*', priority: '*', result: 'Sonderfall' }
+    ];
+
+    // Scoring-Punkte
+    const scoringPoints = {
+      customerType: { 'Neu': 1, 'Bestandskunde': 2, 'VIP': 3, 'Partner': 2, 'Reseller': 1 },
+      revenueClass: { '<10k': 1, '10k-50k': 2, '>50k': 3 },
+      countryRisk: { 'DE': 1, 'AT': 1, 'CH': 1, 'NL': 1, 'EU': 2, 'Non-EU': 3 },
+      priority: { 'Niedrig': 1, 'Mittel': 2, 'Hoch': 3 }
+    };
+
+    // Tab-Switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        
+        if (tabName === 'rules') renderRules();
+        if (tabName === 'scoring') updateScoring();
+        if (tabName === 'flowchart') updateFlowchart();
+        if (tabName === 'export') updateExport();
+      });
+    });
+
+    // Eingaben überwachen
+    document.querySelectorAll('#tab-input select, #tab-input input').forEach(el => {
+      el.addEventListener('change', calculate);
+    });
+
+    // Regeln rendern
+    function renderRules() {
+      const tbody = document.getElementById('rulesBody');
+      tbody.innerHTML = rules.map((rule, idx) => `
+        <tr>
+          <td>${rule.id}</td>
+          <td><select onchange="updateRule(${idx}, 'customerType', this.value)">
+            <option value="*" ${rule.customerType === '*' ? 'selected' : ''}>*</option>
+            <option value="Neu" ${rule.customerType === 'Neu' ? 'selected' : ''}>Neu</option>
+            <option value="Bestandskunde" ${rule.customerType === 'Bestandskunde' ? 'selected' : ''}>Bestandskunde</option>
+            <option value="VIP" ${rule.customerType === 'VIP' ? 'selected' : ''}>VIP</option>
+            <option value="Partner" ${rule.customerType === 'Partner' ? 'selected' : ''}>Partner</option>
+            <option value="Reseller" ${rule.customerType === 'Reseller' ? 'selected' : ''}>Reseller</option>
+          </select></td>
+          <td><input type="number" value="${rule.revenueMin}" onchange="updateRule(${idx}, 'revenueMin', validateFormula(parseInt(this.value) || 0, 0, Infinity, 0))" style="width: 100px;"></td>
+          <td><select onchange="updateRule(${idx}, 'country', this.value)">
+            <option value="*" ${rule.country === '*' ? 'selected' : ''}>*</option>
+            <option value="DE" ${rule.country === 'DE' ? 'selected' : ''}>DE</option>
+            <option value="AT" ${rule.country === 'AT' ? 'selected' : ''}>AT</option>
+            <option value="CH" ${rule.country === 'CH' ? 'selected' : ''}>CH</option>
+            <option value="NL" ${rule.country === 'NL' ? 'selected' : ''}>NL</option>
+            <option value="EU" ${rule.country === 'EU' ? 'selected' : ''}>EU</option>
+            <option value="Non-EU" ${rule.country === 'Non-EU' ? 'selected' : ''}>Non-EU</option>
+          </select></td>
+          <td><select onchange="updateRule(${idx}, 'priority', this.value)">
+            <option value="*" ${rule.priority === '*' ? 'selected' : ''}>*</option>
+            <option value="Hoch" ${rule.priority === 'Hoch' ? 'selected' : ''}>Hoch</option>
+            <option value="Mittel" ${rule.priority === 'Mittel' ? 'selected' : ''}>Mittel</option>
+            <option value="Niedrig" ${rule.priority === 'Niedrig' ? 'selected' : ''}>Niedrig</option>
+          </select></td>
+          <td><input type="text" value="${rule.result}" onchange="updateRule(${idx}, 'result', this.value)" style="width: 150px;"></td>
+          <td><button class="btn btn-secondary" onclick="deleteRule(${idx})" style="padding: 4px 8px; font-size: 10px;">Löschen</button></td>
+        </tr>
+      `;
+      }).join('');
+    }
+
+    function updateRule(idx, field, value) {
+      // Validierung für numerische Felder
+      if (field === 'revenueMin') {
+        rules[idx][field] = validateFormula(value, 0, Infinity, 0);
+      } else {
+        rules[idx][field] = value;
+      }
+      calculate();
+    }
+
+    function addRule() {
+      const newId = 'R' + (rules.length + 1);
+      rules.push({ id: newId, customerType: '*', revenueMin: 0, country: '*', priority: '*', result: 'Neue Regel' });
+      renderRules();
+    }
+
+    function deleteRule(idx) {
+      if (confirm('Regel wirklich löschen?')) {
+        rules.splice(idx, 1);
+        renderRules();
+      }
+    }
+
+    // Berechnung - KORRIGIERT mit robusten Validierungen
+    function calculate() {
+      const customerType = document.getElementById('customerType').value;
+      
+      // ROBUSTE Validierung aller numerischen Eingaben
+      const revenueRaw = document.getElementById('revenue').value;
+      const revenue = validateFormula(revenueRaw, 0, Infinity, 0);
+      
+      const country = document.getElementById('country').value;
+      const priority = document.getElementById('priority').value;
+
+      // Validierung: Regel-Matching nur wenn alle Werte gültig
+      let matchedRule = null;
+      for (const rule of rules) {
+        // Validierung der Regel-Werte
+        const ruleRevenueMin = validateFormula(rule.revenueMin, 0, Infinity, 0);
+        
+        const customerMatch = rule.customerType === '*' || rule.customerType === customerType;
+        const revenueMatch = isFinite(revenue) && isFinite(ruleRevenueMin) && revenue >= ruleRevenueMin;
+        const countryMatch = rule.country === '*' || rule.country === country;
+        const priorityMatch = rule.priority === '*' || rule.priority === priority;
+
+        if (customerMatch && revenueMatch && countryMatch && priorityMatch) {
+          matchedRule = rule;
+          break; // Erste passende Regel
+        }
+      }
+
+      // Validierung des Ergebnisses
+      const result = matchedRule ? matchedRule.result : 'Keine passende Regel';
+      document.getElementById('resultValue').textContent = result;
+      
+      // Sichere Formatierung für Details
+      const revenueFormatted = isFinite(revenue) ? revenue.toLocaleString('de-DE') : '0';
+      document.getElementById('resultDetails').textContent = matchedRule 
+        ? `Regel: ${matchedRule.id} | Kundentyp: ${customerType || '--'} | Umsatz: ${revenueFormatted}€ | Land: ${country || '--'}`
+        : 'Bitte Eingaben überprüfen';
+
+      // Scoring aktualisieren
+      updateScoring();
+    }
+
+    // Scoring - KORRIGIERT mit robusten Validierungen
+    function updateScoring() {
+      const customerType = document.getElementById('customerType').value;
+      
+      // ROBUSTE Validierung aller numerischen Eingaben
+      const revenueRaw = document.getElementById('revenue').value;
+      const revenue = validateFormula(revenueRaw, 0, Infinity, 0);
+      
+      const country = document.getElementById('country').value;
+      const priority = document.getElementById('priority').value;
+
+      // Punkte berechnen - mit Fallback auf 0
+      const points1 = scoringPoints.customerType[customerType] || 0;
+      const revenueClass = revenue < 10000 ? '<10k' : revenue < 50000 ? '10k-50k' : '>50k';
+      const points2 = scoringPoints.revenueClass[revenueClass] || 0;
+      const points3 = scoringPoints.countryRisk[country] || 0;
+      const points4 = scoringPoints.priority[priority] || 0;
+
+      // Gewichte - ROBUSTE Validierung
+      const weight1Raw = document.getElementById('weight1').value;
+      const weight2Raw = document.getElementById('weight2').value;
+      const weight3Raw = document.getElementById('weight3').value;
+      const weight4Raw = document.getElementById('weight4').value;
+      
+      const weight1 = validateFormula(weight1Raw, 0, 10, 0);
+      const weight2 = validateFormula(weight2Raw, 0, 10, 0);
+      const weight3 = validateFormula(weight3Raw, 0, 10, 0);
+      const weight4 = validateFormula(weight4Raw, 0, 10, 0);
+
+      // Berechnungen - mit Validierung
+      const calc1 = isFinite(weight1) && isFinite(points1) ? weight1 * points1 : 0;
+      const calc2 = isFinite(weight2) && isFinite(points2) ? weight2 * points2 : 0;
+      const calc3 = isFinite(weight3) && isFinite(points3) ? weight3 * points3 : 0;
+      const calc4 = isFinite(weight4) && isFinite(points4) ? weight4 * points4 : 0;
+
+      // Gesamt-Score - mit Validierung
+      const totalScore = isFinite(calc1) && isFinite(calc2) && isFinite(calc3) && isFinite(calc4)
+        ? calc1 + calc2 + calc3 + calc4
+        : 0;
+
+      // Anzeige aktualisieren
+      document.getElementById('value1').textContent = customerType || '--';
+      document.getElementById('value2').textContent = revenueClass || '--';
+      document.getElementById('value3').textContent = country || '--';
+      document.getElementById('value4').textContent = priority || '--';
+
+      document.getElementById('points1').textContent = points1;
+      document.getElementById('points2').textContent = points2;
+      document.getElementById('points3').textContent = points3;
+      document.getElementById('points4').textContent = points4;
+
+      document.getElementById('calc1').textContent = calc1;
+      document.getElementById('calc2').textContent = calc2;
+      document.getElementById('calc3').textContent = calc3;
+      document.getElementById('calc4').textContent = calc4;
+
+      // Validierung: Nur anzeigen wenn gültig
+      const totalScoreDisplay = isFinite(totalScore) && !isNaN(totalScore) ? totalScore : 0;
+      document.getElementById('totalScore').textContent = totalScoreDisplay;
+
+      // Ergebnis - mit Validierung
+      let scoringResult = 'Standard';
+      if (isFinite(totalScore) && !isNaN(totalScore)) {
+        if (totalScore >= 15) scoringResult = 'Top-Kunde';
+        else if (totalScore >= 10) scoringResult = 'Premium';
+        else if (totalScore >= 5) scoringResult = 'Mittel';
+      }
+
+      document.getElementById('scoringResult').textContent = scoringResult + ` (${totalScoreDisplay} Punkte)`;
+    }
+
+    // Flowchart - KORRIGIERT mit robusten Validierungen
+    function updateFlowchart() {
+      const flowchart = document.getElementById('flowchart');
+      const customerType = document.getElementById('customerType').value;
+      
+      // ROBUSTE Validierung
+      const revenueRaw = document.getElementById('revenue').value;
+      const revenue = validateFormula(revenueRaw, 0, Infinity, 0);
+      
+      const country = document.getElementById('country').value;
+
+      flowchart.innerHTML = `
+        <div style="text-align: center;">
+          <div class="flowchart-node start">Start<br>Eingaben</div>
+          <div class="flowchart-arrow">↓</div>
+          <div class="flowchart-node decision">Kundentyp = VIP?<br>${customerType || '--'}</div>
+          <div class="flowchart-arrow">↓</div>
+          ${customerType === 'VIP' ? 
+            '<div class="flowchart-node result">VIP-Handling</div>' :
+            `<div class="flowchart-node decision">Umsatz ≥ 50k?<br>${isFinite(revenue) ? revenue.toLocaleString('de-DE') : '0'}€</div>
+             <div class="flowchart-arrow">↓</div>
+             ${isFinite(revenue) && revenue >= 50000 ? 
+               '<div class="flowchart-node result">Sonderfall</div>' :
+               `<div class="flowchart-node decision">Bestand & DE & ≥10k?<br>${country || '--'}</div>
+                <div class="flowchart-arrow">↓</div>
+                ${customerType === 'Bestandskunde' && country === 'DE' && isFinite(revenue) && revenue >= 10000 ?
+                  '<div class="flowchart-node result">Premium</div>' :
+                  '<div class="flowchart-node result">Standard</div>'
+                }`
+             }`
+          }
+        </div>
+      `;
+    }
+
+    // Export
+    function updateExport() {
+      // ROBUSTE Validierung aller Werte für Export
+      const revenueRaw = document.getElementById('revenue').value;
+      const quantityRaw = document.getElementById('quantity').value;
+      const scoreRaw = document.getElementById('score').value;
+      const durationRaw = document.getElementById('duration').value;
+      
+      const data = {
+        timestamp: new Date().toISOString(),
+        inputs: {
+          customerType: document.getElementById('customerType').value,
+          product: document.getElementById('product').value,
+          country: document.getElementById('country').value,
+          status: document.getElementById('status').value,
+          revenue: validateFormula(revenueRaw, 0, Infinity, 0),
+          quantity: validateFormula(quantityRaw, 0, Infinity, 0),
+          score: validateFormula(scoreRaw, 0, 100, 0),
+          discount: document.getElementById('discount').value,
+          contractStart: document.getElementById('contractStart').value,
+          duration: validateFormula(durationRaw, 0, Infinity, 0),
+          priority: document.getElementById('priority').value,
+          phase: document.getElementById('phase').value
+        },
+        rules: rules,
+        result: document.getElementById('resultValue').textContent,
+        scoring: {
+          totalScore: document.getElementById('totalScore').textContent,
+          result: document.getElementById('scoringResult').textContent
+        }
+      };
+
+      document.getElementById('jsonExport').value = JSON.stringify(data, null, 2);
+    }
+
+    function exportJSON() {
+      updateExport();
+      const data = document.getElementById('jsonExport').value;
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'decision-matrix-' + new Date().toISOString().split('T')[0] + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportCSV() {
+      updateExport();
+      const data = JSON.parse(document.getElementById('jsonExport').value);
+      let csv = 'Parameter,Wert\n';
+      Object.entries(data.inputs).forEach(([key, value]) => {
+        csv += `${key},${value}\n`;
+      });
+      csv += '\nRegeln\n';
+      csv += 'ID,Kundentyp,UmsatzMin,Land,Priorität,Ergebnis\n';
+      data.rules.forEach(rule => {
+        csv += `${rule.id},${rule.customerType},${rule.revenueMin},${rule.country},${rule.priority},${rule.result}\n`;
+      });
+      csv += `\nErgebnis,${data.result}\n`;
+      csv += `Scoring,${data.scoring.result}\n`;
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'decision-matrix-' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function reset() {
+      document.querySelectorAll('#tab-input select, #tab-input input').forEach(el => {
+        if (el.type === 'number') el.value = 0;
+        else if (el.type === 'date') el.value = '';
+        else el.value = '';
+      });
+      calculate();
+    }
+
+    // Initialisierung
+    renderRules();
+    calculate();
+  </script>
+</body>
+</html>
+

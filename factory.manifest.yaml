@@ -1,179 +1,121 @@
-# ============================================================================
-# FACTORY MANIFEST - UNIFIED PRODUCTION CONTROL
-# TOGETHERSYSTEMS. INTERNATIONAL TTT
-# Industrielle Softwarefabrik - A-Start aus Ordner
-# ============================================================================
+# [.SYSTEMS.T.SYSTEMS.] Factory Manifest - Single Source of Truth
+# Console-Bypass Integration für maximalen Durchsatz
 
-version: "2.0.0"
-name: "TogetherSystems-Factory"
-codename: "TEL1-NL-V2.0.0-INFINITE"
+project: togethersystems
+version: 1.0.0
+brand: "[.SYSTEMS.T.SYSTEMS.]"
 
-# ============================================================================
-# FABRIKAGE-MODULE
-# ============================================================================
+modules:
+  - name: portal-start
+    language: html
+    path: "Portal – Start.html"
+    pipeline: [generate, build, test, package, publish]
+    dependencies: []
+    
+  - name: kassenbuch
+    language: html
+    path: "CASHFLOX/Kassenbuch/kassenbuch.html"
+    pipeline: [generate, build, test, package, publish]
+    dependencies: ["communication-layer"]
+    
+  - name: chflox
+    language: html
+    path: "CASHFLOX/chflox.html"
+    pipeline: [generate, build, test, package, publish]
+    dependencies: ["communication-layer", "ocr-pipeline"]
+    
+  - name: budget
+    language: html
+    path: "CASHFLOX/budget.html"
+    pipeline: [generate, build, test, package, publish]
+    dependencies: ["communication-layer"]
+    
+  - name: contract
+    language: html
+    path: "CASHFLOX/contract.html"
+    pipeline: [generate, build, test, package, publish]
+    dependencies: ["communication-layer"]
+    
+  - name: flowcashx
+    language: html
+    path: "CASHFLOX/FLOCASHX.HTML"
+    pipeline: [generate, build, test, package, publish]
+    dependencies: ["communication-layer"]
+    
+  - name: communication-layer
+    language: js
+    path: "CASHFLOX/KASSENBUCH-COMMUNICATION-LAYER.js"
+    pipeline: [generate, build, test, package]
+    dependencies: []
+    
+  - name: ocr-pipeline
+    language: js
+    runtime: cloudflare-pages
+    path: "cloudflare-pages-studiolive/functions/api/ocr"
+    pipeline: [generate, build, test, publish]
+    dependencies: []
+    
+  - name: api-voucher
+    language: js
+    runtime: cloudflare-pages
+    path: "cloudflare-pages-studiolive/functions/api/voucher"
+    pipeline: [generate, build, test, publish]
+    dependencies: []
+    
+  - name: robotics
+    language: js
+    runtime: cloudflare-pages
+    path: "cloudflare-pages-studiolive/functions/api/robotics"
+    pipeline: [generate, build, test, publish]
+    dependencies: []
 
-fabrikage:
-  coreProtocols:
-    path: "Fabrikage.CoreProtocols/"
-    manifest: "Fabrikage.CoreProtocols/manifest.yaml"
-    status: "PERMANENT-ACTIVE"
-    mandatory: true
-  
-  autoExecution:
-    path: "Fabrikage.AutoExecution/"
-    manifest: "Fabrikage.AutoExecution/manifest.yaml"
-    status: "PERMANENT-ACTIVE"
-    mandatory: true
-  
-  intelligenceMatrix:
-    path: "Fabrikage.IntelligenceMatrix/"
-    manifest: "Fabrikage.IntelligenceMatrix/manifest.yaml"
-    status: "PERMANENT-ACTIVE"
-    mandatory: true
-  
-  provenanceLedger:
-    path: "Fabrikage.ProvenanceLedger/"
-    manifest: "Fabrikage.ProvenanceLedger/manifest.yaml"
-    status: "PERMANENT-ACTIVE"
-    mandatory: true
-  
-  observabilityAtlas:
-    path: "Fabrikage.ObservabilityAtlas/"
-    manifest: "Fabrikage.ObservabilityAtlas/manifest.yaml"
-    status: "PERMANENT-ACTIVE"
-    mandatory: true
+policies:
+  retries:
+    default:
+      attempts: 3
+      backoff: exponential
+      maxDelayMs: 30000
+    ocr:
+      attempts: 2
+      backoff: linear
+      maxDelayMs: 10000
+    api:
+      attempts: 5
+      backoff: exponential
+      maxDelayMs: 60000
+      
+  autofix:
+    enabled: true
+    ruleset: default
+    confidenceThreshold: 0.8
+    
+  gates:
+    requireTestsGreen: true
+    requireSbom: false
+    requireChecksums: true
+    
+  console:
+    bypass: true
+    errorLevels: [error, warning, info]
+    telemetry: true
 
-# ============================================================================
-# T,.&T,,.&T,,,.T. VERSCHLÜSSELUNGSPRINZIP
-# ============================================================================
+telemetry:
+  errorBus: "local://error-bus"
+  auditSink: "local://audit-log"
+  console:
+    enabled: true
+    prefix: "[FABRIKAGE]"
+    levels: [error, warning, info, debug]
 
-encryption_principle: "T,.&T,,.&T,,,.T."
-encryption_description: "Unendliche Ketten, Ritzel, Zahnrad - 8etearnal"
+slo:
+  buildTimeMs: 600000
+  successRate: 0.99
+  maxRollbackMs: 120000
+  ocrProcessingMs: 30000
+  apiResponseMs: 5000
 
-encryption_layers:
-  - level: 1
-    name: "T,."
-    algorithm: "AES-256"
-  
-  - level: 2
-    name: "T,,."
-    algorithm: "ChaCha20-Poly1305"
-  
-  - level: 3
-    name: "T,,,."
-    algorithm: "RSA-4096"
-  
-  - level: 4
-    name: "T,,,,."
-    algorithm: "Elliptic Curve"
-
-# ============================================================================
-# ELLIPSOIDISCHE VERSIONIERUNG
-# ============================================================================
-
-versioning:
-  type: "ellipsoid"
-  axes:
-    domain: ["core", "ui", "api", "device", "system"]
-    function: ["feature", "fix", "security", "performance", "accessibility"]
-    region: ["global", "eu", "us", "asia", "local"]
-    time: "yyyy-MM-ddTHH:mm:ssZ"
-
-# ============================================================================
-# UNENDLICHKEITSPRINZIP
-# ============================================================================
-
-infinity:
-  principle: "Unendliche Skalierung ohne Übersichtsverlust"
-  pattern: "T,.&T,,.&T,,,.T."
-  mechanisms:
-    - recursive_structuring
-    - hierarchical_navigation
-    - metadata_index
-    - compressed_view
-
-# ============================================================================
-# A-START BOOTSTRAP
-# ============================================================================
-
-bootstrap:
-  entry_point: "Fabrikage.AutoExecution/bootstrap/a-start.ts"
-  
-  phases:
-    - recognize
-    - validate
-    - produce
-
-# ============================================================================
-# PROFILE UND UMGEBUNGEN
-# ============================================================================
-
-profiles:
-  prod:
-    env: "env/prod.env"
-    toolchains: ["node@20", "java@21", "docker@24"]
-  
-  staging:
-    env: "env/staging.env"
-    toolchains: ["node@20", "java@21", "docker@24"]
-  
-  dev:
-    env: "env/dev.env"
-    toolchains: ["node@20", "java@21", "docker@24"]
-
-# ============================================================================
-# STANDARDS (ZELLULEITFOLIE)
-# ============================================================================
-
-standards:
-  accessibility: "Fabrikage.CoreProtocols/policies/accessibility.yaml"
-  security: "Fabrikage.CoreProtocols/policies/security.yaml"
-  quality: "Fabrikage.CoreProtocols/policies/quality.yaml"
-  compliance: "Fabrikage.CoreProtocols/policies/compliance.yaml"
-  ethics: "Fabrikage.CoreProtocols/policies/ethics.yaml"
-
-# ============================================================================
-# USER-INTERAKTION ≤ 1%
-# ============================================================================
-
-user_interaction:
-  target: 0.01  # 1%
-  principle: "Entscheidungen statt Handgriffe"
-  automation:
-    - context_sensitive: true
-    - error_tolerant: true
-    - deterministic: true
-    - declarative: true
-
-# ============================================================================
-# REKURSIVE SELBSTBEOBACHTUNG
-# ============================================================================
-
-self_observation:
+audit:
   enabled: true
-  mechanisms:
-    - event_sourcing: true
-    - merkle_roots: true
-    - provenance: true
-    - sbom: true
-    - signatures: true
-    - audit_clock: true
-
-# ============================================================================
-# UNIVERSALE INKLUSION
-# ============================================================================
-
-universal_inclusion:
-  enabled: true
-  actors:
-    - humans
-    - machines
-    - organizations
-    - services
-  
-  features:
-    - multi_tenant: true
-    - multi_domain: true
-    - multi_culture: true
-    - no_exclusion: true
-
+  chain: [manifest, plan, events, fixes, artifacts, deploy]
+  signing: true
+  checksums: [sha256]

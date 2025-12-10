@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spiel eröffnen - Manifest-Hive</title>
+  <!-- BRANDING: .T. TogetherSystems - ModularFlux Architecture -->
+  <!-- VERSION: 3.0.0 -->
+  <!-- STANDARD: IBM STANDARD - PERMANENT AKTIV -->
+  <script src="../js/console-error-controller.js"></script>
+  <script src="../js/console-cache-system.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --accent2: #f59e0b;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #0f1419 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .game-entry-container {
+      text-align: center;
+      max-width: 600px;
+    }
+    .game-entry-button {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 20px;
+      padding: 24px 48px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #00100a;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .game-entry-button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px rgba(16, 185, 129, 0.5);
+    }
+    .game-entry-button:active {
+      transform: translateY(-2px);
+    }
+    .hex-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.2);
+      clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+      position: relative;
+    }
+    .hex-icon::after {
+      content: '✨';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+    }
+    .intro-text {
+      margin-top: 32px;
+      line-height: 1.8;
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="game-entry-container">
+    <button class="game-entry-button" id="gameEntryButton" onclick="startGameRitual()">
+      <div class="hex-icon"></div>
+      <span>Spiel eröffnen</span>
+    </button>
+    <div class="intro-text">
+      Ein Spiel zu beginnen ist mehr als Zeitvertreib.<br>
+      In vielen Kulturen wurde gespielt, um Frieden zu stiften.
+    </div>
+  </div>
+
+  <script>
+    function startGameRitual() {
+      // Öffne Ritual-Wizard
+      window.location.href = 'ritual-wizard.html';
+    }
+    
+    // Export für Integration in andere Apps
+    if (typeof window !== 'undefined') {
+      window.ManifestHiveGameEntry = {
+        startRitual: startGameRitual,
+        buttonHTML: '<button class="game-entry-button" onclick="window.ManifestHiveGameEntry.startRitual()"><div class="hex-icon"></div><span>Spiel eröffnen</span></button>'
+      };
+    }
+  </script>
+</body>
+</html>
+
+

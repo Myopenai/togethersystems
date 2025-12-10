@@ -1,0 +1,35 @@
+{
+  "WFWorkflowActions": [
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.getcontentsofurl",
+      "WFWorkflowActionParameters": {
+        "WFURLAction": "Get Contents of URL",
+        "WFURL": "https://apple-pi.local/notary/manifest"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.base64encode",
+      "WFWorkflowActionParameters": {
+        "WFInput": "{{Base64 Encoded}}"
+      }
+    },
+    {
+      "WFWorkflowActionIdentifier": "is.workflow.actions.posttopage",
+      "WFWorkflowActionParameters": {
+        "WFURL": "https://apple-pi.local/notary/manifest",
+        "WFHTTPMethod": "POST",
+        "WFHTTPHeaders": {
+          "Content-Type": "application/json"
+        },
+        "WFHTTPBody": "{\"name\": \"Manifest.pdf\", \"data\": \"{{Base64 Encoded}}\"}"
+      }
+    }
+  ],
+  "WFWorkflowClientVersion": "900",
+  "WFWorkflowMinimumClientVersion": 900,
+  "WFWorkflowIcon": {
+    "WFWorkflowIconGlyphNumber": 59508
+  }
+}
+
+

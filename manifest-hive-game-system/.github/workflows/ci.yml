@@ -1,0 +1,39 @@
+# Manifest-Hive Game System - CI/CD
+# BRANDING: .T. TogetherSystems - ModularFlux Architecture
+# VERSION: 3.0.0
+# STANDARD: IBM STANDARD - PERMANENT AKTIV
+
+name: CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: manifest-hive-game-system:latest
+
+

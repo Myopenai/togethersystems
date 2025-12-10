@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bubble-Hydrosphäre · XXXXXXLS · TogetherSystems</title>
+  <link rel="stylesheet" href="/assets/ultra.css">
+  <style>
+    #c {
+      background: radial-gradient(circle at center, rgba(5, 7, 17, 0.9) 0, #000 100%);
+      cursor: crosshair;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 200px;
+    }
+    .slider-group label {
+      font-size: 12px;
+      color: var(--muted);
+      min-width: 80px;
+    }
+    input[type="range"] {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="logo"><span class="brand">.XLS.</span> Bubble Scene</div>
+      <div>
+        <button class="btn" onclick="location.href='/'">Zurück</button>
+        <button class="btn btn-primary" onclick="reset()">Reset</button>
+      </div>
+    </header>
+    
+    <aside class="sidenav">
+      <nav class="nav">
+        <div class="nav-label">Kontrollen</div>
+        <a href="#" onclick="pulse(); return false;">Pulse</a>
+        <a href="#" onclick="foam(); return false;">Foam+</a>
+        <a href="#" onclick="reset(); return false;">Reset</a>
+        <div class="nav-label" style="margin-top:16px;">Parameter</div>
+        <div class="slider-group" style="flex-direction:column;align-items:stretch;padding:10px;">
+          <label>Foam Level: <span id="foam-value">0.4</span></label>
+          <input type="range" id="foam-slider" min="0" max="1" step="0.01" value="0.4" oninput="updateFoam(this.value)">
+          <label>Pulse Speed: <span id="pulse-value">0.02</span></label>
+          <input type="range" id="pulse-slider" min="0" max="0.1" step="0.001" value="0.02" oninput="updatePulse(this.value)">
+          <label>Brightness: <span id="bright-value">0.25</span></label>
+          <input type="range" id="bright-slider" min="0" max="1" step="0.01" value="0.25" oninput="updateBright(this.value)">
+        </div>
+      </nav>
+    </aside>
+    
+    <main class="main">
+      <section class="card">
+        <h2>Hydrosphäre Visual</h2>
+        <canvas id="c" class="canvas-wrap"></canvas>
+        <div class="controls">
+          <button class="btn btn-primary" onclick="pulse()">Pulse</button>
+          <button class="btn" onclick="foam()">Foam+</button>
+          <button class="btn" onclick="reset()">Reset</button>
+        </div>
+        <div class="small" style="margin-top:12px;">
+          Neon-cyan / deep-aqua / phosphor-magenta bloom. Capillary waves & caustics.<br>
+          Klicke auf den Canvas für interaktive Pulse.
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    let foamLevel = 0.4;
+    let pulsePhase = 0;
+    let pulseSpeed = 0.02;
+    let brightness = 0.25;
+    let animationId = null;
+    
+    function resize() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+    
+    window.addEventListener('resize', resize);
+    resize();
+    
+    function draw() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      
+      const cx = w / 2;
+      const cy = h / 2;
+      const baseRadius = Math.min(w, h) / 3;
+      const r = baseRadius * (1 + 0.03 * Math.sin(pulsePhase));
+      
+      // Background gradient
+      const grd = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r * 1.5);
+      grd.addColorStop(0, `rgba(57, 208, 255, ${brightness})`);
+      grd.addColorStop(0.5, `rgba(255, 107, 203, ${brightness * 0.4})`);
+      grd.addColorStop(1, 'rgba(0, 0, 0, 0.85)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, w, h);
+      
+      // Bubble skin (outer membrane)
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(233, 236, 255, ${0.7 + brightness * 0.3})`;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Caustics (light patterns)
+      for (let i = 0; i < 80; i++) {
+        const a = (i / 80) * Math.PI * 2 + pulsePhase * 0.4;
+        const rr = r * (0.92 + 0.06 * Math.sin(i * 0.3 + pulsePhase));
+        const x = cx + rr * Math.cos(a);
+        const y = cy + rr * Math.sin(a);
+        const alpha = 0.08 + foamLevel * 0.12;
+        ctx.fillStyle = `hsla(${180 + 60 * Math.sin(a * 2)}, 80%, 60%, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, y, 2 + foamLevel * 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Inner glow
+      const ig = ctx.createRadialGradient(cx, cy, r * 0.1, cx, cy, r * 0.9);
+      ig.addColorStop(0, `rgba(57, 208, 255, ${brightness})`);
+      ig.addColorStop(1, `rgba(255, 107, 203, ${brightness * 0.2})`);
+      ctx.fillStyle = ig;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.95, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Foam particles
+      if (foamLevel > 0.3) {
+        for (let i = 0; i < Math.floor(foamLevel * 30); i++) {
+          const a = Math.random() * Math.PI * 2;
+          const rr = r * (0.95 + Math.random() * 0.1);
+          const x = cx + rr * Math.cos(a);
+          const y = cy + rr * Math.sin(a);
+          ctx.fillStyle = `rgba(255, 255, 255, ${foamLevel * 0.3})`;
+          ctx.beginPath();
+          ctx.arc(x, y, 1 + Math.random() * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      
+      pulsePhase += pulseSpeed;
+      animationId = requestAnimationFrame(draw);
+    }
+    
+    function pulse() {
+      pulsePhase += 0.4;
+    }
+    
+    function foam() {
+      foamLevel = Math.min(1, foamLevel + 0.1);
+      document.getElementById('foam-slider').value = foamLevel;
+      document.getElementById('foam-value').textContent = foamLevel.toFixed(2);
+    }
+    
+    function reset() {
+      foamLevel = 0.4;
+      pulsePhase = 0;
+      pulseSpeed = 0.02;
+      brightness = 0.25;
+      document.getElementById('foam-slider').value = foamLevel;
+      document.getElementById('pulse-slider').value = pulseSpeed;
+      document.getElementById('bright-slider').value = brightness;
+      document.getElementById('foam-value').textContent = foamLevel.toFixed(2);
+      document.getElementById('pulse-value').textContent = pulseSpeed.toFixed(3);
+      document.getElementById('bright-value').textContent = brightness.toFixed(2);
+    }
+    
+    function updateFoam(value) {
+      foamLevel = parseFloat(value);
+      document.getElementById('foam-value').textContent = foamLevel.toFixed(2);
+    }
+    
+    function updatePulse(value) {
+      pulseSpeed = parseFloat(value);
+      document.getElementById('pulse-value').textContent = pulseSpeed.toFixed(3);
+    }
+    
+    function updateBright(value) {
+      brightness = parseFloat(value);
+      document.getElementById('bright-value').textContent = brightness.toFixed(2);
+    }
+    
+    // Interactive canvas clicks
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+      const r = Math.min(canvas.width, canvas.height) / 3;
+      if (dist < r * 1.2) {
+        pulse();
+      }
+    });
+    
+    // Start animation
+    draw();
+  </script>
+</body>
+</html>
+
+
+

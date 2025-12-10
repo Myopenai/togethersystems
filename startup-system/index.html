@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Startup-System - Produktübergabe & Verifizierung [.SYSTEMS.T.SYSTEMS.]</title>
+	<script src="../js/console-error-controller.js"></script>
+	<script src="../js/console-cache-system.js"></script>
+	<style>
+		:root {
+			--bg: #0f1419;
+			--card: #151b23;
+			--text: #e6eef3;
+			--muted: #9fb3c8;
+			--accent: #10b981;
+			--danger: #ef4444;
+			--warn: #f59e0b;
+			--border: #223040;
+			--success: #34d399;
+			--notar: #8b5cf6;
+		}
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			padding: 20px;
+			min-height: 100vh;
+		}
+		.container { max-width: 1400px; margin: 0 auto; }
+		header {
+			background: var(--card);
+			border: 1px solid var(--notar);
+			border-radius: 12px;
+			padding: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+		}
+		h1 { font-size: 28px; margin-bottom: 10px; color: var(--notar); }
+		.card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 20px;
+			margin-bottom: 20px;
+		}
+		.btn {
+			background: var(--notar);
+			color: white;
+			border: none;
+			padding: 12px 24px;
+			border-radius: 6px;
+			cursor: pointer;
+			font-weight: 500;
+			transition: all 0.3s;
+		}
+		.btn:hover { background: #7c3aed; }
+		.input-group {
+			margin-bottom: 15px;
+		}
+		label {
+			display: block;
+			margin-bottom: 5px;
+			color: var(--muted);
+		}
+		input, textarea, select {
+			width: 100%;
+			padding: 10px;
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			color: var(--text);
+		}
+		.product-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+			gap: 20px;
+			margin-top: 20px;
+		}
+		.product-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 20px;
+		}
+		.status-badge {
+			display: inline-block;
+			padding: 4px 8px;
+			border-radius: 4px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+		.status-development { background: var(--warn); color: white; }
+		.status-perfection { background: var(--accent); color: white; }
+		.status-verified { background: var(--success); color: white; }
+		.status-ready { background: var(--notar); color: white; }
+	</style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>🚀 Startup-System</h1>
+			<p style="color: var(--muted); margin-top: 10px;">
+				Produktübergabe · Verifizierung · Entwicklungsberichte
+			</p>
+			<p class="brand" style="margin-top: 10px; font-size: 12px; color: var(--muted);">
+				[.SYSTEMS.T.SYSTEMS.] - .T. TogetherSystems - ModularFlux Architecture
+			</p>
+		</header>
+
+		<!-- Produktübergabe -->
+		<div class="card">
+			<h2>📦 Produktübergabe an Startup</h2>
+			<div class="input-group">
+				<label>Produktname</label>
+				<input type="text" id="productName" placeholder="z.B. Fabrikage-Modul-X">
+			</div>
+			<div class="input-group">
+				<label>Startup-ID</label>
+				<input type="text" id="startupId" placeholder="STARTUP-001">
+			</div>
+			<div class="input-group">
+				<label>Beschreibung</label>
+				<textarea id="productDescription" rows="4" placeholder="Produktbeschreibung..."></textarea>
+			</div>
+			<button class="btn" onclick="transferProduct()">📤 Produkt übergeben</button>
+		</div>
+
+		<!-- Produktliste -->
+		<div class="card">
+			<h2>📋 Produkte</h2>
+			<div class="product-grid" id="productGrid">
+				<p style="color: var(--muted); grid-column: 1/-1; text-align: center;">Keine Produkte vorhanden</p>
+			</div>
+		</div>
+
+		<!-- Verifizierung -->
+		<div class="card">
+			<h2>✅ Verifizierung vor Verkauf</h2>
+			<div class="input-group">
+				<label>Produkt auswählen</label>
+				<select id="verifyProductSelect">
+					<option value="">-- Produkt wählen --</option>
+				</select>
+			</div>
+			<div class="input-group">
+				<label>Entwicklungsberichte hochladen</label>
+				<input type="file" id="reportsUpload" multiple accept=".pdf,.doc,.docx">
+			</div>
+			<button class="btn" onclick="verifyProduct()">🔐 Produkt verifizieren</button>
+		</div>
+
+		<!-- Mathematische Verifikation -->
+		<div class="card">
+			<h2>🔢 Mathematische Verifikation</h2>
+			<div class="input-group">
+				<label>Formeln prüfen (eine pro Zeile)</label>
+				<textarea id="mathFormulas" rows="6" placeholder="2+2=4&#10;10*5=50&#10;sqrt(16)=4"></textarea>
+			</div>
+			<button class="btn" onclick="verifyMath()">✅ Formeln prüfen</button>
+			<div id="mathResults" style="margin-top: 15px;"></div>
+		</div>
+	</div>
+
+	<script>
+		const STORAGE_KEY = 'startup.products';
+		let products = [];
+
+		window.addEventListener('DOMContentLoaded', () => {
+			loadProducts();
+		});
+
+		function loadProducts() {
+			const stored = localStorage.getItem(STORAGE_KEY);
+			if (stored) {
+				products = JSON.parse(stored);
+			}
+			renderProducts();
+			updateVerifySelect();
+		}
+
+		function saveProducts() {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+		}
+
+		function transferProduct() {
+			const name = document.getElementById('productName').value;
+			const startupId = document.getElementById('startupId').value;
+			const description = document.getElementById('productDescription').value;
+
+			if (!name || !startupId) {
+				alert('Bitte füllen Sie alle Felder aus');
+				return;
+			}
+
+			const product = {
+				id: `PP-${Date.now().toString(36).toUpperCase()}`,
+				name,
+				startupId,
+				description,
+				status: 'development',
+				createdAt: new Date().toISOString(),
+				manifest: { documents: [], reports: [] }
+			};
+
+			products.push(product);
+			saveProducts();
+			renderProducts();
+			updateVerifySelect();
+
+			// Felder leeren
+			document.getElementById('productName').value = '';
+			document.getElementById('startupId').value = '';
+			document.getElementById('productDescription').value = '';
+
+			alert('✅ Produkt erfolgreich übergeben');
+		}
+
+		function renderProducts() {
+			const grid = document.getElementById('productGrid');
+			if (products.length === 0) {
+				grid.innerHTML = '<p style="color: var(--muted); grid-column: 1/-1; text-align: center;">Keine Produkte vorhanden</p>';
+				return;
+			}
+
+			grid.innerHTML = products.map(p => `
+				<div class="product-card">
+					<h3>${p.name}</h3>
+					<p style="color: var(--muted); font-size: 14px; margin: 10px 0;">${p.description || 'Keine Beschreibung'}</p>
+					<div style="margin-top: 15px;">
+						<span class="status-badge status-${p.status}">${p.status}</span>
+						<p style="color: var(--muted); font-size: 12px; margin-top: 10px;">ID: ${p.id}</p>
+						<p style="color: var(--muted); font-size: 12px;">Startup: ${p.startupId}</p>
+					</div>
+				</div>
+			`).join('');
+		}
+
+		function updateVerifySelect() {
+			const select = document.getElementById('verifyProductSelect');
+			select.innerHTML = '<option value="">-- Produkt wählen --</option>' +
+				products.filter(p => p.status !== 'sold').map(p =>
+					`<option value="${p.id}">${p.name} (${p.status})</option>`
+				).join('');
+		}
+
+		async function verifyProduct() {
+			const productId = document.getElementById('verifyProductSelect').value;
+			if (!productId) {
+				alert('Bitte wählen Sie ein Produkt');
+				return;
+			}
+
+			const product = products.find(p => p.id === productId);
+			if (!product) return;
+
+			// Entwicklungsberichte hochladen
+			const files = document.getElementById('reportsUpload').files;
+			const reports = [];
+			for (const file of files) {
+				reports.push(file.name);
+			}
+
+			// Manifest erstellen
+			const manifest = {
+				hash: await generateHash(JSON.stringify(product)),
+				documents: reports,
+				reports: reports
+			};
+
+			// Digitalnotator aufrufen (vereinfacht)
+			const verification = {
+				productId,
+				verified: true,
+				verifiedAt: new Date().toISOString(),
+				notarId: `NN-${Date.now().toString(36)}`,
+				hessenNumber: null
+			};
+
+			product.status = 'verified';
+			product.verification = verification;
+			product.manifest = manifest;
+			product.verifiedAt = new Date().toISOString();
+
+			saveProducts();
+			renderProducts();
+			updateVerifySelect();
+
+			alert('✅ Produkt erfolgreich verifiziert');
+		}
+
+		async function generateHash(data) {
+			const encoder = new TextEncoder();
+			const dataBuffer = encoder.encode(data);
+			const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+			const hashArray = Array.from(new Uint8Array(hashBuffer));
+			return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+		}
+
+		function verifyMath() {
+			const formulas = document.getElementById('mathFormulas').value.split('\n').filter(f => f.trim());
+			const results = document.getElementById('mathResults');
+			
+			const verified = formulas.map(formula => {
+				try {
+					const [left, right] = formula.split('=').map(s => s.trim());
+					const leftResult = eval(left);
+					const rightResult = parseFloat(right);
+					const valid = Math.abs(leftResult - rightResult) < 0.0001;
+					return { formula, valid, result: leftResult, expected: rightResult };
+				} catch (e) {
+					return { formula, valid: false, error: e.message };
+				}
+			});
+
+			results.innerHTML = verified.map(v => `
+				<div style="padding: 10px; margin: 5px 0; background: ${v.valid ? 'rgba(52, 211, 153, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: 6px;">
+					<strong>${v.formula}</strong>
+					${v.valid ? '✅' : '❌'}
+					${v.error ? `<span style="color: var(--danger);">${v.error}</span>` : ''}
+				</div>
+			`).join('');
+		}
+	</script>
+</body>
+</html>
+
+

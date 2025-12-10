@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Manifest of Thinkers – Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Language" content="de">
+  <link rel="stylesheet" href="/assets/osoto.css">
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body class="osoto-app">
+  <div class="osoto-shell">
+    <header class="osoto-topbar">
+      <div class="osoto-logo"><span class="osoto-brand-token">.T.</span> Manifest<span>PORTAL</span></div>
+      <div class="osoto-topbar-right">
+        <button onclick="location.href='/'" class="osoto-btn osoto-btn-outline">Zurück</button>
+      </div>
+    </header>
+    <aside class="osoto-sidenav">
+      <nav class="osoto-nav">
+        <div class="osoto-nav-label">System</div>
+        <a href="/" class="osoto-nav-item">Dashboard</a>
+        <a href="/downloads/" class="osoto-nav-item">Downloads</a>
+      </nav>
+    </aside>
+    <main class="osoto-main">
+      <section class="osoto-page-header"><div><h1>Manifest Portal</h1><p>Voucher & Presence APIs live auf Cloudflare.</p></div></section>
+      <section>
+        <button class="osoto-btn osoto-btn-primary" onclick="loadVouchers()">Voucher laden</button>
+        <button class="osoto-btn osoto-btn-outline" onclick="loadPresence()">Presence prüfen</button>
+        <pre id="voucher-output"></pre>
+        <pre id="presence-output"></pre>
+      </section>
+    </main>
+  </div>
+  <script>
+    async function loadVouchers(){
+      const res = await fetch('/api/voucher/list');
+      const vouchers = await res.json();
+      document.getElementById('voucher-output').textContent = JSON.stringify(vouchers,null,2);
+    }
+    async function loadPresence(){
+      const res = await fetch('/api/presence/status');
+      const status = await res.json();
+      document.getElementById('presence-output').textContent = JSON.stringify(status,null,2);
+    }
+  </script>
+</body>
+</html>
+

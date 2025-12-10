@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manifest-Hive: Ritual-Wizard</title>
+  <!-- BRANDING: .T. TogetherSystems - ModularFlux Architecture -->
+  <!-- VERSION: 3.0.0 -->
+  <!-- STANDARD: IBM STANDARD - PERMANENT AKTIV -->
+  <script src="../js/console-error-controller.js"></script>
+  <script src="../js/console-cache-system.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --accent2: #f59e0b;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #0f1419 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+    .step h2 {
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .step p {
+      margin-bottom: 16px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #00100a;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn:hover {
+      background: #059669;
+    }
+    .btn.secondary {
+      background: var(--accent2);
+      color: #150f00;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+    }
+    .progress {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .progress-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .progress-dot.active {
+      background: var(--accent);
+    }
+    .progress-dot.completed {
+      background: var(--accent2);
+    }
+  </style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 style="text-align: center; margin-bottom: 32px;">
+      🐝 Manifest-Hive: Ritual-Wizard
+    </h1>
+    
+    <div class="progress" id="progress"></div>
+    
+    <!-- Step 1: Intro - Seriöse Botschaft -->
+    <div class="step active" id="step-1">
+      <h2>Willkommen</h2>
+      <div style="padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--accent);">
+        <p style="font-size: 16px; line-height: 1.8; margin-bottom: 16px;">
+          <strong>Ein Spiel zu beginnen ist mehr als Zeitvertreib.</strong>
+        </p>
+        <p style="font-size: 14px; line-height: 1.8; color: var(--muted); margin-bottom: 16px;">
+          In vielen Kulturen wurde gespielt, um Entscheidungen zu treffen, Konflikte zu entschärfen oder gemeinsam Frieden zu fühlen.
+        </p>
+        <p style="font-size: 14px; line-height: 1.8; color: var(--muted); margin-bottom: 16px;">
+          <strong>Die Friedenspfeife:</strong> Man rauchte nur dann eine Pfeife, wenn Frieden geschlossen wurde – nicht ständig, sondern als heiliges Ritual.
+        </p>
+        <p style="font-size: 14px; line-height: 1.8; color: var(--muted); margin-bottom: 16px;">
+          <strong>Das Schachspiel:</strong> Statt in den Krieg zu ziehen, ließ man Schachspiele das Urteil fällen. Wer gewinnt, ist Sieger. Wer verliert, akzeptiert. Ein Remis bedeutet: Der Konflikt bleibt ungelöst, aber im absoluten Zustand des Friedens beim Spielen.
+        </p>
+        <p style="font-size: 14px; line-height: 1.8; color: var(--muted);">
+          Wenn du jetzt weitermachst, wählst du den Weg des Spiels statt des Angriffs – einen Raum, in dem ihr euch begegnet, ohne Urteil, ohne Vorurteil.
+        </p>
+      </div>
+      <button class="btn" onclick="nextStep()">Ritual beginnen</button>
+    </div>
+    
+    <!-- Step 2: Lucky Number -->
+    <div class="step" id="step-2">
+      <h2>Schritt 2: Deine Glückszahl</h2>
+      <p>Wähle eine Zahl zwischen 1 und 999, die für dich Glück bedeutet.</p>
+      <input type="number" id="luckyNumber" min="1" max="999" placeholder="Deine Glückszahl">
+      <button class="btn" onclick="setLuckyNumber()">Weiter</button>
+    </div>
+    
+    <!-- Step 3: Style -->
+    <div class="step" id="step-3">
+      <h2>Schritt 3: Wabenstil</h2>
+      <p>Wähle den Stil deines Wabenraums:</p>
+      <select id="style">
+        <option value="ruhig">Ruhig & Meditativ</option>
+        <option value="feierlich">Feierlich & Zeremoniell</option>
+        <option value="kreativ">Kreativ & Spielerisch</option>
+        <option value="futuristisch">Futuristisch & Modern</option>
+      </select>
+      <button class="btn" onclick="setStyle()">Weiter</button>
+    </div>
+    
+    <!-- Step 4: Promise - Erweitert -->
+    <div class="step" id="step-4">
+      <h2>Schritt 4: Dein stilles Versprechen</h2>
+      <div style="padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--accent2);">
+        <p style="font-size: 14px; line-height: 1.8; margin-bottom: 16px;">
+          In diesem Raum begegnest du einem anderen Menschen.
+        </p>
+        <p style="font-size: 14px; line-height: 1.8; margin-bottom: 16px; color: var(--muted);">
+          Du kennst seinen Charakter nicht, seine Geschichte nicht – und das ist gewollt.
+        </p>
+        <p style="font-size: 14px; line-height: 1.8; margin-bottom: 16px; color: var(--muted);">
+          Kein System bewertet ihn für dich. Kein System analysiert seine Persönlichkeit.
+        </p>
+        <p style="font-size: 14px; line-height: 1.8; color: var(--muted);">
+          Du betrittst diese Wabe ohne Vorurteil, mit der Bereitschaft zu spielen – und zu respektieren.
+        </p>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="promiseCheck">
+        <label for="promiseCheck" style="font-size: 14px; line-height: 1.6;">
+          <strong>Ich begegne allen Teilnehmern ohne Urteil und nutze das Spiel als friedliche Begegnung.</strong>
+        </label>
+      </div>
+      <button class="btn" onclick="confirmPromise()">Versprechen bestätigen</button>
+    </div>
+    
+    <!-- Step 5: Complete -->
+    <div class="step" id="step-5">
+      <h2>Schritt 5: Raum wird erstellt</h2>
+      <p id="completionStatus">Erstelle deinen Wabenraum...</p>
+      <div id="roomInfo" style="display: none;">
+        <p><strong>Raum-Nummer:</strong> <span id="publicNumber"></span></p>
+        <p><strong>Glückszahl:</strong> <span id="finalLuckyNumber"></span></p>
+        <p><strong>Stil:</strong> <span id="finalStyle"></span></p>
+        <button class="btn" onclick="enterRoom()">Zum Raum</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin.replace(/:\d+$/, ':3000');
+    let currentStep = 1;
+    let ritualId = null;
+    let roomData = null;
+    
+    // Initialisiere Progress
+    function initProgress() {
+      const progress = document.getElementById('progress');
+      for (let i = 1; i <= 5; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        dot.id = `progress-${i}`;
+        progress.appendChild(dot);
+      }
+      updateProgress();
+    }
+    
+    function updateProgress() {
+      for (let i = 1; i <= 5; i++) {
+        const dot = document.getElementById(`progress-${i}`);
+        if (i < currentStep) {
+          dot.className = 'progress-dot completed';
+        } else if (i === currentStep) {
+          dot.className = 'progress-dot active';
+        } else {
+          dot.className = 'progress-dot';
+        }
+      }
+    }
+    
+    async function startRitual() {
+      try {
+        const userId = localStorage.getItem('user_id') || 'user-' + Date.now();
+        localStorage.setItem('user_id', userId);
+        
+        const response = await fetch(`${API_BASE}/ritual/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: userId })
+        });
+        
+        const data = await response.json();
+        ritualId = data.ritual_id;
+        localStorage.setItem('ritual_id', ritualId);
+      } catch (e) {
+        console.error('Ritual start error:', e);
+        alert('Fehler beim Starten des Rituals');
+      }
+    }
+    
+    function nextStep() {
+      if (currentStep === 1) {
+        confirmIntro();
+      }
+      
+      document.getElementById(`step-${currentStep}`).classList.remove('active');
+      currentStep++;
+      document.getElementById(`step-${currentStep}`).classList.add('active');
+      updateProgress();
+    }
+    
+    async function confirmIntro() {
+      if (!ritualId) await startRitual();
+      try {
+        await fetch(`${API_BASE}/ritual/confirm_intro`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ritual_id: ritualId })
+        });
+      } catch (e) {
+        console.error('Confirm intro error:', e);
+      }
+    }
+    
+    async function setLuckyNumber() {
+      const luckyNumber = parseInt(document.getElementById('luckyNumber').value);
+      if (!luckyNumber || luckyNumber < 1 || luckyNumber > 999) {
+        alert('Bitte wähle eine Zahl zwischen 1 und 999');
+        return;
+      }
+      
+      try {
+        await fetch(`${API_BASE}/ritual/set_lucky_number`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ritual_id: ritualId, lucky_number: luckyNumber })
+        });
+        nextStep();
+      } catch (e) {
+        console.error('Set lucky number error:', e);
+        alert('Fehler beim Setzen der Glückszahl');
+      }
+    }
+    
+    async function setStyle() {
+      const style = document.getElementById('style').value;
+      try {
+        await fetch(`${API_BASE}/ritual/select_style`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ritual_id: ritualId, style: style })
+        });
+        nextStep();
+      } catch (e) {
+        console.error('Set style error:', e);
+        alert('Fehler beim Setzen des Stils');
+      }
+    }
+    
+    async function confirmPromise() {
+      if (!document.getElementById('promiseCheck').checked) {
+        alert('Bitte bestätige das Friedensversprechen');
+        return;
+      }
+      
+      try {
+        await fetch(`${API_BASE}/ritual/confirm_promise`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ritual_id: ritualId })
+        });
+        nextStep();
+        completeRitual();
+      } catch (e) {
+        console.error('Confirm promise error:', e);
+        alert('Fehler beim Bestätigen des Versprechens');
+      }
+    }
+    
+    async function completeRitual() {
+      try {
+        const response = await fetch(`${API_BASE}/ritual/complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ritual_id: ritualId })
+        });
+        
+        const data = await response.json();
+        roomData = data;
+        
+        document.getElementById('publicNumber').textContent = data.public_number;
+        document.getElementById('finalLuckyNumber').textContent = data.lucky_number;
+        document.getElementById('finalStyle').textContent = data.style;
+        document.getElementById('completionStatus').textContent = 'Raum erfolgreich erstellt!';
+        document.getElementById('roomInfo').style.display = 'block';
+        
+        localStorage.setItem('hive_room_id', data.hive_room_id);
+      } catch (e) {
+        console.error('Complete ritual error:', e);
+        document.getElementById('completionStatus').textContent = 'Fehler beim Erstellen des Raums';
+      }
+    }
+    
+    function enterRoom() {
+      if (roomData) {
+        window.location.href = `hive-room.html?room_id=${roomData.hive_room_id}`;
+      }
+    }
+    
+    // Initialisiere
+    initProgress();
+    startRitual();
+  </script>
+</body>
+</html>
+
+

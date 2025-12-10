@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: Apple-Pi Localhost APIs
+  version: 1.0.0
+  description: Lokale APIs für alle privaten Anwendungen A-Z
+servers:
+  - url: https://apple-pi.local
+    description: Lokaler Server (mDNS)
+  - url: https://192.168.1.10:8443
+    description: Statische IP
+
+paths:
+  /fin/transactions:
+    get:
+      summary: Bank-Transaktionen abrufen
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../domain/BA_bank.schema.json'
+    post:
+      summary: Neue Transaktion erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../domain/BA_bank.schema.json'
+      responses:
+        '201':
+          description: Created
+
+  /ins/contracts:
+    get:
+      summary: Versicherungsverträge abrufen
+      responses:
+        '200':
+          description: OK
+
+  /house/energy:
+    get:
+      summary: Energie-Daten abrufen
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../domain/EE_energy.schema.json'
+
+  /notary/manifest:
+    post:
+      summary: Manifest speichern
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                data:
+                  type: string
+                  format: base64
+      responses:
+        '201':
+          description: Manifest stored
+          content:
+            application/json:
+              schema:
+                $ref: '../domain/NN_notary.schema.json'
+
+  /startup/products:
+    get:
+      summary: Startup-Produkte abrufen
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../domain/PP_product.schema.json'
+    post:
+      summary: Neues Produkt erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../domain/PP_product.schema.json'
+      responses:
+        '201':
+          description: Created
+
+  /startup/products/{productId}/verify:
+    post:
+      summary: Produkt verifizieren
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verified
+
+

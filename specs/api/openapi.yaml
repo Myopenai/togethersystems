@@ -1,0 +1,362 @@
+openapi: 3.0.0
+info:
+  title: Fabrikage API - Live Mirror Architecture
+  version: 3.0.0
+  description: |
+    API Specification for Fabrikage System
+    BRANDING: .T. TogetherSystems - ModularFlux Architecture
+    STANDARD: IBM STANDARD - PERMANENT AKTIV
+  contact:
+    name: TogetherSystems
+    url: https://togethersystems.com
+
+servers:
+  - url: http://localhost:5173
+    description: Local development
+  - url: https://dev-api.togethersystems.com
+    description: Development environment
+  - url: https://api.togethersystems.com
+    description: Production environment
+
+paths:
+  /api/health:
+    get:
+      summary: Health check endpoint
+      operationId: getHealth
+      responses:
+        '200':
+          description: System is operational
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  
+  /api/nodes:
+    get:
+      summary: List all nodes
+      operationId: listNodes
+      responses:
+        '200':
+          description: List of nodes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Node'
+    post:
+      summary: Create a new node
+      operationId: createNode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeInput'
+      responses:
+        '200':
+          description: Node created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+  
+  /api/links:
+    get:
+      summary: List all links
+      operationId: listLinks
+      responses:
+        '200':
+          description: List of links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+  
+  /api/events:
+    get:
+      summary: List all events
+      operationId: listEvents
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+  
+  /api/energy-ledger:
+    get:
+      summary: Get energy ledger
+      operationId: getEnergyLedger
+      responses:
+        '200':
+          description: Energy ledger data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergyLedger'
+  
+  /api/universal/layers:
+    get:
+      summary: Get universal layers
+      operationId: getUniversalLayers
+      responses:
+        '200':
+          description: Universal layers data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UniversalLayers'
+  
+  /api/morph:
+    post:
+      summary: Morph/transform a node
+      operationId: morphNode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MorphRequest'
+      responses:
+        '200':
+          description: Morph operation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MorphResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - ok
+        - status
+        - version
+        - system
+        - timestamp
+      properties:
+        ok:
+          type: boolean
+        status:
+          type: string
+          enum: [operational, degraded, down]
+        version:
+          type: string
+        system:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    
+    Node:
+      type: object
+      required:
+        - id
+        - level
+        - ports
+      properties:
+        id:
+          type: string
+        level:
+          type: string
+          enum: [NANO, MESO, PLANET_SPHERE, SOLAR_SPHERE, GALACTIC, SUPERCLUSTER, UNIVERSAL, TRANSUNIVERSAL_META, CONTINUUM_FIELD]
+        ports:
+          type: array
+          items:
+            type: string
+            enum: [material, energy, info, meta]
+        holoState:
+          type: string
+    
+    NodeInput:
+      type: object
+      required:
+        - level
+      properties:
+        id:
+          type: string
+        level:
+          type: string
+        ports:
+          type: array
+          items:
+            type: string
+        holoState:
+          type: string
+    
+    NodeResponse:
+      type: object
+      required:
+        - ok
+        - node
+        - timestamp
+      properties:
+        ok:
+          type: boolean
+        node:
+          $ref: '#/components/schemas/Node'
+        timestamp:
+          type: string
+          format: date-time
+    
+    Link:
+      type: object
+      required:
+        - id
+        - from
+        - to
+        - type
+      properties:
+        id:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        type:
+          type: string
+          enum: [MATERIAL, ENERGY, INFORMATION, META]
+        capacity:
+          type: string
+        latencyRange:
+          type: string
+        protocol:
+          type: string
+    
+    Event:
+      type: object
+      required:
+        - id
+        - stage
+        - message
+        - timestamp
+      properties:
+        id:
+          type: string
+        stage:
+          type: string
+          enum: [sense, commit, transform, emerge]
+        message:
+          type: string
+        signature:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    
+    EnergyLedger:
+      type: object
+      required:
+        - sources
+        - sinks
+        - balance
+        - efficiency
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnergySource'
+        sinks:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnergySink'
+        balance:
+          type: number
+        efficiency:
+          type: number
+          minimum: 0
+          maximum: 1
+    
+    EnergySource:
+      type: object
+      required:
+        - name
+        - mw
+        - level
+      properties:
+        name:
+          type: string
+        mw:
+          type: number
+        level:
+          type: string
+    
+    EnergySink:
+      type: object
+      required:
+        - name
+        - mw
+        - level
+      properties:
+        name:
+          type: string
+        mw:
+          type: number
+        level:
+          type: string
+    
+    UniversalLayers:
+      type: object
+      required:
+        - layers
+        - active
+        - current
+      properties:
+        layers:
+          type: array
+          items:
+            type: string
+        active:
+          type: array
+          items:
+            type: string
+        current:
+          type: string
+    
+    MorphRequest:
+      type: object
+      required:
+        - action
+        - target
+      properties:
+        action:
+          type: string
+          enum: [replicate, transform, merge, split]
+        target:
+          type: string
+        morphType:
+          type: string
+    
+    MorphResponse:
+      type: object
+      required:
+        - ok
+        - action
+        - target
+        - result
+        - timestamp
+      properties:
+        ok:
+          type: boolean
+        action:
+          type: string
+        target:
+          type: string
+        morphType:
+          type: string
+        result:
+          type: string
+        commitWindow:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        newState:
+          type: string

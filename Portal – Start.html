@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!-- saved from url=(0051)https://caramel-galaxy-472407-t7.web.app/index.html -->
 <html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
@@ -65,6 +65,8 @@
 
   <link rel="stylesheet" href="css/teladia-complete-design-system.css">
   <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
+  <script src="./console-monitor.js"></script>
+  <script src="./http-resource-monitor-browser.js"></script>
 </head>
 <body>
 	<header>
@@ -90,7 +92,7 @@
 	</header>
 
 	<main>
-		<section class="card">
+		<section id="tab-portal-start" class="card" role="tabpanel" hidden="">
 			<h2>Portal starten</h2>
 			<p class="note">Hier bleibst du auf der Startseite. Mit dem Button unten Ã¶ffnest du das Portal manuell. Von dort kannst du wieder zurÃ¼ck hierher (fÃ¼r Download &amp; Anleitung).</p>
 			<div class="controls">
@@ -99,10 +101,10 @@
 		</section>
 
 		<section id="tab-dashboard" class="card" role="tabpanel" aria-labelledby="Dashboard">
-			<h2>Ãœbersicht</h2>
+			<h2>Übersicht</h2>
 			<div class="grid cols-3">
 				<div class="kpi">
-					<div>EintrÃ¤ge</div>
+					<div>Einträge</div>
 					<strong id="kpiCount">0</strong>
 				</div>
 				<div class="kpi">
@@ -115,7 +117,7 @@
 				</div>
 			</div>
 			<hr>
-			<p class="note small">Tipp: Alles funktioniert offline. Importiere unten Daten oder erstelle neue EintrÃ¤ge im Admin.</p>
+			<p class="note small">Tipp: Alles funktioniert offline. Importiere unten Daten oder erstelle neue Einträge im Admin.</p>
 		</section>
 
 		<section id="tab-daten" class="card" role="tabpanel" hidden="">
@@ -235,28 +237,101 @@
 		let page = 1, pageSize = 25;
 		let filterText = "", filterCat = "";
 
-		// INIT
-		restoreTheme();
-		bindTabs();
-		bindToolbar();
-		bindDataControls();
-		updateCategories();
-		refreshAll();
+		// INIT - KORRIGIERT (Fabrikage-Routine)
+		function init() {
+			try {
+				restoreTheme();
+				bindTabs();
+				bindToolbar();
+				bindDataControls();
+				updateCategories();
+				refreshAll();
+				updateClearButtonVisibility();
+				
+				// Sicherstellen, dass Dashboard initial angezeigt wird
+				setTimeout(() => {
+					try {
+						const dashboardSection = $('#tab-dashboard');
+						if (dashboardSection && dashboardSection.hidden) {
+							const dashboardBtn = $$('nav button').find(b => b.dataset.tab === 'dashboard');
+							if (dashboardBtn) {
+								dashboardBtn.click();
+							}
+						}
+					} catch(e) {
+						console.error('[FABRIKAGE] Dashboard init error:', e);
+					}
+				}, 100);
+			} catch(e) {
+				console.error('[FABRIKAGE] Init error:', e);
+			}
+		}
+		
+		// Warte auf DOM-Laden
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', init);
+		} else {
+			init();
+		}
 
-		// Tabs
+		// Tabs - KORRIGIERT mit robuster Validierung
 		function bindTabs(){
 			$$('nav button').forEach(btn=>{
 				btn.addEventListener('click', ()=>{
-					$$('nav button').forEach(b=>b.classList.remove('active'));
+					$$('nav button').forEach(b=>{
+						b.classList.remove('active');
+						b.setAttribute('aria-selected', 'false');
+					});
 					btn.classList.add('active');
+					btn.setAttribute('aria-selected', 'true');
 					const tab = btn.dataset.tab;
-					$$('main > section').forEach(s=>s.hidden = !s.id.endsWith(tab));
+					if (!tab) {
+						console.warn('[FABRIKAGE] Tab-Button hat kein data-tab Attribut:', btn);
+						return;
+					}
+					$$('main > section').forEach(s=>{
+						if (!s.id) {
+							// Section ohne ID verstecken (z.B. Portal-Start)
+							s.hidden = true;
+							s.setAttribute('aria-hidden', 'true');
+							return;
+						}
+						// Tab-ID extrahieren (z.B. "tab-dashboard" -> "dashboard")
+						const sectionTab = s.id.replace(/^tab-/, '');
+						
+						// Section anzeigen/verstecken basierend auf Tab-Name
+						const shouldShow = (sectionTab === tab);
+						s.hidden = !shouldShow;
+						s.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+					});
+					
+					// Debug-Log für Fabrikage
+					console.log('[FABRIKAGE] Tab gewechselt zu:', tab);
 				});
 			});
+			
+			// Initial: Dashboard anzeigen (falls nicht bereits aktiv)
+			const activeBtn = $$('nav button.active');
+			if (activeBtn.length === 0) {
+				const dashboardBtn = $$('nav button').find(b => b.dataset.tab === 'dashboard');
+				if (dashboardBtn) {
+					dashboardBtn.click();
+				}
+			}
 		}
 
 		function bindToolbar(){
-			$('#themeToggle').addEventListener('click', toggleTheme);
+			try {
+				const themeBtn = document.getElementById('themeToggle');
+				if (themeBtn) {
+					themeBtn.addEventListener('click', toggleTheme);
+					console.log('[FABRIKAGE] Theme-Toggle Event-Listener registriert');
+				} else {
+					console.error('[FABRIKAGE] themeToggle button not found');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] bindToolbar error:', e);
+			}
 		}
 
 		function bindDataControls(){
@@ -308,7 +383,7 @@
 			const end = Math.min(start+pageSize, total);
 			const view = list.slice(start, end);
 			if(!view.length){
-				body.innerHTML = '<tr><td colspan="5" class="note">Keine EintrÃ¤ge fÃ¼r die aktuelle Auswahl.</td></tr>';
+				body.innerHTML = '<tr><td colspan="5" class="note">Keine Einträge für die aktuelle Auswahl.</td></tr>';
 			}else{
 				body.innerHTML = view.map(row => {
 					return `<tr>
@@ -349,7 +424,14 @@
 			let obj = { id: nanoid(), title:'', category:'', notes:'', createdAt: new Date().toISOString() };
 			if(editId){
 				const found = items.find(x=> String(x.id)===String(editId));
-				if(found) obj = (function() { try { return (function() { try { return (function() { try { return JSON.parse(JSON.stringify(found); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })());
+				if(found) {
+					try {
+						obj = JSON.parse(JSON.stringify(found));
+					} catch(e) {
+						console.error('[FABRIKAGE] JSON parse error:', e);
+						obj = { id: found.id || nanoid(), title: found.title || '', category: found.category || '', notes: found.notes || '', createdAt: found.createdAt || new Date().toISOString() };
+					}
+				}
 			}
 			$('#f_title').value = obj.title||'';
 			$('#f_category').value = obj.category||'';
@@ -362,7 +444,19 @@
 		}
 
 		function saveEditor(){
-			const obj = (function() { try { return (function() { try { return (function() { try { return JSON.parse($('#editor'); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })().dataset.current||'{}');
+			// KORRIGIERT: Robuste JSON-Parsing (Fabrikage-Routine)
+			let obj = {};
+			try {
+				const editorEl = $('#editor');
+				if (editorEl && editorEl.dataset && editorEl.dataset.current) {
+					obj = JSON.parse(editorEl.dataset.current);
+				} else {
+					obj = { id: nanoid(), title: '', category: '', notes: '', createdAt: new Date().toISOString() };
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] JSON parse error in saveEditor:', e);
+				obj = { id: nanoid(), title: '', category: '', notes: '', createdAt: new Date().toISOString() };
+			}
 			obj.title = $('#f_title').value.trim();
 			obj.category = $('#f_category').value.trim();
 			obj.notes = $('#f_notes').value;
@@ -400,25 +494,95 @@
 
 		// Persistence
 		function persistItems(){
-			localStorage.setItem('portal.items', JSON.stringify(items));
+			try {
+				localStorage.setItem('portal.items', JSON.stringify(items));
+				// Prüfe ob Daten vorhanden sind und zeige Löschbutton
+				updateClearButtonVisibility();
+			} catch(e) {
+				console.error('[FABRIKAGE] localStorage setItem error:', e);
+			}
+		}
+		
+		function updateClearButtonVisibility(){
+			try {
+				const clearBtn = document.getElementById('clearDataBtn');
+				if (clearBtn) {
+					const hasData = items && items.length > 0;
+					clearBtn.style.display = hasData ? 'inline-block' : 'none';
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] updateClearButtonVisibility error:', e);
+			}
+		}
+		
+		function clearAllImportedData(){
+			try {
+				if (confirm('Möchten Sie wirklich ALLE importierten Daten löschen?\n\nDies löscht:\n- Alle Einträge\n- Importierte CSV/JSON Daten\n- Alle lokal gespeicherten Daten\n\nDiese Aktion kann nicht rückgängig gemacht werden.')) {
+					// Lösche alle Items
+					items = [];
+					
+					// Lösche localStorage
+					localStorage.removeItem('portal.items');
+					
+					// Optional: Alle anderen Portal-Daten löschen (außer Theme)
+					const theme = localStorage.getItem('portal.theme');
+					localStorage.clear();
+					if (theme) {
+						localStorage.setItem('portal.theme', theme);
+					}
+					
+					// Aktualisiere UI
+					updateCategories();
+					refreshAll();
+					updateClearButtonVisibility();
+					
+					console.log('[FABRIKAGE] Alle importierten Daten gelöscht');
+					alert('Alle Daten wurden erfolgreich gelöscht.');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] clearAllImportedData error:', e);
+				alert('Fehler beim Löschen der Daten: ' + e.message);
+			}
 		}
 		function loadItems(){
+			// KORRIGIERT: Robuste JSON-Parsing (Fabrikage-Routine)
 			try{
 				const raw = localStorage.getItem('portal.items');
 				if(!raw) return [];
-				const arr = (function() { try { return (function() { try { return (function() { try { return JSON.parse(raw); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })(); } catch(e) { console.error('JSON parse error:', e); return null; } })();
-				return Array.isArray(arr)? arr : [];
-			}catch{ return []; }
+				const arr = JSON.parse(raw);
+				return Array.isArray(arr) ? arr : [];
+			} catch(e) {
+				console.error('[FABRIKAGE] JSON parse error in loadItems:', e);
+				return [];
+			}
 		}
 
-		// Theme
+		// Theme - KORRIGIERT mit robuster Validierung (Fabrikage-Routine)
 		function restoreTheme(){
-			const t = localStorage.getItem('portal.theme') || 'dark';
-			if(t==='light'){ document.documentElement.classList.add('light'); }
+			try {
+				const t = localStorage.getItem('portal.theme') || 'dark';
+				if(t==='light'){ 
+					document.documentElement.classList.add('light'); 
+				} else {
+					document.documentElement.classList.remove('light');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] Fehler beim Wiederherstellen des Themes:', e);
+			}
 		}
 		function toggleTheme(){
-			const light = document.documentElement.classList.toggle('light');
-			localStorage.setItem('portal.theme', light? 'light':'dark');
+			try {
+				const isLight = document.documentElement.classList.contains('light');
+				if (isLight) {
+					document.documentElement.classList.remove('light');
+					localStorage.setItem('portal.theme', 'dark');
+				} else {
+					document.documentElement.classList.add('light');
+					localStorage.setItem('portal.theme', 'light');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] Fehler beim Umschalten des Themes:', e);
+			}
 		}
 
 		// Utils

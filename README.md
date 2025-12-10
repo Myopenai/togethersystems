@@ -1,6 +1,30 @@
-# TogetherSystems – Manifest of Thinkers / BusinessConnect Hub
+# TogetherSystems – Fabrikage System
+## Manifest of Thinkers / BusinessConnect Hub
 
-Dieses Repository enthält eine lauffähige, statische Web-Applikation:
+**VERSION:** 3.0.0  
+**BRANDING:** .T. TogetherSystems - ModularFlux Architecture  
+**STANDARD:** IBM STANDARD - PERMANENT AKTIV
+
+Dieses Repository enthält die vollständige Fabrikage-System-Implementierung:
+
+## Fabrikage-Systeme
+
+- **Modular-Fabrikage:** Interaktive Modul-Fabrik mit visueller Verbindung
+- **XXXXXXLS-Fabrikage:** Dimensionless, infinite, absolute production architecture
+- **Code-Mirror-System:** Fehlerfreier Code-Speicher
+- **Live-Mirror-Coding-Architektur:** Automatische Code-Generierung und Validierung
+
+## Standards
+
+- ✅ Code-Mirror bei jeder Code-Handlung
+- ✅ Error-Patterns-Prüfung (15 Patterns)
+- ✅ API-Error-Handler
+- ✅ API-Config-Loader
+- ✅ Error-Fix-System
+
+## Portal-Anwendungen
+
+Dieses Repository enthält auch eine lauffähige, statische Web-Applikation:
 
 - Offline-Portal (`index.html`)
 - Admin-Bereich (`admin.html`)
@@ -68,6 +92,35 @@ Der spezielle Test `businessconnecthub-playwright-tests-full/tests/pool-entry.sp
   - „Live-Raum erstellen (No‑Code)“ mit Formular statt JSON-Handarbeit.
 
 Damit lässt sich der zentrale „ins Becken rein und wieder raus“-Einstieg des Portals automatisch überwachen.
+
+## Installation & Setup
+
+Siehe `FABRIKAGE-COMPLETE-PROCESS-DOKUMENTATION.md` für Details zu:
+- Standards
+- Code-Mirror-System
+- Live-Mirror-Coding-Architektur
+- Deployment-Prozesse
+
+## Quick Start
+
+```powershell
+# Komplette Prüfung, TÜV, Deploy
+.\FABRIKAGE-ULTIMATE-COMPLETE-ALL.ps1
+
+# Oder einzelne Phasen:
+.\FABRIKAGE-MIRROR-VALIDATE-ALL-ERRORS.ps1
+.\FABRIKAGE-ULTIMATE-COMPLETE-TUEV-AND-DEPLOY.ps1
+.\FABRIKAGE-COMPLETE-DEPLOY-AND-PUSH.ps1
+```
+
+## Dokumentation
+
+- `FABRIKAGE-COMPLETE-PROCESS-DOKUMENTATION.md` - Prozess-Dokumentation
+- `FABRIKAGE-LIVE-MIRROR-ARCHITECTURE.md` - Live-Mirror-Architektur
+- `FABRIKAGE-TECHNISCHER-BERICHT-SYSTEMARCHITEKTUR.md` - Technischer Bericht
+- `ENTWICKLUNGSBERICHT.md` - Entwicklungsbericht (Pipeline vs. Produktion)
+
+---
 
 Branding-String (vollständig):
 

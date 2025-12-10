@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TogetherSystems - Dynamic PDF Template</title>
+    <style>
+        /* ============================================
+           BRAND STYLE GUIDE - FESTE DEFINITIONEN
+           ============================================ */
+        
+        :root {
+            /* Primärfarben - Brand */
+            --brand-primary: #1a1a2e;
+            --brand-secondary: #16213e;
+            --brand-accent: #0f3460;
+            --brand-highlight: #e94560;
+            
+            /* Neutrale Töne */
+            --neutral-dark: #0a0a0a;
+            --neutral-light: #f5f5f5;
+            --neutral-gray: #6b7280;
+            --neutral-white: #ffffff;
+            
+            /* Typografie */
+            --font-primary: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            --font-headline: 'Segoe UI', sans-serif;
+            
+            /* Spacing */
+            --header-height: 80px;
+            --footer-height: 60px;
+            --content-padding: 40px;
+        }
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        /* ============================================
+           BRAND HEADER - FESTER BEREICH (10-15%)
+           ============================================ */
+        
+        .brand-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            color: var(--neutral-white);
+            padding: 0 var(--content-padding);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .brand-logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--neutral-white);
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .brand-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--neutral-white);
+            letter-spacing: 1px;
+            opacity: 0.95;
+        }
+        
+        .brand-claim {
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.8);
+            font-style: italic;
+        }
+        
+        /* ============================================
+           CONTENT ZONE - SPIELFLÄCHE (70-80%)
+           ============================================ */
+        
+        body {
+            font-family: var(--font-primary);
+            margin: 0;
+            padding: 0;
+            background: var(--neutral-light);
+            color: var(--neutral-dark);
+            line-height: 1.6;
+        }
+        
+        .content-wrapper {
+            margin-top: var(--header-height);
+            margin-bottom: var(--footer-height);
+            min-height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding: var(--content-padding);
+            max-width: 210mm;
+            margin-left: auto;
+            margin-right: auto;
+            background: var(--neutral-white);
+        }
+        
+        /* ============================================
+           INTERAKTIVE ELEMENTE
+           ============================================ */
+        
+        /* Inhaltsverzeichnis */
+        .table-of-contents {
+            background: var(--neutral-light);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid var(--brand-accent);
+        }
+        
+        .toc-item {
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            color: var(--brand-accent);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .toc-item:hover {
+            background: var(--brand-accent);
+            color: var(--neutral-white);
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(15, 52, 96, 0.3);
+        }
+        
+        .toc-item::before {
+            content: "▶ ";
+            margin-right: 8px;
+            opacity: 0.6;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--brand-accent);
+            color: var(--neutral-white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            background: var(--brand-highlight);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--brand-accent);
+            color: var(--brand-accent);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--brand-accent);
+            color: var(--neutral-white);
+        }
+        
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--neutral-gray);
+            border-bottom: 1px solid var(--neutral-gray);
+        }
+        
+        /* Links */
+        a {
+            color: var(--brand-accent);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--brand-accent);
+            transition: all 0.2s ease;
+        }
+        
+        a:hover {
+            color: var(--brand-highlight);
+            border-bottom: 1px solid var(--brand-highlight);
+        }
+        
+        a.external::after {
+            content: " ↗";
+            font-size: 0.8em;
+        }
+        
+        /* ============================================
+           VISUELLE ELEMENTE - DEZENT & PREMIUM
+           ============================================ */
+        
+        /* Charts & Diagramme */
+        .chart-container {
+            background: var(--neutral-light);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chart-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--brand-primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--brand-accent);
+            padding-bottom: 10px;
+        }
+        
+        /* Info-Boxen mit Hover-Effekt */
+        .info-box {
+            background: var(--neutral-light);
+            border-left: 4px solid var(--brand-accent);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .info-box:hover {
+            box-shadow: 0 4px 12px rgba(15, 52, 96, 0.15);
+            transform: translateX(5px);
+        }
+        
+        /* Layer / Ebenen (ein-/ausblendbar) */
+        .layer-toggle {
+            cursor: pointer;
+            color: var(--brand-accent);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        .layer-content {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--neutral-light);
+            border-radius: 4px;
+        }
+        
+        .layer-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ============================================
+           TYPOGRAPHY - PROFESSIONELL
+           ============================================ */
+        
+        h1 {
+            font-family: var(--font-headline);
+            font-size: 2.5em;
+            color: var(--brand-primary);
+            margin: 30px 0 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-family: var(--font-headline);
+            font-size: 2em;
+            color: var(--brand-secondary);
+            margin: 25px 0 15px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--brand-accent);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            font-family: var(--font-headline);
+            font-size: 1.5em;
+            color: var(--brand-primary);
+            margin: 20px 0 10px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin: 15px 0;
+            color: var(--neutral-dark);
+            line-height: 1.8;
+        }
+        
+        /* ============================================
+           BRAND FOOTER - FESTER BEREICH (5-10%)
+           ============================================ */
+        
+        .brand-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--footer-height);
+            background: var(--brand-primary);
+            color: var(--neutral-white);
+            padding: 0 var(--content-padding);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            font-size: 0.85em;
+        }
+        
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .footer-logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+        
+        .footer-info {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .footer-right {
+            text-align: right;
+        }
+        
+        .page-number {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* ============================================
+           SECTIONS & KAPITEL
+           ============================================ */
+        
+        .section {
+            margin: 50px 0;
+            page-break-inside: avoid;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            color: var(--neutral-white);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .section-header h2 {
+            color: var(--neutral-white);
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* ============================================
+           PRINT STYLES
+           ============================================ */
+        
+        @media print {
+            .brand-header,
+            .brand-footer {
+                position: fixed;
+            }
+            
+            .content-wrapper {
+                margin-top: var(--header-height);
+                margin-bottom: var(--footer-height);
+            }
+            
+            .btn,
+            .toc-item:hover {
+                background: var(--brand-accent) !important;
+                color: var(--neutral-white) !important;
+            }
+            
+            a {
+                color: var(--brand-accent);
+                text-decoration: underline;
+            }
+        }
+    </style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+</head>
+<body>
+    <!-- ============================================
+         BRAND HEADER - FESTER BEREICH
+         ============================================ -->
+    <header class="brand-header">
+        <div>
+            <div class="brand-logo">T,.&T,,.&T,,,.</div>
+        </div>
+        <div style="text-align: right;">
+            <div class="brand-name">TOGETHERSYSTEMS. INTERNATIONAL TTT</div>
+            <div class="brand-claim">UniverseAllEnterprises · Financial Intelligence</div>
+        </div>
+    </header>
+
+    <!-- ============================================
+         CONTENT ZONE - SPIELFLÄCHE
+         ============================================ -->
+    <div class="content-wrapper">
+        <!-- Titelseite -->
+        <section class="section" id="title">
+            <div class="section-header">
+                <h1>🏭 MCP Setup Dokumentation</h1>
+                <p style="font-size: 1.2em; margin-top: 15px; opacity: 0.95;">
+                    Fabrikation Centrale - Industrial Software Factory
+                </p>
+            </div>
+            
+            <div class="info-box">
+                <h3>✅ Setup Status: ERFOLGREICH ABGESCHLOSSEN</h3>
+                <p>Die MCP-Verbindung zur Fabrikation Centrale wurde erfolgreich eingerichtet und ist betriebsbereit.</p>
+            </div>
+        </section>
+
+        <!-- Inhaltsverzeichnis -->
+        <section class="section" id="toc">
+            <h2>📋 Inhaltsverzeichnis</h2>
+            <div class="table-of-contents">
+                <a href="#overview" class="toc-item">1. Systemübersicht</a>
+                <a href="#mcp-servers" class="toc-item">2. Verbundene MCP Server</a>
+                <a href="#capabilities" class="toc-item">3. Verfügbare Capabilities</a>
+                <a href="#configuration" class="toc-item">4. Konfigurationsdateien</a>
+                <a href="#usage" class="toc-item">5. Verwendung</a>
+                <a href="#network" class="toc-item">6. Netzwerk-Verteilung</a>
+                <a href="#next-steps" class="toc-item">7. Nächste Schritte</a>
+            </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <a href="#title" class="btn btn-secondary">⬆ Zum Anfang</a>
+            <a href="#overview" class="btn">Nächstes Kapitel ▶</a>
+        </div>
+
+        <!-- Systemübersicht -->
+        <section class="section" id="overview">
+            <h2>📊 Systemübersicht</h2>
+            
+            <div class="chart-container">
+                <div class="chart-title">System-Metriken</div>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: var(--brand-accent); color: white;">
+                        <th style="padding: 12px; text-align: left;">Metrik</th>
+                        <th style="padding: 12px; text-align: right;">Wert</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">Gesamt MCPs</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;"><strong>1</strong></td>
+                    </tr>
+                    <tr style="background: #f9f9f9;">
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">Verbunden</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;"><strong>1</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">Verfügbar</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #eee;"><strong>1</strong></td>
+                    </tr>
+                    <tr style="background: #f9f9f9;">
+                        <td style="padding: 12px;">XXXXL MCPs</td>
+                        <td style="padding: 12px; text-align: right;"><strong>1</strong></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#toc" class="btn btn-secondary">← Zurück zur Übersicht</a>
+                <a href="#mcp-servers" class="btn">Nächstes Kapitel ▶</a>
+            </div>
+        </section>
+
+        <!-- MCP Server -->
+        <section class="section" id="mcp-servers">
+            <h2>🔌 Verbundene MCP Server</h2>
+            
+            <div class="info-box">
+                <h3>1. Fabrikation Centrale (XXXXL)</h3>
+                <p><strong>Status:</strong> ✅ VERBUNDEN</p>
+                <p><strong>Typ:</strong> Industrial Factory MCP</p>
+                <p><strong>MCP ID:</strong> <code>fabrikation-centrale-001</code></p>
+                <p><strong>Endpoint:</strong> <a href="http://localhost:8080" class="external">http://localhost:8080</a></p>
+                <p><strong>Factory Path:</strong> <code>Farbriqautions/TTT</code></p>
+            </div>
+
+            <!-- Layer Toggle Beispiel -->
+            <p>
+                <span class="layer-toggle" onclick="toggleLayer('details')">▶ Technische Details anzeigen</span>
+            </p>
+            <div class="layer-content" id="details">
+                <p><strong>Version:</strong> 1.0.0</p>
+                <p><strong>Netzwerk:</strong> localhost</p>
+                <p><strong>Letzte Verifizierung:</strong> 2025-01-27T12:00:00.000Z</p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#overview" class="btn btn-secondary">← Zurück</a>
+                <a href="#capabilities" class="btn">Nächstes Kapitel ▶</a>
+            </div>
+        </section>
+
+        <!-- Capabilities -->
+        <section class="section" id="capabilities">
+            <h2>🔧 Verfügbare Capabilities</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px 0;">
+                <div class="info-box">
+                    <strong>factory_build</strong><br>
+                    Build factory artifacts
+                </div>
+                <div class="info-box">
+                    <strong>factory_validate</strong><br>
+                    Validate factory configurations
+                </div>
+                <div class="info-box">
+                    <strong>factory_deploy</strong><br>
+                    Deploy factory outputs
+                </div>
+                <div class="info-box">
+                    <strong>factory_monitor</strong><br>
+                    Monitor factory operations
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#mcp-servers" class="btn btn-secondary">← Zurück</a>
+                <a href="#configuration" class="btn">Nächstes Kapitel ▶</a>
+            </div>
+        </section>
+
+        <!-- Configuration -->
+        <section class="section" id="configuration">
+            <h2>📁 Konfigurationsdateien</h2>
+            
+            <div class="info-box">
+                <h3>Erstellte/Aktualisierte Dateien</h3>
+                <ul>
+                    <li><code>settings/config/mcp-config.json</code> - Basis MCP Server Konfiguration</li>
+                    <li><code>settings/config/mcp-config-extended.json</code> - Erweiterte Tool Registry</li>
+                    <li><code>settings/mcp/mcp-registry.json</code> - Aktive MCP Registry</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#capabilities" class="btn btn-secondary">← Zurück</a>
+                <a href="#usage" class="btn">Nächstes Kapitel ▶</a>
+            </div>
+        </section>
+
+        <!-- Usage -->
+        <section class="section" id="usage">
+            <h2>🚀 Verwendung</h2>
+            
+            <div class="info-box">
+                <h4>MCP Status prüfen</h4>
+                <pre style="background: var(--neutral-dark); color: var(--neutral-light); padding: 15px; border-radius: 4px; overflow-x: auto;"><code>cat settings/mcp/mcp-registry.json</code></pre>
+            </div>
+
+            <div class="info-box">
+                <h4>Zu Fabrikation Centrale verbinden</h4>
+                <pre style="background: var(--neutral-dark); color: var(--neutral-light); padding: 15px; border-radius: 4px; overflow-x: auto;"><code>node settings/mcp/connect-fabrikation-centrale-simple.js</code></pre>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#configuration" class="btn btn-secondary">← Zurück</a>
+                <a href="#network" class="btn">Nächstes Kapitel ▶</a>
+            </div>
+        </section>
+
+        <!-- Network -->
+        <section class="section" id="network">
+            <h2>🌐 Netzwerk-Verteilung</h2>
+            
+            <div class="info-box">
+                <h3>Localhost MCPs</h3>
+                <ul>
+                    <li><strong>Fabrikation Centrale</strong> - <a href="http://localhost:8080" class="external">http://localhost:8080</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#usage" class="btn btn-secondary">← Zurück</a>
+                <a href="#next-steps" class="btn">Nächstes Kapitel ▶</a>
+            </div>
+        </section>
+
+        <!-- Next Steps -->
+        <section class="section" id="next-steps">
+            <h2>📝 Nächste Schritte</h2>
+            
+            <div class="info-box">
+                <h3>1. MCP verwenden</h3>
+                <p>Die Fabrikation Centrale kann jetzt für folgende Operationen verwendet werden:</p>
+                <ul>
+                    <li>Industrielle Software-Factory-Operationen</li>
+                    <li>Automatisierte Build-Pipelines</li>
+                    <li>Factory-Validierung und Deployment</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#network" class="btn btn-secondary">← Zurück</a>
+                <a href="#toc" class="btn">⬆ Zurück zur Übersicht</a>
+            </div>
+        </section>
+
+        <!-- Kontakt -->
+        <section class="section" id="contact">
+            <h2>📧 Kontakt & Support</h2>
+            
+            <div class="info-box">
+                <p><strong>Website:</strong> <a href="https://tel1.nl" class="external">https://tel1.nl</a></p>
+                <p><strong>E-Mail:</strong> <a href="mailto:gentlyoverdone@outlook.com">gentlyoverdone@outlook.com</a></p>
+                <p><strong>Telefon:</strong> <a href="tel:+31613803782">+31 613 803 782</a></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- ============================================
+         BRAND FOOTER - FESTER BEREICH
+         ============================================ -->
+    <footer class="brand-footer">
+        <div class="footer-left">
+            <div class="footer-logo">T,.&T,,.&T,,,.</div>
+            <div class="footer-info">
+                TOGETHERSYSTEMS. INTERNATIONAL TTT | Version 1.0.0 | 2025-01-27
+            </div>
+        </div>
+        <div class="footer-right">
+            <div class="page-number">Seite <span id="page-num">1</span></div>
+            <div style="font-size: 0.8em; margin-top: 5px; color: rgba(255,255,255,0.6);">
+                T,.&T,,.&T,,,.(C)(R) | <a href="https://tel1.nl" style="color: rgba(255,255,255,0.8);">TEL1.NL</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Layer Toggle Funktion
+        function toggleLayer(id) {
+            const layer = document.getElementById(id);
+            const toggle = event.target;
+            
+            if (layer.classList.contains('active')) {
+                layer.classList.remove('active');
+                toggle.textContent = '▶ Technische Details anzeigen';
+            } else {
+                layer.classList.add('active');
+                toggle.textContent = '▼ Technische Details ausblenden';
+            }
+        }
+
+        // Smooth Scroll für interne Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Seitenzahl aktualisieren (vereinfacht)
+        // In echter PDF würde das durch PDF-Viewer gehandhabt
+        function updatePageNumbers() {
+            // Placeholder - würde in PDF durch Viewer gehandhabt
+        }
+    </script>
+</body>
+</html>
+
