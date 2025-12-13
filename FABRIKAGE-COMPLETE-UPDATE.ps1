@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE UPDATE
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE UPDATE
 # Aktualisiert alle Fabrikage-Standards mit neuen Komponenten
 
 $ErrorActionPreference = "Stop"
@@ -127,7 +127,7 @@ $standardsContent = @"
 
 ### Umlaute
 - Ä, Ö, Ü, ß korrekt dargestellt
-- Keine Garbled Characters (â€¢, Ã¤, etc.)
+- Keine Garbled Characters (•, ä, etc.)
 - Emoji korrekt kodiert
 - Sonderzeichen korrekt
 

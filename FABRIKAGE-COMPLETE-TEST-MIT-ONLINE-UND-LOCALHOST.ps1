@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - MIT ONLINE & LOCALHOST
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - MIT ONLINE & LOCALHOST
 # Umfassender Test ALLER Komponenten + Online-Status + Localhost-Verifikation
 # Nach eingreifenden Maßnahmen ins System
 
@@ -158,7 +158,7 @@ Write-Host ""
 
 Write-Host "[PHASE 3] Encoding & Umlaute prüfen (alle HTML)..." -ForegroundColor Cyan
 
-$umlautErrors = @("â€¢", "Ã¤", "Ã¶", "Ã¼", "ÃŸ", "â€", "ðŸ", "â€"")
+$umlautErrors = @("•", "ä", "ö", "ü", "ß", "â€", "", "â€"")
 $encodingOk = 0
 $encodingErrors = 0
 

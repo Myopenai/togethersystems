@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -34,6 +34,8 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 .btn-secondary{background:var(--border);color:var(--text)}
 .summary-card{background:var(--card);padding:20px;border-radius:15px;border:2px solid var(--accent);margin-top:20px}
 </style>
+
+  <link rel="stylesheet" href="../../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <div class="container">
@@ -49,10 +51,10 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div style="text-align:center;margin:20px 0">
-<button class="btn btn-primary" onclick="runAllTests()">🚀 Alle Tests starten</button>
-<button class="btn btn-secondary" onclick="clearLog()">🗑️ Log löschen</button>
-<button class="btn btn-secondary" onclick="downloadLog()">💾 Log herunterladen</button>
-<button class="btn btn-secondary" onclick="autoFixErrors()" id="autoFixBtn" style="display:none">🔧 Fehler automatisch beheben</button>
+<button class="btn btn-primary" onclick="runAllTests()">š€ Alle Tests starten</button>
+<button class="btn btn-secondary" onclick="clearLog()">—‘ï¸ Log löschen</button>
+<button class="btn btn-secondary" onclick="downloadLog()">’¾ Log herunterladen</button>
+<button class="btn btn-secondary" onclick="autoFixErrors()" id="autoFixBtn" style="display:none">”§ Fehler automatisch beheben</button>
 </div>
 
 <div class="test-log" id="testLog">
@@ -60,7 +62,7 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div class="summary-card" id="summaryCard" style="display:none">
-<h2 style="color:var(--accent);margin-bottom:15px">📊 Test-Zusammenfassung</h2>
+<h2 style="color:var(--accent);margin-bottom:15px">“Š Test-Zusammenfassung</h2>
 <div id="summaryContent"></div>
 </div>
 </div>
@@ -134,7 +136,7 @@ function initTestGrid() {
     card.innerHTML = `
       <h3>${test.id}. ${test.name}</h3>
       <p style="font-size:0.8em;color:var(--muted);margin-bottom:8px">${test.category}</p>
-      <span class="status status-pending" id="test${test.id}">⏳ Wartend</span>
+      <span class="status status-pending" id="test${test.id}">â³ Wartend</span>
     `;
     grid.appendChild(card);
   });
@@ -170,7 +172,7 @@ function updateTestStatus(testId, status, message) {
 
 // Test-Funktionen
 async function testHTMLStructure() {
-  updateTestStatus(1, 'running', '🔄 Läuft...');
+  updateTestStatus(1, 'running', '”„ Läuft...');
   try {
     if (window.location.protocol === 'file:') {
       if (document.doctype && document.querySelector('html')) {
@@ -203,7 +205,7 @@ async function testHTMLStructure() {
 }
 
 async function testCSSLoading() {
-  updateTestStatus(2, 'running', '🔄 Läuft...');
+  updateTestStatus(2, 'running', '”„ Läuft...');
   return new Promise((resolve) => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -230,7 +232,7 @@ async function testCSSLoading() {
 }
 
 function testJavaScriptExecution() {
-  updateTestStatus(3, 'running', '🔄 Läuft...');
+  updateTestStatus(3, 'running', '”„ Läuft...');
   try {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       updateTestStatus(3, 'pass', '✅ Bestanden');
@@ -245,7 +247,7 @@ function testJavaScriptExecution() {
 }
 
 function testLocalStorage() {
-  updateTestStatus(4, 'running', '🔄 Läuft...');
+  updateTestStatus(4, 'running', '”„ Läuft...');
   try {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('test', 'value');
@@ -267,7 +269,7 @@ function testLocalStorage() {
 }
 
 function testNavigation() {
-  updateTestStatus(5, 'running', '🔄 Läuft...');
+  updateTestStatus(5, 'running', '”„ Läuft...');
   try {
     const navItems = document.querySelectorAll('.nav-item');
     if (navItems.length > 0 || window.location.pathname.includes('OSTOSOS')) {
@@ -283,24 +285,24 @@ function testNavigation() {
 }
 
 async function testSettingsIntegration() {
-  updateTestStatus(6, 'running', '🔄 Läuft...');
+  updateTestStatus(6, 'running', '”„ Läuft...');
   try {
     const response = await fetch('../Settings/MASTER-SETTINGS-SYSTEM.json');
     if (response.ok) {
       updateTestStatus(6, 'pass', '✅ Bestanden');
       testResults.test6 = true;
     } else {
-      updateTestStatus(6, 'pass', '⚠️ Nicht erreichbar (normal bei file://)');
+      updateTestStatus(6, 'pass', 'âš ï¸ Nicht erreichbar (normal bei file://)');
       testResults.test6 = true;
     }
   } catch (error) {
-    updateTestStatus(6, 'pass', '⚠️ Nicht erreichbar (normal bei file://)');
+    updateTestStatus(6, 'pass', 'âš ï¸ Nicht erreichbar (normal bei file://)');
     testResults.test6 = true;
   }
 }
 
 function testDaVinciDesign() {
-  updateTestStatus(7, 'running', '🔄 Läuft...');
+  updateTestStatus(7, 'running', '”„ Läuft...');
   try {
     const style = getComputedStyle(document.documentElement);
     const bg = style.getPropertyValue('--davinci-bg');
@@ -317,7 +319,7 @@ function testDaVinciDesign() {
 }
 
 function testResponsiveDesign() {
-  updateTestStatus(8, 'running', '🔄 Läuft...');
+  updateTestStatus(8, 'running', '”„ Läuft...');
   try {
     const viewport = window.innerWidth;
     if (viewport > 0) {
@@ -333,7 +335,7 @@ function testResponsiveDesign() {
 }
 
 function testCrossBrowser() {
-  updateTestStatus(9, 'running', '🔄 Läuft...');
+  updateTestStatus(9, 'running', '”„ Läuft...');
   try {
     const userAgent = navigator.userAgent;
     if (userAgent) {
@@ -349,7 +351,7 @@ function testCrossBrowser() {
 }
 
 function testPerformance() {
-  updateTestStatus(10, 'running', '🔄 Läuft...');
+  updateTestStatus(10, 'running', '”„ Läuft...');
   return new Promise((resolve) => {
     const startTime = performance.now();
     setTimeout(() => {
@@ -369,7 +371,7 @@ function testPerformance() {
 
 // Navigation-Tests
 async function testDashboardSection() {
-  updateTestStatus(11, 'running', '🔄 Läuft...');
+  updateTestStatus(11, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -391,7 +393,7 @@ async function testDashboardSection() {
 }
 
 async function testPortalSection() {
-  updateTestStatus(12, 'running', '🔄 Läuft...');
+  updateTestStatus(12, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -413,7 +415,7 @@ async function testPortalSection() {
 }
 
 async function testTelbankSection() {
-  updateTestStatus(13, 'running', '🔄 Läuft...');
+  updateTestStatus(13, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -435,7 +437,7 @@ async function testTelbankSection() {
 }
 
 async function testOSOSection() {
-  updateTestStatus(14, 'running', '🔄 Läuft...');
+  updateTestStatus(14, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -457,7 +459,7 @@ async function testOSOSection() {
 }
 
 async function testHoneycombSection() {
-  updateTestStatus(15, 'running', '🔄 Läuft...');
+  updateTestStatus(15, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -479,7 +481,7 @@ async function testHoneycombSection() {
 }
 
 async function testLegalSection() {
-  updateTestStatus(16, 'running', '🔄 Läuft...');
+  updateTestStatus(16, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -501,7 +503,7 @@ async function testLegalSection() {
 }
 
 async function testSettingsSection() {
-  updateTestStatus(17, 'running', '🔄 Läuft...');
+  updateTestStatus(17, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -524,7 +526,7 @@ async function testSettingsSection() {
 
 // Hub-Tests
 async function testCloudHub() {
-  updateTestStatus(18, 'running', '🔄 Läuft...');
+  updateTestStatus(18, 'running', '”„ Läuft...');
   try {
     if (window.location.protocol === 'file:') {
       // Für file:// Protokoll: Prüfe ob Datei existiert durch direkten Zugriff
@@ -560,7 +562,7 @@ async function testCloudHub() {
 }
 
 async function testMailHub() {
-  updateTestStatus(19, 'running', '🔄 Läuft...');
+  updateTestStatus(19, 'running', '”„ Läuft...');
   try {
     if (window.location.protocol === 'file:') {
       updateTestStatus(19, 'pass', '✅ Bestanden (angenommen bei file://)');
@@ -582,7 +584,7 @@ async function testMailHub() {
 }
 
 async function testMediaHub() {
-  updateTestStatus(20, 'running', '🔄 Läuft...');
+  updateTestStatus(20, 'running', '”„ Läuft...');
   try {
     if (window.location.protocol === 'file:') {
       updateTestStatus(20, 'pass', '✅ Bestanden (angenommen bei file://)');
@@ -604,7 +606,7 @@ async function testMediaHub() {
 }
 
 async function testMatrixGames() {
-  updateTestStatus(21, 'running', '🔄 Läuft...');
+  updateTestStatus(21, 'running', '”„ Läuft...');
   try {
     if (window.location.protocol === 'file:') {
       updateTestStatus(21, 'pass', '✅ Bestanden (angenommen bei file://)');
@@ -627,41 +629,41 @@ async function testMatrixGames() {
 
 // System-Tests
 async function testAutoUpdateSystem() {
-  updateTestStatus(22, 'running', '🔄 Läuft...');
+  updateTestStatus(22, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-AUTO-UPDATE-SYSTEM.js');
     if (response.ok) {
       updateTestStatus(22, 'pass', '✅ Bestanden');
       testResults.test22 = true;
     } else {
-      updateTestStatus(22, 'pass', '⚠️ Nicht verfügbar (normal bei file://)');
+      updateTestStatus(22, 'pass', 'âš ï¸ Nicht verfügbar (normal bei file://)');
       testResults.test22 = true;
     }
   } catch (error) {
-    updateTestStatus(22, 'pass', '⚠️ Nicht verfügbar (normal bei file://)');
+    updateTestStatus(22, 'pass', 'âš ï¸ Nicht verfügbar (normal bei file://)');
     testResults.test22 = true;
   }
 }
 
 async function testCrossDeviceSync() {
-  updateTestStatus(23, 'running', '🔄 Läuft...');
+  updateTestStatus(23, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-CROSS-DEVICE-SYNC.js');
     if (response.ok) {
       updateTestStatus(23, 'pass', '✅ Bestanden');
       testResults.test23 = true;
     } else {
-      updateTestStatus(23, 'pass', '⚠️ Nicht verfügbar (normal bei file://)');
+      updateTestStatus(23, 'pass', 'âš ï¸ Nicht verfügbar (normal bei file://)');
       testResults.test23 = true;
     }
   } catch (error) {
-    updateTestStatus(23, 'pass', '⚠️ Nicht verfügbar (normal bei file://)');
+    updateTestStatus(23, 'pass', 'âš ï¸ Nicht verfügbar (normal bei file://)');
     testResults.test23 = true;
   }
 }
 
 async function testServiceWorker() {
-  updateTestStatus(24, 'running', '🔄 Läuft...');
+  updateTestStatus(24, 'running', '”„ Läuft...');
   try {
     if ('serviceWorker' in navigator) {
       updateTestStatus(24, 'pass', '✅ Bestanden');
@@ -677,25 +679,25 @@ async function testServiceWorker() {
 }
 
 async function testPWAManifest() {
-  updateTestStatus(25, 'running', '🔄 Läuft...');
+  updateTestStatus(25, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./manifest.webmanifest');
     if (response.ok) {
       updateTestStatus(25, 'pass', '✅ Bestanden');
       testResults.test25 = true;
     } else {
-      updateTestStatus(25, 'pass', '⚠️ Nicht verfügbar (normal bei file://)');
+      updateTestStatus(25, 'pass', 'âš ï¸ Nicht verfügbar (normal bei file://)');
       testResults.test25 = true;
     }
   } catch (error) {
-    updateTestStatus(25, 'pass', '⚠️ Nicht verfügbar (normal bei file://)');
+    updateTestStatus(25, 'pass', 'âš ï¸ Nicht verfügbar (normal bei file://)');
     testResults.test25 = true;
   }
 }
 
 // Da Vinci Effects Tests
 function testPhosphorescence() {
-  updateTestStatus(26, 'running', '🔄 Läuft...');
+  updateTestStatus(26, 'running', '”„ Läuft...');
   try {
     const style = getComputedStyle(document.documentElement);
     const phosphor = style.getPropertyValue('--davinci-phosphorescent') || 
@@ -715,7 +717,7 @@ function testPhosphorescence() {
 }
 
 function testFlowAnimations() {
-  updateTestStatus(27, 'running', '🔄 Läuft...');
+  updateTestStatus(27, 'running', '”„ Läuft...');
   try {
     const flow = document.querySelector('[data-davinci-flow]') ||
                  document.querySelector('.davinci-flow') ||
@@ -734,7 +736,7 @@ function testFlowAnimations() {
 }
 
 function testHologramEffects() {
-  updateTestStatus(28, 'running', '🔄 Läuft...');
+  updateTestStatus(28, 'running', '”„ Läuft...');
   try {
     const hologram = document.querySelector('[data-davinci-hologram]') ||
                      document.querySelector('.davinci-hologram');
@@ -752,7 +754,7 @@ function testHologramEffects() {
 }
 
 function testParticleSystems() {
-  updateTestStatus(29, 'running', '🔄 Läuft...');
+  updateTestStatus(29, 'running', '”„ Läuft...');
   try {
     const particles = document.querySelector('[data-davinci-particles]') ||
                      document.querySelector('.davinci-particles');
@@ -771,7 +773,7 @@ function testParticleSystems() {
 
 // Link-Tests
 async function testPortalLink() {
-  updateTestStatus(30, 'running', '🔄 Läuft...');
+  updateTestStatus(30, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -794,7 +796,7 @@ async function testPortalLink() {
 }
 
 async function testManifestPortalLink() {
-  updateTestStatus(31, 'running', '🔄 Läuft...');
+  updateTestStatus(31, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -817,7 +819,7 @@ async function testManifestPortalLink() {
 }
 
 async function testTelbankLink() {
-  updateTestStatus(32, 'running', '🔄 Läuft...');
+  updateTestStatus(32, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -840,7 +842,7 @@ async function testTelbankLink() {
 }
 
 async function testOSOLink() {
-  updateTestStatus(33, 'running', '🔄 Läuft...');
+  updateTestStatus(33, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -863,7 +865,7 @@ async function testOSOLink() {
 }
 
 async function testHoneycombLink() {
-  updateTestStatus(34, 'running', '🔄 Läuft...');
+  updateTestStatus(34, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -886,7 +888,7 @@ async function testHoneycombLink() {
 }
 
 async function testLegalHubLink() {
-  updateTestStatus(35, 'running', '🔄 Läuft...');
+  updateTestStatus(35, 'running', '”„ Läuft...');
   try {
     const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     if (response.ok) {
@@ -909,7 +911,7 @@ async function testLegalHubLink() {
 }
 
 function testEffectsControl() {
-  updateTestStatus(36, 'running', '🔄 Läuft...');
+  updateTestStatus(36, 'running', '”„ Läuft...');
   try {
     const response = fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     response.then(r => r.text()).then(html => {
@@ -931,7 +933,7 @@ function testEffectsControl() {
 }
 
 function testLogoClickable() {
-  updateTestStatus(37, 'running', '🔄 Läuft...');
+  updateTestStatus(37, 'running', '”„ Läuft...');
   try {
     const response = fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
     response.then(r => r.text()).then(html => {
@@ -954,7 +956,7 @@ function testLogoClickable() {
 
 // Hauptfunktion
 async function runAllTests() {
-  log('🚀 Starte alle Tests...', 'info');
+  log('š€ Starte alle Tests...', 'info');
   completedTests = 0;
   testResults = {};
   updateProgress();
@@ -976,13 +978,13 @@ async function runAllTests() {
     const total = Object.keys(testResults).length;
     const passRate = total > 0 ? ((passed / total) * 100).toFixed(1) : 0;
 
-    log(`\n📊 TEST-ERGEBNISSE: ${passed}/${total} bestanden (${passRate}%), ${failed} fehlgeschlagen`, 
+    log(`\n“Š TEST-ERGEBNISSE: ${passed}/${total} bestanden (${passRate}%), ${failed} fehlgeschlagen`, 
         passed === total ? 'success' : failed > 0 ? 'error' : 'info');
     
     if (passed === total) {
       log('✅ ALLE TESTS BESTANDEN - 100% FUNKTIONSFEHLERFREI!', 'success');
     } else if (passRate >= 90) {
-      log('⚠️ MEISTE TESTS BESTANDEN - System funktionsfähig', 'info');
+      log('âš ï¸ MEISTE TESTS BESTANDEN - System funktionsfähig', 'info');
     } else {
       log('❌ EINIGE TESTS FEHLGESCHLAGEN - BITTE ÜBERPRÜFEN', 'error');
       // Auto-Fix Button anzeigen
@@ -1048,7 +1050,7 @@ function downloadLog() {
   logText += '\n--- TEST-ERGEBNISSE ---\n\n';
   testDefinitions.forEach(test => {
     const result = testResults[`test${test.id}`];
-    const status = result === true ? '✅ BESTANDEN' : result === false ? '❌ FEHLGESCHLAGEN' : '⏳ WARTEND';
+    const status = result === true ? '✅ BESTANDEN' : result === false ? '❌ FEHLGESCHLAGEN' : 'â³ WARTEND';
     logText += `Test ${test.id}: ${test.name} (${test.category}) - ${status}\n`;
   });
   
@@ -1069,7 +1071,7 @@ function downloadLog() {
 async function autoFixErrors() {
   const autoFixBtn = document.getElementById('autoFixBtn');
   autoFixBtn.disabled = true;
-  log('🔧 Starte automatische Fehlerbehebung...', 'info');
+  log('”§ Starte automatische Fehlerbehebung...', 'info');
   
   const failedTests = [];
   testDefinitions.forEach(test => {
@@ -1085,15 +1087,15 @@ async function autoFixErrors() {
     return;
   }
   
-  log(`🔍 ${failedTests.length} fehlgeschlagene Tests gefunden`, 'warn');
+  log(`” ${failedTests.length} fehlgeschlagene Tests gefunden`, 'warn');
   
   for (const test of failedTests) {
-    log(`🔧 Behebe Test ${test.id}: ${test.name}...`, 'info');
+    log(`”§ Behebe Test ${test.id}: ${test.name}...`, 'info');
     
     // Spezifische Fixes für bekannte Probleme
     if (test.id >= 18 && test.id <= 21) {
       // Hub-Tests: Bei file:// Protokoll als bestanden markieren
-      log(`   → Hub-Test bei file:// Protokoll - als bestanden markiert`, 'info');
+      log(`   â†’ Hub-Test bei file:// Protokoll - als bestanden markiert`, 'info');
       testResults[`test${test.id}`] = true;
       updateTestStatus(test.id, 'pass', '✅ Automatisch behoben');
     } else {
@@ -1104,7 +1106,7 @@ async function autoFixErrors() {
         if (testResults[`test${test.id}`] === true) {
           log(`   ✅ Test ${test.id} erfolgreich behoben`, 'success');
         } else {
-          log(`   ⚠️ Test ${test.id} konnte nicht automatisch behoben werden`, 'warn');
+          log(`   âš ï¸ Test ${test.id} konnte nicht automatisch behoben werden`, 'warn');
         }
       } catch (error) {
         log(`   ❌ Fehler bei Test ${test.id}: ${error.message}`, 'error');
@@ -1113,7 +1115,7 @@ async function autoFixErrors() {
   }
   
   // Tests erneut ausführen
-  log('🔄 Führe Tests erneut aus...', 'info');
+  log('”„ Führe Tests erneut aus...', 'info');
   await runAllTests();
   
   autoFixBtn.disabled = false;

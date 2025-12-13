@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -9,6 +9,8 @@ body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; 
 pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
 code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
+
+  <link rel="stylesheet" href="../../../../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>VERTIEFUNGEN WICHTIGER BEREICHE</h1>
@@ -27,21 +29,21 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 <strong>Vollständige Formale Definition:</strong>
 
 ```
-Journey J = (Q, Σ, δ, q₀, F, λ)
+Journey J = (Q, Î£, Î´, qâ‚€, F, Î»)
 
 wobei:
-- Q = {n₁, n₂, ..., nₖ}  // Menge aller Nodes
-- Σ = EVENT ∪ {TIMEOUT, MANUAL_TRIGGER, CONDITION_MET}  // Input-Alphabet
-- δ : Q × Σ × CONTEXT → Q × ACTION ∪ {EXIT}  // Übergangsfunktion mit Aktionen
-- q₀ ∈ Q  // Start-Node
-- F ⊆ Q  // End-Nodes (Exit-Nodes)
-- λ : Q → LABEL  // Node-Labels
+- Q = {nâ‚, nâ‚‚, ..., nâ‚–}  // Menge aller Nodes
+- Î£ = EVENT âˆª {TIMEOUT, MANUAL_TRIGGER, CONDITION_MET}  // Input-Alphabet
+- Î´ : Q Ã— Î£ Ã— CONTEXT â†’ Q Ã— ACTION âˆª {EXIT}  // Übergangsfunktion mit Aktionen
+- qâ‚€ âˆˆ Q  // Start-Node
+- F âŠ† Q  // End-Nodes (Exit-Nodes)
+- Î» : Q â†’ LABEL  // Node-Labels
 ```
 
 <strong>Erweiterte Übergangsfunktion:</strong>
 
 ```
-δ(n, input, context) → (n', actions):
+Î´(n, input, context) â†’ (n', actions):
 
   // Actions sind Seiteneffekte (z.B. Message senden)
   actions = []
@@ -72,10 +74,10 @@ wobei:
       else if n.config["wait_type"] = "event":
         // Warte auf Event
         wait_event_type = n.config["event_type"]
-        if EXISTS e ∈ context.events:
+        if EXISTS e âˆˆ context.events:
           e.event_type = wait_event_type
-          ∧ e.event_time > context.journey_state["wait_start_time"]
-          ∧ evaluate_boolean(n.config["event_conditions"] ?? true, {
+          âˆ§ e.event_time > context.journey_state["wait_start_time"]
+          âˆ§ evaluate_boolean(n.config["event_conditions"] ?? true, {
               contact: context.contact,
               event: e
             }):
@@ -120,7 +122,7 @@ wobei:
     CASE "branch":
       // Mehrere Bedingungen prüfen
       sorted_branches = sort(n.config["branches"], by: "priority")
-      ∀ branch ∈ sorted_branches:
+      âˆ€ branch âˆˆ sorted_branches:
         if evaluate_boolean(branch.condition, context):
           return (branch.next_node_id, [])
       return (n.config["default_node_id"], [])
@@ -141,9 +143,9 @@ wobei:
 Ein Kontakt kann in mehreren Journeys gleichzeitig sein.
 
 Verwaltung:
-active_instances(c) := { ji ∈ JI |
+active_instances(c) := { ji âˆˆ JI |
   ji.contact_id = c.id
-  ∧ ji.status = "active"
+  âˆ§ ji.status = "active"
 }
 
 Reentry-Policy (bei Trigger-Fire):
@@ -158,7 +160,7 @@ IF existing_instances = active_instances(c) WHERE ji.journey_id = journey.id:
     
     CASE "restart":
       // Alte Instanz beenden, neue starten
-      ∀ ji ∈ existing_instances:
+      âˆ€ ji âˆˆ existing_instances:
         ji.status = "cancelled"
         ji.state_data["cancel_reason"] = "restarted"
       create_new_instance()
@@ -225,7 +227,7 @@ process_journey_instances_batch(batch_size = 100):
   nodes = LOAD journey_nodes WHERE journey_id IN journey_ids
   
   // 6. Pro Instanz verarbeiten
-  ∀ ji ∈ active_instances:
+  âˆ€ ji âˆˆ active_instances:
     context = build_context_optimized(ji, contacts, events, journeys, nodes)
     process_journey_instance(ji, context)
   
@@ -314,15 +316,15 @@ PATH_NODE {
 <strong>Parser-Funktion:</strong>
 
 ```
-parse_expression(tokens: Array<Token>) → EXPRESSION_NODE:
+parse_expression(tokens: Array<Token>) â†’ EXPRESSION_NODE:
 
   return parse_logical_expression(tokens)
 
-parse_logical_expression(tokens) → EXPRESSION_NODE:
+parse_logical_expression(tokens) â†’ EXPRESSION_NODE:
   
   left = parse_comparison_expression(tokens)
   
-  if peek(tokens) ∈ {"AND", "OR"}:
+  if peek(tokens) âˆˆ {"AND", "OR"}:
     operator = consume(tokens)
     right = parse_logical_expression(tokens)
     return LOGICAL_NODE(operator, left, right)
@@ -335,18 +337,18 @@ parse_logical_expression(tokens) → EXPRESSION_NODE:
   else:
     return left
 
-parse_comparison_expression(tokens) → EXPRESSION_NODE:
+parse_comparison_expression(tokens) â†’ EXPRESSION_NODE:
   
   if peek(tokens) = "EXISTS":
     return parse_exists_clause(tokens)
   
-  else if peek(tokens) ∈ {"COUNT", "SUM", "AVG", "MAX", "MIN"}:
+  else if peek(tokens) âˆˆ {"COUNT", "SUM", "AVG", "MAX", "MIN"}:
     return parse_aggregate_clause(tokens)
   
   else:
     return parse_simple_comparison(tokens)
 
-parse_simple_comparison(tokens) → COMPARISON_NODE:
+parse_simple_comparison(tokens) â†’ COMPARISON_NODE:
   
   left = parse_path(tokens)
   operator = consume_operator(tokens)
@@ -354,7 +356,7 @@ parse_simple_comparison(tokens) → COMPARISON_NODE:
   
   return COMPARISON_NODE(left, operator, right)
 
-parse_exists_clause(tokens) → EXISTS_NODE:
+parse_exists_clause(tokens) â†’ EXISTS_NODE:
   
   consume(tokens, "EXISTS")
   entity = consume_entity(tokens)  // "event" oder "contact"
@@ -363,7 +365,7 @@ parse_exists_clause(tokens) → EXISTS_NODE:
   
   return EXISTS_NODE(entity, where_clause)
 
-parse_aggregate_clause(tokens) → AGGREGATE_NODE:
+parse_aggregate_clause(tokens) â†’ AGGREGATE_NODE:
   
   function = consume_function(tokens)  // COUNT, SUM, etc.
   consume(tokens, "(")
@@ -396,7 +398,7 @@ parse_aggregate_clause(tokens) → AGGREGATE_NODE:
 <strong>Caching-Strategie:</strong>
 
 ```
-evaluate_with_cache(expr: EXPRESSION_NODE, context: CONTEXT) → Boolean:
+evaluate_with_cache(expr: EXPRESSION_NODE, context: CONTEXT) â†’ Boolean:
 
   // Cache-Key generieren
   cache_key = generate_cache_key(expr, context.contact.id)
@@ -421,7 +423,7 @@ generate_cache_key(expr, contact_id):
 <strong>Event-Filter-Optimierung:</strong>
 
 ```
-evaluate_exists_optimized(exists_node: EXISTS_NODE, context: CONTEXT) → Boolean:
+evaluate_exists_optimized(exists_node: EXISTS_NODE, context: CONTEXT) â†’ Boolean:
 
   if exists_node.entity = "event":
     // Events bereits gefiltert laden
@@ -447,7 +449,7 @@ evaluate_exists_optimized(exists_node: EXISTS_NODE, context: CONTEXT) → Boolea
 <strong>COUNT:</strong>
 
 ```
-evaluate_count(aggregate_node: AGGREGATE_NODE, context: CONTEXT) → Number:
+evaluate_count(aggregate_node: AGGREGATE_NODE, context: CONTEXT) â†’ Number:
 
   events = context.events
   
@@ -466,7 +468,7 @@ evaluate_count(aggregate_node: AGGREGATE_NODE, context: CONTEXT) → Number:
 <strong>SUM:</strong>
 
 ```
-evaluate_sum(aggregate_node: AGGREGATE_NODE, context: CONTEXT) → Number:
+evaluate_sum(aggregate_node: AGGREGATE_NODE, context: CONTEXT) â†’ Number:
 
   events = context.events
   
@@ -481,13 +483,13 @@ evaluate_sum(aggregate_node: AGGREGATE_NODE, context: CONTEXT) → Number:
   
   // Property extrahieren
   sum = 0
-  ∀ e ∈ filtered_events:
+  âˆ€ e âˆˆ filtered_events:
     property_value = resolve_path(aggregate_node.property, {
       event: e,
       contact: context.contact
     })
     
-    if property_value ∈ Number:
+    if property_value âˆˆ Number:
       sum += property_value
   
   return sum
@@ -504,7 +506,7 @@ evaluate_sum(aggregate_node: AGGREGATE_NODE, context: CONTEXT) → Number:
 <strong>Incremental Update:</strong>
 
 ```
-recalculate_segment_incremental(s: Segment) → Segment':
+recalculate_segment_incremental(s: Segment) â†’ Segment':
 
   if s.is_dynamic = false:
     // Statisches Segment, keine Berechnung
@@ -525,23 +527,23 @@ recalculate_segment_incremental(s: Segment) → Segment':
     s.workspace_id
   )
   
-  contacts_to_check = changed_contacts ∪ new_contacts
+  contacts_to_check = changed_contacts âˆª new_contacts
   
   // 4. Prüfe nur diese Kontakte
   new_members = Set<ContactID>()
   
-  ∀ c ∈ contacts_to_check:
+  âˆ€ c âˆˆ contacts_to_check:
     if evaluate_segment_predicate(s.segment_query, c):
       new_members.add(c.id)
   
   // 5. Update Segment
-  s'.segment_set = (old_members - contacts_to_check) ∪ new_members
+  s'.segment_set = (old_members - contacts_to_check) âˆª new_members
   s'.contact_count = |s'.segment_set|
   s'.last_calculated_at = now()
   
   return s'
 
-get_changed_contacts_since(since: Timestamp, workspace_id: UUID) → Set<ContactID>:
+get_changed_contacts_since(since: Timestamp, workspace_id: UUID) â†’ Set<ContactID>:
 
   // Kontakte mit geänderten Attributen
   changed_contacts = SELECT DISTINCT contact_id FROM contact_attributes
@@ -554,13 +556,13 @@ get_changed_contacts_since(since: Timestamp, workspace_id: UUID) → Set<Contact
       AND event_time >= since
       AND contact_id IS NOT NULL
   
-  return changed_contacts ∪ contacts_with_events
+  return changed_contacts âˆª contacts_with_events
 ```
 
 <strong>Parallel-Berechnung:</strong>
 
 ```
-recalculate_segment_parallel(s: Segment, worker_count = 4) → Segment':
+recalculate_segment_parallel(s: Segment, worker_count = 4) â†’ Segment':
 
   // 1. Alle Kontakte des Workspaces partitionieren
   all_contacts = get_all_contacts(s.workspace_id)
@@ -569,7 +571,7 @@ recalculate_segment_parallel(s: Segment, worker_count = 4) → Segment':
   // 2. Parallel pro Partition berechnen
   results = PARALLEL_MAP(partitions, partition =>
     members = Set<ContactID>()
-    ∀ c ∈ partition:
+    âˆ€ c âˆˆ partition:
       if evaluate_segment_predicate(s.segment_query, c):
         members.add(c.id)
     return members
@@ -614,14 +616,14 @@ invalidate_segment_cache(workspace_id: UUID, contact_id: UUID | null, event_type
   if contact_id:
     // Kontakt-spezifische Invalidation
     segments = get_segments_for_workspace(workspace_id)
-    ∀ s ∈ segments:
+    âˆ€ s âˆˆ segments:
       cache.delete("segment:{workspace_id}:{s.id}:members")
       cache.delete("segment:{workspace_id}:{s.id}:metadata")
   
   else if event_type:
     // Event-spezifische Invalidation (nur relevante Segmente)
     segments = get_segments_using_event_type(workspace_id, event_type)
-    ∀ s ∈ segments:
+    âˆ€ s âˆˆ segments:
       cache.delete("segment:{workspace_id}:{s.id}:members")
       cache.delete("segment:{workspace_id}:{s.id}:metadata")
   
@@ -650,7 +652,7 @@ PriorityQueue<Message> {
       buckets[priority] = Queue()
     buckets[priority].enqueue(message)
   
-  dequeue() → Message | null:
+  dequeue() â†’ Message | null:
     // Von höchster Priority
     for priority in [10, 9, 8, ..., 1]:
       if priority in buckets AND not buckets[priority].empty():
@@ -665,7 +667,7 @@ PriorityQueue<Message> {
     
     return null
   
-  peek() → Message | null:
+  peek() â†’ Message | null:
     // Nächste Message ohne zu entfernen
     for priority in [10, 9, 8, ..., 1]:
       if priority in buckets AND not buckets[priority].empty():
@@ -708,7 +710,7 @@ RateLimiter {
   tokens: Number
   last_refill: Timestamp
   
-  check_limit() → Boolean:
+  check_limit() â†’ Boolean:
     now_time = now()
     elapsed = now_time - last_refill
     
@@ -738,7 +740,7 @@ Pro Channel:
 <strong>Per-Contact Rate-Limiting:</strong>
 
 ```
-check_contact_rate_limit(contact_id: UUID, channel_id: UUID, config: RateLimitConfig) → Boolean:
+check_contact_rate_limit(contact_id: UUID, channel_id: UUID, config: RateLimitConfig) â†’ Boolean:
 
   key = "rate_limit:{contact_id}:{channel_id}"
   
@@ -760,7 +762,7 @@ check_contact_rate_limit(contact_id: UUID, channel_id: UUID, config: RateLimitCo
 <strong>Exponential Backoff:</strong>
 
 ```
-retry_message(message: Message, error: Error) → Message':
+retry_message(message: Message, error: Error) â†’ Message':
 
   message.retry_count++
   
@@ -799,7 +801,7 @@ ERROR_CATEGORIES = {
   "retryable": ["network_error", "provider_error"]
 }
 
-categorize_error(error: Error) → String:
+categorize_error(error: Error) â†’ String:
 
   error_message_lower = error.message.toLowerCase()
   
@@ -922,13 +924,13 @@ Bulk-Keys:
 <strong>Batch-Loading:</strong>
 
 ```
-load_contacts_batch(contact_ids: Array<UUID>) → Map<UUID, Contact>:
+load_contacts_batch(contact_ids: Array<UUID>) â†’ Map<UUID, Contact>:
 
   // 1. L1 Cache prüfen
   cached = {}
   missing_ids = []
   
-  ∀ id ∈ contact_ids:
+  âˆ€ id âˆˆ contact_ids:
     if cached_contact = l1_cache.get("contact:" + id):
       cached[id] = cached_contact
     else:
@@ -941,7 +943,7 @@ load_contacts_batch(contact_ids: Array<UUID>) → Map<UUID, Contact>:
   l2_keys = map(missing_ids, id => "contact:" + id)
   l2_results = redis.mget(l2_keys)
   
-  ∀ (id, result) ∈ zip(missing_ids, l2_results):
+  âˆ€ (id, result) âˆˆ zip(missing_ids, l2_results):
     if result:
       contact = deserialize(result)
       cached[id] = contact
@@ -954,7 +956,7 @@ load_contacts_batch(contact_ids: Array<UUID>) → Map<UUID, Contact>:
   // 3. Database-Load
   db_results = SELECT * FROM contacts WHERE id IN missing_ids
   
-  ∀ contact ∈ db_results:
+  âˆ€ contact âˆˆ db_results:
     cached[contact.id] = contact
     l1_cache.set("contact:" + contact.id, contact, ttl=5min)
     l2_cache.set("contact:" + contact.id, serialize(contact), ttl=5min)
@@ -965,7 +967,7 @@ load_contacts_batch(contact_ids: Array<UUID>) → Map<UUID, Contact>:
 <strong>Lazy Loading:</strong>
 
 ```
-load_events_lazy(contact_id: UUID, filters: EventFilters) → Array<Event>:
+load_events_lazy(contact_id: UUID, filters: EventFilters) â†’ Array<Event>:
 
   // Nur wenn wirklich benötigt
   if filters.needed = false:
@@ -1007,7 +1009,7 @@ CircuitBreaker {
   timeout: Duration = 60s
   last_failure_time: Timestamp | null
   
-  call(fn: Function) → Result:
+  call(fn: Function) â†’ Result:
     
     if state = "open":
       if now() - last_failure_time < timeout:

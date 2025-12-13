@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -17,8 +17,8 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 <strong>Der User soll das System einfach "fahren" wie ein autonomes Fahrzeug.</strong>
 - Nur kommunizieren, keine Konfiguration
-- Keine Formular-Hölle
-- Automatische Verbindungen, automatische Räume, automatische Slots
+- Keine Formular-H&Ouml;lle
+- Automatische Verbindungen, automatische R&Auml;ume, automatische Slots
 
 ---
 
@@ -33,15 +33,15 @@ Beim Laden von `manifest-portal.html`:
 <h3>Implementierung</h3>
 Siehe `manifest-portal.html` - Funktion: `autoConnectFromToken()`
 
-<strong>Status:</strong> ✅ Bereits teilweise implementiert, muss nur automatisch beim Seitenladen ausgeführt werden
+<strong>Status:</strong> ✅ Bereits teilweise implementiert, muss nur automatisch beim Seitenladen ausgef&Uuml;hrt werden
 
 ---
 
-<h2>📋 Phase 2: One-Click-Matching (NÄCHSTER SCHRITT)</h2>
+<h2>📋 Phase 2: One-Click-Matching (N&Auml;CHSTER SCHRITT)</h2>
 
 <h3>Ziel</h3>
 Statt manuell `pair_code` eintippen:
-- ✅ `pair_code` kann für einen Kontakt/Link automatisch generiert werden
+- ✅ `pair_code` kann f&Uuml;r einen Kontakt/Link automatisch generiert werden
 - ✅ In der URL stehen: `https://.../manifest-portal.html?room=ABCD`
 - ✅ Der zweite Nutzer klickt auf den Link → Frontend liest `room`-Param
 - ✅ Ruft `/api/presence/verify` und `/match` automatisch
@@ -59,7 +59,7 @@ Siehe Code-Snippets unten
 In `manifest-portal.html`:
 - ✅ Statt langem Formular: Buttons wie "Call", "Chat", "Group Session"
 - ✅ Dahinter werden intern:
-  - Voucher/Slots (falls nötig) erzeugt
+  - Voucher/Slots (falls n&Ouml;tig) erzeugt
   - Presence & WebSocket-Room angelegt
   - Telbank-Flows vorbereitet
 
@@ -72,12 +72,12 @@ Siehe Code-Snippets unten
 
 <h3>Ziel</h3>
 Der User klickt: "Call mit X planen"
-- ✅ Frontend fragt `/api/slots/available` für X
-- ✅ Wählt automatisch den ersten passenden Slot
+- ✅ Frontend fragt `/api/slots/available` f&Uuml;r X
+- ✅ W&Auml;hlt automatisch den ersten passenden Slot
 - ✅ Bucht den Slot via `/api/voucher/book`
 - ✅ User sieht nur: "Termin am Dienstag, 14:00 steht – Join-Button"
 
-<strong>→ Keine Eingabe, nur Bestätigung</strong>
+<strong>→ Keine Eingabe, nur Best&Auml;tigung</strong>
 
 ---
 
@@ -85,8 +85,8 @@ Der User klickt: "Call mit X planen"
 
 <h3>Ziel</h3>
 Eine simple "Contact Card"-Liste anzeigen:
-- ✅ Für jeden Kontakt:
-  - Status (online/offline) über Presence-API
+- ✅ F&Uuml;r jeden Kontakt:
+  - Status (online/offline) &Uuml;ber Presence-API
   - "Join Conversation"-Button:
     - Triggert intern `pair_code`-Generierung + `/match` + WebSocket-Join
 
@@ -107,17 +107,17 @@ Aus dem Code kann man folgende (teilweise "versteckte") Features erkennen:
 
 <h4>✅ WebSocket-Livechat</h4>
 - `functions/ws.js` → `/ws`
-- Rooms, Broadcast, basic Signaling – vorbereitet für Live-Communication
+- Rooms, Broadcast, basic Signaling – vorbereitet f&Uuml;r Live-Communication
 
 <h4>✅ Telbank</h4>
 - Frontend: `TELBANK/index.html`, `TELBANK/telbank-app.js`
 - Backend: `/api/telbank/transfers` (D1-Tabelle `transfers`)
-- Event-Sourcing-Light über Tabelle `events`
+- Event-Sourcing-Light &Uuml;ber Tabelle `events`
 
 <h4>✅ Voucher & Slots</h4>
 - Backend: `/api/voucher/issue`, `/book`, `/cancel`, `/bookings`
 - Noch eine API `/api/slots/available`
-- Kann man nutzen für Zeit-Slots, Sessions, Gespräche, etc.
+- Kann man nutzen f&Uuml;r Zeit-Slots, Sessions, Gespr&Auml;che, etc.
 
 <h4>✅ Mortgage-Flow</h4>
 - `/api/mortgage/application`, `/offer`, `/offer-list`
@@ -133,13 +133,13 @@ Aus dem Code kann man folgende (teilweise "versteckte") Features erkennen:
 - `autofix-client.js` integrierbar in jede Seite:
   - Fehler werden gesammelt
   - Backendseitig analysiert
-  - Benutzer bekommt hübsche Notifs ("Fix vorgeschlagen")
+  - Benutzer bekommt h&Uuml;bsche Notifs ("Fix vorgeschlagen")
 
 <h4>✅ Admin-Monitoring, Honeycomb, Ambient Media</h4>
 - `admin-monitoring.html`, `business-admin.html`, `honeycomb.html`, `ambient-media.js`
-- Visualisierung von Events, Räumen, Traffic, etc.
+- Visualisierung von Events, R&Auml;umen, Traffic, etc.
 
-<strong>Das ist keine Dummy-Doku – das ist echte, greifbare Funktionalität im Code.</strong>
+<strong>Das ist keine Dummy-Doku – das ist echte, greifbare Funktionalit&Auml;t im Code.</strong>
 
 ---
 
@@ -150,7 +150,7 @@ Aus dem Code kann man folgende (teilweise "versteckte") Features erkennen:
 - [x] Automatischer Heartbeat alle X Sekunden
 - [ ] Auto-Verifizierung ohne Token (optional)
 
-<h3>Phase 2: One-Click-Match 🔄 (NÄCHSTER SCHRITT)</h3>
+<h3>Phase 2: One-Click-Match 🔄 (N&Auml;CHSTER SCHRITT)</h3>
 - [ ] URL-Parameter `?room=ABCD` lesen
 - [ ] Automatisch `pair_code` aus URL generieren
 - [ ] Automatisch `/api/presence/match` aufrufen
@@ -164,7 +164,7 @@ Aus dem Code kann man folgende (teilweise "versteckte") Features erkennen:
 <h3>Phase 4: Auto-Slots 📅</h3>
 - [ ] Automatische Slot-Auswahl
 - [ ] Automatische Buchung
-- [ ] Bestätigungs-UI
+- [ ] Best&Auml;tigungs-UI
 
 <h3>Phase 5: Kontaktliste 📅</h3>
 - [ ] Presence-Status pro Kontakt
@@ -173,9 +173,9 @@ Aus dem Code kann man folgende (teilweise "versteckte") Features erkennen:
 
 ---
 
-<h2>📝 Nächste Schritte</h2>
+<h2>📝 N&Auml;chste Schritte</h2>
 
-1. ✅ Code-Snippets für Presence-Auto-Init + One-Click-Match implementieren
+1. ✅ Code-Snippets f&Uuml;r Presence-Auto-Init + One-Click-Match implementieren
 2. ✅ In `manifest-portal.html` integrieren
 3. ✅ Testen
 4. ⏭ Phase 3-5 nach und nach umsetzen

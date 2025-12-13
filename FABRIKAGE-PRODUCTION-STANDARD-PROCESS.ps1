@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE PRODUCTION STANDARD PROCESS
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE PRODUCTION STANDARD PROCESS
 # Dieser Vorgang ist Standard und soll frequentivest wiederholt werden
 # Um das System up-to-date zu halten im Production-Prozess
 # Immer prüfen während des Prozesses
@@ -108,21 +108,21 @@ $htmlFiles = Get-ChildItem -Path $rootDir -Filter "*.html" -Recurse -File |
     Select-Object -First 100 -ExpandProperty FullName
 
 $encodingFixes = @{
-    'EintrÃ¤ge' = 'Einträge'
-    'fÃ¼r' = 'für'
-    'Ã¼' = 'ü'
-    'Ã¤' = 'ä'
-    'Ã¶' = 'ö'
-    'ÃŸ' = 'ß'
+    'Einträge' = 'Einträge'
+    'für' = 'für'
+    'ü' = 'ü'
+    'ä' = 'ä'
+    'ö' = 'ö'
+    'ß' = 'ß'
     'Ãœ' = 'Ü'
-    'Ã„' = 'Ä'
-    'Ã–' = 'Ö'
-    'ZurÃ¼ck' = 'Zurück'
-    'Ã¶ffnen' = 'öffnen'
-    'erklÃ¤rt' = 'erklärt'
-    'wÃ¤hlen' = 'wählen'
-    'zurÃ¼ckspielen' = 'zurückspielen'
-    'geschÃ¼tzten' = 'geschützten'
+    'Ä' = 'Ä'
+    'Ö' = 'Ö'
+    'Zurück' = 'Zurück'
+    'öffnen' = 'öffnen'
+    'erklärt' = 'erklärt'
+    'wählen' = 'wählen'
+    'zurückspielen' = 'zurückspielen'
+    'geschützten' = 'geschützten'
     'â€"' = '—'
     'â€"' = '"'
     'â€"' = '"'

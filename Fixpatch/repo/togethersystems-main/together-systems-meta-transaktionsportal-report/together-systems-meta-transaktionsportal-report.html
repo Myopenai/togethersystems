@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -9,6 +9,8 @@ body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; 
 pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
 code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
+
+  <link rel="stylesheet" href="../../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>Together Systems – Meta-Transaktionsportal</h1>
@@ -48,7 +50,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 - <strong>Verträge und Vouchers</strong> als JSON-Objekte austauschen und
 - über angebundene <strong>APIs und Signaling-Server</strong> echte Geschäfte abwickeln können.</p>
 <p>Dabei gilt:</p>
-<p>- Die <strong>Offline-Manifest-Datei</strong> ist der „heilige Startpunkt“ und liefert die erste Verifikation.
+<p>- Die <strong>Offline-Manifest-Datei</strong> ist der „heilige Startpunkt" und liefert die erste Verifikation.
 - Das <strong>Online-Portal</strong> erkennt den Browser automatisch wieder.
 - Die <strong>Wabenräume</strong> bilden die Raumlogik (Treffpunkte, Verhandlungsräume, Live-Sessions).
 - Der <strong>Legal-Hub</strong> verknüpft Verträge, AGBs, Signaturen und archivierte Dokumente.</p>
@@ -80,8 +82,8 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
   - Vergleich der HMAC-Signatur mit dem Shared Secret.
   - Persistenz des Verifizierungsstatus in `localStorage.mot_verified_v1`.</p>
 <p>- <strong>Hilfsfunktionen</strong>
-  - `getUserContext()` → `{ uid, verified }`.
-  - `parseHashParams()` → Hash-Parameter aus URL.
+  - `getUserContext()` â†’ `{ uid, verified }`.
+  - `parseHashParams()` â†’ Hash-Parameter aus URL.
   - Hilfen zum Erzeugen verifizierter Links (z. B. `#wabe=cell-7&uid=...`).
   - Optionale API- & WSS-Helfer für einheitliches Anhängen von `uid`.</p>
 <h4>Backend-Komponenten</h4>
@@ -102,16 +104,16 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 <p>- Identität = Kombination aus:
   - `localStorage.mot_user_id_v1` (zufällige, stabile ID pro Browser),
   - optionalem `mot_device_keypair` (für kryptografische Signaturen),
-  - HMAC-Verifikation über das Offline-Manifest (einmalige „Einführung“ ins System).</p>
+  - HMAC-Verifikation über das Offline-Manifest (einmalige „Einführung" ins System).</p>
 <p>---</p>
 <h3>1.3. Auth-/Identitätsfluss</h3>
 <h4>1.3.1. Erste Benutzung (Offline-Manifest)</h4>
 <p>1. User öffnet `manifest-forum.html` lokal.
 2. Script prüft: existiert `localStorage.mot_user_id_v1`?
-   - Wenn <strong>nein</strong> → neue `userId` generieren (z. B. 128-Bit Random, Base62/Base58 codiert).
+   - Wenn <strong>nein</strong> â†’ neue `userId` generieren (z. B. 128-Bit Random, Base62/Base58 codiert).
    - Optional: zusätzlich Schlüsselpaar (Public/Private Key) erzeugen und lokal speichern.
 3. User ist damit <strong>lokal eindeutig bekannt</strong>, aber noch nicht im Online-Portal verifiziert.</p>
-<h4>1.3.2. „Portal öffnen (verifiziert)“</h4>
+<h4>1.3.2. „Portal öffnen (verifiziert)"</h4>
 <p>Beim Klick auf einen Button im Offline-Manifest:</p>
 <p>- Das Manifest kennt einen gemeinsamen Token `MOT_ACCESS_TOKEN`.
 - Es erzeugt einen signierten Link:</p>
@@ -164,13 +166,13 @@ sig  = HMAC-SHA256(base, MOT_SHARED_SECRET)
 <h3>2.2. Endkunden-Flow (Borrower) – vom ersten Besuch bis zum Deal</h3>
 <p>1. <strong>Erstkontakt</strong>
    - User öffnet das Portal (z. B. `Portal-Start.html` oder `manifest-portal.html`).
-   - Wenn er über das Offline-Manifest kommt → verifizierte Sitzung.</p>
+   - Wenn er über das Offline-Manifest kommt â†’ verifizierte Sitzung.</p>
 <p>2. <strong>Objekt-Erfassung</strong>
    - User erfasst Daten zu Immobilie und Bedarf:
      - Adresse, Typ (Haus, Wohnung, etc.), Kaufpreis, Eigenkapital, gewünschte Laufzeit, etc.
    - Diese Daten werden zunächst <strong>lokal im Manifest</strong> gespeichert.</p>
 <p>3. <strong>Anfrage als Voucher/Objekt</strong>
-   - Aus den lokalen Daten erzeugt das Manifest ein <strong>Hypothekenanfrage-Objekt</strong> (`MortgageApplication`) und optional einen <strong>Anfrage-Voucher</strong> („Recht auf Angebote zu erhalten“).
+   - Aus den lokalen Daten erzeugt das Manifest ein <strong>Hypothekenanfrage-Objekt</strong> (`MortgageApplication`) und optional einen <strong>Anfrage-Voucher</strong> („Recht auf Angebote zu erhalten").
    - Dieses Objekt wird über `POST /api/hypotheken/anfrage` an die API gesendet.</p>
 <p>4. <strong>Banken/FinTechs antworten mit Angeboten</strong>
    - Kreditgeber erhalten die Anfrage (intern via Matching/Rules).
@@ -365,7 +367,7 @@ sig  = HMAC-SHA256(base, MOT_SHARED_SECRET)
   ]
 }
 </code></pre>
-<h4>2.4.5. Angebot annehmen (Offer-Voucher → Contract-Voucher)</h4>
+<h4>2.4.5. Angebot annehmen (Offer-Voucher â†’ Contract-Voucher)</h4>
 <p>`POST /api/hypotheken/angebot/accept`</p>
 <strong>Body</strong>
 <pre><code>{
@@ -468,7 +470,7 @@ sig  = HMAC-SHA256(base, MOT_SHARED_SECRET)
    - Profitieren von <strong>accountloser Nutzung</strong> und einem zentralen Kommunikations- & Vertragsraum.</p>
 <p>---</p>
 <h3>3.2. Value Proposition (Werteversprechen)</h3>
-<p>1. <strong>Accountlose Nutzung – „einfach Browser öffnen und loslegen“</strong>
+<p>1. <strong>Accountlose Nutzung – „einfach Browser öffnen und loslegen"</strong>
    - Keine Registrierungshürde.
    - Identität kommt aus dem Offline-Manifest + Browser.</p>
 <p>2. <strong>Einheitliche Transaktionslogik über alle Branchen</strong>
@@ -483,7 +485,7 @@ sig  = HMAC-SHA256(base, MOT_SHARED_SECRET)
    - Export/Backup als JSON/HTML/PDF jederzeit möglich.</p>
 <p>4. <strong>Nahtlose Verbindung von Kommunikation & Vertrag</strong>
    - Wabenräume (= Kommunikationsräume) sind direkt mit Vouchers/Verträgen verknüpft.
-   - Keine Trennung zwischen „Chat hier“ und „Vertrag irgendwo im E-Mail-Anhang“.</p>
+   - Keine Trennung zwischen „Chat hier" und „Vertrag irgendwo im E-Mail-Anhang".</p>
 <p>5. <strong>White-Label-fähige Infrastruktur</strong>
    - Unternehmen können das System mit eigenem Branding nutzen.
    - Integration in bestehende Backends/Signaling-Server/APIs.</p>
@@ -542,7 +544,7 @@ sig  = HMAC-SHA256(base, MOT_SHARED_SECRET)
 <p>4. <strong>Partnernetzwerk</strong>
    - FinTechs, Payment-Provider, Notare, Kanzleien, Marktplätze.</p>
 <p>5. <strong>Marke & Community</strong>
-   - Vertrauen in „Together Systems“ als faire, offene und möglichst neutrale Meta-Plattform.</p>
+   - Vertrauen in „Together Systems" als faire, offene und möglichst neutrale Meta-Plattform.</p>
 <p>---</p>
 <h3>3.7. Key Activities (Schlüsselaktivitäten)</h3>
 <p>1. <strong>Plattform-Entwicklung & Betrieb</strong>
@@ -627,7 +629,7 @@ sig  = HMAC-SHA256(base, MOT_SHARED_SECRET)
 <p>Das Business Model Canvas ordnet diese technische Architektur in einen betriebswirtschaftlichen Rahmen ein und zeigt, wie Together Systems als <strong>Kern-Infrastruktur für zahlreiche digitale Geschäftsmodelle</strong> dienen kann – mit freiem Zugang für Endnutzer, starker B2B-Monetarisierung und hoher Flexibilität für zukünftige Verticals.</p>
 <p>---
 
-<h2>🏢 Unternehmens-Branding & OCR</h2>
+<h2>¢ Unternehmens-Branding & OCR</h2>
 
 <strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
 

@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE STANDARD PRODUCTION PROCESS
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE STANDARD PRODUCTION PROCESS
 # Frequentivestm wiederholbarer Prozess: Prüfen → Fixen → Testen → Deployen → Verifizieren
 # Basisregel: Alle fehlenden Dateien erstellen + 100% Tests + Deployment
 
@@ -64,21 +64,21 @@ $htmlFiles = @(
 )
 
 $encodingFixes = @{
-    'EintrÃ¤ge' = 'Einträge'
-    'fÃ¼r' = 'für'
-    'Ã¼' = 'ü'
-    'Ã¤' = 'ä'
-    'Ã¶' = 'ö'
-    'ÃŸ' = 'ß'
+    'Einträge' = 'Einträge'
+    'für' = 'für'
+    'ü' = 'ü'
+    'ä' = 'ä'
+    'ö' = 'ö'
+    'ß' = 'ß'
     'Ãœ' = 'Ü'
-    'Ã„' = 'Ä'
-    'Ã–' = 'Ö'
-    'ZurÃ¼ck' = 'Zurück'
-    'Ã¶ffnen' = 'öffnen'
-    'erklÃ¤rt' = 'erklärt'
-    'wÃ¤hlen' = 'wählen'
-    'zurÃ¼ckspielen' = 'zurückspielen'
-    'geschÃ¼tzten' = 'geschützten'
+    'Ä' = 'Ä'
+    'Ö' = 'Ö'
+    'Zurück' = 'Zurück'
+    'öffnen' = 'öffnen'
+    'erklärt' = 'erklärt'
+    'wählen' = 'wählen'
+    'zurückspielen' = 'zurückspielen'
+    'geschützten' = 'geschützten'
     'â€"' = '—'
     'â€"' = '"'
     'â€"' = '"'

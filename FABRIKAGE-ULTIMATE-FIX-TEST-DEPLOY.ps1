@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ULTIMATE FIX, TEST & DEPLOY
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ULTIMATE FIX, TEST & DEPLOY
 # Behebt ALLE Fehler, testet ALLES, deployed ALLES
 
 $ErrorActionPreference = "Continue"
@@ -30,21 +30,21 @@ $htmlFiles = @(
 )
 
 $encodingFixes = @{
-    'EintrÃ¤ge' = 'Einträge'
-    'fÃ¼r' = 'für'
-    'Ã¼' = 'ü'
-    'Ã¤' = 'ä'
-    'Ã¶' = 'ö'
-    'ÃŸ' = 'ß'
+    'Einträge' = 'Einträge'
+    'für' = 'für'
+    'ü' = 'ü'
+    'ä' = 'ä'
+    'ö' = 'ö'
+    'ß' = 'ß'
     'Ãœ' = 'Ü'
-    'Ã„' = 'Ä'
-    'Ã–' = 'Ö'
-    'ZurÃ¼ck' = 'Zurück'
-    'Ã¶ffnen' = 'öffnen'
-    'erklÃ¤rt' = 'erklärt'
-    'wÃ¤hlen' = 'wählen'
-    'zurÃ¼ckspielen' = 'zurückspielen'
-    'geschÃ¼tzten' = 'geschützten'
+    'Ä' = 'Ä'
+    'Ö' = 'Ö'
+    'Zurück' = 'Zurück'
+    'öffnen' = 'öffnen'
+    'erklärt' = 'erklärt'
+    'wählen' = 'wählen'
+    'zurückspielen' = 'zurückspielen'
+    'geschützten' = 'geschützten'
     'â€"' = '—'
     'â€"' = '"'
     'â€"' = '"'

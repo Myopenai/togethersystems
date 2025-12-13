@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - ALLE KOMPONENTEN
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - ALLE KOMPONENTEN
 # Umfassender Test aller neuen Komponenten und Integrationen
 
 $ErrorActionPreference = "Stop"
@@ -85,11 +85,11 @@ foreach ($file in $htmlFiles) {
         
         # Prüfe Umlaute
         $umlautErrors = @()
-        if ($content -match 'â€¢') { $umlautErrors += "â€¢ statt •" }
-        if ($content -match 'Ã¤') { $umlautErrors += "Ã¤ statt ä" }
-        if ($content -match 'Ã¶') { $umlautErrors += "Ã¶ statt ö" }
-        if ($content -match 'Ã¼') { $umlautErrors += "Ã¼ statt ü" }
-        if ($content -match 'ÃŸ') { $umlautErrors += "ÃŸ statt ß" }
+        if ($content -match '•') { $umlautErrors += "• statt •" }
+        if ($content -match 'ä') { $umlautErrors += "ä statt ä" }
+        if ($content -match 'ö') { $umlautErrors += "ö statt ö" }
+        if ($content -match 'ü') { $umlautErrors += "ü statt ü" }
+        if ($content -match 'ß') { $umlautErrors += "ß statt ß" }
         
         if ($umlautErrors.Count -gt 0) {
             Add-Result -Component $component -Test "Umlaute" -Status "ERROR" -Message ($umlautErrors -join ", ")

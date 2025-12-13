@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -15,14 +15,14 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 <body>
 <h2>TogetherSystems Portal – Entwicklungsleitfaden (Vertikalen, DB, Security, Psychologie)</h2>
 
-Dieser Bericht ist für einen echten Entwickler / ein Team gedacht, um das aktuelle Demo‑System
+Dieser Bericht ist f&Uuml;r einen echten Entwickler / ein Team gedacht, um das aktuelle Demo‑System
 (`ts-portal` auf Cloudflare Pages) in ein produktiv nutzbares Multi‑Vertical‑System zu verwandeln.
 
 Er beschreibt:
 1. Aktuellen Stand (was IST da)
-2. Lücken (was FEHLT)
+2. L&Uuml;cken (was FEHLT)
 3. Konkrete Umsetzungsschritte je Schicht:
-   - Vertikalen (Geschäfte)
+   - Vertikalen (Gesch&Auml;fte)
    - Backend (D1 / APIs)
    - Security & Monitoring
    - Psychologie / AI‑Layer
@@ -32,8 +32,8 @@ Er beschreibt:
 <h3>1. Aktueller Stand (IST)</h3>
 
 <strong>Frontend / UIs</strong>
-- `index.html`: Offline‑Portal‑Start, Download‑Link fürs Manifest‑Forum.
-- `manifest-forum.html`: Offline‑Forum (Single‑File), inkl. Verifizierungs‑Button „Portal öffnen (verifiziert)“.
+- `index.html`: Offline‑Portal‑Start, Download‑Link f&Uuml;rs Manifest‑Forum.
+- `manifest-forum.html`: Offline‑Forum (Single‑File), inkl. Verifizierungs‑Button „Portal &Ouml;ffnen (verifiziert)“.
 - `manifest-portal.html`: Online‑Portal mit:
   - Feed‑Ansicht (Lesen),
   - Token‑Verifikation (Hash‑Parameter),
@@ -41,26 +41,26 @@ Er beschreibt:
   - Live‑Room‑Stub (WebSocket‑Signaling),
   - Voucher & Termine (inkl. Branch‑Templates + Kalender),
   - Immoblien & Hypotheken (Demo),
-  - Events & Memberships‑Übersicht (Text‑Report aus Voucher‑API).
-- `honeycomb.html`: Wabenräume (lokale Raum‑Logik).
-- `legal-hub.html`: Rechtlicher Hub (Branding, Text) + lokale Contract‑Verknüpfung (Datei ↔ Voucher/Raum).
+  - Events & Memberships‑&Uuml;bersicht (Text‑Report aus Voucher‑API).
+- `honeycomb.html`: Wabenr&Auml;ume (lokale Raum‑Logik).
+- `legal-hub.html`: Rechtlicher Hub (Branding, Text) + lokale Contract‑Verkn&Uuml;pfung (Datei ↔ Voucher/Raum).
 - `TELBANK/index.html`: Telbank‑Konsole (MetaMask‑Flows, In/Out, Transfer‑Logging).
 
 <strong>Backend / Functions</strong>
 - Cloudflare Pages Functions (im Verzeichnis `functions/`):
   - `api/telbank/transfers.js`: Telbank‑Transfers, aktuell bereits auf <strong>D1</strong> umgestellt (`env.DB` Binding, `transfers`‑Tabelle).
   - Presence‑API (`functions/api/presence/*.js`): Verify / Heartbeat / Match (In‑Memory‑Store, NICHT D1).
-  - WebSocket‑Signaling (`functions/ws.js`): Räume + Broadcast (In‑Memory‑Store).
-- Lokale Node‑Server (nicht auf Pages ausgerollt, nur für lokale Tests):
+  - WebSocket‑Signaling (`functions/ws.js`): R&Auml;ume + Broadcast (In‑Memory‑Store).
+- Lokale Node‑Server (nicht auf Pages ausgerollt, nur f&Uuml;r lokale Tests):
   - `voucher-api-server.js`: Voucher + Slots (In‑Memory).
   - `mortgage-api-server.js`: Hypothek‑Demo (In‑Memory).
 
 <strong>Datenmodell / DB</strong>
-- `d1-schema.sql`: Definiert Tabellen für:
+- `d1-schema.sql`: Definiert Tabellen f&Uuml;r:
   - `transfers` (Telbank),
   - `vouchers`, `voucher_bookings`,
   - `properties`, `mortgage_applications`, `mortgage_offers`.
-- `BACKEND-ARCHITECTURE-DB-MONITORING-FEES.md`: beschreibt zusätzliche Tabellenideen (Events, Fees etc.).
+- `BACKEND-ARCHITECTURE-DB-MONITORING-FEES.md`: beschreibt zus&Auml;tzliche Tabellenideen (Events, Fees etc.).
 
 ---
 
@@ -72,9 +72,9 @@ Er beschreibt:
   - Text‑Karten im Portal,
   - Backend‑Schema.
 - Es fehlen:
-  - Eigene Oberflächen pro Vertical (Listen, Filter, Status, Detail‑Views),
-  - Branch‑spezifische Business‑Regeln (z.B. Maschinen‑IDs, Standort, Verfügbarkeit, Stornoregeln),
-  - Echte Verknüpfung zu Legal‑Hub (Contracts in D1 + R2).
+  - Eigene Oberfl&Auml;chen pro Vertical (Listen, Filter, Status, Detail‑Views),
+  - Branch‑spezifische Business‑Regeln (z.B. Maschinen‑IDs, Standort, Verf&Uuml;gbarkeit, Stornoregeln),
+  - Echte Verkn&Uuml;pfung zu Legal‑Hub (Contracts in D1 + R2).
 
 <strong>Backend (D1 / APIs):</strong>
 - Nur Telbank‑Transfers nutzen D1.
@@ -85,7 +85,7 @@ Er beschreibt:
 - Keine Authentisierung (nur „Besitz“ eines Manifest‑Tokens),
 - Keine Rate‑Limits,
 - Kein globales Audit‑Log (`events`),
-- Keine Admin‑Screens für Monitoring (nur einzelne Text‑Outputs).
+- Keine Admin‑Screens f&Uuml;r Monitoring (nur einzelne Text‑Outputs).
 
 <strong>Psychologie / AI:</strong>
 - Konzepte (Telemetrie, Rage‑Clicks, UI‑Anpassung) sind beschrieben, aber:
@@ -97,9 +97,9 @@ Er beschreibt:
 
 <h3>3. Phasenplan – Schrittweise Umsetzung</h3>
 
-<h4>Phase 1: D1‑Backend für Voucher & Hypothek</h4>
+<h4>Phase 1: D1‑Backend f&Uuml;r Voucher & Hypothek</h4>
 
-Ziel: Lokale Node‑Server ablösen und Voucher/Hypothek‑Flows vollständig über D1‑Backends laufen lassen.
+Ziel: Lokale Node‑Server abl&Ouml;sen und Voucher/Hypothek‑Flows vollst&Auml;ndig &Uuml;ber D1‑Backends laufen lassen.
 
 1. <strong>Voucher‑API nach D1 migrieren (Workers‑Stil)</strong>  
    - Neue Functions anlegen, z.B.:
@@ -109,7 +109,7 @@ Ziel: Lokale Node‑Server ablösen und Voucher/Hypothek‑Flows vollständig ü
      - `functions/api/voucher/book.js`
      - `functions/api/voucher/cancel.js`
    - Implementierung: SELECT/INSERT/UPDATE gegen `vouchers` und `voucher_bookings` aus `d1-schema.sql`.
-   - URL‑Schema: `/api/voucher/issue`, `/api/voucher/list`, `/api/slots/available`, etc., so dass `manifest-portal.html` nur die Basis `VOUCHER_API_BASE` von `http://localhost:3200/api` auf `/api` ändern muss.
+   - URL‑Schema: `/api/voucher/issue`, `/api/voucher/list`, `/api/slots/available`, etc., so dass `manifest-portal.html` nur die Basis `VOUCHER_API_BASE` von `http://localhost:3200/api` auf `/api` &Auml;ndern muss.
 
 2. <strong>Mortgage‑Demo nach D1 migrieren (optional, aber empfohlen)</strong>  
    - Functions:
@@ -130,12 +130,12 @@ Ziel: Pro Vertical eine klar erkennbare UI, basierend auf Voucher/Hypothek‑Dat
 1. <strong>Maschinenzeit‑Konsole</strong>
    - Neues Panel, z.B. `machines.html` oder ein Abschnitt in `manifest-portal.html`:
      - Tabelle „Maschinen“, gespeist aus `vouchers` mit `service_type='machine.timeslot'`.
-     - Spalten: Maschine (Titel), Standort, Preis, verfügbare Slots, Status.
+     - Spalten: Maschine (Titel), Standort, Preis, verf&Uuml;gbare Slots, Status.
      - Aktionen: „Slot buchen“, „Vertrag ansehen“ (Link zum Legal‑Hub mit `voucherId`).
 
 2. <strong>Events‑Konsole</strong>
    - Filter auf `service_type IN ('consulting.session','therapy.session','realestate.viewing')`.
-   - UI ähnlich: Liste der Sessions/Events, Slots, Buchungsstatus.
+   - UI &Auml;hnlich: Liste der Sessions/Events, Slots, Buchungsstatus.
 
 3. <strong>Membership‑Konsole</strong>
    - Filter auf `service_type='membership.access'`.
@@ -145,9 +145,9 @@ Alle drei Konsole nutzen dieselben Endpunkte wie „Voucher & Termine“, aber b
 
 <h4>Phase 3: Legal‑Hub ↔ D1 & R2</h4>
 
-Ziel: Verträge nicht nur lokal, sondern persistent mit D1 + R2 verknüpfen.
+Ziel: Vertr&Auml;ge nicht nur lokal, sondern persistent mit D1 + R2 verkn&Uuml;pfen.
 
-1. <strong>R2‑Bucket für Contracts</strong>  
+1. <strong>R2‑Bucket f&Uuml;r Contracts</strong>  
    - Bucket z.B. `ts-contracts`, Binding `CONTRACTS_BUCKET`.
 
 2. <strong>D1‑Tabellen erweitern</strong>  
@@ -162,7 +162,7 @@ Ziel: Verträge nicht nur lokal, sondern persistent mit D1 + R2 verknüpfen.
 
 4. <strong>Legal‑Hub UI</strong>  
    - `legal-hub.html` so erweitern, dass:
-     - vorhandene lokale Verknüpfungs‑Demo optional auf Online‑Upload umstellt,
+     - vorhandene lokale Verkn&Uuml;pfungs‑Demo optional auf Online‑Upload umstellt,
      - Liste aus D1 geladen und angezeigt wird (echte Contracts).
 
 <h4>Phase 4: Security & Monitoring</h4>
@@ -174,8 +174,8 @@ Ziel: Basis‑Security einziehen und Betriebsdaten sichtbar machen.
    - Keys in D1 in einer `api_keys`‑Tabelle pflegen (oder `wrangler secret` / Secrets Store).
 
 2. <strong>Rate‑Limit light</strong>
-   - Einfache Drosselung per IP + Zeitfenster, z.B. über R2/KV oder D1‑Tabelle `rate_limits` (Key, Count, Window).
-   - Minimal: pro Function‐Aufruf prüfen, ob über Schwellwert.
+   - Einfache Drosselung per IP + Zeitfenster, z.B. &Uuml;ber R2/KV oder D1‑Tabelle `rate_limits` (Key, Count, Window).
+   - Minimal: pro Function‐Aufruf pr&Uuml;fen, ob &Uuml;ber Schwellwert.
 
 3. <strong>Events‑Tabelle & Audit‑Log</strong>
    - In D1 Tabelle `events` anlegen (siehe Architektur‑Dok).
@@ -185,7 +185,7 @@ Ziel: Basis‑Security einziehen und Betriebsdaten sichtbar machen.
 4. <strong>Monitoring‑UI</strong>
    - Eine einfache Admin‑Seite (z.B. `admin-monitoring.html`), die:
      - Summen und letzte N Events aus `/api/admin/events` anzeigt,
-     - Statistiken für Transfers, Voucher‑Buchungen, Hypotheken‑Anfragen rendert.
+     - Statistiken f&Uuml;r Transfers, Voucher‑Buchungen, Hypotheken‑Anfragen rendert.
 
 <h4>Phase 5: Psychologie / AI‑Layer</h4>
 
@@ -193,16 +193,16 @@ Ziel: Telemetrie und psychologische Indikatoren sammeln und (vorsichtig) auf UI/
 
 1. <strong>Telemetrie‑Client</strong>
    - `psy-telemetry.js`: sammelt Events wie:
-     - Klick‑Pfad, Abbrüche, „Rage Clicks“, Verweilzeiten.
+     - Klick‑Pfad, Abbr&Uuml;che, „Rage Clicks“, Verweilzeiten.
    - Schickt diese an `/api/telemetry` (Workers‑Function, die in D1‑Tabelle `telemetry_events` schreibt).
 
 2. <strong>Mini‑Analyzer</strong>
    - Periodische Auswertung (z.B. Worker‑Cron oder manuell):
-     - Welche Panels verursachen viele Abbrüche?
-     - Wo häufen sich Errors / 500er?
+     - Welche Panels verursachen viele Abbr&Uuml;che?
+     - Wo h&Auml;ufen sich Errors / 500er?
 
 3. <strong>UI‑Anpassung light</strong>
-   - Anfänglich nur Hinweise/Tooltips:
+   - Anf&Auml;nglich nur Hinweise/Tooltips:
      - z.B. wenn viele Nutzer nicht verstehen, wie Voucher funktioniert, zeige automatisch kurze Hilfetexte.
    - Keine „Black‑Box‑AI“, sondern nachvollziehbare Regeln auf Basis der Telemetrie.
 
@@ -224,9 +224,9 @@ Ziel: Telemetrie und psychologische Indikatoren sammeln und (vorsichtig) auf UI/
 
 ---
 
-<h3>5. Checkliste für Entwickler</h3>
+<h3>5. Checkliste f&Uuml;r Entwickler</h3>
 
-1. Bestehende D1‑DB auswählen (`wrangler d1 list`) und Schema ausführen.
+1. Bestehende D1‑DB ausw&Auml;hlen (`wrangler d1 list`) und Schema ausf&Uuml;hren.
 2. Binding `DB` im Pages‑Projekt sicherstellen.
 3. Voucher‑API als Workers‑Functions nach D1 heben, `manifest-portal.html` auf `/api` umstellen.
 4. Mortgage‑Demo optional nach D1 heben.
@@ -234,12 +234,12 @@ Ziel: Telemetrie und psychologische Indikatoren sammeln und (vorsichtig) auf UI/
    - Maschinenzeit‑Konsole,
    - Events‑Konsole,
    - Membership‑Konsole.
-6. Legal‑Hub an D1 + R2 anschließen (Contracts & Links).
-7. Basic Auth‑Header + Rate‑Limit in produktiven Functions einführen.
+6. Legal‑Hub an D1 + R2 anschlie&szlig;en (Contracts & Links).
+7. Basic Auth‑Header + Rate‑Limit in produktiven Functions einf&Uuml;hren.
 8. Events‑Tabelle + Monitoring‑UI bauen.
-9. Telemetrie‑Client + `/api/telemetry` hinzufügen, spätere UI‑Anpassung vorbereiten.
+9. Telemetrie‑Client + `/api/telemetry` hinzuf&Uuml;gen, sp&Auml;tere UI‑Anpassung vorbereiten.
 
-Dieser Leitfaden beschreibt, was <strong>konkret</strong> fehlt und wie es sich Stück für Stück implementieren lässt,
+Dieser Leitfaden beschreibt, was <strong>konkret</strong> fehlt und wie es sich St&Uuml;ck f&Uuml;r St&Uuml;ck implementieren l&Auml;sst,
 ohne das System zu zerbrechen – so dass aus der jetzigen Demo‑Architektur eine real nutzbare Plattform werden kann.
 </body>
 </html>

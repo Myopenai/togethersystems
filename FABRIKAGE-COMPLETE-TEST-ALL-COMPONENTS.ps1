@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - ALLE KOMPONENTEN
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - ALLE KOMPONENTEN
 # Umfassender Test ALLER Komponenten im System (alt + neu)
 
 $ErrorActionPreference = "Continue"
@@ -116,11 +116,11 @@ foreach ($file in $allHtmlFiles | Select-Object -First 50) {
         
         # Umlaut-Fehler
         $umlautErrors = @()
-        if ($content -match 'â€¢') { $umlautErrors += "â€¢" }
-        if ($content -match 'Ã¤') { $umlautErrors += "Ã¤" }
-        if ($content -match 'Ã¶') { $umlautErrors += "Ã¶" }
-        if ($content -match 'Ã¼') { $umlautErrors += "Ã¼" }
-        if ($content -match 'ÃŸ') { $umlautErrors += "ÃŸ" }
+        if ($content -match '•') { $umlautErrors += "•" }
+        if ($content -match 'ä') { $umlautErrors += "ä" }
+        if ($content -match 'ö') { $umlautErrors += "ö" }
+        if ($content -match 'ü') { $umlautErrors += "ü" }
+        if ($content -match 'ß') { $umlautErrors += "ß" }
         if ($content -match 'â€') { $umlautErrors += "â€" }
         
         if ($umlautErrors.Count -gt 0) {

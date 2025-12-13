@@ -66,4 +66,26 @@ pscp -P 65002 -i "C:\Users\Gebruiker\.ssh\id_rsa_notar" u972026836@45.87.81.214:
 ## 🔗 Links
 
 - **PuTTY Download:** https://www.chiark.greenend.org.uk/~sgtatham/putty/
-- **PuTTY Dokumentation:** https://www.chiark.greenend.org.uk/~sgtatham/putty/docs.html 
+- **PuTTY Dokumentation:** https://www.chiark.greenend.org.uk/~sgtatham/putty/docs.html
+
+
+---
+
+## 🏢 Unternehmens-Branding & OCR
+
+**TogetherSystems** | **T,.&T,,.&T,,,.** | **TTT Enterprise Universe**
+
+| Information | Link |
+|------------|------|
+| **Initiator** | [Raymond Demitrio Tel](https://orcid.org/0009-0003-1328-2430) |
+| **ORCID** | [0009-0003-1328-2430](https://orcid.org/0009-0003-1328-2430) |
+| **Website** | [tel1.nl](https://tel1.nl) |
+| **WhatsApp** | [+31 613 803 782](https://wa.me/31613803782) |
+| **GitHub** | [myopenai/togethersystems](https://github.com/myopenai/togethersystems) |
+| **Businessplan** | [TGPA Businessplan DE.pdf](https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf) |
+
+**Branding:** T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+**IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
+
+---

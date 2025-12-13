@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -17,14 +17,14 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 <p>Dieses Paket basiert auf dem Stand <strong>v1.0.0‑PRODUCTION‑20251124‑222131</strong> und fasst alle
 im Repository dokumentierten Korrekturen als „Fixed Patch Bundle“ zusammen.</p>
 <h2>1. Architektur & Scope</h2>
-<p>Enthalten ist eine vollständig lauffähige, statische Web‑Applikation:</p>
+<p>Enthalten ist eine vollst&Auml;ndig lauff&Auml;hige, statische Web‑Applikation:</p>
 <p>- Offline‑Portal (`index.html`)
 - Admin‑Bereich (`admin.html`, `business-admin.html`, `admin-monitoring.html`)
 - Manifest‑Forum / Offline‑Manifest (`manifest-forum.html`)
 - Online‑Portal / Bridge (`manifest-portal.html`)
-- Wabenräume für Verabredungen (`honeycomb.html`)
+- Wabenr&Auml;ume f&Uuml;r Verabredungen (`honeycomb.html`)
 - Legal‑ & Verifikations‑Hub (`legal-hub.html`)
-- Service Worker (`sw.js`) für Offline‑Funktionalität
+- Service Worker (`sw.js`) f&Uuml;r Offline‑Funktionalit&Auml;t
 - Branding‑Assets im Verzeichnis `assets/branding/`
 - E2E‑Tests (`businessconnecthub-playwright-tests-full/`)</p>
 <p>Ziel dieses Fixed Patches ist:</p>
@@ -40,8 +40,8 @@ im Repository dokumentierten Korrekturen als „Fixed Patch Bundle“ zusammen.<
 <p>- `initAutofix()` wird automatisch initialisiert.
 - `window.enqueueError` wird bereitgestellt, damit jede Seite Fehler in die Autofix‑Queue legen kann.
 - Auf <strong>GitHub Pages</strong>:
-  - `AUTOFIX_CONFIG.ENABLED` ist standardmäßig <strong>deaktiviert</strong>.
-  - `flushErrorQueue()` beendet frühzeitig, es werden <strong>keine</strong> HTTP‑Calls versucht.
+  - `AUTOFIX_CONFIG.ENABLED` ist standardm&Auml;&szlig;ig <strong>deaktiviert</strong>.
+  - `flushErrorQueue()` beendet fr&Uuml;hzeitig, es werden <strong>keine</strong> HTTP‑Calls versucht.
   - `connectAutofixNotifications()` ist inert (kein SSE, keine Backend‑Verbindung).
   - Fehler werden nur lokal in der Konsole gezeigt.
 - Auf <strong>Cloudflare Pages</strong>:
@@ -54,8 +54,8 @@ im Repository dokumentierten Korrekturen als „Fixed Patch Bundle“ zusammen.<
 <p>Quelle: `ALLE-FEHLER-BEHOBEN.md`</p>
 <p>- Cache‑Name auf `businessconnecthub-cache-v2` aktualisiert.
 - Fehlerrobuste Installation dank `Promise.allSettled`.
-- `self.skipWaiting()` sorgt dafür, dass neue Versionen direkt aktiv werden.
-- Statische Ressourcen (HTML, JS, CSS, Branding‑Assets) werden zuverlässig gecacht,
+- `self.skipWaiting()` sorgt daf&Uuml;r, dass neue Versionen direkt aktiv werden.
+- Statische Ressourcen (HTML, JS, CSS, Branding‑Assets) werden zuverl&Auml;ssig gecacht,
   sodass das <strong>Offline‑Portal</strong>, Manifest‑Forum und weitere Seiten offline nutzbar bleiben.</p>
 <h3>2.3 404/405‑Fehler (& API‑Trennung)</h3>
 <p>Quelle: `ALLE-404-405-FEHLER-BEHOBEN.md`</p>
@@ -63,9 +63,9 @@ im Repository dokumentierten Korrekturen als „Fixed Patch Bundle“ zusammen.<
   `/api/telemetry` werden <strong>nicht mehr</strong> auf GitHub Pages aufgerufen.
 - In `manifest-portal.html`:
   - `detectVoucherApiBase()` erkennt GitHub Pages vs. Cloudflare.
-  - Gibt auf GitHub Pages `null` zurück → API‑Funktionen werden deaktiviert.
+  - Gibt auf GitHub Pages `null` zur&Uuml;ck → API‑Funktionen werden deaktiviert.
   - In der Konsole wird ein Hinweis ausgegeben
-    („GitHub Pages erkannt: API-Funktionen nicht verfügbar“).
+    („GitHub Pages erkannt: API-Funktionen nicht verf&Uuml;gbar“).
 - Ergebnis:
   - Keine 404‑Fehler mehr auf GitHub Pages.
   - Keine 405‑Fehler mehr wegen unerlaubter Methoden.
@@ -73,32 +73,32 @@ im Repository dokumentierten Korrekturen als „Fixed Patch Bundle“ zusammen.<
     mit lokalen JSON‑Daten / No‑Code‑Formularen arbeiten.</p>
 <h3>2.4 Navigation & Telbank‑Integration</h3>
 <p>Quelle: `DEPLOYMENT-READY-STATUS.md`</p>
-<p>- In <strong>allen</strong> relevanten Navigationsmenüs wurde Telbank integriert:
-  - Eintrag wie „💰 Telbank“ ist in 15+ HTML‑Dateien konsistent verfügbar.
+<p>- In <strong>allen</strong> relevanten Navigationsmen&Uuml;s wurde Telbank integriert:
+  - Eintrag wie „💰 Telbank“ ist in 15+ HTML‑Dateien konsistent verf&Uuml;gbar.
 - Alle Haupt‑Portale sind verlinkt:
-  - Offline‑Portal, Manifest‑Forum, Online‑Portal, Wabenräume, Legal‑Hub,
+  - Offline‑Portal, Manifest‑Forum, Online‑Portal, Wabenr&Auml;ume, Legal‑Hub,
     Telbank, Business‑Admin, Monitoring, One Network.
 - Ergebnis: Kein „verstecktes Feature“ mehr; alle Funktionsbereiche sind
   von allen Kernseiten aus auffindbar.</p>
-<h2>3. Ausführung / Deployment (Heutiger Stand)</h2>
-<p>Die Applikation ist als <strong>statisch lauffähige Web‑App</strong> konzipiert.</p>
+<h2>3. Ausf&Uuml;hrung / Deployment (Heutiger Stand)</h2>
+<p>Die Applikation ist als <strong>statisch lauff&Auml;hige Web‑App</strong> konzipiert.</p>
 <h3>3.1 Lokal</h3>
 <p>1. Inhalt dieses Patch‑Bundles in ein Verzeichnis entpacken.
 2. Im Projekt‑Root einen simplen HTTP‑Server starten, z. B.:</p>
 <pre><code>   python -m http.server 9323
    </code></pre>
-<p>3. Browser öffnen und `http://localhost:9323/v1.0.0-PRODUCTION-20251124-222131/` aufrufen.
+<p>3. Browser &Ouml;ffnen und `http://localhost:9323/v1.0.0-PRODUCTION-20251124-222131/` aufrufen.
 4. Einstiegspunkte:
    - `index.html` → Offline‑Portal / Manifest‑Einstieg
    - `manifest-portal.html` → Online‑Bridge / No‑Code‑Flows
-   - `honeycomb.html` → Wabenräume
+   - `honeycomb.html` → Wabenr&Auml;ume
    - `legal-hub.html` → Legal & Verifikations‑Hub</p>
 <h3>3.2 GitHub Pages</h3>
 <p>1. Ein leeres Repository erstellen.
 2. Inhalt dieses Patch‑Bundles ins Repository kopieren.
 3. Branch `main` auf GitHub pushen.
-4. GitHub Pages für das Repo aktivieren (Quelle: `/` mit statischen Dateien).
-5. In den Developer‑Tools des Browsers prüfen:
+4. GitHub Pages f&Uuml;r das Repo aktivieren (Quelle: `/` mit statischen Dateien).
+5. In den Developer‑Tools des Browsers pr&Uuml;fen:
    - Keine 404/405‑Fehler auf den genannten `/api/*`‑Routen.
    - Autofix meldet nur in der Konsole, kein Network‑Traffic zu nicht vorhandenen APIs.</p>
 <h3>3.3 Cloudflare Pages</h3>
@@ -108,46 +108,46 @@ im Repository dokumentierten Korrekturen als „Fixed Patch Bundle“ zusammen.<
    - D1‑Datenbank und Functions konfigurieren.
    - `autofix-client.js` so konfigurieren, dass Autofix‑Logging aktiviert ist.</p>
 <h2>4. Bezug zur Verifikations‑/Eigentums‑Logik</h2>
-<p>Konzeptionell unterstützt dieses Bundle den beschriebenen Ansatz:</p>
+<p>Konzeptionell unterst&Uuml;tzt dieses Bundle den beschriebenen Ansatz:</p>
 <p>- Benutzer‑Daten bleiben im Eigenbestand (statische/Client‑seitige Verarbeitung).
-- Identitäts‑/Manifest‑Daten können in Form von JSON‑Strukturen gehandhabt werden.
+- Identit&Auml;ts‑/Manifest‑Daten k&Ouml;nnen in Form von JSON‑Strukturen gehandhabt werden.
 - Das System kann Hashes und Tagging pro User‑Kontext erzeugen (Client‑seitige
-  Berechnung möglich – z. B. via `crypto.subtle` APIs im Browser).
-- Für höhere Rechtsverbindlichkeit (z. B. Immobiliengeschäfte, Autoverkauf,
+  Berechnung m&Ouml;glich – z. B. via `crypto.subtle` APIs im Browser).
+- F&Uuml;r h&Ouml;here Rechtsverbindlichkeit (z. B. Immobiliengesch&Auml;fte, Autoverkauf,
   digitale Erbschaften) ist – wie in der Projektbeschreibung vorgesehen –
-  der zusätzliche Gang zum Notar notwendig.</p>
-<p>Die konkrete notarielle / rechtliche Ausgestaltung hängt von der jeweiligen
-nationalen Gesetzgebung ab und muss <strong>außerhalb</strong> dieses Codes mit Fachjuristen
+  der zus&Auml;tzliche Gang zum Notar notwendig.</p>
+<p>Die konkrete notarielle / rechtliche Ausgestaltung h&Auml;ngt von der jeweiligen
+nationalen Gesetzgebung ab und muss <strong>au&szlig;erhalb</strong> dieses Codes mit Fachjuristen
 und Notaren abgestimmt werden.</p>
 <h2>5. TELADIA Integration (NEU - 2025-11-28)</h2>
 <strong>Quelle:</strong> `TELADIA-FIXED-PATCH-COMPLETE.md`, `FIXED-PATCH-BUNDLE-v1.0.0-COMPLETE.md`
-<strong>Zusätzliche Fixes in dieser zweiten Lieferung:</strong>
+<strong>Zus&Auml;tzliche Fixes in dieser zweiten Lieferung:</strong>
 <p>* ✅ <strong>ORCID URL aktiv und klickbar:</strong>
   * URL: <a href="https://orcid.org/0009-0003-1328-2430">https://orcid.org/0009-0003-1328-2430</a>
   * Aktiviert in allen HTML-Dateien mit korrektem Link-Format.</p>
 <p>* ✅ <strong>TELADIA Bank sichtbar gemacht:</strong>
   * Link: `TELADIA/teladia-portal-redesign.html`
-  * Hinzugefügt in allen Navigationsmenüs (index.html, manifest-portal.html, manifest-forum.html, honeycomb.html, legal-hub.html).
+  * Hinzugef&Uuml;gt in allen Navigationsmen&Uuml;s (index.html, manifest-portal.html, manifest-forum.html, honeycomb.html, legal-hub.html).
   * Styling: DB-Blau Gradient, 2px Border, Font-Weight 700.</p>
-<p>* ✅ <strong>T,. Symbol vor jedem Menüpunkt:</strong>
+<p>* ✅ <strong>T,. Symbol vor jedem Men&Uuml;punkt:</strong>
   * CSS-Regel: `.ts-brand-links a::before { content: "T,."; }`
   * Integriert in allen Seiten mit `.ts-brand-links`.</p>
 <p>* ✅ <strong>Teladia Design System:</strong>
   * Erstellt: `css/teladia-unified-design-system.css`
-  * Enthält: Branding-Leiste, Design-Variablen, Panel-System.</p>
-<strong>Status:</strong> ✅ TELADIA Integration vollständig implementiert und getestet.
+  * Enth&Auml;lt: Branding-Leiste, Design-Variablen, Panel-System.</p>
+<strong>Status:</strong> ✅ TELADIA Integration vollst&Auml;ndig implementiert und getestet.
 <p>---</p>
 <h2>6. Status</h2>
 <p>Auf Basis der bereitgestellten Dokumentation gilt dieser Stand als:</p>
 <p>- <strong>Deployment‑ready</strong>
 - Alle bekannten Fehler laut `ALLE-FEHLER-BEHOBEN.md` und
-  `ALLE-404-405-FEHLER-BEHOBEN.md` sind berücksichtigt.
-- ✅ <strong>TELADIA Integration vollständig</strong> (ORCID aktiv, TELADIA sichtbar, T,. Symbol integriert).
+  `ALLE-404-405-FEHLER-BEHOBEN.md` sind ber&Uuml;cksichtigt.
+- ✅ <strong>TELADIA Integration vollst&Auml;ndig</strong> (ORCID aktiv, TELADIA sichtbar, T,. Symbol integriert).
 - ✅ <strong>Design System konsolidiert</strong> (`css/teladia-unified-design-system.css`).
-- Geeignet als Referenz‑Snapshot für weitere Open‑Source‑Beiträge
+- Geeignet als Referenz‑Snapshot f&Uuml;r weitere Open‑Source‑Beitr&Auml;ge
   (Teladia / TogetherSystems / Manifest‑Projekt).</p>
-<p>Dieses `PATCH-NOTES-GPT-FIXED.md` dient als zusätzliche, zusammenfassende
-Beschreibung des vollständigen Fixed Patch Bundles für diese Produktionsversion.</p>
+<p>Dieses `PATCH-NOTES-GPT-FIXED.md` dient als zus&Auml;tzliche, zusammenfassende
+Beschreibung des vollst&Auml;ndigen Fixed Patch Bundles f&Uuml;r diese Produktionsversion.</p>
 <strong>Zweite Lieferung (2025-11-28):</strong> Erweitert um TELADIA Integration und konsolidierte Dokumentation.
 </body>
 </html>

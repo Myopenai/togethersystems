@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] COMPLETE SYSTEM VERIFICATION
+﻿# [.SYSTEMS.T.SYSTEMS.] COMPLETE SYSTEM VERIFICATION
 # Prüft ALLE Dateien auf 100% Funktionalität
 
 $ErrorActionPreference = "Continue"
@@ -28,35 +28,35 @@ $umlautPatterns = @{
     "â€" = "—"
     "â€" = "–"
     "â†'" = "→"
-    "Ã¤" = "ä"
-    "Ã¶" = "ö"
-    "Ã¼" = "ü"
-    "ÃŸ" = "ß"
-    "Ã„" = "Ä"
-    "Ã–" = "Ö"
+    "ä" = "ä"
+    "ö" = "ö"
+    "ü" = "ü"
+    "ß" = "ß"
+    "Ä" = "Ä"
+    "Ö" = "Ö"
     "Ãœ" = "Ü"
     "â€'" = "-"
     "â€"" = "…"
-    "PrÃ¼fe" = "Prüfe"
-    "ErhÃ¶he" = "Erhöhe"
-    "Ã¼bernommen" = "übernommen"
-    "lÃ¤uft" = "läuft"
-    "Ã¶ffnen" = "öffnen"
-    "IdentitÃ¤t" = "Identität"
-    "erklÃ¤rt" = "erklärt"
-    "EintrÃ¤ge" = "Einträge"
-    "wÃ¤hlen" = "wählen"
-    "zurÃ¼ck" = "zurück"
+    "Prüfe" = "Prüfe"
+    "Erhöhe" = "Erhöhe"
+    "übernommen" = "übernommen"
+    "läuft" = "läuft"
+    "öffnen" = "öffnen"
+    "Identität" = "Identität"
+    "erklärt" = "erklärt"
+    "Einträge" = "Einträge"
+    "wählen" = "wählen"
+    "zurück" = "zurück"
     "Ãœbersicht" = "Übersicht"
-    "geschÃ¼tzten" = "geschützten"
-    "Ã„nderungen" = "Änderungen"
-    "lÃ¶schen" = "löschen"
-    "VerknÃ¼pfung" = "Verknüpfung"
-    "nÃ¤chsten" = "nächsten"
-    "spÃ¤ter" = "später"
-    "hinzufÃ¼gen" = "hinzufügen"
+    "geschützten" = "geschützten"
+    "Änderungen" = "Änderungen"
+    "löschen" = "löschen"
+    "Verknüpfung" = "Verknüpfung"
+    "nächsten" = "nächsten"
+    "später" = "später"
+    "hinzufügen" = "hinzufügen"
     "Ãœbermittlung" = "Übermittlung"
-    "SchlieÃŸen" = "Schließen"
+    "Schließen" = "Schließen"
 }
 
 foreach ($file in $htmlFiles) {
@@ -73,8 +73,8 @@ foreach ($file in $htmlFiles) {
         }
         
         # Emoji-Fehler beheben
-        if ($content -match "ðŸ'¨â€ðŸ'»") {
-            $content = $content -replace "ðŸ'¨â€ðŸ'»", "👨‍💻"
+        if ($content -match "'¨â€'»") {
+            $content = $content -replace "'¨â€'»", "👨‍💻"
             $fileFixed = $true
         }
         
@@ -150,7 +150,7 @@ if (Test-Path $ostososDir) {
             
             # Prüfe auf Umlaut-Fehler
             $content = Get-Content $filePath -Raw -Encoding UTF8
-            if ($content -match "â€|Ã¤|Ã¶|Ã¼|ÃŸ|Ã„|Ã–|Ãœ") {
+            if ($content -match "â€|ä|ö|ü|ß|Ä|Ö|Ãœ") {
                 $warnings += "OSTOSOS: $file hat Umlaut-Fehler"
                 Write-Host "      ⚠️  Umlaut-Fehler gefunden" -ForegroundColor Yellow
             }

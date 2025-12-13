@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -13,7 +13,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 <body>
 <h1>Autofix-System: Automatische Fehlererkennung und -korrektur</h1>
 
-<h2>Übersicht</h2>
+<h2>&Uuml;bersicht</h2>
 
 Das Autofix-System erkennt automatisch Fehler, die durch User-Aktionen auftauchen, und korrigiert sie <strong>online, live, just-in-time</strong> mit Benachrichtigungen an den User.
 
@@ -22,14 +22,14 @@ Das Autofix-System erkennt automatisch Fehler, die durch User-Aktionen auftauche
 <h3>Backend (Cloudflare Pages Functions)</h3>
 
 1. <strong>`/api/autofix/errors` (POST)</strong>
-   - Empfängt Fehler von Client
+   - Empf&Auml;ngt Fehler von Client
    - Erkennt Fehlermuster
    - Wendet automatische Korrekturen an
    - Speichert Events in D1
 
 2. <strong>`/api/autofix/notify` (GET)</strong>
    - Server-Sent Events (SSE) Stream
-   - Sendet Live-Benachrichtigungen über automatische Korrekturen
+   - Sendet Live-Benachrichtigungen &Uuml;ber automatische Korrekturen
    - Polling alle 2 Sekunden
 
 3. <strong>`/api/autofix/status` (GET)</strong>
@@ -39,14 +39,14 @@ Das Autofix-System erkennt automatisch Fehler, die durch User-Aktionen auftauche
 
 <h3>Frontend (`autofix-client.js`)</h3>
 
-- <strong>Global Error Handler</strong>: Fängt alle JavaScript-Fehler ab
-- <strong>Unhandled Promise Rejection Handler</strong>: Fängt Promise-Rejections ab
+- <strong>Global Error Handler</strong>: F&Auml;ngt alle JavaScript-Fehler ab
+- <strong>Unhandled Promise Rejection Handler</strong>: F&Auml;ngt Promise-Rejections ab
 - <strong>Fetch Error Handler</strong>: Wrappt `fetch()` und erkennt HTTP-Fehler
 - <strong>Error Queue</strong>: Batch-Verarbeitung (alle 2 Sekunden oder bei 5 Fehlern)
-- <strong>Live-Benachrichtigungen</strong>: SSE-Verbindung für Echtzeit-Updates
+- <strong>Live-Benachrichtigungen</strong>: SSE-Verbindung f&Uuml;r Echtzeit-Updates
 - <strong>UI-Benachrichtigungen</strong>: Visuelle Popups mit Korrektur-Details
 
-<h2>Unterstützte Fehlermuster</h2>
+<h2>Unterst&Uuml;tzte Fehlermuster</h2>
 
 | Muster | Typ | Korrektur | Beschreibung |
 |--------|-----|-----------|--------------|
@@ -62,7 +62,7 @@ Das Autofix-System erkennt automatisch Fehler, die durch User-Aktionen auftauche
 
 <h3>1. `disable_api_calls`</h3>
 - <strong>Aktion</strong>: Setzt API-Base-URL auf `null`
-- <strong>Verwendung</strong>: Wenn API-Verbindung nicht möglich ist
+- <strong>Verwendung</strong>: Wenn API-Verbindung nicht m&Ouml;glich ist
 - <strong>Ergebnis</strong>: API-Aufrufe werden deaktiviert, keine weiteren Fehler
 
 <h3>2. `fallback_content`</h3>
@@ -81,17 +81,17 @@ Das Autofix-System erkennt automatisch Fehler, die durch User-Aktionen auftauche
 - <strong>Ergebnis</strong>: Verwendet relative Pfade statt absolute URLs
 
 <h3>5. `increase_timeout`</h3>
-- <strong>Aktion</strong>: Erhöht Timeout auf 30 Sekunden
+- <strong>Aktion</strong>: Erh&Ouml;ht Timeout auf 30 Sekunden
 - <strong>Verwendung</strong>: Bei Timeout-Fehlern
-- <strong>Ergebnis</strong>: Längere Wartezeit für langsame Verbindungen
+- <strong>Ergebnis</strong>: L&Auml;ngere Wartezeit f&Uuml;r langsame Verbindungen
 
 <h3>6. `add_null_check`</h3>
-- <strong>Aktion</strong>: Fügt Null-Prüfung hinzu
+- <strong>Aktion</strong>: F&Uuml;gt Null-Pr&Uuml;fung hinzu
 - <strong>Verwendung</strong>: Bei Null-Referenz-Fehlern
 - <strong>Ergebnis</strong>: Verhindert weitere Null-Referenz-Fehler
 
 <h3>7. `add_undefined_check`</h3>
-- <strong>Aktion</strong>: Fügt Undefined-Prüfung hinzu
+- <strong>Aktion</strong>: F&Uuml;gt Undefined-Pr&Uuml;fung hinzu
 - <strong>Verwendung</strong>: Bei Undefined-Referenz-Fehlern
 - <strong>Ergebnis</strong>: Verhindert weitere Undefined-Referenz-Fehler
 
@@ -123,7 +123,7 @@ console.log(status);
 <h3>Visuelle Benachrichtigungen</h3>
 
 - <strong>Position</strong>: Oben rechts (fixed)
-- <strong>Design</strong>: Neon-grüner Rahmen, dunkler Hintergrund
+- <strong>Design</strong>: Neon-gr&Uuml;ner Rahmen, dunkler Hintergrund
 - <strong>Auto-Entfernung</strong>: Nach 10 Sekunden
 - <strong>Animation</strong>: Slide-in von rechts
 
@@ -146,7 +146,7 @@ Das `admin-monitoring.html` Dashboard zeigt:
 <h3>API-Endpoints</h3>
 
 - `GET /api/autofix/status` - Status und Statistiken
-- `GET /api/autofix/notify` - SSE-Stream für Live-Updates
+- `GET /api/autofix/notify` - SSE-Stream f&Uuml;r Live-Updates
 - `POST /api/autofix/errors` - Fehler melden und korrigieren
 
 <h2>Datenbank</h2>
@@ -162,7 +162,7 @@ VALUES (?, 'autofix.applied', ?, 'error', ?, ?, ?)
 
 <strong>Meta-Felder:</strong>
 - `fixType`: Typ der Korrektur
-- `action`: Durchgeführte Aktion
+- `action`: Durchgef&Uuml;hrte Aktion
 - `params`: Parameter der Aktion
 - `error`: Original-Fehlermeldung
 - `timestamp`: Zeitstempel
@@ -174,12 +174,12 @@ VALUES (?, 'autofix.applied', ?, 'error', ?, ?, ?)
 3. <strong>Autofix erkennt</strong>: Fehlermuster `ERR_CONNECTION_REFUSED`
 4. <strong>Korrektur wird angewendet</strong>: `disable_api_calls` → API-Base-URL auf `null`
 5. <strong>Benachrichtigung</strong>: "API-Verbindung fehlgeschlagen. API-Aufrufe werden deaktiviert."
-6. <strong>Event gespeichert</strong>: In D1-Datenbank für Monitoring
+6. <strong>Event gespeichert</strong>: In D1-Datenbank f&Uuml;r Monitoring
 7. <strong>Weitere Fehler verhindert</strong>: Keine weiteren API-Aufrufe, keine weiteren Fehler
 
 <h2>Erweiterung</h2>
 
-<h3>Neue Fehlermuster hinzufügen</h3>
+<h3>Neue Fehlermuster hinzuf&Uuml;gen</h3>
 
 1. In `functions/api/autofix/errors.js`:
    ```javascript
@@ -207,7 +207,7 @@ VALUES (?, 'autofix.applied', ?, 'error', ?, ?, ?)
 
 <h3>Frontend-Integration erweitern</h3>
 
-In `autofix-client.js` können weitere Error-Handler hinzugefügt werden:
+In `autofix-client.js` k&Ouml;nnen weitere Error-Handler hinzugef&Uuml;gt werden:
 
 ```javascript
 // Beispiel: Custom Error Handler
@@ -230,8 +230,8 @@ window.addEventListener('customError', (event) => {
 
 🔄 <strong>In Entwicklung:</strong>
 - Erweiterte Fehlermuster
-- Proaktive Fehlerprävention
-- Machine Learning für Fehlererkennung
+- Proaktive Fehlerpr&Auml;vention
+- Machine Learning f&Uuml;r Fehlererkennung
 
 <h2>Kontakt</h2>
 

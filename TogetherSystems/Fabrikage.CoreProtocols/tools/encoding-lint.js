@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ============================================================================
  * ENCODING LINT
  * TOGETHERSYSTEMS. INTERNATIONAL TTT
@@ -60,9 +60,9 @@ class EncodingLint {
       }
       
       // Prüfe auf verbotene Zeichen (typisch für Latin-1)
-      const latin1Pattern = /[Ã€ÃÃ‚ÃƒÃ„Ã…Ã†Ã‡ÃˆÃ‰ÃŠÃ‹ÃŒÃÃŽÃÃÃ'Ã"Ã•Ã–Ã—Ã˜Ã™ÃšÃ›ÃœÃžÃŸ]/;
+      const latin1Pattern = /[Ã€ÃÃ‚ÃƒÄÃ…Ã†Ã‡ÃˆÃ‰ÃŠÃ‹ÃŒÃÃŽÃÃÃ'Ã"Ã•ÖÃ—Ã˜Ã™ÃšÜÜÃžß]/;
       if (latin1Pattern.test(content)) {
-        this.errors.push(`${filePath}: Enthält Latin-1 kodierte Zeichen (z.B. "fÃ¼r" statt "für")`);
+        this.errors.push(`${filePath}: Enthält Latin-1 kodierte Zeichen (z.B. "für" statt "für")`);
       }
       
       // Prüfe HTML auf charset meta tag

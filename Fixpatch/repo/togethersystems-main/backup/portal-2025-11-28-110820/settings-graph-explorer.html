@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
@@ -325,7 +325,7 @@
     <h1>OSTOS · Settings-Graph Explorer</h1>
     <p class="subtitle">
       Neural Network Config + Provider + Deployment + OS/Hardware-Dimensionen ·
-      Live-„Fixbox“-Konsole für das Raumschiff <strong>SPACE ENTER UNIVERSE · License TTT</strong>.
+      Live-„Fixbox“-Konsole f&Uuml;r das Raumschiff <strong>SPACE ENTER UNIVERSE · License TTT</strong>.
     </p>
     <div class="badge-row">
       <span class="badge badge--accent">Neural Network Config</span>
@@ -346,7 +346,7 @@
         <div class="input-group">
           <label for="modelSelect">
             Neural Network
-            <span class="hint">wähle ein Beispielmodell</span>
+            <span class="hint">w&Auml;hle ein Beispielmodell</span>
           </label>
           <select id="modelSelect">
             <option value="model-ostos-supercode">OSTOS-SuperCode-∞ (Universal OS Agent)</option>
@@ -357,7 +357,7 @@
         <div class="input-group">
           <label for="deploymentSelect">
             Deployment-Profil
-            <span class="hint">Qualität &amp; Kosten vs. Space-Style</span>
+            <span class="hint">Qualit&Auml;t &amp; Kosten vs. Space-Style</span>
           </label>
           <select id="deploymentSelect">
             <option value="deploy-ostos-prod-eu">OSTOS Production EU (Latenz &lt;= 250ms, EU-Data)</option>
@@ -376,11 +376,11 @@
         <div class="stack">
           <div>
             <span class="pill pill--good">Hard Constraint</span>
-            <small>muss erfüllt sein (z.B. EU-Region, Budget)</small>
+            <small>muss erf&Uuml;llt sein (z.B. EU-Region, Budget)</small>
           </div>
           <div>
             <span class="pill pill--warn">Soft Constraint</span>
-            <small>fließt in Score ein (z.B. Latenz, CO₂)</small>
+            <small>flie&szlig;t in Score ein (z.B. Latenz, CO₂)</small>
           </div>
           <div>
             <span class="pill">Meta-Dimension</span>
@@ -400,7 +400,7 @@
           <div id="resultScoreLabel">Score: –</div>
         </div>
         <div class="result-main" id="resultMain">
-          Noch keine Planung ausgeführt.
+          Noch keine Planung ausgef&Uuml;hrt.
         </div>
         <div class="result-dims" id="resultDims"></div>
       </div>
@@ -643,7 +643,7 @@
             isDefault: true,
             dimensions: [
               vStr("axis-region", "eu-central-1"),
-              vNum("axis-governance-eu", 1), // EU-Data möglich
+              vNum("axis-governance-eu", 1), // EU-Data m&Ouml;glich
               vNum("axis-meta-space-license", 0.6),
               vNum("axis-co2", 380),
             ],
@@ -838,7 +838,7 @@
               vStr("axis-region", "eu-space-1"),
               vNum("axis-governance-eu", 1),
               vNum("axis-meta-space-license", 1.0),
-              vNum("axis-co2", 120), // super-grün
+              vNum("axis-co2", 120), // super-gr&Uuml;n
             ],
             hardwareProfiles: [
               {
@@ -1094,7 +1094,7 @@
 
     resetConsole();
 
-    // --- 6. HELFER FÜR DIMENSIONEN --------------------------------------------
+    // --- 6. HELFER F&Uuml;R DIMENSIONEN --------------------------------------------
     /**
      * @param {Candidate} candidate
      * @param {DimensionAxis} axis
@@ -1124,7 +1124,7 @@
       const value = getDimensionValueFromCandidate(candidate, axis);
       if (!value) {
         logWarn(
-          `Missing dimension '${axis.key}' für Hard-Constraint '${constraint.id}' → Kandidat verworfen.`
+          `Missing dimension '${axis.key}' f&Uuml;r Hard-Constraint '${constraint.id}' → Kandidat verworfen.`
         );
         return false;
       }
@@ -1277,7 +1277,7 @@
             !deployment.preferredProviders.includes(provider.id))
         ) {
           logFix(
-            `Provider '${provider.name}' nicht in bevorzugter Liste → wird übersprungen.`
+            `Provider '${provider.name}' nicht in bevorzugter Liste → wird &Uuml;bersprungen.`
           );
           continue;
         }
@@ -1290,7 +1290,7 @@
             const totalVRAM = hw.vramPerAcceleratorGB * hw.acceleratorCount;
             if (totalVRAM < model.estimatedVRAMGB) {
               logWarn(
-                `Kandidat ${provider.name}/${region.code}/${hw.name} → total VRAM ${totalVRAM}GB < benötigte ${model.estimatedVRAMGB}GB.`
+                `Kandidat ${provider.name}/${region.code}/${hw.name} → total VRAM ${totalVRAM}GB < ben&Ouml;tigte ${model.estimatedVRAMGB}GB.`
               );
               continue;
             }
@@ -1305,7 +1305,7 @@
             }
             if (!hardOk) continue;
 
-            // Kandidat gültig
+            // Kandidat g&Uuml;ltig
             logOk(
               `Kandidat validiert: ${provider.name} · ${region.code} · ${hw.name} (VRAM OK).`
             );
@@ -1315,7 +1315,7 @@
       }
 
       if (candidates.length === 0) {
-        logErr("Keine Kandidaten erfüllen die Hard-Constraints. Planner-Abbruch.");
+        logErr("Keine Kandidaten erf&Uuml;llen die Hard-Constraints. Planner-Abbruch.");
         return { best: null, scores: [] };
       }
 
@@ -1412,7 +1412,7 @@
      */
     function renderResult(best, score) {
       if (!best) {
-        resultMainEl.textContent = "Keine gültige Konfiguration gefunden.";
+        resultMainEl.textContent = "Keine g&Uuml;ltige Konfiguration gefunden.";
         resultDimsEl.innerHTML = "";
         resultScoreLabelEl.textContent = "Score: –";
         return;
@@ -1482,7 +1482,7 @@
       resetConsole();
     });
 
-    // Optional: beim Laden einmal initial ausführen
+    // Optional: beim Laden einmal initial ausf&Uuml;hren
     setTimeout(() => {
       runPlannerBtn.click();
     }, 200);

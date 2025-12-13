@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE 100% SYSTEM FIX
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE 100% SYSTEM FIX
 # Behebt ALLE Probleme - System muss 100% funktionieren
 
 $ErrorActionPreference = "Stop"
@@ -138,16 +138,16 @@ foreach ($file in $psFiles) {
         $original = $content
         
         # Fix Encoding-Fehler
-        $content = $content -replace 'Ã¤', 'ä'
-        $content = $content -replace 'Ã¶', 'ö'
-        $content = $content -replace 'Ã¼', 'ü'
-        $content = $content -replace 'ÃŸ', 'ß'
+        $content = $content -replace 'ä', 'ä'
+        $content = $content -replace 'ö', 'ö'
+        $content = $content -replace 'ü', 'ü'
+        $content = $content -replace 'ß', 'ß'
         $content = $content -replace 'Ãœ', 'Ü'
-        $content = $content -replace 'Ã„', 'Ä'
-        $content = $content -replace 'Ã–', 'Ö'
-        $content = $content -replace 'zurÃ¼ck', 'zurück'
-        $content = $content -replace 'zurÃ¼ckspielen', 'zurückspielen'
-        $content = $content -replace 'geschÃ¼tzten', 'geschützten'
+        $content = $content -replace 'Ä', 'Ä'
+        $content = $content -replace 'Ö', 'Ö'
+        $content = $content -replace 'zurück', 'zurück'
+        $content = $content -replace 'zurückspielen', 'zurückspielen'
+        $content = $content -replace 'geschützten', 'geschützten'
         $content = $content -replace 'Arbeitsâ€''', 'Arbeits-'
         $content = $content -replace 'Portal â€"', 'Portal –'
         

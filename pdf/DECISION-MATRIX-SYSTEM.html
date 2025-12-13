@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -263,6 +263,8 @@
   </style>
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
   <div class="page">
@@ -410,7 +412,7 @@
               <tr>
                 <th>Regel-ID</th>
                 <th>Kundentyp</th>
-                <th>Umsatz ≥</th>
+                <th>Umsatz â‰¥</th>
                 <th>Land</th>
                 <th>Priorität</th>
                 <th>Ergebnis</th>
@@ -769,17 +771,17 @@
       flowchart.innerHTML = `
         <div style="text-align: center;">
           <div class="flowchart-node start">Start<br>Eingaben</div>
-          <div class="flowchart-arrow">↓</div>
+          <div class="flowchart-arrow">â†“</div>
           <div class="flowchart-node decision">Kundentyp = VIP?<br>${customerType || '--'}</div>
-          <div class="flowchart-arrow">↓</div>
+          <div class="flowchart-arrow">â†“</div>
           ${customerType === 'VIP' ? 
             '<div class="flowchart-node result">VIP-Handling</div>' :
-            `<div class="flowchart-node decision">Umsatz ≥ 50k?<br>${isFinite(revenue) ? revenue.toLocaleString('de-DE') : '0'}€</div>
-             <div class="flowchart-arrow">↓</div>
+            `<div class="flowchart-node decision">Umsatz â‰¥ 50k?<br>${isFinite(revenue) ? revenue.toLocaleString('de-DE') : '0'}€</div>
+             <div class="flowchart-arrow">â†“</div>
              ${isFinite(revenue) && revenue >= 50000 ? 
                '<div class="flowchart-node result">Sonderfall</div>' :
-               `<div class="flowchart-node decision">Bestand & DE & ≥10k?<br>${country || '--'}</div>
-                <div class="flowchart-arrow">↓</div>
+               `<div class="flowchart-node decision">Bestand & DE & â‰¥10k?<br>${country || '--'}</div>
+                <div class="flowchart-arrow">â†“</div>
                 ${customerType === 'Bestandskunde' && country === 'DE' && isFinite(revenue) && revenue >= 10000 ?
                   '<div class="flowchart-node result">Premium</div>' :
                   '<div class="flowchart-node result">Standard</div>'

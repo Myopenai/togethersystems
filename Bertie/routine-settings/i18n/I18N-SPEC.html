@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -11,6 +11,8 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
   <script src="../../../console-monitor.js"></script>
   <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>INTERNATIONALISIERUNG (I18N)</h1>
@@ -139,17 +141,17 @@ CREATE TEMPLATE welcome_email
 <strong>Locale-Resolver-Formel:</strong>
 
 ```
-resolve_template_locale(contact: Contact, workspace: Workspace) → Locale:
+resolve_template_locale(contact: Contact, workspace: Workspace) â†’ Locale:
 
   // 1. Kontakt-Locale prüfen
-  if contact.attributes["locale"] ∈ supported_locales:
+  if contact.attributes["locale"] âˆˆ supported_locales:
     return contact.attributes["locale"]
   
-  if contact.attributes["language"] ∈ supported_locales:
+  if contact.attributes["language"] âˆˆ supported_locales:
     return contact.attributes["language"]
   
   // 2. Workspace-Default
-  if workspace.settings["default_locale"] ∈ supported_locales:
+  if workspace.settings["default_locale"] âˆˆ supported_locales:
     return workspace.settings["default_locale"]
   
   // 3. System-Default
@@ -159,7 +161,7 @@ resolve_template_locale(contact: Contact, workspace: Workspace) → Locale:
 <strong>Template-Loading:</strong>
 
 ```
-get_template_variant(template_id: UUID, locale: Locale) → TemplateVariant:
+get_template_variant(template_id: UUID, locale: Locale) â†’ TemplateVariant:
 
   template = get_template(template_id)
   
@@ -187,10 +189,10 @@ get_template_variant(template_id: UUID, locale: Locale) → TemplateVariant:
 {{date | format: DATE_FORMAT}}
 
 Locale-spezifische Formatierung:
-- de: "DD.MM.YYYY" → "27.01.2025"
-- en: "MM/DD/YYYY" → "01/27/2025"
-- nl: "DD-MM-YYYY" → "27-01-2025"
-- fr: "DD/MM/YYYY" → "27/01/2025"
+- de: "DD.MM.YYYY" â†’ "27.01.2025"
+- en: "MM/DD/YYYY" â†’ "01/27/2025"
+- nl: "DD-MM-YYYY" â†’ "27-01-2025"
+- fr: "DD/MM/YYYY" â†’ "27/01/2025"
 
 {{date | format: LONG_DATE}}
 
@@ -245,7 +247,7 @@ Locale-spezifisch:
 <h3>2.4 Template-Rendering mit I18N</h3>
 
 ```
-render_template_i18n(template_id: UUID, contact: Contact, context: CONTEXT) → Message:
+render_template_i18n(template_id: UUID, contact: Contact, context: CONTEXT) â†’ Message:
 
   // 1. Locale bestimmen
   locale = resolve_template_locale(contact, context.workspace)
@@ -272,11 +274,11 @@ render_template_i18n(template_id: UUID, contact: Contact, context: CONTEXT) → 
     locale: locale
   }
 
-render_placeholders(text: String, context: CONTEXT, locale: Locale) → String:
+render_placeholders(text: String, context: CONTEXT, locale: Locale) â†’ String:
 
   resolved = text
   
-  ∀ placeholder ∈ extract_placeholders(text):
+  âˆ€ placeholder âˆˆ extract_placeholders(text):
     value = resolve_variable(placeholder, context)
     
     // Locale-spezifische Formatierung anwenden
@@ -290,7 +292,7 @@ render_placeholders(text: String, context: CONTEXT, locale: Locale) → String:
   
   return resolved
 
-format_value(value: Value, format_type: String, locale: Locale) → String:
+format_value(value: Value, format_type: String, locale: Locale) â†’ String:
 
   SWITCH format_type:
     CASE "DATE":
@@ -333,7 +335,7 @@ ErrorResponse {
 <strong>Error-Message-Resolver:</strong>
 
 ```
-get_error_message(error_code: String, locale: Locale, details: Map) → String:
+get_error_message(error_code: String, locale: Locale, details: Map) â†’ String:
 
   // Error-Messages aus i18n-File laden
   error_messages = load_i18n_file("errors", locale)
@@ -532,27 +534,27 @@ Beispiel:
 
 ```
 i18n/
-  ├── templates/
-  │   ├── welcome_email.de.json
-  │   ├── welcome_email.en.json
-  │   ├── welcome_email.nl.json
-  │   └── ...
-  ├── errors/
-  │   ├── errors.de.json
-  │   ├── errors.en.json
-  │   └── ...
-  ├── validation/
-  │   ├── validation.de.json
-  │   ├── validation.en.json
-  │   └── ...
-  ├── status/
-  │   ├── status.de.json
-  │   ├── status.en.json
-  │   └── ...
-  └── ui/  // Falls UI vorhanden
-      ├── ui.de.json
-      ├── ui.en.json
-      └── ...
+  â”œâ”€â”€ templates/
+  â”‚   â”œâ”€â”€ welcome_email.de.json
+  â”‚   â”œâ”€â”€ welcome_email.en.json
+  â”‚   â”œâ”€â”€ welcome_email.nl.json
+  â”‚   â””â”€â”€ ...
+  â”œâ”€â”€ errors/
+  â”‚   â”œâ”€â”€ errors.de.json
+  â”‚   â”œâ”€â”€ errors.en.json
+  â”‚   â””â”€â”€ ...
+  â”œâ”€â”€ validation/
+  â”‚   â”œâ”€â”€ validation.de.json
+  â”‚   â”œâ”€â”€ validation.en.json
+  â”‚   â””â”€â”€ ...
+  â”œâ”€â”€ status/
+  â”‚   â”œâ”€â”€ status.de.json
+  â”‚   â”œâ”€â”€ status.en.json
+  â”‚   â””â”€â”€ ...
+  â””â”€â”€ ui/  // Falls UI vorhanden
+      â”œâ”€â”€ ui.de.json
+      â”œâ”€â”€ ui.en.json
+      â””â”€â”€ ...
 ```
 
 <h3>5.2 I18N-File-Format</h3>
@@ -586,7 +588,7 @@ i18n/
 <h3>5.3 I18N-Loading</h3>
 
 ```
-load_i18n_file(category: String, locale: Locale) → Map<String, Value>:
+load_i18n_file(category: String, locale: Locale) â†’ Map<String, Value>:
 
   file_path = "i18n/{category}/{category}.{locale}.json"
   
@@ -594,7 +596,7 @@ load_i18n_file(category: String, locale: Locale) → Map<String, Value>:
     return parse_json_file(file_path)
   else:
     // Fallback auf Englisch
-    if locale ≠ "en":
+    if locale â‰  "en":
       return load_i18n_file(category, "en")
     else:
       // Fallback auf leere Map
@@ -614,16 +616,16 @@ API-Request:
   Header: Accept-Language: de-DE,de;q=0.9,en;q=0.8
 
 Locale-Resolver:
-  parse_accept_language(header: String) → Array<Locale>:
+  parse_accept_language(header: String) â†’ Array<Locale>:
     // Parsed: ["de-DE", "de", "en"]
     // Qualität: de-DE=1.0, de=0.9, en=0.8
     return sorted_locales_by_quality
 
-resolve_locale_from_header(header: String) → Locale:
+resolve_locale_from_header(header: String) â†’ Locale:
     locales = parse_accept_language(header)
-    ∀ locale ∈ locales:
-      locale_code = extract_language_code(locale)  // "de-DE" → "de"
-      if locale_code ∈ supported_locales:
+    âˆ€ locale âˆˆ locales:
+      locale_code = extract_language_code(locale)  // "de-DE" â†’ "de"
+      if locale_code âˆˆ supported_locales:
         return locale_code
     return "en"  // Default
 ```
@@ -815,7 +817,7 @@ Grund: Keys sind maschinen-lesbar, Übersetzungen getrennt
 
 <strong>4. Fallback-Chain:</strong>
 ```
-de → en → system_default
+de â†’ en â†’ system_default
 ```
 
 <h3>8.3 Testing</h3>
@@ -827,11 +829,11 @@ test_template_rendering_all_locales():
   template_id = "welcome_email"
   supported_locales = ["de", "en", "nl", "fr"]
   
-  ∀ locale ∈ supported_locales:
+  âˆ€ locale âˆˆ supported_locales:
     variant = get_template_variant(template_id, locale)
-    assert variant ≠ null
-    assert variant.subject ≠ ""
-    assert variant.body ≠ ""
+    assert variant â‰  null
+    assert variant.subject â‰  ""
+    assert variant.body â‰  ""
 
 test_placeholder_formatting():
   date = "2025-01-27"

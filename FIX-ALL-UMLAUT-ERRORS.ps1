@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FIX ALL UMLAUT ERRORS
+﻿# [.SYSTEMS.T.SYSTEMS.] FIX ALL UMLAUT ERRORS
 # Behebt alle Umlaut-Encoding-Fehler in HTML-Dateien
 
 $ErrorActionPreference = "Continue"
@@ -14,17 +14,17 @@ $htmlFiles = Get-ChildItem -Path $ROOT -Recurse -Filter "*.html" -File | Where-O
 }
 
 $fixes = @{
-    "â€¢" = "•"
+    "•" = "•"
     "â€" = "—"
-    "â€œ" = """"
+    """ = """"
     "â€" = """"
     "â†'" = "→"
-    "Ã¤" = "ä"
-    "Ã¶" = "ö"
-    "Ã¼" = "ü"
-    "ÃŸ" = "ß"
-    "Ã„" = "Ä"
-    "Ã–" = "Ö"
+    "ä" = "ä"
+    "ö" = "ö"
+    "ü" = "ü"
+    "ß" = "ß"
+    "Ä" = "Ä"
+    "Ö" = "Ö"
     "Ãœ" = "Ü"
     "Ã©" = "é"
     "Ã¨" = "è"

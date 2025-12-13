@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE 100% FIX ALL & TEST
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE 100% FIX ALL & TEST
 # Behebt alle Umlaut-Fehler, 404-Fehler, Encoding-Probleme
 # Führt komplette Tests durch und deployed alles
 
@@ -64,21 +64,21 @@ $htmlFiles = Get-ChildItem -Path $rootDir -Filter "*.html" -Recurse -File |
     Select-Object -First 50 -ExpandProperty FullName
 
 $encodingFixes = @{
-    'EintrÃ¤ge' = 'Einträge'
-    'fÃ¼r' = 'für'
-    'Ã¼' = 'ü'
-    'Ã¤' = 'ä'
-    'Ã¶' = 'ö'
-    'ÃŸ' = 'ß'
+    'Einträge' = 'Einträge'
+    'für' = 'für'
+    'ü' = 'ü'
+    'ä' = 'ä'
+    'ö' = 'ö'
+    'ß' = 'ß'
     'Ãœ' = 'Ü'
-    'Ã„' = 'Ä'
-    'Ã–' = 'Ö'
-    'ZurÃ¼ck' = 'Zurück'
-    'Ã¶ffnen' = 'öffnen'
-    'erklÃ¤rt' = 'erklärt'
-    'wÃ¤hlen' = 'wählen'
-    'zurÃ¼ckspielen' = 'zurückspielen'
-    'geschÃ¼tzten' = 'geschützten'
+    'Ä' = 'Ä'
+    'Ö' = 'Ö'
+    'Zurück' = 'Zurück'
+    'öffnen' = 'öffnen'
+    'erklärt' = 'erklärt'
+    'wählen' = 'wählen'
+    'zurückspielen' = 'zurückspielen'
+    'geschützten' = 'geschützten'
     'emdash' = '—'
     'quote1' = '"'
     'quote2' = '"'
@@ -87,10 +87,10 @@ $encodingFixes = @{
     'euro' = '€'
     'Arbeits-' = 'Arbeits-'
     'Portal –' = 'Portal –'
-    'ðŸ' = '🌍'
-    'ðŸŒ"' = '🌍'
-    'ðŸ' = '🏷️'
-    'ðŸ' = '💡'
+    '' = '🌍'
+    'Œ"' = '🌍'
+    '' = '🏷️'
+    '' = '💡'
 }
 
 $filesFixed = 0

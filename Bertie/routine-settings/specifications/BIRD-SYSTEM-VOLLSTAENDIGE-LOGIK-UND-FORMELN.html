@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -11,12 +11,14 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
   <script src="../../../console-monitor.js"></script>
   <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>VOLLSTÄNDIGE SYSTEM-LOGIK & FORMELN</h1>
 <h2>Customer Engagement & Messaging Platform - Komplettes Entwickler-Dokument</h2>
 
-<strong>⭐ USER-FRIENDLY ⭐</strong>
+<strong>â­ USER-FRIENDLY â­</strong>
 
 <strong>Version:</strong> 1.0.0  
 <strong>Erstellt:</strong> 2025-01-27  
@@ -25,7 +27,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>⭐ USER-FRIENDLINESS-PRINZIP ⭐</h2>
+<h2>â­ USER-FRIENDLINESS-PRINZIP â­</h2>
 
 <strong>Alle Komponenten dieses Systems sind user-friendly implementiert:</strong>
 
@@ -84,7 +86,7 @@ wobei:
 <strong>Workspace-Entität:</strong>
 
 ```
-W = { w | w.id ∈ UUID, w.name ∈ String, w.created_at ∈ Timestamp }
+W = { w | w.id âˆˆ UUID, w.name âˆˆ String, w.created_at âˆˆ Timestamp }
 
 Workspace-Metadaten:
 w.settings : Map(String, Value)
@@ -95,13 +97,13 @@ w.status : {"active", "suspended", "trial"}
 <strong>Multi-Tenant-Isolation-Formel:</strong>
 
 ```
-∀ entity ∈ {C, E, S, J, CH, T, M}:
-  entity.workspace_id ∈ W.id
+âˆ€ entity âˆˆ {C, E, S, J, CH, T, M}:
+  entity.workspace_id âˆˆ W.id
   
 Zugriffsregel:
 can_access_entity(u, entity) = true 
-  ⇔ entity.workspace_id = u.workspace_id 
-    ∧ user_has_permission(u, entity_type)
+  â‡” entity.workspace_id = u.workspace_id 
+    âˆ§ user_has_permission(u, entity_type)
 ```
 
 <h3>2.2 Users (Interne Benutzer)</h3>
@@ -109,12 +111,12 @@ can_access_entity(u, entity) = true
 <strong>User-Entität:</strong>
 
 ```
-U = { u | u.id ∈ UUID }
+U = { u | u.id âˆˆ UUID }
 
-u.workspace_id ∈ W.id
-u.email ∈ String (eindeutig pro Workspace)
-u.roles ⊆ ROLE = {"admin", "developer", "analyst", "marketer", "viewer"}
-u.permissions ⊆ PERMISSION = {
+u.workspace_id âˆˆ W.id
+u.email âˆˆ String (eindeutig pro Workspace)
+u.roles âŠ† ROLE = {"admin", "developer", "analyst", "marketer", "viewer"}
+u.permissions âŠ† PERMISSION = {
   "contacts:read", "contacts:write",
   "events:read", "events:write",
   "journeys:read", "journeys:write", "journeys:execute",
@@ -123,17 +125,17 @@ u.permissions ⊆ PERMISSION = {
   "channels:read", "channels:write",
   "templates:read", "templates:write"
 }
-u.last_login ∈ Timestamp ∪ {null}
-u.created_at ∈ Timestamp
+u.last_login âˆˆ Timestamp âˆª {null}
+u.created_at âˆˆ Timestamp
 ```
 
 <strong>Berechtigungs-Prüf-Formel:</strong>
 
 ```
 has_permission(u, action, resource_type) = true
-  ⇔ ∃ p ∈ u.permissions: 
-      (p.action = action ∧ p.resource = resource_type)
-    ∨ "admin" ∈ u.roles
+  â‡” âˆƒ p âˆˆ u.permissions: 
+      (p.action = action âˆ§ p.resource = resource_type)
+    âˆ¨ "admin" âˆˆ u.roles
 ```
 
 <h3>2.3 Contacts (Endkunden)</h3>
@@ -141,41 +143,41 @@ has_permission(u, action, resource_type) = true
 <strong>Contact-Entität:</strong>
 
 ```
-C = { c | c.id ∈ UUID }
+C = { c | c.id âˆˆ UUID }
 
-c.workspace_id ∈ W.id
+c.workspace_id âˆˆ W.id
 c.attributes : Map(String, Value)
-  wobei Value ∈ {String, Number, Boolean, Date, Array, Object, null}
+  wobei Value âˆˆ {String, Number, Boolean, Date, Array, Object, null}
 
 Standard-Attribute (immer vorhanden):
 c.attributes["id"] = c.id
 c.attributes["workspace_id"] = c.workspace_id
-c.attributes["created_at"] ∈ Timestamp
-c.attributes["updated_at"] ∈ Timestamp
+c.attributes["created_at"] âˆˆ Timestamp
+c.attributes["updated_at"] âˆˆ Timestamp
 
 Häufige Attribute:
-c.attributes["email"] ∈ String ∪ {null}
-c.attributes["phone"] ∈ String ∪ {null}
-c.attributes["first_name"] ∈ String ∪ {null}
-c.attributes["last_name"] ∈ String ∪ {null}
-c.attributes["country"] ∈ String ∪ {null}
-c.attributes["timezone"] ∈ String ∪ {null}
-c.attributes["language"] ∈ String ∪ {null}
-c.attributes["tags"] ⊆ String
+c.attributes["email"] âˆˆ String âˆª {null}
+c.attributes["phone"] âˆˆ String âˆª {null}
+c.attributes["first_name"] âˆˆ String âˆª {null}
+c.attributes["last_name"] âˆˆ String âˆª {null}
+c.attributes["country"] âˆˆ String âˆª {null}
+c.attributes["timezone"] âˆˆ String âˆª {null}
+c.attributes["language"] âˆˆ String âˆª {null}
+c.attributes["tags"] âŠ† String
 c.attributes["custom_fields"] : Map(String, Value)
 
 Berechnete Attribute (on-the-fly):
-c.attributes["lifetime_value"] = Σ(e ∈ events_of_contact(c): 
+c.attributes["lifetime_value"] = Î£(e âˆˆ events_of_contact(c): 
   if event_type(e) = "purchase" then event_properties(e)["amount"] else 0)
-c.attributes["last_event_time"] = max({event_time(e) | e ∈ events_of_contact(c)})
+c.attributes["last_event_time"] = max({event_time(e) | e âˆˆ events_of_contact(c)})
 c.attributes["event_count"] = |events_of_contact(c)|
 ```
 
 <strong>Kontakt-Aktualisierungs-Formel:</strong>
 
 ```
-update_contact(c, updates : Map(String, Value)) → c':
-  ∀ key ∈ keys(updates):
+update_contact(c, updates : Map(String, Value)) â†’ c':
+  âˆ€ key âˆˆ keys(updates):
     c'.attributes[key] = updates[key]
   c'.attributes["updated_at"] = now()
   return c'
@@ -186,49 +188,49 @@ update_contact(c, updates : Map(String, Value)) → c':
 <strong>Event-Entität:</strong>
 
 ```
-E = { e | e.id ∈ UUID }
+E = { e | e.id âˆˆ UUID }
 
-e.workspace_id ∈ W.id
-e.contact_id ∈ C.id ∪ {null}  // null = anonymes Event
-e.event_type ∈ String  // z.B. "page_view", "purchase", "login", "cart_abandoned"
-e.event_time ∈ Timestamp
+e.workspace_id âˆˆ W.id
+e.contact_id âˆˆ C.id âˆª {null}  // null = anonymes Event
+e.event_type âˆˆ String  // z.B. "page_view", "purchase", "login", "cart_abandoned"
+e.event_time âˆˆ Timestamp
 e.event_properties : Map(String, Value)
-e.source ∈ String  // z.B. "web", "api", "webhook", "journey"
-e.session_id ∈ String ∪ {null}
+e.source âˆˆ String  // z.B. "web", "api", "webhook", "journey"
+e.session_id âˆˆ String âˆª {null}
 ```
 
 <strong>Event-Filter-Formel:</strong>
 
 ```
-events_matching(c, filters) := { e ∈ E |
+events_matching(c, filters) := { e âˆˆ E |
   e.contact_id = c.id
-  ∧ (filters.type = null ∨ e.event_type = filters.type)
-  ∧ (filters.start_time = null ∨ e.event_time ≥ filters.start_time)
-  ∧ (filters.end_time = null ∨ e.event_time ≤ filters.end_time)
-  ∧ (filters.properties = null ∨ 
-      ∀ (k, v) ∈ filters.properties: e.event_properties[k] = v)
+  âˆ§ (filters.type = null âˆ¨ e.event_type = filters.type)
+  âˆ§ (filters.start_time = null âˆ¨ e.event_time â‰¥ filters.start_time)
+  âˆ§ (filters.end_time = null âˆ¨ e.event_time â‰¤ filters.end_time)
+  âˆ§ (filters.properties = null âˆ¨ 
+      âˆ€ (k, v) âˆˆ filters.properties: e.event_properties[k] = v)
 }
 ```
 
 <strong>Events pro Kontakt:</strong>
 
 ```
-events_of_contact(c) := { e ∈ E | e.contact_id = c.id }
+events_of_contact(c) := { e âˆˆ E | e.contact_id = c.id }
 ```
 
 <strong>Event-Aggregation:</strong>
 
 ```
 count_events(c, event_type, time_window) := 
-  |{ e ∈ events_of_contact(c) |
+  |{ e âˆˆ events_of_contact(c) |
       e.event_type = event_type
-      ∧ e.event_time ≥ now() - time_window }|
+      âˆ§ e.event_time â‰¥ now() - time_window }|
 
 sum_event_property(c, event_type, property_key, time_window) :=
-  Σ(e ∈ events_of_contact(c) |
+  Î£(e âˆˆ events_of_contact(c) |
       e.event_type = event_type
-      ∧ e.event_time ≥ now() - time_window:
-    if e.event_properties[property_key] ∈ Number 
+      âˆ§ e.event_time â‰¥ now() - time_window:
+    if e.event_properties[property_key] âˆˆ Number 
     then e.event_properties[property_key] 
     else 0)
 ```
@@ -238,46 +240,46 @@ sum_event_property(c, event_type, property_key, time_window) :=
 <strong>Channel-Entität:</strong>
 
 ```
-CH = { ch | ch.id ∈ UUID }
+CH = { ch | ch.id âˆˆ UUID }
 
-ch.workspace_id ∈ W.id
-ch.kind ∈ CHANNEL_KIND = {"sms", "whatsapp", "email", "voice", "push", "inbox"}
-ch.name ∈ String
-ch.status ∈ {"active", "inactive", "pending"}
+ch.workspace_id âˆˆ W.id
+ch.kind âˆˆ CHANNEL_KIND = {"sms", "whatsapp", "email", "voice", "push", "inbox"}
+ch.name âˆˆ String
+ch.status âˆˆ {"active", "inactive", "pending"}
 ch.config : Map(String, Value)  // kanal-spezifische Konfiguration
 
 Beispiel-Konfigurationen:
 
 SMS/WhatsApp:
-ch.config["provider"] ∈ String  // z.B. "twilio", "bird", "messagebird"
-ch.config["api_key"] ∈ String
-ch.config["api_secret"] ∈ String
-ch.config["sender_id"] ∈ String
-ch.config["rate_limit_per_minute"] ∈ Number
+ch.config["provider"] âˆˆ String  // z.B. "twilio", "bird", "messagebird"
+ch.config["api_key"] âˆˆ String
+ch.config["api_secret"] âˆˆ String
+ch.config["sender_id"] âˆˆ String
+ch.config["rate_limit_per_minute"] âˆˆ Number
 
 Email:
-ch.config["smtp_host"] ∈ String
-ch.config["smtp_port"] ∈ Number
-ch.config["smtp_user"] ∈ String
-ch.config["smtp_password"] ∈ String
-ch.config["from_email"] ∈ String
-ch.config["from_name"] ∈ String
-ch.config["reply_to"] ∈ String
+ch.config["smtp_host"] âˆˆ String
+ch.config["smtp_port"] âˆˆ Number
+ch.config["smtp_user"] âˆˆ String
+ch.config["smtp_password"] âˆˆ String
+ch.config["from_email"] âˆˆ String
+ch.config["from_name"] âˆˆ String
+ch.config["reply_to"] âˆˆ String
 ```
 
 <strong>Channel-Verfügbarkeit:</strong>
 
 ```
 is_channel_available(ch, contact) = true
-  ⇔ ch.status = "active"
-    ∧ ch.workspace_id = contact.workspace_id
-    ∧ has_required_identifier(contact, ch.kind)
+  â‡” ch.status = "active"
+    âˆ§ ch.workspace_id = contact.workspace_id
+    âˆ§ has_required_identifier(contact, ch.kind)
 
 wobei:
-has_required_identifier(c, "sms") = (c.attributes["phone"] ≠ null)
-has_required_identifier(c, "whatsapp") = (c.attributes["phone"] ≠ null)
-has_required_identifier(c, "email") = (c.attributes["email"] ≠ null)
-has_required_identifier(c, "push") = (c.attributes["push_token"] ≠ null)
+has_required_identifier(c, "sms") = (c.attributes["phone"] â‰  null)
+has_required_identifier(c, "whatsapp") = (c.attributes["phone"] â‰  null)
+has_required_identifier(c, "email") = (c.attributes["email"] â‰  null)
+has_required_identifier(c, "push") = (c.attributes["push_token"] â‰  null)
 ```
 
 <h3>2.6 Templates (Nachrichtenvorlagen)</h3>
@@ -285,16 +287,16 @@ has_required_identifier(c, "push") = (c.attributes["push_token"] ≠ null)
 <strong>Template-Entität:</strong>
 
 ```
-T = { t | t.id ∈ UUID }
+T = { t | t.id âˆˆ UUID }
 
-t.workspace_id ∈ W.id
-t.name ∈ String
-t.channel_kind ∈ CHANNEL_KIND
-t.subject ∈ String ∪ {null}  // für Email
-t.body ∈ String  // mit Platzhaltern: {{variable_name}}
+t.workspace_id âˆˆ W.id
+t.name âˆˆ String
+t.channel_kind âˆˆ CHANNEL_KIND
+t.subject âˆˆ String âˆª {null}  // für Email
+t.body âˆˆ String  // mit Platzhaltern: {{variable_name}}
 t.variables : Set(String)  // extrahierte Platzhalter aus body
-t.status ∈ {"draft", "active", "archived"}
-t.created_at, t.updated_at ∈ Timestamp
+t.status âˆˆ {"draft", "active", "archived"}
+t.created_at, t.updated_at âˆˆ Timestamp
 ```
 
 <strong>Template-Platzhalter-Syntax:</strong>
@@ -318,7 +320,7 @@ Filter:
 <strong>Template-Rendering-Formel:</strong>
 
 ```
-render_template(t, context) → String:
+render_template(t, context) â†’ String:
   context = {
     contact: c,
     journey_state: ji.state_data,
@@ -327,7 +329,7 @@ render_template(t, context) → String:
   }
   
   resolved_body = t.body
-  ∀ var_name ∈ extract_placeholders(t.body):
+  âˆ€ var_name âˆˆ extract_placeholders(t.body):
     value = resolve_variable(var_name, context)
     resolved_body = replace(resolved_body, "{{" + var_name + "}}", value)
   
@@ -353,16 +355,16 @@ resolve_variable(var_name, context) :=
 <strong>Message-Entität:</strong>
 
 ```
-M = { m | m.id ∈ UUID }
+M = { m | m.id âˆˆ UUID }
 
-m.workspace_id ∈ W.id
-m.contact_id ∈ C.id
-m.channel_id ∈ CH.id
-m.template_id ∈ T.id ∪ {null}
-m.journey_instance_id ∈ JI.id ∪ {null}
-m.body ∈ String  // bereits aufgelöst (keine Platzhalter)
-m.subject ∈ String ∪ {null}  // für Email
-m.status ∈ MESSAGE_STATUS = {
+m.workspace_id âˆˆ W.id
+m.contact_id âˆˆ C.id
+m.channel_id âˆˆ CH.id
+m.template_id âˆˆ T.id âˆª {null}
+m.journey_instance_id âˆˆ JI.id âˆª {null}
+m.body âˆˆ String  // bereits aufgelöst (keine Platzhalter)
+m.subject âˆˆ String âˆª {null}  // für Email
+m.status âˆˆ MESSAGE_STATUS = {
   "queued",      // in Warteschlange
   "sending",     // wird gerade gesendet
   "sent",        // an Provider gesendet
@@ -372,16 +374,16 @@ m.status ∈ MESSAGE_STATUS = {
   "bounced",     // Bounce/Abweisung
   "unsubscribed" // Abmeldung
 }
-m.external_message_id ∈ String ∪ {null}  // ID vom Provider
-m.error_message ∈ String ∪ {null}
-m.queued_at, m.sent_at, m.delivered_at, m.failed_at ∈ Timestamp ∪ {null}
-m.created_at ∈ Timestamp
+m.external_message_id âˆˆ String âˆª {null}  // ID vom Provider
+m.error_message âˆˆ String âˆª {null}
+m.queued_at, m.sent_at, m.delivered_at, m.failed_at âˆˆ Timestamp âˆª {null}
+m.created_at âˆˆ Timestamp
 ```
 
 <strong>Message-Status-Übergangs-Formel:</strong>
 
 ```
-message_status_transition(m, new_status, timestamp) → m':
+message_status_transition(m, new_status, timestamp) â†’ m':
   m'.status = new_status
   
   if new_status = "queued":
@@ -404,29 +406,29 @@ message_status_transition(m, new_status, timestamp) → m':
 <strong>Segment-Entität:</strong>
 
 ```
-S = { s | s.id ∈ UUID }
+S = { s | s.id âˆˆ UUID }
 
-s.workspace_id ∈ W.id
-s.name ∈ String
-s.description ∈ String ∪ {null}
+s.workspace_id âˆˆ W.id
+s.name âˆˆ String
+s.description âˆˆ String âˆª {null}
 s.segment_query : BOOLEAN_EXPRESSION  // logische Formel
 s.is_dynamic : Boolean  // true = automatisch aktualisiert
 s.contact_count : Number  // Anzahl Kontakte (bei dynamisch: geschätzt)
-s.last_calculated_at ∈ Timestamp ∪ {null}
-s.created_at, s.updated_at ∈ Timestamp
+s.last_calculated_at âˆˆ Timestamp âˆª {null}
+s.created_at, s.updated_at âˆˆ Timestamp
 ```
 
 <strong>Segment-Prädikat (mathematisch):</strong>
 
 ```
-segment_predicate_s : C × P(E) → {true, false}
+segment_predicate_s : C Ã— P(E) â†’ {true, false}
 
 wobei P(E) = Potenzmenge von E (alle Event-Mengen)
 
 Segment-Menge:
-segment_set_s := { c ∈ C |
+segment_set_s := { c âˆˆ C |
   c.workspace_id = s.workspace_id
-  ∧ segment_predicate_s(c, events_of_contact(c)) = true
+  âˆ§ segment_predicate_s(c, events_of_contact(c)) = true
 }
 ```
 
@@ -442,7 +444,7 @@ BOOLEAN_EXPRESSION :=
 
 ATTRIBUTE_COMPARISON := 
   contact.attributes["key"] OPERATOR VALUE
-  OPERATOR ∈ {=, !=, >, <, >=, <=, IN, NOT_IN, CONTAINS, STARTS_WITH, ENDS_WITH}
+  OPERATOR âˆˆ {=, !=, >, <, >=, <=, IN, NOT_IN, CONTAINS, STARTS_WITH, ENDS_WITH}
 
 EVENT_EXISTS :=
   EXISTS event WHERE
@@ -458,7 +460,7 @@ EVENT_AGGREGATE :=
   | MAX(event.properties["key"] WHERE ...) OPERATOR NUMBER
   | MIN(event.properties["key"] WHERE ...) OPERATOR NUMBER
 
-LOGICAL_OP ∈ {AND, OR}
+LOGICAL_OP âˆˆ {AND, OR}
 ```
 
 <strong>Beispiel-Segment-Formel:</strong>
@@ -468,21 +470,21 @@ Segment "Aktive Käufer in Deutschland (letzte 30 Tage)":
 
 segment_predicate_active_buyers_DE(c, events) :=
   c.attributes["country"] = "DE"
-  ∧ EXISTS e ∈ events:
+  âˆ§ EXISTS e âˆˆ events:
       e.event_type = "purchase"
-      ∧ e.event_time ≥ now() - 30d
-  ∧ COUNT(e ∈ events WHERE 
+      âˆ§ e.event_time â‰¥ now() - 30d
+  âˆ§ COUNT(e âˆˆ events WHERE 
       e.event_type = "purchase" 
-      ∧ e.event_time ≥ now() - 30d) ≥ 1
+      âˆ§ e.event_time â‰¥ now() - 30d) â‰¥ 1
 ```
 
 <strong>Segment-Berechnung (Dynamisch):</strong>
 
 ```
-recalculate_segment(s) → S':
-  s'.segment_set = { c ∈ C |
+recalculate_segment(s) â†’ S':
+  s'.segment_set = { c âˆˆ C |
     c.workspace_id = s.workspace_id
-    ∧ evaluate_boolean_expression(s.segment_query, c, events_of_contact(c))
+    âˆ§ evaluate_boolean_expression(s.segment_query, c, events_of_contact(c))
   }
   s'.contact_count = |s'.segment_set|
   s'.last_calculated_at = now()
@@ -494,25 +496,25 @@ recalculate_segment(s) → S':
 <strong>Journey-Entität:</strong>
 
 ```
-J = { j | j.id ∈ UUID }
+J = { j | j.id âˆˆ UUID }
 
-j.workspace_id ∈ W.id
-j.name ∈ String
-j.description ∈ String ∪ {null}
-j.status ∈ {"draft", "active", "paused", "archived"}
+j.workspace_id âˆˆ W.id
+j.name âˆˆ String
+j.description âˆˆ String âˆª {null}
+j.status âˆˆ {"draft", "active", "paused", "archived"}
 j.nodes : Set(N)  // alle Nodes dieser Journey
-j.edges : Set(N × N)  // gerichtete Kanten zwischen Nodes
-j.start_node_id ∈ N.id
-j.created_at, j.updated_at ∈ Timestamp
+j.edges : Set(N Ã— N)  // gerichtete Kanten zwischen Nodes
+j.start_node_id âˆˆ N.id
+j.created_at, j.updated_at âˆˆ Timestamp
 ```
 
 <strong>Journey-Node-Entität:</strong>
 
 ```
-N = { n | n.id ∈ UUID }
+N = { n | n.id âˆˆ UUID }
 
-n.journey_id ∈ J.id
-n.node_type ∈ NODE_TYPE = {
+n.journey_id âˆˆ J.id
+n.node_type âˆˆ NODE_TYPE = {
   "trigger",         // Startpunkt, triggert neue Journey-Instanz
   "condition",       // Bedingungsprüfung (if/else)
   "wait",            // Warten (Zeit oder Event)
@@ -521,7 +523,7 @@ n.node_type ∈ NODE_TYPE = {
   "branch",          // Mehrfach-Verzweigung
   "exit"             // Journey beenden
 }
-n.label ∈ String
+n.label âˆˆ String
 n.config : Map(String, Value)  // node-type-spezifische Konfiguration
 n.position : (x: Number, y: Number)  // für UI
 ```
@@ -529,24 +531,24 @@ n.position : (x: Number, y: Number)  // für UI
 <strong>Journey-Instance (Laufende Instanz pro Kontakt):</strong>
 
 ```
-JI = { ji | ji.id ∈ UUID }
+JI = { ji | ji.id âˆˆ UUID }
 
-ji.workspace_id ∈ W.id
-ji.journey_id ∈ J.id
-ji.contact_id ∈ C.id
-ji.current_node_id ∈ N.id
-ji.status ∈ {"active", "completed", "paused", "cancelled"}
+ji.workspace_id âˆˆ W.id
+ji.journey_id âˆˆ J.id
+ji.contact_id âˆˆ C.id
+ji.current_node_id âˆˆ N.id
+ji.status âˆˆ {"active", "completed", "paused", "cancelled"}
 ji.state_data : Map(String, Value)  // Kontext-Daten für Journey
-ji.entry_time, ji.last_updated ∈ Timestamp
-ji.completed_at ∈ Timestamp ∪ {null}
+ji.entry_time, ji.last_updated âˆˆ Timestamp
+ji.completed_at âˆˆ Timestamp âˆª {null}
 ```
 
 <strong>Journey-State-Update-Formel:</strong>
 
 ```
-update_journey_instance(ji, new_node_id, state_updates) → ji':
+update_journey_instance(ji, new_node_id, state_updates) â†’ ji':
   ji'.current_node_id = new_node_id
-  ∀ (key, value) ∈ state_updates:
+  âˆ€ (key, value) âˆˆ state_updates:
     ji'.state_data[key] = value
   ji'.last_updated = now()
   
@@ -566,13 +568,13 @@ update_journey_instance(ji, new_node_id, state_updates) → ji':
 <strong>Formale Definition:</strong>
 
 ```
-Journey J = (Q, Σ, δ, q₀, F)
+Journey J = (Q, Î£, Î´, qâ‚€, F)
 
 wobei:
 - Q = N (alle Nodes der Journey)
-- Σ = EVENT ∪ {TIMEOUT, MANUAL_TRIGGER} (Input-Alphabet)
-- δ : Q × Σ × CONTEXT → Q ∪ {EXIT} (Übergangsfunktion)
-- q₀ = j.start_node_id (Start-Node)
+- Î£ = EVENT âˆª {TIMEOUT, MANUAL_TRIGGER} (Input-Alphabet)
+- Î´ : Q Ã— Î£ Ã— CONTEXT â†’ Q âˆª {EXIT} (Übergangsfunktion)
+- qâ‚€ = j.start_node_id (Start-Node)
 - F = {n | n.node_type = "exit"} (End-Zustände)
 ```
 
@@ -591,7 +593,7 @@ CONTEXT = {
 <strong>Übergangsfunktion (allgemein):</strong>
 
 ```
-δ(n, input, context) → n' ∪ {EXIT}:
+Î´(n, input, context) â†’ n' âˆª {EXIT}:
   
   SWITCH n.node_type:
     
@@ -612,16 +614,16 @@ CONTEXT = {
     CASE "wait":
       if n.config["wait_type"] = "duration":
         wait_until = context.journey_state["wait_until"]
-        if context.system_time ≥ wait_until:
+        if context.system_time â‰¥ wait_until:
           return n.config["next_node_id"]
         else:
           return n  // bleibt im aktuellen Node
       
       else if n.config["wait_type"] = "event":
         wait_event_type = n.config["event_type"]
-        if EXISTS e ∈ context.events:
+        if EXISTS e âˆˆ context.events:
           e.event_type = wait_event_type
-          ∧ e.event_time > context.journey_state["wait_start_time"]:
+          âˆ§ e.event_time > context.journey_state["wait_start_time"]:
           return n.config["next_node_id"]
         else:
           return n
@@ -638,7 +640,7 @@ CONTEXT = {
     
     CASE "branch":
       // Prüfe Bedingungen in Reihenfolge
-      ∀ branch ∈ n.config["branches"]:
+      âˆ€ branch âˆˆ n.config["branches"]:
         if evaluate_boolean(branch.condition, context):
           return branch.next_node_id
       return n.config["default_node_id"]
@@ -670,18 +672,18 @@ Trigger-Logik:
 trigger_condition_met(e, c, n) :=
   if n.config["trigger_type"] = "event":
     e.event_type = n.config["event_type"]
-    ∧ evaluate_boolean(n.config["event_conditions"], {
+    âˆ§ evaluate_boolean(n.config["event_conditions"], {
         contact: c,
         event: e,
         events: events_of_contact(c)
       })
   else if n.config["trigger_type"] = "segment":
     if n.config["trigger_on"] = "enter":
-      c ∈ segment_set_s  // gerade eingetreten
-      ∧ c ∉ segment_set_s_old  // war vorher nicht drin
+      c âˆˆ segment_set_s  // gerade eingetreten
+      âˆ§ c âˆ‰ segment_set_s_old  // war vorher nicht drin
     else:
-      c ∉ segment_set_s  // gerade ausgetreten
-      ∧ c ∈ segment_set_s_old  // war vorher drin
+      c âˆ‰ segment_set_s  // gerade ausgetreten
+      âˆ§ c âˆˆ segment_set_s_old  // war vorher drin
   else:
     false
 
@@ -706,14 +708,14 @@ n.config = {
 }
 
 Condition-Evaluation:
-evaluate_condition(n, context) → Boolean:
+evaluate_condition(n, context) â†’ Boolean:
   return evaluate_boolean_expression(
     n.config["condition"],
     context
   )
 
 Übergang:
-δ(n, _, context) = 
+Î´(n, _, context) = 
   if evaluate_condition(n, context):
     n.config["true_node_id"]
   else:
@@ -749,10 +751,10 @@ Bei Eintritt in Wait-Node:
   ji.state_data["wait_start_time"] = now()
 
 Bei jeder Evaluation:
-  if now() ≥ ji.state_data["wait_until"]:
-    δ(n, _, context) = n.config["next_node_id"]
+  if now() â‰¥ ji.state_data["wait_until"]:
+    Î´(n, _, context) = n.config["next_node_id"]
   else:
-    δ(n, _, context) = n  // bleibt stehen
+    Î´(n, _, context) = n  // bleibt stehen
 
 Wait-Logik (Event):
 Bei Eintritt:
@@ -762,12 +764,12 @@ Bei Eintritt:
 
 Bei jedem neuen Event e für Kontakt c:
   if e.event_type = n.config["wait_event_type"]
-    ∧ e.event_time > ji.state_data["wait_start_time"]
-    ∧ evaluate_boolean(n.config["wait_event_conditions"], {contact: c, event: e}):
-    δ(n, e, context) = n.config["next_node_id"]
+    âˆ§ e.event_time > ji.state_data["wait_start_time"]
+    âˆ§ evaluate_boolean(n.config["wait_event_conditions"], {contact: c, event: e}):
+    Î´(n, e, context) = n.config["next_node_id"]
   
-  if ji.state_data["wait_timeout"] exists ∧ now() ≥ ji.state_data["wait_timeout"]:
-    δ(n, _, context) = n.config["timeout_node_id"]  // oder next_node_id
+  if ji.state_data["wait_timeout"] exists âˆ§ now() â‰¥ ji.state_data["wait_timeout"]:
+    Î´(n, _, context) = n.config["timeout_node_id"]  // oder next_node_id
 ```
 
 <h4>3.2.4 Send-Message-Node</h4>
@@ -784,12 +786,12 @@ n.config = {
     "window": Duration
   },
   "priority": Number,  // 1-10, höher = wichtiger
-  "fallback_channel_id": CH.id ∪ {null}  // falls Haupt-Channel fehlschlägt
+  "fallback_channel_id": CH.id âˆª {null}  // falls Haupt-Channel fehlschlägt
 }
 
 Send-Message-Logik:
 
-send_message_from_node(n, context) → Message m:
+send_message_from_node(n, context) â†’ Message m:
 
   // 1. Rate-Limit prüfen
   if check_rate_limit(context.contact, n.config["channel_id"], n.config["rate_limit"]):
@@ -835,14 +837,14 @@ send_message_from_node(n, context) → Message m:
   return m
 
 Rate-Limit-Prüfung:
-check_rate_limit(c, ch_id, rate_limit) → Boolean:
+check_rate_limit(c, ch_id, rate_limit) â†’ Boolean:
   window_start = now() - rate_limit.window
-  recent_messages = { m ∈ M |
+  recent_messages = { m âˆˆ M |
     m.contact_id = c.id
-    ∧ m.channel_id = ch_id
-    ∧ m.created_at ≥ window_start
+    âˆ§ m.channel_id = ch_id
+    âˆ§ m.created_at â‰¥ window_start
   }
-  return |recent_messages| ≥ rate_limit.max_per_contact
+  return |recent_messages| â‰¥ rate_limit.max_per_contact
 ```
 
 <h4>3.2.5 Update-Contact-Node</h4>
@@ -863,11 +865,11 @@ n.config = {
 
 Update-Contact-Logik:
 
-apply_contact_updates(n, context) → c':
+apply_contact_updates(n, context) â†’ c':
 
   c' = context.contact
   
-  ∀ update ∈ n.config["updates"]:
+  âˆ€ update âˆˆ n.config["updates"]:
     
     if update.operation = "set":
       // Wert auswerten (kann Formel sein)
@@ -892,7 +894,7 @@ apply_contact_updates(n, context) → c':
       // Für Arrays/Tags
       current_array = c'.attributes[update.attribute] ?? []
       remove_value = evaluate_expression(update.value, context)
-      c'.attributes[update.attribute] = current_array.filter(x => x ≠ remove_value)
+      c'.attributes[update.attribute] = current_array.filter(x => x â‰  remove_value)
   
   c'.attributes["updated_at"] = now()
   save_contact(c')
@@ -924,15 +926,15 @@ n.config = {
 
 Branch-Logik:
 
-δ(n, _, context) = 
+Î´(n, _, context) = 
   // Branches nach Priority sortieren
   sorted_branches = sort(n.config["branches"], by: "priority")
   
-  ∀ branch ∈ sorted_branches:
+  âˆ€ branch âˆˆ sorted_branches:
     if evaluate_boolean_expression(branch.condition, context):
       return branch.next_node_id
   
-  // Keine Bedingung erfüllt → Default
+  // Keine Bedingung erfüllt â†’ Default
   return n.config["default_node_id"]
 ```
 
@@ -942,12 +944,12 @@ Branch-Logik:
 n.node_type = "exit"
 
 n.config = {
-  "reason": String ∪ {null}  // optional: Grund für Exit
+  "reason": String âˆª {null}  // optional: Grund für Exit
 }
 
 Exit-Logik:
 
-δ(n, _, context) = EXIT
+Î´(n, _, context) = EXIT
 
 Bei Exit:
   ji.status = "completed"
@@ -965,9 +967,9 @@ Bei Exit:
 process_journey_instances():
 
   // Alle aktiven Journey-Instanzen
-  active_instances = { ji ∈ JI | ji.status = "active" }
+  active_instances = { ji âˆˆ JI | ji.status = "active" }
   
-  ∀ ji ∈ active_instances:
+  âˆ€ ji âˆˆ active_instances:
     
     // 1. Aktuellen Node holen
     current_node = get_node(ji.current_node_id)
@@ -1005,7 +1007,7 @@ process_journey_instances():
     // 5. Speichern
     save_journey_instance(ji)
 
-build_context(ji) → CONTEXT:
+build_context(ji) â†’ CONTEXT:
   return {
     contact: get_contact(ji.contact_id),
     events: events_of_contact(ji.contact_id),
@@ -1022,29 +1024,29 @@ build_context(ji) → CONTEXT:
 on_event_received(e: Event):
 
   // 1. Alle Trigger-Nodes finden, die auf dieses Event reagieren
-  relevant_triggers = { n ∈ N |
+  relevant_triggers = { n âˆˆ N |
     n.node_type = "trigger"
-    ∧ n.config["trigger_type"] = "event"
-    ∧ n.config["event_type"] = e.event_type
-    ∧ evaluate_boolean(n.config["event_conditions"] ?? true, {
+    âˆ§ n.config["trigger_type"] = "event"
+    âˆ§ n.config["event_type"] = e.event_type
+    âˆ§ evaluate_boolean(n.config["event_conditions"] ?? true, {
         contact: get_contact(e.contact_id),
         event: e
       })
   }
   
   // 2. Für jeden Trigger: Journey starten
-  ∀ trigger_node ∈ relevant_triggers:
+  âˆ€ trigger_node âˆˆ relevant_triggers:
     journey = get_journey(trigger_node.journey_id)
     
     // Prüfen ob Journey aktiv ist
-    if journey.status ≠ "active":
+    if journey.status â‰  "active":
       continue
     
     // Prüfen ob Kontakt bereits in dieser Journey ist
-    existing_ji = { ji ∈ JI |
+    existing_ji = { ji âˆˆ JI |
       ji.contact_id = e.contact_id
-      ∧ ji.journey_id = journey.id
-      ∧ ji.status = "active"
+      âˆ§ ji.journey_id = journey.id
+      âˆ§ ji.status = "active"
     }
     
     if |existing_ji| > 0:
@@ -1053,7 +1055,7 @@ on_event_received(e: Event):
         continue
       else if journey.config["reentry_policy"] = "restart":
         // Alte Instanz beenden
-        ∀ ji ∈ existing_ji:
+        âˆ€ ji âˆˆ existing_ji:
           ji.status = "cancelled"
     
     // Neue Instanz erstellen
@@ -1134,10 +1136,10 @@ message_worker_loop():
 
 ```
 ChannelAdapter = {
-  send(message: M, config: Map) → SendResult,
-  validate_credentials(config: Map) → Boolean,
-  get_status(external_id: String) → MessageStatus,
-  handle_webhook(payload: Map) → Event
+  send(message: M, config: Map) â†’ SendResult,
+  validate_credentials(config: Map) â†’ Boolean,
+  get_status(external_id: String) â†’ MessageStatus,
+  handle_webhook(payload: Map) â†’ Event
 }
 ```
 
@@ -1146,9 +1148,9 @@ ChannelAdapter = {
 ```
 SendResult = {
   success: Boolean,
-  external_message_id: String ∪ {null},
-  error: String ∪ {null},
-  estimated_delivery_time: Timestamp ∪ {null}
+  external_message_id: String âˆª {null},
+  error: String âˆª {null},
+  estimated_delivery_time: Timestamp âˆª {null}
 }
 ```
 
@@ -1264,14 +1266,14 @@ handle_webhook(webhook: WebhookEvent):
     })
   
   // 4. Journey-Instanzen prüfen (für Wait-Nodes auf Events)
-  active_journey_instances = { ji ∈ JI |
+  active_journey_instances = { ji âˆˆ JI |
     ji.contact_id = m.contact_id
-    ∧ ji.status = "active"
-    ∧ ji.current_node.node_type = "wait"
-    ∧ ji.current_node.config["wait_type"] = "event"
+    âˆ§ ji.status = "active"
+    âˆ§ ji.current_node.node_type = "wait"
+    âˆ§ ji.current_node.config["wait_type"] = "event"
   }
   
-  ∀ ji ∈ active_journey_instances:
+  âˆ€ ji âˆˆ active_journey_instances:
     // Journey-Processor wird Event verarbeiten
     trigger_journey_processing(ji)
 ```
@@ -1299,19 +1301,19 @@ POST /contacts
     "phone": String,
     "attributes": Map(String, Value)
   }
-  → { "id": UUID, "contact": Contact }
+  â†’ { "id": UUID, "contact": Contact }
 
 GET /contacts/:id
-  → { "contact": Contact }
+  â†’ { "contact": Contact }
 
 PUT /contacts/:id
   Body: {
     "attributes": Map(String, Value)
   }
-  → { "contact": Contact }
+  â†’ { "contact": Contact }
 
 DELETE /contacts/:id
-  → { "success": Boolean }
+  â†’ { "success": Boolean }
 ```
 
 <h3>5.3 Event-API</h3>
@@ -1324,7 +1326,7 @@ POST /events
     "event_properties": Map(String, Value),
     "timestamp": Timestamp  // optional, default: now()
   }
-  → { "id": UUID, "event": Event }
+  â†’ { "id": UUID, "event": Event }
   
   Logik:
   - Event erstellen
@@ -1337,7 +1339,7 @@ POST /events
 ```
 GET /segments
   Query: ?workspace_id=UUID
-  → { "segments": Array<Segment> }
+  â†’ { "segments": Array<Segment> }
 
 POST /segments
   Body: {
@@ -1345,10 +1347,10 @@ POST /segments
     "segment_query": BOOLEAN_EXPRESSION,
     "is_dynamic": Boolean
   }
-  → { "id": UUID, "segment": Segment }
+  â†’ { "id": UUID, "segment": Segment }
 
 GET /segments/:id/contacts
-  → { "contacts": Array<Contact>, "count": Number }
+  â†’ { "contacts": Array<Contact>, "count": Number }
 ```
 
 <h3>5.5 Journey-API</h3>
@@ -1356,7 +1358,7 @@ GET /segments/:id/contacts
 ```
 GET /journeys
   Query: ?workspace_id=UUID&status=active
-  → { "journeys": Array<Journey> }
+  â†’ { "journeys": Array<Journey> }
 
 POST /journeys
   Body: {
@@ -1364,7 +1366,7 @@ POST /journeys
     "nodes": Array<Node>,
     "edges": Array<Edge>
   }
-  → { "id": UUID, "journey": Journey }
+  â†’ { "id": UUID, "journey": Journey }
 
 PUT /journeys/:id
   Body: {
@@ -1372,11 +1374,11 @@ PUT /journeys/:id
     "nodes": Array<Node>,  // optional
     "edges": Array<Edge>   // optional
   }
-  → { "journey": Journey }
+  â†’ { "journey": Journey }
 
 GET /journeys/:id/instances
   Query: ?contact_id=UUID&status=active
-  → { "instances": Array<JourneyInstance> }
+  â†’ { "instances": Array<JourneyInstance> }
 ```
 
 <h3>5.6 Message-API</h3>
@@ -1391,14 +1393,14 @@ POST /messages
     "priority": Number,  // 1-10
     "scheduled_at": Timestamp  // optional
   }
-  → { "id": UUID, "message": Message }
+  â†’ { "id": UUID, "message": Message }
 
 GET /messages
   Query: ?contact_id=UUID&status=sent&limit=100
-  → { "messages": Array<Message> }
+  â†’ { "messages": Array<Message> }
 
 GET /messages/:id/status
-  → { "message": Message, "status": MessageStatus }
+  â†’ { "message": Message, "status": MessageStatus }
 ```
 
 <h3>5.7 Template-API</h3>
@@ -1406,7 +1408,7 @@ GET /messages/:id/status
 ```
 GET /templates
   Query: ?workspace_id=UUID&channel_kind=sms
-  → { "templates": Array<Template> }
+  â†’ { "templates": Array<Template> }
 
 POST /templates
   Body: {
@@ -1416,7 +1418,7 @@ POST /templates
     "body": String,
     "variables": Array<String>  // optional
   }
-  → { "id": UUID, "template": Template }
+  â†’ { "id": UUID, "template": Template }
 ```
 
 <h3>5.8 Channel-API</h3>
@@ -1424,7 +1426,7 @@ POST /templates
 ```
 GET /channels
   Query: ?workspace_id=UUID&status=active
-  → { "channels": Array<Channel> }
+  â†’ { "channels": Array<Channel> }
 
 POST /channels
   Body: {
@@ -1432,10 +1434,10 @@ POST /channels
     "name": String,
     "config": Map(String, Value)
   }
-  → { "id": UUID, "channel": Channel }
+  â†’ { "id": UUID, "channel": Channel }
 
 PUT /channels/:id/test
-  → { "success": Boolean, "error": String }
+  â†’ { "success": Boolean, "error": String }
 ```
 
 ---
@@ -1497,7 +1499,7 @@ VALUE := String | Number | Boolean | Date | null
 <strong>Evaluator-Funktion:</strong>
 
 ```
-evaluate_expression(expr: EXPRESSION, context: CONTEXT) → Value:
+evaluate_expression(expr: EXPRESSION, context: CONTEXT) â†’ Value:
 
   SWITCH expr.type:
     
@@ -1507,20 +1509,20 @@ evaluate_expression(expr: EXPRESSION, context: CONTEXT) → Value:
       
       SWITCH expr.operator:
         CASE "=": return left_value = right_value
-        CASE "!=": return left_value ≠ right_value
+        CASE "!=": return left_value â‰  right_value
         CASE ">": return left_value > right_value
         CASE "<": return left_value < right_value
-        CASE ">=": return left_value ≥ right_value
-        CASE "<=": return left_value ≤ right_value
-        CASE "IN": return left_value ∈ right_value
-        CASE "NOT_IN": return left_value ∉ right_value
+        CASE ">=": return left_value â‰¥ right_value
+        CASE "<=": return left_value â‰¤ right_value
+        CASE "IN": return left_value âˆˆ right_value
+        CASE "NOT_IN": return left_value âˆ‰ right_value
         CASE "CONTAINS": return left_value.contains(right_value)
         CASE "STARTS_WITH": return left_value.startsWith(right_value)
         CASE "ENDS_WITH": return left_value.endsWith(right_value)
     
     CASE "exists":
       if expr.entity = "event":
-        matching_events = { e ∈ context.events |
+        matching_events = { e âˆˆ context.events |
           evaluate_boolean(expr.where_clause, {
             contact: context.contact,
             event: e,
@@ -1531,11 +1533,11 @@ evaluate_expression(expr: EXPRESSION, context: CONTEXT) → Value:
       
       else if expr.entity = "contact":
         // Für Contact-Exists (selten)
-        return context.contact ≠ null
+        return context.contact â‰  null
     
     CASE "aggregate":
       if expr.entity = "event":
-        matching_events = { e ∈ context.events |
+        matching_events = { e âˆˆ context.events |
           evaluate_boolean(expr.where_clause, {
             contact: context.contact,
             event: e,
@@ -1545,21 +1547,21 @@ evaluate_expression(expr: EXPRESSION, context: CONTEXT) → Value:
         
         SWITCH expr.function:
           CASE "COUNT": return |matching_events|
-          CASE "SUM": return Σ(e ∈ matching_events: resolve_path(expr.property, e))
-          CASE "AVG": return AVG(e ∈ matching_events: resolve_path(expr.property, e))
-          CASE "MAX": return MAX(e ∈ matching_events: resolve_path(expr.property, e))
-          CASE "MIN": return MIN(e ∈ matching_events: resolve_path(expr.property, e))
+          CASE "SUM": return Î£(e âˆˆ matching_events: resolve_path(expr.property, e))
+          CASE "AVG": return AVG(e âˆˆ matching_events: resolve_path(expr.property, e))
+          CASE "MAX": return MAX(e âˆˆ matching_events: resolve_path(expr.property, e))
+          CASE "MIN": return MIN(e âˆˆ matching_events: resolve_path(expr.property, e))
     
     CASE "logical":
       left_result = evaluate_expression(expr.left, context)
       right_result = evaluate_expression(expr.right, context)
       
       SWITCH expr.operator:
-        CASE "AND": return left_result ∧ right_result
-        CASE "OR": return left_result ∨ right_result
+        CASE "AND": return left_result âˆ§ right_result
+        CASE "OR": return left_result âˆ¨ right_result
         CASE "NOT": return ¬left_result
 
-resolve_path(path: String, context: CONTEXT) → Value:
+resolve_path(path: String, context: CONTEXT) â†’ Value:
   
   if path.startsWith("contact.attributes["):
     key = extract_key(path)
@@ -1606,7 +1608,7 @@ workspaces
 
 users
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
   - email (String, unique per workspace)
   - roles (Array<String>)
   - permissions (Array<String>)
@@ -1614,7 +1616,7 @@ users
 
 contacts
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
   - attributes (JSON)  // oder normalisiert in contact_attributes
   - created_at (Timestamp)
   - updated_at (Timestamp)
@@ -1623,8 +1625,8 @@ contacts
 
 events
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
-  - contact_id (UUID, FK → contacts.id, nullable)
+  - workspace_id (UUID, FK â†’ workspaces.id)
+  - contact_id (UUID, FK â†’ contacts.id, nullable)
   - event_type (String)
   - event_time (Timestamp)
   - event_properties (JSON)
@@ -1634,7 +1636,7 @@ events
 
 channels
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
   - kind (Enum)
   - name (String)
   - status (Enum)
@@ -1642,7 +1644,7 @@ channels
 
 templates
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
   - channel_kind (Enum)
   - name (String)
   - subject (String, nullable)
@@ -1651,10 +1653,10 @@ templates
 
 messages
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
-  - contact_id (UUID, FK → contacts.id)
-  - channel_id (UUID, FK → channels.id)
-  - template_id (UUID, FK → templates.id, nullable)
+  - workspace_id (UUID, FK â†’ workspaces.id)
+  - contact_id (UUID, FK â†’ contacts.id)
+  - channel_id (UUID, FK â†’ channels.id)
+  - template_id (UUID, FK â†’ templates.id, nullable)
   - journey_instance_id (UUID, nullable)
   - body (String)
   - subject (String, nullable)
@@ -1668,7 +1670,7 @@ messages
 
 segments
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
   - name (String)
   - segment_query (JSON)  // Boolean-Expression als AST
   - is_dynamic (Boolean)
@@ -1676,13 +1678,13 @@ segments
   - last_calculated_at (Timestamp, nullable)
 
 segment_contacts  // nur für statische Segmente
-  - segment_id (UUID, FK → segments.id)
-  - contact_id (UUID, FK → contacts.id)
+  - segment_id (UUID, FK â†’ segments.id)
+  - contact_id (UUID, FK â†’ contacts.id)
   - INDEX: (segment_id, contact_id)
 
 journeys
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
   - name (String)
   - status (Enum)
   - config (JSON)  // start_node_id, reentry_policy, etc.
@@ -1691,23 +1693,23 @@ journeys
 
 journey_nodes
   - id (UUID, PK)
-  - journey_id (UUID, FK → journeys.id)
+  - journey_id (UUID, FK â†’ journeys.id)
   - node_type (Enum)
   - label (String)
   - config (JSON)
   - position_x, position_y (Number)
 
 journey_edges
-  - from_node_id (UUID, FK → journey_nodes.id)
-  - to_node_id (UUID, FK → journey_nodes.id)
+  - from_node_id (UUID, FK â†’ journey_nodes.id)
+  - to_node_id (UUID, FK â†’ journey_nodes.id)
   - condition (String, nullable)  // "true", "false", etc.
 
 journey_instances
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
-  - journey_id (UUID, FK → journeys.id)
-  - contact_id (UUID, FK → contacts.id)
-  - current_node_id (UUID, FK → journey_nodes.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
+  - journey_id (UUID, FK â†’ journeys.id)
+  - contact_id (UUID, FK â†’ contacts.id)
+  - current_node_id (UUID, FK â†’ journey_nodes.id)
   - status (Enum)
   - state_data (JSON)
   - entry_time (Timestamp)
@@ -1719,7 +1721,7 @@ journey_instances
 
 access_keys
   - id (UUID, PK)
-  - workspace_id (UUID, FK → workspaces.id)
+  - workspace_id (UUID, FK â†’ workspaces.id)
   - key_hash (String)  // gehasht
   - permissions (Array<String>)
   - expires_at (Timestamp, nullable)
@@ -1732,11 +1734,11 @@ access_keys
 Cache-Layer (Redis):
 
 Keys:
-  - contact:{workspace_id}:{contact_id} → Contact (TTL: 5 min)
-  - segment:{segment_id}:contacts → Set<ContactID> (TTL: 1 hour)
-  - journey:{journey_id} → Journey + Nodes (TTL: 10 min)
-  - template:{template_id} → Template (TTL: 30 min)
-  - channel:{channel_id} → Channel (TTL: 10 min)
+  - contact:{workspace_id}:{contact_id} â†’ Contact (TTL: 5 min)
+  - segment:{segment_id}:contacts â†’ Set<ContactID> (TTL: 1 hour)
+  - journey:{journey_id} â†’ Journey + Nodes (TTL: 10 min)
+  - template:{template_id} â†’ Template (TTL: 30 min)
+  - channel:{channel_id} â†’ Channel (TTL: 10 min)
 
 Invalidation:
   - Bei Contact-Update: contact:{workspace_id}:{contact_id} löschen
@@ -1914,24 +1916,24 @@ END
 <h3>8.2 DSL-zu-Formel-Mapping</h3>
 
 ```
-DSL → Formel-Übersetzung:
+DSL â†’ Formel-Übersetzung:
 
 "contact.attributes.country = 'DE'"
-  →
+  â†’
   attributes(contact)["country"] = "DE"
 
 "EXISTS event WHERE event.type = 'purchase'"
-  →
-  ∃ e ∈ events_of_contact(contact): 
+  â†’
+  âˆƒ e âˆˆ events_of_contact(contact): 
     event_type(e) = "purchase"
 
 "COUNT(event WHERE event.type = 'purchase') >= 1"
-  →
-  |{e ∈ events_of_contact(contact) | event_type(e) = "purchase"}| ≥ 1
+  â†’
+  |{e âˆˆ events_of_contact(contact) | event_type(e) = "purchase"}| â‰¥ 1
 
 "SUM(event.properties.amount WHERE event.type = 'purchase')"
-  →
-  Σ(e ∈ events_of_contact(contact) |
+  â†’
+  Î£(e âˆˆ events_of_contact(contact) |
     event_type(e) = "purchase":
     event_properties(e)["amount"])
 ```
@@ -2032,39 +2034,39 @@ Journey ecommerce_onboarding:
 Trigger:
   trigger_condition(e, c) := 
     event_type(e) = "user_registered"
-    ∧ e.contact_id = c.id
+    âˆ§ e.contact_id = c.id
 
 Journey-Graph:
-  n1 (trigger) → n2 (send_message: welcome_email)
-  n2 → n3 (wait: 24h)
-  n3 → n4 (condition: check_first_visit)
-  n4 → [true: n5 (wait: 3d), false: n6 (send_message: browse_reminder)]
-  n6 → n5
-  n5 → n7 (condition: check_activity)
-  n7 → [true: n8 (update_contact), false: n9 (send_message: offer)]
-  n8 → n10 (exit)
-  n9 → n11 (wait: 7d)
-  n11 → n12 (condition: check_purchase)
-  n12 → [true: n13 (send_message: thank_you), false: n10]
-  n13 → n14 (update_contact)
-  n14 → n10
+  n1 (trigger) â†’ n2 (send_message: welcome_email)
+  n2 â†’ n3 (wait: 24h)
+  n3 â†’ n4 (condition: check_first_visit)
+  n4 â†’ [true: n5 (wait: 3d), false: n6 (send_message: browse_reminder)]
+  n6 â†’ n5
+  n5 â†’ n7 (condition: check_activity)
+  n7 â†’ [true: n8 (update_contact), false: n9 (send_message: offer)]
+  n8 â†’ n10 (exit)
+  n9 â†’ n11 (wait: 7d)
+  n11 â†’ n12 (condition: check_purchase)
+  n12 â†’ [true: n13 (send_message: thank_you), false: n10]
+  n13 â†’ n14 (update_contact)
+  n14 â†’ n10
 
 Node-Bedingungen:
 
 n4.condition := 
-  ∃ e ∈ events_of_contact(c):
+  âˆƒ e âˆˆ events_of_contact(c):
     event_type(e) = "page_view"
-    ∧ event_time(e) ≥ ji.state_data["entry_time"]
+    âˆ§ event_time(e) â‰¥ ji.state_data["entry_time"]
 
 n7.condition :=
-  ∃ e ∈ events_of_contact(c):
-    event_type(e) ∈ {"purchase", "cart_add", "page_view"}
-    ∧ event_time(e) ≥ now() - 3d
+  âˆƒ e âˆˆ events_of_contact(c):
+    event_type(e) âˆˆ {"purchase", "cart_add", "page_view"}
+    âˆ§ event_time(e) â‰¥ now() - 3d
 
 n12.condition :=
-  ∃ e ∈ events_of_contact(c):
+  âˆƒ e âˆˆ events_of_contact(c):
     event_type(e) = "purchase"
-    ∧ event_time(e) ≥ ji.state_data["send_offer_time"]
+    âˆ§ event_time(e) â‰¥ ji.state_data["send_offer_time"]
 ```
 
 ---
@@ -2121,19 +2123,19 @@ Caching:
 
 ```
 Multi-Tenant-Isolation:
-  ∀ API-Request:
+  âˆ€ API-Request:
     workspace_id = extract_from_access_key(access_key)
-    ∀ Entity in Request:
+    âˆ€ Entity in Request:
       assert(entity.workspace_id = workspace_id)
 
 Permission-Check:
-  ∀ Action:
+  âˆ€ Action:
     assert(has_permission(access_key, action, resource_type))
 
 Rate-Limiting:
-  ∀ Workspace:
-    messages_per_minute ≤ workspace.quotas["messages_per_minute"]
-    api_requests_per_minute ≤ 1000
+  âˆ€ Workspace:
+    messages_per_minute â‰¤ workspace.quotas["messages_per_minute"]
+    api_requests_per_minute â‰¤ 1000
 ```
 
 <h3>11.2 Datenschutz</h3>
@@ -2217,7 +2219,7 @@ Dependencies:
 
 ```
 Pipeline:
-  1. Code-Commit → GitHub/GitLab
+  1. Code-Commit â†’ GitHub/GitLab
   2. Automatische Tests (Unit, Integration)
   3. Build Docker-Images
   4. Deploy to Staging
@@ -2253,7 +2255,7 @@ Phase 4: Messaging-Layer
   - Webhook-Handler
 
 Phase 5: Boolean-Expression-Engine
-  - Parser (DSL → AST)
+  - Parser (DSL â†’ AST)
   - Evaluator
   - Test-Suite
 
@@ -2277,22 +2279,22 @@ Phase 8: Optimierung & Monitoring
 
 ```
 // Kontakt-Events
-events_of_contact(c) = {e ∈ E | e.contact_id = c.id}
+events_of_contact(c) = {e âˆˆ E | e.contact_id = c.id}
 
 // Segment-Prädikat
-segment_set = {c ∈ C | segment_predicate(c, events_of_contact(c))}
+segment_set = {c âˆˆ C | segment_predicate(c, events_of_contact(c))}
 
 // Journey-Übergang
-δ(n, input, context) → n' ∪ {EXIT}
+Î´(n, input, context) â†’ n' âˆª {EXIT}
 
 // Message-Status
-message_status_transition(m, new_status, timestamp) → m'
+message_status_transition(m, new_status, timestamp) â†’ m'
 
 // Template-Rendering
-render_template(t, context) → resolved_body
+render_template(t, context) â†’ resolved_body
 
 // Boolean-Expression
-evaluate_boolean(expr, context) → true | false
+evaluate_boolean(expr, context) â†’ true | false
 ```
 
 ---

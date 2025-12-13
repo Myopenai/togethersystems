@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -24,12 +24,12 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 <strong>Was macht es:</strong>
 - ✅ Erstellt automatisch `thinker_id` falls nicht vorhanden
 - ✅ Startet automatisch Heartbeat alle X Sekunden
-- ✅ Funktioniert auch ohne Token (Fallback für lokale Entwicklung)
+- ✅ Funktioniert auch ohne Token (Fallback f&Uuml;r lokale Entwicklung)
 
 <strong>Code:</strong>
 ```javascript
 async function autoInitPresence(){
-	// Prüfe ob bereits verifiziert
+	// Pr&Uuml;fe ob bereits verifiziert
 	if(currentIdentity && currentIdentity.thinker_id){
 		startPresenceHeartbeat(currentIdentity);
 		startMatchLoop(currentIdentity);
@@ -80,7 +80,7 @@ async function autoInitPresence(){
 <strong>Code:</strong>
 ```javascript
 async function autoConnectFromToken(){
-	// Prüfe URL-Parameter für room/pair_code
+	// Pr&Uuml;fe URL-Parameter f&Uuml;r room/pair_code
 	const urlParams = new URLSearchParams(window.location.search);
 	const roomParam = urlParams.get('room') || urlParams.get('pair_code');
 	
@@ -97,7 +97,7 @@ async function autoConnectFromToken(){
 			// Starte sofort Match-Loop
 			updateConnectStatus(`Raum „${roomParam}“ wird beigetreten …`);
 			
-			// Warte kurz, dann prüfe Match
+			// Warte kurz, dann pr&Uuml;fe Match
 			setTimeout(async ()=>{
 				if(PRESENCE_API_BASE){
 					try{
@@ -120,7 +120,7 @@ async function autoConnectFromToken(){
 							}
 						}
 					}catch{
-						// Backend nicht verfügbar - leise weiter
+						// Backend nicht verf&Uuml;gbar - leise weiter
 					}
 				}
 			}, 1000);
@@ -159,12 +159,12 @@ function setupQuickActionButtons(){
 	const quickGroupBtn = document.getElementById('quickGroupBtn');
 	
 	async function startQuickAction(type){
-		// Prüfe ob verifiziert
+		// Pr&Uuml;fe ob verifiziert
 		if(!currentIdentity || !currentIdentity.thinker_id){
 			// Auto-Init starten
 			await autoInitPresence();
 			if(!currentIdentity){
-				alert('Bitte warte kurz, während das System initialisiert wird.');
+				alert('Bitte warte kurz, w&Auml;hrend das System initialisiert wird.');
 				return;
 			}
 		}
@@ -220,27 +220,27 @@ function setupQuickActionButtons(){
 }
 ```
 
-<strong>UI-Änderungen:</strong>
+<strong>UI-&Auml;nderungen:</strong>
 - ✅ Neue Buttons: "📞 Call starten", "💬 Chat starten", "👥 Gruppe starten"
 - ✅ Buttons erscheinen oben im "Live-Funktionen" Panel
-- ✅ Keine Konfiguration nötig - ein Klick startet sofort
+- ✅ Keine Konfiguration n&Ouml;tig - ein Klick startet sofort
 
 ---
 
 <h2>🎯 Verwendung</h2>
 
-<h3>Für User:</h3>
+<h3>F&Uuml;r User:</h3>
 
-1. <strong>Einladungslink öffnen:</strong>
+1. <strong>Einladungslink &Ouml;ffnen:</strong>
    ```
    https://ts-portal.pages.dev/manifest-portal.html?room=ABCD
    ```
-   → Automatisch verbunden, keine Eingabe nötig
+   → Automatisch verbunden, keine Eingabe n&Ouml;tig
 
 2. <strong>Call/Chat/Gruppe starten:</strong>
    - Klick auf "📞 Call starten"
    - Link wird automatisch generiert und in Zwischenablage kopiert
-   - Link teilen → zweiter User öffnet → automatisch verbunden
+   - Link teilen → zweiter User &Ouml;ffnet → automatisch verbunden
 
 3. <strong>Keine Konfiguration:</strong>
    - Signaling Server wird automatisch erkannt
@@ -259,7 +259,7 @@ function setupQuickActionButtons(){
 
 ---
 
-<h2>🚀 Nächste Schritte</h2>
+<h2>🚀 N&Auml;chste Schritte</h2>
 
 1. ✅ Code ist implementiert
 2. ⏭ Testen lokal

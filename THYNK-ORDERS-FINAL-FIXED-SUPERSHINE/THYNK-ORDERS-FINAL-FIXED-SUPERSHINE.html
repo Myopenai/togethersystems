@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -480,6 +480,8 @@
 
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
     <!-- THEME SWITCHER -->
@@ -494,43 +496,43 @@
 
     <div class="container">
         <header>
-            <h1>🛒 THYNK ORDERS</h1>
+            <h1>›’ THYNK ORDERS</h1>
             <p class="subtitle">Lokales Bestellsystem - Click & Run - Kein Server nötig!</p>
         </header>
         <div class="info-box">
-            <strong>ℹ️ Wichtig:</strong> Dies ist eine <strong>lokale Version</strong> - alles läuft direkt in Ihrem Browser. 
+            <strong>â„¹ï¸ Wichtig:</strong> Dies ist eine <strong>lokale Version</strong> - alles läuft direkt in Ihrem Browser. 
             Keine Server, keine Installation nötig! Alle Daten werden lokal gespeichert (localStorage).
-            <br><strong>🎨 Theme:</strong> Rechts oben können Sie zwischen Modern und THYNK Original Design wechseln.
+            <br><strong>Ž¨ Theme:</strong> Rechts oben können Sie zwischen Modern und THYNK Original Design wechseln.
         </div>
 
         <!-- TABS -->
         <div class="tabs">
-            <button class="tab" onclick="showTab('orders')">📋 Bestellungen</button>
-            <button class="tab" onclick="showTab('new')">➕ Neue Bestellung</button>
-            <button class="tab" onclick="showTab('stats')">📊 Statistiken</button>
-            <button class="tab" onclick="showTab('settings')">⚙️ Einstellungen</button>
+            <button class="tab" onclick="showTab('orders')">“‹ Bestellungen</button>
+            <button class="tab" onclick="showTab('new')">âž• Neue Bestellung</button>
+            <button class="tab" onclick="showTab('stats')">“Š Statistiken</button>
+            <button class="tab" onclick="showTab('settings')">âš™ï¸ Einstellungen</button>
         </div>
 
         <!-- TAB CONTENTS -->
         <div id="orders-tab" class="tab-content section active">
-            <h2>📋 Bestellungen</h2>
+            <h2>“‹ Bestellungen</h2>
             <div style="margin: 20px 0;">
-                <button class="btn" onclick="exportData()">💾 Daten exportieren</button>
-                <button class="btn" onclick="document.getElementById('importFile').click()">📥 Daten importieren</button>
+                <button class="btn" onclick="exportData()">’¾ Daten exportieren</button>
+                <button class="btn" onclick="document.getElementById('importFile').click()">“¥ Daten importieren</button>
                 <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
             </div>
             <div id="ordersList"></div>
         </div>
 
         <div id="new-tab" class="tab-content section">
-            <h2>➕ Neue Bestellung</h2>
+            <h2>âž• Neue Bestellung</h2>
             <div class="grid">
                 <div>
                     <h3>Produkt hinzufügen</h3>
                     <input type="text" id="productName" placeholder="Produktname">
                     <input type="number" id="productPrice" placeholder="Preis" step="0.01">
                     <input type="number" id="productQuantity" placeholder="Menge" value="1" min="1">
-                    <button class="btn" onclick="addProductToCart()">➕ Zum Warenkorb</button>
+                    <button class="btn" onclick="addProductToCart()">âž• Zum Warenkorb</button>
                 </div>
                 <div>
                     <h3>Warenkorb</h3>
@@ -549,7 +551,7 @@
         </div>
 
         <div id="stats-tab" class="tab-content section">
-            <h2>📊 Statistiken</h2>
+            <h2>“Š Statistiken</h2>
             <div class="grid">
                 <div class="card">
                     <h3>Gesamt Bestellungen</h3>
@@ -571,7 +573,7 @@
         </div>
 
         <div id="settings-tab" class="tab-content section">
-            <h2>⚙️ Einstellungen</h2>
+            <h2>âš™ï¸ Einstellungen</h2>
             <div>
                 <label>Währung:</label>
                 <select id="currency">
@@ -579,12 +581,12 @@
                     <option value="USD">USD ($)</option>
                     <option value="GBP">GBP (£)</option>
                 </select>
-                <button class="btn" onclick="saveSettings()" style="margin-top: 10px;">💾 Einstellungen speichern</button>
+                <button class="btn" onclick="saveSettings()" style="margin-top: 10px;">’¾ Einstellungen speichern</button>
             </div>
             <div style="margin-top: 20px;">
-                <button class="btn" onclick="exportData()">💾 Backup erstellen</button>
-                <button class="btn" onclick="document.getElementById('importFile').click()">📥 Backup wiederherstellen</button>
-                <button class="btn" onclick="clearAllData()" style="background: #d32f2f;">🗑️ Alle Daten löschen</button>
+                <button class="btn" onclick="exportData()">’¾ Backup erstellen</button>
+                <button class="btn" onclick="document.getElementById('importFile').click()">“¥ Backup wiederherstellen</button>
+                <button class="btn" onclick="clearAllData()" style="background: #d32f2f;">—‘ï¸ Alle Daten löschen</button>
             </div>
         </div>
     </div>
@@ -698,8 +700,8 @@
                 html += `
                     <div class="card" style="margin: 10px 0;">
                         <strong>${item.name}</strong>
-                        <br>Menge: ${item.quantity} × ${settings.currencySymbol}${item.price.toFixed(2)} = ${settings.currencySymbol}${item.total.toFixed(2)}
-                        <button class="btn" onclick="removeFromCart(${index})" style="margin-top: 5px; padding: 5px 10px; background: #d32f2f;">🗑️</button>
+                        <br>Menge: ${item.quantity} Ã— ${settings.currencySymbol}${item.price.toFixed(2)} = ${settings.currencySymbol}${item.total.toFixed(2)}
+                        <button class="btn" onclick="removeFromCart(${index})" style="margin-top: 5px; padding: 5px 10px; background: #d32f2f;">—‘ï¸</button>
                     </div>
                 `;
             });
@@ -801,9 +803,9 @@
                                 <p><strong>Datum:</strong> ${new Date(order.created_at).toLocaleString('de-DE')}</p>
                             </div>
                             <div>
-                                <button class="btn" onclick="viewOrder('${order.id}')">👁️</button>
-                                <button class="btn" onclick="updateOrderStatus('${order.id}')">✏️</button>
-                                <button class="btn" onclick="deleteOrder('${order.id}')" style="background: #d32f2f;">🗑️</button>
+                                <button class="btn" onclick="viewOrder('${order.id}')">‘ï¸</button>
+                                <button class="btn" onclick="updateOrderStatus('${order.id}')">âœï¸</button>
+                                <button class="btn" onclick="deleteOrder('${order.id}')" style="background: #d32f2f;">—‘ï¸</button>
                             </div>
                         </div>
                     </div>
@@ -956,8 +958,8 @@ ${itemsHtml}
         }
 
         function clearAllData() {
-            if (confirm('⚠️ WIRKLICH alle Daten löschen? Das kann nicht rückgängig gemacht werden!')) {
-                if (confirm('⚠️ LETZTE BESTÄTIGUNG: Alle Daten wirklich löschen?')) {
+            if (confirm('âš ï¸ WIRKLICH alle Daten löschen? Das kann nicht rückgängig gemacht werden!')) {
+                if (confirm('âš ï¸ LETZTE BESTÄTIGUNG: Alle Daten wirklich löschen?')) {
                     localStorage.removeItem(STORAGE_KEY);
                     localStorage.removeItem(SETTINGS_KEY);
                     alert('✅ Alle Daten gelöscht!');

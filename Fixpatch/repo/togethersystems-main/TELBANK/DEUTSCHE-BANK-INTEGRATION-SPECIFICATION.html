@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -9,6 +9,8 @@ body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; 
 pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
 code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
+
+  <link rel="stylesheet" href="../../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>Deutsche Bank Integration – Vollständige Spezifikation</h1>
@@ -21,12 +23,12 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>🏦 ÜBERSICHT</h2>
+<h2>¦ ÜBERSICHT</h2>
 
 <h3>Zielsetzung</h3>
 Integration der <strong>Deutsche Bank AG</strong> als <strong>Hauptbank-Partner</strong> für Together Systems, speziell für:
-- TPGA Telbank → Deutsche Bank Geldfluss
-- Crypto ↔ Fiat Umtausch (via regulierte Exchanges)
+- TPGA Telbank â†’ Deutsche Bank Geldfluss
+- Crypto â†” Fiat Umtausch (via regulierte Exchanges)
 - Negative Assets Management
 - Compliance & Reporting (BaFin)
 - KYC/AML-Prozesse
@@ -40,7 +42,7 @@ Integration der <strong>Deutsche Bank AG</strong> als <strong>Hauptbank-Partner<
 
 ---
 
-<h2>📡 API-INTEGRATION</h2>
+<h2>“¡ API-INTEGRATION</h2>
 
 <h3>1. Deutsche Bank API Overview</h3>
 
@@ -113,7 +115,7 @@ Integration der <strong>Deutsche Bank AG</strong> als <strong>Hauptbank-Partner<
 
 ---
 
-<h2>🔐 AUTHENTICATION & ZERTIFIKATE</h2>
+<h2>” AUTHENTICATION & ZERTIFIKATE</h2>
 
 <h3>2. Certificate Management</h3>
 
@@ -174,7 +176,7 @@ const certificateConfig = {
 
 ---
 
-<h2>💼 COMPLIANCE & REGULATORIK</h2>
+<h2>’¼ COMPLIANCE & REGULATORIK</h2>
 
 <h3>3. BaFin-Anforderungen</h3>
 
@@ -229,11 +231,11 @@ const certificateConfig = {
 
 ---
 
-<h2>🔄 INTEGRATION-ARCHITEKTUR</h2>
+<h2>”„ INTEGRATION-ARCHITEKTUR</h2>
 
 <h3>4. System-Integration</h3>
 
-<h4>4.1 TELBANK → Deutsche Bank Flow</h4>
+<h4>4.1 TELBANK â†’ Deutsche Bank Flow</h4>
 
 ```mermaid
 graph LR
@@ -356,16 +358,16 @@ CREATE INDEX idx_db_api_log_timestamp ON deutsche_bank_api_log(timestamp);
 
 ---
 
-<h2>💰 GELDFLUSS-INTEGRATION</h2>
+<h2>’° GELDFLUSS-INTEGRATION</h2>
 
-<h3>5. Crypto ↔ Fiat via Deutsche Bank</h3>
+<h3>5. Crypto â†” Fiat via Deutsche Bank</h3>
 
-<h4>5.1 Inflow (Fiat → Crypto → MetaMask)</h4>
+<h4>5.1 Inflow (Fiat â†’ Crypto â†’ MetaMask)</h4>
 
 <strong>Flow:</strong>
 1. User überweist EUR via SEPA auf Deutsche Bank Corporate Account
 2. Deutsche Bank API meldet eingehende Transaktion
-3. System konvertiert EUR → ETH/Stablecoin via regulierte Exchange
+3. System konvertiert EUR â†’ ETH/Stablecoin via regulierte Exchange
 4. Crypto wird an MetaMask-Wallet gesendet
 
 <strong>API-Implementation:</strong>
@@ -374,7 +376,7 @@ async function handleFiatInflow(dbTransaction) {
   // 1. Transaktion von Deutsche Bank empfangen
   const creditAmount = dbTransaction.amount; // EUR
   
-  // 2. Exchange Order: EUR → ETH
+  // 2. Exchange Order: EUR â†’ ETH
   const exchangeOrder = await createExchangeOrder({
     from: 'EUR',
     to: 'ETH',
@@ -405,11 +407,11 @@ async function handleFiatInflow(dbTransaction) {
 }
 ```
 
-<h4>5.2 Outflow (MetaMask → Crypto → Fiat → Deutsche Bank)</h4>
+<h4>5.2 Outflow (MetaMask â†’ Crypto â†’ Fiat â†’ Deutsche Bank)</h4>
 
 <strong>Flow:</strong>
 1. User sendet Crypto von MetaMask an Exchange
-2. Exchange konvertiert Crypto → EUR
+2. Exchange konvertiert Crypto â†’ EUR
 3. System initiiert SEPA-Überweisung via Deutsche Bank API
 4. Fiat wird auf Deutsche Bank Account gutgeschrieben
 
@@ -422,7 +424,7 @@ async function handleCryptoOutflow(cryptoAmount, targetIBAN) {
     currency: 'ETH'
   });
   
-  // 2. Exchange: ETH → EUR
+  // 2. Exchange: ETH â†’ EUR
   const exchangeOrder = await createExchangeOrder({
     from: 'ETH',
     to: 'EUR',
@@ -460,7 +462,7 @@ async function handleCryptoOutflow(cryptoAmount, targetIBAN) {
 
 ---
 
-<h2>🔒 SICHERHEIT & BEST PRACTICES</h2>
+<h2>”’ SICHERHEIT & BEST PRACTICES</h2>
 
 <h3>6. Security Measures</h3>
 
@@ -485,7 +487,7 @@ async function handleCryptoOutflow(cryptoAmount, targetIBAN) {
 
 ---
 
-<h2>📊 MONITORING & ERROR HANDLING</h2>
+<h2>“Š MONITORING & ERROR HANDLING</h2>
 
 <h3>7. Error Handling</h3>
 
@@ -511,22 +513,22 @@ async function handleDeutscheBankError(error) {
   switch (errorCode) {
     case 'DB001':
     case 'DB002':
-      // Certificate-Problem → Alert Admin, Certificate erneuern
+      // Certificate-Problem â†’ Alert Admin, Certificate erneuern
       await alertAdmin('Certificate issue detected');
       break;
     case 'DB003':
-      // Insufficient funds → User informieren
+      // Insufficient funds â†’ User informieren
       return { success: false, message: 'Insufficient funds in account' };
     case 'DB007':
-      // KYC required → KYC-Prozess starten
+      // KYC required â†’ KYC-Prozess starten
       await triggerKYCProcess();
       break;
     case 'DB009':
-      // Rate limit → Exponential Backoff
+      // Rate limit â†’ Exponential Backoff
       await sleep(exponentialBackoff(retryCount));
       break;
     default:
-      // Generic error → Log & Alert
+      // Generic error â†’ Log & Alert
       console.error('Deutsche Bank API Error:', error);
       await logError(error);
   }
@@ -542,7 +544,7 @@ async function retryWithBackoff(fn, maxRetries = 3) {
       return await fn();
     } catch (error) {
       if (error.code === 'DB009' && i < maxRetries - 1) {
-        // Rate limit → wait exponential
+        // Rate limit â†’ wait exponential
         await sleep(Math.pow(2, i) * 1000);
         continue;
       }
@@ -554,7 +556,7 @@ async function retryWithBackoff(fn, maxRetries = 3) {
 
 ---
 
-<h2>🚀 DEPLOYMENT & PRODUCTION-READINESS</h2>
+<h2>š€ DEPLOYMENT & PRODUCTION-READINESS</h2>
 
 <h3>8. Prototyp-Anforderungen</h3>
 
@@ -589,7 +591,7 @@ async function retryWithBackoff(fn, maxRetries = 3) {
 
 ---
 
-<h2>📚 REFERENZEN & LINKS</h2>
+<h2>“š REFERENZEN & LINKS</h2>
 
 <h3>Deutsche Bank API Documentation</h3>
 - <strong>Developer Portal:</strong> https://developer.db.com

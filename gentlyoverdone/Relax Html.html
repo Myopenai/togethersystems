@@ -51,9 +51,11 @@
   </style>
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body data-theme="dark" data-ui="komfort">
-  <!-- Alle Funktionen, keine externen Abhängigkeiten. Eine Datei. -->
+  <!-- Alle Funktionen, keine externen Abh&Auml;ngigkeiten. Eine Datei. -->
   <header>
 <meta charset="UTF-8">
     <div>
@@ -72,14 +74,14 @@
         </div>
       </div>
       <div class="panel">
-        <label>Zuversicht (Elastizität)</label>
+        <label>Zuversicht (Elastizit&Auml;t)</label>
         <div class="row">
           <input id="conf" type="range" min="0" max="1" value="0.82" step="0.01">
           <div class="value" id="cV">0.82</div>
         </div>
       </div>
       <div class="panel">
-        <label>Nähe/Abstand (Skala)</label>
+        <label>N&Auml;he/Abstand (Skala)</label>
         <div class="row">
           <input id="prox" type="range" min="0.5" max="2.0" value="1.0" step="0.01">
           <div class="value" id="pV">1.00</div>
@@ -94,7 +96,7 @@
       </div>
       <div class="panel">
         <button class="btn" id="reset">Neu starten</button>
-        <button class="btn" id="toggleDoor">Tür auf/zu</button>
+        <button class="btn" id="toggleDoor">T&Uuml;r auf/zu</button>
         <button class="btn" id="pause">Pause</button>
       </div>
       <div class="panel">
@@ -120,16 +122,16 @@
     <section class="canvas-wrap">
       <canvas id="view" width="1491" height="792"></canvas>
       <div class="poem" id="poem">Das ist mein Ausdrucksatz,
-was übrig bleibt, wenn nichts geschlossen ist,
-und die Tür wieder auf und zu springt.
-Nach dem Aufsteigen aus der Höhe,
+was &Uuml;brig bleibt, wenn nichts geschlossen ist,
+und die T&Uuml;r wieder auf und zu springt.
+Nach dem Aufsteigen aus der H&Ouml;he,
 bis zum Grund gefallen und wieder auferstanden,
-spürst du den Grund in der auffluchtsfliegenden Kraft — Gravitation.
+sp&Uuml;rst du den Grund in der auffluchtsfliegenden Kraft — Gravitation.
 
 Zeit: 79.80 s · Δt ≤ 0.016 s
-Zuversicht: e = 0.82 · Nähe × Abstand: 1.00
+Zuversicht: e = 0.82 · N&Auml;he × Abstand: 1.00
 Keine Intention ohne Gedanken.</div>
-      <div class="door" aria-label="Tür">
+      <div class="door" aria-label="T&Uuml;r">
         <div class="hinge"></div>
         <div class="leaf" id="leaf" data-open="1.0000" style="transform: perspective(600px) rotateY(-85deg);"></div>
       </div>
@@ -146,9 +148,9 @@ Keine Intention ohne Gedanken.</div>
       BIC: <code class="small">RABONL2U</code><br>
       Accountant: R.D.TEL
       <br><br>
-      💝 Unterstützen Sie <em>Magnitudo Musica Mundo</em><br>
+      💝 Unterst&Uuml;tzen Sie <em>Magnitudo Musica Mundo</em><br>
       url: <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener">https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget</a><br>
-      Mindestspende: 5 € · anonym oder personalisiert möglich · steuerlich absetzbar (zu prüfen)
+      Mindestspende: 5 € · anonym oder personalisiert m&Ouml;glich · steuerlich absetzbar (zu pr&Uuml;fen)
       <div style="margin-top:6px">
         <a class="btn" href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" target="_blank" rel="noopener">Jetzt spenden via GoFundMe</a>
       </div>
@@ -157,7 +159,7 @@ Keine Intention ohne Gedanken.</div>
   </footer>
 
   <script>
-  // --- Geometrie & Physik ohne Abhängigkeiten ---
+  // --- Geometrie & Physik ohne Abh&Auml;ngigkeiten ---
   const $ = sel => document.querySelector(sel);
   const canvas = $('#view');
   const ctx = canvas.getContext('2d');
@@ -185,8 +187,8 @@ Keine Intention ohne Gedanken.</div>
   // Zustand
   let world = {
     g: 9.81,
-    conf: .82, // Elastizität (Zuversicht)
-    prox: 1.0, // Skala (Nähe/Abstand)
+    conf: .82, // Elastizit&Auml;t (Zuversicht)
+    prox: 1.0, // Skala (N&Auml;he/Abstand)
     dtCap: 0.016, // Zeit-Schritt (Zukunft)
     t: 0,
     paused: false,
@@ -222,7 +224,7 @@ Keine Intention ohne Gedanken.</div>
   applyTheme();
   applyUI();
 
-  // Tür-Animation
+  // T&Uuml;r-Animation
   function renderDoor(dt){
     const target = world.doorOpen? 0 : 1; // 0 = auf, 1 = zu
     const current = parseFloat(leaf.dataset.open || '1');
@@ -235,14 +237,14 @@ Keine Intention ohne Gedanken.</div>
   // Poesie-Generator
   function updatePoem(){
     const lines = [
-      'Das ist mein Ausdrucksatz,\nwas übrig bleibt, wenn nichts geschlossen ist,',
-      'und die Tür wieder auf und zu springt.',
-      `Nach dem Aufsteigen aus der Höhe,`,
+      'Das ist mein Ausdrucksatz,\nwas &Uuml;brig bleibt, wenn nichts geschlossen ist,',
+      'und die T&Uuml;r wieder auf und zu springt.',
+      `Nach dem Aufsteigen aus der H&Ouml;he,`,
       'bis zum Grund gefallen und wieder auferstanden,',
-      'spürst du den Grund in der auffluchtsfliegenden Kraft — Gravitation.',
+      'sp&Uuml;rst du den Grund in der auffluchtsfliegenden Kraft — Gravitation.',
       '',
       `Zeit: ${world.t.toFixed(2)} s · Δt ≤ ${world.dtCap.toFixed(3)} s`,
-      `Zuversicht: e = ${world.conf.toFixed(2)} · Nähe × Abstand: ${world.prox.toFixed(2)}`,
+      `Zuversicht: e = ${world.conf.toFixed(2)} · N&Auml;he × Abstand: ${world.prox.toFixed(2)}`,
       'Keine Intention ohne Gedanken.'
     ];
     poem.textContent = lines.join('\n');
@@ -250,7 +252,7 @@ Keine Intention ohne Gedanken.</div>
 
   // Physik-Update (semi-implizit Euler, Boden + Wand-Kollisionen)
   function step(dt){
-    // Skala beeinflusst den verfügbaren Raum (Nähe/Abstand)
+    // Skala beeinflusst den verf&Uuml;gbaren Raum (N&Auml;he/Abstand)
     const W = canvas.clientWidth / world.prox;
     const H = canvas.clientHeight / world.prox;
 
@@ -266,7 +268,7 @@ Keine Intention ohne Gedanken.</div>
     if(ball.y < ceiling){
       ball.y = ceiling; ball.vy *= -world.conf; jitter(ball); }
 
-    // Kollisionen mit Wänden
+    // Kollisionen mit W&Auml;nden
     const left = ball.r, right = W - ball.r;
     if(ball.x < left){ ball.x = left; ball.vx *= -world.conf; jitter(ball); }
     if(ball.x > right){ ball.x = right; ball.vx *= -world.conf; jitter(ball); }
@@ -317,12 +319,12 @@ Keine Intention ohne Gedanken.</div>
   }
   requestAnimationFrame(frame);
 
-  // Klick auf die Tür kippt den Zustand
+  // Klick auf die T&Uuml;r kippt den Zustand
   document.querySelector('.door').addEventListener('click',()=>{
     world.doorOpen = !world.doorOpen;
   });
 
-  // Tastaturkürzel
+  // Tastaturk&Uuml;rzel
   window.addEventListener('keydown',e=>{
     if(e.key===' '){ ui.pause.click(); e.preventDefault(); }
     if(e.key==='r'){ reset(); }

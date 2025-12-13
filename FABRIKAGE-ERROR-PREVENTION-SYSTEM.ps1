@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ERROR PREVENTION SYSTEM
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ERROR PREVENTION SYSTEM
 # Verhindert alle bekannten Fehler systematisch - NIEMALS WIEDER
 
 $ErrorActionPreference = "Continue"
@@ -96,16 +96,16 @@ $errorProfiles = @{
         param($content)
         # Fix alle bekannten Encoding-Fehler
         $encodingFixes = @{
-            'Ã¤' = 'ä'
-            'Ã¶' = 'ö'
-            'Ã¼' = 'ü'
-            'ÃŸ' = 'ß'
+            'ä' = 'ä'
+            'ö' = 'ö'
+            'ü' = 'ü'
+            'ß' = 'ß'
             'Ãœ' = 'Ü'
-            'Ã„' = 'Ä'
-            'Ã–' = 'Ö'
-            'zurÃ¼ck' = 'zurück'
-            'zurÃ¼ckspielen' = 'zurückspielen'
-            'geschÃ¼tzten' = 'geschützten'
+            'Ä' = 'Ä'
+            'Ö' = 'Ö'
+            'zurück' = 'zurück'
+            'zurückspielen' = 'zurückspielen'
+            'geschützten' = 'geschützten'
             'Arbeitsâ€'' = 'Arbeits-'
             'Portal â€"' = 'Portal –'
         }

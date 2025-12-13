@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: startup-systems
+  labels:
+    app: mongodb
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: mongodb
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 27017
+    targetPort: 27017
+    name: mongodb
+  selector:
+    app: mongodb
+---
+# Headless service for direct pod DNS resolution
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-headless
+  namespace: startup-systems
+  labels:
+    app: mongodb
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: mongodb
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  clusterIP: None
+  ports:
+  - port: 27017
+    name: mongodb
+  selector:
+    app: mongodb

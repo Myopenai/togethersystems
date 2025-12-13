@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -162,6 +162,8 @@
       display: none;
     }
   </style>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
 <div class="page">
@@ -185,7 +187,7 @@
   <!-- Rohdaten-Ebene: wird automatisch verarbeitet bei Änderung -->
   <div>
     <div class="hint">
-      ✂️ Bank-/Kassendaten hier einfach hineinkopieren. System erkennt Format automatisch.<br>
+      âœ‚ï¸ Bank-/Kassendaten hier einfach hineinkopieren. System erkennt Format automatisch.<br>
       Beispiele: <code>2025-12-01;Supermarkt;-23,40</code> oder <code>Miete,-550</code>
     </div>
     <textarea id="dataInput" rows="4">2025-12-01;Supermarkt;-23,40
@@ -259,7 +261,7 @@
   <!-- Fragen / Selbststeuerung (kein Pflicht-Input, nur Orientierung) -->
   <div class="questions">
     <strong>Fragen, die du dir selbst stellen kannst (kein Pflicht-Input für das System):</strong><br>
-    – Welche Ausgaben sind absolut notwendig, welche sind „nice to have“?<br>
+    – Welche Ausgaben sind absolut notwendig, welche sind „nice to have"?<br>
     – Wie viel Puffer willst du mindestens pro Monat / Zeitraum haben?<br>
     – Willst du dein Modell eher täglich, wöchentlich oder monatlich steuern?<br>
     – Sollen künftige Features noch Kategorien, Konten (Giro/Kredit/Bar) oder Steuer-Betrachtungen anzeigen?
@@ -504,17 +506,17 @@
     ctx.fillText("Gesamtbudget: " + to2(b.gesamtBudget) + " €", 20, baseY);
     ctx.fillText("Tage: " + b.tage + " | Tagesbudget: " + to2(b.tagesBudget) + " €", 20, baseY + lh);
     ctx.fillText(
-      "Joints: " + b.jointsProTag + " × " + to2(b.jointPreis) + " € = " + to2(b.jointsPerDayEuro) + " €/Tag",
+      "Joints: " + b.jointsProTag + " Ã— " + to2(b.jointPreis) + " € = " + to2(b.jointsPerDayEuro) + " €/Tag",
       20, baseY + 2 * lh
     );
     ctx.fillText(
       "Lebensmittel-Zukauf: " + to2(b.foodPerDay) + " €/Tag · Brötchen neu: " +
-      b.brotNeu + " × " + to2(b.brotPreis) + " € = " + to2(b.brotNewCost) + " €",
+      b.brotNeu + " Ã— " + to2(b.brotPreis) + " € = " + to2(b.brotNewCost) + " €",
       20, baseY + 3 * lh
     );
     ctx.fillText(
       "Importierte Ausgaben gesamt: " + to2(agg.total) + " €" +
-      (agg.days > 0 ? " · Ø " + to2(agg.total / agg.days) + " €/Tag" : ""),
+      (agg.days > 0 ? " · Ã˜ " + to2(agg.total / agg.days) + " €/Tag" : ""),
       20, baseY + 4 * lh
     );
 
@@ -577,13 +579,13 @@
     ctx.font = "11px system-ui, sans-serif";
     if (b.restTotal < 0) {
       ctx.fillStyle = "#f97373";
-      ctx.fillText("⚠ Budget überzogen: " + to2(-b.restTotal) +
+      ctx.fillText("âš  Budget überzogen: " + to2(-b.restTotal) +
         " € fehlen. Joints / Lebensmittel / Brötchen anpassen.", 20, canvas.height - 18);
       statusEl.textContent = "Budget überzogen: " + to2(-b.restTotal) + " € fehlen.";
       statusEl.style.color = "#f97373";
     } else {
       ctx.fillStyle = "#4ade80";
-      ctx.fillText("✔ Budget im Rahmen. Puffer: " + to2(b.restTotal) +
+      ctx.fillText("âœ” Budget im Rahmen. Puffer: " + to2(b.restTotal) +
         " € im Zeitraum.", 20, canvas.height - 18);
       statusEl.textContent = "Budget OK. Puffer: " + to2(b.restTotal) + " €.";
       statusEl.style.color = "#4ade80";
@@ -673,7 +675,7 @@
         String(d.getDate()).padStart(2, "0");
       range = "Zeitraum: " + fmt(agg.minDate) + " bis " + fmt(agg.maxDate) +
               " · Gesamt: " + to2(agg.total) + " €" +
-              (agg.days > 0 ? " · Ø " + to2(agg.total / agg.days) + " €/Tag" : "");
+              (agg.days > 0 ? " · Ã˜ " + to2(agg.total / agg.days) + " €/Tag" : "");
     } else {
       range = "Zeitraum unbekannt · Gesamt: " + to2(agg.total) + " €";
     }
@@ -964,7 +966,7 @@
 				const flowcashxData = window.flowcashxModule.getData();
 				if (flowcashxData.entries && flowcashxData.entries.length > 0) {
 					window.kassenbuchModule.setData(flowcashxData);
-					console.log('[FABRIKAGE] Flowcashx → Kassenbuch: Daten gesendet');
+					console.log('[FABRIKAGE] Flowcashx â†’ Kassenbuch: Daten gesendet');
 				}
 			}
 		} catch(e) {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -33,6 +33,8 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </style>
   <script src="../../../console-monitor.js"></script>
   <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <div class="container">
@@ -42,25 +44,25 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div class="card">
-<h2>📦 Verfügbare Builds</h2>
+<h2>“¦ Verfügbare Builds</h2>
 <div class="builds-grid" id="buildsGrid">
 <div class="build-item" id="windowsBuild">
-<h3>🪟 Windows</h3>
+<h3>ªŸ Windows</h3>
 <p id="windowsStatus">Prüfe...</p>
 </div>
 <div class="build-item" id="macosBuild">
-<h3>🍎 macOS</h3>
+<h3>Ž macOS</h3>
 <p id="macosStatus">Prüfe...</p>
 </div>
 <div class="build-item" id="linuxBuild">
-<h3>🐧 Linux</h3>
+<h3>§ Linux</h3>
 <p id="linuxStatus">Prüfe...</p>
 </div>
 </div>
 </div>
 
 <div class="card">
-<h2>🔧 USB-Stick Konfiguration</h2>
+<h2>”§ USB-Stick Konfiguration</h2>
 <div class="info-box">
 <p><strong>Auto-Start:</strong></p>
 <label style="display:flex;align-items:center;margin-top:10px">
@@ -78,19 +80,19 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div class="card">
-<h2>🚀 Multi-Boot USB-Stick erstellen</h2>
+<h2>š€ Multi-Boot USB-Stick erstellen</h2>
 <div class="progress-bar" id="progressBar">
 <div class="progress-fill" id="progressFill" style="width:0%">0%</div>
 </div>
 <div style="text-align:center;margin:30px 0">
-<button title="🚀 Multi-Boot USB-Stick erstellen - Klicke hier um diese Aktion auszufÃ¼hren" class="btn btn-primary" id="createBtn" onclick="createMultiBootUSB()">🚀 Multi-Boot USB-Stick erstellen</button>
-<button title="💾 Image herunterladen - Klicke hier um diese Aktion auszufÃ¼hren" class="btn btn-primary" onclick="downloadImage()" id="downloadBtn" style="display:none">💾 Image herunterladen</button>
+<button title="š€ Multi-Boot USB-Stick erstellen - Klicke hier um diese Aktion auszufÃƒ¼hren" class="btn btn-primary" id="createBtn" onclick="createMultiBootUSB()">š€ Multi-Boot USB-Stick erstellen</button>
+<button title="’¾ Image herunterladen - Klicke hier um diese Aktion auszufÃƒ¼hren" class="btn btn-primary" onclick="downloadImage()" id="downloadBtn" style="display:none">’¾ Image herunterladen</button>
 </div>
 <div class="log" id="log"></div>
 </div>
 
 <div class="card" id="instructionsCard" style="display:none">
-<h2>📖 Anleitung</h2>
+<h2>“– Anleitung</h2>
 <div id="instructionsContent"></div>
 </div>
 </div>
@@ -156,47 +158,47 @@ async function createMultiBootUSB() {
   const downloadBtn = document.getElementById('downloadBtn');
   createBtn.disabled = true;
   
-  log('🚀 Starte Multi-Boot USB-Stick Erstellung...', 'info');
+  log('š€ Starte Multi-Boot USB-Stick Erstellung...', 'info');
   updateProgress(10);
 
   try {
     // Schritt 1: Sammle alle Builds
-    log('📦 Sammle alle OS-Builds...', 'info');
+    log('“¦ Sammle alle OS-Builds...', 'info');
     updateProgress(20);
     const builds = await collectBuilds();
     log(`✅ ${builds.length} Builds gefunden`, 'success');
     updateProgress(40);
 
     // Schritt 2: Erstelle Autorun-Dateien
-    log('🔧 Erstelle Autorun-Dateien...', 'info');
+    log('”§ Erstelle Autorun-Dateien...', 'info');
     updateProgress(50);
     const autorunFiles = await createAutorunFiles();
     log('✅ Autorun-Dateien erstellt', 'success');
     updateProgress(60);
 
     // Schritt 3: Erstelle Bootloader
-    log('🔧 Erstelle Universal Bootloader...', 'info');
+    log('”§ Erstelle Universal Bootloader...', 'info');
     updateProgress(70);
     const bootloader = await createBootloader();
     log('✅ Bootloader erstellt', 'success');
     updateProgress(80);
 
     // Schritt 4: Erstelle OS-Detector
-    log('🔧 Erstelle OS-Detector...', 'info');
+    log('”§ Erstelle OS-Detector...', 'info');
     updateProgress(85);
     const osDetector = await createOSDetector();
     log('✅ OS-Detector erstellt', 'success');
     updateProgress(90);
 
     // Schritt 5: Erstelle Config
-    log('🔧 Erstelle Konfiguration...', 'info');
+    log('”§ Erstelle Konfiguration...', 'info');
     updateProgress(95);
     const config = createConfig();
     log('✅ Konfiguration erstellt', 'success');
     updateProgress(100);
 
     // Schritt 6: Erstelle Image
-    log('📦 Erstelle Multi-Boot Image...', 'info');
+    log('“¦ Erstelle Multi-Boot Image...', 'info');
     const imageBlob = await assembleMultiBootImage(builds, autorunFiles, bootloader, osDetector, config);
     log('✅ Multi-Boot Image erstellt!', 'success');
 

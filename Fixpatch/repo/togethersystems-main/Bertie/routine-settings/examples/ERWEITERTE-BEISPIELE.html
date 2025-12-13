@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -9,6 +9,8 @@ body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; 
 pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
 code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
+
+  <link rel="stylesheet" href="../../../../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>ERWEITERTE BEISPIELE</h1>
@@ -23,7 +25,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 <h2>1. E-COMMERCE: ABANDONED CART RECOVERY</h2>
 
 <h3>1.1 Use Case</h3>
-Warenkorb wurde verlassen → automatische Recovery-Kampagne mit abgestuften Rabatten
+Warenkorb wurde verlassen â†’ automatische Recovery-Kampagne mit abgestuften Rabatten
 
 <h3>1.2 Journey-Definition (DSL)</h3>
 
@@ -130,7 +132,7 @@ END
 
 <strong>cart_reminder_1:</strong>
 ```
-Subject: Du hast Artikel in deinem Warenkorb! 🛒
+Subject: Du hast Artikel in deinem Warenkorb! ›’
 
 Hallo {{contact.attributes.first_name}},
 
@@ -147,7 +149,7 @@ Viele Grüße,
 
 <strong>cart_reminder_2_with_10_discount:</strong>
 ```
-Subject: 10% Rabatt auf deinen Warenkorb! 🎁
+Subject: 10% Rabatt auf deinen Warenkorb! Ž
 
 Hallo {{contact.attributes.first_name}},
 
@@ -168,7 +170,7 @@ Viele Grüße,
 
 <strong>cart_reminder_3_with_15_discount:</strong>
 ```
-Subject: Letzte Chance: 15% Rabatt! ⏰
+Subject: Letzte Chance: 15% Rabatt! â°
 
 Hallo {{contact.attributes.first_name}},
 
@@ -194,7 +196,7 @@ Journey abandoned_cart_recovery:
 Trigger:
   trigger_condition(e, c) :=
     event_type(e) = "cart_abandoned"
-    ∧ e.contact_id = c.id
+    âˆ§ e.contact_id = c.id
 
 State-Initialisierung:
   ji.state_data["cart_id"] = e.event_properties["cart_id"]
@@ -206,9 +208,9 @@ Bedingungen:
 
 check_cart_status:
   condition :=
-    ∃ e ∈ events_of_contact(c):
+    âˆƒ e âˆˆ events_of_contact(c):
       event_type(e) = "purchase"
-      ∧ event_properties(e)["cart_id"] = ji.state_data["cart_id"]
+      âˆ§ event_properties(e)["cart_id"] = ji.state_data["cart_id"]
 
 check_cart_status_2, check_cart_status_3 analog
 ```
@@ -407,7 +409,7 @@ Subject: Willkommen bei {{workspace.name}} - Deine 14-tägige Testversion beginn
 
 Hallo {{contact.attributes.first_name}},
 
-herzlich willkommen bei {{workspace.name}}! 🎉
+herzlich willkommen bei {{workspace.name}}! Ž‰
 
 Deine 14-tägige Testversion läuft ab jetzt. Du hast vollen Zugriff auf alle Premium-Features.
 
@@ -426,7 +428,7 @@ Viele Grüße,
 
 <strong>trial_conversion_offer_premium:</strong>
 ```
-Subject: Exklusiv: 20% Rabatt auf Premium - nur für dich! 🎁
+Subject: Exklusiv: 20% Rabatt auf Premium - nur für dich! Ž
 
 Hallo {{contact.attributes.first_name}},
 
@@ -1010,7 +1012,7 @@ END
 - Basierend auf Segment-Zugehörigkeit
 
 <strong>Rabatt-Strategien:</strong>
-- Abgestufte Rabatte (10% → 15%)
+- Abgestufte Rabatte (10% â†’ 15%)
 - Personalisierte Codes (kontakt-spezifisch)
 - Zeitliche Begrenzung (Urgency)
 

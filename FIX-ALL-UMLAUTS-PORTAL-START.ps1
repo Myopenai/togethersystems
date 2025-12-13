@@ -1,5 +1,5 @@
-# [.SYSTEMS.T.SYSTEMS.] Fix alle Umlaut-Encoding-Fehler in Portal – Start.html
-# Behebt: EintrÃ¤ge → Einträge, â€" → —, ðŸ → korrektes Emoji, etc.
+﻿# [.SYSTEMS.T.SYSTEMS.] Fix alle Umlaut-Encoding-Fehler in Portal – Start.html
+# Behebt: Einträge → Einträge, â€" → —,  → korrektes Emoji, etc.
 
 $ErrorActionPreference = "Continue"
 
@@ -15,33 +15,33 @@ $content = Get-Content $file -Raw -Encoding UTF8
 
 # Encoding-Fehler → korrekte Zeichen
 $replacements = @{
-    'EintrÃ¤ge' = 'Einträge'
-    'fÃ¼r' = 'für'
-    'Ã¼' = 'ü'
-    'Ã¤' = 'ä'
-    'Ã¶' = 'ö'
-    'ÃŸ' = 'ß'
+    'Einträge' = 'Einträge'
+    'für' = 'für'
+    'ü' = 'ü'
+    'ä' = 'ä'
+    'ö' = 'ö'
+    'ß' = 'ß'
     'Ãœ' = 'Ü'
-    'Ã„' = 'Ä'
-    'Ã–' = 'Ö'
+    'Ä' = 'Ä'
+    'Ö' = 'Ö'
     'â€"' = '—'
     'â€"' = '"'
     'â€"' = '"'
     'â€"' = '…'
     'â€"' = '–'
     'â€"' = '€'
-    'ZurÃ¼ck' = 'Zurück'
-    'Ã¶ffnen' = 'öffnen'
-    'erklÃ¤rt' = 'erklärt'
-    'wÃ¤hlen' = 'wählen'
-    'zurÃ¼ckspielen' = 'zurückspielen'
-    'FÃ¼r' = 'Für'
+    'Zurück' = 'Zurück'
+    'öffnen' = 'öffnen'
+    'erklärt' = 'erklärt'
+    'wählen' = 'wählen'
+    'zurückspielen' = 'zurückspielen'
+    'Für' = 'Für'
     'â€' = '€'
-    'ðŸ' = '🌍'
-    'ðŸŒ"' = '🌍'
-    'ðŸ' = '🏷️'
-    'ðŸ' = '💡'
-    'ðŸ' = '🚀'
+    '' = '🌍'
+    'Œ"' = '🌍'
+    '' = '🏷️'
+    '' = '💡'
+    '' = '🚀'
 }
 
 $fixed = $content

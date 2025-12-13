@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ERROR PREVENTION TEMPLATE
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ERROR PREVENTION TEMPLATE
 # Template für neue PowerShell-Scripts - VERHINDERT ALLE BEKANNTEN FEHLER
 
 $ErrorActionPreference = "Continue"
@@ -41,7 +41,7 @@ $text = 'Terminated string'
 
 # ❌ FEHLER 4: Encoding-Fehler in Strings
 # FALSCH:
-# 'zurÃ¼ck' = 'zurück'
+# 'zurück' = 'zurück'
 # RICHTIG:
 'zurück' = 'zurück'  # UTF-8 Encoding verwenden!
 
@@ -106,7 +106,7 @@ function Test-ScriptSyntax {
     }
     
     # Prüfe Encoding-Fehler
-    if ($content -match 'Ã¤|Ã¶|Ã¼|ÃŸ|â€"') {
+    if ($content -match 'ä|ö|ü|ß|â€"') {
         $errors += "Encoding-Fehler gefunden (verwende UTF-8)"
     }
     
@@ -132,11 +132,11 @@ function Fix-ScriptErrors {
     $content = $content -replace "'â€\"' = '€'", "'euro' = '€'"
     
     # Fix 2: Encoding-Fehler
-    $content = $content -replace 'Ã¤', 'ä'
-    $content = $content -replace 'Ã¶', 'ö'
-    $content = $content -replace 'Ã¼', 'ü'
-    $content = $content -replace 'ÃŸ', 'ß'
-    $content = $content -replace 'zurÃ¼ck', 'zurück'
+    $content = $content -replace 'ä', 'ä'
+    $content = $content -replace 'ö', 'ö'
+    $content = $content -replace 'ü', 'ü'
+    $content = $content -replace 'ß', 'ß'
+    $content = $content -replace 'zurück', 'zurück'
     
     # Fix 3: Fehlende Klammern
     $openBraces = ([regex]::Matches($content, '\{')).Count

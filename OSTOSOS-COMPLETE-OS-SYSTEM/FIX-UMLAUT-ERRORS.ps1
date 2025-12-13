@@ -1,4 +1,4 @@
-# T,. OSOTOSOS Automatische Umlaut-Fehler-Behebung
+﻿# T,. OSOTOSOS Automatische Umlaut-Fehler-Behebung
 # Fabrik-Standard: Alle Umlaute müssen korrekt sein!
 
 $ErrorActionPreference = "Continue"
@@ -61,13 +61,13 @@ foreach ($file in $textFiles) {
         
         # Prüfe auf falsche Umlaute (ISO-8859-1/Windows-1252 Fehler)
         $umlautErrors = @{
-            'Ã¼' = 'ü'
-            'Ã¤' = 'ä'
-            'Ã¶' = 'ö'
-            'ÃŸ' = 'ß'
+            'ü' = 'ü'
+            'ä' = 'ä'
+            'ö' = 'ö'
+            'ß' = 'ß'
             'Ãœ' = 'Ü'
-            'Ã„' = 'Ä'
-            'Ã–' = 'Ö'
+            'Ä' = 'Ä'
+            'Ö' = 'Ö'
             'Ã©' = 'é'
             'Ã¨' = 'è'
             'Ã ' = 'à'
@@ -173,7 +173,7 @@ foreach (`$file in `$textFiles) {
         `$content = Get-Content -Path `$file.FullName -Raw -Encoding UTF8 -ErrorAction Stop
         
         # Prüfe auf falsche Umlaute
-        if (`$content -match 'Ã¼|Ã¤|Ã¶|ÃŸ|Ãœ|Ã„|Ã–') {
+        if (`$content -match 'ü|ä|ö|ß|Ãœ|Ä|Ö') {
             `$errors++
             Write-Warning "Umlaut-Fehler gefunden in: `$(`$file.Name)"
         }

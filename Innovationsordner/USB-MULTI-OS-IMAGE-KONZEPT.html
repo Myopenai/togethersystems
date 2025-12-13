@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -11,6 +11,8 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>T,. OSTOSOS - USB Multi-OS Image Konzept</h1>
@@ -21,7 +23,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>🎯 PROBLEM</h2>
+<h2>Ž¯ PROBLEM</h2>
 
 <strong>Aktuell:</strong>
 - Ein USB-Stick = Eine OS-Version
@@ -38,39 +40,39 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>💡 LÖSUNGSANSATZ</h2>
+<h2>’¡ LÖSUNGSANSATZ</h2>
 
 <h3>1. Multi-OS Image Struktur</h3>
 
 ```
 USB-Stick/
-├── boot/
-│   ├── bootloader/          # Universal Bootloader
-│   │   ├── EFI/
-│   │   │   ├── BOOT/
-│   │   │   │   ├── BOOTX64.EFI    # Windows/Linux
-│   │   │   │   └── BOOTAA64.EFI   # ARM
-│   │   │   └── OSTOSOS/
-│   │   │       └── OSTOSOS.EFI
-│   │   └── BIOS/
-│   │       └── boot.bin
-│   └── grub/
-│       └── grub.cfg          # Multi-OS Boot-Menü
-├── ostosos/
-│   ├── windows/
-│   │   └── OSTOSOS-Windows/
-│   ├── macos/
-│   │   └── OSTOSOS-macOS/
-│   ├── linux/
-│   │   └── OSTOSOS-Linux/
-│   └── universal/
-│       └── OSTOSOS-Universal/  # WebAssembly/HTML
-├── autorun/
-│   ├── autorun.inf           # Windows Auto-Start
-│   ├── autorun.sh             # Linux Auto-Start
-│   └── autorun.command        # macOS Auto-Start
-└── detection/
-    └── os-detector.js         # Host-OS Erkennung
+â”œâ”€â”€ boot/
+â”‚   â”œâ”€â”€ bootloader/          # Universal Bootloader
+â”‚   â”‚   â”œâ”€â”€ EFI/
+â”‚   â”‚   â”‚   â”œâ”€â”€ BOOT/
+â”‚   â”‚   â”‚   â”‚   â”œâ”€â”€ BOOTX64.EFI    # Windows/Linux
+â”‚   â”‚   â”‚   â”‚   â””â”€â”€ BOOTAA64.EFI   # ARM
+â”‚   â”‚   â”‚   â””â”€â”€ OSTOSOS/
+â”‚   â”‚   â”‚       â””â”€â”€ OSTOSOS.EFI
+â”‚   â”‚   â””â”€â”€ BIOS/
+â”‚   â”‚       â””â”€â”€ boot.bin
+â”‚   â””â”€â”€ grub/
+â”‚       â””â”€â”€ grub.cfg          # Multi-OS Boot-Menü
+â”œâ”€â”€ ostosos/
+â”‚   â”œâ”€â”€ windows/
+â”‚   â”‚   â””â”€â”€ OSTOSOS-Windows/
+â”‚   â”œâ”€â”€ macos/
+â”‚   â”‚   â””â”€â”€ OSTOSOS-macOS/
+â”‚   â”œâ”€â”€ linux/
+â”‚   â”‚   â””â”€â”€ OSTOSOS-Linux/
+â”‚   â””â”€â”€ universal/
+â”‚       â””â”€â”€ OSTOSOS-Universal/  # WebAssembly/HTML
+â”œâ”€â”€ autorun/
+â”‚   â”œâ”€â”€ autorun.inf           # Windows Auto-Start
+â”‚   â”œâ”€â”€ autorun.sh             # Linux Auto-Start
+â”‚   â””â”€â”€ autorun.command        # macOS Auto-Start
+â””â”€â”€ detection/
+    â””â”€â”€ os-detector.js         # Host-OS Erkennung
 ```
 
 <h3>2. Boot-Strategien</h3>
@@ -82,9 +84,9 @@ USB-Stick/
 
 <h4>B) Start bei laufendem System (Dual-Boot)</h4>
 - <strong>Autorun-Mechanismus:</strong> 
-  - Windows: `autorun.inf` → Startet `OSTOSOS-Launcher.exe`
-  - macOS: `autorun.command` → Startet `OSTOSOS-Launcher.app`
-  - Linux: `autorun.sh` → Startet `OSTOSOS-Launcher.bin`
+  - Windows: `autorun.inf` â†’ Startet `OSTOSOS-Launcher.exe`
+  - macOS: `autorun.command` â†’ Startet `OSTOSOS-Launcher.app`
+  - Linux: `autorun.sh` â†’ Startet `OSTOSOS-Launcher.bin`
 - <strong>OS-Erkennung:</strong> Erkennt Host-OS automatisch
 - <strong>Memory-Installation:</strong> Lädt OS in RAM/Prozessor
 - <strong>Dual-System-Mode:</strong> Läuft parallel zum Host-OS
@@ -127,8 +129,8 @@ function detectHostOS() {
 <strong>Option 2: Mit Bestätigung</strong>
 - USB-Stick wird erkannt
 - Dialog: "OSTOSOS starten? [OK] [Abbrechen]"
-- User bestätigt → OS startet
-- User bricht ab → Nichts passiert
+- User bestätigt â†’ OS startet
+- User bricht ab â†’ Nichts passiert
 
 <strong>Konfiguration:</strong>
 - `USB-CONFIG.json` auf USB-Stick
@@ -153,7 +155,7 @@ function detectHostOS() {
 
 ---
 
-<h2>🔧 IMPLEMENTIERUNGS-STRATEGIE</h2>
+<h2>”§ IMPLEMENTIERUNGS-STRATEGIE</h2>
 
 <h3>Phase 1: Multi-OS Image Creator</h3>
 1. Erweitere `OSTOSOS-USB-BOOT-CREATOR.html`
@@ -181,7 +183,7 @@ function detectHostOS() {
 
 ---
 
-<h2>💡 EINFACHE LÖSUNGEN</h2>
+<h2>’¡ EINFACHE LÖSUNGEN</h2>
 
 <h3>Lösung 1: Autorun-Mechanismus</h3>
 <strong>Einfach:</strong> Nutze native Autorun-Funktionen
@@ -209,7 +211,7 @@ function detectHostOS() {
 
 ---
 
-<h2>🎯 ZUSÄTZLICHE NÜTZLICHE IDEEN</h2>
+<h2>Ž¯ ZUSÄTZLICHE NÜTZLICHE IDEEN</h2>
 
 <h3>1. USB-Stick als "Portable Computer"</h3>
 - Komplettes OS auf USB

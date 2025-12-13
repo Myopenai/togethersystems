@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST AND DEPLOY
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST AND DEPLOY
 # Vollständige Fabrikage-Tests, TÜV-Prüfung, Produkttests, Deploy auf alle Repos
 
 $ErrorActionPreference = "Continue"
@@ -82,7 +82,7 @@ foreach ($product in $productFiles) {
         }
         
         # Prüfe auf Umlaut-Fehler
-        if ($content -match 'Ã¤|Ã¶|Ã¼|ÃŸ') {
+        if ($content -match 'ä|ö|ü|ß') {
             $test.Errors += "Umlaut-Encoding-Fehler gefunden"
         }
         

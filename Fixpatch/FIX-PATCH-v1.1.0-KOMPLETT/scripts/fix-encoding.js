@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TOGETHERSYSTEMS - Encoding-Fixer
  * 
  * Behebt UTF-8 Encoding-Probleme in allen HTML-Dateien
@@ -52,17 +52,17 @@ function fixEncoding(filePath) {
   
   // Prüfe auf kaputte Zeichen und versuche zu reparieren
   const replacements = {
-    'Ã¤': 'ä',
-    'Ã¶': 'ö',
-    'Ã¼': 'ü',
-    'ÃŸ': 'ß',
-    'Ã„': 'Ä',
-    'Ã–': 'Ö',
-    'Ãœ': 'Ü',
+    'ä': 'ä',
+    'ö': 'ö',
+    'ü': 'ü',
+    'ß': 'ß',
+    'Ä': 'Ä',
+    'Ö': 'Ö',
+    'Ü': 'Ü',
     'â€"': '–',
-    'â€˜': ''',
-    'â€™': ''',
-    'â€œ': '"',
+    ''': ''',
+    ''': ''',
+    '"': '"',
     'â€': '"',
   };
   

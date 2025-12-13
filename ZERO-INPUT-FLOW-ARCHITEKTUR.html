@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -11,11 +11,13 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
   <script src="./console-monitor.js"></script>
   <script src="./http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>Zero-Input-Flow Architektur</h1>
 
-<h2>🎯 Vision</h2>
+<h2>Ž¯ Vision</h2>
 
 <strong>Der User soll das System einfach "fahren" wie ein autonomes Fahrzeug.</strong>
 - Nur kommunizieren, keine Konfiguration
@@ -24,13 +26,13 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>📋 Phase 1: Presence-Auto-Init (SOFORT umsetzbar)</h2>
+<h2>“‹ Phase 1: Presence-Auto-Init (SOFORT umsetzbar)</h2>
 
 <h3>Ziel</h3>
 Beim Laden von `manifest-portal.html`:
 - ✅ Automatisch `/api/presence/verify` aufrufen (ohne User-Eingabe)
 - ✅ `thinker_id` in `localStorage` speichern
-- ✅ Auf jeder Seite: Alle X Sekunden `/api/presence/heartbeat` → User ist "online"
+- ✅ Auf jeder Seite: Alle X Sekunden `/api/presence/heartbeat` â†’ User ist "online"
 
 <h3>Implementierung</h3>
 Siehe `manifest-portal.html` - Funktion: `autoConnectFromToken()`
@@ -39,13 +41,13 @@ Siehe `manifest-portal.html` - Funktion: `autoConnectFromToken()`
 
 ---
 
-<h2>📋 Phase 2: One-Click-Matching (NÄCHSTER SCHRITT)</h2>
+<h2>“‹ Phase 2: One-Click-Matching (NÄCHSTER SCHRITT)</h2>
 
 <h3>Ziel</h3>
 Statt manuell `pair_code` eintippen:
 - ✅ `pair_code` kann für einen Kontakt/Link automatisch generiert werden
 - ✅ In der URL stehen: `https://.../manifest-portal.html?room=ABCD`
-- ✅ Der zweite Nutzer klickt auf den Link → Frontend liest `room`-Param
+- ✅ Der zweite Nutzer klickt auf den Link â†’ Frontend liest `room`-Param
 - ✅ Ruft `/api/presence/verify` und `/match` automatisch
 
 <strong>Ergebnis:</strong> Der User macht nur einen Link-Klick, keine Eingabe.
@@ -55,7 +57,7 @@ Siehe Code-Snippets unten
 
 ---
 
-<h2>📋 Phase 3: Konversations-Start-Templates</h2>
+<h2>“‹ Phase 3: Konversations-Start-Templates</h2>
 
 <h3>Ziel</h3>
 In `manifest-portal.html`:
@@ -70,7 +72,7 @@ Siehe Code-Snippets unten
 
 ---
 
-<h2>📋 Phase 4: Voucher & Slots automatisch</h2>
+<h2>“‹ Phase 4: Voucher & Slots automatisch</h2>
 
 <h3>Ziel</h3>
 Der User klickt: "Call mit X planen"
@@ -79,11 +81,11 @@ Der User klickt: "Call mit X planen"
 - ✅ Bucht den Slot via `/api/voucher/book`
 - ✅ User sieht nur: "Termin am Dienstag, 14:00 steht – Join-Button"
 
-<strong>→ Keine Eingabe, nur Bestätigung</strong>
+<strong>â†’ Keine Eingabe, nur Bestätigung</strong>
 
 ---
 
-<h2>📋 Phase 5: Kontaktliste + Presence kombinieren</h2>
+<h2>“‹ Phase 5: Kontaktliste + Presence kombinieren</h2>
 
 <h3>Ziel</h3>
 Eine simple "Contact Card"-Liste anzeigen:
@@ -96,7 +98,7 @@ Eine simple "Contact Card"-Liste anzeigen:
 
 ---
 
-<h2>🔧 Implementierungs-Details</h2>
+<h2>”§ Implementierungs-Details</h2>
 
 <h3>Was im Code jetzt schon als Features drinsteckt</h3>
 
@@ -108,7 +110,7 @@ Aus dem Code kann man folgende (teilweise "versteckte") Features erkennen:
 - Matching-Logik, um zwei Leute mit gleichem `pair_code` in denselben Raum zu stecken
 
 <h4>✅ WebSocket-Livechat</h4>
-- `functions/ws.js` → `/ws`
+- `functions/ws.js` â†’ `/ws`
 - Rooms, Broadcast, basic Signaling – vorbereitet für Live-Communication
 
 <h4>✅ Telbank</h4>
@@ -145,47 +147,47 @@ Aus dem Code kann man folgende (teilweise "versteckte") Features erkennen:
 
 ---
 
-<h2>🚀 Roadmap (3–5 Phasen)</h2>
+<h2>š€ Roadmap (3–5 Phasen)</h2>
 
 <h3>Phase 1: Presence-Auto-Init ✅ (SOFORT)</h3>
 - [x] Automatische `thinker_id`-Generierung beim Seitenladen
 - [x] Automatischer Heartbeat alle X Sekunden
 - [ ] Auto-Verifizierung ohne Token (optional)
 
-<h3>Phase 2: One-Click-Match 🔄 (NÄCHSTER SCHRITT)</h3>
+<h3>Phase 2: One-Click-Match ”„ (NÄCHSTER SCHRITT)</h3>
 - [ ] URL-Parameter `?room=ABCD` lesen
 - [ ] Automatisch `pair_code` aus URL generieren
 - [ ] Automatisch `/api/presence/match` aufrufen
 - [ ] Automatisch WebSocket-Room joinen
 
-<h3>Phase 3: Konversations-Templates 📅</h3>
+<h3>Phase 3: Konversations-Templates “…</h3>
 - [ ] "Call", "Chat", "Group Session" Buttons
 - [ ] Automatische Voucher/Slot-Erzeugung
 - [ ] Automatischer WebSocket-Room-Aufbau
 
-<h3>Phase 4: Auto-Slots 📅</h3>
+<h3>Phase 4: Auto-Slots “…</h3>
 - [ ] Automatische Slot-Auswahl
 - [ ] Automatische Buchung
 - [ ] Bestätigungs-UI
 
-<h3>Phase 5: Kontaktliste 📅</h3>
+<h3>Phase 5: Kontaktliste “…</h3>
 - [ ] Presence-Status pro Kontakt
 - [ ] "Join Conversation" Button
 - [ ] Automatischer Match + WebSocket-Join
 
 ---
 
-<h2>📝 Nächste Schritte</h2>
+<h2>“ Nächste Schritte</h2>
 
 1. ✅ Code-Snippets für Presence-Auto-Init + One-Click-Match implementieren
 2. ✅ In `manifest-portal.html` integrieren
 3. ✅ Testen
-4. ⏭ Phase 3-5 nach und nach umsetzen
+4. â­ Phase 3-5 nach und nach umsetzen
 
 
 ---
 
-<h2>🏢 Unternehmens-Branding & OCR</h2>
+<h2>¢ Unternehmens-Branding & OCR</h2>
 
 <strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
 

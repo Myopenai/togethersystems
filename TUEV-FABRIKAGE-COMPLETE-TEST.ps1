@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] TÜV FABRIKAGE COMPLETE TEST
+﻿# [.SYSTEMS.T.SYSTEMS.] TÜV FABRIKAGE COMPLETE TEST
 # Testet Online & Lokal auf 100% Funktionalität und Fabrikage Standards
 
 $ErrorActionPreference = "Continue"
@@ -74,7 +74,7 @@ foreach ($url in $onlineUrls) {
             }
             
             # Umlaut-Fehler prüfen
-            $umlautErrors = @("Ã¤", "Ã¶", "Ã¼", "ÃŸ", "â€", "â€œ", "â€", "â€™")
+            $umlautErrors = @("ä", "ö", "ü", "ß", "â€", """, "â€", "'")
             $foundErrors = $umlautErrors | Where-Object { $content -match $_ }
             if ($foundErrors) {
                 Write-Host "    ❌ Umlaut-Fehler gefunden: $($foundErrors -join ', ')" -ForegroundColor Red
@@ -157,7 +157,7 @@ foreach ($file in $localFiles) {
             }
             
             # Umlaut-Fehler prüfen
-            $umlautErrors = @("Ã¤", "Ã¶", "Ã¼", "ÃŸ", "â€", "â€œ", "â€", "â€™")
+            $umlautErrors = @("ä", "ö", "ü", "ß", "â€", """, "â€", "'")
             $foundErrors = $umlautErrors | Where-Object { $content -match $_ }
             if ($foundErrors) {
                 Write-Host "    ❌ Umlaut-Fehler gefunden: $($foundErrors -join ', ')" -ForegroundColor Red

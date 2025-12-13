@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -11,17 +11,17 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
 </head>
 <body>
-<h2>Backend-Architektur für DB, Monitoring & Fees (1:1 übernehmbar)</h2>
+<h2>Backend-Architektur f&Uuml;r DB, Monitoring & Fees (1:1 &Uuml;bernehmbar)</h2>
 
 Dieses Dokument beschreibt, wie die aktuell In‑Memory arbeitenden Module (Presence, Voucher, Hypothek, Telbank)
 in eine echte relationale Datenbank (z. B. Postgres/Supabase, Cloudflare D1) und ein Monitoring/Fee‑System
-überführt werden können – so, dass die bestehenden HTTP‑APIs weitgehend unverändert bleiben.
+&Uuml;berf&Uuml;hrt werden k&Ouml;nnen – so, dass die bestehenden HTTP‑APIs weitgehend unver&Auml;ndert bleiben.
 
 ---
 
 <h3>1. Kern-Tabellen (Datenmodell)</h3>
 
-<h4>1.1 Identitäten & Sessions</h4>
+<h4>1.1 Identit&Auml;ten & Sessions</h4>
 
 - <strong>thinkers</strong>
   - `id               uuid PK` – interne ID
@@ -84,9 +84,9 @@ in eine echte relationale Datenbank (z. B. Postgres/Supabase, Cloudflare D1) u
   - `default_terms    jsonb`
 
 > Mapping: Der aktuelle In‑Memory‑Voucher‑Server liest/schreibt in `vouchers` und `voucher_bookings`.
-> Die neuen Branchen‑Templates im Portal entsprechen Einträgen in `voucher_templates`.
+> Die neuen Branchen‑Templates im Portal entsprechen Eintr&Auml;gen in `voucher_templates`.
 
-<h4>1.3 Verträge (Legal Hub)</h4>
+<h4>1.3 Vertr&Auml;ge (Legal Hub)</h4>
 
 - <strong>contracts</strong>
   - `id               uuid PK`
@@ -94,7 +94,7 @@ in eine echte relationale Datenbank (z. B. Postgres/Supabase, Cloudflare D1) u
   - `mime_type        text`
   - `byte_size        bigint`
   - `storage_url      text` – z. B. S3/Backblaze/Cloudflare R2 Pfad
-  - `hash_sha256      text` – Integritäts‑Prüfsumme
+  - `hash_sha256      text` – Integrit&Auml;ts‑Pr&Uuml;fsumme
   - `created_by       uuid FK -> thinkers(id)`
   - `created_at       timestamptz`
 
@@ -107,7 +107,7 @@ in eine echte relationale Datenbank (z. B. Postgres/Supabase, Cloudflare D1) u
   - `created_at       timestamptz`
 
 > Der aktuelle Legal‑Hub speichert nur eine lokale Liste in `localStorage`. 
-> In Produktion würden Uploads in `contracts` landen, die Zuordnung zu Voucher/Raum in `contract_links`.
+> In Produktion w&Uuml;rden Uploads in `contracts` landen, die Zuordnung zu Voucher/Raum in `contract_links`.
 
 <h4>1.4 Hypotheken‑Vertical</h4>
 
@@ -177,7 +177,7 @@ in eine echte relationale Datenbank (z. B. Postgres/Supabase, Cloudflare D1) u
   - `meta             jsonb`
   - `created_at       timestamptz`
 
-Alle bestehenden Endpunkte können beim Erfolg einen Eintrag in `events` erzeugen:
+Alle bestehenden Endpunkte k&Ouml;nnen beim Erfolg einen Eintrag in `events` erzeugen:
 
 - `/api/presence/heartbeat` → `type='presence.heartbeat'`
 - `/api/presence/match` → `type='presence.match'`
@@ -197,12 +197,12 @@ Auf Basis der Tabellen:
   - Auslastung pro Template: Join `vouchers` mit `voucher_templates`.
 
 - <strong>Hypotheken Dashboard</strong>
-  - Offene Anträge, angenommene Angebote, durchschnittliche Zins‑Sätze.
+  - Offene Antr&Auml;ge, angenommene Angebote, durchschnittliche Zins‑S&Auml;tze.
 
 - <strong>Telbank Dashboard</strong>
-  - Summe In/Out pro Tag/Netzwerk/Währung.
+  - Summe In/Out pro Tag/Netzwerk/W&Auml;hrung.
 
-Diese Queries können in Supabase‑Dashboards, Metabase, Grafana oder als einfache Admin‑Views im Portal verwendet werden.
+Diese Queries k&Ouml;nnen in Supabase‑Dashboards, Metabase, Grafana oder als einfache Admin‑Views im Portal verwendet werden.
 
 ---
 
@@ -213,9 +213,9 @@ Diese Queries können in Supabase‑Dashboards, Metabase, Grafana oder als einfa
 - <strong>fees</strong>
   - `id               text PK` – 'voucher.booking', 'transfer.logged', …
   - `scope            text` – 'voucher', 'transfer', 'room', 'mortgage'
-  - `percentage       numeric(6,4)` – z. B. 0.02 für 2 %
+  - `percentage       numeric(6,4)` – z. B. 0.02 f&Uuml;r 2 %
   - `fixed_amount     bigint` – fixer Betrag in cents (optional)
-  - `currency         text` – Standardwährung für fixe Fees
+  - `currency         text` – Standardw&Auml;hrung f&Uuml;r fixe Fees
   - `active           boolean`
   - `meta             jsonb`
 
@@ -244,11 +244,11 @@ Diese Queries können in Supabase‑Dashboards, Metabase, Grafana oder als einfa
 > 1) Die Buchung geschrieben.
 > 2) Aus `fees` der passende Eintrag (z. B. 'voucher.booking') geladen.
 > 3) Ein `fee_events`‑Eintrag erzeugt (z. B. 2 % des Voucher‑Preises).
-> 4) Später fasst ein Cron‑Job alle Fee‑Events zu einem `settlement` zusammen.
+> 4) Sp&Auml;ter fasst ein Cron‑Job alle Fee‑Events zu einem `settlement` zusammen.
 
 ---
 
-<h3>4. Migration von In-Memory zu DB (Schritt-für-Schritt)</h3>
+<h3>4. Migration von In-Memory zu DB (Schritt-f&Uuml;r-Schritt)</h3>
 
 1. <strong>Tabellen anlegen</strong>  
    - DDL in Postgres/Supabase oder D1 anlegen (siehe obige Tabellen).
@@ -261,17 +261,17 @@ Diese Queries können in Supabase‑Dashboards, Metabase, Grafana oder als einfa
 
 3. <strong>APIs stabil halten</strong>
    - JSON‑Formate der Responses beibehalten (Feldnamen aus den Tabellen direkt spiegeln).
-   - Nur interne Speicherung ändern, nicht die äußeren Routen.
+   - Nur interne Speicherung &Auml;ndern, nicht die &Auml;u&szlig;eren Routen.
 
 4. <strong>Monitoring aktivieren</strong>
-   - In jedem Endpunkt nach dem erfolgreichen Write zusätzlich einen `events`‑Eintrag erzeugen.
-   - Optionale Export‑Pfade (`/api/admin/stats/...`) können reine SELECT‑Abfragen sein.
+   - In jedem Endpunkt nach dem erfolgreichen Write zus&Auml;tzlich einen `events`‑Eintrag erzeugen.
+   - Optionale Export‑Pfade (`/api/admin/stats/...`) k&Ouml;nnen reine SELECT‑Abfragen sein.
 
 5. <strong>Fees schichtweise einschalten</strong>
-   - Zuerst nur `fees`/`fee_events` füllen, aber keine echten Abbuchungen durchführen.
+   - Zuerst nur `fees`/`fee_events` f&Uuml;llen, aber keine echten Abbuchungen durchf&Uuml;hren.
    - Nach Testphase `settlements` erstellen und im Portal‑Admin sichtbar machen.
 
 Damit ist der Weg von der aktuellen Demo‑Infrastruktur (In‑Memory, Cloudflare‑Function, Node‑Server) zu einer stabilen,
-abrechnungsfähigen Plattform klar und 1:1 in eine reale Datenbank übertragbar.
+abrechnungsf&Auml;higen Plattform klar und 1:1 in eine reale Datenbank &Uuml;bertragbar.
 </body>
 </html>

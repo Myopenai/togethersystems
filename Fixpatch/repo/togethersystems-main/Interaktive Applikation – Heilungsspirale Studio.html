@@ -429,6 +429,8 @@
       }
     }
   </style>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <div id="app">
@@ -479,7 +481,7 @@
         <select id="mode">
           <option value="2d">2D-Modus</option>
           <option value="3d">3D-Projektion</option>
-          <option value="morph">Morph-Modus (stärker)</option>
+          <option value="morph">Morph-Modus (st&Auml;rker)</option>
         </select>
       </div>
 
@@ -509,7 +511,7 @@
 
       <div class="btn-row">
         <button class="btn" id="resetBtn">
-          ↺ <span>Zurücksetzen</span>
+          ↺ <span>Zur&Uuml;cksetzen</span>
         </button>
         <button class="btn primary" id="savePngBtn">
           ⬇ <span>Als PNG speichern</span>
@@ -520,8 +522,8 @@
       </div>
 
       <p class="notice">
-        Tipp: Halte <span class="kbd">R</span> für Neuzeichnen, <span class="kbd">S</span> für PNG-Speichern,
-        <span class="kbd">Leertaste</span> für Play/Pause.
+        Tipp: Halte <span class="kbd">R</span> f&Uuml;r Neuzeichnen, <span class="kbd">S</span> f&Uuml;r PNG-Speichern,
+        <span class="kbd">Leertaste</span> f&Uuml;r Play/Pause.
       </p>
     </div>
 
@@ -530,13 +532,13 @@
 
       <div class="control-group">
         <label for="presetSelect">
-          <span>Preset auswählen</span>
+          <span>Preset ausw&Auml;hlen</span>
         </label>
         <select id="presetSelect">
           <option value="none">— Frei —</option>
           <option value="healing">Heilung · Gold / Blau</option>
           <option value="yinYang">Yin·Yang · Dual</option>
-          <option value="lotus">Lotus · Blüte</option>
+          <option value="lotus">Lotus · Bl&Uuml;te</option>
           <option value="galaxy">Galaxie · Sternenarm</option>
         </select>
       </div>
@@ -548,7 +550,7 @@
       </div>
 
       <label class="small-label" for="presetJson">Preset-JSON</label>
-      <textarea id="presetJson" placeholder="Hier Preset-JSON anzeigen / einfügen…"></textarea>
+      <textarea id="presetJson" placeholder="Hier Preset-JSON anzeigen / einf&Uuml;gen…"></textarea>
     </div>
   </section>
 
@@ -592,14 +594,14 @@
 
       <div class="control-group">
         <label for="animIntensity">
-          <span>Intensität</span>
+          <span>Intensit&Auml;t</span>
           <span class="value" id="animIntensityValue">1.0</span>
         </label>
         <input id="animIntensity" type="range" min="0" max="3" step="0.1" value="1">
       </div>
 
       <div class="btn-row">
-        <button class="btn danger" id="deleteElementBtn">✕ Element löschen</button>
+        <button class="btn danger" id="deleteElementBtn">✕ Element l&Ouml;schen</button>
       </div>
 
       <p class="notice">
@@ -691,7 +693,7 @@
   let isPlaying = true;
   let lastTimestamp = 0;
   let globalTime = 0; // in Sekunden
-  let cycleTime = 0;  // für Modiwechsel
+  let cycleTime = 0;  // f&Uuml;r Modiwechsel
   const cycleDuration = 18; // Sekunden pro Modus im AutoCycle
 
   let currentMode = '2d'; // 2d | 3d | morph
@@ -699,7 +701,7 @@
   let elements = []; // {id, type, x, y, scale, rotation, opacity, animationProfile, animIntensity, ...}
   let activeElementId = null;
 
-  // für Dragging
+  // f&Uuml;r Dragging
   let dragging = false;
   let dragElement = null;
   let dragOffsetX = 0;
@@ -709,7 +711,7 @@
   let mediaRecorder = null;
   let recordedChunks = [];
 
-  // einfacher AudioContext für Video-Audio -> Stream
+  // einfacher AudioContext f&Uuml;r Video-Audio -> Stream
   let audioCtx = null;
   let audioDest = null;
 
@@ -766,7 +768,7 @@
       mode: '2d'
     },
     lotus: {
-      name: 'Lotus · Blüte',
+      name: 'Lotus · Bl&Uuml;te',
       arms: 12,
       twist: 4.5,
       density: 1100,
@@ -818,7 +820,7 @@
       if (obj.palette) currentPalette = obj.palette;
       updateLabelValues();
     } catch(e) {
-      alert('Preset-JSON ist ungültig.');
+      alert('Preset-JSON ist ung&Uuml;ltig.');
     }
   }
 
@@ -863,7 +865,7 @@
     // leichte Rotation im Loop
     const baseRotation = time * 0.15 * parseFloat(speedInput.value);
 
-    // Spiral "Träger"
+    // Spiral "Tr&Auml;ger"
     ctx.save();
     ctx.translate(cx, cy);
 
@@ -1130,7 +1132,7 @@
     const w = canvas.clientWidth || 1024;
     const h = canvas.clientHeight || 600;
     video.loop = true;
-    video.muted = false; // Audio erlaubt – Browser-Rechte nötig
+    video.muted = false; // Audio erlaubt – Browser-Rechte n&Ouml;tig
     video.playsInline = true;
     video.play().catch(()=>{ /* Autoplay ggf. blockiert, dann erst nach User-Interaktion */});
 
@@ -1209,7 +1211,7 @@
   }
 
   function drawElements(t) {
-    // Elemente werden über der Spirale gezeichnet
+    // Elemente werden &Uuml;ber der Spirale gezeichnet
     const w = canvas.clientWidth || 1024;
     const h = canvas.clientHeight || 600;
     const scaleBase = (window.devicePixelRatio || 1);
@@ -1282,8 +1284,8 @@
       } else if (el.type === 'image') {
         base.imageDataUrl = el._dataUrl || null; // optional
       } else if (el.type === 'video') {
-        // Videos können aus Sicherheitsgründen meist nicht als DataURL exportiert werden.
-        base.videoNote = 'Video muss manuell wieder hinzugefügt werden.';
+        // Videos k&Ouml;nnen aus Sicherheitsgr&Uuml;nden meist nicht als DataURL exportiert werden.
+        base.videoNote = 'Video muss manuell wieder hinzugef&Uuml;gt werden.';
       }
       return base;
     });
@@ -1356,13 +1358,13 @@
             });
           };
         }
-        // Video-Infos lassen wir bewusst aus; Nutzer fügt neu hinzu.
+        // Video-Infos lassen wir bewusst aus; Nutzer f&Uuml;gt neu hinzu.
       });
 
       updateLabelValues();
       renderElementList();
     } catch(e) {
-      alert('Projekt-JSON ist ungültig.');
+      alert('Projekt-JSON ist ung&Uuml;ltig.');
     }
   }
 
@@ -1464,7 +1466,7 @@
       try {
         mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
       } catch(err) {
-        alert('MediaRecorder für WebM nicht unterstützt.');
+        alert('MediaRecorder f&Uuml;r WebM nicht unterst&Uuml;tzt.');
         return;
       }
     }
@@ -1485,7 +1487,7 @@
     };
 
     mediaRecorder.start();
-    recStatus.textContent = 'Aufnahme läuft…';
+    recStatus.textContent = 'Aufnahme l&Auml;uft…';
     startRecBtn.disabled = true;
     stopRecBtn.disabled = false;
   }

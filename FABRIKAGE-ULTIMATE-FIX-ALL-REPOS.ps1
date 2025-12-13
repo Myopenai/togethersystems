@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ULTIMATE FIX ALL REPOS
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ULTIMATE FIX ALL REPOS
 # Fixt ALLE Repos automatisch - 0% User-Interaktion
 
 $ErrorActionPreference = "Continue"
@@ -87,10 +87,10 @@ $fixStrategies = @{
             if (-not $content) { continue }
             
             # Fix Umlauts
-            $content = $content -replace 'Ã¤', 'ä'
-            $content = $content -replace 'Ã¶', 'ö'
-            $content = $content -replace 'Ã¼', 'ü'
-            $content = $content -replace 'ÃŸ', 'ß'
+            $content = $content -replace 'ä', 'ä'
+            $content = $content -replace 'ö', 'ö'
+            $content = $content -replace 'ü', 'ü'
+            $content = $content -replace 'ß', 'ß'
             
             $content | Out-File -FilePath $file.FullName -Encoding UTF8 -NoNewline
         }

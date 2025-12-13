@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - FINAL
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE COMPLETE TEST - FINAL
 # Nach eingreifenden Maßnahmen ins System (Architecture Update)
 # Testet: Datei-Existenz, Encoding, Online-Status, Localhost-Status
 
@@ -93,7 +93,7 @@ $htmlFiles = @(
     "CASHFLOX\TOGETHERSYSTEMS-COMPLETE-PACKAGE\apps\decision-matrix-uae.html"
 )
 
-$umlautErrors = @("â€¢", "Ã¤", "Ã¶", "Ã¼", "ÃŸ")
+$umlautErrors = @("•", "ä", "ö", "ü", "ß")
 $encodingOk = 0
 $encodingErrors = 0
 

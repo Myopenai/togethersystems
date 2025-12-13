@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -34,6 +34,8 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </style>
   <script src="../../console-monitor.js"></script>
   <script src="../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <div class="container">
@@ -43,14 +45,14 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div class="card">
-<h2>📋 Informationen</h2>
+<h2>“‹ Informationen</h2>
 <div class="info-box">
 <p><strong>Was macht diese Funktion?</strong></p>
 <p>Diese Funktion erstellt ein bootbares Image (ISO/IMG) von OSTOSOS, das auf einen USB-Stick kopiert werden kann. Wenn ein Gerät mit USB-Startsequenz im BIOS konfiguriert ist, startet es automatisch mit OSTOSOS.</p>
 </div>
 
 <div class="warning-box">
-<p><strong>⚠️ Wichtig:</strong></p>
+<p><strong>âš ï¸ Wichtig:</strong></p>
 <ul style="margin-left:20px;margin-top:10px">
 <li>Der USB-Stick wird komplett gelöscht</li>
 <li>Mindestens 4GB Speicherplatz erforderlich</li>
@@ -61,7 +63,7 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div class="card">
-<h2>🔧 USB Boot Image erstellen</h2>
+<h2>”§ USB Boot Image erstellen</h2>
 
 <div id="platformInfo" class="info-box">
 <p><strong>Plattform:</strong> <span id="platformName">-</span></p>
@@ -94,8 +96,8 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div style="text-align:center;margin:30px 0">
-<button class="btn btn-primary" id="createBtn" onclick="createBootImage()">🚀 Boot Image erstellen</button>
-<button class="btn btn-secondary" onclick="downloadImage()" id="downloadBtn" style="display:none">💾 Image herunterladen</button>
+<button class="btn btn-primary" id="createBtn" onclick="createBootImage()">š€ Boot Image erstellen</button>
+<button class="btn btn-secondary" onclick="downloadImage()" id="downloadBtn" style="display:none">’¾ Image herunterladen</button>
 </div>
 
 <div class="log" id="log">
@@ -104,7 +106,7 @@ body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,v
 </div>
 
 <div class="card" id="instructionsCard" style="display:none">
-<h2>📖 Anleitung</h2>
+<h2>“– Anleitung</h2>
 <div id="instructionsContent"></div>
 </div>
 </div>
@@ -129,7 +131,7 @@ function detectPlatform() {
     return 'linux';
   } else {
     platformName.textContent = 'Unbekannt';
-    platformStatus.textContent = '⚠️ Nicht erkannt';
+    platformStatus.textContent = 'âš ï¸ Nicht erkannt';
     return 'unknown';
   }
 }
@@ -162,8 +164,8 @@ async function detectUSBDevices() {
   
   // Web API hat keine direkte USB-Zugriffsmöglichkeit
   // Wir müssen auf native Apps oder Downloads zurückgreifen
-  log('⚠️ Browser können USB-Geräte nicht direkt erkennen', 'warn');
-  log('💡 Lösung: Image herunterladen und mit externem Tool auf USB kopieren', 'info');
+  log('âš ï¸ Browser können USB-Geräte nicht direkt erkennen', 'warn');
+  log('’¡ Lösung: Image herunterladen und mit externem Tool auf USB kopieren', 'info');
   
   // Für native Implementierung: Electron/Tauri mit USB-APIs
   return [];
@@ -176,12 +178,12 @@ async function createBootImage() {
   const imageType = document.getElementById('imageType').value;
   
   createBtn.disabled = true;
-  log('🚀 Starte Boot-Image-Erstellung...', 'info');
+  log('š€ Starte Boot-Image-Erstellung...', 'info');
   updateProgress(10);
   
   try {
     // Schritt 1: Alle OSTOSOS-Dateien sammeln
-    log('📦 Sammle OSTOSOS-Dateien...', 'info');
+    log('“¦ Sammle OSTOSOS-Dateien...', 'info');
     updateProgress(20);
     
     const files = await collectOSTOSOSFiles();
@@ -189,7 +191,7 @@ async function createBootImage() {
     updateProgress(40);
     
     // Schritt 2: Bootloader erstellen
-    log('🔧 Erstelle Bootloader...', 'info');
+    log('”§ Erstelle Bootloader...', 'info');
     updateProgress(50);
     
     const bootloader = await createBootloader();
@@ -197,7 +199,7 @@ async function createBootImage() {
     updateProgress(60);
     
     // Schritt 3: Image zusammenstellen
-    log('📦 Stelle Image zusammen...', 'info');
+    log('“¦ Stelle Image zusammen...', 'info');
     updateProgress(70);
     
     const imageBlob = await assembleBootImage(files, bootloader, imageType);
@@ -205,7 +207,7 @@ async function createBootImage() {
     updateProgress(90);
     
     // Schritt 4: Speichern
-    log('💾 Speichere Image...', 'info');
+    log('’¾ Speichere Image...', 'info');
     updateProgress(95);
     
     const imageUrl = URL.createObjectURL(imageBlob);
@@ -277,6 +279,8 @@ async function createBootloader() {
 <head>
 <meta charset="UTF-8">
 <title>OSTOSOS Bootloader</title>
+
+  <link rel="stylesheet" href="../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <script>
@@ -414,7 +418,7 @@ function downloadImage() {
   document.body.removeChild(a);
   
   log(`✅ Image heruntergeladen: ${filename}`, 'success');
-  log('📖 Siehe Anleitung für weitere Schritte', 'info');
+  log('“– Siehe Anleitung für weitere Schritte', 'info');
 }
 
 // Anleitung anzeigen
@@ -449,7 +453,7 @@ function showInstructions(imageType) {
 <li><strong>BIOS konfigurieren:</strong>
   <ul style="margin-left:20px;margin-top:10px">
     <li>Starte neu und drücke F2, F12 oder DEL</li>
-    <li>Gehe zu "Boot" → "Boot Priority"</li>
+    <li>Gehe zu "Boot" â†’ "Boot Priority"</li>
     <li>Setze USB als erste Option</li>
     <li>Speichere (F10) und starte neu</li>
   </ul>
@@ -465,7 +469,7 @@ function showInstructions(imageType) {
   <ul style="margin-left:20px;margin-top:10px">
     <li>Öffne "Festplatten-Dienstprogramm"</li>
     <li>Wähle deinen USB-Stick</li>
-    <li>Klicke auf "Löschen" → Format: "MS-DOS (FAT)"</li>
+    <li>Klicke auf "Löschen" â†’ Format: "MS-DOS (FAT)"</li>
     <li>Klicke auf "Löschen"</li>
   </ul>
 </li>
@@ -479,7 +483,7 @@ function showInstructions(imageType) {
 </li>
 <li><strong>Startoptionen:</strong>
   <ul style="margin-left:20px;margin-top:10px">
-    <li>Halte Option (⌥) beim Start gedrückt</li>
+    <li>Halte Option (âŒ¥) beim Start gedrückt</li>
     <li>Wähle den USB-Stick aus</li>
   </ul>
 </li>
@@ -508,7 +512,7 @@ function showInstructions(imageType) {
   <ul style="margin-left:20px;margin-top:10px">
     <li>Lade Etcher herunter: <a href="https://etcher.balena.io" target="_blank" style="color:var(--accent)">etcher.balena.io</a></li>
     <li>Öffne Etcher</li>
-    <li>Wähle Image → Wähle USB-Stick → Flash</li>
+    <li>Wähle Image â†’ Wähle USB-Stick â†’ Flash</li>
   </ul>
 </li>
 <li><strong>BIOS konfigurieren:</strong>

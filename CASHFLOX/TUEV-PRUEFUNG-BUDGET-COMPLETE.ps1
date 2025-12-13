@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] TÜV-Prüfung: CASHFLOX budget.html
+﻿# [.SYSTEMS.T.SYSTEMS.] TÜV-Prüfung: CASHFLOX budget.html
 # Fabrikage-Routine: Vollständige Prüfung vor Deployment
 
 $ErrorActionPreference = "Stop"
@@ -93,8 +93,8 @@ foreach ($check in $umlautChecks.Keys) {
 
 # Prüfe auf fehlerhafte Encoding-Zeichen
 $badEncoding = @()
-if ($content -match 'Ã¤|Ã¶|Ã¼|Ã„|Ã–|Ãœ') {
-    $badEncoding += "Fehlerhafte UTF-8 Encoding-Zeichen gefunden (z.B. Ã¤ statt ä)"
+if ($content -match 'ä|ö|ü|Ä|Ö|Ãœ') {
+    $badEncoding += "Fehlerhafte UTF-8 Encoding-Zeichen gefunden (z.B. ä statt ä)"
 }
 
 if ($badEncoding.Count -gt 0) {

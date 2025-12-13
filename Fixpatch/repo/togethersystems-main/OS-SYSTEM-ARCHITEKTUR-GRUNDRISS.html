@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -9,6 +9,8 @@ body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; 
 pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
 code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>OS System-Architektur Grundriss</h1>
@@ -21,85 +23,85 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>📐 GRUNDRISS: OS-ARCHITEKTUR (OSTOSOS)</h2>
+<h2>“ GRUNDRISS: OS-ARCHITEKTUR (OSTOSOS)</h2>
 
 <h3>Layer-Hierarchie (Boot-Sequenz)</h3>
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ LAYER 0: BIOS/UEFI                                          │
-│ Order: 0 | Symbol: ⊙Ω | Type: Hardware Interface           │
-│ Config: Settings/BOOT-LAYER-BIOS.json                       │
-│ ─────────────────────────────────────────────────────────── │
-│ - Hardware Detection                                        │
-│ - Boot Mode: UEFI | Legacy                                  │
-│ - Secure Boot: false                                        │
-│ - Virtualization: VT-x | AMD-V                              │
-│ → Boots to: MBR                                             │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│ LAYER 1: MBR (Master Boot Record)                           │
-│ Order: 1 | Symbol: ⚿⚽ | Type: Boot Sector                 │
-│ Config: Settings/BOOT-LAYER-MBR.json                        │
-│ ─────────────────────────────────────────────────────────── │
-│ - Partition Table                                           │
-│ - Boot Code                                                 │
-│ - Signature Verification                                    │
-│ → Boots to: Bootloader                                      │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│ LAYER 2: BOOTLOADER                                         │
-│ Order: 2 | Symbol: ⚿⌘ | Type: Boot Manager                 │
-│ Config: Settings/BOOT-LAYER-BOOTLOADER.json                 │
-│ ─────────────────────────────────────────────────────────── │
-│ - Kernel Loading                                            │
-│ - Initrd/Initramfs                                          │
-│ - Boot Parameters                                           │
-│ → Boots to: Kernel                                          │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│ LAYER 3: KERNEL                                             │
-│ Order: 3 | Symbol: ⌘Ψ | Type: OS Core                      │
-│ Config: Settings/BOOT-LAYER-KERNEL.json                     │
-│ ─────────────────────────────────────────────────────────── │
-│ - Process Management                                        │
-│ - Memory Management                                         │
-│ - Device Drivers                                            │
-│ - Syscalls                                                  │
-│ - Module System                                             │
-│ → Boots to: Init                                            │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│ LAYER 4: INIT                                               │
-│ Order: 4 | Symbol: ⌘⟐ | Type: System Initialization        │
-│ Config: Settings/BOOT-LAYER-INIT.json                       │
-│ ─────────────────────────────────────────────────────────── │
-│ - Service Management                                        │
-│ - Process Spawning                                          │
-│ - System Configuration                                      │
-│ → Boots to: User-Space                                      │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│ LAYER 5: USERSPACE                                          │
-│ Order: 5 | Symbol: ⌘⟡ | Type: Application Layer            │
-│ Config: Settings/BOOT-LAYER-USERSPACE.json                  │
-│ ─────────────────────────────────────────────────────────── │
-│ - Browser (Chrome/Firefox/Safari/Edge)                      │
-│ - Portal Applications (index.html, manifest-portal.html)    │
-│ - Local Storage (IndexedDB, localStorage)                   │
-│ - Service Worker (sw.js)                                    │
-│ → Connects to: OSTOS Space Enter Universe Manifest          │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LAYER 0: BIOS/UEFI                                          â”‚
+â”‚ Order: 0 | Symbol: âŠ™Î© | Type: Hardware Interface           â”‚
+â”‚ Config: Settings/BOOT-LAYER-BIOS.json                       â”‚
+â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ â”‚
+â”‚ - Hardware Detection                                        â”‚
+â”‚ - Boot Mode: UEFI | Legacy                                  â”‚
+â”‚ - Secure Boot: false                                        â”‚
+â”‚ - Virtualization: VT-x | AMD-V                              â”‚
+â”‚ â†’ Boots to: MBR                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LAYER 1: MBR (Master Boot Record)                           â”‚
+â”‚ Order: 1 | Symbol: âš¿âš½ | Type: Boot Sector                 â”‚
+â”‚ Config: Settings/BOOT-LAYER-MBR.json                        â”‚
+â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ â”‚
+â”‚ - Partition Table                                           â”‚
+â”‚ - Boot Code                                                 â”‚
+â”‚ - Signature Verification                                    â”‚
+â”‚ â†’ Boots to: Bootloader                                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LAYER 2: BOOTLOADER                                         â”‚
+â”‚ Order: 2 | Symbol: âš¿âŒ˜ | Type: Boot Manager                 â”‚
+â”‚ Config: Settings/BOOT-LAYER-BOOTLOADER.json                 â”‚
+â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ â”‚
+â”‚ - Kernel Loading                                            â”‚
+â”‚ - Initrd/Initramfs                                          â”‚
+â”‚ - Boot Parameters                                           â”‚
+â”‚ â†’ Boots to: Kernel                                          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LAYER 3: KERNEL                                             â”‚
+â”‚ Order: 3 | Symbol: âŒ˜Î¨ | Type: OS Core                      â”‚
+â”‚ Config: Settings/BOOT-LAYER-KERNEL.json                     â”‚
+â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ â”‚
+â”‚ - Process Management                                        â”‚
+â”‚ - Memory Management                                         â”‚
+â”‚ - Device Drivers                                            â”‚
+â”‚ - Syscalls                                                  â”‚
+â”‚ - Module System                                             â”‚
+â”‚ â†’ Boots to: Init                                            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LAYER 4: INIT                                               â”‚
+â”‚ Order: 4 | Symbol: âŒ˜âŸ | Type: System Initialization        â”‚
+â”‚ Config: Settings/BOOT-LAYER-INIT.json                       â”‚
+â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ â”‚
+â”‚ - Service Management                                        â”‚
+â”‚ - Process Spawning                                          â”‚
+â”‚ - System Configuration                                      â”‚
+â”‚ â†’ Boots to: User-Space                                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LAYER 5: USERSPACE                                          â”‚
+â”‚ Order: 5 | Symbol: âŒ˜âŸ¡ | Type: Application Layer            â”‚
+â”‚ Config: Settings/BOOT-LAYER-USERSPACE.json                  â”‚
+â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ â”‚
+â”‚ - Browser (Chrome/Firefox/Safari/Edge)                      â”‚
+â”‚ - Portal Applications (index.html, manifest-portal.html)    â”‚
+â”‚ - Local Storage (IndexedDB, localStorage)                   â”‚
+â”‚ - Service Worker (sw.js)                                    â”‚
+â”‚ â†’ Connects to: OSTOS Space Enter Universe Manifest          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-<h2>🏗️ DETAILLIERTER GRUNDRISS: KERNEL-ARCHITEKTUR</h2>
+<h2>—ï¸ DETAILLIERTER GRUNDRISS: KERNEL-ARCHITEKTUR</h2>
 
 <h3>Kernel-Module-Struktur</h3>
 
@@ -192,29 +194,29 @@ static KernelModule modules[] = {
 
 ---
 
-<h2>💾 MEMORY-ARCHITEKTUR</h2>
+<h2>’¾ MEMORY-ARCHITEKTUR</h2>
 
 <h3>Memory-Layout</h3>
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ HIGH MEMORY (Kernel Space)                                  │
-│ ─────────────────────────────────────────────────────────── │
-│ 0xFFFFFFFF  Kernel Code & Data                             │
-│ 0xC0000000  Kernel Stack                                    │
-│ 0xBF000000  Kernel Heap                                     │
-│ 0xBE000000  Device Memory Mappings                          │
-│             ──────────────────────────────────────────────  │
-│ KERNEL/USER BOUNDARY                                        │
-│             ──────────────────────────────────────────────  │
-│ 0x80000000  User Stack (grows down)                        │
-│ 0x70000000  Memory Mapped Files                            │
-│ 0x60000000  Heap (malloc/free)                             │
-│ 0x40000000  Shared Libraries                                │
-│ 0x08000000  Program Code & Data                            │
-│ 0x00000000  ──────────────────────────────────────────────  │
-│ LOW MEMORY (User Space)                                     │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ HIGH MEMORY (Kernel Space)                                  â”‚
+â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ â”‚
+â”‚ 0xFFFFFFFF  Kernel Code & Data                             â”‚
+â”‚ 0xC0000000  Kernel Stack                                    â”‚
+â”‚ 0xBF000000  Kernel Heap                                     â”‚
+â”‚ 0xBE000000  Device Memory Mappings                          â”‚
+â”‚             â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
+â”‚ KERNEL/USER BOUNDARY                                        â”‚
+â”‚             â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
+â”‚ 0x80000000  User Stack (grows down)                        â”‚
+â”‚ 0x70000000  Memory Mapped Files                            â”‚
+â”‚ 0x60000000  Heap (malloc/free)                             â”‚
+â”‚ 0x40000000  Shared Libraries                                â”‚
+â”‚ 0x08000000  Program Code & Data                            â”‚
+â”‚ 0x00000000  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
+â”‚ LOW MEMORY (User Space)                                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 <h3>Memory-Manager-API</h3>
@@ -244,7 +246,7 @@ void free_pages(unsigned long addr, unsigned int order);
 
 ---
 
-<h2>🔄 PROCESS-MANAGEMENT</h2>
+<h2>”„ PROCESS-MANAGEMENT</h2>
 
 <h3>Process-Struktur</h3>
 
@@ -299,7 +301,7 @@ int execve(const char<em> filename, char</em> const argv[], char* const envp[]);
 
 ---
 
-<h2>🔌 DEVICE-DRIVER-ARCHITEKTUR</h2>
+<h2>”Œ DEVICE-DRIVER-ARCHITEKTUR</h2>
 
 <h3>Driver-Model</h3>
 
@@ -351,7 +353,7 @@ static struct bus_type buses[] = {
 
 ---
 
-<h2>🛡️ SECURITY-ARCHITEKTUR</h2>
+<h2>›¡ï¸ SECURITY-ARCHITEKTUR</h2>
 
 <h3>Security-Layer-Struktur</h3>
 
@@ -399,7 +401,7 @@ struct EncryptionEngine {
 
 ---
 
-<h2>📡 SYSCALL-INTERFACE</h2>
+<h2>“¡ SYSCALL-INTERFACE</h2>
 
 <h3>Syscall-Tabelle</h3>
 
@@ -430,7 +432,7 @@ long sys_encryption_syscall(unsigned long cmd, struct encryption_data* data);
 
 ---
 
-<h2>🌐 USERSPACE-ARCHITEKTUR</h2>
+<h2>Œ USERSPACE-ARCHITEKTUR</h2>
 
 <h3>Application-Layer-Struktur</h3>
 
@@ -518,7 +520,7 @@ class KernelProxy {
 
 ---
 
-<h2>🔗 INTER-LAYER-KOMMUNIKATION</h2>
+<h2>”— INTER-LAYER-KOMMUNIKATION</h2>
 
 <h3>Layer-Communication-Protocol</h3>
 
@@ -583,7 +585,7 @@ void boot_sequence(void) {
 
 ---
 
-<h2>📊 DIMENSION-VECTOR-SYSTEM</h2>
+<h2>“Š DIMENSION-VECTOR-SYSTEM</h2>
 
 <h3>Dimension-Vector-Struktur</h3>
 
@@ -646,7 +648,7 @@ struct DimensionVector {
 
 ---
 
-<h2>🔐 SETTINGS-OS INTEGRATION</h2>
+<h2>” SETTINGS-OS INTEGRATION</h2>
 
 <h3>Settings-OS-Kernel-Interface</h3>
 
@@ -678,13 +680,13 @@ int settings_os_autofix(void);
 
 ---
 
-<h2>📝 ZUSAMMENFASSUNG</h2>
+<h2>“ ZUSAMMENFASSUNG</h2>
 
 <h3>OS-Architektur-Übersicht</h3>
 
 <strong>Boot-Sequenz:</strong>
 ```
-BIOS → MBR → Bootloader → Kernel → Init → User-Space
+BIOS â†’ MBR â†’ Bootloader â†’ Kernel â†’ Init â†’ User-Space
 ```
 
 <strong>Kernel-Module:</strong>

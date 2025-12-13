@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEAN Platform</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>Welcome to KEAN Platform</h1>
+    <p>Your development server is running! 🚀</p>
+    
+    <div class="status">
+        <strong>API Status:</strong> 
+        <span id="api-status">Checking...</span>
+    </div>
+
+    <h2>Available Endpoints</h2>
+    <ul>
+        <li><a href="/api/health" target="_blank">/api/health</a> - Check API status</li>
+        <li><a href="/api/regions" target="_blank">/api/regions</a> - List all regions</li>
+    </ul>
+
+    <script>
+        // Check API status
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('api-status').textContent = 
+                    data.status === 'ok' ? '✅ Running' : '❌ Error';
+            })
+            .catch(() => {
+                document.getElementById('api-status').textContent = 
+                    '❌ Could not connect to API';
+            });
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -85,15 +85,17 @@
   </style>
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>T,. OSTOSOS – Auto Test & Fix System</h1>
       <p>Automatische Tests und Fehlerbehebung bis alle Tests grün sind</p>
-      <button title="🚀 Auto Test & Fix starten - Klicke hier um diese Aktion auszufÃ¼hren" class="btn" onclick="startAutoTestAndFix()">🚀 Auto Test & Fix starten</button>
-      <button title="🌍 Universal Build testen - Klicke hier um diese Aktion auszufÃ¼hren" class="btn" onclick="testUniversalBuild()">🌍 Universal Build testen</button>
-      <button title="🗑️ Löschen - Klicke hier um diese Aktion auszufÃ¼hren" class="btn" onclick="clearResults()">🗑️ Löschen</button>
+      <button title="š€ Auto Test & Fix starten - Klicke hier um diese Aktion auszufÃƒ¼hren" class="btn" onclick="startAutoTestAndFix()">š€ Auto Test & Fix starten</button>
+      <button title="Œ Universal Build testen - Klicke hier um diese Aktion auszufÃƒ¼hren" class="btn" onclick="testUniversalBuild()">Œ Universal Build testen</button>
+      <button title="—‘ï¸ Löschen - Klicke hier um diese Aktion auszufÃƒ¼hren" class="btn" onclick="clearResults()">—‘ï¸ Löschen</button>
     </div>
 
     <div class="progress-bar">
@@ -225,7 +227,7 @@
             if (sidebar) {
               const nav = document.createElement('div');
               nav.className = 'nav-item';
-              nav.textContent = '🏠 Dashboard';
+              nav.textContent = '  Dashboard';
               nav.onclick = () => showSection('dashboard', nav);
               sidebar.appendChild(nav);
             }
@@ -402,7 +404,7 @@
           <span style="margin-left: 10px; padding: 5px 10px; border-radius: 4px; background: ${result.passed ? '#22c55e' : '#ef4444'}; color: white; font-size: 0.9em;">
             ${result.passed ? '✅ PASS' : '❌ FAIL'}
           </span>
-          ${result.fixed ? '<span style="color: #f59e0b; margin-left: 10px;">🔧 AUTO-FIXED</span>' : ''}
+          ${result.fixed ? '<span style="color: #f59e0b; margin-left: 10px;">”§ AUTO-FIXED</span>' : ''}
           ${result.error ? `<div style="color: #f00; margin-top: 5px;">${result.error}</div>` : ''}
         `;
         resultsEl.appendChild(item);
@@ -426,17 +428,17 @@
       for (const test of tests) {
         const result = runTest(test);
         results.push(result);
-        log(`${result.passed ? '✅' : '❌'} ${result.name}${result.fixed ? ' (🔧 AUTO-FIXED)' : ''}`, result.passed ? 'success' : 'error');
+        log(`${result.passed ? '✅' : '❌'} ${result.name}${result.fixed ? ' (”§ AUTO-FIXED)' : ''}`, result.passed ? 'success' : 'error');
         await new Promise(resolve => setTimeout(resolve, 100));
       }
 
       const allPassed = displayResults(results);
       
       if (allPassed) {
-        log('🎉 Alle Tests bestanden!', 'success');
+        log('Ž‰ Alle Tests bestanden!', 'success');
         allTestsPassed = true;
       } else {
-        log('⚠️ Einige Tests fehlgeschlagen', 'error');
+        log('âš ï¸ Einige Tests fehlgeschlagen', 'error');
         allTestsPassed = false;
       }
 
@@ -455,18 +457,18 @@
         const allPassed = await runAllTests();
 
         if (allPassed) {
-          log(`\n🎉 Alle Tests bestanden nach ${iterationCount} Iteration(en)!`, 'success');
+          log(`\nŽ‰ Alle Tests bestanden nach ${iterationCount} Iteration(en)!`, 'success');
           log('✅ System ist bereit für Production!', 'success');
           break;
         } else {
-          log(`\n⚠️ Fehler gefunden - weitere Iteration...`, 'error');
+          log(`\nâš ï¸ Fehler gefunden - weitere Iteration...`, 'error');
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
 
       if (iterationCount >= maxIterations && !allTestsPassed) {
-        log(`\n⚠️ Maximale Iterationen (${maxIterations}) erreicht`, 'error');
-        log('⚠️ Einige Tests konnten nicht automatisch behoben werden', 'error');
+        log(`\nâš ï¸ Maximale Iterationen (${maxIterations}) erreicht`, 'error');
+        log('âš ï¸ Einige Tests konnten nicht automatisch behoben werden', 'error');
       }
     }
 
@@ -511,7 +513,7 @@
           log(`\nUniversal Build Tests: ${passed} bestanden, ${failed} fehlgeschlagen`);
           
           if (failed === 0) {
-            log('🎉 Universal Build ist vollständig und funktionsfähig!', 'success');
+            log('Ž‰ Universal Build ist vollständig und funktionsfähig!', 'success');
           }
         } else {
           log('❌ Universal Build Datei nicht gefunden', 'error');

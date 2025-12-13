@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] DEPLOY VERIFICATION
+﻿# [.SYSTEMS.T.SYSTEMS.] DEPLOY VERIFICATION
 # Prüft alle Online-Apps nach Deployment
 
 $ErrorActionPreference = "Continue"
@@ -90,7 +90,7 @@ foreach ($test in $testUrls) {
                 $html = $content.Content
                 
                 # Prüfe auf Umlaut-Fehler
-                if ($html -match "â€|Ã¤|Ã¶|Ã¼|ÃŸ|Ã„|Ã–|Ãœ") {
+                if ($html -match "â€|ä|ö|ü|ß|Ä|Ö|Ãœ") {
                     Write-Host "    ⚠️  Umlaut-Fehler gefunden" -ForegroundColor Yellow
                     $testResults += @{ Name = $test.Name; Status = "UMLAUT_ERROR"; Url = $test.Url }
                 } else {

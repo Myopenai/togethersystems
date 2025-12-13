@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -9,6 +9,8 @@ body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; 
 pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
 code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 </style>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
 </head>
 <body>
 <h1>Implementierungs-Zusammenfassung</h1>
@@ -82,7 +84,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>🔧 Wie alles funktioniert</h2>
+<h2>”§ Wie alles funktioniert</h2>
 
 <h3>Gleichgewichts-Börse</h3>
 
@@ -98,7 +100,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 3. <strong>Instrumente erstellen:</strong>
    - Instrumente basieren auf positiven Real-Bilanzen
    - Symbol, Name, Units werden definiert
-   - Status: `draft` → `active` → handelbar
+   - Status: `draft` â†’ `active` â†’ handelbar
 
 4. <strong>Markt:</strong>
    - Nur Instrumente mit `status='active'` sind sichtbar
@@ -114,8 +116,8 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 2. <strong>Online-Gehen:</strong>
    - Beim Öffnen des Portals wird `syncMessages()` aufgerufen
-   - <strong>Outbox → Server:</strong> Alle nicht gesyncten Nachrichten werden gesendet
-   - <strong>Server → Inbox:</strong> Neue Nachrichten werden abgeholt
+   - <strong>Outbox â†’ Server:</strong> Alle nicht gesyncten Nachrichten werden gesendet
+   - <strong>Server â†’ Inbox:</strong> Neue Nachrichten werden abgeholt
    - Popup wird angezeigt für jede neue Nachricht
 
 3. <strong>Live-Push (optional):</strong>
@@ -142,7 +144,7 @@ code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
 
 ---
 
-<h2>🚀 Nächste Schritte</h2>
+<h2>š€ Nächste Schritte</h2>
 
 <h3>1. Schema deployen</h3>
 
@@ -189,67 +191,67 @@ Statt 404-Fehler:
 
 ---
 
-<h2>📊 Datenfluss-Diagramm</h2>
+<h2>“Š Datenfluss-Diagramm</h2>
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    OFFLINE (manifest-forum.html)             │
-│                                                              │
-│  LocalStorage:                                               │
-│    - messages.outbox[]  (synced: false)                     │
-│    - messages.inbox[]   (gelieferte Nachrichten)            │
-│                                                              │
-│  User schreibt Nachricht → outbox                           │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             │ Portal öffnen (verifiziert)
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    ONLINE (manifest-portal.html)             │
-│                                                              │
-│  1. syncMessages()                                          │
-│     ├─ POST /api/messages/send (outbox → Server)           │
-│     └─ GET /api/messages/pending (Server → inbox)          │
-│                                                              │
-│  2. showMessagePopup() für jede neue Nachricht              │
-│                                                              │
-│  3. POST /api/messages/ack (Delivery-Bestätigung)           │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             │ API-Calls
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│              BACKEND (Cloudflare Pages Functions)            │
-│                                                              │
-│  /api/messages/send                                         │
-│    → INSERT INTO messages                                   │
-│    → INSERT INTO events                                     │
-│    → Optional: WebSocket-Push wenn Empfänger online         │
-│                                                              │
-│  /api/messages/pending                                      │
-│    → SELECT * FROM messages                                 │
-│       WHERE recipient_id = ? AND delivered_at IS NULL       │
-│                                                              │
-│  /api/real/transactions                                     │
-│    → INSERT INTO real_transactions                          │
-│                                                              │
-│  /api/instruments                                           │
-│    → Prüfe: net_value > 0                                  │
-│    → INSERT INTO instruments                                │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             │ SQL
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    D1 DATABASE (SQLite)                      │
-│                                                              │
-│  messages, real_transactions, instruments, ...               │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    OFFLINE (manifest-forum.html)             â”‚
+â”‚                                                              â”‚
+â”‚  LocalStorage:                                               â”‚
+â”‚    - messages.outbox[]  (synced: false)                     â”‚
+â”‚    - messages.inbox[]   (gelieferte Nachrichten)            â”‚
+â”‚                                                              â”‚
+â”‚  User schreibt Nachricht â†’ outbox                           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                             â”‚
+                             â”‚ Portal öffnen (verifiziert)
+                             â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    ONLINE (manifest-portal.html)             â”‚
+â”‚                                                              â”‚
+â”‚  1. syncMessages()                                          â”‚
+â”‚     â”œâ”€ POST /api/messages/send (outbox â†’ Server)           â”‚
+â”‚     â””â”€ GET /api/messages/pending (Server â†’ inbox)          â”‚
+â”‚                                                              â”‚
+â”‚  2. showMessagePopup() für jede neue Nachricht              â”‚
+â”‚                                                              â”‚
+â”‚  3. POST /api/messages/ack (Delivery-Bestätigung)           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                             â”‚
+                             â”‚ API-Calls
+                             â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              BACKEND (Cloudflare Pages Functions)            â”‚
+â”‚                                                              â”‚
+â”‚  /api/messages/send                                         â”‚
+â”‚    â†’ INSERT INTO messages                                   â”‚
+â”‚    â†’ INSERT INTO events                                     â”‚
+â”‚    â†’ Optional: WebSocket-Push wenn Empfänger online         â”‚
+â”‚                                                              â”‚
+â”‚  /api/messages/pending                                      â”‚
+â”‚    â†’ SELECT * FROM messages                                 â”‚
+â”‚       WHERE recipient_id = ? AND delivered_at IS NULL       â”‚
+â”‚                                                              â”‚
+â”‚  /api/real/transactions                                     â”‚
+â”‚    â†’ INSERT INTO real_transactions                          â”‚
+â”‚                                                              â”‚
+â”‚  /api/instruments                                           â”‚
+â”‚    â†’ Prüfe: net_value > 0                                  â”‚
+â”‚    â†’ INSERT INTO instruments                                â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                             â”‚
+                             â”‚ SQL
+                             â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    D1 DATABASE (SQLite)                      â”‚
+â”‚                                                              â”‚
+â”‚  messages, real_transactions, instruments, ...               â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-<h2>🎯 Zusammenfassung</h2>
+<h2>Ž¯ Zusammenfassung</h2>
 
 ✅ <strong>Logo erstellt</strong> - `assets/myopena.svg`  
 ✅ <strong>Datenbank-Schema</strong> - `d1-schema-balanced-exchange.sql`  
@@ -268,7 +270,7 @@ Statt 404-Fehler:
 
 ---
 
-<h2>🏢 Unternehmens-Branding & OCR</h2>
+<h2>¢ Unternehmens-Branding & OCR</h2>
 
 <strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
 

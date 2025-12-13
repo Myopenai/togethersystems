@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -183,7 +183,7 @@
 
   <main>
     <div class="alert">
-      <strong>⚠️ WICHTIG:</strong> CMS-Backend existiert vollständig, aber D1 Schema muss deployed werden!<br>
+      <strong>⚠️ WICHTIG:</strong> CMS-Backend existiert vollst&Auml;ndig, aber D1 Schema muss deployed werden!<br>
       <code>wrangler d1 execute &lt;db-name&gt; --file=./d1-schema-cms.sql</code>
     </div>
 
@@ -254,7 +254,7 @@
         <tbody id="pagesTable">
           <tr>
             <td colspan="5" style="text-align: center; color: var(--muted); padding: 2rem;">
-              Wähle eine Site, um Pages anzuzeigen
+              W&Auml;hle eine Site, um Pages anzuzeigen
             </td>
           </tr>
         </tbody>
@@ -264,7 +264,7 @@
     <div class="card">
       <h2>🧱 Block Types</h2>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <p style="color: var(--muted);">Verfügbare Block-Typen</p>
+        <p style="color: var(--muted);">Verf&Uuml;gbare Block-Typen</p>
         <button class="btn btn-secondary" onclick="loadBlockTypes()">Aktualisieren</button>
       </div>
       <div id="blockTypesList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
@@ -334,8 +334,8 @@
       <h2>📖 Dokumentation</h2>
       <div style="display: flex; flex-direction: column; gap: 0.75rem;">
         <div style="color: var(--muted); padding: 1rem;">
-          📋 CMS-Dokumentation ist im Repository verfügbar.<br>
-          <small>Hinweis: Für volle Funktionalität muss das D1-Schema deployed sein.</small>
+          📋 CMS-Dokumentation ist im Repository verf&Uuml;gbar.<br>
+          <small>Hinweis: F&Uuml;r volle Funktionalit&Auml;t muss das D1-Schema deployed sein.</small>
         </div>
       </div>
     </div>
@@ -361,17 +361,17 @@
         if (!res.ok) {
           // Stumme Behandlung von 404/405 auf GitHub Pages
           if (res.status === 404 || res.status === 405) {
-            return { ok: false, error: 'API nicht verfügbar. Stelle sicher, dass D1-Schema deployed ist.', status: res.status };
+            return { ok: false, error: 'API nicht verf&Uuml;gbar. Stelle sicher, dass D1-Schema deployed ist.', status: res.status };
           }
           return { ok: false, error: `HTTP ${res.status}`, status: res.status };
         }
         
-        const data = await res.json().catch(() => ({ ok: false, error: 'Ungültige JSON-Antwort' }));
+        const data = await res.json().catch(() => ({ ok: false, error: 'Ung&Uuml;ltige JSON-Antwort' }));
         return { ok: true, data, status: res.status };
       } catch (err) {
         // Stumme Behandlung von Netzwerk-Fehlern auf GitHub Pages
         if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-          return { ok: false, error: 'Backend nicht verfügbar. Für volle Funktionalität deploye auf Cloudflare Pages.', status: 0 };
+          return { ok: false, error: 'Backend nicht verf&Uuml;gbar. F&Uuml;r volle Funktionalit&Auml;t deploye auf Cloudflare Pages.', status: 0 };
         }
         console.error('API Error:', err);
         return { ok: false, error: String(err), status: 0 };
@@ -409,7 +409,7 @@
               <td colspan="5" style="text-align: center; color: var(--warn); padding: 2rem;">
                 ⚠️ Fehler beim Laden: ${result.error || 'Unbekannter Fehler'}<br>
                 <small style="color: var(--muted);">Stelle sicher, dass D1 Schema deployed ist!<br>
-                Für lokale Tests: Backend-Server muss laufen.</small>
+                F&Uuml;r lokale Tests: Backend-Server muss laufen.</small>
               </td>
             </tr>
           `;

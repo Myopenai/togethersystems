@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -120,6 +120,8 @@
   </style>
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
   <div class="installer-container davinci-card" data-davinci-phosphor-complete>
@@ -127,8 +129,8 @@
     <h1 class="title davinci-heading-1">OSTOSOS Operating System</h1>
     <p class="subtitle">Ein-Klick Installation – Minimalste User-Handlung</p>
 
-    <button title="🚀 JETZT INSTALLIEREN (Ein Klick) - Klicke hier um diese Aktion auszufÃ¼hren" class="install-button davinci-btn" id="installButton" onclick="startInstallation()" data-davinci-expressive>
-      🚀 JETZT INSTALLIEREN (Ein Klick)
+    <button title="š€ JETZT INSTALLIEREN (Ein Klick) - Klicke hier um diese Aktion auszufÃƒ¼hren" class="install-button davinci-btn" id="installButton" onclick="startInstallation()" data-davinci-expressive>
+      š€ JETZT INSTALLIEREN (Ein Klick)
     </button>
 
     <div class="progress-container" id="progressContainer">
@@ -171,26 +173,26 @@
         progressContainer.style.display = 'block';
         statusLog.style.display = 'block';
 
-        this.addStatus('🚀 Installation gestartet...', 'info');
+        this.addStatus('š€ Installation gestartet...', 'info');
         this.updateProgress(0);
 
         for (let i = 0; i < this.components.length; i++) {
           const component = this.components[i];
-          this.addStatus(`📦 Installiere: ${component.name}...`, 'info');
+          this.addStatus(`“¦ Installiere: ${component.name}...`, 'info');
           await this.delay(500);
           this.updateProgress(component.progress);
           this.addStatus(`✅ ${component.name} installiert`, 'success');
         }
 
-        this.addStatus('⚙️ Registriere Service Worker...', 'info');
+        this.addStatus('âš™ï¸ Registriere Service Worker...', 'info');
         await this.registerServiceWorker();
         this.addStatus('✅ Service Worker registriert', 'success');
 
-        this.addStatus('🔄 Initialisiere Update-System...', 'info');
+        this.addStatus('”„ Initialisiere Update-System...', 'info');
         await this.initUpdateSystem();
         this.addStatus('✅ Update-System initialisiert', 'success');
 
-        this.addStatus('🌐 Initialisiere Cross-Device-Sync...', 'info');
+        this.addStatus('Œ Initialisiere Cross-Device-Sync...', 'info');
         await this.initSyncSystem();
         this.addStatus('✅ Sync-System initialisiert', 'success');
 
@@ -199,7 +201,7 @@
         localStorage.setItem('ostosos.version', '1.0.0');
 
         this.updateProgress(100);
-        this.addStatus('🎉 Installation abgeschlossen!', 'success');
+        this.addStatus('Ž‰ Installation abgeschlossen!', 'success');
         
         button.style.display = 'none';
         autoStartNotice.style.display = 'block';
@@ -212,7 +214,7 @@
       async registerServiceWorker() {
         // Skip Service Worker if running from file:// protocol
         if (window.location.protocol === 'file:') {
-          this.addStatus('ℹ️ Service Worker nicht verfügbar (file:// Protokoll)', 'info');
+          this.addStatus('â„¹ï¸ Service Worker nicht verfügbar (file:// Protokoll)', 'info');
           return null;
         }
         
@@ -224,12 +226,12 @@
             
             // Check for updates
             registration.addEventListener('updatefound', () => {
-              this.addStatus('🔄 Update gefunden, installiere...', 'info');
+              this.addStatus('”„ Update gefunden, installiere...', 'info');
             });
             
             return registration;
           } catch (error) {
-            this.addStatus(`⚠️ Service Worker Fehler: ${error.message}`, 'error');
+            this.addStatus(`âš ï¸ Service Worker Fehler: ${error.message}`, 'error');
           }
         }
       }

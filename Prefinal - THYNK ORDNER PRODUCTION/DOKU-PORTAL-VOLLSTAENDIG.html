@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Think Orders - Vollständiges Dokumentations-Portal | Da Vinci Style</title>
+    <title>Think Orders - Vollst&Auml;ndiges Dokumentations-Portal | Da Vinci Style</title>
     
-    <!-- Meta Tags für Kino Qualität -->
-    <meta name="description" content="Vollständige Dokumentation für Think Orders System - Alle 91 Dokumentationen durchsuchbar - Da Vinci Style Animation Portal">
+    <!-- Meta Tags f&Uuml;r Kino Qualit&Auml;t -->
+    <meta name="description" content="Vollst&Auml;ndige Dokumentation f&Uuml;r Think Orders System - Alle 91 Dokumentationen durchsuchbar - Da Vinci Style Animation Portal">
     <meta name="author" content="Think Orders Production">
-    <meta name="keywords" content="Think Orders, Dokumentation, Tests, Handbücher, Anleitungen">
+    <meta name="keywords" content="Think Orders, Dokumentation, Tests, Handb&Uuml;cher, Anleitungen">
     
     <!-- Extended HD Support -->
     <meta name="color-scheme" content="dark">
@@ -609,6 +609,8 @@
   <link rel="stylesheet" href="./css/da-vinci-xxxxxl-enterprise-standard.css">
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
     <!-- 3D Background Canvas -->
@@ -623,7 +625,7 @@
                     type="text" 
                     class="search-input" 
                     id="searchInput"
-                    placeholder="Suche in allen 91 Dokumentationen... (z.B. 'Tests ausführen' oder 'wie installiere ich')"
+                    placeholder="Suche in allen 91 Dokumentationen... (z.B. 'Tests ausf&Uuml;hren' oder 'wie installiere ich')"
                     aria-label="Dokumentationssuche"
                     autocomplete="off"
                 >
@@ -640,8 +642,8 @@
         <section class="hero">
             <div class="hero-content">
                 <h1>Dokumentations-Portal</h1>
-                <p>Vollständige Sammlung aller 91 Dokumentationen</p>
-                <p style="font-size: 1.2em; opacity: 0.7;">Da Vinci Style • Kino Qualität • Extended HD • Dolby Surround</p>
+                <p>Vollst&Auml;ndige Sammlung aller 91 Dokumentationen</p>
+                <p style="font-size: 1.2em; opacity: 0.7;">Da Vinci Style • Kino Qualit&Auml;t • Extended HD • Dolby Surround</p>
             </div>
         </section>
         
@@ -668,7 +670,7 @@
         <!-- Filters -->
         <section class="filters" id="filters">
             <button class="filter-btn active" data-category="all">Alle</button>
-            <button class="filter-btn" data-category="Handbücher">Handbücher</button>
+            <button class="filter-btn" data-category="Handb&Uuml;cher">Handb&Uuml;cher</button>
             <button class="filter-btn" data-category="Tests">Tests</button>
             <button class="filter-btn" data-category="Anleitungen">Anleitungen</button>
             <button class="filter-btn" data-category="Dokumentation">Dokumentation</button>
@@ -692,7 +694,7 @@
         
         <!-- Documentation Grid -->
         <section class="docs-grid" id="docsGrid">
-            <!-- Wird dynamisch befüllt -->
+            <!-- Wird dynamisch bef&Uuml;llt -->
         </section>
     </main>
     
@@ -705,7 +707,7 @@
         // ===== LANGUAGE MAPPING - Einfache zu technische Sprache =====
         const languageMapping = {
             // Tests
-            'wie teste ich': ['test', 'tests ausführen', 'npm test', 'playwright'],
+            'wie teste ich': ['test', 'tests ausf&Uuml;hren', 'npm test', 'playwright'],
             'testen': ['test', 'tests', 'testing', 'playwright'],
             'tests laufen lassen': ['test', 'npm test', 'playwright'],
             
@@ -731,17 +733,17 @@
             'anleitung': ['handbuch', 'anleitung', 'guide', 'tutorial'],
             'handbuch': ['handbuch', 'handbook', 'guide'],
             
-            // Anfänger
-            'anfänger': ['dummies', 'beginner', 'quick start', 'anfänger'],
-            'dummies': ['dummies', 'beginner', 'anfänger'],
-            'beginner': ['dummies', 'anfänger', 'quick start'],
+            // Anf&Auml;nger
+            'anf&Auml;nger': ['dummies', 'beginner', 'quick start', 'anf&Auml;nger'],
+            'dummies': ['dummies', 'beginner', 'anf&Auml;nger'],
+            'beginner': ['dummies', 'anf&Auml;nger', 'quick start'],
             
             // Erweiterung
-            'tests erweitern': ['erweitern', 'neue tests', 'tests hinzufügen', 'extension'],
-            'erweitern': ['erweitern', 'extension', 'hinzufügen'],
+            'tests erweitern': ['erweitern', 'neue tests', 'tests hinzuf&Uuml;gen', 'extension'],
+            'erweitern': ['erweitern', 'extension', 'hinzuf&Uuml;gen'],
             
             // Funktionen
-            'wie funktioniert': ['anleitung', 'tutorial', 'erklärung', 'funktion'],
+            'wie funktioniert': ['anleitung', 'tutorial', 'erkl&Auml;rung', 'funktion'],
             'funktionen': ['features', 'funktionen', 'functions'],
             
             // Navigation
@@ -800,15 +802,15 @@
             loading.classList.add('active');
             
             try {
-                // CORS-FIX: Versuche eingebettete Datenbank zu laden (wird von Script eingefügt)
+                // CORS-FIX: Versuche eingebettete Datenbank zu laden (wird von Script eingef&Uuml;gt)
                 if (typeof window.EMBEDDED_DOCS_DB !== 'undefined' && window.EMBEDDED_DOCS_DB) {
                     documentationDB = window.EMBEDDED_DOCS_DB;
                     console.log(`✅ ${documentationDB.length} Dokumentationen geladen (eingebettet - CORS-frei)`);
                 } else {
                     // Fallback: Verwende hardcoded Liste
                     documentationDB = getAllDocumentationsFallback();
-                    console.log(`⚠️ Verwende Fallback-Dokumentationsliste mit ${documentationDB.length} Einträgen`);
-                    console.log('💡 Tipp: Führen Sie das Script "generate-embedded-docs-db.ps1" aus, um alle Dokumentationen einzubetten.');
+                    console.log(`⚠️ Verwende Fallback-Dokumentationsliste mit ${documentationDB.length} Eintr&Auml;gen`);
+                    console.log('💡 Tipp: F&Uuml;hren Sie das Script "generate-embedded-docs-db.ps1" aus, um alle Dokumentationen einzubetten.');
                 }
             } catch (error) {
                 console.error('Fehler beim Laden der Dokumentation:', error);
@@ -841,7 +843,7 @@
             // Extract category from path
             let category = 'Dokumentation';
             if (path.includes('tests')) category = 'Tests';
-            if (path.includes('HANDBUCH') || path.includes('handbuch')) category = 'Handbücher';
+            if (path.includes('HANDBUCH') || path.includes('handbuch')) category = 'Handb&Uuml;cher';
             if (path.includes('ANLEITUNG') || path.includes('anleitung')) category = 'Anleitungen';
             if (path.includes('ENTWICKLUNG') || path.includes('development')) category = 'Entwicklung';
             
@@ -871,7 +873,7 @@
             if (nameLower.includes('handbuch')) keywords.push('handbuch', 'handbook', 'anleitung', 'guide');
             if (nameLower.includes('anleitung')) keywords.push('anleitung', 'guide', 'tutorial', 'hilfe');
             if (nameLower.includes('doku')) keywords.push('dokumentation', 'doku', 'docs');
-            if (nameLower.includes('dummies')) keywords.push('dummies', 'anfänger', 'beginner', 'quick start');
+            if (nameLower.includes('dummies')) keywords.push('dummies', 'anf&Auml;nger', 'beginner', 'quick start');
             if (nameLower.includes('installation')) keywords.push('installation', 'installieren', 'setup');
             if (nameLower.includes('erweiterung')) keywords.push('erweitern', 'extension', 'entwicklung');
             
@@ -907,17 +909,17 @@
             let desc = '';
             
             if (nameLower.includes('handbuch')) {
-                desc = 'Vollständiges Handbuch mit detaillierten Anleitungen';
+                desc = 'Vollst&Auml;ndiges Handbuch mit detaillierten Anleitungen';
             } else if (nameLower.includes('anleitung')) {
-                desc = 'Schritt-für-Schritt Anleitung';
+                desc = 'Schritt-f&Uuml;r-Schritt Anleitung';
             } else if (nameLower.includes('test')) {
                 desc = 'Test-Dokumentation und Test-Anleitungen';
             } else if (nameLower.includes('doku')) {
                 desc = 'Technische Dokumentation';
             } else if (nameLower.includes('readme')) {
-                desc = 'Übersicht und Schnellstart';
+                desc = '&Uuml;bersicht und Schnellstart';
             } else {
-                desc = 'Dokumentation für Think Orders System';
+                desc = 'Dokumentation f&Uuml;r Think Orders System';
             }
             
             return desc;
@@ -932,7 +934,7 @@
             if (nameLower.includes('nl') || nameLower.includes('nederlands')) tags.push('Nederlands');
             if (nameLower.includes('en') || nameLower.includes('english')) tags.push('English');
             
-            if (nameLower.includes('dummies') || nameLower.includes('anfänger')) tags.push('Anfänger');
+            if (nameLower.includes('dummies') || nameLower.includes('anf&Auml;nger')) tags.push('Anf&Auml;nger');
             if (nameLower.includes('test')) tags.push('Tests');
             if (nameLower.includes('handbuch')) tags.push('Handbuch');
             if (nameLower.includes('anleitung')) tags.push('Anleitung');
@@ -963,18 +965,18 @@
             return [
                 {
                     id: 'handbuch-de-komplett',
-                    title: 'Vollständiges Handbuch (Deutsch)',
-                    description: 'Komplettes Handbuch von Anfang an - Terminal erklärt, Installation, Tests ausführen',
-                    tags: ['Deutsch', 'Anfänger', 'Terminal', 'Installation', 'Tests'],
+                    title: 'Vollst&Auml;ndiges Handbuch (Deutsch)',
+                    description: 'Komplettes Handbuch von Anfang an - Terminal erkl&Auml;rt, Installation, Tests ausf&Uuml;hren',
+                    tags: ['Deutsch', 'Anf&Auml;nger', 'Terminal', 'Installation', 'Tests'],
                     path: 'tests/think-orders/HANDBUCH-DE-KOMPLETT.md',
-                    category: 'Handbücher',
-                    keywords: ['handbuch', 'anleitung', 'terminal', 'installation', 'tests', 'dummies', 'anfänger', 'hilfe', 'wie teste ich', 'wie installiere ich'],
+                    category: 'Handb&Uuml;cher',
+                    keywords: ['handbuch', 'anleitung', 'terminal', 'installation', 'tests', 'dummies', 'anf&Auml;nger', 'hilfe', 'wie teste ich', 'wie installiere ich'],
                     language: 'DE'
                 },
                 {
                     id: 'kalkulation',
                     title: 'Kalkulationsrechnungsauftrag',
-                    description: 'Vollständiger Rechnungsauftrag mit allen Funktionen und Kostenaufstellung',
+                    description: 'Vollst&Auml;ndiger Rechnungsauftrag mit allen Funktionen und Kostenaufstellung',
                     tags: ['Rechnung', 'Kalkulation', 'Aufwand'],
                     path: 'KALKULATIONSRECHNUNGSANTRAG-VOLLSTAENDIG.md',
                     category: 'Administration',
@@ -1021,25 +1023,25 @@
                 </div>
             `;
             // CORS-FIX: Direkter Link statt Event-Listener (funktioniert mit file://)
-            // Unterstützt beide Formate: HTML (Priorität) + MD (Fallback)
+            // Unterst&Uuml;tzt beide Formate: HTML (Priorit&Auml;t) + MD (Fallback)
             let linkPath = doc.path;
             let hasMD = linkPath.endsWith('.md');
             let htmlPath = hasMD ? linkPath.replace(/\.md$/, '.html') : null;
             
-            // Erstelle Link-Wrapper (HTML hat Priorität)
+            // Erstelle Link-Wrapper (HTML hat Priorit&Auml;t)
             const link = document.createElement('a');
             link.href = htmlPath || linkPath;
             link.target = '_blank';
             link.style.textDecoration = 'none';
             link.style.color = 'inherit';
             link.style.display = 'block';
-            link.title = htmlPath ? 'HTML-Version öffnen (klicken)' : 'Datei öffnen (klicken)';
+            link.title = htmlPath ? 'HTML-Version &Ouml;ffnen (klicken)' : 'Datei &Ouml;ffnen (klicken)';
             
-            // Wenn MD, füge auch MD-Link hinzu (kleiner Button)
+            // Wenn MD, f&Uuml;ge auch MD-Link hinzu (kleiner Button)
             if (hasMD && htmlPath) {
                 card.innerHTML += `
                     <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
-                        <span style="font-size: 0.85em; color: #666;">Verfügbar als:</span>
+                        <span style="font-size: 0.85em; color: #666;">Verf&Uuml;gbar als:</span>
                         <a href="${htmlPath}" target="_blank" onclick="event.stopPropagation();" 
                            style="padding: 4px 10px; background: #e94560; color: white; text-decoration: none; 
                                   border-radius: 3px; font-size: 0.85em; font-weight: 500;">HTML</a>
@@ -1057,16 +1059,16 @@
         }
         
         // ===== OPEN DOCUMENTATION =====
-        // Diese Funktion wird nicht mehr benötigt - direkte Links werden verwendet
-        // Behalten für Kompatibilität, aber Cards verwenden jetzt direkte <a> Links
+        // Diese Funktion wird nicht mehr ben&Ouml;tigt - direkte Links werden verwendet
+        // Behalten f&Uuml;r Kompatibilit&Auml;t, aber Cards verwenden jetzt direkte <a> Links
         async function openDocumentation(doc) {
-            // Bestimme den richtigen Pfad (HTML hat Priorität)
+            // Bestimme den richtigen Pfad (HTML hat Priorit&Auml;t)
             let filePath = doc.path;
             if (filePath.endsWith('.md')) {
                 filePath = filePath.replace(/\.md$/, '.html');
             }
             
-            // Erstelle temporären Link und klicke ihn (funktioniert mit file://)
+            // Erstelle tempor&Auml;ren Link und klicke ihn (funktioniert mit file://)
             const link = document.createElement('a');
             link.href = filePath;
             link.target = '_blank';
@@ -1361,13 +1363,13 @@
                 resultsContainer.innerHTML = `
                     <div class="no-results">
                         <h3 style="color: var(--dv-gold); margin-bottom: 20px;">
-                            Keine Ergebnisse für "${query}"
+                            Keine Ergebnisse f&Uuml;r "${query}"
                         </h3>
                         <p style="margin-bottom: 20px; opacity: 0.8;">
-                            Möglicherweise haben Sie einen der folgenden Begriffe gemeint:
+                            M&Ouml;glicherweise haben Sie einen der folgenden Begriffe gemeint:
                         </p>
                         <div class="suggestions">
-                            <h3>💡 Vorschläge:</h3>
+                            <h3>💡 Vorschl&Auml;ge:</h3>
                             ${getIntelligentSuggestions(query).map(suggestion => `
                                 <div class="suggestion-item" onclick="searchFor('${suggestion}')">
                                     ${suggestion}
@@ -1375,7 +1377,7 @@
                             `).join('')}
                         </div>
                         <p style="margin-top: 30px; opacity: 0.7; font-style: italic;">
-                            💡 Tipp: Verwenden Sie einfache Begriffe wie "Tests ausführen", "Installation" oder "Handbuch"
+                            💡 Tipp: Verwenden Sie einfache Begriffe wie "Tests ausf&Uuml;hren", "Installation" oder "Handbuch"
                         </p>
                     </div>
                 `;
@@ -1394,7 +1396,7 @@
             
             // Keyword-based suggestions
             if (queryLower.includes('test')) {
-                suggestions.add('Tests ausführen');
+                suggestions.add('Tests ausf&Uuml;hren');
                 suggestions.add('Test-Suite');
                 suggestions.add('Playwright Tests');
             }
@@ -1414,14 +1416,14 @@
                 suggestions.add('PowerShell');
             }
             if (queryLower.includes('handbuch') || queryLower.includes('anleitung')) {
-                suggestions.add('Handbücher');
+                suggestions.add('Handb&Uuml;cher');
                 suggestions.add('Anleitungen');
                 suggestions.add('Dokumentation');
             }
             
             // Generic suggestions
             if (suggestions.size === 0) {
-                suggestions.add('Handbücher');
+                suggestions.add('Handb&Uuml;cher');
                 suggestions.add('Anleitungen');
                 suggestions.add('Dokumentation');
                 suggestions.add('Quick Start');

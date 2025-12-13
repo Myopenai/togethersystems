@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 	<meta charset="UTF-8">
@@ -71,11 +71,13 @@
 	</style>
   <script src="../console-monitor.js"></script>
   <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
 </head>
 <body>
 	<div class="container">
 		<header>
-			<h1>🔬 Wissenschaftliche Excel-Formeln</h1>
+			<h1>”¬ Wissenschaftliche Excel-Formeln</h1>
 			<p style="color: var(--muted); margin-top: 10px;">
 				Haushaltsbuch · Solar · Brennstoffzelle · Ökonomische Ministrukturen
 			</p>
@@ -83,7 +85,7 @@
 
 		<!-- Solar-Berechnung -->
 		<div class="card">
-			<h2>☀️ Solar-Energie</h2>
+			<h2>â˜€ï¸ Solar-Energie</h2>
 			<table>
 				<tr>
 					<th>Parameter</th>
@@ -101,7 +103,7 @@
 					<td>Wirkungsgrad</td>
 					<td><input type="number" id="solarEfficiency" value="20" onchange="calculateSolar()"></td>
 					<td>%</td>
-					<td>η</td>
+					<td>Î·</td>
 				</tr>
 				<tr>
 					<td>Einstrahlung</td>
@@ -113,13 +115,13 @@
 					<td><strong>Leistung</strong></td>
 					<td><strong id="solarPower">0</strong></td>
 					<td><strong>kW</strong></td>
-					<td><strong>P = A × η × G / 1000</strong></td>
+					<td><strong>P = A Ã— Î· Ã— G / 1000</strong></td>
 				</tr>
 				<tr>
 					<td><strong>Ertrag (pro Jahr)</strong></td>
 					<td><strong id="solarYield">0</strong></td>
 					<td><strong>kWh</strong></td>
-					<td><strong>E = P × 8760 × 0.8</strong></td>
+					<td><strong>E = P Ã— 8760 Ã— 0.8</strong></td>
 				</tr>
 			</table>
 			<div class="formula-display" id="solarFormula"></div>
@@ -127,7 +129,7 @@
 
 		<!-- Brennstoffzelle -->
 		<div class="card">
-			<h2>⚡ Brennstoffzelle</h2>
+			<h2>âš¡ Brennstoffzelle</h2>
 			<table>
 				<tr>
 					<th>Parameter</th>
@@ -145,7 +147,7 @@
 					<td>Wirkungsgrad</td>
 					<td><input type="number" id="fuelCellEfficiency" value="60" onchange="calculateFuelCell()"></td>
 					<td>%</td>
-					<td>η</td>
+					<td>Î·</td>
 				</tr>
 				<tr>
 					<td>Heizwert H2</td>
@@ -157,7 +159,7 @@
 					<td><strong>Leistung</strong></td>
 					<td><strong id="fuelCellPower">0</strong></td>
 					<td><strong>kW</strong></td>
-					<td><strong>P = m_H2 × H × η / 100</strong></td>
+					<td><strong>P = m_H2 Ã— H Ã— Î· / 100</strong></td>
 				</tr>
 			</table>
 			<div class="formula-display" id="fuelCellFormula"></div>
@@ -165,7 +167,7 @@
 
 		<!-- Haushaltsbuch -->
 		<div class="card">
-			<h2>💰 Haushaltsbuch</h2>
+			<h2>’° Haushaltsbuch</h2>
 			<table>
 				<tr>
 					<th>Kategorie</th>
@@ -208,25 +210,25 @@
 
 		<!-- Export -->
 		<div class="card">
-			<h2>📥 Export</h2>
-			<button class="btn" onclick="exportToExcel()" style="background: var(--accent); padding: 12px 24px; border: none; border-radius: 6px; color: white; cursor: pointer;">📊 Als Excel exportieren</button>
+			<h2>“¥ Export</h2>
+			<button class="btn" onclick="exportToExcel()" style="background: var(--accent); padding: 12px 24px; border: none; border-radius: 6px; color: white; cursor: pointer;">“Š Als Excel exportieren</button>
 		</div>
 	</div>
 
 	<script>
 		function calculateSolar() {
 			const A = parseFloat(document.getElementById('solarArea').value) || 0;
-			const η = parseFloat(document.getElementById('solarEfficiency').value) || 0;
+			const Î· = parseFloat(document.getElementById('solarEfficiency').value) || 0;
 			const G = parseFloat(document.getElementById('solarIrradiance').value) || 0;
 			
-			const P = (A * η * G) / 1000; // kW
+			const P = (A * Î· * G) / 1000; // kW
 			const E = P * 8760 * 0.8; // kWh pro Jahr (0.8 = Verfügbarkeitsfaktor)
 			
 			document.getElementById('solarPower').textContent = P.toFixed(2);
 			document.getElementById('solarYield').textContent = E.toFixed(2);
 			
 			document.getElementById('solarFormula').textContent = 
-				`P = ${A} × ${η}% × ${G} / 1000 = ${P.toFixed(2)} kW | E = ${P.toFixed(2)} × 8760 × 0.8 = ${E.toFixed(2)} kWh/a`;
+				`P = ${A} Ã— ${Î·}% Ã— ${G} / 1000 = ${P.toFixed(2)} kW | E = ${P.toFixed(2)} Ã— 8760 Ã— 0.8 = ${E.toFixed(2)} kWh/a`;
 			
 			// Aktualisiere Haushaltsbuch
 			document.getElementById('incomeSolar').value = (E * 0.10).toFixed(2); // 10 Cent pro kWh Einspeisevergütung
@@ -235,15 +237,15 @@
 
 		function calculateFuelCell() {
 			const m_H2 = parseFloat(document.getElementById('fuelCellH2').value) || 0;
-			const η = parseFloat(document.getElementById('fuelCellEfficiency').value) || 0;
+			const Î· = parseFloat(document.getElementById('fuelCellEfficiency').value) || 0;
 			const H = 33.3; // kWh/kg
 			
-			const P = (m_H2 * H * η) / 100; // kW
+			const P = (m_H2 * H * Î·) / 100; // kW
 			
 			document.getElementById('fuelCellPower').textContent = P.toFixed(2);
 			
 			document.getElementById('fuelCellFormula').textContent = 
-				`P = ${m_H2} × ${H} × ${η}% / 100 = ${P.toFixed(2)} kW`;
+				`P = ${m_H2} Ã— ${H} Ã— ${Î·}% / 100 = ${P.toFixed(2)} kW`;
 		}
 
 		function calculateHousehold() {

@@ -1,4 +1,4 @@
-# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ERROR PREVENTION GUIDE
+﻿# [.SYSTEMS.T.SYSTEMS.] FABRIKAGE ERROR PREVENTION GUIDE
 
 **Dokumentation: Verhindert alle bekannten Fehler - NIEMALS WIEDER**
 
@@ -72,8 +72,8 @@ $text = 'Terminated string'
 
 **❌ FALSCH:**
 ```powershell
-'zurÃ¼ck' = 'zurück'
-'Ã¤' = 'ä'
+'zurück' = 'zurück'
+'ä' = 'ä'
 ```
 
 **✅ RICHTIG:**
@@ -183,7 +183,7 @@ Diese Fehler sind jetzt **SYSTEMATISCH VERBOTEN**:
 1. ❌ Duplikate Hash-Keys (`'â€"' = ...`)
 2. ❌ Fehlende Klammern (`{` ohne `}`)
 3. ❌ Untermierte Strings (`'text` ohne `'`)
-4. ❌ Encoding-Fehler (`Ã¤` statt `ä`)
+4. ❌ Encoding-Fehler (`ä` statt `ä`)
 5. ❌ Veraltete GitHub Actions (`pwsh/setup-pwsh@v1`)
 
 ---
@@ -191,3 +191,25 @@ Diese Fehler sind jetzt **SYSTEMATISCH VERBOTEN**:
 **Signatur:** [.SYSTEMS.T.SYSTEMS.] FABRIKAGE  
 **Version:** 1.0.0  
 **Status:** ✅ **FEHLER-PREVENTION AKTIV**
+
+
+---
+
+## 🏢 Unternehmens-Branding & OCR
+
+**TogetherSystems** | **T,.&T,,.&T,,,.** | **TTT Enterprise Universe**
+
+| Information | Link |
+|------------|------|
+| **Initiator** | [Raymond Demitrio Tel](https://orcid.org/0009-0003-1328-2430) |
+| **ORCID** | [0009-0003-1328-2430](https://orcid.org/0009-0003-1328-2430) |
+| **Website** | [tel1.nl](https://tel1.nl) |
+| **WhatsApp** | [+31 613 803 782](https://wa.me/31613803782) |
+| **GitHub** | [myopenai/togethersystems](https://github.com/myopenai/togethersystems) |
+| **Businessplan** | [TGPA Businessplan DE.pdf](https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf) |
+
+**Branding:** T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+**IBM+++ MCP MCP MCP Standard** | **Industrial Business Machine** | **Industrial Fabrication Software**
+
+---
