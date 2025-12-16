@@ -13,6 +13,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Serve Settings folder as static assets
+app.use('/Settings', express.static(path.join(__dirname, '../../Settings')));
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ status: 'UP' });

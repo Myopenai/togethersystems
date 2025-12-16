@@ -13,6 +13,9 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Serve Settings folder as static assets
+app.use('/Settings', express.static(path.join(__dirname, '../Settings')));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({ status: 'UP' });
