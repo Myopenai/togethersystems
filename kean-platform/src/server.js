@@ -12,13 +12,13 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// JSON parse error handler - just log but don't crash
+// JSON parse error handler - catch malformed JSON gracefully
 app.use((err, req, res, next) => {
     if (err instanceof SyntaxError && 'body' in err) {
         req.body = {};
         return next();
     }
-    next();
+    next(err);
 });
 app.use(express.static('public'));
 

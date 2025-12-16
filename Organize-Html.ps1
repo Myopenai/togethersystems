@@ -1,6 +1,9 @@
 # Auto-Organize HTML Files Script
 # This script will:
 # 1. Create a timestamped backup
+# Auto-Organize HTML Files Script
+# This script will:
+# 1. Create a timestamped backup
 # 2. Reorganize HTML files into a standard structure
 # 3. Clean up filenames
 # 4. Generate a report
@@ -86,13 +89,13 @@ function Update-HtmlLinks {
         $updated = $false
 
         # Update href attributes
-        $content = [regex]::Replace($content, 'href=["'']([^"''#?]+\.html)["'']', {
+        $content = [regex]::Replace($content, 'href=["'']([^"'']#?]+\.html)["'']', {
             param($match)
             $link = $match.Groups[1].Value
             $newLink = Get-CleanFileName -name $link
             if ($link -ne $newLink) {
                 $updated = $true
-                return "href=""$newLink"""
+                return ('href="' + $newLink + '"')
             }
             return $match.Value
         })

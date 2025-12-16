@@ -5,7 +5,9 @@ $buildJsPath = "D:\busineshuboffline CHATGTP\TOGETHERSYSTEMS- GITHUB\Nieuwe map 
 $content = Get-Content -Path $buildJsPath -Raw
 
 # Fix the regex pattern
-$fixedContent = $content -replace 'file\.replace\(/\\\.js\$'"'"', '"'"'\.min\.js/\)', 'file.replace(/\.js$/, ".min.js")'
+$pattern = 'file\.replace\(/\\\.js\$\)'
+$replacement = 'file.replace(/.js$/, ".min.js")'
+$fixedContent = $content -replace $pattern, $replacement
 
 # Write the fixed content back to the file
 $fixedContent | Set-Content -Path $buildJsPath -NoNewline

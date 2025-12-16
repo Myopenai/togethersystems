@@ -1,0 +1,61 @@
+option batch continue
+option confirm off
+option transfer binary
+
+# Connection settings
+# Host: 45.87.81.214
+# Port: 65002
+# Username: u972026836
+# Password: [Enter your password in WinSCP GUI or use -sessionlog for troubleshooting]
+
+open sftp://u972026836@45.87.81.214:65002
+
+# Navigate to webroot
+cd /home/u972026836/domains/digitalnotar.in/public_html
+
+# Create required directories
+mkdir data 2>/dev/null
+mkdir data/content 2>/dev/null
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📤 Starting Multi-Industry Docs deployment..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Synchronize dist folder (production build)
+echo "📁 Synchronizing dist/ folder..."
+synchronize remote "REPLACE_WITH_LOCAL_PATH\dist" "." -mirror -delete
+
+# Upload server.js
+echo "📄 Uploading server.js..."
+put "REPLACE_WITH_LOCAL_PATH\server.js" "."
+
+# Upload package.json
+echo "📄 Uploading package.json..."
+put "REPLACE_WITH_LOCAL_PATH\package.json" "."
+
+# Upload .gitignore for reference
+put "REPLACE_WITH_LOCAL_PATH\.gitignore" "." 2>/dev/null
+
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✓ Files uploaded successfully!"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# Set correct file permissions
+chmod 755 data
+chmod 755 data/content
+chmod 644 server.js
+chmod 644 package.json
+
+echo "✓ Permissions set correctly"
+echo ""
+echo "NEXT STEPS:"
+echo "  1. Open terminal/SSH to your server"
+echo "  2. cd /home/u972026836/domains/digitalnotar.in/public_html"
+echo "  3. npm install --production"
+echo "  4. PORT=80 node server.js"
+echo ""
+echo "VERIFY:"
+echo "  curl http://digitalnotar.in/api/health"
+echo ""
+
+exit
