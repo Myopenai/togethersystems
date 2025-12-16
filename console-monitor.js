@@ -118,21 +118,10 @@
       const errorType = detectErrorType(entry.message);
       
       if (errorType) {
-        // Fehler an Settings-Ordner melden
-        await fetch(SETTINGS_PATH + 'api/console-error', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            entry: entry,
-            errorType: errorType,
-            timestamp: Date.now()
-          })
-        }).catch(() => {
-          // Offline: In Queue speichern
-          const queue = JSON.parse(localStorage.getItem('console_error_queue') || '[]');
-          queue.push({ entry, errorType, timestamp: Date.now() });
-          localStorage.setItem('console_error_queue', JSON.stringify(queue.slice(-50)));
-        });
+        // Fehler lokal speichern (kein POST-Fehler!)
+        const queue = JSON.parse(localStorage.getItem('console_error_queue') || '[]');
+        queue.push({ entry, errorType, timestamp: Date.now() });
+        localStorage.setItem('console_error_queue', JSON.stringify(queue.slice(-50)));
       }
     } catch (e) {
       // Silent fail

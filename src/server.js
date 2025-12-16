@@ -13,6 +13,15 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// JSON parse error handler - just log but don't crash
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && 'body' in err) {
+        req.body = {};
+        return next();
+    }
+    next();
+});
+
 // Serve Settings folder as static assets
 app.use('/Settings', express.static(path.join(__dirname, '../Settings')));
 
