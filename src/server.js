@@ -38,6 +38,21 @@ app.get('/api/config/ai', (req, res) => {
     });
 });
 
+// Accept console-monitor POSTs to avoid 405s from browser clients
+app.post('/Settings/api/console-error', (req, res) => {
+    try {
+        const payload = req.body || {};
+        const fs = require('fs');
+        const logDir = path.join(__dirname, '../togethersystems_external_artifacts/logs');
+        if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+        const logFile = path.join(logDir, 'console_errors.jsonl');
+        fs.appendFileSync(logFile, JSON.stringify({ receivedAt: new Date().toISOString(), payload }) + '\n');
+        res.status(201).json({ ok: true });
+    } catch (e) {
+        res.status(500).json({ ok: false, error: String(e) });
+    }
+});
+
 // Start server
 (async () => {
     try {
