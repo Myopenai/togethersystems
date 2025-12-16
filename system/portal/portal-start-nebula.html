@@ -1,0 +1,255 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Portal Start · Nebula · TogetherSystems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Language" content="de">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #020617;
+      color: #f8fafc;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+    
+    #nebula-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    
+    #nebula-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #020617;
+    }
+    
+    .portal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: linear-gradient(135deg, rgba(2, 6, 23, 0.95), rgba(15, 23, 42, 0.95));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease-out;
+      pointer-events: none;
+    }
+    
+    .portal-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .portal-content {
+      text-align: center;
+      padding: 40px;
+      max-width: 600px;
+    }
+    
+    .brand {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #39d0ff, #f565ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      text-shadow: 0 0 30px rgba(57, 208, 255, 0.5);
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: #a0a0a0;
+      margin-bottom: 40px;
+    }
+    
+    .btn-portal {
+      background: linear-gradient(135deg, #39d0ff, #f565ff);
+      color: #020617;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(57, 208, 255, 0.3);
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+    
+    .btn-portal:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(57, 208, 255, 0.5);
+    }
+    
+    .btn-portal:active {
+      transform: translateY(0);
+    }
+    
+    .loading {
+      display: none;
+      color: #39d0ff;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+    
+    .loading.active {
+      display: block;
+    }
+  </style>
+  <script src="./console-monitor.js"></script>
+  <script src="./http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="css/teladia-complete-design-system.css">
+</head>
+<body>
+  <!-- Nebula Container - Heilungsspirale Pro -->
+  <div id="nebula-container">
+    <iframe 
+      id="nebula-iframe" 
+      src="heilungsspirale-pro.html"
+      allow="fullscreen"
+      loading="eager">
+    </iframe>
+  </div>
+  
+  <!-- Portal Overlay -->
+  <div class="portal-overlay" id="portal-overlay">
+    <div class="portal-content">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <a href="https://github.com/Myopenai" target="_blank" style="text-decoration: none; display: inline-block;">
+          <div style="position: relative; width: 100px; height: 100px; background: linear-gradient(135deg, #003399 0%, #002266 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 51, 153, 0.4); margin: 0 auto;">
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 5%; left: 50%; transform: translateX(-50%);"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 15%; right: 15%;"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 50%; right: 5%; transform: translateY(-50%);"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); bottom: 15%; right: 15%;"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); bottom: 5%; left: 50%; transform: translateX(-50%);"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); bottom: 15%; left: 15%;"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 50%; left: 5%; transform: translateY(-50%);"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 15%; left: 15%;"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); top: 25%; right: 25%;"></div>
+            <div style="position: absolute; width: 8px; height: 8px; background: #FFD700; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); bottom: 25%; left: 25%;"></div>
+            <div style="font-size: 2rem; font-weight: 700; color: #39d0ff; text-shadow: 0 0 10px rgba(57, 208, 255, 0.8), 0 0 20px rgba(57, 208, 255, 0.6); letter-spacing: 4px; z-index: 2;">TTT</div>
+            <div style="font-size: 0.4rem; color: #ffffff; margin-top: 5px; text-align: center; z-index: 2; line-height: 1.2;">Wer nicht will, macht nicht – T<sub>m</sub>, T<sub>e</sub>, & T<sub>a</sub></div>
+          </div>
+        </a>
+        <div style="margin-top: 10px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a href="https://github.com/Myopenai" target="_blank" style="color: #f565ff; text-decoration: none; font-size: 0.9rem;">GitHub: Myopenai</a>
+          <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&utm_medium=referral&utm_source=widget" target="_blank" style="color: #39d0ff; text-decoration: none; font-size: 0.9rem;">Žµ Magnitudo Musica Mundo</a>
+        </div>
+        <div style="font-size: 0.75rem; color: #aaa; margin-top: 5px; font-style: italic;">Fabriquations Software Automatizations Productions Industrial Software Products</div>
+      </div>
+      <div class="brand">.T.</div>
+      <div class="subtitle">TogetherSystems Portal</div>
+      <button class="btn-portal" onclick="openPortal()">
+        Portal öffnen
+      </button>
+      <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="uae-enterprises-presentation.html" style="display: inline-block; padding: 12px 24px; background: rgba(57, 208, 255, 0.2); color: #39d0ff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(57, 208, 255, 0.4); font-weight: 600; transition: all 0.3s;">
+          ¢ UAE Enterprises Präsentation
+        </a>
+        <a href="fabrikage-scripts-dashboard.html" style="display: inline-block; padding: 12px 24px; background: rgba(245, 101, 255, 0.2); color: #f565ff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(245, 101, 255, 0.4); font-weight: 600; transition: all 0.3s;">
+          š€ Scripts Dashboard
+        </a>
+      </div>
+      <div class="loading" id="loading">
+        Lade Portal...
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Portal öffnen
+    function openPortal() {
+      const overlay = document.getElementById('portal-overlay');
+      const loading = document.getElementById('loading');
+      const iframe = document.getElementById('nebula-iframe');
+      
+      // Zeige Loading
+      loading.classList.add('active');
+      
+      // Warte kurz, dann verstecke Overlay
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+        
+        // Stelle sicher, dass iframe fokussiert ist
+        iframe.focus();
+        
+        // Optional: Vollbild-Modus aktivieren
+        if (iframe.requestFullscreen) {
+          iframe.requestFullscreen().catch(err => {
+            console.log('Fullscreen nicht verfügbar:', err);
+          });
+        }
+      }, 500);
+    }
+    
+    // Auto-Start nach 3 Sekunden (optional)
+    let autoStartTimer = null;
+    
+    function enableAutoStart() {
+      autoStartTimer = setTimeout(() => {
+        openPortal();
+      }, 3000);
+    }
+    
+    // Auto-Start deaktivieren bei Mausbewegung oder Klick
+    document.addEventListener('mousemove', () => {
+      if (autoStartTimer) {
+        clearTimeout(autoStartTimer);
+        autoStartTimer = null;
+      }
+    });
+    
+    document.addEventListener('click', () => {
+      if (autoStartTimer) {
+        clearTimeout(autoStartTimer);
+        autoStartTimer = null;
+      }
+    });
+    
+    // Optional: Auto-Start aktivieren (auskommentiert)
+    // enableAutoStart();
+    
+    // Keyboard Shortcut: ESC zum Zurückkehren zum Overlay
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('portal-overlay');
+        overlay.classList.remove('hidden');
+      }
+    });
+    
+    // Prüfe ob iframe geladen ist
+    const iframe = document.getElementById('nebula-iframe');
+    iframe.addEventListener('load', () => {
+      console.log('Heilungsspirale Pro geladen');
+    });
+    
+    iframe.addEventListener('error', () => {
+      console.error('Fehler beim Laden der Heilungsspirale Pro');
+      document.getElementById('loading').textContent = 'Fehler: Datei nicht gefunden. Bitte prüfe den Pfad.';
+    });
+  </script>
+</body>
+</html>
+
+
+

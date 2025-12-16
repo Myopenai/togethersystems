@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CODE BEISPIELE ERWEITERUNG</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      color: #2c3e50;
+    }
+    h1 { font-size: 2.2em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+    h2 { font-size: 1.8em; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+    h3 { font-size: 1.5em; }
+    p { margin: 1em 0; }
+    a { color: #0366d6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      background-color: rgba(27, 31, 35, 0.05);
+      border-radius: 3px;
+      padding: 0.2em 0.4em;
+      font-size: 85%;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+      line-height: 1.45;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      border-radius: 0;
+    }
+    blockquote {
+      border-left: 4px solid #dfe2e5;
+      color: #6a737d;
+      padding: 0 1em;
+      margin: 0 0 16px 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    th, td {
+      border: 1px solid #dfe2e5;
+      padding: 6px 13px;
+    }
+    th {
+      background-color: #f6f8fa;
+      font-weight: 600;
+    }
+    tr:nth-child(2n) {
+      background-color: #f6f8fa;
+    }
+    img {
+      max-width: 100%;
+      box-sizing: content-box;
+    }
+  </style>
+</head>
+<body>
+  <h1>Code-Beispiele Erweiterung – Together Systems</h1>
+<p><strong>LOGO:</strong> <code>T,.&amp;T,,.&amp;T,,,.(C)TEL1.NL</code><br><strong>BRANDING:</strong> Together Systems – International TTT<br><strong>VERSION:</strong> 1.0.0<br><strong>DATUM:</strong> 2025-01-15</p>
+<hr>
+<h2>📋 ÜBERSICHT</h2>
+<p>Diese Dokumentation erweitert die <code>GESAMTSYSTEM-MASTER-DOKUMENTATION.md</code> um konkrete Code-Beispiele für alle Hauptkomponenten.</p>
+<hr>
+<h2>🔐 VERSCHLÜSSELUNGSSYSTEME</h2>
+<h3>AES-256-GCM Verschlüsselung</h3>
+<pre><code class="language-javascript">// settings/routines/encryption-examples.js
+
+/**
+ * AES-256-GCM Verschlüsselung - Production Standard
+ * Gemäß INDUSTRIAL-FABRICATION-ROUTINE
+ */
+async function encryptWithAES256GCM(plaintext, userKey) {
+  // Pre-Code-Verification: Settings-Ordner konsultieren
+  const encryptionConfig = await loadSettingsConfig(&#39;encryption-config.json&#39;);
+  
+  // Key Derivation mit PBKDF2
+  const salt = crypto.getRandomValues(new Uint8Array(32));
+  const keyMaterial = await crypto.subtle.importKey(
+    &#39;raw&#39;,
+    new TextEncoder().encode(userKey),
+    &#39;PBKDF2&#39;,
+    false,
+    [&#39;deriveBits&#39;, &#39;deriveKey&#39;]
+  );
+  
+  const aesKey = await crypto.subtle.deriveKey(
+    {
+      name: &#39;PBKDF2&#39;,
+      salt: salt,
+      iterations: 200000, // Gemäß Settings-Standard
+      hash: &#39;SHA-256&#39;
+    },
+    keyMaterial,
+    { name: &#39;AES-GCM&#39;, length: 256 },
+    false,
+    [&#39;encrypt&#39;]
+  );
+  
+  // IV generieren
+  const iv = crypto.getRandomValues(new Uint8Array(16));
+  
+  // Verschlüsselung
+  const plaintextBuffer = new TextEncoder().encode(plaintext);
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: &#39;AES-GCM&#39;, iv: iv },
+    aesKey,
+    plaintextBuffer
+  );
+  
+  // Resultat: { salt, iv, ciphertext }
+  return {
+    salt: Array.from(salt).map(b =&gt; b.toString(16).padStart(2, &#39;0&#39;)).join(&#39;&#39;),
+    iv: Array.from(iv).map(b =&gt; b.toString(16).padStart(2, &#39;0&#39;)).join(&#39;&#39;),
+    ciphertext: Array.from(new Uint8Array(ciphertext))
+      .map(b =&gt; b.toString(16).padStart(2, &#39;0&#39;)).join(&#39;&#39;)
+  };
+}
+</code></pre>
+<hr>
+<h2>🏦 BANKING-SYSTEME</h2>
+<h3>TPGA Telbank Transfer</h3>
+<pre><code class="language-javascript">// TELBANK/transfer-example.js
+
+/**
+ * Telbank Transfer - Fiat ↔ Crypto
+ * Gemäß TPGA-TELBANK-SYSTEM-OVERVIEW.md
+ */
+async function executeTelbankTransfer(transferData) {
+  // Pre-Code-Verification
+  await verifyWithSettingsManifest();
+  
+  const {
+    flow, // &#39;inflow&#39; | &#39;outflow&#39;
+    amount,
+    currency,
+    fromAddress,
+    toAddress
+  } = transferData;
+  
+  // MetaMask-Integration prüfen
+  if (typeof window.ethereum !== &#39;undefined&#39;) {
+    const accounts = await window.ethereum.request({
+      method: &#39;eth_requestAccounts&#39;
+    });
+    
+    // Transfer-Request an API
+    const response = await fetch(&#39;/api/telbank/transfers&#39;, {
+      method: &#39;POST&#39;,
+      headers: {
+        &#39;Content-Type&#39;: &#39;application/json&#39;,
+        &#39;Authorization&#39;: `Bearer ${getAuthToken()}`
+      },
+      body: JSON.stringify({
+        flow,
+        amount,
+        currency,
+        from_address: fromAddress || accounts[0],
+        to_address: toAddress,
+        timestamp: new Date().toISOString()
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Transfer failed: ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    
+    // Logging gemäß Console-Monitoring
+    console.log(&#39;TELBANK_TRANSFER&#39;, {
+      transfer_id: result.id,
+      flow,
+      amount,
+      status: &#39;SUCCESS&#39;
+    });
+    
+    return result;
+  } else {
+    throw new Error(&#39;MetaMask not available&#39;);
+  }
+}
+</code></pre>
+<hr>
+<h2>📈 BÖRSEN-SYSTEM</h2>
+<h3>Order-Matching-Engine</h3>
+<pre><code class="language-javascript">// Exchange/order-matching-example.js
+
+/**
+ * Order-Matching-Algorithmus
+ * Price-Time-Priority Matching
+ */
+function matchOrders(buyOrders, sellOrders) {
+  // Pre-Code-Verification
+  verifyWithSettingsManifest();
+  
+  // Sortierung: Price (beste zuerst), dann Time (älteste zuerst)
+  const sortedBuys = buyOrders.sort((a, b) =&gt; {
+    if (b.price !== a.price) return b.price - a.price; // Höchstpreis zuerst
+    return a.created_at - b.created_at; // Älteste zuerst
+  });
+  
+  const sortedSells = sellOrders.sort((a, b) =&gt; {
+    if (a.price !== b.price) return a.price - b.price; // Niedrigstpreis zuerst
+    return a.created_at - b.created_at; // Älteste zuerst
+  });
+  
+  const trades = [];
+  
+  for (const buyOrder of sortedBuys) {
+    if (buyOrder.filled_quantity &gt;= buyOrder.quantity) continue;
+    
+    for (const sellOrder of sortedSells) {
+      if (sellOrder.filled_quantity &gt;= sellOrder.quantity) continue;
+      if (buyOrder.price &lt; sellOrder.price) break; // Kein Match möglich
+      
+      // Match gefunden
+      const remainingBuy = buyOrder.quantity - buyOrder.filled_quantity;
+      const remainingSell = sellOrder.quantity - sellOrder.filled_quantity;
+      const tradeQuantity = Math.min(remainingBuy, remainingSell);
+      const tradePrice = sellOrder.price; // Market-Order oder Limit-Order-Preis
+      
+      trades.push({
+        buy_order_id: buyOrder.id,
+        sell_order_id: sellOrder.id,
+        asset_type: buyOrder.asset_type,
+        asset_id: buyOrder.asset_id,
+        price: tradePrice,
+        quantity: tradeQuantity,
+        executed_at: new Date().toISOString()
+      });
+      
+      // Filled-Quantity aktualisieren
+      buyOrder.filled_quantity += tradeQuantity;
+      sellOrder.filled_quantity += tradeQuantity;
+      
+      if (buyOrder.filled_quantity &gt;= buyOrder.quantity) break;
+    }
+  }
+  
+  return trades;
+}
+</code></pre>
+<hr>
+<h2>🎫 VOUCHER-SYSTEM</h2>
+<h3>Voucher-Generierung mit Behavior-Tracking</h3>
+<pre><code class="language-javascript">// Voucher/voucher-generation-example.js
+
+/**
+ * Voucher-Generierung basierend auf User-Verhalten
+ * Gemäß Voucher-System-Spezifikation
+ */
+async function generateVoucherForUser(userId, checkoutContext) {
+  // Pre-Code-Verification
+  await verifyWithSettingsManifest();
+  
+  // Behavior-Tracking analysieren
+  const userBehavior = await analyzeUserBehavior(userId);
+  
+  // Voucher-Parameter berechnen
+  const voucherConfig = {
+    discount_type: calculateDiscountType(userBehavior),
+    discount_value: calculateDiscountValue(userBehavior, checkoutContext),
+    min_purchase: calculateMinPurchase(checkoutContext.cartTotal),
+    valid_from: new Date().toISOString(),
+    valid_until: calculateValidUntil(userBehavior.urgency),
+    trigger_timing: calculateTriggerTiming(userBehavior) // &#39;before_checkout&#39; | &#39;after_checkout&#39;
+  };
+  
+  // Voucher generieren
+  const voucher = {
+    id: generateVoucherId(),
+    user_id: userId,
+    code: generateVoucherCode(),
+    ...voucherConfig,
+    status: &#39;active&#39;,
+    created_at: new Date().toISOString()
+  };
+  
+  // In Datenbank speichern
+  await saveVoucherToDatabase(voucher);
+  
+  return voucher;
+}
+
+function calculateDiscountType(userBehavior) {
+  // Logik: percentage für treue Kunden, fixed für neue
+  if (userBehavior.total_orders &gt; 10) {
+    return &#39;percentage&#39;;
+  }
+  return &#39;fixed&#39;;
+}
+
+function calculateTriggerTiming(userBehavior) {
+  // Logik: vor Checkout wenn Cart-Abandonment-Rate hoch
+  if (userBehavior.cart_abandonment_rate &gt; 0.5) {
+    return &#39;before_checkout&#39;;
+  }
+  return &#39;after_checkout&#39;;
+}
+</code></pre>
+<hr>
+<h2>🌐 API-INTEGRATIONEN</h2>
+<h3>Deutsche Bank API – Payment Initiation</h3>
+<pre><code class="language-javascript">// Banking/deutsche-bank-api-example.js
+
+/**
+ * Deutsche Bank API - Payment Initiation
+ * Gemäß PSD2 / ISO 20022 Standards
+ */
+async function initiateDeutscheBankPayment(paymentData) {
+  // Pre-Code-Verification
+  await verifyWithSettingsManifest();
+  
+  const {
+    amount,
+    currency,
+    creditor_account,
+    creditor_name,
+    remittance_information
+  } = paymentData;
+  
+  // OAuth 2.0 Token abrufen
+  const accessToken = await getDeutscheBankAccessToken();
+  
+  // Payment Request gemäß ISO 20022
+  const paymentRequest = {
+    instructedAmount: {
+      amount: amount.toFixed(2),
+      currency: currency
+    },
+    creditorAccount: {
+      iban: creditor_account
+    },
+    creditorName: creditor_name,
+    remittanceInformationUnstructured: remittance_information,
+    requestedExecutionDate: new Date().toISOString().split(&#39;T&#39;)[0]
+  };
+  
+  // API-Call
+  const response = await fetch(&#39;https://api.db.com/v1/payments/sepa-credit-transfers&#39;, {
+    method: &#39;POST&#39;,
+    headers: {
+      &#39;Authorization&#39;: `Bearer ${accessToken}`,
+      &#39;Content-Type&#39;: &#39;application/json&#39;,
+      &#39;X-Request-ID&#39;: generateRequestId(),
+      &#39;PSU-IP-Address&#39;: await getClientIP()
+    },
+    body: JSON.stringify(paymentRequest)
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`Payment initiation failed: ${error.errorMessage}`);
+  }
+  
+  const result = await response.json();
+  
+  // Logging
+  console.log(&#39;DEUTSCHE_BANK_PAYMENT&#39;, {
+    payment_id: result.transactionId,
+    status: result.transactionStatus,
+    amount,
+    currency
+  });
+  
+  return result;
+}
+</code></pre>
+<hr>
+<h2>💾 DATENBANK-OPERATIONEN</h2>
+<h3>Negative Asset Pool - Abfrage</h3>
+<pre><code class="language-javascript">// Database/negative-asset-query-example.js
+
+/**
+ * Negative Asset Pool Query
+ * Gemäß TELBANK Architektur
+ */
+async function queryNegativeAssetPool(filters) {
+  // Pre-Code-Verification
+  await verifyWithSettingsManifest();
+  
+  const {
+    bank_id,
+    asset_class,
+    min_amount,
+    max_amount,
+    status
+  } = filters;
+  
+  // SQL-Query (Cloudflare D1)
+  const query = `
+    SELECT 
+      n.neg_asset_id,
+      n.bank_id,
+      b.name AS bank_name,
+      n.asset_type_id,
+      at.code AS asset_class,
+      n.nominal_amount,
+      n.currency_code,
+      n.event_date,
+      n.status,
+      n.risk_score
+    FROM negative_asset n
+    JOIN bank b ON n.provider_bank_id = b.bank_id
+    JOIN asset_type at ON n.asset_type_id = at.asset_type_id
+    WHERE 
+      (? IS NULL OR n.provider_bank_id = ?)
+      AND (? IS NULL OR at.code = ?)
+      AND (? IS NULL OR n.nominal_amount &gt;= ?)
+      AND (? IS NULL OR n.nominal_amount &lt;= ?)
+      AND (? IS NULL OR n.status = ?)
+    ORDER BY n.nominal_amount ASC, n.event_date DESC
+  `;
+  
+  const result = await db.prepare(query).bind(
+    bank_id, bank_id,
+    asset_class, asset_class,
+    min_amount, min_amount,
+    max_amount, max_amount,
+    status, status
+  ).all();
+  
+  return result.results;
+}
+</code></pre>
+<hr>
+<p><strong>Erstellt:</strong> 2025-01-15<br><strong>Version:</strong> 1.0.0<br><strong>BRANDING:</strong> T,.&amp;T,,.&amp;T,,,.(C)TEL1.NL</p>
+<hr>
+<h2>🏢 Unternehmens-Branding &amp; OCR</h2>
+<p><strong>TogetherSystems</strong> | <strong>T,.&amp;T,,.&amp;T,,,.</strong> | <strong>TTT Enterprise Universe</strong></p>
+<table>
+<thead>
+<tr>
+<th>Information</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Initiator</strong></td>
+<td><a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a></td>
+</tr>
+<tr>
+<td><strong>ORCID</strong></td>
+<td><a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a></td>
+</tr>
+<tr>
+<td><strong>Website</strong></td>
+<td><a href="https://tel1.nl">tel1.nl</a></td>
+</tr>
+<tr>
+<td><strong>WhatsApp</strong></td>
+<td><a href="https://wa.me/31613803782">+31 613 803 782</a></td>
+</tr>
+<tr>
+<td><strong>GitHub</strong></td>
+<td><a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a></td>
+</tr>
+<tr>
+<td><strong>Businessplan</strong></td>
+<td><a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a></td>
+</tr>
+</tbody></table>
+<p><strong>Branding:</strong> T,.&amp;T,,.&amp;T,,,.(C)(R)TEL1.NL - TTT,. -</p>
+<p><strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong></p>
+<hr>
+
+</body>
+</html>

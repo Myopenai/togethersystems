@@ -1,0 +1,204 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>U.A.E. Decision Matrix – Formel-Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    const BASE_URL = window.location.origin || 'https://myopenai.github.io/togethersystems';
+  </script>
+  <style>
+    :root{--bg:#0a0e1e;--text:#f5f7ff;--muted:#94a3b8;--accent:#39d0ff;--r:12px}
+    body{margin:0;font-family:system-ui,"Inter","Segoe UI",sans-serif;background:var(--bg);color:var(--text);padding:24px}
+    .wrap{max-width:1000px;margin:0 auto}
+    h1{font-size:20px;margin:0 0 8px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    @media(max-width:800px){.row{grid-template-columns:1fr}}
+    .card{border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:16px;background:rgba(12,16,40,.9)}
+    label{font-size:12px;color:var(--muted);display:block;margin-top:12px;margin-bottom:6px}
+    input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(5,7,17,.8);color:var(--text);box-sizing:border-box}
+    button{padding:10px 16px;border-radius:999px;border:1px solid transparent;background:linear-gradient(135deg,var(--accent),#ff6bcb);color:#000;font-weight:700;cursor:pointer;margin-top:12px}
+    button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(57,208,255,.3)}
+    pre{white-space:pre-wrap;background:rgba(5,7,17,.7);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);max-height:360px;overflow:auto;font-size:12px;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+    .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:6px 10px;color:var(--muted);font-size:12px;margin-bottom:16px}
+    .brand{color:var(--accent);font-weight:900}
+    h3{font-size:14px;margin:0 0 8px;color:var(--accent)}
+  </style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
+</head>
+<body>
+  <div class="wrap">
+    <h1><span class="brand">.T.</span> U.A.E. Decision Matrix – Excel-Formeln</h1>
+    <div class="pill">Blätter & Bereiche konfigurieren</div>
+
+    <div class="row">
+      <div class="card">
+        <label>Input Blattname</label>
+        <input id="inputSheet" value="Input">
+        <label>Matrix Blattname</label>
+        <input id="matrixSheet" value="Matrix">
+        <label>Matrix Bereich (Schlüssel in Spalte A)</label>
+        <input id="matrixRangeA" value="$A$2:$A$100">
+        <label>Matrix Förderquote (Spalte B)</label>
+        <input id="matrixRangeB" value="$B$2:$B$100">
+        <label>Matrix RobotikProfil (Spalte C)</label>
+        <input id="matrixRangeC" value="$C$2:$C$100">
+        <label>Matrix DruckProfil (Spalte D)</label>
+        <input id="matrixRangeD" value="$D$2:$D$100">
+      </div>
+      <div class="card">
+        <label>Gewichte (Input!B2:F2)</label>
+        <input id="weightsRange" value="$B$2:$F$2">
+        <label>Werte Startzeile (z. B. 5)</label>
+        <input id="startRow" type="number" value="5">
+        <label>WENNâ€‘Schwellen (Score/Recycling/Space/OuterSpace)</label>
+        <input id="thresholds" value="80;3;4;90" placeholder="Score>=80; D>=3; F>=4; OuterSpace Score>=90">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <button onclick="generate()">Alle Formeln generieren (U.A.E.)</button>
+        <p style="margin-top:8px;color:#a3a8c2;font-size:12px">Die Ausgabe kann 1:1 in Excel eingefügt werden (deutsche Funktionsnamen, Semikolon).</p>
+      </div>
+      <div class="card">
+        <button onclick="copyAll()">Alles kopieren</button>
+        <p style="margin-top:8px;color:#a3a8c2;font-size:12px">Kopiert die generierten Formeln in die Zwischenablage.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>SUMMENPRODUKT (Score) · Zelle Input!G{row}</h3>
+        <pre id="outScore"></pre>
+      </div>
+      <div class="card">
+        <h3>WENN (Installationsentscheidung) · Zelle Input!H{row}</h3>
+        <pre id="outDecision"></pre>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>XLOOKUP Förderquote · Zelle Input!I{row}</h3>
+        <pre id="outQuoteXL"></pre>
+      </div>
+      <div class="card">
+        <h3>INDEX+VERGLEICH Profile · Zellen Input!J{row} / K{row}</h3>
+        <pre id="outProfilesIdx"></pre>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>OuterSpaceFlag · Zelle Input!L{row}</h3>
+        <pre id="outOuter"></pre>
+      </div>
+      <div class="card">
+        <h3>Hinweis</h3>
+        <pre>Nutze dieselbe Zeile (row) für alle Formeln und ziehe sie nach unten.
+
+Beispiel-Struktur in Excel:
+
+Input-Blatt:
+  A: Standort-ID
+  B-F: Kriterien (NachfrageIndex, EnergieKostenIndex, RecyclingPotenzial, F_E_Anbindung, SpaceReadyIndex)
+  G: Score (SUMMENPRODUKT)
+  H: Entscheidung (WENN)
+  I: Förderquote (XLOOKUP)
+  J: RobotikProfil (INDEX+VERGLEICH)
+  K: DruckProfil (INDEX+VERGLEICH)
+  L: OuterSpaceFlag (WENN)
+
+Matrix-Blatt:
+  A: Score-Schlüssel
+  B: Förderquote
+  C: RobotikProfil
+  D: DruckProfil</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // [.SYSTEMS.T.SYSTEMS.] U.A.E. DECISION MATRIX - EXCEL FORMEL GENERATOR
+    
+    function esc(s){ return s.replace(/"/g,'""'); }
+    
+    function generate(){
+      try {
+        const input = document.getElementById('inputSheet').value.trim() || 'Input';
+        const matrix = document.getElementById('matrixSheet').value.trim() || 'Matrix';
+        const rA = document.getElementById('matrixRangeA').value.trim() || '$A$2:$A$100';
+        const rB = document.getElementById('matrixRangeB').value.trim() || '$B$2:$B$100';
+        const rC = document.getElementById('matrixRangeC').value.trim() || '$C$2:$C$100';
+        const rD = document.getElementById('matrixRangeD').value.trim() || '$D$2:$D$100';
+        const w = document.getElementById('weightsRange').value.trim() || '$B$2:$F$2';
+        const row = Number(document.getElementById('startRow').value.trim() || '5');
+        const thresholds = document.getElementById('thresholds').value.split(';').map(Number);
+        const [scoreTh, recycleTh, spaceTh, outerScoreTh] = thresholds.length >= 4 ? thresholds : [80, 3, 4, 90];
+        
+        const valsRange = `B${row}:F${row}`;
+        
+        // SUMMENPRODUKT für Score
+        const fScore = `=SUMMENPRODUKT(${input}!${w};${input}!${valsRange})`;
+        
+        // WENN für Installationsentscheidung
+        const fDecision = `=WENN(${input}!G${row}>=${scoreTh};WENN(${input}!D${row}>=${recycleTh};WENN(${input}!F${row}>=${spaceTh};"INSTALLIEREN";"NOCH PRÜFEN");"NOCH PRÜFEN");"NICHT INSTALLIEREN")`;
+        
+        // XLOOKUP für Förderquote
+        const fQuoteXL = `=XLOOKUP(${input}!G${row};${matrix}!${rA};${matrix}!${rB};0;0)`;
+        
+        // INDEX+VERGLEICH für Profile
+        const fRobotIdx = `=INDEX(${matrix}!${rC};VERGLEICH(${input}!G${row};${matrix}!${rA};0))`;
+        const fPrintIdx = `=INDEX(${matrix}!${rD};VERGLEICH(${input}!G${row};${matrix}!${rA};0))`;
+        
+        // OuterSpaceFlag
+        const fOuter = `=WENN(${input}!F${row}>=${spaceTh};WENN(${input}!E${row}>=${spaceTh};WENN(${input}!G${row}>=${outerScoreTh};1;0);0);0)`;
+        
+        document.getElementById('outScore').textContent = fScore;
+        document.getElementById('outDecision').textContent = fDecision;
+        document.getElementById('outQuoteXL').textContent = fQuoteXL;
+        document.getElementById('outProfilesIdx').textContent = `RobotikProfil (J${row}):\n${fRobotIdx}\n\nDruckProfil (K${row}):\n${fPrintIdx}`;
+        document.getElementById('outOuter').textContent = fOuter;
+        
+        console.log('[FABRIKAGE] Excel-Formeln generiert');
+      } catch(e) {
+        console.error('[FABRIKAGE] generate error:', e);
+        alert('Fehler beim Generieren: ' + e.message);
+      }
+    }
+    
+    async function copyAll(){
+      try {
+        const blocks = ['outScore','outDecision','outQuoteXL','outProfilesIdx','outOuter']
+          .map(id => {
+            const el = document.getElementById(id);
+            return el ? el.textContent.trim() : '';
+          })
+          .filter(Boolean)
+          .join('\n\n');
+        
+        if (blocks) {
+          await navigator.clipboard.writeText(blocks);
+          alert('Formeln kopiert!');
+          console.log('[FABRIKAGE] Formeln kopiert');
+        } else {
+          alert('Keine Formeln zum Kopieren. Bitte zuerst generieren.');
+        }
+      } catch(e) {
+        console.error('[FABRIKAGE] copyAll error:', e);
+        alert('Kopieren fehlgeschlagen. Bitte manuell markieren.');
+      }
+    }
+    
+    // Initialisierung
+    generate();
+    
+    console.log('[FABRIKAGE] U.A.E. Decision Matrix geladen');
+    console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+  </script>
+</body>
+</html>

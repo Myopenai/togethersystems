@@ -1,0 +1,89 @@
+// A dedicated script for mobile navigation.
+// It assumes the CSS is correctly set up for the slide-out and accordion behaviors.
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Mobile Menu Open/Close Elements
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mainMobileNav = document.getElementById('main-mobile-nav');
+    const mobileNavClose = document.getElementById('mobile-nav-close');
+    const body = document.body;
+    // 2. Check if the required elements exist
+    if (mobileMenuToggle && mainMobileNav && mobileNavClose) {
+        // Handle opening the menu
+        mobileMenuToggle.addEventListener('click', function() {
+            mainMobileNav.classList.add('is-open');
+            body.classList.add('nav-open'); // Add class to body to prevent scrolling
+            mainMobileNav.setAttribute('aria-hidden', 'false');
+            mobileMenuToggle.setAttribute('aria-expanded', 'true');
+        });
+        // Handle closing the menu
+        mobileNavClose.addEventListener('click', function() {
+            mainMobileNav.classList.remove('is-open');
+            body.classList.remove('nav-open'); // Remove class from body
+            mainMobileNav.setAttribute('aria-hidden', 'true');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        });
+        
+    } else {
+        console.error("Mobile navigation elements not found. Please ensure IDs 'mobile-menu-toggle', 'main-mobile-nav', and 'mobile-nav-close' are correct in your HTML.");
+    }
+
+    // 3. Accordion Functionality
+    const mobileMainMenuItems = document.querySelectorAll('.mobile-main-menu > li');
+
+    mobileMainMenuItems.forEach(item => {
+        // Find the main link with a submenu indicator (aria-haspopup)
+        const parentLink = item.querySelector('a[aria-haspopup="true"]');
+        // Find the submenu <ul>
+        const submenu = item.querySelector('ul');
+
+        if (parentLink && submenu) {
+            
+            // Prevent the main link from navigating and toggle the submenu
+            parentLink.addEventListener('click', function(event) {
+                // Check if the screen width is within the mobile range (using a common breakpoint)
+                if (window.matchMedia('(max-width: 66.999em)').matches) {
+                    event.preventDefault(); 
+                    
+                    // Toggle the 'is-expanded' class on the parent <li>
+                    item.classList.toggle('is-expanded');
+                    
+                    if (item.classList.contains('is-expanded')) {
+                        // Expand the submenu by setting max-height to its scroll height
+                        submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                        parentLink.setAttribute('aria-expanded', 'true');
+                    } else {
+                        // Collapse the submenu
+                        submenu.style.maxHeight = '0';
+                        parentLink.setAttribute('aria-expanded', 'false');
+                    }
+                    
+                    // Close other open accordions
+                    mobileMainMenuItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('is-expanded')) {
+                            otherItem.classList.remove('is-expanded');
+                            const otherSubmenu = otherItem.querySelector('ul');
+                            if (otherSubmenu) {
+                                otherSubmenu.style.maxHeight = '0';
+                                otherItem.querySelector('a[aria-haspopup="true"]').setAttribute('aria-expanded', 'false');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    // 4. Ensure accordion max-height is recalculated on window resize
+    window.addEventListener('resize', function() {
+        mobileMainMenuItems.forEach(item => {
+            if (item.classList.contains('is-expanded')) {
+                const submenu = item.querySelector('ul');
+                if (submenu) {
+                    // Recalculate max-height in case content reflowed
+                    submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                }
+            }
+        });
+    });
+});

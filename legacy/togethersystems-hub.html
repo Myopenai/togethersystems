@@ -1,0 +1,441 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TogetherSystems Hub – [.SYSTEMS.T.SYSTEMS.]</title>
+	<meta name="description" content="Zentraler Hub für alle TogetherSystems Anwendungen: Budget, Contract, Flowcashx, Kassenbuch, Indexportal">
+	<meta name="theme-color" content="#0f3460">
+	
+	<!-- PWA Manifest -->
+	<link rel="manifest" href="manifest.json">
+	
+	<!-- Icons für alle Plattformen -->
+	<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+	<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+	<link rel="apple-touch-icon" href="icons/icon-192.png">
+	
+	<script>
+		const BASE_URL = 'https://myopenai.github.io/togethersystems';
+	</script>
+	
+	<style>
+		:root {
+			--bg: #0f1419;
+			--card: #151b23;
+			--text: #e6eef3;
+			--muted: #9fb3c8;
+			--accent: #10b981;
+			--accent-2: #0f3460;
+			--danger: #ef4444;
+			--border: #223040;
+			--success: #34d399;
+		}
+		
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+		
+		body {
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			background: linear-gradient(135deg, #0f1419 0%, #151b23 50%, #0f1419 100%);
+			color: var(--text);
+			min-height: 100vh;
+			padding: 20px;
+		}
+		
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+		
+		header {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			padding: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+			box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+		}
+		
+		h1 {
+			font-size: 32px;
+			margin-bottom: 10px;
+			background: linear-gradient(120deg, var(--accent), #30e0ff);
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+		}
+		
+		.brand {
+			font-size: 14px;
+			color: var(--muted);
+			margin-top: 10px;
+		}
+		
+		.install-banner {
+			background: linear-gradient(120deg, var(--accent-2), var(--accent));
+			border-radius: 12px;
+			padding: 15px 20px;
+			margin-bottom: 30px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+		
+		.install-banner.hidden {
+			display: none;
+		}
+		
+		.install-banner p {
+			margin: 0;
+			font-weight: 600;
+		}
+		
+		.install-btn {
+			background: white;
+			color: var(--accent-2);
+			border: none;
+			border-radius: 8px;
+			padding: 10px 20px;
+			font-weight: 700;
+			cursor: pointer;
+			transition: transform 0.2s;
+		}
+		
+		.install-btn:hover {
+			transform: translateY(-2px);
+		}
+		
+		.apps-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+			gap: 20px;
+			margin-bottom: 30px;
+		}
+		
+		.app-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			padding: 25px;
+			transition: all 0.3s;
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		.app-card::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 4px;
+			background: linear-gradient(90deg, var(--accent), var(--accent-2));
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
+		
+		.app-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+			border-color: var(--accent);
+		}
+		
+		.app-card:hover::before {
+			opacity: 1;
+		}
+		
+		.app-icon {
+			font-size: 48px;
+			margin-bottom: 15px;
+		}
+		
+		.app-card h2 {
+			font-size: 20px;
+			margin-bottom: 10px;
+		}
+		
+		.app-card p {
+			font-size: 14px;
+			color: var(--muted);
+			line-height: 1.6;
+			margin-bottom: 15px;
+		}
+		
+		.app-badges {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			margin-bottom: 15px;
+		}
+		
+		.badge {
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 4px 10px;
+			font-size: 11px;
+			color: var(--muted);
+		}
+		
+		.app-link {
+			display: inline-block;
+			background: var(--accent);
+			color: #00110b;
+			padding: 10px 20px;
+			border-radius: 8px;
+			text-decoration: none;
+			font-weight: 600;
+			transition: all 0.3s;
+		}
+		
+		.app-link:hover {
+			background: var(--success);
+			transform: translateX(5px);
+		}
+		
+		.stats-section {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			padding: 25px;
+			margin-bottom: 30px;
+		}
+		
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 20px;
+			margin-top: 20px;
+		}
+		
+		.stat-item {
+			text-align: center;
+			padding: 20px;
+			background: var(--bg);
+			border-radius: 12px;
+			border: 1px solid var(--border);
+		}
+		
+		.stat-value {
+			font-size: 32px;
+			font-weight: 700;
+			color: var(--accent);
+			margin-bottom: 5px;
+		}
+		
+		.stat-label {
+			font-size: 14px;
+			color: var(--muted);
+		}
+		
+		.footer {
+			text-align: center;
+			padding: 30px;
+			color: var(--muted);
+			font-size: 12px;
+		}
+		
+		@media (max-width: 768px) {
+			.apps-grid {
+				grid-template-columns: 1fr;
+			}
+			
+			h1 {
+				font-size: 24px;
+			}
+		}
+	</style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>š€ TogetherSystems Hub</h1>
+			<div class="brand">[.SYSTEMS.T.SYSTEMS.] TogetherSystems International TTT</div>
+			<p style="margin-top: 15px; color: var(--muted);">
+				Zentraler Hub für alle Anwendungen • Cross-Platform • Offline-Fähig
+			</p>
+		</header>
+		
+		<div id="installBanner" class="install-banner">
+			<p>“± Installiere diese App auf deinem Gerät für Offline-Zugriff</p>
+			<button class="install-btn" id="installBtn">Installieren</button>
+		</div>
+		
+		<div class="apps-grid">
+			<div class="app-card" onclick="window.location.href='budget.html'">
+				<div class="app-icon">“Š</div>
+				<h2>Budget</h2>
+				<p>DaVinci Budget Sphere – 4D Haushaltsbilanz-Visualisierung mit interaktiven Szenarien</p>
+				<div class="app-badges">
+					<span class="badge">Visualisierung</span>
+					<span class="badge">4D</span>
+					<span class="badge">Szenarien</span>
+				</div>
+				<a href="budget.html" class="app-link">Öffnen â†’</a>
+			</div>
+			
+			<div class="app-card" onclick="window.location.href='contract.html'">
+				<div class="app-icon">“„</div>
+				<h2>Contract</h2>
+				<p>UniverseAllEnterprises Budget & Statement System – Vertrags- und Bilanzverwaltung</p>
+				<div class="app-badges">
+					<span class="badge">Verträge</span>
+					<span class="badge">Bilanz</span>
+					<span class="badge">Export</span>
+				</div>
+				<a href="contract.html" class="app-link">Öffnen â†’</a>
+			</div>
+			
+			<div class="app-card" onclick="window.location.href='FLOCASHX.HTML'">
+				<div class="app-icon">’¸</div>
+				<h2>Flowcashx</h2>
+				<p>Haushalts- & Bilanzsystem – Automatische Verarbeitung von Bank- und Kassendaten</p>
+				<div class="app-badges">
+					<span class="badge">CSV Import</span>
+					<span class="badge">Auto-Processing</span>
+					<span class="badge">Canvas</span>
+				</div>
+				<a href="FLOCASHX.HTML" class="app-link">Öffnen â†’</a>
+			</div>
+			
+			<div class="app-card" onclick="window.location.href="kassenbuchkassenbuch.html"">
+				<div class="app-icon">“–</div>
+				<h2>Kassenbuch</h2>
+				<p>Vollständiges Kassenbuch mit automatischer Synchronisation zu allen Apps</p>
+				<div class="app-badges">
+					<span class="badge">Synchronisation</span>
+					<span class="badge">CSV Import</span>
+					<span class="badge">Export</span>
+				</div>
+				<a href="kassenbuchkassenbuch.html" class="app-link">Öffnen â†’</a>
+			</div>
+			
+			<div class="app-card" onclick="window.location.href='chflox.html'">
+				<div class="app-icon">Ž¨</div>
+				<h2>UAE / Chflox</h2>
+				<p>Budget-, Bilanz- & Haushaltsplaner (Canvas-Modul) – Single-File kompatibel</p>
+				<div class="app-badges">
+					<span class="badge">Canvas</span>
+					<span class="badge">Single-File</span>
+					<span class="badge">UAE</span>
+				</div>
+				<a href="chflox.html" class="app-link">Öffnen â†’</a>
+			</div>
+			
+			<div class="app-card" onclick="window.location.href='indexortal.html'">
+				<div class="app-icon">Œ</div>
+				<h2>Indexportal</h2>
+				<p>Zentrales Portal für alle Anwendungen und Funktionen</p>
+				<div class="app-badges">
+					<span class="badge">Portal</span>
+					<span class="badge">Zentral</span>
+					<span class="badge">Hub</span>
+				</div>
+				<a href="indexortal.html" class="app-link">Öffnen â†’</a>
+			</div>
+		</div>
+		
+		<div class="stats-section">
+			<h2 style="margin-bottom: 10px;">“ˆ System-Status</h2>
+			<div class="stats-grid">
+				<div class="stat-item">
+					<div class="stat-value" id="appCount">6</div>
+					<div class="stat-label">Anwendungen</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value" id="syncStatus">âœ“</div>
+					<div class="stat-label">Synchronisation</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value" id="platform">Web</div>
+					<div class="stat-label">Plattform</div>
+				</div>
+				<div class="stat-item">
+					<div class="stat-value" id="offlineStatus">âœ“</div>
+					<div class="stat-label">Offline-Fähig</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="footer">
+			<p><strong>[.SYSTEMS.T.SYSTEMS.]</strong> TogetherSystems International TTT</p>
+			<p>BRANÃ: TTT.T,.3T | Kennung: [.T.4T.]</p>
+			<p style="margin-top: 10px;">
+				Verfügbar für: Windows • macOS • Linux • iOS • Android • Web
+			</p>
+		</div>
+	</div>
+	
+	<script>
+		// PWA Install Handler
+		let deferredPrompt;
+		
+		window.addEventListener('beforeinstallprompt', (e) => {
+			e.preventDefault();
+			deferredPrompt = e;
+			document.getElementById('installBanner').classList.remove('hidden');
+		});
+		
+		document.getElementById('installBtn').addEventListener('click', async () => {
+			if (deferredPrompt) {
+				deferredPrompt.prompt();
+				const { outcome } = await deferredPrompt.userChoice;
+				console.log('[FABRIKAGE] Install outcome:', outcome);
+				deferredPrompt = null;
+				document.getElementById('installBanner').classList.add('hidden');
+			}
+		});
+		
+		// Platform Detection
+		function detectPlatform() {
+			const ua = navigator.userAgent;
+			if (/Windows/.test(ua)) return 'Windows';
+			if (/Mac/.test(ua)) return 'macOS';
+			if (/Linux/.test(ua)) return 'Linux';
+			if (/iPhone|iPad/.test(ua)) return 'iOS';
+			if (/Android/.test(ua)) return 'Android';
+			return 'Web';
+		}
+		
+		document.getElementById('platform').textContent = detectPlatform();
+		
+		// Offline Status
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('sw.js').then(() => {
+				document.getElementById('offlineStatus').textContent = 'âœ“';
+			}).catch(() => {
+				document.getElementById('offlineStatus').textContent = 'âš ';
+			});
+		}
+		
+		// Sync Status
+		if (window.cashflowHub) {
+			document.getElementById('syncStatus').textContent = 'âœ“';
+		} else {
+			// Lade Communication Layer
+			const script = document.createElement('script');
+			script.src = 'KASSENBUCH-COMMUNICATION-LAYER.js';
+			script.onload = () => {
+				document.getElementById('syncStatus').textContent = 'âœ“';
+			};
+			document.head.appendChild(script);
+		}
+		
+		console.log('[FABRIKAGE] TogetherSystems Hub geladen');
+		console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+		console.log('[FABRIKAGE] Platform:', detectPlatform());
+	</script>
+</body>
+</html>

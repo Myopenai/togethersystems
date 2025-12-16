@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SIZE-ANALYSIS-REPORT</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
+</head>
+<body>
+<h1>Size Analysis Report - Größte Dateien/Ordner</h1>
+
+<h2>Basierend auf Verzeichnisstruktur-Analyse</h2>
+
+<h3>Vermutete größte Ordner (basierend auf Struktur):</h3>
+
+1. <strong>backup/</strong> - Wahrscheinlich 500-1000 MB
+   - Enthält mehrere Backup-Versionen des Portals
+   - `portal-2025-11-28-105610/`
+   - `portal-2025-11-28-110820/`
+   - <strong>LÖSCHEN für Production Package</strong>
+
+2. <strong>node_modules/</strong> (falls vorhanden) - Kann mehrere 100 MB sein
+   - NPM Dependencies
+   - <strong>NICHT benötigt für Production Package</strong>
+
+3. <strong>businessconnecthub-playwright-tests-full/</strong> - Kann 100-500 MB sein
+   - Test-Dateien und Screenshots
+   - <strong>NICHT benötigt für Production Package</strong>
+
+4. <strong>Settings/</strong> - Kann 50-200 MB sein
+   - Viele JSON-Dateien
+   - <strong>NUR wichtigste Dateien für Production Package</strong>
+
+5. <strong>archive/</strong> - Kann 100-500 MB sein
+   - Alte archivierte Dateien
+   - <strong>LÖSCHEN für Production Package</strong>
+
+6. <strong>online/</strong> - Kann 100-300 MB sein
+   - Duplikate/Backups
+   - <strong>PRÜFEN ob benötigt</strong>
+
+7. <strong>Produktionsordner/</strong> - Kann 100-300 MB sein
+   - Alte Produktions-Dateien
+   - <strong>PRÜFEN ob benötigt</strong>
+
+8. <strong>Developer Portal - Together Systems_files/</strong> - Kann 50-200 MB sein
+   - Gespeicherte Webseiten-Dateien
+   - <strong>LÖSCHEN für Production Package</strong>
+
+9. <strong>Job-Angebot - Together Systems Developer_files/</strong> - Kann 50-200 MB sein
+   - Gespeicherte Webseiten-Dateien
+   - <strong>LÖSCHEN für Production Package</strong>
+
+10. <strong>together-systems-meta-transaktionsportal-report/</strong> - Kann 50-200 MB sein
+    - Report-Dateien
+    - <strong>PRÜFEN ob benötigt</strong>
+
+<h3>Vermutete größte Dateien:</h3>
+
+1. <strong>.zip Dateien</strong> - Können 50-500 MB sein
+   - `cloudflare-complete.zip`
+   - `help-manifest.zip`
+   - `settings.zip`
+   - `portal-static-upload.zip`
+   - <strong>LÖSCHEN für Production Package</strong>
+
+2. <strong>Screenshots</strong> - Können 5-50 MB sein
+   - `Schermafbeelding 2025-11-05 010211.png`
+   - `Schermafbeelding 2025-11-25 223934.png`
+   - `GLI5_msWMAAPink.jpg`
+   - <strong>LÖSCHEN für Production Package</strong>
+
+3. <strong>Große HTML-Dateien</strong> - Können 1-10 MB sein
+   - `manifest-portal.html` (wahrscheinlich sehr groß)
+   - `index.html` (kann groß sein)
+   - <strong>BEHALTEN (sind essentiell)</strong>
+
+4. <strong>Test-Report JSON</strong> - Kann 10-100 MB sein
+   - `COMPLETE-MASTER-TEST-REPORT.json`
+   - <strong>LÖSCHEN für Production Package</strong>
+
+<h3>Dateitypen-Analyse (Vermutung):</h3>
+
+1. <strong>.md Dateien</strong> - ~100-200 MB
+   - Über 100 Dokumentationsdateien
+   - <strong>NICHT benötigt für Production Package</strong>
+
+2. <strong>.js Test-Scripts</strong> - ~50-100 MB
+   - Viele Test- und Auto-Fix-Scripts
+   - <strong>NUR Core-Scripts für Production Package</strong>
+
+3. <strong>.ps1 Scripts</strong> - ~10-50 MB
+   - Viele Deployment- und Test-Scripts
+   - <strong>NICHT benötigt für Production Package</strong>
+
+4. <strong>.sql Dateien</strong> - ~5-20 MB
+   - Datenbank-Schemas
+   - <strong>NUR wenn für Deployment benötigt</strong>
+
+<h2>Empfohlene Aktionen:</h2>
+
+<h3>Sofort löschen für Production Package:</h3>
+- ❌ `backup/` (komplett)
+- ❌ `archive/` (komplett)
+- ❌ `node_modules/` (falls vorhanden)
+- ❌ `*.zip` Dateien
+- ❌ `<em>.png`, `</em>.jpg` Screenshots
+- ❌ Alle `.md` Dokumentationsdateien (außer README.md)
+- ❌ Alle Test-Scripts (`test-<em>.js`, `auto-</em>.js` außer Core)
+- ❌ Alle `.ps1` Scripts (außer Deployment-Scripts)
+- ❌ `Developer Portal - Together Systems_files/`
+- ❌ `Job-Angebot - Together Systems Developer_files/`
+- ❌ `businessconnecthub-playwright-tests-full/`
+
+<h3>Behalten (essentiell):</h3>
+- ✅ Alle `.html` Portal-Dateien
+- ✅ `css/` Ordner
+- ✅ `js/` Ordner (nur Core-Scripts)
+- ✅ `assets/` Ordner
+- ✅ `TELADIA/`, `TELBANK/`, `YORDY/`
+- ✅ `Settings/` (nur wichtigste Dateien)
+- ✅ `functions/` (Cloudflare Pages)
+- ✅ `demo-data/` (falls benötigt)
+- ✅ `icon.png`, `manifest-*.webmanifest`, `sw.js`
+- ✅ `package.json`, `README.md`
+
+<h2>Geschätzte Größen-Reduktion:</h2>
+
+- <strong>Aktuell</strong>: ~2 GB
+- <strong>Nach Cleanup</strong>: ~50-200 MB (95-97% Reduktion)
+- <strong>Komprimiert</strong>: ~20-100 MB
+
+T,.&T,,.&T,,,.SIZE-ANALYSIS-COMPLETE(C)(R)
+<p>---
+
+<h2>¢ Unternehmens-Branding & OCR</h2>
+
+<strong>TogetherSystems</strong> | <strong>T,.&T,,.&T,,,.</strong> | <strong>TTT Enterprise Universe</strong>
+
+| Information | Link |
+|------------|------|
+| <strong>Initiator</strong> | <a href="https://orcid.org/0009-0003-1328-2430">Raymond Demitrio Tel</a> |
+| <strong>ORCID</strong> | <a href="https://orcid.org/0009-0003-1328-2430">0009-0003-1328-2430</a> |
+| <strong>Website</strong> | <a href="https://tel1.nl">tel1.nl</a> |
+| <strong>WhatsApp</strong> | <a href="https://wa.me/31613803782">+31 613 803 782</a> |
+| <strong>GitHub</strong> | <a href="https://github.com/myopenai/togethersystems">myopenai/togethersystems</a> |
+| <strong>Businessplan</strong> | <a href="https://github.com/T-T-T-Sysytems-T-T-T-Systems-com-T-T/.github/blob/main/TGPA_Businessplan_DE.pdf">TGPA Businessplan DE.pdf</a> |
+
+<strong>Branding:</strong> T,.&T,,.&T,,,.(C)(R)TEL1.NL - TTT,. -
+
+<strong>IBM+++ MCP MCP MCP Standard</strong> | <strong>Industrial Business Machine</strong> | <strong>Industrial Fabrication Software</strong>
+
+---</p>
+</body>
+</html>

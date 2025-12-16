@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference | Multi-Industry Docs</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://unpkg.com/lunr/lunr.js"></script>
+    <script src="../js/search-data.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>API Reference</h1>
+            <p class="subtitle">Complete API documentation for all services</p>
+        </header>
+
+        <nav class="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search API..." id="searchInput">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div id="searchResults"></div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="active"><a href="#overview"><i class="fas fa-code"></i> API Reference</a>
+                    <ul class="submenu">
+                        <li><a href="#authentication">Authentication</a></li>
+                        <li><a href="#rate-limiting">Rate Limiting</a></li>
+                        <li><a href="#errors">Error Handling</a></li>
+                        <li><a href="#ecommerce">E-commerce API</a></li>
+                        <li><a href="#banking">Banking API</a></li>
+                        <li><a href="#insurance">Insurance API</a></li>
+                    </ul>
+                </li>
+                <li><a href="../templates/user-guide.html"><i class="fas fa-book"></i> User Guide</a></li>
+                <li><a href="../templates/faq.html"><i class="fas fa-question-circle"></i> FAQ</a></li>
+            </ul>
+        </nav>
+
+        <main class="content" id="mainContent">
+            <section id="overview">
+                <h2>API Overview</h2>
+                <div class="card">
+                    <p>This is the complete reference documentation for our Multi-Industry API. The API follows REST principles and uses JSON for request and response bodies.</p>
+                    
+                    <h3>Base URL</h3>
+                    <pre><code class="http">https://api.togethersystems.com/v1</code></pre>
+                    
+                    <h3>Content Type</h3>
+                    <p>All API requests should include the following header:</p>
+                    <pre><code class="http">Content-Type: application/json</code></pre>
+                </div>
+            </section>
+
+            <section id="authentication">
+                <h2>Authentication</h2>
+                <div class="card">
+                    <p>All API requests must include an API key in the <code>Authorization</code> header.</p>
+                    
+                    <h3>Request Headers</h3>
+                    <pre><code class="http">Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json</code></pre>
+                    
+                    <h3>Getting an API Key</h3>
+                    <p>To get an API key, log in to your dashboard and navigate to the API section.</p>
+                </div>
+            </section>
+
+            <section id="rate-limiting">
+                <h2>Rate Limiting</h2>
+                <div class="card">
+                    <p>API requests are limited to 1000 requests per hour per API key.</p>
+                    
+                    <h3>Rate Limit Headers</h3>
+                    <pre><code class="http">X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 995
+X-RateLimit-Reset: 1679999999</code></pre>
+                </div>
+            </section>
+
+            <section id="ecommerce">
+                <h2>E-commerce API</h2>
+                <div class="card">
+                    <h3>Products</h3>
+                    
+                    <div class="endpoint">
+                        <div class="method get">GET</div>
+                        <div class="path">/ecommerce/products</div>
+                        <div class="description">List all products</div>
+                        
+                        <h4>Example Request</h4>
+                        <pre><code class="bash">curl -X GET https://api.togethersystems.com/v1/ecommerce/products \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                        
+                        <h4>Example Response</h4>
+                        <pre><code class="json">{
+  "data": [
+    {
+      "id": "prod_123",
+      "name": "Premium T-Shirt",
+      "price": 29.99,
+      "stock_quantity": 100
+    }
+  ],
+  "pagination": {
+    "total": 1,
+    "page": 1,
+    "per_page": 25
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="banking">
+                <h2>Banking API</h2>
+                <div class="card">
+                    <h3>Accounts</h3>
+                    
+                    <div class="endpoint">
+                        <div class="method get">GET</div>
+                        <div class="path">/banking/accounts</div>
+                        <div class="description">List all accounts</div>
+                        
+                        <h4>Example Request</h4>
+                        <pre><code class="bash">curl -X GET https://api.togethersystems.com/v1/banking/accounts \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="insurance">
+                <h2>Insurance API</h2>
+                <div class="card">
+                    <h3>Claims</h3>
+                    
+                    <div class="endpoint">
+                        <div class="method post">POST</div>
+                        <div class="path">/insurance/claims</div>
+                        <div class="description">Submit a new claim</div>
+                        
+                        <h4>Example Request</h4>
+                        <pre><code class="bash">curl -X POST https://api.togethersystems.com/v1/insurance/claims \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "policy_number": "POL123456",
+    "incident_date": "2025-01-15T10:30:00Z",
+    "description": "Water damage to living room"
+  }'</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="errors">
+                <h2>Error Handling</h2>
+                <div class="card">
+                    <p>All error responses follow the same format:</p>
+                    
+                    <pre><code class="json">{
+  "error": {
+    "code": "invalid_request",
+    "message": "The request is missing a required parameter",
+    "details": {
+      "parameter": "amount"
+    }
+  }
+}</code></pre>
+                    
+                    <h3>Common Error Codes</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>HTTP Status</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>invalid_request</code></td>
+                                <td>400</td>
+                                <td>The request is missing a required parameter or is otherwise malformed</td>
+                            </tr>
+                            <tr>
+                                <td><code>unauthorized</code></td>
+                                <td>401</td>
+                                <td>Authentication failed or user doesn't have permissions</td>
+                            </tr>
+                            <tr>
+                                <td><code>not_found</code></td>
+                                <td>404</td>
+                                <td>The requested resource doesn't exist</td>
+                            </tr>
+                            <tr>
+                                <td><code>rate_limit_exceeded</code></td>
+                                <td>429</td>
+                                <td>Too many requests</td>
+                            </tr>
+                            <tr>
+                                <td><code>server_error</code></td>
+                                <td>500</td>
+                                <td>An internal server error occurred</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 TogetherSystems - API Reference</p>
+            <div class="theme-switcher">
+                <button id="themeToggle"><i class="fas fa-moon"></i> Toggle Dark Mode</button>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/search.js" defer></script>
+    <script>
+        // Initialize syntax highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

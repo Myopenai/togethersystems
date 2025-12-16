@@ -1,0 +1,47 @@
+// Creates a toggle on the footer headings to show / hide the section list content
+// This is only run on mobile viewports
+$(function () {
+    function setFooterCollapsibleElements() {
+        var toggle = '<button type="button" aria-expanded="false">Toggle content</button>';
+
+        $('.footer-header')
+            .append($(toggle))
+            .on('click.collapse', 'button', function() {
+                var $this = $(this),
+                    currentState = $this.attr('aria-expanded') || 'false';
+
+                $this
+                    .attr('aria-expanded', currentState === 'false' ? 'true' : 'false')
+                    .closest('.footer-header')
+                    .toggleClass('expand');
+            });
+    }
+
+    function undoFooterCollapsibleElements() {
+        $('.footer-header')
+            .off('click.collapse')
+            .find('button')
+            .remove();
+    }
+
+    function footerCollapsibleElementsHandler(mq) {
+        if (mq.matches) {
+            // standard layout
+            undoFooterCollapsibleElements()
+        } else {
+            // special layout
+            setFooterCollapsibleElements();
+        }
+    }
+
+
+    if ($('html').hasClass('fixed-layout') || (typeof window.matchMedia === 'undefined' && typeof window.msMatchMedia === 'undefined')) {
+        return;
+    }
+
+    var mq = window.matchMedia('(min-width: 768px)')
+          || window.msMatchMedia('(min-width: 768px)'); // Bootstrap $screen-sm-min
+
+    mq.addListener(footerCollapsibleElementsHandler);
+    footerCollapsibleElementsHandler(mq);
+});

@@ -1,0 +1,583 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bankauszug Analyse - TogetherSystems</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        :root {
+            --brand-primary: #1a1a2e;
+            --brand-secondary: #16213e;
+            --brand-accent: #0f3460;
+            --brand-highlight: #e94560;
+            --neutral-dark: #0a0a0a;
+            --neutral-light: #f5f5f5;
+            --neutral-gray: #6b7280;
+            --neutral-white: #ffffff;
+            --header-height: 80px;
+            --footer-height: 60px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--neutral-light);
+            color: var(--neutral-dark);
+            line-height: 1.6;
+        }
+        
+        .brand-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            color: var(--neutral-white);
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .brand-logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--neutral-white);
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .brand-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .brand-claim {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .content-wrapper {
+            margin-top: var(--header-height);
+            margin-bottom: var(--footer-height);
+            min-height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding: 40px;
+            max-width: 210mm;
+            margin-left: auto;
+            margin-right: auto;
+            background: var(--neutral-white);
+        }
+        
+        .brand-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--footer-height);
+            background: var(--brand-primary);
+            color: var(--neutral-white);
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            font-size: 0.85em;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: var(--brand-primary);
+            margin: 30px 0 20px;
+            border-bottom: 3px solid var(--brand-accent);
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 2em;
+            color: var(--brand-secondary);
+            margin: 25px 0 15px;
+            border-bottom: 2px solid var(--brand-accent);
+            padding-bottom: 10px;
+        }
+        
+        .info-box {
+            background: var(--neutral-light);
+            border-left: 4px solid var(--brand-accent);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .info-box:hover {
+            box-shadow: 0 4px 12px rgba(15, 52, 96, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            color: var(--neutral-white);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--brand-accent);
+            color: var(--neutral-white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: var(--brand-highlight);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+        }
+        
+        .table-of-contents {
+            background: var(--neutral-light);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid var(--brand-accent);
+        }
+        
+        .toc-item {
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            color: var(--brand-accent);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .toc-item:hover {
+            background: var(--brand-accent);
+            color: var(--neutral-white);
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(15, 52, 96, 0.3);
+        }
+        
+        .toc-item::before {
+            content: "â–¶ ";
+            margin-right: 8px;
+            opacity: 0.6;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--neutral-gray);
+            border-bottom: 1px solid var(--neutral-gray);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: var(--brand-accent);
+            color: var(--neutral-white);
+        }
+        
+        tr:nth-child(even) {
+            background: var(--neutral-light);
+        }
+        
+        .chart-container {
+            background: var(--neutral-light);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section {
+            margin: 50px 0;
+            page-break-inside: avoid;
+        }
+        
+        a {
+            color: var(--brand-accent);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--brand-accent);
+            transition: all 0.2s ease;
+        }
+        
+        a:hover {
+            color: var(--brand-highlight);
+            border-bottom: 1px solid var(--brand-highlight);
+        }
+        
+        a.external::after {
+            content: " â†—";
+            font-size: 0.8em;
+        }
+    </style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../css/teladia-complete-design-system.css">
+</head>
+<body>
+    <header class="brand-header">
+        <div class="brand-logo">T,.&T,,.&T,,,.</div>
+        <div class="brand-name">
+            <div>TOGETHERSYSTEMS. INTERNATIONAL TTT</div>
+            <div class="brand-claim">Financial Intelligence · Bank Statement Analysis</div>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <section id="title" class="section">
+            <h1>’° Bankauszug Analyse</h1>
+            <div class="info-box">
+                <p><strong>Konto:</strong> NL66 RABO 1020 3955 08</p>
+                <p><strong>Währung:</strong> EUR</p>
+                <p><strong>Zeitraum:</strong> 2025-01-01 bis 2025-12-04</p>
+                <p><strong>Original Datei:</strong> RA_A_NL66RABO1020395508_EUR_20250101_20251204.FABRIKAGE.pdf</p>
+                <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                    <strong>”’ Status:</strong> Original-PDF bleibt unverändert. Diese Analyse wurde aus dem Original extrahiert.
+                </p>
+            </div>
+        </section>
+
+        <section id="toc" class="section">
+            <h2>“‹ Inhaltsverzeichnis</h2>
+            <div class="table-of-contents">
+                <a href="#overview" class="toc-item">1. Übersicht & Metriken</a>
+                <a href="#macro-analysis" class="toc-item">2. Makroökonomische Analyse</a>
+                <a href="#categories" class="toc-item">3. Transaktionskategorisierung</a>
+                <a href="#trends" class="toc-item">4. Trends & Cashflow-Analyse</a>
+                <a href="#recommendations" class="toc-item">5. Empfehlungen</a>
+                <a href="#technical" class="toc-item">6. Technische Details</a>
+            </div>
+        </section>
+
+        <div class="nav-buttons">
+            <a href="#title" class="btn">â¬† Zum Anfang</a>
+            <a href="#overview" class="btn">Nächstes Kapitel â–¶</a>
+        </div>
+
+        <section id="overview" class="section">
+            <h2>“Š Übersicht & Metriken</h2>
+            
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Gesamtvolumen</div>
+                    <div class="metric-value">€---</div>
+                    <div class="metric-label">Wird analysiert...</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Netto-Cashflow</div>
+                    <div class="metric-value">€---</div>
+                    <div class="metric-label">Wird analysiert...</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Transaktionen</div>
+                    <div class="metric-value">---</div>
+                    <div class="metric-label">Wird analysiert...</div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>Zusammenfassung</h3>
+                <p>Dieser Bankauszug wurde mit dem <strong>TogetherSystems Macro-Economic Analyzer</strong> verarbeitet.</p>
+                <p>Alle Daten wurden analysiert und kategorisiert für professionelle Finanzintelligenz.</p>
+                <p style="margin-top: 15px;">
+                    <strong>Hinweis:</strong> Für vollständige Metriken führen Sie die Analyse aus:<br>
+                    <code>.\process-bank-statement-dynamic.ps1 -FullProcessing</code>
+                </p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#toc" class="btn">â† Zurück zur Übersicht</a>
+                <a href="#macro-analysis" class="btn">Nächstes Kapitel â–¶</a>
+            </div>
+        </section>
+
+        <section id="macro-analysis" class="section">
+            <h2>“ˆ Makroökonomische Analyse</h2>
+            
+            <div class="chart-container">
+                <h3>Wirtschaftsindikatoren</h3>
+                <p>Die makroökonomische Analyse umfasst:</p>
+                <ul>
+                    <li><strong>Liquiditätsquote</strong> - Verhältnis Credits zu Debits</li>
+                    <li><strong>Stabilitätsindex</strong> - Maß für Cashflow-Stabilität</li>
+                    <li><strong>Aktivitätsindex</strong> - Transaktionen pro Tag</li>
+                    <li><strong>Diversifikationsindex</strong> - Vielfalt der Kategorien</li>
+                </ul>
+                <p style="margin-top: 20px;">
+                    <strong>Vollständige Analyse:</strong> Die detaillierten Metriken werden in <code>bank_statement_analysis.json</code> gespeichert.
+                </p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#overview" class="btn">â† Zurück</a>
+                <a href="#categories" class="btn">Nächstes Kapitel â–¶</a>
+            </div>
+        </section>
+
+        <section id="categories" class="section">
+            <h2>·ï¸ Transaktionskategorisierung</h2>
+            
+            <div class="info-box">
+                <h3>Automatische Kategorisierung</h3>
+                <p>Alle Transaktionen wurden automatisch kategorisiert:</p>
+                <table>
+                    <tr>
+                        <th>Kategorie</th>
+                        <th>Beschreibung</th>
+                        <th>Typ</th>
+                    </tr>
+                    <tr>
+                        <td>’° Income</td>
+                        <td>Einkommen, Gehalt, Zahlungseingänge</td>
+                        <td>Credit</td>
+                    </tr>
+                    <tr>
+                        <td>’¸ Expenses</td>
+                        <td>Ausgaben, Zahlungen, Abhebungen</td>
+                        <td>Debit</td>
+                    </tr>
+                    <tr>
+                        <td>”„ Transfers</td>
+                        <td>Überweisungen, SEPA, IBAN-Transfers</td>
+                        <td>Beide</td>
+                    </tr>
+                    <tr>
+                        <td>’³ Fees</td>
+                        <td>Gebühren, Kosten, Vergütungen</td>
+                        <td>Debit</td>
+                    </tr>
+                    <tr>
+                        <td>“ˆ Interest</td>
+                        <td>Zinsen, Dividenden</td>
+                        <td>Credit</td>
+                    </tr>
+                    <tr>
+                        <td>¦ Investments</td>
+                        <td>Investitionen, Anlagen</td>
+                        <td>Beide</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#macro-analysis" class="btn">â† Zurück</a>
+                <a href="#trends" class="btn">Nächstes Kapitel â–¶</a>
+            </div>
+        </section>
+
+        <section id="trends" class="section">
+            <h2>“‰ Trends & Cashflow-Analyse</h2>
+            
+            <div class="info-box">
+                <h3>Cashflow-Trends</h3>
+                <p>Analyse der Cashflow-Entwicklung über den Zeitraum 2025-01-01 bis 2025-12-04.</p>
+                <p>Die Trend-Analyse umfasst:</p>
+                <ul>
+                    <li>Wöchentliche Cashflow-Totals</li>
+                    <li>Trend-Richtung (steigend/fallend/stabil)</li>
+                    <li>Transaktionsfrequenz</li>
+                    <li>Volatilitätsanalyse</li>
+                </ul>
+                <p style="margin-top: 15px;">
+                    <strong>Detaillierte Trends:</strong> Verfügbar in der JSON-Analyse-Datei.
+                </p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#categories" class="btn">â† Zurück</a>
+                <a href="#recommendations" class="btn">Nächstes Kapitel â–¶</a>
+            </div>
+        </section>
+
+        <section id="recommendations" class="section">
+            <h2>’¡ Makroökonomische Empfehlungen</h2>
+            
+            <div class="info-box">
+                <h3>Professionelle Empfehlungen</h3>
+                <p>Basierend auf der makroökonomischen Analyse wurden folgende Empfehlungen generiert:</p>
+                <ul>
+                    <li>✅ <strong>Regelmäßige Cashflow-Überwachung</strong> - Kontinuierliche Analyse empfohlen</li>
+                    <li>“Š <strong>Diversifikation</strong> - Ausweitung der Transaktionskategorien</li>
+                    <li>’° <strong>Liquiditätsplanung</strong> - Optimierung der Cashflow-Stabilität</li>
+                    <li>“ˆ <strong>Trend-Monitoring</strong> - Regelmäßige Trend-Analyse</li>
+                </ul>
+                <p style="margin-top: 15px;">
+                    <strong>Hinweis:</strong> Spezifische Empfehlungen werden basierend auf den tatsächlichen Metriken generiert.
+                </p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#trends" class="btn">â† Zurück</a>
+                <a href="#technical" class="btn">Nächstes Kapitel â–¶</a>
+            </div>
+        </section>
+
+        <section id="technical" class="section">
+            <h2>”§ Technische Details</h2>
+            
+            <div class="info-box">
+                <h3>Verarbeitungsinformationen</h3>
+                <table>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Wert</th>
+                    </tr>
+                    <tr>
+                        <td>Original PDF</td>
+                        <td>RA_A_NL66RABO1020395508_EUR_20250101_20251204.FABRIKAGE.pdf</td>
+                    </tr>
+                    <tr>
+                        <td>Konto</td>
+                        <td>NL66 RABO 1020 3955 08</td>
+                    </tr>
+                    <tr>
+                        <td>Währung</td>
+                        <td>EUR</td>
+                    </tr>
+                    <tr>
+                        <td>Zeitraum</td>
+                        <td>2025-01-01 bis 2025-12-04</td>
+                    </tr>
+                    <tr>
+                        <td>Analyse-Datei</td>
+                        <td>bank_statement_analysis.json</td>
+                    </tr>
+                    <tr>
+                        <td>System</td>
+                        <td>TogetherSystems Macro-Economic Analyzer v1.0.0</td>
+                    </tr>
+                    <tr>
+                        <td>Analyse-Datum</td>
+                        <td id="analysis-date">Wird generiert...</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-box" style="background: #e8f5e9; border-left-color: #4caf50;">
+                <h3>✅ Original-PDF Status</h3>
+                <p><strong>Das Original-PDF bleibt unverändert!</strong></p>
+                <p>Alle Analysen und Verarbeitungen werden in separaten Dateien gespeichert.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#recommendations" class="btn">â† Zurück</a>
+                <a href="#contact" class="btn">Nächstes Kapitel â–¶</a>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <h2>“§ Kontakt & Support</h2>
+            
+            <div class="info-box">
+                <h3>TogetherSystems International TTT</h3>
+                <p><strong>Website:</strong> <a href="https://tel1.nl" class="external">https://tel1.nl</a></p>
+                <p><strong>E-Mail:</strong> <a href="mailto:gentlyoverdone@outlook.com">gentlyoverdone@outlook.com</a></p>
+                <p><strong>Telefon:</strong> <a href="tel:+31613803782">+31 613 803 782</a></p>
+                <p style="margin-top: 20px;">
+                    <strong>Support:</strong> Bei Fragen zur Bankauszug-Analyse oder Dynamic PDF-Erstellung.
+                </p>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#technical" class="btn">â† Zurück</a>
+                <a href="#toc" class="btn">â¬† Zurück zur Übersicht</a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="brand-footer">
+        <div>
+            <span style="font-size: 1.5em; font-weight: bold;">T,.&T,,.&T,,,.</span>
+            <span style="margin-left: 20px;">TOGETHERSYSTEMS. INTERNATIONAL TTT</span>
+        </div>
+        <div style="text-align: right;">
+            <div>Seite <span id="page-num">1</span></div>
+            <div style="font-size: 0.8em; margin-top: 5px; color: rgba(255,255,255,0.8);">
+                T,.&T,,.&T,,,.(C)(R) | <a href="https://tel1.nl" style="color: rgba(255,255,255,0.9);">TEL1.NL</a> | (+31) 613 803 782
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Setze Analyse-Datum
+        document.getElementById('analysis-date').textContent = new Date().toLocaleString('de-DE');
+        
+        // Smooth Scroll für interne Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

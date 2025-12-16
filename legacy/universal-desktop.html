@@ -1,0 +1,407 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T,. Universal Desktop - TogetherSystems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .desktop-container {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            grid-template-rows: 60px 1fr 200px;
+            height: 100vh;
+            gap: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .branding {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00d4ff, #5b9bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .sidebar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .right-panel {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .footer {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-top: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .view-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .view-btn {
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 5px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .view-btn:hover, .view-btn.active {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: rgba(0, 212, 255, 0.6);
+        }
+        
+        .artifact-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .artifact-card:hover {
+            border-color: rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .artifact-path {
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #00d4ff;
+            margin: 5px 0;
+        }
+        
+        .artifact-hash {
+            font-family: monospace;
+            font-size: 0.8em;
+            color: #888;
+            margin: 5px 0;
+        }
+        
+        .artifact-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin: 5px 5px 5px 0;
+        }
+        
+        .status-active {
+            background: rgba(0, 255, 0, 0.2);
+            color: #0f0;
+        }
+        
+        .status-deprecated {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+        
+        .status-archived {
+            background: rgba(128, 128, 128, 0.2);
+            color: #888;
+        }
+        
+        .open-btn {
+            padding: 5px 10px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 3px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .open-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        .timeline-item {
+            padding: 10px;
+            border-left: 2px solid rgba(0, 212, 255, 0.3);
+            margin-bottom: 10px;
+            padding-left: 15px;
+        }
+        
+        .timeline-time {
+            font-size: 0.8em;
+            color: #888;
+        }
+    </style>
+  <script src="../../console-monitor.js"></script>
+  <script src="../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../css/teladia-complete-design-system.css">
+</head>
+<body>
+    <div class="desktop-container">
+        <header class="header">
+            <div class="branding">T,. Universal Desktop</div>
+        </header>
+        
+        <aside class="sidebar">
+            <h3>T,. Navigation</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin: 10px 0;"><a href="#dashboard" style="color: #00d4ff; text-decoration: none;">Dashboard</a></li>
+                <li style="margin: 10px 0;"><a href="#explorer" style="color: #00d4ff; text-decoration: none;">Explorer</a></li>
+                <li style="margin: 10px 0;"><a href="#timeline" style="color: #00d4ff; text-decoration: none;">Timeline</a></li>
+                <li style="margin: 10px 0;"><a href="#metrics" style="color: #00d4ff; text-decoration: none;">Metrics</a></li>
+                <li style="margin: 10px 0;"><a href="#search" style="color: #00d4ff; text-decoration: none;">Suche</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <div class="view-selector">
+                <button class="view-btn active" onclick="showView('dashboard')">Dashboard</button>
+                <button class="view-btn" onclick="showView('explorer')">Explorer</button>
+                <button class="view-btn" onclick="showView('timeline')">Timeline</button>
+                <button class="view-btn" onclick="showView('metrics')">Metrics</button>
+            </div>
+            
+            <div id="dashboard-view" class="view">
+                <h2>T,. Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="active-count">0</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="deprecated-count">0</div>
+                        <div class="stat-label">Deprecated</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="archived-count">0</div>
+                        <div class="stat-label">Archived</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-count">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                
+                <h3>T,. Recent Artifacts</h3>
+                <div id="recent-artifacts"></div>
+            </div>
+            
+            <div id="explorer-view" class="view" style="display: none;">
+                <h2>T,. Explorer</h2>
+                <div id="explorer-tree"></div>
+            </div>
+            
+            <div id="timeline-view" class="view" style="display: none;">
+                <h2>T,. Timeline</h2>
+                <div id="timeline-items"></div>
+            </div>
+            
+            <div id="metrics-view" class="view" style="display: none;">
+                <h2>T,. Metrics & Statistics</h2>
+                <div id="metrics-content"></div>
+            </div>
+        </main>
+        
+        <aside class="right-panel">
+            <h3>T,. Quick Search</h3>
+            <input type="text" class="search-box" id="search-input" placeholder="Suche nach Pfad, ID, Hash...">
+            <div id="search-results"></div>
+            
+            <h3 style="margin-top: 20px;">T,. Status Filter</h3>
+            <div>
+                <label><input type="checkbox" checked onchange="filterStatus('active')"> Active</label><br>
+                <label><input type="checkbox" onchange="filterStatus('deprecated')"> Deprecated</label><br>
+                <label><input type="checkbox" onchange="filterStatus('archived')"> Archived</label>
+            </div>
+        </aside>
+        
+        <footer class="footer">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>T,.&T,,.&T,,,.T. - Together Systems</div>
+                <div id="last-update">Last Update: <span id="update-time"></span></div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // ============================================================================
+        // T,. UNIVERSAL DESKTOP LOGIC
+        // ============================================================================
+        
+        let artifacts = [];
+        
+        // Lade Artefakte (würde normalerweise von Registry kommen)
+        async function loadArtifacts() {
+            try {
+                const response = await fetch('./artifacts.log');
+                const text = await response.text();
+                // Parse artifacts.log
+                // Für Demo: Mock-Daten
+                artifacts = [
+                    {
+                        id: 'artifact-001',
+                        path: 'Docs/SYSTEMARCHITEKTUR-ANALYSE.md',
+                        hash: '5a1c...d3',
+                        status: 'active',
+                        timestamp: new Date().toISOString(),
+                        module: 'Docs'
+                    },
+                    {
+                        id: 'artifact-002',
+                        path: 'Pipelines/build.yaml',
+                        hash: '7b2d...e4',
+                        status: 'active',
+                        timestamp: new Date().toISOString(),
+                        module: 'Pipelines'
+                    }
+                ];
+                updateDashboard();
+            } catch (error) {
+                console.error('T,. Fehler beim Laden der Artefakte:', error);
+            }
+        }
+        
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            document.getElementById(viewName + '-view').style.display = 'block';
+            
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function updateDashboard() {
+            const active = artifacts.filter(a => a.status === 'active').length;
+            const deprecated = artifacts.filter(a => a.status === 'deprecated').length;
+            const archived = artifacts.filter(a => a.status === 'archived').length;
+            
+            document.getElementById('active-count').textContent = active;
+            document.getElementById('deprecated-count').textContent = deprecated;
+            document.getElementById('archived-count').textContent = archived;
+            document.getElementById('total-count').textContent = artifacts.length;
+            
+            // Recent Artifacts
+            const recent = artifacts.slice(-10).reverse();
+            const recentHtml = recent.map(a => `
+                <div class="artifact-card">
+                    <div class="artifact-status status-${a.status}">${a.status}</div>
+                    <div class="artifact-path">${a.path}</div>
+                    <div class="artifact-hash">${a.hash}</div>
+                    <button class="open-btn" onclick="openArtifact('${a.path}')">Öffnen</button>
+                </div>
+            `).join('');
+            document.getElementById('recent-artifacts').innerHTML = recentHtml;
+        }
+        
+        function openArtifact(path) {
+            console.log('T,. Öffne:', path);
+            // Öffne Datei oder Portal-Link
+            window.open(path, '_blank');
+        }
+        
+        function filterStatus(status) {
+            console.log('T,. Filter:', status);
+            // Filter-Logik
+        }
+        
+        // Search
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const results = artifacts.filter(a => 
+                a.path.toLowerCase().includes(query) ||
+                a.id.toLowerCase().includes(query) ||
+                a.hash.toLowerCase().includes(query)
+            );
+            
+            const resultsHtml = results.map(a => `
+                <div class="artifact-card">
+                    <div class="artifact-path">${a.path}</div>
+                    <button class="open-btn" onclick="openArtifact('${a.path}')">Öffnen</button>
+                </div>
+            `).join('');
+            document.getElementById('search-results').innerHTML = resultsHtml;
+        });
+        
+        // Update Time
+        document.getElementById('update-time').textContent = new Date().toLocaleString();
+        
+        // Initial Load
+        loadArtifacts();
+    </script>
+</body>
+</html>
+

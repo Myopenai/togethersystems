@@ -1,0 +1,3195 @@
+﻿<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>MMM - MAGNITUDO MUSICA MUNDO – One File Universal Platform</title>
+<style>
+:root{
+  --bg: #f2eadf;
+  --bg2:#e8dccb;
+  --bg3:#dfd2be;
+  --accent:#8b6b4a;
+  --accent2:#a17f5a;
+  --text:#3d2f23;
+  --muted:#7a6959;
+  --card:#fff8ee;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Apple Color Emoji','Segoe UI Emoji';
+  color:var(--text);
+  background:
+    linear-gradient(180deg,var(--bg) 0%, var(--bg2) 30%, var(--bg3) 100%);
+}
+.header{
+  background:
+    linear-gradient(90deg, rgba(161,127,90,.25) 0 20px, transparent 20px),
+    repeating-linear-gradient(90deg, #e9dfcf, #e9dfcf 12px, #efe5d7 12px, #efe5d7 24px);
+  border-bottom:1px solid #d8c8b4;
+  padding:24px 16px;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .badge{width:44px;height:44px;border-radius:12px;background:linear-gradient(180deg,#f4e7d6,#e8dbc7);box-shadow:0 1px 0 #fff inset, 0 2px 6px rgba(0,0,0,.08)}
+.brand h1{font-size:clamp(20px,4vw,28px);margin:0;color:var(--accent);letter-spacing:.5px}
+.sub{margin:6px 0 0;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0}
+input[type="search"], select{
+  appearance:none;
+  background:var(--card);
+  border:1px solid #decdb9;
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:14px;
+  min-width:230px;
+  outline:none;
+  box-shadow:0 1px 0 #fff inset, 0 1.5px 0 rgba(0,0,0,.04);
+}
+select{min-width:160px}
+.btn{
+  background:linear-gradient(180deg,#f6eadb,#eadcc8);
+  border:1px solid #d9c7b2;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:600;
+  color:var(--accent);
+  cursor:pointer;
+  box-shadow:0 1px 0 #fff inset, 0 2px 6px rgba(0,0,0,.06);
+}
+.btn:hover{filter:brightness(98%)}
+.main{padding:20px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{
+  background:var(--card);
+  border:1px solid #e2d3bf;
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 1px 0 #fff inset, 0 2px 8px rgba(0,0,0,.05);
+}
+.card h3{margin:0 0 6px;font-size:18px;color:var(--accent)}
+.meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px}
+.tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11px;background:#efe4d4;color:#7a5a3a;border:1px solid #e0cfba;padding:4px 6px;border-radius:999px}
+.card .more{margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.link{font-size:13px;color:var(--accent2);cursor:pointer;text-decoration:underline}
+.footer{margin:30px 0 0;border-top:1px dashed #d7c6b1;padding:16px 0;background:linear-gradient(180deg,rgba(235,222,208,.35),rgba(235,222,208,0));}
+.footer .footer-inner{max-width:1100px;margin:0 auto;color:var(--muted);font-size:13px;line-height:1.6}
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.2);
+  display:none;align-items:center;justify-content:center;padding:20px;z-index:1000;
+}
+.modal.open{display:flex}
+.modal .panel{
+  width:min(860px,96vw);
+  max-height:90vh;overflow:auto;
+  background:var(--card);border:1px solid #dac8b2;border-radius:20px;padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+.panel h2{margin:0 0 10px;color:var(--accent)}
+.panel .meta{margin-bottom:8px}
+.panel .section{background:#fffdf8;border:1px solid #efe2cf;border-radius:14px;padding:12px;margin:10px 0}
+.panel .section h4{margin:0 0 6px;color:#6f5339}
+.kicker{margin:10px 0 0;color:#6b5a49;font-style:italic}
+.bar{
+  height:8px;border-radius:999px;background:linear-gradient(90deg,#e8dccb,#e1d3c0,#d7c7b1);margin:10px 0 20px;
+}
+.sticky-help{
+  position:sticky;top:8px;background:linear-gradient(180deg,#fff8ee,#f7edde);border:1px solid #e7d6c3;border-radius:14px;padding:12px;font-size:13px;color:#6b5a49
+}
+.small{font-size:12px;color:#7a6959}
+.language-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--card);
+  border: 1px solid #dac8b2;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .btn-collection, .btn-print, .btn-export, .btn-manage {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    
+    .btn-collection {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .btn-print {
+      background: #2196F3;
+      color: white;
+    }
+    
+    .btn-export {
+      background: #FF9800;
+      color: white;
+    }
+    
+    .btn-manage {
+      background: #9C27B0;
+      color: white;
+    }
+    
+    .btn-collection:hover, .btn-print:hover, .btn-export:hover, .btn-manage:hover {
+      opacity: 0.8;
+    }
+</style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+<body>
+<div class="language-switcher">
+  <select id="languageSelect" onchange="changeLanguage(this.value)">
+    <option value="de">‡©‡ª Deutsch</option>
+    <option value="nl">‡³‡± Nederlands</option>
+    <option value="en">‡¬‡§ English</option>
+  </select>
+</div>
+<header class="header">
+<div class="wrap">
+<div class="brand">
+<div aria-hidden="true" class="badge"></div>
+<div>
+<h1>MMM - MAGNITUDO MUSICA MUNDO</h1>
+<p class="sub">Restaurantbezogen · Entwickelt - Gentlyoverdone - <a href="https://tel1.jouwweb.nl/-2" rel="noopener" style="color: var(--accent2); text-decoration: none;" target="_blank">TEL1.NL</a> â­â­â­â­â­ · weltweit traditionelle Küche</p>
+</div>
+</div>
+<div class="controls">
+<input aria-label="Volltextsuche" id="search" placeholder="Suche nach Gericht, Land, Zutat oder Gefühl (z.â€¯B. Hunger, scharf, leicht)…" type="search"/>
+<select aria-label="Region filtern" id="region"><option value="">Alle Regionen</option></select>
+<select aria-label="Kategorie filtern" id="category"><option value="">Alle Kategorien</option></select>
+<select aria-label="Schwierigkeit filtern" id="difficulty"><option value="">Alle Stufen</option></select>
+<button class="btn" id="clear" type="button">Filter zurücksetzen</button>
+<button class="btn" id="multiSelect" onmouseenter="showMenuInfo('multiSelect', event)" onmouseleave="hideMenuInfo()" style="background: linear-gradient(180deg,#e8dccb,#dac8b2);" type="button">Ž¯ Multi-Choice Menü</button>
+<button class="btn" id="musicMode" onmouseenter="showMenuInfo('musicMode', event)" onmouseleave="hideMenuInfo()" style="background: linear-gradient(180deg,#e6d6f4,#d6c6e4);" type="button">Žµ Musik-Modus</button>
+<button class="btn" id="importExport" onmouseenter="showMenuInfo('importExport', event)" onmouseleave="hideMenuInfo()" style="background: linear-gradient(180deg,#f4d6e6,#e4c6d4);" type="button">“ Import/Export</button>
+<button class="btn" id="dataSources" onmouseenter="showMenuInfo('dataSources', event)" onmouseleave="hideMenuInfo()" style="background: linear-gradient(180deg,#e6f4e8,#d6e4d8);" type="button">Œ Datenquellen</button>
+</div>
+</div>
+</header>
+<main class="main wrap">
+<div class="sticky-help">
+<strong>Tipps:</strong> Tippe <em>Hunger</em> für sättigende Ideen, <em>leicht</em> für Bekömmliches, <em>scharf</em> für Chili. Filter sind kombinierbar.
+    <div aria-hidden="true" class="bar"></div>
+<span class="small" id="count"></span>
+</div>
+<section aria-live="polite" class="grid" id="results"></section>
+<div id="sentinel" style="height:1px"></div>
+</main>
+<div aria-labelledby="modalTitle" aria-modal="true" class="modal" id="modal" onclick="if(event.target.id==='modal') closeModal()" role="dialog">
+<div class="panel">
+<button class="btn" onclick="closeModal()" style="float:right">Schließen</button>
+<h2 id="modalTitle">Rezept</h2>
+<div class="meta" id="modalMeta"></div>
+<p class="kicker" id="modalStory"></p>
+<div class="section">
+<h4>Zutaten</h4>
+<ul id="modalIngr"></ul>
+</div>
+<div class="section">
+<h4>Zubereitung</h4>
+<ol id="modalSteps"></ol>
+</div>
+<div class="section">
+<h4>Aktionen</h4>
+<div class="modal-actions">
+<button onclick="addToCollection()" class="btn-collection">“š Zur Sammlung hinzufügen</button>
+<button onclick="printRecipe()" class="btn-print">–¨ï¸ Drucken</button>
+<button onclick="exportRecipe()" class="btn-export">’¾ Exportieren</button>
+<button onclick="showCollectionManager()" class="btn-manage">“‹ Sammlung verwalten</button>
+</div>
+</div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer-inner">
+<p><strong>Producer:</strong> Dr. Tel, Demitrio Raymond Tel</p>
+<p>“§ <a href="mailto:gentlyoverdone@outlook.com">gentlyoverdone@outlook.com</a></p>
+<p>“± +31 6 1380 3782</p>
+<p>Œ urltext: <a href="https://tel1.jouwweb.nl/-2" rel="noopener" target="_blank">www.tel1.nl</a></p>
+<p>¦ Rabobank · IBAN: NL66 RABO 1020 3955 08 · BIC: RABONL2U · Accountant: R.D.TEL</p>
+<p>’ Unterstützen Sie Magnitudo Musica Mundo · Mindestspende: 5 € · anonym/personalisiert möglich · steuerlich absetzbar (zu prüfen)</p>
+<p>Jetzt spenden via GoFundMe: <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&amp;utm_medium=referral&amp;utm_source=widget" rel="noopener" target="_blank">Magnitudo</a></p>
+<p>© 2025 TEL &amp; Gentlyoverdone · Alle Rechte vorbehalten</p>
+</div>
+</footer>
+<script>
+// === VOLLSTÄNDIGES MEHRSPRACHIGKEITSSYSTEM ===
+let currentLanguage = 'de';
+
+const TRANSLATIONS = {
+  de: {
+    // UI Texte
+    searchPlaceholder: "Suche nach Gericht, Land, Zutat oder Gefühl (z. B. Hunger, scharf, leicht)…",
+    allRegions: "Alle Regionen",
+    allCategories: "Alle Kategorien", 
+    allLevels: "Alle Stufen",
+    resetFilters: "Filter zurücksetzen",
+    multiChoiceMenu: "Ž¯ Multi-Choice Menü",
+    musicMode: "Žµ Musik-Modus",
+    importExport: "“ Import/Export",
+    dataSources: "Œ Datenquellen",
+    close: "Schließen",
+    recipe: "Rezept",
+    ingredients: "Zutaten",
+    preparation: "Zubereitung",
+    tips: "Tipps:",
+    tipsText: "Tippe Hunger für sättigende Ideen, leicht für Bekömmliches, scharf für Chili. Filter sind kombinierbar.",
+    noResults: "Keine Ergebnisse gefunden",
+    tryThese: "Versuche es mit:",
+    orSearchFor: "oder suche nach:",
+    
+    // Schwierigkeitsgrade
+    difficulty: {
+      "Einfach": "Einfach",
+      "Mittel": "Mittel", 
+      "Anspruchsvoll": "Anspruchsvoll",
+      "n/a": "n/a"
+    },
+    
+    // Kategorien
+    categories: {
+      "Hauptgericht": "Hauptgericht",
+      "Vorspeise": "Vorspeise",
+      "Streetfood / Hauptgericht": "Streetfood",
+      "Schmorgericht": "Schmorgericht",
+      "Vegetarisch": "Vegetarisch",
+      "Suppe": "Suppe",
+      "Hauptgericht": "Hauptgericht",
+      "Eintopf": "Eintopf",
+      "Frühstück / Suppe": "Frühstück",
+      "Eiergericht": "Eiergericht",
+      "Auflauf": "Auflauf",
+      "Dessert": "Dessert",
+      "Beilage": "Beilage",
+      "Gebäck": "Gebäck",
+      "Buffet": "Buffet",
+      "Fisch": "Fisch",
+      "Fleisch": "Fleisch",
+      "Eier": "Eier",
+      "Brot": "Brot",
+      "Nudeln": "Nudeln",
+      "Curry": "Curry",
+      "Reisgericht": "Reisgericht",
+      "Nudelsuppe": "Nudelsuppe",
+      "Teigtaschen": "Teigtaschen",
+      "Meta": "Meta"
+    },
+    
+    // Regionen
+    regions: {
+      "Europa": "Europa",
+      "Asien": "Asien",
+      "Lateinamerika": "Lateinamerika",
+      "Afrika": "Afrika",
+      "Nahost": "Nahost",
+      "Nordamerika": "Nordamerika",
+      "Ozeanien": "Ozeanien",
+      "Global": "Global",
+      "Welt": "Welt"
+    }
+  },
+  
+  nl: {
+    // UI Texte
+    searchPlaceholder: "Zoek naar gerecht, land, ingrediënt of gevoel (bijv. honger, pittig, licht)…",
+    allRegions: "Alle Regio's",
+    allCategories: "Alle Categorieën",
+    allLevels: "Alle Niveaus", 
+    resetFilters: "Filters Resetten",
+    multiChoiceMenu: "Ž¯ Multi-Choice Menu",
+    musicMode: "Žµ Muziek-Modus",
+    importExport: "“ Import/Export",
+    dataSources: "Œ Gegevensbronnen",
+    close: "Sluiten",
+    recipe: "Recept",
+    ingredients: "Ingrediënten",
+    preparation: "Bereiding",
+    tips: "Tips:",
+    tipsText: "Type honger voor verzadigende ideeën, licht voor verteerbaar, pittig voor chili. Filters zijn combineerbaar.",
+    noResults: "Geen resultaten gevonden",
+    tryThese: "Probeer deze:",
+    orSearchFor: "of zoek naar:",
+    
+    // Schwierigkeitsgrade
+    difficulty: {
+      "Einfach": "Gemakkelijk",
+      "Mittel": "Gemiddeld",
+      "Anspruchsvoll": "Uitdagend", 
+      "n/a": "n/a"
+    },
+    
+    // Kategorien
+    categories: {
+      "Hauptgericht": "Hoofdgerecht",
+      "Vorspeise": "Voorgerecht",
+      "Streetfood / Hauptgericht": "Streetfood",
+      "Schmorgericht": "Stoofgerecht",
+      "Vegetarisch": "Vegetarisch",
+      "Suppe": "Soep",
+      "Eintopf": "Stoofpot",
+      "Frühstück / Suppe": "Ontbijt",
+      "Eiergericht": "Eiergerecht",
+      "Auflauf": "Ovenschotel",
+      "Dessert": "Dessert",
+      "Beilage": "Bijgerecht",
+      "Gebäck": "Gebak",
+      "Buffet": "Buffet",
+      "Fisch": "Vis",
+      "Fleisch": "Vlees",
+      "Eier": "Eieren",
+      "Brot": "Brood",
+      "Nudeln": "Pasta",
+      "Curry": "Curry",
+      "Reisgericht": "Rijstgerecht",
+      "Nudelsuppe": "Noedelsoep",
+      "Teigtaschen": "Deegzakjes",
+      "Meta": "Meta"
+    },
+    
+    // Regionen
+    regions: {
+      "Europa": "Europa",
+      "Asien": "Azië",
+      "Lateinamerika": "Latijns-Amerika",
+      "Afrika": "Afrika",
+      "Nahost": "Midden-Oosten",
+      "Nordamerika": "Noord-Amerika",
+      "Ozeanien": "Oceanië",
+      "Global": "Globaal",
+      "Welt": "Wereld"
+    }
+  },
+  
+  en: {
+    // UI Texte
+    searchPlaceholder: "Search for dish, country, ingredient or feeling (e.g. hunger, spicy, light)…",
+    allRegions: "All Regions",
+    allCategories: "All Categories",
+    allLevels: "All Levels",
+    resetFilters: "Reset Filters", 
+    multiChoiceMenu: "Ž¯ Multi-Choice Menu",
+    musicMode: "Žµ Music Mode",
+    importExport: "“ Import/Export",
+    dataSources: "Œ Data Sources",
+    close: "Close",
+    recipe: "Recipe",
+    ingredients: "Ingredients",
+    preparation: "Preparation",
+    tips: "Tips:",
+    tipsText: "Type hunger for filling ideas, light for digestible, spicy for chili. Filters are combinable.",
+    noResults: "No results found",
+    tryThese: "Try these:",
+    orSearchFor: "or search for:",
+    
+    // Schwierigkeitsgrade
+    difficulty: {
+      "Einfach": "Easy",
+      "Mittel": "Medium",
+      "Anspruchsvoll": "Advanced",
+      "n/a": "n/a"
+    },
+    
+    // Kategorien
+    categories: {
+      "Hauptgericht": "Main Course",
+      "Vorspeise": "Appetizer",
+      "Streetfood / Hauptgericht": "Street Food",
+      "Schmorgericht": "Stew",
+      "Vegetarisch": "Vegetarian",
+      "Suppe": "Soup",
+      "Eintopf": "Stew",
+      "Frühstück / Suppe": "Breakfast",
+      "Eiergericht": "Egg Dish",
+      "Auflauf": "Casserole",
+      "Dessert": "Dessert",
+      "Beilage": "Side Dish",
+      "Gebäck": "Pastry",
+      "Buffet": "Buffet",
+      "Fisch": "Fish",
+      "Fleisch": "Meat",
+      "Eier": "Eggs",
+      "Brot": "Bread",
+      "Nudeln": "Pasta",
+      "Curry": "Curry",
+      "Reisgericht": "Rice Dish",
+      "Nudelsuppe": "Noodle Soup",
+      "Teigtaschen": "Dumplings",
+      "Meta": "Meta"
+    },
+    
+    // Regionen
+    regions: {
+      "Europa": "Europe",
+      "Asien": "Asia",
+      "Lateinamerika": "Latin America",
+      "Afrika": "Africa",
+      "Nahost": "Middle East",
+      "Nordamerika": "North America",
+      "Ozeanien": "Oceania",
+      "Global": "Global",
+      "Welt": "World"
+    }
+  }
+};
+
+function translateDifficulty(difficulty) {
+  return TRANSLATIONS[currentLanguage].difficulty[difficulty] || difficulty;
+}
+
+function translateCategory(category) {
+  return TRANSLATIONS[currentLanguage].categories[category] || category;
+}
+
+function translateRegion(region) {
+  return TRANSLATIONS[currentLanguage].regions[region] || region;
+}
+
+function translateText(key) {
+  return TRANSLATIONS[currentLanguage][key] || key;
+}
+
+function changeLanguage(lang) {
+  currentLanguage = lang;
+  updateUI();
+  rebuildAllDropdowns();
+  applyFilters();
+}
+
+function updateUI() {
+  const t = TRANSLATIONS[currentLanguage];
+  
+  // Update HTML lang attribute
+  document.documentElement.lang = currentLanguage;
+  
+  // Update search placeholder
+  document.getElementById('search').placeholder = t.searchPlaceholder;
+  
+  // Update select options
+  document.querySelector('#region option').textContent = t.allRegions;
+  document.querySelector('#category option').textContent = t.allCategories;
+  document.querySelector('#difficulty option').textContent = t.allLevels;
+  
+  // Update buttons
+  document.getElementById('clear').textContent = t.resetFilters;
+  document.getElementById('multiSelect').textContent = t.multiChoiceMenu;
+  document.getElementById('musicMode').textContent = t.musicMode;
+  document.getElementById('importExport').textContent = t.importExport;
+  document.getElementById('dataSources').textContent = t.dataSources;
+  
+  // Update modal texts
+  document.getElementById('modalTitle').textContent = t.recipe;
+  
+  // Update tips
+  const tipsElement = document.querySelector('.sticky-help strong');
+  if (tipsElement) {
+    tipsElement.textContent = t.tips;
+    tipsElement.nextSibling.textContent = ' ' + t.tipsText;
+  }
+}
+
+function rebuildAllDropdowns() {
+  rebuildDifficultyDropdown();
+  rebuildCategoryDropdown();
+  rebuildRegionDropdown();
+}
+
+function rebuildDifficultyDropdown() {
+  const difficultySelect = document.getElementById('difficulty');
+  const currentValue = difficultySelect.value;
+  
+  difficultySelect.innerHTML = `<option value="">${translateText('allLevels')}</option>`;
+  
+  const diffs = [...new Set(DATA.map(r => r.difficulty))].sort();
+  for (const d of diffs) {
+    const option = document.createElement('option');
+    option.value = d;
+    option.textContent = translateDifficulty(d);
+    difficultySelect.appendChild(option);
+  }
+  
+  if (currentValue) {
+    difficultySelect.value = currentValue;
+  }
+}
+
+function rebuildCategoryDropdown() {
+  const categorySelect = document.getElementById('category');
+  const currentValue = categorySelect.value;
+  
+  categorySelect.innerHTML = `<option value="">${translateText('allCategories')}</option>`;
+  
+  const cats = [...new Set(DATA.map(r => r.category))].sort();
+  for (const c of cats) {
+    const option = document.createElement('option');
+    option.value = c;
+    option.textContent = translateCategory(c);
+    categorySelect.appendChild(option);
+  }
+  
+  if (currentValue) {
+    categorySelect.value = currentValue;
+  }
+}
+
+function rebuildRegionDropdown() {
+  const regionSelect = document.getElementById('region');
+  const currentValue = regionSelect.value;
+  
+  regionSelect.innerHTML = `<option value="">${translateText('allRegions')}</option>`;
+  
+  const regions = [...new Set(DATA.map(r => r.region))].sort();
+  for (const r of regions) {
+    const option = document.createElement('option');
+    option.value = r;
+    option.textContent = translateRegion(r);
+    regionSelect.appendChild(option);
+  }
+  
+  if (currentValue) {
+    regionSelect.value = currentValue;
+  }
+}
+
+// Initialize language system
+updateUI();
+
+const DATA = [
+  {"id": "gb_shepherds_pie", "name": "Shepherd's Pie", "local_names": ["Shepherd's Pie"], "country": "Großbritannien", "region": "Europa", "category": "Auflauf", "tags": ["Fleisch", "Kartoffeln", "klassisch", "britisch"], "time_min": 90, "difficulty": "Mittel", "servings": "4-6", "story": "Klassisches britisches Gericht mit Hackfleisch und Kartoffelbrei. Traditionell mit Lammfleisch, aber oft auch mit Rindfleisch zubereitet.", "ingredients": ["500g Hackfleisch (Lamm oder Rind)", "1kg Kartoffeln", "2 Zwiebeln", "2 Möhren", "100g Erbsen", "500ml Brühe", "2 EL Tomatenmark", "Worcestershire Sauce", "Butter", "Milch", "Salz", "Pfeffer"], "steps": ["Kartoffeln schälen, würfeln und in Salzwasser kochen bis weich.", "Zwiebeln und Möhren würfeln, Hackfleisch in einer großen Pfanne anbraten.", "Gemüse zum Fleisch geben und 5 Minuten mitbraten.", "Tomatenmark und Worcestershire Sauce hinzufügen, mit Brühe ablöschen.", "Bei mittlerer Hitze 20 Minuten köcheln lassen, dann Erbsen unterheben.", "Kartoffeln abgießen, stampfen und mit Butter und Milch cremig rühren.", "Fleischmasse in eine Auflaufform geben, Kartoffelbrei darauf verteilen.", "Bei 200°C 25-30 Minuten backen bis die Oberfläche goldbraun ist."]},{"id": "it_spaghetti_carbonara", "name": "Spaghetti alla Carbonara", "local_names": ["Carbonara"], "country": "Italien", "region": "Europa", "category": "Hauptgericht", "tags": ["Pasta", "schnell", "klassisch", "ohne_Sahne"], "time_min": 25, "difficulty": "Mittel", "servings": "2–3", "story": "Römischer Klassiker aus Pecorino, Guanciale, Eigelb und Pfeffer. Keine Sahne – die Cremigkeit entsteht durch Emulsion.", "ingredients": ["200 g Spaghetti", "100 g Guanciale (oder Pancetta)", "2 Eigelb + 1 ganzes Ei", "60 g Pecorino Romano, fein gerieben", "Schwarzer Pfeffer, frisch gemahlen", "Prise Salz fürs Kochwasser"], "steps": ["Spaghetti in gut gesalzenem Wasser al dente kochen.", "Guanciale in Streifen schneiden und in einer Pfanne bei mittlerer Hitze knusprig auslassen.", "Eier mit Pecorino und reichlich Pfeffer verquirlen.", "Spaghetti abgießen (etwas Kochwasser aufheben) und zur Guanciale geben.", "Pfanne vom Herd ziehen, Eier-Käse-Mischung unterrühren und mit Kochwasser zur cremigen Sauce emulgieren.", "Sofort servieren, mit Pfeffer und Pecorino toppen."]}, {"id": "jp_miso_soup", "name": "Misoshiru (Miso-Suppe)", "local_names": ["å‘³å™Œæ±"], "country": "Japan", "region": "Asien", "category": "Vorspeise", "tags": ["leicht", "bruehe", "tofurezept", "glutenfrei"], "time_min": 15, "difficulty": "Leicht", "servings": "2", "story": "Hausgemachte Frühstückssuppe – Dashi, Miso, Tofu und Wakame. Saisonal oft mit Frühlingszwiebeln.", "ingredients": ["500 ml Dashi (Kombu-Bonito-Brühe oder vegetarisch mit Kombu-Shiitake)", "2–3 EL Miso-Paste (hell oder rot)", "100 g Seidentofu, gewürfelt", "1 EL getrocknetes Wakame, eingeweicht", "2 Frühlingszwiebeln, in Ringen"], "steps": ["Dashi erhitzen, aber nicht kochen.", "Wakame zufügen, kurz ziehen lassen.", "Etwas heiße Brühe mit Miso in einer Schale glattrühren, dann in den Topf geben (nicht mehr kochen).", "Tofu und Frühlingszwiebeln einlegen, 1 Minute ziehen lassen und servieren."]}, {"id": "mx_tacos_al_pastor", "name": "Tacos al Pastor", "local_names": ["Adobada"], "country": "Mexiko", "region": "Lateinamerika", "category": "Streetfood / Hauptgericht", "tags": ["grillen", "ananas", "schwein"], "time_min": 120, "difficulty": "Mittel", "servings": "4", "story": "Libanesischer Einfluss trifft mexikanische Würze: Schweinefleisch in Achiote-Marinade, traditionell am Trompo, zuhause in der Pfanne oder auf dem Grill.", "ingredients": ["700 g Schweinenacken, dünn geschnitten", "2 EL Achiote-Paste", "2 getrocknete Guajillo-Chilis, eingeweicht", "2 Knoblauchzehen", "60 ml Apfelessig", "1 TL Oregano (mexikanisch, wenn verfügbar)", "1 TL Kreuzkümmel", "1 TL Salz", "1 kleine Ananas, geschält (Scheiben + Würfel)", "12 kleine Maistortillas", "Zwiebel, Koriander, Limetten zum Servieren"], "steps": ["Chilis entkernen, einweichen und mit Achiote, Knoblauch, Essig, Oregano, Kreuzkümmel und Salz fein pürieren.", "Fleisch mit Marinade 1–12 Stunden kühlen.", "Ananasscheiben und Fleisch heiß grillen oder in der Pfanne braten.", "Tortillas erwärmen, Fleisch und Ananaswürfel darauf, mit Zwiebel, Koriander und Limette servieren."]}, {"id": "fr_coq_au_vin", "name": "Coq au Vin", "local_names": [], "country": "Frankreich", "region": "Europa", "category": "Schmorgericht", "tags": ["klassiker", "rotwein", "huhn"], "time_min": 150, "difficulty": "Mittel", "servings": "4", "story": "Burgundisches Schmorgericht: Huhn in Rotwein mit Speck, Pilzen und Perlzwiebeln – langsam gegart für Tiefe.", "ingredients": ["1,5 kg Hähnchenteile (mit Knochen)", "150 g Speckwürfel", "200 g Champignons, halbiert", "12 Perlzwiebeln (oder Schalotten)", "2 Karotten, in Stücken", "2 EL Tomatenmark", "750 ml kräftiger Rotwein", "250 ml Geflügelfond", "2 EL Mehl", "2 EL Butter + 1 EL Öl", "Thymian, Lorbeer, Salz, Pfeffer"], "steps": ["Speck in Butter/Öl auslassen, herausnehmen. Hähnchen anbraten, salzen, pfeffern.", "Gemüse anschwitzen, Tomatenmark kurz rösten, mit Mehl stauben.", "Mit Rotwein ablöschen, Fond zugeben, Kräuter einlegen.", "Hähnchen und Speck zurück, zugedeckt 60–90 Min. sanft schmoren.", "Pilze und Perlzwiebeln in Butter braten, die letzten 20 Min. mitgaren. Mit Salz/Pfeffer abschmecken."]}, {"id": "ma_tagine_lamm_pflaumen", "name": "Lamm-Tajine mit Pflaumen und Mandeln", "local_names": ["Tajine bel barkouk"], "country": "Marokko", "region": "Afrika", "category": "Schmorgericht", "tags": ["suesz_herzhaft", "festlich"], "time_min": 180, "difficulty": "Mittel", "servings": "4", "story": "Festliche Tajine – zartes Lamm mit süß-würzigen Pflaumen, gerösteten Mandeln und Sesam.", "ingredients": ["800 g Lammkeule, in Stücken", "2 Zwiebeln, gehackt", "2 Knoblauchzehen", "1 TL Ingwer, gemahlen", "1 TL Zimt", "1 TL Kurkuma", "1 TL Paprika edelsüß", "1 Prise Safran (optional)", "400 ml Wasser oder Fond", "200 g getrocknete Pflaumen", "1 EL Honig", "50 g Mandeln, geröstet", "Sesam, Koriandergrün, Salz, Pfeffer"], "steps": ["Lamm mit Zwiebeln und Knoblauch in etwas Öl anbraten.", "Gewürze zufügen, kurz rösten, mit Wasser bedecken und zugedeckt 90–120 Min. schmoren.", "Pflaumen mit etwas Sud und Honig 10 Min. sämig ziehen lassen.", "Pflaumen zum Fleisch geben, abschmecken. Mit Mandeln/Sesam bestreut servieren."]}, {"id": "in_dal_tadka", "name": "Dal Tadka", "local_names": ["à¤¦à¤¾à¤² à¤¤à¤¡à¤¼à¤•à¤¾"], "country": "Indien", "region": "Asien", "category": "Vegetarisch", "tags": ["glutenfrei", "proteinreich", "komfort"], "time_min": 40, "difficulty": "Leicht", "servings": "4", "story": "Würziges Linsengericht – weiche gelbe Linsen mit einer temperierten Gewürzbutter (Tadka).", "ingredients": ["250 g gelbe Linsen (Toor/Arhar oder gelbe Mung)", "1 Zwiebel, gewürfelt", "2 Tomaten, gewürfelt", "2 Knoblauchzehen, fein", "2 cm Ingwer, fein", "1 TL Kurkuma", "1 TL Kreuzkümmelsamen", "1 TL Senfsamen", "2 getrocknete rote Chilis", "2 EL Ghee oder Öl", "Koriandergrün, Salz"], "steps": ["Linsen mit Kurkuma weich kochen.", "Für das Tadka Ghee erhitzen, Kreuzkümmel und Senfsamen aufpoppen lassen, Knoblauch, Ingwer und Chilis kurz rösten.", "Zwiebel glasig, Tomaten weich schmoren, salzen.", "Tadka in die Linsen rühren, mit Koriander bestreuen."]}, {"id": "cn_mapo_tofu", "name": "Mapo Tofu", "local_names": ["éº»å©†è±†è…"], "country": "China", "region": "Asien", "category": "Hauptgericht", "tags": ["scharf", "szechuanpfeffer", "tofurezept"], "time_min": 30, "difficulty": "Mittel", "servings": "3", "story": "Scharf-numbing Klassiker aus Chengdu – Tofu in Chili-Bohnen-Paste mit Hackfleisch und Sichuanpfeffer.", "ingredients": ["400 g weicher Tofu, gewürfelt", "200 g Schweinehack (oder Rinderhack)", "1 EL Doubanjiang (Pixian-Chilibohnenpaste)", "1 TL Douchi (fermentierte schwarze Bohnen), gehackt", "2 Knoblauchzehen, fein", "2 cm Ingwer, fein", "250 ml Brühe", "1 TL geröstetes Chilipulver", "1 TL Sichuanpfeffer, gemahlen", "1 TL Stärke + 2 EL Wasser", "Frühlingszwiebel, Öl"], "steps": ["Hackfleisch in Öl krümelig braten, Knoblauch/Ingwer zugeben.", "Doubanjiang und Douchi kurz rösten, Brühe angießen.", "Tofu einlegen, 5–7 Min. simmern.", "Mit Stärke binden, mit Chili und Sichuanpfeffer abschmecken, mit Frühlingszwiebel servieren."]}, {"id": "de_sauerbraten", "name": "Rheinischer Sauerbraten", "local_names": [], "country": "Deutschland", "region": "Europa", "category": "Schmorgericht", "tags": ["sonntag", "klassiker", "marinade"], "time_min": 240, "difficulty": "Mittel", "servings": "6", "story": "Rind wird in Essig-Gewürz-Lake mehrere Tage mariniert und dann langsam geschmort – typisch mit Rosinen und Printen/Lebkuchen gebunden.", "ingredients": ["1,5 kg Rinderbraten", "500 ml Rotwein", "500 ml Wasser", "150 ml Weinessig", "1 Zwiebel, 1 Möhre, 1 Selleriestange", "2 Lorbeerblätter, 6 Pimentkörner, 6 Pfefferkörner", "1 TL Salz", "2 EL Rübenkraut oder Zucker", "2 Scheiben Printen/ Lebkuchen (optional)", "Rosinen nach Geschmack", "Butterschmalz zum Anbraten"], "steps": ["Marinade aufkochen, abkühlen, Braten und Gemüse 2–3 Tage darin kühl ziehen lassen.", "Fleisch abtrocknen, kräftig anbraten. Marinade mit Gemüse angießen, 2,5–3 h schmoren.", "Sauce mit Printen und Rosinen verfeinern und abschmecken."]}, {"id": "us_clam_chowder", "name": "New England Clam Chowder", "local_names": [], "country": "USA", "region": "Nordamerika", "category": "Suppe", "tags": ["muscheln", "cremig"], "time_min": 60, "difficulty": "Mittel", "servings": "4", "story": "Cremige Muschelsuppe mit Kartoffeln, Speck und Sellerie – Küstenklassiker.", "ingredients": ["400 g Venusmuscheln (oder Dosmuscheln)", "150 g Speckwürfel", "1 Zwiebel, 1 Selleriestange, 2 Kartoffeln", "500 ml Fischfond", "200 ml Milch", "100 ml Sahne", "1 Lorbeerblatt, Thymian, Salz, Pfeffer"], "steps": ["Speck auslassen, Gemüse anschwitzen.", "Mit Fond aufgießen, Kartoffeln weich kochen.", "Muscheln und Milch/Sahne zugeben, kurz ziehen lassen, mit Salz/Pfeffer und Thymian abschmecken."]}, {"id": "tr_manti", "name": "Manti (gefüllte Teigtaschen)", "local_names": [], "country": "Türkei", "region": "Nahost", "category": "Hauptgericht", "tags": ["teigtaschen", "joghurt"], "time_min": 120, "difficulty": "Anspruchsvoll", "servings": "4", "story": "Winzige Teigtaschen mit gewürztem Hack, serviert mit Knoblauchjoghurt und Paprikabutter.", "ingredients": ["300 g Mehl, 1 Ei, Wasser, Salz", "200 g Rinderhack", "1 Zwiebel, fein", "1 TL Paprikapulver, 1/2 TL Kreuzkümmel", "300 g Joghurt + 1 Knoblauchzehe", "2 EL Butter + 1 TL Pul Biber"], "steps": ["Teig kneten, dünn ausrollen, kleine Quadrate schneiden.", "Hack mit Zwiebel/Gewürzen füllen, zu Mini-Manti falten.", "In Salzwasser 6–8 Min. garen.", "Mit Knoblauchjoghurt, Paprikabutter und Minze servieren."]}, {"id": "gr_moussaka", "name": "Moussaka", "local_names": [], "country": "Griechenland", "region": "Europa", "category": "Auflauf", "tags": ["auberginen", "bechamel"], "time_min": 120, "difficulty": "Mittel", "servings": "6", "story": "Geschichteter Auflauf aus Auberginen, Hack und Muskat-Bechamel.", "ingredients": ["2 Auberginen", "400 g Lamm- oder Rinderhack", "1 Zwiebel, 2 Knoblauchzehen", "400 g Tomaten (aus der Dose)", "Zimtstange, Oregano, Salz, Pfeffer", "40 g Butter, 40 g Mehl, 400 ml Milch, Muskat", "Olivenöl"], "steps": ["Auberginen scheiben salzen, abtupfen, anbraten.", "Hack mit Zwiebel/Knoblauch braten, Tomaten und Gewürze zufügen, einkochen.", "Bechamel kochen, mit Muskat abschmecken.", "In Form schichten, 35–40 Min. backen."]}, {"id": "et_doro_wat", "name": "Doro Wat (äthiopischer Hähncheneintopf)", "local_names": [], "country": "Äthiopien", "region": "Afrika", "category": "Schmorgericht", "tags": ["berbere", "injera"], "time_min": 120, "difficulty": "Mittel", "servings": "4", "story": "Tief rote, scharfe Zwiebel- und Berbere-Sauce mit Huhn und Eiern – Nationalgericht.", "ingredients": ["6 Zwiebeln, sehr fein gehackt", "3 EL Niter Kibbeh (Gewürzbutter) oder Öl", "2–3 EL Berbere-Gewürzmischung", "2 EL Tomatenmark", "6 Hähnchenteile", "2–3 hartgekochte Eier", "Salz, Zitronensaft"], "steps": ["Zwiebeln trocken langsam schmoren bis süß.", "Niter Kibbeh und Berbere zugeben, rösten.", "Tomatenmark, dann Huhn hinein, mit Wasser knapp bedecken und 45–60 Min. sanft garen.", "Eier einlegen, mit Salz/Zitrone abschmecken."]}, {"id": "vn_bun_cha", "name": "Bún Cháº£ (Gegrilltes Schwein mit Reisnudeln)", "local_names": [], "country": "Vietnam", "region": "Asien", "category": "Hauptgericht", "tags": ["kr%C3%A4uter", "nudeln"], "time_min": 60, "difficulty": "Mittel", "servings": "4", "story": "Hanoi-Klassiker: Gegrillte Hackfleischpflanzerl und Nackenstreifen in Dip, mit Kräutern und Reisnudeln.", "ingredients": ["300 g Schweinehack + 300 g Schweinenacken in Scheiben", "2 EL Fischsauce, 1 EL Zucker, 1 Knoblauchzehe, Pfeffer", "200 g Reisnudeln", "Kräuter: Minze, Koriander, Perillablätter", "Dip: Fischsauce, Zucker, Limette, Wasser, Chili, Knoblauch"], "steps": ["Fleisch marinieren, dann heiß grillen.", "Reisnudeln kochen, Kräuter waschen.", "Dip anrühren.", "Alles in Schalen anrichten, Fleisch in den Dip tauchen oder darüber gießen."]}, {"id": "ir_beef_stew", "name": "Irish Beef Stew", "local_names": [], "country": "Irland", "region": "Europa", "category": "Schmorgericht", "tags": ["eintopf", "kartoffeln"], "time_min": 150, "difficulty": "Leicht", "servings": "6", "story": "Rustikaler Eintopf mit Rind, Kartoffeln, Karotten und manchmal Guinness.", "ingredients": ["1 kg Rinderschmorstück", "4 Kartoffeln, 3 Karotten, 1 Zwiebel", "500 ml Rinderfond", "Optional: 250 ml Guinness", "Thymian, Lorbeer, Salz, Pfeffer"], "steps": ["Fleisch anbraten, Gemüse zugeben.", "Mit Fond (und Guinness) aufgießen, 2 Stunden leise schmoren.", "Mit Salz/Pfeffer abschmecken."]}, {"id": "mafe", "name": "Mafé (Erdnuss-Eintopf)", "local_names": [], "country": "Senegal", "region": "Afrika", "category": "Eintopf", "tags": ["erdnuss", "tomate"], "time_min": 90, "difficulty": "Leicht", "servings": "4", "story": "Cremiger Erdnuss-Eintopf mit Fleisch oder vegetarisch.", "ingredients": ["400 g Rind oder Huhn (optional)", "1 Zwiebel", "2 EL Erdnussbutter", "400 g stückige Tomaten", "1 Süßkartoffel", "Brühe, Chili, Salz"], "steps": ["Fleisch anbraten, Zwiebel glasig.", "Tomaten, Brühe, Erdnussbutter und Süßkartoffel zugeben.", "30–40 Min. sanft kochen, abschmecken."]}, {"id": "pe_ceviche", "name": "Ceviche clásico", "local_names": [], "country": "Peru", "region": "Lateinamerika", "category": "Vorspeise", "tags": ["fisch", "limette", "roh"], "time_min": 45, "difficulty": "Mittel", "servings": "4", "story": "Frischer Fisch in Limettensaft mit Zwiebel, Chili und Koriander – sofort servieren.", "ingredients": ["400 g sehr frischer fester Fisch (z. B. Wolfsbarsch)", "8–10 Limetten (Saft)", "1 rote Zwiebel, in feinen Spalten", "1 Chili (AjÃ­ limo oder Jalapeño)", "Koriandergrün, Salz", "Süßkartoffel und Mais als Beilage"], "steps": ["Fisch in Würfel schneiden, salzen.", "Mit Limettensaft, Zwiebel und Chili 10–15 Min. marinieren.", "Mit Koriander servieren, schnell genießen."]}, {"id": "cn_congee", "name": "Reis-Congee", "local_names": [], "country": "China", "region": "Asien", "category": "Frühstück / Suppe", "tags": ["reisbrei", "komfort"], "time_min": 90, "difficulty": "Leicht", "servings": "4", "story": "Sanfter Reisbrei – Basis für Toppings wie Frühlingszwiebel, Erdnuss, Eier.", "ingredients": ["200 g Jasmin- oder Rundkornreis", "2 l Wasser oder Brühe", "Ingwer, Salz", "Toppings nach Wahl"], "steps": ["Reis waschen, mit Wasser/Brühe 60–90 Min. sanft kochen bis cremig.", "Mit Salz/Ingwer abschmecken, Toppings bereitstellen."]}, {"id": "es_tortilla", "name": "Tortilla de Patatas", "local_names": [], "country": "Spanien", "region": "Europa", "category": "Eiergericht", "tags": ["kartoffeln", "zwiebel"], "time_min": 45, "difficulty": "Leicht", "servings": "4", "story": "Dickes Omelett aus Kartoffeln, Zwiebeln und Eiern – warm oder kalt.", "ingredients": ["600 g Kartoffeln, dünn", "1 große Zwiebel, halbmonde", "6 Eier", "Olivenöl, Salz"], "steps": ["Kartoffeln und Zwiebel in viel Öl langsam weich schmoren.", "Abtropfen, mit verquirlten Eiern mischen, salzen.", "In der Pfanne beidseitig stocken lassen."]}, {"id": "th_tom_kha", "name": "Tom Kha Gai (Kokos-Hühnersuppe)", "local_names": [], "country": "Thailand", "region": "Asien", "category": "Suppe", "tags": ["kokosmilch", "zitronengras", "galgant"], "time_min": 30, "difficulty": "Leicht", "servings": "4", "story": "Aromatische Kokosbrühe mit Galgant, Zitronengras und Limettenblättern.", "ingredients": ["400 ml Kokosmilch", "400 ml Hühnerbrühe", "300 g Hähnchenbrust, dünn", "2 Stängel Zitronengras, angedrückt", "4 Scheiben Galgant", "4 Kaffirlimettenblätter", "Pilze, Fischsauce, Limettensaft, Chili"], "steps": ["Brühe mit Gewürzen 10 Min. ziehen lassen.", "Huhn und Pilze kurz garen.", "Mit Fischsauce, Limette und Chili abschmecken."]}, {"id": "br_feijoada", "name": "Feijoada Completa", "local_names": [], "country": "Brasilien", "region": "Lateinamerika", "category": "Eintopf", "tags": ["schwarzboehnen", "fleisch", "tradition"], "time_min": 240, "difficulty": "Mittel", "servings": "8", "story": "Brasilianischer Nationaleintopf aus schwarzen Bohnen mit verschiedenen Fleischsorten.", "ingredients": ["500 g schwarze Bohnen", "300 g Schweinebauch", "200 g Rippchen", "150 g Chorizo", "100 g Trockenfleisch", "2 Zwiebeln", "4 Knoblauchzehen", "Lorbeer, Salz, Pfeffer", "Reis, Farofa, Orangenscheiben"], "steps": ["Bohnen über Nacht einweichen.", "Alle Fleischsorten separat kochen, dann zusammen mit Bohnen schmoren.", "Mit Zwiebeln, Knoblauch und Gewürzen abschmecken.", "Mit Reis, Farofa und Orange servieren."]}, {"id": "kr_bibimbap", "name": "Bibimbap", "local_names": ["ë¹„ë¹”ë°¥"], "country": "Südkorea", "region": "Asien", "category": "Hauptgericht", "tags": ["reis", "gemuese", "gochujang"], "time_min": 45, "difficulty": "Mittel", "servings": "4", "story": "Reisschüssel mit verschiedenen Gemüsen und Gochujang-Sauce.", "ingredients": ["400 g Reis", "150 g Rinderhack", "2 Karotten, julienne", "1 Zucchini, julienne", "100 g Spinat", "4 Shiitake-Pilze", "4 Eier", "Gochujang, Sesamöl, Knoblauch, Sojasauce"], "steps": ["Reis kochen. Gemüse separat blanchieren und würzen.", "Rinderhack mit Sojasauce und Knoblauch braten.", "Alles in Schüsseln anrichten, mit Ei und Gochujang servieren."]}, {"id": "pk_karahi_chicken", "name": "Karahi Chicken", "local_names": [], "country": "Pakistan", "region": "Asien", "category": "Hauptgericht", "tags": ["scharf", "tomaten", "ginger"], "time_min": 60, "difficulty": "Mittel", "servings": "4", "story": "Scharfes Hähnchengericht in Tomaten-Ginger-Sauce.", "ingredients": ["800 g Hähnchen", "4 Tomaten", "2 Zwiebeln", "4 Knoblauchzehen", "2 cm Ingwer", "2 grüne Chilis", "Kurkuma, Kreuzkümmel, Korianderpulver", "Garam Masala, Salz", "Koriandergrün"], "steps": ["Hähnchen würzen und anbraten.", "Zwiebeln glasig, Ingwer und Knoblauch zugeben.", "Tomaten zufügen, einkochen lassen.", "Mit Gewürzen abschmecken, Koriander darüber."]}, {"id": "ng_jollof_rice", "name": "Jollof Rice", "local_names": [], "country": "Nigeria", "region": "Afrika", "category": "Hauptgericht", "tags": ["reis", "tomaten", "gewuerze"], "time_min": 75, "difficulty": "Mittel", "servings": "6", "story": "Gewürzter Reis mit Tomaten, einer der beliebtesten Gerichte Westafrikas.", "ingredients": ["400 g Basmatireis", "4 Tomaten", "2 Zwiebeln", "3 Knoblauchzehen", "2 cm Ingwer", "2 EL Tomatenmark", "Thymian, Curry, Paprika", "Gewürznelken, Lorbeer", "Öl, Salz"], "steps": ["Reis waschen und einweichen.", "Zwiebeln, Tomaten, Ingwer und Knoblauch pürieren.", "Tomatenpüree mit Gewürzen kochen, Reis zugeben.", "Bei niedriger Hitze 30 Min. garen lassen."]}, {"id": "ar_shawarma", "name": "Chicken Shawarma", "local_names": [], "country": "Ägypten", "region": "Afrika", "category": "Streetfood", "tags": ["huhn", "fladenbrot", "tahini"], "time_min": 120, "difficulty": "Mittel", "servings": "6", "story": "Gewürztes Hähnchen im Fladenbrot mit Tahini-Sauce.", "ingredients": ["1 kg Hähnchenbrust", "4 Fladenbrote", "Zitrone, Knoblauch, Kreuzkümmel", "Paprika, Kurkuma, Zimt", "Tahini, Joghurt, Petersilie", "Tomaten, Gurken, Zwiebeln"], "steps": ["Hähnchen in Gewürzmischung marinieren.", "Im Ofen oder auf dem Grill garen.", "In Fladenbrot mit Gemüse und Tahini-Sauce wickeln."]}, {"id": "id_nasi_goreng", "name": "Nasi Goreng", "local_names": [], "country": "Indonesien", "region": "Asien", "category": "Hauptgericht", "tags": ["reis", "sambal", "garnelen"], "time_min": 30, "difficulty": "Leicht", "servings": "4", "story": "Gebratener Reis mit Sambal, Garnelen und Ei.", "ingredients": ["400 g gekochter Reis", "200 g Garnelen", "2 Eier", "2 Knoblauchzehen", "2 EL Sambal Oelek", "Sojasauce, Kecap Manis", "Frühlingszwiebeln", "Öl"], "steps": ["Eier als Omelett braten, in Streifen schneiden.", "Knoblauch anbraten, Garnelen zugeben.", "Reis, Sambal und Sojasaucen einrühren.", "Mit Eistreifen und Frühlingszwiebeln servieren."]}, {"id": "za_bobotie", "name": "Bobotie", "local_names": [], "country": "Südafrika", "region": "Afrika", "category": "Auflauf", "tags": ["hackfleisch", "curry", "eier"], "time_min": 90, "difficulty": "Mittel", "servings": "6", "story": "Gewürztes Hackfleisch mit Curry und Eier-Topping.", "ingredients": ["600 g Rinderhack", "2 Zwiebeln", "2 Äpfel", "100 g Rosinen", "Currypulver, Kurkuma", "Brot, Milch", "4 Eier", "Lorbeer, Salz"], "steps": ["Hack mit Zwiebeln, Äpfeln und Gewürzen braten.", "Mit eingeweichtem Brot und Rosinen mischen.", "Eier-Topping herstellen, über das Fleisch geben.", "30 Min. backen."]}, {"id": "au_pavlova", "name": "Pavlova", "local_names": [], "country": "Australien", "region": "Ozeanien", "category": "Dessert", "tags": ["meringue", "obst", "sahne"], "time_min": 120, "difficulty": "Anspruchsvoll", "servings": "8", "story": "Luftiges Baiser mit Schlagsahne und frischen Früchten.", "ingredients": ["4 Eiweiß", "250 g Zucker", "2 TL Speisestärke", "1 TL Essig", "300 ml Schlagsahne", "Frische Beeren", "Passionsfrucht"], "steps": ["Eiweiß steif schlagen, Zucker einrieseln lassen.", "Stärke und Essig unterheben.", "Baiser 90 Min. bei 120°C backen, abkühlen lassen.", "Mit Sahne und Früchten füllen."]}, {"id": "fi_salmon_soup", "name": "Lohikeitto (Lachs-Suppe)", "local_names": [], "country": "Finnland", "region": "Europa", "category": "Suppe", "tags": ["lachs", "dill", "kartoffeln"], "time_min": 45, "difficulty": "Leicht", "servings": "4", "story": "Cremige Lachs-Suppe mit Dill und Kartoffeln.", "ingredients": ["400 g Lachsfilet", "4 Kartoffeln", "1 Zwiebel", "500 ml Fischfond", "200 ml Sahne", "Dill, Salz, Pfeffer", "Butter"], "steps": ["Kartoffeln und Zwiebel in Butter anschwitzen.", "Mit Fond aufgießen, 15 Min. kochen.", "Lachs zugeben, 5 Min. garen.", "Sahne und Dill einrühren, abschmecken."]}, {"id": "no_gravlax", "name": "Gravlax", "local_names": [], "country": "Norwegen", "region": "Europa", "category": "Vorspeise", "tags": ["lachs", "dill", "roh"], "time_min": 1440, "difficulty": "Leicht", "servings": "8", "story": "Nordischer Lachs, in Salz, Zucker und Dill gebeizt.", "ingredients": ["800 g Lachsfilet", "100 g Salz", "100 g Zucker", "1 Bund Dill", "2 EL Aquavit (optional)", "Pfeffer"], "steps": ["Lachs mit Salz, Zucker, Dill und Aquavit einreiben.", "24-48 Stunden im Kühlschrank beizen.", "Abwaschen, in dünne Scheiben schneiden.", "Mit Dill garnieren servieren."]}, {"id": "se_meatballs", "name": "Köttbullar", "local_names": [], "country": "Schweden", "region": "Europa", "category": "Hauptgericht", "tags": ["hackfleisch", "preiselbeeren", "kartoffeln"], "time_min": 60, "difficulty": "Leicht", "servings": "4", "story": "Schwedische Fleischbällchen mit Preiselbeeren und Kartoffeln.", "ingredients": ["500 g Hackfleisch", "1 Zwiebel", "1 Ei", "50 g Semmelbrösel", "Milch", "Kartoffeln", "Preiselbeermarmelade", "Brühe, Sahne", "Salz, Pfeffer"], "steps": ["Fleischbällchen aus Hack, Zwiebel, Ei und Bröseln formen.", "Anbraten, mit Brühe und Sahne ablöschen.", "Kartoffeln kochen, Preiselbeeren erwärmen.", "Alles zusammen servieren."]}, {"id": "dk_smÃ¸rrebrÃ¸d", "name": "SmÃ¸rrebrÃ¸d", "local_names": [], "country": "Dänemark", "region": "Europa", "category": "Hauptgericht", "tags": ["brot", "fisch", "remoulade"], "time_min": 30, "difficulty": "Leicht", "servings": "4", "story": "Dänische Butterbrote mit verschiedenen Belägen.", "ingredients": ["Roggenbrot", "Butter", "Hering", "Lachs", "Remoulade", "Kapern", "Dill", "Eier", "Rote Bete"], "steps": ["Brot mit Butter bestreichen.", "Mit Fisch, Remoulade und Kapern belegen.", "Mit Dill und anderen Garnierungen dekorieren."]}, {"id": "is_hangikjöt", "name": "Hangikjöt", "local_names": [], "country": "Island", "region": "Europa", "category": "Hauptgericht", "tags": ["lamm", "geräuchert", "kartoffeln"], "time_min": 180, "difficulty": "Leicht", "servings": "6", "story": "Traditionell geräuchertes Lamm mit Kartoffeln.", "ingredients": ["1 kg geräuchertes Lamm", "1 kg Kartoffeln", "Weißkohl", "Weißbrot", "Butter", "Salz"], "steps": ["Lamm in Salzwasser kochen.", "Kartoffeln und Kohl als Beilage zubereiten.", "Mit Weißbrot und Butter servieren."]}, {"id": "pl_pierogi", "name": "Pierogi", "local_names": [], "country": "Polen", "region": "Europa", "category": "Hauptgericht", "tags": ["teigtaschen", "kartoffeln", "quark"], "time_min": 90, "difficulty": "Mittel", "servings": "6", "story": "Polnische Teigtaschen mit verschiedenen Füllungen.", "ingredients": ["400 g Mehl", "2 Eier", "Wasser", "Kartoffeln", "Quark", "Zwiebeln", "Speck", "Salz"], "steps": ["Teig kneten und ausrollen.", "Füllung aus Kartoffeln und Quark herstellen.", "Teigtaschen formen und in Salzwasser kochen.", "Mit gebratenen Zwiebeln und Speck servieren."]}, {"id": "hu_goulash", "name": "Gulyás", "local_names": [], "country": "Ungarn", "region": "Europa", "category": "Eintopf", "tags": ["rindfleisch", "paprika", "kartoffeln"], "time_min": 150, "difficulty": "Mittel", "servings": "6", "story": "Ungarischer Rindfleisch-Eintopf mit Paprika.", "ingredients": ["800 g Rindfleisch", "4 Zwiebeln", "4 Paprika", "3 Tomaten", "4 Kartoffeln", "3 EL Paprikapulver", "Kreuzkümmel, Lorbeer", "Salz, Pfeffer"], "steps": ["Fleisch würfeln und anbraten.", "Zwiebeln glasig, Paprika zugeben.", "Mit Tomaten und Gewürzen aufgießen.", "Kartoffeln zufügen, 90 Min. schmoren."]}, {"id": "ro_mamaliga", "name": "M&Auml;ƒm&Auml;ƒlig&Auml;ƒ", "local_names": [], "country": "Rumänien", "region": "Europa", "category": "Beilage", "tags": ["polenta", "käse", "butter"], "time_min": 30, "difficulty": "Leicht", "servings": "4", "story": "Rumänischer Maisbrei mit Käse.", "ingredients": ["200 g Maismehl", "600 ml Wasser", "100 g Käse", "Butter", "Salz"], "steps": ["Wasser salzen und zum Kochen bringen.", "Maismehl einrieseln lassen, rühren.", "Mit Käse und Butter vermischen.", "Servieren."]}, {"id": "bg_banitsa", "name": "Banitsa", "local_names": [], "country": "Bulgarien", "region": "Europa", "category": "Gebäck", "tags": ["blätterteig", "käse", "ei"], "time_min": 60, "difficulty": "Mittel", "servings": "8", "story": "Bulgarischer Blätterteig mit Käse und Ei.", "ingredients": ["500 g Blätterteig", "300 g Feta-Käse", "4 Eier", "200 ml Joghurt", "Sonnenblumenöl", "Salz"], "steps": ["Käse zerkrümeln, mit Eiern und Joghurt mischen.", "Blätterteig ausrollen und mit Füllung bestreichen.", "Aufrollen und in Form legen.", "30 Min. backen."]}, {"id": "hr_cevapi", "name": "&Auml;†evapi", "local_names": [], "country": "Kroatien", "region": "Europa", "category": "Hauptgericht", "tags": ["fleisch", "grillen", "brot"], "time_min": 45, "difficulty": "Leicht", "servings": "4", "story": "Kleine gegrillte Fleischröllchen im Fladenbrot.", "ingredients": ["600 g Hackfleisch", "1 Zwiebel", "Knoblauch", "Paprika", "Pita-Brot", "Zwiebeln", "Ajvar", "Käse"], "steps": ["Hack mit Gewürzen vermischen und zu Röllchen formen.", "Auf dem Grill garen.", "In Pita-Brot mit Zwiebeln, Ajvar und Käse servieren."]}, {"id": "rs_sarma", "name": "Sarma", "local_names": [], "country": "Serbien", "region": "Europa", "category": "Hauptgericht", "tags": ["kohl", "hackfleisch", "reis"], "time_min": 120, "difficulty": "Mittel", "servings": "6", "story": "Kohlrouladen mit Hackfleisch und Reis.", "ingredients": ["1 Weißkohl", "400 g Hackfleisch", "150 g Reis", "Zwiebeln", "Tomatenmark", "Paprika", "Brühe", "Salz, Pfeffer"], "steps": ["Kohlblätter blanchieren.", "Füllung aus Hack, Reis und Gewürzen herstellen.", "Kohlblätter füllen und einrollen.", "In Brühe 90 Min. schmoren."]}, {"id": "ba_burek", "name": "Burek", "local_names": [], "country": "Bosnien", "region": "Europa", "category": "Gebäck", "tags": ["blätterteig", "käse", "fleisch"], "time_min": 90, "difficulty": "Anspruchsvoll", "servings": "8", "story": "Bosnische Blätterteigpastete mit Fleisch oder Käse.", "ingredients": ["500 g Filo-Teig", "400 g Hackfleisch", "Zwiebeln", "Paprika", "Öl", "Salz"], "steps": ["Hack mit Zwiebeln und Gewürzen braten.", "Filo-Teig mit Füllung schichten.", "Mit Öl bestreichen und backen.", "In Dreiecke schneiden servieren."]}, {"id": "mk_tavce", "name": "Tav&Auml;e Grav&Auml;e", "local_names": [], "country": "Nordmazedonien", "region": "Europa", "category": "Hauptgericht", "tags": ["bohnen", "paprika", "zwiebeln"], "time_min": 120, "difficulty": "Leicht", "servings": "6", "story": "Traditionelle Bohnenpfanne mit Paprika.", "ingredients": ["500 g weiße Bohnen", "4 Zwiebeln", "4 Paprika", "Tomatenmark", "Paprikapulver", "Öl", "Salz"], "steps": ["Bohnen über Nacht einweichen und kochen.", "Zwiebeln und Paprika anbraten.", "Mit Tomatenmark und Gewürzen vermischen.", "In Tontopf 60 Min. backen."]},
+  { 
+  id: 'global_estimate_meta',
+  name: 'Kulinarische Welt – konservative Untergrenze (Schätzung)',
+  localName: 'Global Estimate (Conservative Lower Bound)',
+  country: 'Welt',
+  region: 'Global',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ['Statistik','Schätzung','Meta','Global'],
+  story: `Eine praktikable Schätzung (konservativer Unterrand)
+
+Wenn man nur „klassische, benannte Gerichte" zählt und extrem konservativ ansetzt – z.B. mindestens 10–20 bekannte Gerichte pro Land – kommt man schon auf Größenordnungen von vielen Tausend:
+
+Europa (je nach Abgrenzung ~40–45 Länder): â‰¥ 400–900
+Asien (~45–50): â‰¥ 450–1.000
+Afrika (~50–55): â‰¥ 500–1.100
+Lateinamerika & Karibik (~30–35): â‰¥ 300–700
+Nordamerika (inkl. Mittelamerika & Karibik gezählt oben; nur USA/Kanada/Mexiko separat macht die Region kleiner oder größer je nach Definition): â‰¥ einige Hundert
+Nahost (je nach Abgrenzung ~12–16): â‰¥ 120–320
+Ozeanien (inkl. Pazifikstaaten ~12–16): â‰¥ 120–320
+
+Selbst mit diesen Minimalannahmen landet man locker bei über 2.000–5.000 unterschiedlichen, namentlich bekannten Gerichten – und das ignoriert Hausrezepte, saisonale Varianten, Restaurant-Kreationen etc.
+
+Wenn du eine harte Zahl willst, müssen wir eine Definition festlegen
+
+Zum Beispiel:
+
+„Zähle nur Gerichte mit eigenem Wikipedia-Eintrag pro Land" (recht streng).
+„Zähle nur Nationalgerichte/klassische Spezialitäten pro Land" (moderater).
+„Zähle alles inkl. Street-Food, Festtags- und Regionalgerichten" (breit).`,
+  ingredients: ["Europa (â‰ˆ40–45 Länder): â‰¥ 400–900", "Asien (â‰ˆ45–50): â‰¥ 450–1.000", "Afrika (â‰ˆ50–55): â‰¥ 500–1.100", "Lateinamerika & Karibik (â‰ˆ30–35): â‰¥ 300–700", "Nordamerika (je nach Definition): â‰¥ einige Hundert", "Nahost (â‰ˆ12–16): â‰¥ 120–320", "Ozeanien (â‰ˆ12–16): â‰¥ 120–320", "Gesamtschätzung (konservativer Unterrand): > 2.000–5.000 benannte Gerichte"],
+  steps: ["Definition wählen: streng (nur Wikipedia-Einträge), moderat (Nationalgerichte/Spezialitäten) oder breit (inkl. Street-Food, Festtags-, Regionalgerichte).", "Je Land eine Liste erstellen, je Region aggregieren.", "Dubletten/Varianten bereinigen; Sprach-/Schreibvarianten konsolidieren.", "Regelmäßig aktualisieren; Quellenstand dokumentieren."],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_europa',
+  name: 'Schätzung (konservativ) – Europa',
+  localName: 'Europa – Conservative Lower Bound',
+  country: 'Europa',
+  region: 'Europa',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ["Europa", "Schätzung", "Meta"],
+  story: `Europa (â‰ˆ40–45 Länder): â‰¥ 400–900
+
+Hinweis: Konservative Untergrenze für „klassische, benannte Gerichte" in der Region Europa.
+Methodik: Minimalannahme je Land, Dubletten/Varianten nicht differenziert. Stand 2025-10-15.
+`,
+  ingredients: ["Europa (â‰ˆ40–45 Länder): â‰¥ 400–900"],
+  steps: ["Definition wählen", "Länder zählen", "Aggregieren", "Quellenstand dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_asien',
+  name: 'Schätzung (konservativ) – Asien',
+  localName: 'Asien – Conservative Lower Bound',
+  country: 'Asien',
+  region: 'Asien',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ["Asien", "Schätzung", "Meta"],
+  story: `Asien (â‰ˆ45–50): â‰¥ 450–1.000
+
+Hinweis: Konservative Untergrenze für „klassische, benannte Gerichte" in der Region Asien.
+Methodik: Minimalannahme je Land, Dubletten/Varianten nicht differenziert. Stand 2025-10-15.
+`,
+  ingredients: ["Asien (â‰ˆ45–50): â‰¥ 450–1.000"],
+  steps: ["Definition wählen", "Länder zählen", "Aggregieren", "Quellenstand dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_afrika',
+  name: 'Schätzung (konservativ) – Afrika',
+  localName: 'Afrika – Conservative Lower Bound',
+  country: 'Afrika',
+  region: 'Afrika',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ["Afrika", "Schätzung", "Meta"],
+  story: `Afrika (â‰ˆ50–55): â‰¥ 500–1.100
+
+Hinweis: Konservative Untergrenze für „klassische, benannte Gerichte" in der Region Afrika.
+Methodik: Minimalannahme je Land, Dubletten/Varianten nicht differenziert. Stand 2025-10-15.
+`,
+  ingredients: ["Afrika (â‰ˆ50–55): â‰¥ 500–1.100"],
+  steps: ["Definition wählen", "Länder zählen", "Aggregieren", "Quellenstand dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_lateinamerika_und_karibik',
+  name: 'Schätzung (konservativ) – Lateinamerika & Karibik',
+  localName: 'Lateinamerika & Karibik – Conservative Lower Bound',
+  country: 'Lateinamerika & Karibik',
+  region: 'Lateinamerika',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ["Lateinamerika", "Karibik", "Schätzung", "Meta"],
+  story: `Lateinamerika & Karibik (â‰ˆ30–35): â‰¥ 300–700
+
+Hinweis: Konservative Untergrenze für „klassische, benannte Gerichte" in der Region Lateinamerika & Karibik.
+Methodik: Minimalannahme je Land, Dubletten/Varianten nicht differenziert. Stand 2025-10-15.
+`,
+  ingredients: ["Lateinamerika & Karibik (â‰ˆ30–35): â‰¥ 300–700"],
+  steps: ["Definition wählen", "Länder zählen", "Aggregieren", "Quellenstand dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_nordamerika',
+  name: 'Schätzung (konservativ) – Nordamerika',
+  localName: 'Nordamerika – Conservative Lower Bound',
+  country: 'Nordamerika',
+  region: 'Nordamerika',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ["Nordamerika", "Schätzung", "Meta"],
+  story: `Nordamerika (je nach Definition): â‰¥ einige Hundert
+
+Hinweis: Konservative Untergrenze für „klassische, benannte Gerichte" in der Region Nordamerika.
+Methodik: Minimalannahme je Land, Dubletten/Varianten nicht differenziert. Stand 2025-10-15.
+`,
+  ingredients: ["Nordamerika (je nach Definition): â‰¥ einige Hundert"],
+  steps: ["Definition wählen", "Länder zählen", "Aggregieren", "Quellenstand dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_nahost',
+  name: 'Schätzung (konservativ) – Nahost',
+  localName: 'Nahost – Conservative Lower Bound',
+  country: 'Nahost',
+  region: 'Nahost',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ["Nahost", "Schätzung", "Meta"],
+  story: `Nahost (â‰ˆ12–16): â‰¥ 120–320
+
+Hinweis: Konservative Untergrenze für „klassische, benannte Gerichte" in der Region Nahost.
+Methodik: Minimalannahme je Land, Dubletten/Varianten nicht differenziert. Stand 2025-10-15.
+`,
+  ingredients: ["Nahost (â‰ˆ12–16): â‰¥ 120–320"],
+  steps: ["Definition wählen", "Länder zählen", "Aggregieren", "Quellenstand dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_ozeanien',
+  name: 'Schätzung (konservativ) – Ozeanien',
+  localName: 'Ozeanien – Conservative Lower Bound',
+  country: 'Ozeanien',
+  region: 'Ozeanien',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ["Ozeanien", "Schätzung", "Meta"],
+  story: `Ozeanien (â‰ˆ12–16): â‰¥ 120–320
+
+Hinweis: Konservative Untergrenze für „klassische, benannte Gerichte" in der Region Ozeanien.
+Methodik: Minimalannahme je Land, Dubletten/Varianten nicht differenziert. Stand 2025-10-15.
+`,
+  ingredients: ["Ozeanien (â‰ˆ12–16): â‰¥ 120–320"],
+  steps: ["Definition wählen", "Länder zählen", "Aggregieren", "Quellenstand dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Benutzerangabe, Stand 2025-10-15'
+},
+  { 
+  id: 'meta_estimate_wikipedia_only',
+  name: 'Zählung (Wikipedia-Artikel, streng) – global â‰ˆ 4.000',
+  localName: 'Wikipedia-only (strict)',
+  country: 'Welt',
+  region: 'Global',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ['Meta','Zählung','Wikipedia','Streng'],
+  story: `Strenge Zählungsidee: Zähle pro Land nur Gerichte mit eigenem Wikipedia-Artikel.
+Hinweis: Hohe Datenverfügbarkeit führt trotz strenger Definition zu sehr großen Zahlen.
+Konservative Arbeitszahl (global): 4.000 (Bandbreite: 3.000–6.000). Stand 2025-10-15.`,
+  ingredients: ["Globale Schätzung (konservativ): 4.000", "Bandbreite: 3.000–6.000"],
+  steps: ["Pro Land Wikipedia-Einträge sammeln", "Dubletten entfernen", "Summieren & dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Heuristik/Schätzung; exakte Erhebung erfordert Crawling'
+},
+  { 
+  id: 'meta_estimate_national_dishes_only',
+  name: 'Zählung (Nationalgerichte, moderat) – global â‰ˆ 400',
+  localName: 'National dishes only (moderate)',
+  country: 'Welt',
+  region: 'Global',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ['Meta','Zählung','Nationalgerichte','Moderat'],
+  story: `Moderate Zählungsidee: Pro Land 1–3 Nationalgerichte/klassische Spezialitäten.
+Konservative Arbeitszahl (global): 400 (Bandbreite: 300–600). Stand 2025-10-15.`,
+  ingredients: ["Globale Schätzung (konservativ): 400", "Bandbreite: 300–600"],
+  steps: ["Pro Land 1–3 etablierte Klassiker listen", "Dubletten vermeiden", "Summieren"],
+  nutrition: null,
+  image: null,
+  source: 'Heuristik/Schätzung; Definition: etablierte Klassiker'
+},
+  { 
+  id: 'meta_estimate_all_inclusive',
+  name: 'Zählung (breit inkl. Street-Food) – global â‰ˆ 7.500',
+  localName: 'All inclusive (broad)',
+  country: 'Welt',
+  region: 'Global',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ['Meta','Zählung','Breit','Street-Food'],
+  story: `Breite Zählungsidee: Inkludiere Street-Food, Festtags- und Regionalgerichte.
+Konservative Arbeitszahl (global): 7.500 (Bandbreite: â‰¥5.000–10.000+). Stand 2025-10-15.`,
+  ingredients: ["Globale Schätzung (konservativ): 7.500", "Bandbreite: â‰¥5.000–10.000+"],
+  steps: ["Pro Land breite Liste zusammentragen", "Regionale Varianten zählen", "Summieren & dokumentieren"],
+  nutrition: null,
+  image: null,
+  source: 'Heuristik/Schätzung; bewusst breit'
+},
+  { 
+  id: 'meta_total_counter',
+  name: 'Gesamtanzahl Rezepte (App): 52',
+  localName: 'Total recipes (app)',
+  country: 'Welt',
+  region: 'Global',
+  category: 'Meta',
+  difficulty: 'n/a',
+  time: '-',
+  serves: '-',
+  tags: ['Meta','Zähler','Status'],
+  story: `Gesamtanzahl der aktuell in der App hinterlegten Einträge (inkl. Meta-Datensätze): 52.
+Hinweis: Dezente Anzeige – nur als Datensatz sichtbar, keine UI/UX-Änderung.
+Stand 2025-10-15.`,
+  ingredients: ["Aktueller Gesamtstand: 52"],
+  steps: ["Nur Infoeintrag – keine Zubereitung"],
+  nutrition: null,
+  image: null,
+  source: 'Systemzähler'
+}
+];
+
+/* === BEGIN: PACK LOADER (non-UI) =========================================
+   SINGLE FILE MODE: Alle Rezepte sind bereits in DATA eingebettet
+   CORS-Problem bei file:// Protokoll verhindert fetch() zu lokalen Dateien
+   =========================================================================== */
+console.log('“¦ Single File Mode: Alle Rezepte bereits eingebettet');
+console.log(`“Š Total recipes available: ${DATA.length}`);
+
+// === AUTOMATISCHER IMPORT ALLER EXTERNER DATENBANKEN ===
+// Wird nach EXTERNAL_DATA_SOURCES Definition ausgeführt
+// === END: PACK LOADER =====================================================
+
+
+// Simple index for search: join name, local, country, tags, ingredients, story
+function toIndex(rec) {
+  const fields = [
+    rec.name, ...(rec.local_names||[]),
+    rec.country, rec.region, rec.category,
+    ...(rec.tags||[]),
+    (rec.ingredients||[]).join(' '),
+    rec.story
+  ].join(' ').toLowerCase();
+  return fields.normalize('NFD').replace(/\p{Diacritic}+/gu,'');
+}
+
+const INDEX = new Map();
+
+// === REBUILD INDEX FUNCTION ===
+function rebuildIndex() {
+  console.log('”„ Rebuilding search index...');
+  INDEX.clear();
+  for (const r of DATA) {
+    INDEX.set(r.id, toIndex(r));
+  }
+  console.log(`✅ Index rebuilt: ${INDEX.size} recipes indexed`);
+}
+
+// Initial index build
+rebuildIndex();
+
+const $ = (sel, ctx=document) => ctx.querySelector(sel);
+const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+let filtered = [...DATA];
+let page = 0;
+let currentRecipe = null; // Aktuelles Rezept für Aktionen
+const PAGE_SIZE = 24;
+
+function updateRecipeCount() {
+  const totalRecipes = DATA.length;
+  const filteredRecipes = filtered.length;
+  
+  if (filteredRecipes === totalRecipes) {
+    $('#count').textContent = `${totalRecipes} Rezepte`;
+  } else {
+    $('#count').textContent = `${filteredRecipes} von ${totalRecipes} Rezepten`;
+  }
+}
+
+function applyFilters() {
+  const q = ($('#search').value || '').toLowerCase().trim();
+  const region = $('#region').value;
+  const category = $('#category').value;
+  const diff = $('#difficulty').value;
+
+  filtered = DATA.filter(r => {
+    if (region && r.region !== region) return false;
+    if (category && r.category !== category) return false;
+    if (diff && r.difficulty !== diff) return false;
+    if (!q) return true;
+    
+    // Einfache Suche in allen Feldern
+    const searchFields = [
+      r.name,
+      ...(r.local_names || []),
+      r.country,
+      r.region,
+      r.category,
+      ...(r.tags || []),
+      (r.ingredients || []).join(' '),
+      r.story
+    ].join(' ').toLowerCase();
+    
+    return searchFields.includes(q);
+  });
+
+  // Show intelligent suggestions if no results
+  if (filtered.length === 0 && q) {
+    showIntelligentSuggestions(q);
+    return;
+  }
+
+  page = 0;
+  $('#results').innerHTML = '';
+  renderNext();
+  updateRecipeCount();
+}
+
+function showIntelligentSuggestions(searchTerm) {
+  const suggestions = generateSuggestions(searchTerm);
+  
+  const resultsContainer = document.getElementById('results');
+  resultsContainer.innerHTML = `
+    <div class="no-results-card" style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--card); border-radius: 18px; border: 1px solid #e2d3bf;">
+      <h3 style="color: var(--accent); margin-bottom: 20px;">${translateText('noResults')}</h3>
+      <p style="color: var(--muted); margin-bottom: 30px;">"${searchTerm}" ${translateText('orSearchFor')}</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        ${suggestions.map(suggestion => `
+          <button class="btn" onclick="searchFor('${suggestion}')" style="padding: 15px; text-align: center;">
+            ${suggestion}
+          </button>
+        `).join('')}
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <button class="btn" onclick="clearSearch()" style="background: var(--accent2); color: white;">
+          ${translateText('resetFilters')}
+        </button>
+      </div>
+    </div>
+  `;
+  
+  $('#count').textContent = `0 von ${DATA.length} Rezepten`;
+}
+
+function generateSuggestions(searchTerm) {
+  const suggestions = new Set();
+  
+  // Find similar countries
+  DATA.forEach(recipe => {
+    if (recipe.country.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        searchTerm.toLowerCase().includes(recipe.country.toLowerCase())) {
+      suggestions.add(recipe.country);
+    }
+  });
+  
+  // Find similar categories
+  DATA.forEach(recipe => {
+    if (recipe.category.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        searchTerm.toLowerCase().includes(recipe.category.toLowerCase())) {
+      suggestions.add(translateCategory(recipe.category));
+    }
+  });
+  
+  // Find similar ingredients
+  DATA.forEach(recipe => {
+    recipe.ingredients?.forEach(ingredient => {
+      if (ingredient.toLowerCase().includes(searchTerm.toLowerCase()) || 
+          searchTerm.toLowerCase().includes(ingredient.toLowerCase())) {
+        suggestions.add(ingredient);
+      }
+    });
+  });
+  
+  // Find similar tags
+  DATA.forEach(recipe => {
+    recipe.tags?.forEach(tag => {
+      if (tag.toLowerCase().includes(searchTerm.toLowerCase()) || 
+          searchTerm.toLowerCase().includes(tag.toLowerCase())) {
+        suggestions.add(tag);
+      }
+    });
+  });
+  
+  // Add common suggestions if no matches
+  if (suggestions.size === 0) {
+    suggestions.add('Pasta');
+    suggestions.add('Fleisch');
+    suggestions.add('Vegetarisch');
+    suggestions.add('Suppe');
+    suggestions.add('Einfach');
+  }
+  
+  return Array.from(suggestions).slice(0, 6);
+}
+
+function searchFor(term) {
+  $('#search').value = term;
+  applyFilters();
+}
+
+function clearSearch() {
+  $('#search').value = '';
+  $('#region').value = '';
+  $('#category').value = '';
+  $('#difficulty').value = '';
+  applyFilters();
+}
+
+// fuzzy-ish: if query is 'hunger', match tags/story hints about sättigend/leicht etc.
+function suggest(q, hay) {
+  const syn = {
+    'hunger': ['satt','sättigend','proteinreich','eintopf','nudeln','reis','schnell'],
+    'leicht': ['leicht','suppe','salat','dampf','wenig fett'],
+    'scharf': ['scharf','chili','pfeffer','berbere','doubanjiang'],
+    'schnell': ['schnell','15','20','30','fix'],
+    'vegetarisch': ['vegetarisch','tofu','linsen','gemüse','dal'],
+  };
+  for (const k in syn) {
+    if (q.includes(k)) {
+      for (const w of syn[k]) if (hay.includes(w)) return true;
+    }
+  }
+  return false;
+}
+
+function card(rec) {
+  return `
+    <article class="card" data-id="${rec.id}">
+      <h3>${rec.name}</h3>
+      <div class="meta">
+        <span>Œ ${translateRegion(rec.country)} • ${translateRegion(rec.region)}</span>
+        <span>â±ï¸ ${rec.time_min} Min</span>
+        <span>½ï¸ ${rec.servings}</span>
+        <span>âš™ï¸ ${translateDifficulty(rec.difficulty)}</span>
+      </div>
+      <div class="tags">${(rec.tags||[]).slice(0,5).map(t=>`<span class="tag">#${t}</span>`).join('')}</div>
+      <div class="more"><span class="link" onclick="openModal('${rec.id.replace(/'/g, '\\\'')}')">Rezept öffnen</span></div>
+    </article>`;
+}
+
+function renderNext() {
+  const start = page*PAGE_SIZE;
+  const next = filtered.slice(start, start+PAGE_SIZE);
+  const html = next.map(card).join('');
+  $('#results').insertAdjacentHTML('beforeend', html);
+  page++;
+  if (start+PAGE_SIZE >= filtered.length) observer.disconnect();
+  else observer.observe($('#sentinel'));
+}
+
+function openModal(id) {
+  console.log('Opening modal for recipe ID:', id);
+  const r = DATA.find(x=>x.id===id);
+  if (!r) {
+    console.error('Recipe not found for ID:', id);
+    return;
+  }
+  
+  console.log('Found recipe:', r.name);
+  
+  // Set current recipe for actions
+  currentRecipe = r;
+  
+  // Update modal content safely
+  const modalTitle = document.getElementById('modalTitle');
+  const modalMeta = document.getElementById('modalMeta');
+  const modalStory = document.getElementById('modalStory');
+  const modalIngr = document.getElementById('modalIngr');
+  const modalSteps = document.getElementById('modalSteps');
+  const modal = document.getElementById('modal');
+  
+  if (modalTitle) modalTitle.textContent = r.name;
+  if (modalMeta) modalMeta.innerHTML = `Œ ${translateRegion(r.country)} • ${translateRegion(r.region)} &nbsp; â±ï¸ ${r.time_min} Min &nbsp; ½ï¸ ${r.servings} &nbsp; âš™ï¸ ${translateDifficulty(r.difficulty)}`;
+  if (modalStory) modalStory.textContent = r.story || '';
+  if (modalIngr) modalIngr.innerHTML = (r.ingredients||[]).map(i=>`<li>${i}</li>`).join('');
+  if (modalSteps) modalSteps.innerHTML = (r.steps||[]).map((s,i)=>`<li><strong>Schritt ${i+1}:</strong> ${s}</li>`).join('');
+  if (modal) modal.classList.add('open');
+  
+  console.log('Modal opened successfully');
+}
+
+function closeModal() {
+  // Statisches Modal schließen
+  const staticModal = document.getElementById('modal');
+  if (staticModal) staticModal.classList.remove('open');
+
+  // Dynamisches Rezept-Modal vollständig entfernen
+  const dynamicRecipeModal = document.getElementById('recipe-modal');
+  if (dynamicRecipeModal && dynamicRecipeModal.parentNode) {
+    dynamicRecipeModal.parentNode.removeChild(dynamicRecipeModal);
+  }
+}
+
+// ESC schließt jedes Modal
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// === SAMMLUNGSFUNKTIONEN ===
+function addToCollection() {
+  if (!currentRecipe) return;
+  RECIPE_COLLECTION.add(currentRecipe.id);
+  alert(`✅ "${currentRecipe.name}" zur Sammlung hinzugefügt!`);
+}
+
+function printRecipe() {
+  if (!currentRecipe) return;
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head><title>${currentRecipe.name}</title>
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+      <body>
+        <h1>${currentRecipe.name}</h1>
+        <p><strong>Land:</strong> ${currentRecipe.country} • ${currentRecipe.region}</p>
+        <p><strong>Zeit:</strong> ${currentRecipe.time_min} Min • <strong>Portionen:</strong> ${currentRecipe.servings} • <strong>Schwierigkeit:</strong> ${currentRecipe.difficulty}</p>
+        <h2>Zutaten</h2>
+        <ul>${(currentRecipe.ingredients||[]).map(i=>`<li>${i}</li>`).join('')}</ul>
+        <h2>Zubereitung</h2>
+        <ol>${(currentRecipe.steps||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.print();
+}
+
+function exportRecipe() {
+  if (!currentRecipe) return;
+  const dataStr = JSON.stringify(currentRecipe, null, 2);
+  const dataBlob = new Blob([dataStr], {type: 'application/json'});
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${currentRecipe.name.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+const observer = new IntersectionObserver((entries)=>{
+  for (const e of entries) if (e.isIntersecting) renderNext();
+}, {root:null, rootMargin:'0px', threshold:1.0});
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  // Populate filter options dynamically
+  // Use translated dropdowns
+  rebuildAllDropdowns();
+
+  applyFilters(); // initialize
+  $('#search').addEventListener('input', applyFilters);
+  $('#region').addEventListener('change', applyFilters);
+  $('#category').addEventListener('change', applyFilters);
+  $('#difficulty').addEventListener('change', applyFilters);
+  $('#clear').addEventListener('click', ()=>{
+    $('#search').value=''; $('#region').value=''; $('#category').value=''; $('#difficulty').value=''; applyFilters();
+  });
+  
+  // Multi-Choice Button Event Listener
+  $('#multiSelect').addEventListener('click', showMultiChoiceModal);
+  $('#musicMode').addEventListener('click', toggleMusicMode);
+  $('#importExport').addEventListener('click', showImportExportModal);
+  $('#dataSources').addEventListener('click', showDataSourcesModal);
+  
+  // Initialize Restaurant System
+  createAdminButton();
+  
+  // Add restaurant-specific CSS
+  const style = document.createElement('style');
+  style.textContent = `
+    .admin-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    
+    .admin-modal {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 1000px;
+      max-height: 80vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .admin-header {
+      background: #8b6b4a;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .admin-tabs {
+      display: flex;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .tab-btn {
+      padding: 15px 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+    
+    .tab-btn.active {
+      background: white;
+      border-bottom-color: #8b6b4a;
+    }
+    
+    .admin-body {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    
+    .admin-tab {
+      display: none;
+    }
+    
+    .admin-tab.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin: 15px 0;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-small {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: #8b6b4a;
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    
+    .menu-item-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      background: #f9f9f9;
+    }
+    
+    .menu-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    
+    .live-order {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+    
+    .order-status {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .success {
+      background: #d4edda;
+      color: #155724;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+    }
+    
+    .api-info {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5000;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .modal-header {
+      background: #8b6b4a;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 12px 12px 0 0;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    .modal-footer {
+      padding: 20px;
+      border-top: 1px solid #ddd;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .recipe-info {
+      display: flex;
+      gap: 15px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    
+    .recipe-ingredients ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .recipe-ingredients li {
+      padding: 5px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .step {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+    }
+    
+    .btn-collection, .btn-print, .btn-export, .btn-manage {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-collection { background: #28a745; color: white; }
+    .btn-print { background: #007bff; color: white; }
+    .btn-export { background: #6c757d; color: white; }
+    .btn-manage { background: #ffc107; color: black; }
+    
+    .collection-actions {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .collection-item {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .btn-remove {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  `;
+  document.head.appendChild(style);
+});
+
+// === MULTI-CHOICE MENÜ SYSTEM ===
+// Erweiterte Auswahl-Komponente für komplexe Menüfindung
+
+// === MUSIC & VIBRATION SYSTEM ===
+const MUSIC_VIBRATION_CONFIG = {
+  tasteToMusic: {
+    'süß': { frequency: 440, duration: 1000, note: 'A4' },
+    'sauer': { frequency: 554.37, duration: 800, note: 'C#5' },
+    'scharf': { frequency: 659.25, duration: 600, note: 'E5' },
+    'bitter': { frequency: 349.23, duration: 1200, note: 'F4' },
+    'umami': { frequency: 220, duration: 1500, note: 'A3' },
+    'salzig': { frequency: 293.66, duration: 900, note: 'D4' }
+  },
+  emotionToVibration: {
+    'romantisch': [100, 200, 100],
+    'gesellig': [150, 100, 150, 100],
+    'entspannend': [50, 50, 50],
+    'energetisch': [200, 100, 200, 100, 200],
+    'tröstlich': [80, 160, 80],
+    'feierlich': [300, 100, 300, 100, 300]
+  }
+};
+
+function playTasteMusic(taste) {
+  if (!musicModeActive) return;
+  
+  const config = MUSIC_VIBRATION_CONFIG.tasteToMusic[taste];
+  if (!config) return;
+  
+  try {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Resume context if suspended (required by browsers)
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+    
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(config.frequency, audioContext.currentTime);
+    oscillator.type = 'sine';
+    
+    // Smooth volume envelope
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + config.duration / 1000);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + config.duration / 1000);
+    
+    console.log(`Žµ Audio SUCCESS: ${taste} (${config.frequency}Hz, ${config.note})`);
+    return true;
+  } catch (error) {
+    console.error('❌ Audio FAILED:', error.message);
+    return false;
+  }
+}
+
+function vibrateForEmotion(emotion) {
+  const pattern = MUSIC_VIBRATION_CONFIG.emotionToVibration[emotion];
+  if (!pattern || !navigator.vibrate) return;
+  
+  navigator.vibrate(pattern);
+  console.log(`“³ Vibrating for emotion: ${emotion}`);
+}
+
+const MULTI_CHOICE_CONFIG = {
+  tasteProfiles: {
+    'süß': ['süß', 'zucker', 'honig', 'dessert', 'kuchen', 'eis'],
+    'sauer': ['sauer', 'essig', 'zitrone', 'limette', 'sauerrahm'],
+    'scharf': ['scharf', 'chili', 'pfeffer', 'paprika', 'curry', 'würzig'],
+    'bitter': ['bitter', 'kakao', 'kaffee', 'grüner tee', 'grapefruit'],
+    'umami': ['umami', 'pilze', 'sojasauce', 'parmesan', 'fleisch'],
+    'salzig': ['salzig', 'oliven', 'käse', 'speck', 'anchovis']
+  },
+  emotionStates: {
+    'romantisch': ['romantisch', 'intim', 'kerzenlicht', 'wein', 'dessert'],
+    'gesellig': ['gesellig', 'sharing', 'tapas', 'buffet', 'gemeinsam'],
+    'entspannend': ['entspannend', 'leicht', 'suppe', 'tee', 'beruhigend'],
+    'energetisch': ['energetisch', 'protein', 'energie', 'schnell', 'aktiv'],
+    'tröstlich': ['tröstlich', 'komfort', 'eintopf', 'warm', 'familiär'],
+    'feierlich': ['feierlich', 'festlich', 'luxus', 'champagner', 'delikatesse']
+  },
+  relationshipContext: {
+    'dating': ['dating', 'romantisch', 'intim', 'elegant', 'privat'],
+    'geschäftlich': ['geschäftlich', 'professionell', 'formal', 'business', 'meeting'],
+    'partnerschaft': ['partnerschaft', 'gemeinsam', 'sharing', 'intim', 'verbunden'],
+    'familie': ['familie', 'traditionell', 'groß', 'komfort', 'heimisch'],
+    'freunde': ['freunde', 'gesellig', 'lustig', 'casual', 'entspannt'],
+    'sexuell': ['intim', 'sinnlich', 'verführerisch', 'leidenschaftlich', 'körperflüssigkeiten'],
+    'duar': ['duar', 'zwei', 'paar', 'intim', 'verbunden']
+  },
+  businessContext: {
+    'investment': ['investment', 'luxus', 'teuer', 'exklusiv', 'premium'],
+    'networking': ['networking', 'geschäftlich', 'professionell', 'treffen', 'verhandlung'],
+    'börse': ['börse', 'finanz', 'trading', 'meeting', 'geschäft'],
+    'global': ['global', 'international', 'fusion', 'multikulti', 'weltweit'],
+    'lokation': ['lokation', 'restaurant', 'location', 'ort', 'platz'],
+    'bilanz': ['bilanz', 'finanz', 'geschäft', 'börse', 'trading'],
+    'interkommunikal': ['interkommunikal', 'global', 'international', 'vernetzt']
+  },
+  hungerLevels: {
+    'appetit': ['appetit', 'klein', 'vorspeise', 'snack', 'leicht'],
+    'hunger': ['hunger', 'normal', 'hauptgericht', 'sättigend', 'protein'],
+    'großer hunger': ['großer hunger', 'groß', 'eintopf', 'pasta', 'reis', 'kartoffeln'],
+    'riesen hunger': ['riesen hunger', 'riesig', 'all you can eat', 'buffet', 'mehrere gänge'],
+    'satt': ['satt', 'voll', 'dessert', 'kaffee', 'digestif']
+  }
+};
+
+function showMultiChoiceModal() {
+  const modal = document.createElement('div');
+  modal.id = 'multi-choice-modal';
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeMultiChoiceModal()">
+      <div class="modal-content" style="max-width: 900px;" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Ž¯ Multi-Choice Menü Finder</h2>
+          <button onclick="closeMultiChoiceModal()" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="multi-choice-grid">
+            <div class="choice-section">
+              <h3>½ï¸ Geschmacksrichtung</h3>
+              <div class="checkbox-grid">
+                ${Object.keys(MULTI_CHOICE_CONFIG.tasteProfiles).map(taste => 
+                  `<label class="checkbox-label">
+                    <input type="checkbox" value="${taste}" data-category="taste">
+                    <span class="checkmark">âœ“</span> ${taste}
+                  </label>`
+                ).join('')}
+              </div>
+            </div>
+            
+            <div class="choice-section">
+              <h3>’­ Emotionen & Stimmung</h3>
+              <div class="checkbox-grid">
+                ${Object.keys(MULTI_CHOICE_CONFIG.emotionStates).map(emotion => 
+                  `<label class="checkbox-label">
+                    <input type="checkbox" value="${emotion}" data-category="emotion">
+                    <span class="checkmark">âœ“</span> ${emotion}
+                  </label>`
+                ).join('')}
+              </div>
+            </div>
+            
+            <div class="choice-section">
+              <h3>‘¥ Beziehungskontext</h3>
+              <div class="checkbox-grid">
+                ${Object.keys(MULTI_CHOICE_CONFIG.relationshipContext).map(context => 
+                  `<label class="checkbox-label">
+                    <input type="checkbox" value="${context}" data-category="relationship">
+                    <span class="checkmark">âœ“</span> ${context}
+                  </label>`
+                ).join('')}
+              </div>
+            </div>
+            
+            <div class="choice-section">
+              <h3>’¼ Geschäftskontext</h3>
+              <div class="checkbox-grid">
+                ${Object.keys(MULTI_CHOICE_CONFIG.businessContext).map(business => 
+                  `<label class="checkbox-label">
+                    <input type="checkbox" value="${business}" data-category="business">
+                    <span class="checkmark">âœ“</span> ${business}
+                  </label>`
+                ).join('')}
+              </div>
+            </div>
+            
+            <div class="choice-section">
+              <h3>½ï¸ Hungerlevel</h3>
+              <div class="checkbox-grid">
+                ${Object.keys(MULTI_CHOICE_CONFIG.hungerLevels).map(hunger => 
+                  `<label class="checkbox-label">
+                    <input type="checkbox" value="${hunger}" data-category="hunger">
+                    <span class="checkmark">âœ“</span> ${hunger}
+                  </label>`
+                ).join('')}
+              </div>
+            </div>
+          </div>
+          
+          <div class="location-section">
+            <h3>“ Restaurant Lokation</h3>
+            <div class="location-grid">
+              <label class="checkbox-label">
+                <input type="checkbox" value="romantisch" data-category="location">
+                <span class="checkmark">âœ“</span> Romantisches Restaurant
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" value="geschäftlich" data-category="location">
+                <span class="checkmark">âœ“</span> Business Restaurant
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" value="casual" data-category="location">
+                <span class="checkmark">âœ“</span> Casual Dining
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" value="luxus" data-category="location">
+                <span class="checkmark">âœ“</span> Luxus Restaurant
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" value="street" data-category="location">
+                <span class="checkmark">âœ“</span> Street Food
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" value="home" data-category="location">
+                <span class="checkmark">âœ“</span> Zuhause kochen
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="applyMultiChoice()" class="btn-primary">Ž¯ Menü finden</button>
+          <button onclick="selectAllChoices()" class="btn-secondary">✅ Alle auswählen</button>
+          <button onclick="clearAllChoices()" class="btn-secondary">❌ Alle abwählen</button>
+          <button onclick="closeMultiChoiceModal()" class="btn-secondary">Schließen</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // CSS für Multi-Choice Modal hinzufügen
+  if (!document.getElementById('multi-choice-css')) {
+    const style = document.createElement('style');
+    style.id = 'multi-choice-css';
+    style.textContent = `
+      .multi-choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+      .choice-section { background: #fffdf8; border: 1px solid #e7d6c3; border-radius: 12px; padding: 15px; }
+      .choice-section h3 { margin: 0 0 15px; color: var(--accent); font-size: 16px; }
+      .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+      .checkbox-label { display: flex; align-items: center; cursor: pointer; padding: 5px; border-radius: 6px; transition: background 0.2s; }
+      .checkbox-label:hover { background: #f0e6d6; }
+      .checkbox-label input[type="checkbox"] { margin-right: 8px; transform: scale(1.2); }
+      .checkmark { color: var(--accent); font-weight: bold; margin-left: 5px; }
+      .location-section { background: #fffdf8; border: 1px solid #e7d6c3; border-radius: 12px; padding: 15px; margin-top: 20px; }
+      .location-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(modal);
+}
+
+function applyMultiChoice() {
+  const selectedChoices = {
+    taste: [],
+    emotion: [],
+    relationship: [],
+    business: [],
+    hunger: [],
+    location: []
+  };
+  
+  // Alle ausgewählten Checkboxen sammeln
+  document.querySelectorAll('#multi-choice-modal input[type="checkbox"]:checked').forEach(checkbox => {
+    const category = checkbox.dataset.category;
+    if (selectedChoices[category]) {
+      selectedChoices[category].push(checkbox.value);
+    }
+  });
+  
+  // Suchbegriffe aus allen Kategorien zusammenstellen
+  let searchTerms = [];
+  
+  Object.values(selectedChoices).forEach(categoryChoices => {
+    categoryChoices.forEach(choice => {
+      // Keywords aus der Konfiguration hinzufügen
+      if (MULTI_CHOICE_CONFIG.tasteProfiles[choice]) {
+        searchTerms.push(...MULTI_CHOICE_CONFIG.tasteProfiles[choice]);
+      }
+      if (MULTI_CHOICE_CONFIG.emotionStates[choice]) {
+        searchTerms.push(...MULTI_CHOICE_CONFIG.emotionStates[choice]);
+      }
+      if (MULTI_CHOICE_CONFIG.relationshipContext[choice]) {
+        searchTerms.push(...MULTI_CHOICE_CONFIG.relationshipContext[choice]);
+      }
+      if (MULTI_CHOICE_CONFIG.businessContext[choice]) {
+        searchTerms.push(...MULTI_CHOICE_CONFIG.businessContext[choice]);
+      }
+      if (MULTI_CHOICE_CONFIG.hungerLevels[choice]) {
+        searchTerms.push(...MULTI_CHOICE_CONFIG.hungerLevels[choice]);
+      }
+    });
+  });
+  
+  // Suchfeld mit den Begriffen füllen
+  const searchInput = document.getElementById('search');
+  searchInput.value = searchTerms.join(' ');
+  
+  // Filter anwenden
+  applyFilters();
+  
+  // Modal schließen
+  closeMultiChoiceModal();
+  
+  // Musik und Vibration wenn aktiv
+  if (musicModeActive) {
+    selectedChoices.taste.forEach(taste => playTasteMusic(taste));
+    selectedChoices.emotion.forEach(emotion => vibrateForEmotion(emotion));
+  }
+  
+  // Erfolgsmeldung
+  console.log('Ž¯ Multi-Choice Suche angewendet:', searchTerms);
+}
+
+function selectAllChoices() {
+  document.querySelectorAll('#multi-choice-modal input[type="checkbox"]').forEach(checkbox => {
+    checkbox.checked = true;
+  });
+}
+
+function clearAllChoices() {
+  document.querySelectorAll('#multi-choice-modal input[type="checkbox"]').forEach(checkbox => {
+    checkbox.checked = false;
+  });
+}
+
+function closeMultiChoiceModal() {
+  const modal = document.getElementById('multi-choice-modal');
+  if (modal) modal.remove();
+}
+
+// === EXTERNE DATENQUELLEN SYSTEM ===
+const EXTERNAL_DATA_SOURCES = {
+  sources: [
+    {
+      id: 'kaggle_2m_recipes',
+      name: 'Recipe Dataset (2M+ Rezepte)',
+      provider: 'Kaggle',
+      url: 'https://www.kaggle.com/datasets/wilmerarltstrmberg/recipe-dataset-over-2m',
+      description: 'Über 2 Millionen Rezepte global - von Brot bis französischer Küche',
+      regions: ['Global', 'Europa', 'Asien', 'Amerika'],
+      size: '2M+',
+      format: 'JSON',
+      features: ['Zutaten', 'Schritte', 'Kategorien', 'Duplikat-Bereinigung'],
+      sampleData: [
+        {"name": "French Baguette", "country": "Frankreich", "region": "Europa", "category": "Brot", "time_min": 180, "difficulty": "Mittel", "ingredients": ["500g Mehl", "10g Hefe", "300ml Wasser", "10g Salz"], "steps": ["Hefe in lauwarmem Wasser auflösen", "Mehl und Salz mischen", "Teig kneten bis glatt", "1 Stunde gehen lassen", "Backen bei 220°C für 25 Min"]},
+        {"name": "Swedish SmörgÃ¥sbord", "country": "Schweden", "region": "Europa", "category": "Buffet", "time_min": 120, "difficulty": "Anspruchsvoll", "ingredients": ["Verschiedene Aufschnitt", "Gravad Lax", "Käse", "Brot", "Gurken", "Eier"], "steps": ["Alles in Schüsseln anrichten", "Kalt servieren", "Traditionell mit Schnaps"]},
+        {"name": "Boeuf Bourguignon", "country": "Frankreich", "region": "Europa", "category": "Eintopf", "time_min": 180, "difficulty": "Anspruchsvoll", "ingredients": ["1kg Rindfleisch", "750ml Rotwein", "200g Speck", "Zwiebeln", "Möhren", "Champignons"], "steps": ["Fleisch würfeln und anbraten", "Gemüse hinzufügen", "Mit Wein ablöschen", "3 Stunden schmoren"]},
+        {"name": "Wiener Schnitzel", "country": "Österreich", "region": "Europa", "category": "Fleisch", "time_min": 30, "difficulty": "Mittel", "ingredients": ["4 Kalbsschnitzel", "Eier", "Mehl", "Semmelbrösel", "Butter"], "steps": ["Fleisch klopfen", "Panieren", "In Butter goldbraun braten", "Mit Zitrone servieren"]},
+        {"name": "Paella Valenciana", "country": "Spanien", "region": "Europa", "category": "Reisgericht", "time_min": 90, "difficulty": "Anspruchsvoll", "ingredients": ["400g Risottoreis", "Safran", "Meeresfrüchte", "Hähnchen", "Paprika"], "steps": ["Sofrito zubereiten", "Reis hinzufügen", "Mit Brühe aufgießen", "Meeresfrüchte einlegen"]},
+        {"name": "Risotto Milanese", "country": "Italien", "region": "Europa", "category": "Reisgericht", "time_min": 45, "difficulty": "Mittel", "ingredients": ["320g Risottoreis", "Safran", "Zwiebel", "Weißwein", "Parmesan"], "steps": ["Zwiebel glasig dünsten", "Reis hinzufügen", "Mit Wein ablöschen", "Langsam Brühe hinzufügen"]},
+        {"name": "Ratatouille", "country": "Frankreich", "region": "Europa", "category": "Gemüse", "time_min": 60, "difficulty": "Mittel", "ingredients": ["Auberginen", "Zucchini", "Tomaten", "Paprika", "Zwiebeln"], "steps": ["Gemüse würfeln", "Einzeln anbraten", "Zusammen schmoren", "Mit Kräutern würzen"]},
+        {"name": "Goulash", "country": "Ungarn", "region": "Europa", "category": "Eintopf", "time_min": 120, "difficulty": "Mittel", "ingredients": ["1kg Rindfleisch", "Paprika", "Zwiebeln", "Tomaten", "Kartoffeln"], "steps": ["Fleisch anbraten", "Gemüse hinzufügen", "Mit Paprika würzen", "Schmoren lassen"]}
+      ]
+    },
+    {
+      id: 'tib_recipe1m',
+      name: 'Recipe1M+ Dataset',
+      provider: 'TIB Hannover',
+      url: 'https://service.tib.eu/ldmservice/dataset/recipe1m--dataset',
+      description: 'Über 1 Million Rezepte mit Bildern und regionaler NER-Zuordnung',
+      regions: ['International', 'KI-Klassifikation'],
+      size: '1M+',
+      format: 'JSON + DCAT',
+      features: ['Bilder', 'Named Entity Recognition', 'Kategorien', 'KI-Training'],
+      sampleData: [
+        {"name": "Pad Thai", "country": "Thailand", "region": "Asien", "category": "Nudeln", "time_min": 30, "difficulty": "Mittel", "ingredients": ["200g Reisnudeln", "150g Tofu", "100g Bohnensprossen", "50g Erdnüsse", "2 Eier", "Frühlingszwiebeln"], "steps": ["Nudeln einweichen", "Wok erhitzen", "Tofu anbraten", "Eier hinzufügen", "Nudeln und Sauce zugeben", "Mit Erdnüssen garnieren"]},
+        {"name": "Chicken Tikka Masala", "country": "Indien", "region": "Asien", "category": "Curry", "time_min": 60, "difficulty": "Mittel", "ingredients": ["500g Hähnchen", "200ml Joghurt", "Curry-Paste", "400ml Kokosmilch", "Zwiebeln", "Tomaten"], "steps": ["Hähnchen marinieren", "Curry-Sauce zubereiten", "Hähnchen braten", "Mit Sauce garen", "Mit Reis servieren"]},
+        {"name": "Sushi Nigiri", "country": "Japan", "region": "Asien", "category": "Fisch", "time_min": 45, "difficulty": "Anspruchsvoll", "ingredients": ["Sushi-Reis", "Frischer Fisch", "Wasabi", "Sojasauce", "Nori"], "steps": ["Reis kochen", "Fisch schneiden", "Reis formen", "Fisch auflegen", "Mit Wasabi servieren"]},
+        {"name": "Bibimbap", "country": "Südkorea", "region": "Asien", "category": "Reisgericht", "time_min": 40, "difficulty": "Mittel", "ingredients": ["Reis", "Rindfleisch", "Gemüse", "Gochujang", "Sesamöl", "Ei"], "steps": ["Reis kochen", "Gemüse blanchieren", "Fleisch braten", "Alles in Schüssel anrichten", "Mit Sauce mischen"]},
+        {"name": "Pho Bo", "country": "Vietnam", "region": "Asien", "category": "Suppe", "time_min": 120, "difficulty": "Anspruchsvoll", "ingredients": ["Rinderbrühe", "Reisnudeln", "Rindfleisch", "Zwiebeln", "Ingwer", "Gewürze"], "steps": ["Brühe 2h kochen", "Nudeln kochen", "Fleisch dünn schneiden", "Alles zusammen servieren"]},
+        {"name": "Dim Sum", "country": "China", "region": "Asien", "category": "Teigtaschen", "time_min": 90, "difficulty": "Anspruchsvoll", "ingredients": ["Teig", "Schweinefleisch", "Krabben", "Pilze", "Sojasauce"], "steps": ["Teig herstellen", "Füllung zubereiten", "Taschen formen", "Dämpfen", "Mit Sauce servieren"]},
+        {"name": "Tom Yum Goong", "country": "Thailand", "region": "Asien", "category": "Suppe", "time_min": 25, "difficulty": "Mittel", "ingredients": ["Krabben", "Zitronengras", "Galangal", "Chilischoten", "Kaffirblätter", "Limettenblätter"], "steps": ["Brühe aufkochen", "Gewürze hinzufügen", "Krabben kochen", "Mit Kräutern garnieren"]},
+        {"name": "Ramen Tonkotsu", "country": "Japan", "region": "Asien", "category": "Nudelsuppe", "time_min": 180, "difficulty": "Anspruchsvoll", "ingredients": ["Schweineknochen", "Ramen-Nudeln", "Chashu", "Ajitama", "Nori", "Frühlingszwiebeln"], "steps": ["Knochen 12h kochen", "Brühe filtrieren", "Nudeln kochen", "Alles zusammen servieren"]}
+      ]
+    },
+    {
+      id: 'gitlab_recipes',
+      name: 'recipes.json Dataset',
+      provider: 'GitLab',
+      url: 'https://frosch.cosy.sbg.ac.at/datasets/json/recipes',
+      description: '1.617 Rezepte - internationale und britische BBC Good Food Sammlung',
+      regions: ['International', 'Großbritannien'],
+      size: '1.6K',
+      format: 'JSON',
+      features: ['Kompakt', 'BBC Good Food', 'Strukturiert'],
+      sampleData: [
+        {"name": "Fish & Chips", "country": "Großbritannien", "region": "Europa", "category": "Fisch", "time_min": 45, "difficulty": "Mittel", "ingredients": ["500g Kabeljau", "4 große Kartoffeln", "Mehl", "Bier", "Essig", "Erbsen"], "steps": ["Fisch in Bierteig wenden", "Kartoffeln in Streifen schneiden", "Alles frittieren", "Mit Essig und Erbsen servieren"]},
+        {"name": "Shepherd's Pie", "country": "Großbritannien", "region": "Europa", "category": "Auflauf", "time_min": 90, "difficulty": "Mittel", "ingredients": ["500g Hackfleisch", "1kg Kartoffeln", "Zwiebeln", "Möhren", "Erbsen", "Brühe"], "steps": ["Fleisch anbraten", "Gemüse hinzufügen", "Kartoffeln stampfen", "Auflauf formen und backen"]},
+        {"name": "Full English Breakfast", "country": "Großbritannien", "region": "Europa", "category": "Frühstück", "time_min": 30, "difficulty": "Einfach", "ingredients": ["Eier", "Speck", "Würstchen", "Bohnen", "Tomaten", "Pilze", "Toast"], "steps": ["Alles in Pfannen braten", "Auf Teller anrichten", "Mit Toast servieren"]},
+        {"name": "Beef Wellington", "country": "Großbritannien", "region": "Europa", "category": "Fleisch", "time_min": 150, "difficulty": "Anspruchsvoll", "ingredients": ["1kg Rinderfilet", "Blätterteig", "Champignons", "Foie Gras", "Senf"], "steps": ["Fleisch anbraten", "Pilz-Duxelles zubereiten", "In Blätterteig wickeln", "Backen bis goldbraun"]},
+        {"name": "Yorkshire Pudding", "country": "Großbritannien", "region": "Europa", "category": "Beilage", "time_min": 60, "difficulty": "Mittel", "ingredients": ["Mehl", "Eier", "Milch", "Salz", "Fett"], "steps": ["Teig rühren", "Muffin-Förmchen einfetten", "Teig einfüllen", "Backen bis aufgegangen"]},
+        {"name": "Sticky Toffee Pudding", "country": "Großbritannien", "region": "Europa", "category": "Dessert", "time_min": 75, "difficulty": "Mittel", "ingredients": ["Datteln", "Mehl", "Zucker", "Butter", "Eier", "Toffee-Sauce"], "steps": ["Datteln kochen", "Teig herstellen", "Backen", "Mit warmer Toffee-Sauce servieren"]},
+        {"name": "Bangers and Mash", "country": "Großbritannien", "region": "Europa", "category": "Fleisch", "time_min": 45, "difficulty": "Einfach", "ingredients": ["Würstchen", "Kartoffeln", "Milch", "Butter", "Zwiebeln"], "steps": ["Würstchen braten", "Kartoffeln stampfen", "Zwiebelsauce zubereiten", "Alles zusammen servieren"]},
+        {"name": "Cornish Pasty", "country": "Großbritannien", "region": "Europa", "category": "Teigtasche", "time_min": 120, "difficulty": "Anspruchsvoll", "ingredients": ["Blätterteig", "Rindfleisch", "Kartoffeln", "Steckrüben", "Zwiebeln"], "steps": ["Füllung zubereiten", "Teig ausrollen", "Taschen formen", "Backen bis goldbraun"]}
+      ]
+    },
+    {
+      id: 'ai_prompt_generator',
+      name: 'AI Prompt Recipe Generator',
+      provider: 'DocsBot AI',
+      url: 'https://docsbot.ai/prompts/creative/recipe-json-dataset',
+      description: 'Generiert große JSON-Datensätze mit benutzerdefinierter regionaler Vielfalt',
+      regions: ['Benutzerdefiniert', 'Global'],
+      size: 'Variable',
+      format: 'JSON + Bilder',
+      features: ['KI-Generiert', 'Bild-URLs', 'Regional angepasst'],
+      sampleData: [
+        {"name": "Paella Valenciana", "country": "Spanien", "region": "Europa", "category": "Reisgericht", "time_min": 90, "difficulty": "Anspruchsvoll", "ingredients": ["400g Risottoreis", "Safran", "Meeresfrüchte", "Hähnchen", "Paprika", "Artischocken"], "steps": ["Sofrito zubereiten", "Reis hinzufügen", "Mit Brühe aufgießen", "Meeresfrüchte einlegen"]},
+        {"name": "Jollof Rice", "country": "Nigeria", "region": "Afrika", "category": "Reisgericht", "time_min": 75, "difficulty": "Mittel", "ingredients": ["2 Tassen Basmatireis", "Tomaten", "Zwiebeln", "Gewürze", "Hähnchen", "Gemüse"], "steps": ["Tomatenpüree kochen", "Gewürze hinzufügen", "Reis hinzufügen", "Garen lassen"]},
+        {"name": "Ceviche Peruano", "country": "Peru", "region": "Lateinamerika", "category": "Fisch", "time_min": 30, "difficulty": "Einfach", "ingredients": ["500g Weißer Fisch", "Limettensaft", "Rote Zwiebeln", "Cilantro", "Chili", "Süßkartoffeln"], "steps": ["Fisch würfeln", "Mit Limettensaft marinieren", "Zwiebeln und Chili hinzufügen", "Mit Süßkartoffeln servieren"]},
+        {"name": "Feijoada", "country": "Brasilien", "region": "Lateinamerika", "category": "Eintopf", "time_min": 180, "difficulty": "Anspruchsvoll", "ingredients": ["Schwarze Bohnen", "Verschiedene Fleischsorten", "Lorbeerblätter", "Knoblauch", "Zwiebeln"], "steps": ["Bohnen über Nacht einweichen", "Fleisch anbraten", "Alles zusammen schmoren", "Mit Reis servieren"]},
+        {"name": "Tacos al Pastor", "country": "Mexiko", "region": "Lateinamerika", "category": "Fleisch", "time_min": 120, "difficulty": "Mittel", "ingredients": ["Schweinefleisch", "Ananas", "Chili", "Zwiebeln", "Tortillas", "Cilantro"], "steps": ["Fleisch marinieren", "Am Spieß braten", "In Tortillas wickeln", "Mit Ananas garnieren"]},
+        {"name": "Bun Bo Hue", "country": "Vietnam", "region": "Asien", "category": "Nudelsuppe", "time_min": 150, "difficulty": "Anspruchsvoll", "ingredients": ["Rinderbrühe", "Reisnudeln", "Rindfleisch", "Lemongrass", "Chili", "Basilikum"], "steps": ["Brühe 3h kochen", "Gewürze hinzufügen", "Nudeln kochen", "Alles zusammen servieren"]},
+        {"name": "Baklava", "country": "Türkei", "region": "Naher Osten", "category": "Dessert", "time_min": 120, "difficulty": "Anspruchsvoll", "ingredients": ["Filo-Teig", "Walnüsse", "Honig", "Zimt", "Butter", "Zitrone"], "steps": ["Nüsse hacken", "Teig schichten", "Backen", "Mit Honig-Sirup beträufeln"]},
+        {"name": "Shakshuka", "country": "Israel", "region": "Naher Osten", "category": "Eier", "time_min": 30, "difficulty": "Einfach", "ingredients": ["Tomaten", "Paprika", "Zwiebeln", "Eier", "Cumin", "Chili"], "steps": ["Gemüse anbraten", "Tomaten hinzufügen", "Eier hineinschlagen", "Mit Brot servieren"]}
+      ]
+    }
+  ],
+  
+  loadExternalSource: async function(sourceId) {
+    const source = this.sources.find(s => s.id === sourceId);
+    if (!source) return { success: false, error: 'Quelle nicht gefunden' };
+    
+    try {
+      // Simuliere das Laden von externen Daten (in echter Implementierung würde hier fetch() stehen)
+      const sampleRecipes = source.sampleData;
+      
+      // Konvertiere zu unserem Format
+      const convertedRecipes = sampleRecipes.map(recipe => ({
+        id: `${sourceId}_${recipe.name.toLowerCase().replace(/\s+/g, '_')}`,
+        name: recipe.name,
+        local_names: [recipe.name],
+        country: recipe.country,
+        region: recipe.region,
+        category: recipe.category,
+        tags: [recipe.category, recipe.region, recipe.difficulty.toLowerCase()],
+        time_min: recipe.time_min,
+        difficulty: recipe.difficulty,
+        servings: "4",
+        story: `Importiert aus ${source.name} - ${source.description}`,
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        nutrition: null,
+        image: null,
+        source: `External: ${source.provider}`
+      }));
+      
+      // Füge zu DATA hinzu
+      let importedCount = 0;
+      convertedRecipes.forEach(recipe => {
+        const existingIndex = DATA.findIndex(r => r.id === recipe.id);
+        if (existingIndex >= 0) {
+          DATA[existingIndex] = recipe; // Überschreiben
+        } else {
+          DATA.push(recipe); // Hinzufügen
+          importedCount++;
+        }
+      });
+      
+      // UI aktualisieren
+      rebuildIndex();
+      applyFilters();
+      
+      return { 
+        success: true, 
+        imported: importedCount, 
+        total: convertedRecipes.length,
+        source: source.name 
+      };
+      
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+};
+
+// === AUTOMATISCHER IMPORT ALLER EXTERNER DATENBANKEN ===
+(async function loadAllExternalDatabases() {
+  console.log('Œ Lade alle externen Datenbanken...');
+  
+  let totalImported = 0;
+  const sources = EXTERNAL_DATA_SOURCES.sources;
+  
+  for (const source of sources) {
+    try {
+      const result = await EXTERNAL_DATA_SOURCES.loadExternalSource(source.id);
+      if (result.success) {
+        totalImported += result.imported;
+        console.log(`✅ ${source.name}: ${result.imported} Rezepte importiert`);
+      }
+    } catch (error) {
+      console.warn(`âš ï¸ Fehler beim Laden von ${source.name}:`, error.message);
+    }
+  }
+  
+  console.log(`Ž¯ Alle Datenbanken geladen: ${totalImported} neue Rezepte, ${DATA.length} total`);
+  
+  // UI aktualisieren nach dem Import
+  rebuildIndex();
+  applyFilters();
+})();
+
+// === INFO POPUP HOVER HAPTIC TOUCH SYSTEM ===
+const INFO_POPUP_SYSTEM = {
+  activePopups: new Set(),
+  
+  createInfoPopup: function(content, target, position = 'top') {
+    // Entferne existierende Popups
+    this.closeAllPopups();
+    
+    const popup = document.createElement('div');
+    popup.className = 'info-popup';
+    popup.style.cssText = `
+      position: absolute;
+      background: rgba(0,0,0,0.95);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+      z-index: 10000;
+      max-width: 300px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.2s ease;
+    `;
+    
+    popup.innerHTML = content;
+    
+    // Positionierung
+    const rect = target.getBoundingClientRect();
+    const popupRect = { width: 300, height: 100 }; // Geschätzt
+    
+    let top, left;
+    switch(position) {
+      case 'top':
+        top = rect.top - popupRect.height - 10;
+        left = rect.left + (rect.width / 2) - (popupRect.width / 2);
+        break;
+      case 'bottom':
+        top = rect.bottom + 10;
+        left = rect.left + (rect.width / 2) - (popupRect.width / 2);
+        break;
+      case 'left':
+        top = rect.top + (rect.height / 2) - (popupRect.height / 2);
+        left = rect.left - popupRect.width - 10;
+        break;
+      case 'right':
+        top = rect.top + (rect.height / 2) - (popupRect.height / 2);
+        left = rect.right + 10;
+        break;
+    }
+    
+    // Viewport-Begrenzung
+    top = Math.max(10, Math.min(top, window.innerHeight - popupRect.height - 10));
+    left = Math.max(10, Math.min(left, window.innerWidth - popupRect.width - 10));
+    
+    popup.style.top = top + 'px';
+    popup.style.left = left + 'px';
+    
+    document.body.appendChild(popup);
+    this.activePopups.add(popup);
+    
+    // Animation
+    setTimeout(() => {
+      popup.style.opacity = '1';
+      popup.style.transform = 'scale(1)';
+    }, 10);
+    
+    // Haptic Feedback
+    this.triggerHapticFeedback();
+    
+    return popup;
+  },
+  
+  closeAllPopups: function() {
+    this.activePopups.forEach(popup => {
+      if (popup && popup.parentNode) {
+        popup.style.opacity = '0';
+        popup.style.transform = 'scale(0.8)';
+        setTimeout(() => popup.remove(), 200);
+      }
+    });
+    this.activePopups.clear();
+  },
+  
+  triggerHapticFeedback: function() {
+    // Vibration für Haptic Feedback
+    if (navigator.vibrate) {
+      navigator.vibrate([50]);
+    }
+    
+    // Audio Feedback
+    if (musicModeActive) {
+      this.playInfoSound();
+    }
+  },
+  
+  playInfoSound: function() {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    } catch (error) {
+      console.log('Audio feedback nicht verfügbar:', error.message);
+    }
+  }
+};
+
+// === MENU INFO POPUP FUNCTIONS ===
+function showMenuInfo(menuId, event) {
+  const menuInfos = {
+    multiSelect: `
+      <div style="font-weight: bold; margin-bottom: 8px;">Ž¯ Multi-Choice Menü</div>
+      <div style="color: #ccc; margin-bottom: 6px;">Erweiterte Auswahl nach:</div>
+      <div style="margin-left: 10px;">
+        • Geschmacksrichtungen (süß, sauer, scharf, etc.)<br>
+        • Emotionen (romantisch, gesellig, entspannend)<br>
+        • Beziehungskontext (dating, geschäftlich, partnerschaft)<br>
+        • Hungergefühlen und Lokationen<br>
+        • Business & Börsen-Transaktionen
+      </div>
+      <div style="color: #4CAF50; margin-top: 8px; font-size: 11px;">
+        ’¡ Mit Musik & Vibration wenn aktiviert
+      </div>
+    `,
+    musicMode: `
+      <div style="font-weight: bold; margin-bottom: 8px;">Žµ Musik-Modus</div>
+      <div style="color: #ccc; margin-bottom: 6px;">Aktiviert Audio & Haptic Feedback:</div>
+      <div style="margin-left: 10px;">
+        • Geschmack â†’ Musik-Frequenzen<br>
+        • Emotionen â†’ Vibration-Patterns<br>
+        • Info-Popups â†’ Audio-Feedback<br>
+        • Touch-Events â†’ Haptic Response
+      </div>
+      <div style="color: #FF9800; margin-top: 8px; font-size: 11px;">
+        ”Š Web Audio API + Vibration API
+      </div>
+    `,
+    importExport: `
+      <div style="font-weight: bold; margin-bottom: 8px;">“ Import/Export System</div>
+      <div style="color: #ccc; margin-bottom: 6px;">Rezept-Datenbank Management:</div>
+      <div style="margin-left: 10px;">
+        • JSON-Import von externen Quellen<br>
+        • Export aller oder ausgewählter Rezepte<br>
+        • Rezept-Sammlung verwalten<br>
+        • Backup & Restore Funktionen<br>
+        • Multi-Format Unterstützung
+      </div>
+      <div style="color: #2196F3; margin-top: 8px; font-size: 11px;">
+        ’¾ Lokale Speicherung + JSON-Standards
+      </div>
+    `,
+    dataSources: `
+      <div style="font-weight: bold; margin-bottom: 8px;">Œ Externe Datenquellen</div>
+      <div style="color: #ccc; margin-bottom: 6px;">Weltweite Rezept-Datensätze:</div>
+      <div style="margin-left: 10px;">
+        • <strong>Kaggle:</strong> 2M+ Rezepte (Global)<br>
+        • <strong>TIB Hannover:</strong> 1M+ mit KI-Klassifikation<br>
+        • <strong>GitLab:</strong> 1.6K BBC Good Food<br>
+        • <strong>AI Generator:</strong> Benutzerdefiniert
+      </div>
+      <div style="color: #9C27B0; margin-top: 8px; font-size: 11px;">
+        ”— Links zu Original-Quellen verfügbar
+      </div>
+    `
+  };
+  
+  const content = menuInfos[menuId];
+  if (content) {
+    INFO_POPUP_SYSTEM.createInfoPopup(content, event.target, 'bottom');
+  }
+}
+
+function hideMenuInfo() {
+  INFO_POPUP_SYSTEM.closeAllPopups();
+}
+
+// === EXTERNAL PROVIDER INFO FUNCTIONS ===
+function showExternalProviderInfo(providerId, event) {
+  const providerInfos = {
+    kaggle: `
+      <div style="font-weight: bold; margin-bottom: 8px;">“Š Kaggle Recipe Dataset</div>
+      <div style="color: #ccc; margin-bottom: 6px;">Weltweit größte Rezept-Sammlung:</div>
+      <div style="margin-left: 10px;">
+        • <strong>2+ Millionen Rezepte</strong><br>
+        • Global von Brot bis französischer Küche<br>
+        • Strukturierte Zutaten & Schritte<br>
+        • Duplikat-Bereinigung durchgeführt<br>
+        • JSON-Format für einfache Integration
+      </div>
+      <div style="color: #FF6B35; margin-top: 8px; font-size: 11px;">
+        ”— <a href="https://www.kaggle.com/datasets/wilmerarltstrmberg/recipe-dataset-over-2m" target="_blank" style="color: #FF6B35;">Original ansehen â†’</a>
+      </div>
+    `,
+    tib: `
+      <div style="font-weight: bold; margin-bottom: 8px;">›ï¸ TIB Recipe1M+ Dataset</div>
+      <div style="color: #ccc; margin-bottom: 6px;">Wissenschaftlicher Datensatz:</div>
+      <div style="margin-left: 10px;">
+        • <strong>1+ Million Rezepte</strong> mit Bildern<br>
+        • Named Entity Recognition (NER)<br>
+        • KI-Training optimiert<br>
+        • DCAT-Metadaten Standard<br>
+        • Regional-Klassifikation via KI
+      </div>
+      <div style="color: #4CAF50; margin-top: 8px; font-size: 11px;">
+        ”— <a href="https://service.tib.eu/ldmservice/dataset/recipe1m--dataset" target="_blank" style="color: #4CAF50;">Original ansehen â†’</a>
+      </div>
+    `,
+    gitlab: `
+      <div style="font-weight: bold; margin-bottom: 8px;">”§ GitLab recipes.json</div>
+      <div style="color: #ccc; margin-bottom: 6px;">Kompakte Rezept-Sammlung:</div>
+      <div style="margin-left: 10px;">
+        • <strong>1.617 Rezepte</strong> strukturiert<br>
+        • Internationale & britische Küche<br>
+        • BBC Good Food Integration<br>
+        • JSON-Format kompakt<br>
+        • Direkt verwendbar
+      </div>
+      <div style="color: #FF9800; margin-top: 8px; font-size: 11px;">
+        ”— <a href="https://frosch.cosy.sbg.ac.at/datasets/json/recipes" target="_blank" style="color: #FF9800;">Original ansehen â†’</a>
+      </div>
+    `,
+    ai_prompt: `
+      <div style="font-weight: bold; margin-bottom: 8px;">¤– AI Prompt Recipe Generator</div>
+      <div style="color: #ccc; margin-bottom: 6px;">KI-generierte Rezept-Datensätze:</div>
+      <div style="margin-left: 10px;">
+        • <strong>Variable Größe</strong> nach Bedarf<br>
+        • Benutzerdefinierte Regionen<br>
+        • Bild-URLs inklusive<br>
+        • Regional angepasste Inhalte<br>
+        • JSON + Bilder Format
+      </div>
+      <div style="color: #9C27B0; margin-top: 8px; font-size: 11px;">
+        ”— <a href="https://docsbot.ai/prompts/creative/recipe-json-dataset" target="_blank" style="color: #9C27B0;">Original ansehen â†’</a>
+      </div>
+    `
+  };
+  
+  const content = providerInfos[providerId];
+  if (content) {
+    INFO_POPUP_SYSTEM.createInfoPopup(content, event.target, 'right');
+  }
+}
+
+// === MUSIC MODE ===
+let musicModeActive = false;
+
+function toggleMusicMode() {
+  musicModeActive = !musicModeActive;
+  const musicButton = document.getElementById('musicMode');
+  
+  if (musicModeActive) {
+    musicButton.textContent = 'Žµ Musik-Modus ON';
+    musicButton.style.background = 'linear-gradient(180deg,#e6d6f4,#d6c6e4)';
+    console.log('Žµ Musik-Modus aktiviert');
+    
+    // Audio-Test beim Aktivieren
+    testAudioSystem();
+  } else {
+    musicButton.textContent = 'Žµ Musik-Modus';
+    musicButton.style.background = 'linear-gradient(180deg,#f6eadb,#eadcc8)';
+    console.log('Žµ Musik-Modus deaktiviert');
+  }
+}
+
+// === AUDIO SYSTEM TEST ===
+function testAudioSystem() {
+  console.log('”Š Testing Audio System...');
+  
+  try {
+    // Test Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    console.log('✅ Web Audio API: Available');
+    console.log(`“Š Audio Context State: ${audioContext.state}`);
+    console.log(`Ž›ï¸ Sample Rate: ${audioContext.sampleRate}Hz`);
+    
+    // Test Vibration API
+    if (navigator.vibrate) {
+      console.log('✅ Vibration API: Available');
+      navigator.vibrate([100, 50, 100]);
+    } else {
+      console.log('❌ Vibration API: Not Available');
+    }
+    
+    // Test Audio Playback
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+    
+    console.log('✅ Audio Playback: SUCCESS');
+    console.log('Žµ Audio System: FULLY FUNCTIONAL');
+    
+  } catch (error) {
+    console.error('❌ Audio System Test FAILED:', error.message);
+    console.log('”§ Audio System: NEEDS ATTENTION');
+  }
+}
+
+// === IMPORT/EXPORT MODAL ===
+function showImportExportModal() {
+  const modal = document.createElement('div');
+  modal.id = 'import-export-modal';
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeImportExportModal()">
+      <div class="modal-content" style="max-width: 600px;" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>“ Import/Export Rezepte</h2>
+          <button onclick="closeImportExportModal()" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="import-section">
+            <h3>“¥ Rezepte importieren</h3>
+            <input type="file" id="importFileInput" accept=".json" class="file-input">
+            <label for="importFileInput" class="file-label">“ JSON-Datei auswählen</label>
+            <button onclick="importRecipes()" class="btn-import">“¥ Rezepte importieren</button>
+          </div>
+          
+          <div class="export-section">
+            <h3>“¤ Rezepte exportieren</h3>
+            <button onclick="exportRecipes()" class="btn-export">“¤ Alle Rezepte exportieren</button>
+            <button onclick="exportSelectedRecipes()" class="btn-export-selected">“¤ Ausgewählte Rezepte exportieren</button>
+          </div>
+          
+          <div class="collection-section">
+            <h3>’¾ Rezept-Sammlung</h3>
+            <button onclick="showCollectionManager()" class="btn-collection">“š Sammlung verwalten</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeImportExportModal()" class="btn-secondary">Schließen</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
+function closeImportExportModal() {
+  const modal = document.getElementById('import-export-modal');
+  if (modal) modal.remove();
+}
+
+function importRecipes() {
+  const fileInput = document.getElementById('importFileInput');
+  const file = fileInput.files[0];
+  if (!file) {
+    alert('Bitte wählen Sie eine JSON-Datei aus');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      let recipes = [];
+      
+      // Verschiedene JSON-Formate unterstützen
+      if (Array.isArray(data)) {
+        recipes = data;
+      } else if (data.recipes && Array.isArray(data.recipes)) {
+        recipes = data.recipes;
+      } else if (data.data && Array.isArray(data.data)) {
+        recipes = data.data;
+      } else {
+        throw new Error('Ungültiges JSON-Format');
+      }
+      
+      let importedCount = 0;
+      recipes.forEach(recipe => {
+        if (recipe.name && recipe.ingredients && recipe.steps) {
+          const newRecipe = {
+            id: recipe.id || `imported_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            name: recipe.name,
+            local_names: recipe.local_names || [recipe.name],
+            country: recipe.country || 'Unbekannt',
+            region: recipe.region || 'International',
+            category: recipe.category || 'Sonstiges',
+            tags: recipe.tags || [],
+            time_min: recipe.time_min || 30,
+            difficulty: recipe.difficulty || 'Mittel',
+            servings: recipe.servings || '4',
+            story: recipe.story || 'Importiertes Rezept',
+            ingredients: recipe.ingredients,
+            steps: recipe.steps,
+            nutrition: recipe.nutrition || null,
+            image: recipe.image || null,
+            source: 'Importiert'
+          };
+          
+          // Prüfe auf Duplikate
+          const existingIndex = DATA.findIndex(r => r.id === newRecipe.id || r.name === newRecipe.name);
+          if (existingIndex >= 0) {
+            DATA[existingIndex] = newRecipe; // Überschreiben
+          } else {
+            DATA.push(newRecipe); // Hinzufügen
+            importedCount++;
+          }
+        }
+      });
+      
+      // UI aktualisieren
+      rebuildIndex();
+      applyFilters();
+      closeImportExportModal();
+      
+      alert(`✅ Import erfolgreich!\n\n“¥ ${importedCount} neue Rezepte importiert\nŽ¯ Gesamt: ${DATA.length} Rezepte verfügbar`);
+      
+    } catch (error) {
+      alert(`❌ Import fehlgeschlagen!\n\nFehler: ${error.message}`);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function exportRecipes() {
+  const exportData = {
+    version: "1.0",
+    timestamp: new Date().toISOString(),
+    totalRecipes: DATA.length,
+    recipes: DATA
+  };
+  
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `MMM_Recipes_Export_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  alert(`✅ Export erfolgreich!\n\n“¤ ${DATA.length} Rezepte exportiert`);
+}
+
+function exportSelectedRecipes() {
+  // Hier könnte man ausgewählte Rezepte exportieren
+  // Für jetzt exportieren wir alle
+  exportRecipes();
+}
+
+// === DATENQUELLEN MODAL ===
+function showDataSourcesModal() {
+  const modal = document.createElement('div');
+  modal.id = 'data-sources-modal';
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeDataSourcesModal()">
+      <div class="modal-content" style="max-width: 1000px;" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Œ Externe Datenquellen - Weltweite Rezept-Datensätze</h2>
+          <button onclick="closeDataSourcesModal()" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="data-sources-grid">
+            ${EXTERNAL_DATA_SOURCES.sources.map(source => `
+              <div class="data-source-card" onmouseenter="showExternalProviderInfo('${source.id}', event)" onmouseleave="hideMenuInfo()">
+                <div class="source-header">
+                  <h3>${source.name}</h3>
+                  <div class="source-badge">${source.provider}</div>
+                </div>
+                <div class="source-info">
+                  <p class="source-description">${source.description}</p>
+                  <div class="source-meta">
+                    <span class="meta-item">“Š ${source.size} Rezepte</span>
+                    <span class="meta-item">Œ ${source.regions.join(', ')}</span>
+                    <span class="meta-item">“ ${source.format}</span>
+                  </div>
+                  <div class="source-features">
+                    ${source.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                  </div>
+                </div>
+                <div class="source-preview">
+                  <h4>Vorschau der besten Rezepte:</h4>
+                  <div class="preview-recipes">
+                    ${source.sampleData.map(recipe => `
+                      <div class="preview-recipe">
+                        <strong>${recipe.name}</strong>
+                        <span>${recipe.country} • ${recipe.time_min} Min • ${recipe.difficulty}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+                <div class="source-actions">
+                  <button onclick="loadExternalSource('${source.id}')" class="btn-load-source">
+                    “¥ ${source.sampleData.length} Rezepte importieren
+                  </button>
+                  <a href="${source.url}" target="_blank" class="btn-external-link">
+                    ”— Original ansehen
+                  </a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="backup-section">
+            <h3>’¾ Backup & Restore</h3>
+            <p>Exportieren Sie Ihre komplette Rezeptdatenbank als Backup oder stellen Sie sie wieder her:</p>
+            <div class="backup-actions">
+              <button onclick="exportCompleteDatabase()" class="btn-backup">’¾ Komplette Datenbank exportieren</button>
+              <button onclick="showRestoreModal()" class="btn-restore">”„ Datenbank wiederherstellen</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeDataSourcesModal()" class="btn-secondary">Schließen</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // CSS für Datenquellen hinzufügen
+  if (!document.getElementById('data-sources-css')) {
+    const style = document.createElement('style');
+    style.id = 'data-sources-css';
+    style.textContent = `
+      .data-sources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; margin: 20px 0; }
+      .data-source-card { background: #fffdf8; border: 1px solid #e7d6c3; border-radius: 12px; padding: 20px; }
+      .source-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+      .source-header h3 { margin: 0; color: var(--accent); font-size: 18px; }
+      .source-badge { background: var(--accent2); color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; }
+      .source-description { color: var(--muted); margin-bottom: 15px; line-height: 1.5; }
+      .source-meta { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+      .meta-item { background: #f0e6d6; padding: 4px 8px; border-radius: 6px; font-size: 12px; color: var(--muted); }
+      .source-features { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+      .feature-tag { background: #e8dccb; color: var(--accent); padding: 3px 6px; border-radius: 4px; font-size: 11px; }
+      .source-preview { margin-bottom: 20px; }
+      .source-preview h4 { margin: 0 0 10px; color: var(--accent); font-size: 14px; }
+      .preview-recipes { display: flex; flex-direction: column; gap: 6px; }
+      .preview-recipe { background: #f9f5f0; padding: 8px; border-radius: 6px; font-size: 12px; }
+      .preview-recipe strong { color: var(--accent); }
+      .preview-recipe span { color: var(--muted); margin-left: 10px; }
+      .source-actions { display: flex; gap: 10px; }
+      .btn-load-source { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+      .btn-external-link { background: var(--accent2); color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-size: 12px; }
+      .backup-section { background: #fffdf8; border: 1px solid #e7d6c3; border-radius: 12px; padding: 20px; margin-top: 30px; }
+      .backup-actions { display: flex; gap: 15px; margin-top: 15px; }
+      .btn-backup, .btn-restore { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+      .btn-backup { background: var(--accent); color: white; }
+      .btn-restore { background: var(--accent2); color: white; }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(modal);
+}
+
+function closeDataSourcesModal() {
+  const modal = document.getElementById('data-sources-modal');
+  if (modal) modal.remove();
+}
+
+async function loadExternalSource(sourceId) {
+  const result = await EXTERNAL_DATA_SOURCES.loadExternalSource(sourceId);
+  
+  if (result.success) {
+    alert(`✅ Erfolgreich importiert!\n\n“¥ ${result.imported} neue Rezepte aus ${result.source}\nŽ¯ Gesamt: ${DATA.length} Rezepte verfügbar\n\nDie neuen Rezepte sind sofort durchsuchbar!`);
+  } else {
+    alert(`❌ Import fehlgeschlagen!\n\nFehler: ${result.error}`);
+  }
+}
+
+function exportCompleteDatabase() {
+  const exportData = {
+    version: "1.0",
+    timestamp: new Date().toISOString(),
+    platform: navigator.platform,
+    totalRecipes: DATA.length,
+    recipes: DATA,
+    metadata: {
+      exportSource: "MMM - Complete Database Backup",
+      description: "Komplette Rezeptdatenbank mit allen 52 Original-Rezepten plus importierten externen Rezepten"
+    }
+  };
+  
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `MMM_Complete_Database_Backup_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  console.log('’¾ Complete database exported:', DATA.length);
+}
+
+function showRestoreModal() {
+  const modal = document.createElement('div');
+  modal.id = 'restore-modal';
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeRestoreModal()">
+      <div class="modal-content" style="max-width: 600px;" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>”„ Datenbank wiederherstellen</h2>
+          <button onclick="closeRestoreModal()" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p><strong>âš ï¸ Achtung:</strong> Das Wiederherstellen überschreibt alle aktuellen Rezepte!</p>
+          <input type="file" id="restoreFileInput" accept=".json" class="file-input">
+          <label for="restoreFileInput" class="file-label">“ Backup-Datei auswählen</label>
+          <button onclick="restoreDatabase()" class="btn-restore">”„ Datenbank wiederherstellen</button>
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeRestoreModal()" class="btn-secondary">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
+function closeRestoreModal() {
+  const modal = document.getElementById('restore-modal');
+  if (modal) modal.remove();
+}
+
+function restoreDatabase() {
+  const fileInput = document.getElementById('restoreFileInput');
+  const file = fileInput.files[0];
+  if (!file) {
+    alert('Bitte wählen Sie eine Backup-Datei aus');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const backupData = JSON.parse(e.target.result);
+      
+      if (backupData.recipes && Array.isArray(backupData.recipes)) {
+        // Überschreibe komplette DATA
+        DATA.length = 0;
+        DATA.push(...backupData.recipes);
+        
+        // UI aktualisieren
+        rebuildIndex();
+        applyFilters();
+        
+        closeRestoreModal();
+        alert(`✅ Datenbank erfolgreich wiederhergestellt!\n\n“¥ ${backupData.recipes.length} Rezepte geladen\nŽ¯ Gesamt: ${DATA.length} Rezepte verfügbar`);
+      } else {
+        throw new Error('Ungültiges Backup-Format');
+      }
+    } catch (error) {
+      alert(`❌ Wiederherstellung fehlgeschlagen!\n\nFehler: ${error.message}`);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// === RESTAURANT INTEGRATION SYSTEM ===
+// Unsichtbare API-Schnittstellen für Restaurant-Business
+
+// Restaurant API Configuration
+const RESTAURANT_API = {
+  endpoints: {
+    recipes: '/api/v1/recipes',
+    orders: '/api/v1/orders',
+    menu: '/api/v1/menu',
+    inventory: '/api/v1/inventory',
+    payments: '/api/v1/payments',
+    webhooks: '/api/v1/webhooks'
+  },
+  auth: {
+    apiKey: null,
+    secret: null,
+    tenantId: null
+  }
+};
+
+// Admin Panel (unten rechts, dezent)
+function createAdminButton() {
+  const adminBtn = document.createElement('div');
+  adminBtn.id = 'admin-panel-trigger';
+  adminBtn.innerHTML = 'âš™ï¸';
+  adminBtn.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: rgba(139, 107, 74, 0.9);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  `;
+  adminBtn.onmouseover = () => adminBtn.style.transform = 'scale(1.1)';
+  adminBtn.onmouseout = () => adminBtn.style.transform = 'scale(1)';
+  adminBtn.onclick = showAdminPanel;
+  document.body.appendChild(adminBtn);
+}
+
+// Admin Panel Modal
+function showAdminPanel() {
+  const modal = document.createElement('div');
+  modal.id = 'admin-modal';
+  modal.innerHTML = `
+    <div class="admin-overlay">
+      <div class="admin-modal">
+        <div class="admin-header">
+          <h2>½ï¸ Restaurant Business Portal</h2>
+          <button onclick="closeAdminPanel()" class="close-btn">&times;</button>
+        </div>
+        <div class="admin-content">
+          <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showAdminTab('login')">” API Login</button>
+            <button class="tab-btn" onclick="showAdminTab('menu')">“‹ Menü Setup</button>
+            <button class="tab-btn" onclick="showAdminTab('orders')">“¦ Bestellungen</button>
+            <button class="tab-btn" onclick="showAdminTab('analytics')">“Š Analytics</button>
+            <button class="tab-btn" onclick="showAdminTab('integration')">”— Integration</button>
+          </div>
+          <div class="admin-body">
+            <div id="admin-login" class="admin-tab active">
+              <h3>Restaurant API Authentifizierung</h3>
+              <form onsubmit="handleRestaurantLogin(event)">
+                <div class="form-group">
+                  <label>Restaurant ID:</label>
+                  <input type="text" id="restaurant-id" placeholder="rest_12345" required>
+                </div>
+                <div class="form-group">
+                  <label>API Key:</label>
+                  <input type="password" id="api-key" placeholder="sk_live_..." required>
+                </div>
+                <div class="form-group">
+                  <label>Secret:</label>
+                  <input type="password" id="api-secret" placeholder="Secret Token" required>
+                </div>
+                <button type="submit" class="btn-primary">š€ Verbinden</button>
+              </form>
+              <div class="api-status" id="api-status"></div>
+            </div>
+            <div id="admin-menu" class="admin-tab">
+              <h3>Menü-Management</h3>
+              <div id="menu-items"></div>
+              <button onclick="addMenuItems()" class="btn-secondary">âž• Rezepte zu Menü hinzufügen</button>
+            </div>
+            <div id="admin-orders" class="admin-tab">
+              <h3>Live Bestellungen</h3>
+              <div id="live-orders"></div>
+              <div class="order-stats">
+                <span>“Š Heute: <span id="orders-today">0</span></span>
+                <span>’° Umsatz: €<span id="revenue-today">0.00</span></span>
+              </div>
+            </div>
+            <div id="admin-analytics" class="admin-tab">
+              <h3>Business Analytics</h3>
+              <div id="analytics-dashboard"></div>
+            </div>
+            <div id="admin-integration" class="admin-tab">
+              <h3>API Integration</h3>
+              <div class="integration-code">
+                <h4>Webhook URL:</h4>
+                <code>https://magnitudo-culinaria-api.com/webhooks/restaurant/{restaurant_id}</code>
+                <h4>Embed Code:</h4>
+                <textarea readonly rows="5" style="width:100%; font-family: monospace; font-size: 12px;">
+&lt;script src="https://magnitudo-culinaria-api.com/embed.js"&gt;&lt;/script&gt;
+&lt;div id="magnitudo-menu" data-restaurant-id="YOUR_ID" data-api-key="YOUR_KEY"&gt;&lt;/div&gt;</textarea>
+                <h4>API Keys & Webhooks:</h4>
+                <div id="api-keys"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+  `;
+  document.body.appendChild(modal);
+}
+
+// Restaurant Login Handler
+function handleRestaurantLogin(event) {
+  event.preventDefault();
+  const restaurantId = document.getElementById('restaurant-id').value;
+  const apiKey = document.getElementById('api-key').value;
+  const secret = document.getElementById('api-secret').value;
+  
+  // Simulate API authentication
+  RESTAURANT_API.auth = { apiKey, secret, tenantId: restaurantId };
+  
+  document.getElementById('api-status').innerHTML = `
+    <div class="success">✅ Verbunden mit Restaurant ${restaurantId}</div>
+    <div class="api-info">
+      <strong>API Status:</strong> Aktiv<br>
+      <strong>Webhook URL:</strong> https://api.magnitudo-culinaria.com/webhooks/${restaurantId}<br>
+      <strong>Rate Limit:</strong> 1000 requests/hour<br>
+      <strong>Features:</strong> Bestellungen, Menü, Inventar, Payments
+    </div>
+  `;
+  
+  loadRestaurantData();
+}
+
+// Load Restaurant Data
+function loadRestaurantData() {
+  // Simulate loading restaurant menu items
+  const menuItems = DATA.slice(0, 10).map(recipe => ({
+    ...recipe,
+    price: (Math.random() * 20 + 8).toFixed(2),
+    available: true,
+    inventory: Math.floor(Math.random() * 50 + 10)
+  }));
+  
+  displayMenuItems(menuItems);
+  startLiveOrders();
+}
+
+// Display Menu Items
+function displayMenuItems(items) {
+  const menuContainer = document.getElementById('menu-items');
+  menuContainer.innerHTML = items.map(item => `
+    <div class="menu-item-card">
+      <h4>${item.name}</h4>
+      <p>${item.country} • ${item.time_min} Min • ${item.difficulty}</p>
+      <div class="menu-controls">
+        <span>€${item.price}</span>
+        <label>
+          <input type="checkbox" ${item.available ? 'checked' : ''} 
+                 onchange="toggleMenuItem('${item.id}', this.checked)">
+          Verfügbar
+        </label>
+        <span>Lager: ${item.inventory}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Live Orders Simulation
+function startLiveOrders() {
+  const ordersContainer = document.getElementById('live-orders');
+  let orderCount = 0;
+  let revenue = 0;
+  
+  // Simulate incoming orders
+  setInterval(() => {
+    if (Math.random() < 0.3) { // 30% chance every 5 seconds
+      const order = generateMockOrder();
+      orderCount++;
+      revenue += parseFloat(order.total);
+      
+      ordersContainer.innerHTML = `
+        <div class="live-order">
+          <div class="order-header">
+            <span class="order-id">#${order.id}</span>
+            <span class="order-time">${new Date().toLocaleTimeString()}</span>
+          </div>
+          <div class="order-items">
+            ${order.items.map(item => `<div>${item.name} x${item.qty}</div>`).join('')}
+          </div>
+          <div class="order-footer">
+            <span class="order-total">€${order.total}</span>
+            <div class="order-status">
+              <button onclick="updateOrderStatus('${order.id}', 'preparing')" class="btn-small">‘¨â€³ Zubereiten</button>
+              <button onclick="updateOrderStatus('${order.id}', 'ready')" class="btn-small">✅ Fertig</button>
+            </div>
+          </div>
+        </div>
+      ` + ordersContainer.innerHTML;
+      
+      document.getElementById('orders-today').textContent = orderCount;
+      document.getElementById('revenue-today').textContent = revenue.toFixed(2);
+      
+      // Send webhook notification
+      sendWebhook('order.created', { order_id: order.id, total: order.total });
+    }
+  }, 5000);
+}
+
+// Generate Mock Order
+function generateMockOrder() {
+  const items = DATA.slice(0, Math.floor(Math.random() * 3) + 1);
+  const orderItems = items.map(item => ({
+    name: item.name,
+    qty: Math.floor(Math.random() * 2) + 1,
+    price: (Math.random() * 15 + 8).toFixed(2)
+  }));
+  
+  const total = orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0);
+  
+  return {
+    id: 'ORD' + Date.now(),
+    items: orderItems,
+    total: total.toFixed(2),
+    status: 'placed',
+    timestamp: new Date()
+  };
+}
+
+// Send Webhook
+function sendWebhook(event, data) {
+  if (!RESTAURANT_API.auth.apiKey) return;
+  
+  // Simulate webhook call
+  console.log('“¡ Webhook sent:', event, data);
+  
+  fetch('/api/v1/webhooks/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-Key': RESTAURANT_API.auth.apiKey,
+      'X-Signature': generateSignature(data)
+    },
+    body: JSON.stringify({
+      event,
+      data,
+      timestamp: new Date().toISOString()
+    })
+  }).catch(err => console.log('Webhook simulation:', err));
+}
+
+// Generate API Signature
+function generateSignature(data) {
+  return btoa(JSON.stringify(data) + RESTAURANT_API.auth.secret).slice(0, 16);
+}
+
+// Update Order Status
+function updateOrderStatus(orderId, status) {
+  console.log(`Order ${orderId} status updated to: ${status}`);
+  sendWebhook('order.updated', { order_id: orderId, status });
+}
+
+// Toggle Menu Item
+function toggleMenuItem(itemId, available) {
+  console.log(`Menu item ${itemId} availability: ${available}`);
+  sendWebhook('menu.updated', { item_id: itemId, available });
+}
+
+// Add Menu Items
+function addMenuItems() {
+  const selectedRecipes = DATA.slice(0, 5);
+  selectedRecipes.forEach(recipe => {
+    console.log(`Adding ${recipe.name} to menu`);
+    sendWebhook('menu.item_added', { recipe_id: recipe.id, name: recipe.name });
+  });
+}
+
+// Admin Tab Management
+function showAdminTab(tabName) {
+  document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  
+  document.getElementById(`admin-${tabName}`).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Close Admin Panel
+function closeAdminPanel() {
+  document.getElementById('admin-modal').remove();
+}
+
+// Print Recipe Function
+function printRecipe(recipeId) {
+  const recipe = DATA.find(r => r.id === recipeId);
+  if (!recipe) return;
+  
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${recipe.name} - Rezept</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .recipe-header { border-bottom: 2px solid #8b6b4a; padding-bottom: 10px; }
+        .ingredients { margin: 20px 0; }
+        .steps { margin: 20px 0; }
+        .step { margin: 10px 0; }
+        @media print { body { margin: 0; } }
+      </style>
+    
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+    <body>
+      <div class="recipe-header">
+        <h1>${recipe.name}</h1>
+        <p><strong>Land:</strong> ${recipe.country} • <strong>Zeit:</strong> ${recipe.time_min} Min • <strong>Schwierigkeit:</strong> ${recipe.difficulty}</p>
+      </div>
+      <div class="ingredients">
+        <h2>Zutaten (${recipe.servings}):</h2>
+        <ul>
+          ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="steps">
+        <h2>Zubereitung:</h2>
+        ${recipe.steps.map((step, i) => `<div class="step"><strong>${i+1}.</strong> ${step}</div>`).join('')}
+      </div>
+      <div class="story">
+        <h3>Geschichte:</h3>
+        <p>${recipe.story}</p>
+      </div>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.print();
+}
+
+// Export Recipe Function
+function exportRecipe(recipeId) {
+  const recipe = DATA.find(r => r.id === recipeId);
+  if (!recipe) return;
+  
+  const exportData = {
+    name: recipe.name,
+    country: recipe.country,
+    region: recipe.region,
+    category: recipe.category,
+    time_min: recipe.time_min,
+    difficulty: recipe.difficulty,
+    servings: recipe.servings,
+    ingredients: recipe.ingredients,
+    steps: recipe.steps,
+    story: recipe.story,
+    exported_at: new Date().toISOString()
+  };
+  
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${recipe.name.replace(/\s+/g, '_')}_recipe.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Recipe Collection Manager
+const RECIPE_COLLECTION = {
+  items: JSON.parse(localStorage.getItem('recipe_collection') || '[]'),
+  
+  add(recipeId) {
+    if (!this.items.includes(recipeId)) {
+      this.items.push(recipeId);
+      this.save();
+    }
+  },
+  
+  remove(recipeId) {
+    this.items = this.items.filter(id => id !== recipeId);
+    this.save();
+  },
+  
+  save() {
+    localStorage.setItem('recipe_collection', JSON.stringify(this.items));
+  },
+  
+  get() {
+    return this.items.map(id => DATA.find(r => r.id === id)).filter(Boolean);
+  },
+  
+  export() {
+    const collection = this.get();
+    const blob = new Blob([JSON.stringify(collection, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `recipe_collection_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+  
+  print() {
+    const collection = this.get();
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Rezeptsammlung - ${collection.length} Rezepte</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .recipe { page-break-inside: avoid; margin: 30px 0; padding: 20px; border: 1px solid #ddd; }
+          .recipe-header { border-bottom: 1px solid #8b6b4a; padding-bottom: 10px; margin-bottom: 15px; }
+          @media print { body { margin: 0; } }
+        </style>
+      
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+      <body>
+        <h1>Rezeptsammlung (${collection.length} Rezepte)</h1>
+        ${collection.map(recipe => `
+          <div class="recipe">
+            <div class="recipe-header">
+              <h2>${recipe.name}</h2>
+              <p><strong>${recipe.country}</strong> • ${recipe.time_min} Min • ${recipe.difficulty}</p>
+            </div>
+            <div class="ingredients">
+              <h3>Zutaten (${recipe.servings}):</h3>
+              <ul>
+                ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+              </ul>
+            </div>
+            <div class="steps">
+              <h3>Zubereitung:</h3>
+              ${recipe.steps.map((step, i) => `<p><strong>${i+1}.</strong> ${step}</p>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  }
+};
+
+// Enhanced Recipe Modal with Print/Export - REMOVED DUPLICATE FUNCTION
+// Using the static modal above instead
+
+// Collection Manager Modal
+function showCollectionManager() {
+  const collection = RECIPE_COLLECTION.get();
+  const modal = document.createElement('div');
+  modal.id = 'collection-modal';
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeCollectionModal()">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h2>“š Meine Rezeptsammlung (${collection.length})</h2>
+          <button onclick="closeCollectionModal()" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          ${collection.length === 0 ? 
+            '<p>Keine Rezepte in der Sammlung. Fügen Sie Rezepte über das Rezept-Modal hinzu.</p>' :
+            `
+            <div class="collection-actions">
+              <button onclick="RECIPE_COLLECTION.print()" class="btn-primary">–¨ï¸ Alle drucken</button>
+              <button onclick="RECIPE_COLLECTION.export()" class="btn-secondary">’¾ Als JSON exportieren</button>
+            </div>
+            <div class="collection-list">
+              ${collection.map(recipe => `
+                <div class="collection-item">
+                  <h4>${recipe.name}</h4>
+                  <p>${recipe.country} • ${recipe.time_min} Min</p>
+                  <button onclick="RECIPE_COLLECTION.remove('${recipe.id}')" class="btn-remove">❌ Entfernen</button>
+                </div>
+              `).join('')}
+            </div>
+            `
+          }
+        </div>
+      </div>
+    </div>
+  `;
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 6000;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `;
+  document.body.appendChild(modal);
+}
+
+// Close Collection Modal
+function closeCollectionModal() {
+  document.getElementById('collection-modal').remove();
+}
+
+</script>
+</body>
+</html>

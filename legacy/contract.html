@@ -1,0 +1,1717 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>UniverseAllEnterprises — Budget & Statement System</title>
+  <script src="KASSENBUCH-COMMUNICATION-LAYER.js"></script>
+  <!-- [.SYSTEMS.T.SYSTEMS.] FABRIKAGE Console-Bypass Integration -->
+  <script src="FABRIKAGE-CONSOLE-BYPASS-INTEGRATION.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #0b1020;
+      color: #e5e7eb;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #020617;
+      border-radius: 12px;
+      padding: 14px 14px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0 0 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #a5b4fc;
+    }
+    .brand {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    button, label.btn, select {
+      font-size: 11px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      padding: 4px 10px;
+      background: #020617;
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    select {
+      padding-right: 22px;
+    }
+    button:hover, label.btn:hover, select:hover {
+      background: #111827;
+    }
+    button:active, label.btn:active {
+      background: #1f2937;
+      transform: translateY(1px);
+    }
+    .status {
+      font-size: 11px;
+      opacity: 0.9;
+      margin-left: 4px;
+      min-height: 14px;
+    }
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 11px;
+      font-family: monospace;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 6px;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
+    }
+    .hint {
+      font-size: 10px;
+      opacity: 0.8;
+      margin-bottom: 3px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+      align-items: flex-start;
+    }
+    .panel {
+      flex: 1 1 260px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      padding: 8px;
+      background: radial-gradient(circle at top left,#111827,#020617);
+    }
+    .panel h2 {
+      font-size: 12px;
+      margin: 0 0 5px;
+      color: #bfdbfe;
+    }
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .field {
+      flex: 1 1 90px;
+    }
+    .field label {
+      display: block;
+      font-size: 10px;
+      opacity: 0.8;
+      margin-bottom: 1px;
+    }
+    .field input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 11px;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 4px 6px;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 1px rgba(99,102,241,0.4);
+    }
+    canvas {
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: radial-gradient(circle at top,#020617,#020617 40%,#020617 60%,#020617 100%);
+      max-width: 100%;
+      height: auto;
+    }
+    .questions {
+      margin-top: 10px;
+      font-size: 11px;
+      border-top: 1px dashed #374151;
+      padding-top: 6px;
+      color: #9ca3af;
+    }
+    .questions strong {
+      color: #e5e7eb;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    #registrationOutput {
+      width: 100%;
+      min-height: 60px;
+      font-size: 10px;
+      font-family: monospace;
+      margin-top: 4px;
+    }
+  </style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+<body>
+<div class="page">
+  <h1 data-i18n="appTitle">UniverseAllEnterprises — Haushalts- &amp; Bilanzsystem</h1>
+  <div class="brand" data-i18n="appTagline">
+    WHD Application · Complete Single-File System · Canvas Engine · Zero-Input Mode.
+  </div>
+
+  <!-- Bedienleiste -->
+  <div class="controls">
+    <button id="btnRefresh" data-i18n="btnRefresh">Neu zeichnen</button>
+    <label class="btn" for="fileInput" data-i18n="btnFile">Datei einlesen (CSV/JSON)</label>
+    <input id="fileInput" type="file" accept=".csv,.txt,.json">
+    <button id="btnExportJSON" data-i18n="btnExportJSON">Export JSON</button>
+    <button id="btnExportCSV" data-i18n="btnExportCSV">Export CSV</button>
+    <button id="btnPrint" data-i18n="btnPrint">Drucken / PDF</button>
+    <button id="btnMode" data-i18n="btnModeTable">Ansicht: Tabelle</button>
+    <select id="selLang" aria-label="Language">
+      <option value="de">Deutsch</option>
+      <option value="en">English</option>
+      <option value="nl">Nederlands</option>
+    </select>
+    <span id="status" class="status"></span>
+  </div>
+
+  <!-- Rohdaten -->
+  <div>
+    <div class="hint" data-i18n="dataHint">
+      âœ‚ï¸ Bank- / Kassendaten hier hineinkopieren. Format wird automatisch erkannt.
+      Beispiele: <code>2025-12-01;Supermarkt;-23,40</code> oder
+      <code>Miete,-550</code>
+    </div>
+    <textarea id="dataInput" rows="4">2025-12-01;Supermarkt;-23,40
+2025-12-02;Miete;-550
+2025-12-03;Stadtcafé;-4,50
+2025-12-04;Bus;-2,90
+</textarea>
+  </div>
+
+  <!-- Eingaben -->
+  <div class="row">
+    <div class="panel">
+      <h2 data-i18n="panelBudgetTitle">Budget &amp; Zeitraum</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpBudget" data-i18n="lblBudgetTotal">Gesamtbudget (€)</label>
+          <input id="inpBudget" type="number" step="0.01" value="187.15">
+        </div>
+        <div class="field">
+          <label for="inpTage" data-i18n="lblDays">Tage zu überbrücken</label>
+          <input id="inpTage" type="number" step="1" value="15">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpJoints" data-i18n="lblJointsPerDay">Joints pro Tag</label>
+          <input id="inpJoints" type="number" step="0.1" value="2">
+        </div>
+        <div class="field">
+          <label for="inpJointPreis" data-i18n="lblJointPrice">Preis pro Joint (€)</label>
+          <input id="inpJointPreis" type="number" step="0.01" value="5">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpFood" data-i18n="lblFoodPerDay">Lebensmittel pro Tag (€)</label>
+          <input id="inpFood" type="number" step="0.01" value="4.39">
+        </div>
+        <div class="field">
+          <label for="inpBrotPreis" data-i18n="lblBreadPackPrice">Brötchen-Paket (€)</label>
+          <input id="inpBrotPreis" type="number" step="0.01" value="1.29">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpBrotProPaket" data-i18n="lblBreadPerPack">Brötchen / Paket</label>
+          <input id="inpBrotProPaket" type="number" step="1" value="6">
+        </div>
+        <div class="field">
+          <label for="inpBrotVorhanden" data-i18n="lblBreadExisting">Brötchen vorhanden</label>
+          <input id="inpBrotVorhanden" type="number" step="1" value="12">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpBrotNeuPakete" data-i18n="lblBreadNewPacks">Neue Pakete (Plan)</label>
+          <input id="inpBrotNeuPakete" type="number" step="1" value="2">
+        </div>
+      </div>
+    </div>
+
+    <!-- Konto / PDF-Analyse-Meta (angelehnt an Bankauszug-Analyse-PDF) -->
+    <div class="panel">
+      <h2 data-i18n="panelAccountTitle">Konto &amp; Analyse-Metadaten</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpIban" data-i18n="lblIban">IBAN</label>
+          <input id="inpIban" type="text" value="NL42 RABO 0157 8482 72">
+        </div>
+        <div class="field">
+          <label for="inpCurrency" data-i18n="lblCurrency">Währung</label>
+          <input id="inpCurrency" type="text" value="EUR">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpPeriodFrom" data-i18n="lblPeriodFrom">Zeitraum von</label>
+          <input id="inpPeriodFrom" type="date" value="2025-01-01">
+        </div>
+        <div class="field">
+          <label for="inpPeriodTo" data-i18n="lblPeriodTo">Zeitraum bis</label>
+          <input id="inpPeriodTo" type="date" value="2025-12-04">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpOriginalName" data-i18n="lblOriginalFile">Original-PDF / Datei</label>
+          <input id="inpOriginalName" type="text" value="RA_A_NL42RABO0157848272_EUR_20250101_20251204.pdf">
+        </div>
+      </div>
+      <div class="hint" data-i18n="accountHint">
+        Diese Felder bilden die Kopfzeile der PDF-Report-Ansicht ab (Konto, Zeitraum, Status).
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 data-i18n="panelCanvasTitle">Visualisierung / Canvas</h2>
+      <canvas id="canvas" width="1024" height="420"></canvas>
+      <div class="hint" style="margin-top:4px;" data-i18n="canvasHint">
+        Modus: Tabelle · Zeitleiste · Kreisdiagramm · PDF-Report — wird automatisch aktualisiert (Eingaben / Daten ändern).
+      </div>
+    </div>
+  </div>
+
+  <!-- Nomad / Company Registration -->
+  <div class="row">
+    <div class="panel">
+      <h2 data-i18n="panelNomadTitle">Nomad / Company Registration (optional)</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpCompany" data-i18n="lblCompanyName">Firmenname / Projekt</label>
+          <input id="inpCompany" type="text" placeholder="z.B. UniverseAllEnterprises">
+        </div>
+        <div class="field">
+          <label for="inpCountry" data-i18n="lblCountry">Land / Base</label>
+          <input id="inpCountry" type="text" placeholder="NL, DE, ES …">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="inpContact" data-i18n="lblContact">Kontakt (E-Mail / URL)</label>
+          <input id="inpContact" type="text" placeholder="you@example.com / Link">
+        </div>
+      </div>
+      <button id="btnNomad" data-i18n="btnNomad">Nomad-Profil als JSON erzeugen</button>
+      <textarea id="registrationOutput" readonly placeholder="JSON-Registrierung erscheint hier …"></textarea>
+      <div class="hint" data-i18n="nomadHint">
+        Für Reisende / Nomaden: JSON exportieren und kostenlos bei TogetherSystems / UniverseAllEnterprises einreichen.
+      </div>
+    </div>
+  </div>
+
+  <!-- Fragen / Orientierung -->
+  <div class="questions" id="questionsBlock">
+    <strong data-i18n="questionsTitle">Fragen, die du dir selbst stellen kannst (kein Pflicht-Input für das System):</strong><br>
+    <span data-i18n="questionsList">
+      – Welche Ausgaben sind absolut notwendig, welche sind „nice to have"?<br>
+      – Wie viel Puffer willst du mindestens pro Monat / Zeitraum haben?<br>
+      – Willst du dein Modell eher täglich, wöchentlich oder monatlich steuern?<br>
+      – Sollen künftige Features noch Kategorien, Konten (Giro/Kredit/Bar) oder Steuer-Betrachtungen anzeigen?
+    </span>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // --- Internationalisierung (DE / EN / NL) ---
+  const translations = {
+    de: {
+      appTitle: "UniverseAllEnterprises — Haushalts- & Bilanzsystem",
+      appTagline: "WHD Applikation · Komplettes Single-File System · Canvas-Engine · Zero-Input-Modus.",
+      btnRefresh: "Neu zeichnen",
+      btnFile: "Datei einlesen (CSV/JSON)",
+      btnExportJSON: "Export JSON",
+      btnExportCSV: "Export CSV",
+      btnPrint: "Drucken / PDF",
+      btnModeTable: "Ansicht: Tabelle",
+      btnModeTimeline: "Ansicht: Zeitleiste",
+      btnModePie: "Ansicht: Kreisdiagramm",
+      btnModeReport: "Ansicht: PDF-Report",
+      dataHint: "âœ‚ï¸ Bank- / Kassendaten hier hineinkopieren. System erkennt Format automatisch.",
+      panelBudgetTitle: "Budget & Zeitraum",
+      lblBudgetTotal: "Gesamtbudget (€)",
+      lblDays: "Tage zu überbrücken",
+      lblJointsPerDay: "Joints pro Tag",
+      lblJointPrice: "Preis pro Joint (€)",
+      lblFoodPerDay: "Lebensmittel pro Tag (€)",
+      lblBreadPackPrice: "Brötchen-Paket (€)",
+      lblBreadPerPack: "Brötchen / Paket",
+      lblBreadExisting: "Brötchen vorhanden",
+      lblBreadNewPacks: "Neue Pakete (Plan)",
+      panelAccountTitle: "Konto & Analyse-Metadaten",
+      lblIban: "IBAN",
+      lblCurrency: "Währung",
+      lblPeriodFrom: "Zeitraum von",
+      lblPeriodTo: "Zeitraum bis",
+      lblOriginalFile: "Original-PDF / Datei",
+      accountHint: "Diese Felder bilden die Kopfzeile der PDF-Report-Ansicht ab (Konto, Zeitraum, Status).",
+      panelCanvasTitle: "Visualisierung / Canvas",
+      canvasHint: "Modus: Tabelle · Zeitleiste · Kreisdiagramm · PDF-Report — wird automatisch aktualisiert.",
+      panelNomadTitle: "Nomad / Company Registration (optional)",
+      lblCompanyName: "Firmenname / Projekt",
+      lblCountry: "Land / Base",
+      lblContact: "Kontakt (E-Mail / URL)",
+      btnNomad: "Nomad-Profil als JSON erzeugen",
+      nomadHint: "Für Reisende / Nomaden: JSON exportieren und kostenlos bei TogetherSystems / UniverseAllEnterprises einreichen.",
+      questionsTitle: "Fragen, die du dir selbst stellen kannst (kein Pflicht-Input für das System):",
+      questionsList:
+        "– Welche Ausgaben sind absolut notwendig, welche sind „nice to have"?<br>" +
+        "– Wie viel Puffer willst du mindestens pro Monat / Zeitraum haben?<br>" +
+        "– Willst du dein Modell eher täglich, wöchentlich oder monatlich steuern?<br>" +
+        "– Sollen künftige Features noch Kategorien, Konten (Giro/Kredit/Bar) oder Steuer-Betrachtungen anzeigen?",
+      canvasTableTitle: "Haushalts- & Budgetübersicht (Tabelle)",
+      canvasTableSub: "UAE · WHD Single File · Canvas Engine",
+      baseData: "Basisdaten",
+      colCategory: "Kategorie",
+      colPerDay: "Pro Tag (€)",
+      colTotal: "Gesamt (€)",
+      colComment: "Kommentar",
+      rowJoints: "Joints",
+      rowFood: "Lebensmittel (Zukauf)",
+      rowBread: "Brötchen (neu)",
+      rowImported: "Importierte Ausgaben",
+      rowSumPlan: "Summe (Budget-Plan)",
+      rowRest: "Restbudget (inkl. Import)",
+      commentJoints: "Reduzierbar, falls Budget knapp.",
+      commentFood: "Basiskosten Versorgung.",
+      commentBread: "Vorhandene:",
+      commentImported: "Aus Konto- / Kassendaten.",
+      commentSumPlan: "Nur geplante Kategorien.",
+      commentRest: "Budget - importierte Ausgaben - Plan.",
+      tableImportedTotal: "Importierte Ausgaben gesamt:",
+      tablePerDayAvg: "Ã˜",
+      statusOver: "Budget überzogen (inkl. importierter Ausgaben):",
+      statusOk: "Budget OK. Puffer (inkl. Import):",
+      statusMissing: "€ fehlen. Joints / Lebensmittel / Brötchen / Ausgaben anpassen.",
+      statusBuffer: "€ im Zeitraum.",
+      timelineTitle: "Zeitliche Verteilung (Monate)",
+      timelineSub: "Grundlage: importierte Bank-/Kassendaten",
+      timelineNoData: "Keine Daten vorhanden. Füge oben Bank-/Kassendaten ein.",
+      timelineRangeUnknown: "Zeitraum unbekannt",
+      pieTitle: "Bilanz / Verteilung (Kreisdiagramm)",
+      pieSub: "Budget-Plan vs. importierte Ausgaben",
+      pieLegend: "Legende",
+      pieNoData: "Keine ausreichenden Daten für Kreisdiagramm.",
+      segJoints: "Joints (Budget)",
+      segFood: "Lebensmittel (Budget)",
+      segBread: "Brötchen neu (Budget)",
+      segImported: "Importierte Ausgaben",
+      reportTitle: "Bankauszug Analyse · PDF-Report",
+      reportSub: "Struktur angelehnt an TogetherSystems International TTT Bank Statement Analysis.",
+      reportAccount: "Konto",
+      reportCurrency: "Währung",
+      reportPeriod: "Zeitraum",
+      reportOriginal: "Original-Datei",
+      reportStatusTitle: "Status",
+      reportStatusText: "Original-PDF bleibt unverändert. Diese Analyse basiert auf importierten Daten.",
+      reportToc: "Inhaltsverzeichnis",
+      reportToc1: "1. Übersicht & Metriken",
+      reportToc2: "2. Makroökonomische Analyse",
+      reportToc3: "3. Transaktionskategorisierung",
+      reportToc4: "4. Trends & Cashflow-Analyse",
+      reportToc5: "5. Empfehlungen",
+      reportToc6: "6. Technische Details",
+      reportMetricsTitle: "Übersicht & Metriken",
+      reportMetricIncome: "Gesamt-Einnahmen",
+      reportMetricExpenses: "Gesamt-Ausgaben",
+      reportMetricNet: "Netto-Cashflow",
+      reportMetricTx: "Transaktionen",
+      reportMacroTitle: "Makroökonomische Indikatoren",
+      reportMacroLiquidity: "Liquiditätsquote (Credits / Debits)",
+      reportMacroStability: "Stabilitätsindex (Cashflow je Tag)",
+      reportMacroActivity: "Aktivitätsindex (Transaktionen / Tag)",
+      reportMacroDivers: "Diversifikationsindex (Kategorien)",
+      reportNomadTitle: "Nomad / Travel-Angebot",
+      reportNomadText: "Für digitale Nomad:innen und Reisende: Analyse, Budget & PDF-Report weltweit im Browser nutzbar. Firmen & Projekte können sich kostenlos registrieren (Nomad-JSON).",
+      reportContactTitle: "Kontakt / TogetherSystems International TTT",
+      reportContactText: "Website: tel1.nl · Support für Bankauszug-Analyse & Dynamic PDF. Standort: Niederlande."
+    },
+    en: {
+      appTitle: "UniverseAllEnterprises — Household & Balance System",
+      appTagline: "WHD application · complete single-file system · canvas engine · zero-input mode.",
+      btnRefresh: "Redraw",
+      btnFile: "Import file (CSV/JSON)",
+      btnExportJSON: "Export JSON",
+      btnExportCSV: "Export CSV",
+      btnPrint: "Print / PDF",
+      btnModeTable: "View: Table",
+      btnModeTimeline: "View: Timeline",
+      btnModePie: "View: Pie",
+      btnModeReport: "View: PDF Report",
+      dataHint: "âœ‚ï¸ Paste bank / cash data here. Format is detected automatically.",
+      panelBudgetTitle: "Budget & Period",
+      lblBudgetTotal: "Total budget (€)",
+      lblDays: "Days to cover",
+      lblJointsPerDay: "Joints per day",
+      lblJointPrice: "Price per joint (€)",
+      lblFoodPerDay: "Food per day (€)",
+      lblBreadPackPrice: "Bread pack (€)",
+      lblBreadPerPack: "Breads / pack",
+      lblBreadExisting: "Breads available",
+      lblBreadNewPacks: "New packs (plan)",
+      panelAccountTitle: "Account & Analysis Metadata",
+      lblIban: "IBAN",
+      lblCurrency: "Currency",
+      lblPeriodFrom: "Period from",
+      lblPeriodTo: "Period to",
+      lblOriginalFile: "Original PDF / file",
+      accountHint: "These fields feed the header of the PDF-style report (account, period, status).",
+      panelCanvasTitle: "Visualisation / Canvas",
+      canvasHint: "Modes: Table · Timeline · Pie · PDF Report — auto-updates when data changes.",
+      panelNomadTitle: "Nomad / Company Registration (optional)",
+      lblCompanyName: "Company / Project name",
+      lblCountry: "Country / Base",
+      lblContact: "Contact (email / URL)",
+      btnNomad: "Generate nomad profile JSON",
+      nomadHint: "For travellers / nomads: export JSON and send it to TogetherSystems / UniverseAllEnterprises (free).",
+      questionsTitle: "Questions you can ask yourself (no required input for the system):",
+      questionsList:
+        "– Which expenses are absolutely necessary, which are \"nice to have\"?<br>" +
+        "– How much buffer do you want per month / period?<br>" +
+        "– Do you want to steer your model daily, weekly or monthly?<br>" +
+        "– Should future features include more categories, accounts or tax views?",
+      canvasTableTitle: "Household & Budget Overview (Table)",
+      canvasTableSub: "UAE · WHD single file · canvas engine",
+      baseData: "Base data",
+      colCategory: "Category",
+      colPerDay: "Per day (€)",
+      colTotal: "Total (€)",
+      colComment: "Comment",
+      rowJoints: "Joints",
+      rowFood: "Food (extra)",
+      rowBread: "Bread (new)",
+      rowImported: "Imported expenses",
+      rowSumPlan: "Sum (budget plan)",
+      rowRest: "Remaining budget (incl. import)",
+      commentJoints: "Reducible if budget is tight.",
+      commentFood: "Basic supply costs.",
+      commentBread: "Existing:",
+      commentImported: "From bank / cash data.",
+      commentSumPlan: "Only planned categories.",
+      commentRest: "Budget - imported expenses - plan.",
+      tableImportedTotal: "Imported expenses total:",
+      tablePerDayAvg: "avg.",
+      statusOver: "Budget exceeded (incl. imported expenses):",
+      statusOk: "Budget OK. Buffer (incl. import):",
+      statusMissing: "€ missing. Adjust joints / food / bread / expenses.",
+      statusBuffer: "€ over the period.",
+      timelineTitle: "Temporal distribution (months)",
+      timelineSub: "Based on imported bank / cash data",
+      timelineNoData: "No data. Paste bank / cash data above.",
+      timelineRangeUnknown: "Period unknown",
+      pieTitle: "Balance / distribution (pie chart)",
+      pieSub: "Budget plan vs. imported expenses",
+      pieLegend: "Legend",
+      pieNoData: "Not enough data for pie chart.",
+      segJoints: "Joints (budget)",
+      segFood: "Food (budget)",
+      segBread: "Bread new (budget)",
+      segImported: "Imported expenses",
+      reportTitle: "Bank Statement Analysis · PDF-style report",
+      reportSub: "Structure inspired by TogetherSystems International TTT Bank Statement Analysis.",
+      reportAccount: "Account",
+      reportCurrency: "Currency",
+      reportPeriod: "Period",
+      reportOriginal: "Original file",
+      reportStatusTitle: "Status",
+      reportStatusText: "Original PDF remains unchanged. This analysis is based on imported data.",
+      reportToc: "Table of contents",
+      reportToc1: "1. Overview & metrics",
+      reportToc2: "2. Macro-economic analysis",
+      reportToc3: "3. Transaction categorisation",
+      reportToc4: "4. Trends & cashflow analysis",
+      reportToc5: "5. Recommendations",
+      reportToc6: "6. Technical details",
+      reportMetricsTitle: "Overview & metrics",
+      reportMetricIncome: "Total income",
+      reportMetricExpenses: "Total expenses",
+      reportMetricNet: "Net cashflow",
+      reportMetricTx: "Transactions",
+      reportMacroTitle: "Macro-economic indicators",
+      reportMacroLiquidity: "Liquidity ratio (credits / debits)",
+      reportMacroStability: "Stability index (cashflow per day)",
+      reportMacroActivity: "Activity index (transactions / day)",
+      reportMacroDivers: "Diversification index (categories)",
+      reportNomadTitle: "Nomad / travel offer",
+      reportNomadText: "For digital nomads and travellers: analysis, budget & PDF report from anywhere in the browser. Companies & projects can register for free (nomad JSON).",
+      reportContactTitle: "Contact / TogetherSystems International TTT",
+      reportContactText: "Website: tel1.nl · Support for bank statement analysis & dynamic PDF. Location: Netherlands."
+    },
+    nl: {
+      appTitle: "UniverseAllEnterprises — Huishoud- & Balanssysteem",
+      appTagline: "WHD applicatie · compleet single-file systeem · canvas engine · zero-input modus.",
+      btnRefresh: "Opnieuw tekenen",
+      btnFile: "Bestand inlezen (CSV/JSON)",
+      btnExportJSON: "JSON exporteren",
+      btnExportCSV: "CSV exporteren",
+      btnPrint: "Afdrukken / PDF",
+      btnModeTable: "Weergave: Tabel",
+      btnModeTimeline: "Weergave: Tijdslijn",
+      btnModePie: "Weergave: Taartdiagram",
+      btnModeReport: "Weergave: PDF-rapport",
+      dataHint: "âœ‚ï¸ Plak hier bank- / kasgegevens. Formaat wordt automatisch herkend.",
+      panelBudgetTitle: "Budget & Periode",
+      lblBudgetTotal: "Totaal budget (€)",
+      lblDays: "Dagen te overbruggen",
+      lblJointsPerDay: "Joints per dag",
+      lblJointPrice: "Prijs per joint (€)",
+      lblFoodPerDay: "Voeding per dag (€)",
+      lblBreadPackPrice: "Broodpakket (€)",
+      lblBreadPerPack: "Broodjes / pakket",
+      lblBreadExisting: "Broodjes beschikbaar",
+      lblBreadNewPacks: "Nieuwe pakketten (plan)",
+      panelAccountTitle: "Rekening & Analyse-metadata",
+      lblIban: "IBAN",
+      lblCurrency: "Valuta",
+      lblPeriodFrom: "Periode van",
+      lblPeriodTo: "Periode tot",
+      lblOriginalFile: "Originele PDF / bestand",
+      accountHint: "Deze velden voeden de kop van het PDF-rapport (rekening, periode, status).",
+      panelCanvasTitle: "Visualisatie / Canvas",
+      canvasHint: "Modi: Tabel · Tijdslijn · Taartdiagram · PDF-rapport — wordt automatisch bijgewerkt.",
+      panelNomadTitle: "Nomad / Bedrijfsregistratie (optioneel)",
+      lblCompanyName: "Bedrijfs- / projectnaam",
+      lblCountry: "Land / Basis",
+      lblContact: "Contact (e-mail / URL)",
+      btnNomad: "Nomad-profiel als JSON genereren",
+      nomadHint: "Voor reizigers / nomads: JSON exporteren en gratis bij TogetherSystems / UniverseAllEnterprises aanmelden.",
+      questionsTitle: "Vragen die je jezelf kunt stellen (geen verplichte invoer):",
+      questionsList:
+        "– Welke uitgaven zijn echt noodzakelijk en welke zijn \"nice to have\"?<br>" +
+        "– Hoeveel buffer wil je per maand / periode?<br>" +
+        "– Wil je je model dagelijks, wekelijks of maandelijks sturen?<br>" +
+        "– Moeten toekomstige features nog meer categorieën, rekeningen of belastingweergaven tonen?",
+      canvasTableTitle: "Huishoud- & Budgetoverzicht (Tabel)",
+      canvasTableSub: "UAE · WHD single file · canvas engine",
+      baseData: "Basisgegevens",
+      colCategory: "Categorie",
+      colPerDay: "Per dag (€)",
+      colTotal: "Totaal (€)",
+      colComment: "Commentaar",
+      rowJoints: "Joints",
+      rowFood: "Voeding (extra)",
+      rowBread: "Brood (nieuw)",
+      rowImported: "GeÃ¯mporteerde uitgaven",
+      rowSumPlan: "Som (budgetplan)",
+      rowRest: "Restbudget (incl. import)",
+      commentJoints: "Te verlagen als het budget krap is.",
+      commentFood: "Basiskosten voeding.",
+      commentBread: "Aanwezig:",
+      commentImported: "Uit bank- / kasgegevens.",
+      commentSumPlan: "Alleen geplande categorieën.",
+      commentRest: "Budget - geÃ¯mporteerde uitgaven - plan.",
+      tableImportedTotal: "GeÃ¯mporteerde uitgaven totaal:",
+      tablePerDayAvg: "gem.",
+      statusOver: "Budget overschreden (incl. geÃ¯mporteerde uitgaven):",
+      statusOk: "Budget OK. Buffer (incl. import):",
+      statusMissing: "€ tekort. Pas joints / eten / brood / uitgaven aan.",
+      statusBuffer: "€ in de periode.",
+      timelineTitle: "Tijdelijke verdeling (maanden)",
+      timelineSub: "Gebaseerd op geÃ¯mporteerde bank- / kasgegevens",
+      timelineNoData: "Geen gegevens. Plak bank- / kasgegevens hierboven.",
+      timelineRangeUnknown: "Periode onbekend",
+      pieTitle: "Balans / verdeling (taartdiagram)",
+      pieSub: "Budgetplan vs. geÃ¯mporteerde uitgaven",
+      pieLegend: "Legenda",
+      pieNoData: "Onvoldoende gegevens voor taartdiagram.",
+      segJoints: "Joints (budget)",
+      segFood: "Voeding (budget)",
+      segBread: "Brood nieuw (budget)",
+      segImported: "GeÃ¯mporteerde uitgaven",
+      reportTitle: "Bankafschrift Analyse · PDF-rapport",
+      reportSub: "Structuur geÃ¯nspireerd op TogetherSystems International TTT Bank Statement Analysis.",
+      reportAccount: "Rekening",
+      reportCurrency: "Valuta",
+      reportPeriod: "Periode",
+      reportOriginal: "Origineel bestand",
+      reportStatusTitle: "Status",
+      reportStatusText: "Originele PDF blijft onveranderd. Deze analyse is gebaseerd op geÃ¯mporteerde gegevens.",
+      reportToc: "Inhoudsopgave",
+      reportToc1: "1. Overzicht & statistieken",
+      reportToc2: "2. Macro-economische analyse",
+      reportToc3: "3. Transactiecategorisatie",
+      reportToc4: "4. Trends & cashflowanalyse",
+      reportToc5: "5. Aanbevelingen",
+      reportToc6: "6. Technische details",
+      reportMetricsTitle: "Overzicht & statistieken",
+      reportMetricIncome: "Totale inkomsten",
+      reportMetricExpenses: "Totale uitgaven",
+      reportMetricNet: "Netto cashflow",
+      reportMetricTx: "Transacties",
+      reportMacroTitle: "Macro-economische indicatoren",
+      reportMacroLiquidity: "Liquiditeitsratio (credits / debits)",
+      reportMacroStability: "Stabiliteitsindex (cashflow per dag)",
+      reportMacroActivity: "Activiteitsindex (transacties / dag)",
+      reportMacroDivers: "Diversificatie-index (categorieën)",
+      reportNomadTitle: "Nomad / travel-aanbod",
+      reportNomadText: "Voor digitale nomads en reizigers: analyse, budget & PDF-rapport overal in de browser. Bedrijven & projecten kunnen zich gratis registreren (nomad JSON).",
+      reportContactTitle: "Contact / TogetherSystems International TTT",
+      reportContactText: "Website: tel1.nl · Support voor bankafschrift-analyse & dynamische PDF. Locatie: Nederland."
+    }
+  };
+
+  const state = {
+    mode: 'table', // 'table' | 'timeline' | 'pie' | 'report'
+    transactions: [],
+    lang: 'de'
+  };
+
+  function tr(key) {
+    const dict = translations[state.lang] || translations.de;
+    return dict[key] || translations.de[key] || key;
+  }
+
+  function applyTranslations() {
+    const dict = translations[state.lang] || translations.de;
+    document.documentElement.lang = state.lang;
+
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.dataset.i18n;
+      if (!key) return;
+      const htmlKeys = ["questionsList"]; // keys, die HTML enthalten dürfen
+      if (htmlKeys.includes(key)) {
+        if (dict[key]) el.innerHTML = dict[key];
+      } else {
+        if (dict[key]) el.textContent = dict[key];
+      }
+    });
+
+    // Button-Text für aktuellen Modus anpassen
+    const btnMode = document.getElementById("btnMode");
+    if (state.mode === "table") btnMode.textContent = tr("btnModeTable");
+    else if (state.mode === "timeline") btnMode.textContent = tr("btnModeTimeline");
+    else if (state.mode === "pie") btnMode.textContent = tr("btnModePie");
+    else btnMode.textContent = tr("btnModeReport");
+  }
+
+  // --- DOM-Referenzen ---
+  const canvas   = document.getElementById('canvas');
+  const ctx      = canvas.getContext('2d');
+  const statusEl = document.getElementById('status');
+
+  const dataInput = document.getElementById('dataInput');
+  const fileInput = document.getElementById('fileInput');
+  const selLang   = document.getElementById('selLang');
+
+  const inpBudget        = document.getElementById('inpBudget');
+  const inpTage          = document.getElementById('inpTage');
+  const inpJoints        = document.getElementById('inpJoints');
+  const inpJointPreis    = document.getElementById('inpJointPreis');
+  const inpFood          = document.getElementById('inpFood');
+  const inpBrotPreis     = document.getElementById('inpBrotPreis');
+  const inpBrotProPaket  = document.getElementById('inpBrotProPaket');
+  const inpBrotVorhanden = document.getElementById('inpBrotVorhanden');
+  const inpBrotNeuPakete = document.getElementById('inpBrotNeuPakete');
+
+  const inpIban        = document.getElementById('inpIban');
+  const inpCurrency    = document.getElementById('inpCurrency');
+  const inpPeriodFrom  = document.getElementById('inpPeriodFrom');
+  const inpPeriodTo    = document.getElementById('inpPeriodTo');
+  const inpOriginalName= document.getElementById('inpOriginalName');
+
+  const inpCompany  = document.getElementById('inpCompany');
+  const inpCountry  = document.getElementById('inpCountry');
+  const inpContact  = document.getElementById('inpContact');
+  const btnNomad    = document.getElementById('btnNomad');
+  const registrationOutput = document.getElementById('registrationOutput');
+
+  const btnRefresh    = document.getElementById('btnRefresh');
+  const btnExportJSON = document.getElementById('btnExportJSON');
+  const btnExportCSV  = document.getElementById('btnExportCSV');
+  const btnPrint      = document.getElementById('btnPrint');
+  const btnMode       = document.getElementById('btnMode');
+
+  function to2(v) {
+    if (!isFinite(v)) return '0.00';
+    return (Math.round(v * 100) / 100).toFixed(2);
+  }
+
+  // --- Parsing von Daten ---
+  function parseTransactions(raw) {
+    const lines = raw.split(/\r?\n/);
+    const list = [];
+
+    for (let line of lines) {
+      const txt = line.trim();
+      if (!txt) continue;
+
+      // JSON-Block?
+      if (txt.startsWith('{') || txt.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            for (const obj of parsed) {
+              list.push({
+                date: obj.date || null,
+                desc: obj.desc || obj.description || '',
+                amount: Number(obj.amount || obj.value || 0)
+              });
+            }
+            return list;
+          }
+        } catch (e) {}
+      }
+
+      // Einfaches CSV/Zeilentext
+      const parts = txt.split(/[;\t]/);
+      let date = null, desc = '', amount = 0;
+
+      if (parts.length === 1) {
+        const p2 = txt.split(',');
+        if (p2.length >= 2) {
+          desc = p2.slice(0, -1).join(' ').trim();
+          amount = parseFloat(p2[p2.length - 1].replace(',', '.')) || 0;
+        } else {
+          desc = txt;
+        }
+      } else if (parts.length === 2) {
+        desc   = parts[0].trim();
+        amount = parseFloat(parts[1].replace(',', '.')) || 0;
+      } else {
+        date = parts[0].trim();
+        desc = parts.slice(1, parts.length - 1).join(' ').trim();
+        amount = parseFloat(parts[parts.length - 1].replace(',', '.')) || 0;
+      }
+
+      list.push({ date, desc, amount });
+    }
+    return list;
+  }
+
+  // Aggregation für importierte Ausgaben (nur Debits)
+  function aggregateTransactions(list) {
+    let totalExpenses = 0;
+    let minDate = null;
+    let maxDate = null;
+    const perMonth = {};
+
+    for (const tx of list) {
+      const raw = Number(tx.amount) || 0;
+      const val = raw < 0 ? -raw : 0; // nur Ausgaben
+      totalExpenses += val;
+
+      let key = 'Unbekannt';
+      if (tx.date) {
+        const d = new Date(tx.date);
+        if (!isNaN(d.getTime())) {
+          const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+          key = ym;
+          if (!minDate || d < minDate) minDate = d;
+          if (!maxDate || d > maxDate) maxDate = d;
+        }
+      }
+      perMonth[key] = (perMonth[key] || 0) + val;
+    }
+
+    let days = 0;
+    if (minDate && maxDate) {
+      const diffMs = maxDate - minDate;
+      days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    return { totalExpenses, perMonth, minDate, maxDate, days };
+  }
+
+  // Cashflow-Analyse (für PDF-Report)
+  function analyzeCashflow(list) {
+    let income = 0;
+    let expenses = 0;
+    let txCount = 0;
+    const categories = {}; // sehr grob: nach Text-Snippets
+
+    let minDate = null;
+    let maxDate = null;
+
+    for (const tx of list) {
+      const raw = Number(tx.amount) || 0;
+      if (raw === 0) continue;
+      txCount++;
+
+      if (tx.date) {
+        const d = new Date(tx.date);
+        if (!isNaN(d.getTime())) {
+          if (!minDate || d < minDate) minDate = d;
+          if (!maxDate || d > maxDate) maxDate = d;
+        }
+      }
+
+      if (raw > 0) income += raw;
+      else expenses += -raw;
+
+      const desc = (tx.desc || '').toLowerCase();
+      let cat = 'other';
+      if (/mcdonalds|hema|lidl|coop|plus|supermarkt|kiosk/.test(desc)) cat = 'food';
+      else if (/huur|woonwaarts|stichting|rent/.test(desc)) cat = 'rent';
+      else if (/ns |bus|ov-chip|trein|travel|transport|at5/.test(desc)) cat = 'transport';
+      else if (/kpn|online\.nl|internet|telefoon|vgz|zorg/.test(desc)) cat = 'utilities';
+      categories[cat] = (categories[cat] || 0) + 1;
+    }
+
+    let days = 0;
+    if (minDate && maxDate) {
+      const diffMs = maxDate - minDate;
+      days = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    const net = income - expenses;
+    const liquidityRatio = expenses > 0 ? income / expenses : 0;
+    const cashflowPerDay = days > 0 ? net / days : 0;
+    const txPerDay = days > 0 ? txCount / days : 0;
+    const diversIndex = Object.keys(categories).length;
+
+    return {
+      income, expenses, net, txCount,
+      days,
+      liquidityRatio,
+      cashflowPerDay,
+      txPerDay,
+      diversIndex
+    };
+  }
+
+  // Budget aus UI
+  function getBudget() {
+    const gesamtBudget = parseFloat(inpBudget.value) || 0;
+    const tage         = Math.max(1, parseInt(inpTage.value, 10) || 1);
+    const jointsProTag = Math.max(0, parseFloat(inpJoints.value) || 0);
+    const jointPreis   = Math.max(0, parseFloat(inpJointPreis.value) || 0);
+    const foodPerDay   = Math.max(0, parseFloat(inpFood.value) || 0);
+    const brotPreis    = Math.max(0, parseFloat(inpBrotPreis.value) || 0);
+    const brotProPak   = Math.max(1, parseInt(inpBrotProPaket.value, 10) || 1);
+    const brotVorh     = Math.max(0, parseInt(inpBrotVorhanden.value, 10) || 0);
+    const brotNeu      = Math.max(0, parseInt(inpBrotNeuPakete.value, 10) || 0);
+
+    const tagesBudget = gesamtBudget / tage;
+    const jointsPerDayEuro = jointsProTag * jointPreis;
+    const jointsTotal      = jointsPerDayEuro * tage;
+
+    const foodTotal        = foodPerDay * tage;
+    const brotNewCost      = brotNeu * brotPreis;
+    const brotPerDayEuro   = brotNewCost / tage;
+
+    const sumPerDay = jointsPerDayEuro + foodPerDay + brotPerDayEuro;
+    const sumTotal  = sumPerDay * tage;
+    const restTotalPlan = gesamtBudget - sumTotal;
+    const restPerDayPlan = restTotalPlan / tage;
+
+    return {
+      gesamtBudget, tage,
+      jointsProTag, jointPreis,
+      foodPerDay,
+      brotPreis, brotProPak, brotVorh, brotNeu,
+      tagesBudget,
+      jointsPerDayEuro, jointsTotal,
+      foodTotal,
+      brotNewCost, brotPerDayEuro,
+      sumPerDay, sumTotal,
+      restPerDayPlan, restTotalPlan
+    };
+  }
+
+  function getAccountMeta() {
+    return {
+      iban: inpIban.value.trim(),
+      currency: inpCurrency.value.trim() || "EUR",
+      periodFrom: inpPeriodFrom.value || "",
+      periodTo: inpPeriodTo.value || "",
+      originalName: inpOriginalName.value.trim()
+    };
+  }
+
+  // --- Canvas Helper ---
+  function clearCanvas() {
+    const gradient = ctx.createRadialGradient(
+      canvas.width * 0.2, 0, 50,
+      canvas.width * 0.5, canvas.height * 0.6, canvas.width
+    );
+    gradient.addColorStop(0, "#1d2538");
+    gradient.addColorStop(0.3, "#020617");
+    gradient.addColorStop(1, "#020617");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function drawGrid(x, y, w, h, rows, cols) {
+    ctx.strokeStyle = "rgba(148,163,184,0.4)";
+    ctx.lineWidth = 1;
+    const rowH = h / rows;
+    const colW = w / cols;
+    for (let r = 0; r <= rows; r++) {
+      const yy = y + r * rowH;
+      ctx.beginPath();
+      ctx.moveTo(x, yy);
+      ctx.lineTo(x + w, yy);
+      ctx.stroke();
+    }
+    for (let c = 0; c <= cols; c++) {
+      const xx = x + c * colW;
+      ctx.beginPath();
+      ctx.moveTo(xx, y);
+      ctx.lineTo(xx, y + h);
+      ctx.stroke();
+    }
+  }
+
+  function drawCellText(tableX, tableY, colW, rowH, col, row, text, align) {
+    const x = tableX + col * colW;
+    const y = tableY + (row + 0.6) * rowH;
+    ctx.textAlign = align || "left";
+    ctx.fillStyle = "#e5e7eb";
+    if (align === "right") {
+      ctx.fillText(text, x + colW - 6, y);
+    } else if (align === "center") {
+      ctx.fillText(text, x + colW / 2, y);
+    } else {
+      ctx.fillText(text, x + 6, y);
+    }
+    ctx.textAlign = "left";
+  }
+
+  // --- Ansicht: Tabelle ---
+  function drawTableView() {
+    clearCanvas();
+    const b = getBudget();
+    const agg = aggregateTransactions(state.transactions);
+    const importedTotal = agg.totalExpenses || 0;
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "16px system-ui, sans-serif";
+    ctx.fillText(tr("canvasTableTitle"), 20, 30);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillText(tr("canvasTableSub"), 20, 48);
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillText(tr("baseData"), 20, 76);
+    ctx.font = "11px system-ui, sans-serif";
+    const baseY = 94;
+    const lh = 16;
+
+    ctx.fillText(tr("lblBudgetTotal") + ": " + to2(b.gesamtBudget) + " €", 20, baseY);
+    ctx.fillText(tr("lblDays") + ": " + b.tage +
+      " | " + tr("colPerDay") + " " + to2(b.tagesBudget) + " €",
+      20, baseY + lh);
+    ctx.fillText(
+      tr("rowJoints") + ": " + b.jointsProTag + " Ã— " + to2(b.jointPreis) +
+      " € = " + to2(b.jointsPerDayEuro) + " €/Tag",
+      20, baseY + 2 * lh
+    );
+    ctx.fillText(
+      tr("rowFood") + ": " + to2(b.foodPerDay) + " €/Tag · " +
+      tr("rowBread") + ": " + b.brotNeu + " Ã— " +
+      to2(b.brotPreis) + " € = " + to2(b.brotNewCost) + " €",
+      20, baseY + 3 * lh
+    );
+    ctx.fillText(
+      tr("tableImportedTotal") + " " + to2(importedTotal) + " €" +
+      (agg.days > 0 ? " · " + tr("tablePerDayAvg") + " " + to2(importedTotal / agg.days) + " €/Tag" : ""),
+      20, baseY + 4 * lh
+    );
+
+    const tableX = 20, tableY = 150;
+    const tableW = canvas.width - 40;
+    const tableH = 200;
+    const rows = 7;
+    const cols = 4;
+
+    drawGrid(tableX, tableY, tableW, tableH, rows, cols);
+    const colW = tableW / cols;
+    const rowH = tableH / rows;
+
+    ctx.font = "11px system-ui, sans-serif";
+
+    drawCellText(tableX, tableY, colW, rowH, 0, 0, tr("colCategory"));
+    drawCellText(tableX, tableY, colW, rowH, 1, 0, tr("colPerDay"), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 0, tr("colTotal"), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 0, tr("colComment"));
+
+    drawCellText(tableX, tableY, colW, rowH, 0, 1, tr("rowJoints"));
+    drawCellText(tableX, tableY, colW, rowH, 1, 1, to2(b.jointsPerDayEuro), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 1, to2(b.jointsTotal), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 1, tr("commentJoints"));
+
+    drawCellText(tableX, tableY, colW, rowH, 0, 2, tr("rowFood"));
+    drawCellText(tableX, tableY, colW, rowH, 1, 2, to2(b.foodPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 2, to2(b.foodTotal), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 2, tr("commentFood"));
+
+    drawCellText(tableX, tableY, colW, rowH, 0, 3, tr("rowBread"));
+    drawCellText(tableX, tableY, colW, rowH, 1, 3, to2(b.brotPerDayEuro), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 3, to2(b.brotNewCost), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 3, tr("commentBread") + " " + b.brotVorh + " Stk.");
+
+    const baseDays = agg.days || b.tage;
+    const importPerDay = baseDays > 0 ? importedTotal / baseDays : 0;
+    drawCellText(tableX, tableY, colW, rowH, 0, 4, tr("rowImported"));
+    drawCellText(tableX, tableY, colW, rowH, 1, 4, to2(importPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 4, to2(importedTotal), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 4, tr("commentImported"));
+
+    drawCellText(tableX, tableY, colW, rowH, 0, 5, tr("rowSumPlan"));
+    drawCellText(tableX, tableY, colW, rowH, 1, 5, to2(b.sumPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 5, to2(b.sumTotal), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 5, tr("commentSumPlan"));
+
+    const restTotal = b.gesamtBudget - importedTotal - b.sumTotal;
+    const restPerDay = restTotal / b.tage;
+
+    drawCellText(tableX, tableY, colW, rowH, 0, 6, tr("rowRest"));
+    drawCellText(tableX, tableY, colW, rowH, 1, 6, to2(restPerDay), "right");
+    drawCellText(tableX, tableY, colW, rowH, 2, 6, to2(restTotal), "right");
+    drawCellText(tableX, tableY, colW, rowH, 3, 6, tr("commentRest"));
+
+    ctx.font = "11px system-ui, sans-serif";
+    if (restTotal < 0) {
+      ctx.fillStyle = "#f97373";
+      ctx.fillText("âš  " + tr("statusOver") + " " + to2(-restTotal) + " " + tr("statusMissing"),
+        20, canvas.height - 18);
+      statusEl.textContent = tr("statusOver") + " " + to2(-restTotal) + " " + tr("statusMissing");
+      statusEl.style.color = "#f97373";
+    } else {
+      ctx.fillStyle = "#4ade80";
+      ctx.fillText("âœ” " + tr("statusOk") + " " + to2(restTotal) + " " + tr("statusBuffer"),
+        20, canvas.height - 18);
+      statusEl.textContent = tr("statusOk") + " " + to2(restTotal) + " " + tr("statusBuffer");
+      statusEl.style.color = "#4ade80";
+    }
+  }
+
+  // --- Zeitleiste ---
+  function drawTimelineView() {
+    clearCanvas();
+    const agg = aggregateTransactions(state.transactions);
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "16px system-ui, sans-serif";
+    ctx.fillText(tr("timelineTitle"), 20, 30);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillText(tr("timelineSub"), 20, 48);
+
+    if (!agg.totalExpenses) {
+      ctx.fillStyle = "#9ca3af";
+      ctx.font = "13px system-ui, sans-serif";
+      ctx.fillText(tr("timelineNoData"), 20, 90);
+      statusEl.textContent = tr("timelineNoData");
+      statusEl.style.color = "#9ca3af";
+      return;
+    }
+
+    const keys = Object.keys(agg.perMonth).sort();
+    const values = keys.map(k => agg.perMonth[k]);
+    const maxVal = Math.max.apply(null, values);
+
+    const chartX = 60;
+    const chartY = 90;
+    const chartW = canvas.width - 90;
+    const chartH = canvas.height - 150;
+
+    ctx.strokeStyle = "rgba(148,163,184,0.6)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(chartX, chartY);
+    ctx.lineTo(chartX, chartY + chartH);
+    ctx.lineTo(chartX + chartW, chartY + chartH);
+    ctx.stroke();
+
+    if (maxVal <= 0) {
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText("No positive values for chart.", chartX, chartY + 20);
+      return;
+    }
+
+    const barWidth = Math.max(20, Math.min(60, chartW / (keys.length * 1.5)));
+
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      const v = values[i];
+      const ratio = v / maxVal;
+      const barH = ratio * (chartH - 20);
+
+      const bx = chartX + 10 + i * (barWidth + 10);
+      const by = chartY + chartH - barH;
+
+      const gradient = ctx.createLinearGradient(bx, by, bx, by + barH);
+      gradient.addColorStop(0, "#60a5fa");
+      gradient.addColorStop(1, "#1d4ed8");
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(bx, by, barWidth, barH);
+
+      ctx.fillStyle = "#e5e7eb";
+      ctx.font = "10px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(to2(v), bx + barWidth / 2, by - 4);
+
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText(k, bx + barWidth / 2, chartY + chartH + 12);
+    }
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "11px system-ui, sans-serif";
+
+    let range = "";
+    if (agg.minDate && agg.maxDate) {
+      const fmt = d => d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0");
+      range = tr("reportPeriod") + ": " + fmt(agg.minDate) + " – " + fmt(agg.maxDate) +
+              " · " + tr("rowImported") + ": " + to2(agg.totalExpenses) + " €" +
+              (agg.days > 0 ? " · " + tr("tablePerDayAvg") + " " + to2(agg.totalExpenses / agg.days) + " €/Tag" : "");
+    } else {
+      range = tr("timelineRangeUnknown") + " · " + tr("rowImported") +
+              ": " + to2(agg.totalExpenses) + " €";
+    }
+    ctx.fillText(range, 20, canvas.height - 20);
+
+    statusEl.textContent = "Timeline: " + to2(agg.totalExpenses) + " €";
+    statusEl.style.color = "#e5e7eb";
+  }
+
+  // --- Kreisdiagramm ---
+  function drawPieView() {
+    clearCanvas();
+    const b = getBudget();
+    const agg = aggregateTransactions(state.transactions);
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "16px system-ui, sans-serif";
+    ctx.fillText(tr("pieTitle"), 20, 30);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillText(tr("pieSub"), 20, 48);
+
+    const segments = [];
+    if (b.jointsTotal > 0) {
+      segments.push({ label: tr("segJoints"), value: b.jointsTotal, color: "#22c55e" });
+    }
+    if (b.foodTotal > 0) {
+      segments.push({ label: tr("segFood"), value: b.foodTotal, color: "#3b82f6" });
+    }
+    if (b.brotNewCost > 0) {
+      segments.push({ label: tr("segBread"), value: b.brotNewCost, color: "#6366f1" });
+    }
+    if (agg.totalExpenses > 0) {
+      segments.push({ label: tr("segImported"), value: agg.totalExpenses, color: "#f97316" });
+    }
+
+    const total = segments.reduce((s, seg) => s + seg.value, 0);
+    if (!total) {
+      ctx.fillStyle = "#9ca3af";
+      ctx.font = "13px system-ui, sans-serif";
+      ctx.fillText(tr("pieNoData"), 20, 90);
+      statusEl.textContent = tr("pieNoData");
+      statusEl.style.color = "#9ca3af";
+      return;
+    }
+
+    const cx = canvas.width * 0.33;
+    const cy = canvas.height * 0.55;
+    const radius = Math.min(canvas.width, canvas.height) * 0.22;
+
+    let startAngle = -Math.PI / 2;
+    segments.forEach(seg => {
+      const angle = (seg.value / total) * Math.PI * 2;
+      const end = startAngle + angle;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.fillStyle = seg.color;
+      ctx.arc(cx, cy, radius, startAngle, end);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(15,23,42,0.6)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      startAngle = end;
+    });
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Total", cx, cy - 3);
+    ctx.fillText(to2(total) + " €", cx, cy + 11);
+
+    ctx.textAlign = "left";
+    let lx = canvas.width * 0.6;
+    let ly = 110;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fillText(tr("pieLegend"), lx, ly - 6);
+    ctx.font = "11px system-ui, sans-serif";
+    segments.forEach(seg => {
+      ctx.fillStyle = seg.color;
+      ctx.fillRect(lx, ly - 9, 14, 14);
+      ctx.fillStyle = "#e5e7eb";
+      ctx.fillText(
+        seg.label + ": " + to2(seg.value) +
+        " € (" + to2(seg.value / total * 100) + "%)",
+        lx + 20, ly + 2
+      );
+      ly += 18;
+    });
+
+    statusEl.textContent = "Pie: total " + to2(total) + " €";
+    statusEl.style.color = "#e5e7eb";
+  }
+
+  // --- PDF-Report-Ansicht (Struktur wie deine Analyse-PDFs) ---
+  function drawReportView() {
+    clearCanvas();
+
+    const meta = getAccountMeta();
+    const cash = analyzeCashflow(state.transactions);
+    const b = getBudget();
+    const agg = aggregateTransactions(state.transactions);
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "18px system-ui, sans-serif";
+    ctx.fillText(tr("reportTitle"), 24, 36);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    ctx.fillText(tr("reportSub"), 24, 52);
+
+    // Kopf-Tabelle (Account, Currency, Period, Original)
+    const headX = 24, headY = 72, headW = canvas.width - 48, headH = 80;
+    ctx.strokeStyle = "rgba(148,163,184,0.7)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(headX, headY, headW, headH);
+
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#e5e7eb";
+
+    const col1x = headX + 12;
+    const col2x = headX + headW * 0.35;
+
+    const line1 = headY + 18;
+    const line2 = headY + 36;
+    const line3 = headY + 54;
+    const line4 = headY + 72;
+
+    ctx.fillText(tr("reportAccount") + ":", col1x, line1);
+    ctx.fillText(meta.iban || "-", col2x, line1);
+
+    ctx.fillText(tr("reportCurrency") + ":", col1x, line2);
+    ctx.fillText(meta.currency || "EUR", col2x, line2);
+
+    ctx.fillText(tr("reportPeriod") + ":", col1x, line3);
+    const periodStr = (meta.periodFrom || "...") + " – " + (meta.periodTo || "...");
+    ctx.fillText(periodStr, col2x, line3);
+
+    ctx.fillText(tr("reportOriginal") + ":", col1x, line4);
+    ctx.fillText(meta.originalName || "-", col2x, line4);
+
+    // Status-Box
+    const statusX = headX + headW * 0.63;
+    const statusY = headY + 10;
+    const statusW = headW * 0.32;
+    const statusH = 54;
+    ctx.strokeRect(statusX, statusY, statusW, statusH);
+    ctx.fillText(tr("reportStatusTitle"), statusX + 10, statusY + 16);
+    ctx.font = "10px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    wrapText(tr("reportStatusText"), statusX + 10, statusY + 30, statusW - 16, 12);
+
+    // Inhaltsverzeichnis
+    const tocX = 24;
+    const tocY = headY + headH + 20;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fillText(tr("reportToc"), tocX, tocY);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+
+    const tocLines = [
+      tr("reportToc1"),
+      tr("reportToc2"),
+      tr("reportToc3"),
+      tr("reportToc4"),
+      tr("reportToc5"),
+      tr("reportToc6")
+    ];
+    let tocLineY = tocY + 16;
+    tocLines.forEach(line => {
+      ctx.fillText("• " + line, tocX + 4, tocLineY);
+      tocLineY += 14;
+    });
+
+    // Metrik-Kacheln (wie Seite „Übersicht & Metriken" deiner Vorlage) :contentReference[oaicite:2]{index=2}
+    const tilesX = canvas.width * 0.5;
+    const tilesY = tocY;
+    const tileW = canvas.width * 0.42;
+    const tileH = 26;
+    const pad = 4;
+
+    const metrics = [
+      { label: tr("reportMetricIncome"), value: to2(cash.income) + " €" },
+      { label: tr("reportMetricExpenses"), value: to2(cash.expenses) + " €" },
+      { label: tr("reportMetricNet"), value: to2(cash.net) + " €" },
+      { label: tr("reportMetricTx"), value: String(cash.txCount) }
+    ];
+
+    ctx.font = "11px system-ui, sans-serif";
+    metrics.forEach((m, i) => {
+      const y = tilesY + i * (tileH + 6);
+      ctx.strokeStyle = "rgba(148,163,184,0.7)";
+      ctx.strokeRect(tilesX, y, tileW, tileH);
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText(m.label, tilesX + pad, y + 14);
+      ctx.fillStyle = "#e5e7eb";
+      ctx.fillText(m.value, tilesX + pad, y + 24);
+    });
+
+    // Makro-Indikatoren-Liste (Liquidität etc.) :contentReference[oaicite:3]{index=3}
+    const macroX = 24;
+    const macroY = canvas.height * 0.63;
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fillText(tr("reportMacroTitle"), macroX, macroY);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+
+    const macroLines = [
+      tr("reportMacroLiquidity") + ": " + to2(cash.liquidityRatio),
+      tr("reportMacroStability") + ": " + to2(cash.cashflowPerDay) + " €/Tag",
+      tr("reportMacroActivity") + ": " + to2(cash.txPerDay),
+      tr("reportMacroDivers") + ": " + cash.diversIndex
+    ];
+
+    let my = macroY + 16;
+    macroLines.forEach(line => {
+      ctx.fillText("• " + line, macroX + 4, my);
+      my += 14;
+    });
+
+    // Nomad / Travel-Angebot + Kontakt (angelehnt an Kontaktseite deiner PDFs) 
+    const nomX = canvas.width * 0.5;
+    const nomY = canvas.height * 0.63;
+    const nomW = canvas.width * 0.42;
+    const nomH = 80;
+    ctx.strokeStyle = "rgba(148,163,184,0.7)";
+    ctx.strokeRect(nomX, nomY, nomW, nomH);
+
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fillText(tr("reportNomadTitle"), nomX + 8, nomY + 16);
+    ctx.font = "10px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    wrapText(tr("reportNomadText"), nomX + 8, nomY + 30, nomW - 14, 11);
+
+    const contactY = nomY + nomH + 4;
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fillText(tr("reportContactTitle"), nomX, contactY);
+    ctx.font = "10px system-ui, sans-serif";
+    ctx.fillStyle = "#9ca3af";
+    wrapText(tr("reportContactText"), nomX, contactY + 14, nomW, 11);
+
+    statusEl.textContent = "PDF-Report-Ansicht aktiv.";
+    statusEl.style.color = "#e5e7eb";
+  }
+
+  function wrapText(text, x, y, maxWidth, lineHeight) {
+    const words = text.split(/\s+/);
+    let line = "";
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line + words[n] + " ";
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth && n > 0) {
+        ctx.fillText(line, x, y);
+        line = words[n] + " ";
+        y += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) ctx.fillText(line, x, y);
+  }
+
+  // --- Render-Zentrale ---
+  function render() {
+    state.transactions = parseTransactions(dataInput.value || "");
+    if (state.mode === "table") drawTableView();
+    else if (state.mode === "timeline") drawTimelineView();
+    else if (state.mode === "pie") drawPieView();
+    else drawReportView();
+  }
+
+  // --- Export / Import ---
+  function exportJSON() {
+    const payload = {
+      meta: {
+        generator: "UAE/WHD Budget-Canvas-System",
+        timestamp: new Date().toISOString()
+      },
+      language: state.lang,
+      budget: getBudget(),
+      account: getAccountMeta(),
+      transactions: state.transactions
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "uae_budget_data.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    statusEl.textContent = "JSON exportiert.";
+    statusEl.style.color = "#4ade80";
+  }
+
+  function exportCSV() {
+    const lines = [];
+    lines.push("date;desc;amount");
+    for (const tx of state.transactions) {
+      const date = tx.date || "";
+      const desc = (tx.desc || "").replace(/;/g, " ");
+      const amount = String(tx.amount || 0).replace('.', ',');
+      lines.push(date + ";" + desc + ";" + amount);
+    }
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "uae_budget_data.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    statusEl.textContent = "CSV exportiert.";
+    statusEl.style.color = "#4ade80";
+  }
+
+  function handleFileInput(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const text = String(e.target.result || "");
+      dataInput.value = text;
+      render();
+    };
+    reader.readAsText(file, "utf-8");
+  }
+
+  function cycleMode() {
+    if (state.mode === "table") state.mode = "timeline";
+    else if (state.mode === "timeline") state.mode = "pie";
+    else if (state.mode === "pie") state.mode = "report";
+    else state.mode = "table";
+
+    if (state.mode === "table") btnMode.textContent = tr("btnModeTable");
+    else if (state.mode === "timeline") btnMode.textContent = tr("btnModeTimeline");
+    else if (state.mode === "pie") btnMode.textContent = tr("btnModePie");
+    else btnMode.textContent = tr("btnModeReport");
+
+    render();
+  }
+
+  // --- Nomad-JSON erzeugen ---
+  function generateNomadJSON() {
+    const company = inpCompany.value.trim() || "Unknown company";
+    const country = inpCountry.value.trim() || "n/a";
+    const contact = inpContact.value.trim() || "n/a";
+    const meta = getAccountMeta();
+
+    const payload = {
+      type: "nomad_profile",
+      company,
+      country,
+      contact,
+      created_at: new Date().toISOString(),
+      source: "UAE/WHD Budget-Canvas-System",
+      account_hint: meta.iban || null,
+      currency: meta.currency || "EUR"
+    };
+
+    const text = JSON.stringify(payload, null, 2);
+    registrationOutput.value = text;
+
+    const blob = new Blob([text], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "nomad_profile_" + company.replace(/\s+/g, "_") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    statusEl.textContent = "Nomad-JSON erzeugt.";
+    statusEl.style.color = "#4ade80";
+  }
+
+  // --- Events ---
+  dataInput.addEventListener("input", render);
+  [
+    inpBudget, inpTage, inpJoints, inpJointPreis,
+    inpFood, inpBrotPreis, inpBrotProPaket,
+    inpBrotVorhanden, inpBrotNeuPakete,
+    inpIban, inpCurrency, inpPeriodFrom,
+    inpPeriodTo, inpOriginalName
+  ].forEach(el => el.addEventListener("input", render));
+
+  btnRefresh.addEventListener("click", render);
+  btnExportJSON.addEventListener("click", exportJSON);
+  btnExportCSV.addEventListener("click", exportCSV);
+  btnPrint.addEventListener("click", () => window.print());
+  btnMode.addEventListener("click", cycleMode);
+  fileInput.addEventListener("change", e => handleFileInput(e.target.files[0]));
+
+  btnNomad.addEventListener("click", generateNomadJSON);
+
+  // Sprache
+  selLang.addEventListener("change", () => {
+    state.lang = selLang.value || "de";
+    applyTranslations();
+    render();
+  });
+
+  // Drag & Drop
+  document.addEventListener("dragover", (e) => {
+    e.preventDefault();
+  });
+  document.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileInput(e.dataTransfer.files[0]);
+    }
+  });
+
+  // Initialsprache basierend auf Browser
+  const navLang = (navigator.language || "de").slice(0,2);
+  if (["de","en","nl"].includes(navLang)) {
+    state.lang = navLang;
+    selLang.value = navLang;
+  }
+  applyTranslations();
+  render();
+})();
+	// Kassenbuch-Kommunikation: Contract-Modul Interface
+	window.contractModule = {
+		setFromKassenbuch: function(data) {
+			try {
+				if (data.entries && Array.isArray(data.entries)) {
+					// Konvertiere Kassenbuch-Einträge zu Contract-Format
+					const contractEntries = data.entries
+						.filter(e => e.category === 'wohnen' || e.description.toLowerCase().includes('miete'))
+						.map(e => ({
+							id: `contract-${e.id}`,
+							title: e.description,
+							amount: Math.abs(e.amount),
+							date: e.date,
+							type: 'expense',
+							source: 'kassenbuch'
+						}));
+					
+					// Speichere in localStorage
+					if (contractEntries.length > 0) {
+						const existing = JSON.parse(localStorage.getItem('contract.items') || '[]');
+						const merged = [...existing, ...contractEntries];
+						localStorage.setItem('contract.items', JSON.stringify(merged));
+					}
+					
+					console.log('[FABRIKAGE] Contract: Daten von Kassenbuch erhalten');
+				}
+			} catch(e) {
+				console.error('[FABRIKAGE] Contract setFromKassenbuch error:', e);
+			}
+		},
+		
+		getData: function() {
+			try {
+				const items = JSON.parse(localStorage.getItem('contract.items') || '[]');
+				return {
+					entries: items,
+					count: items.length
+				};
+			} catch(e) {
+				console.error('[FABRIKAGE] Contract getData error:', e);
+				return { entries: [], count: 0 };
+			}
+		}
+	};
+	
+	// Registriere Contract-Modul im Hub
+	if (window.cashflowHub) {
+		window.cashflowHub.registerApp('contract', window.contractModule);
+	}
+	
+	// Sende Contract-Daten an Kassenbuch
+	function sendContractToKassenbuch() {
+		try {
+			if (window.kassenbuchModule && typeof window.kassenbuchModule.setData === 'function') {
+				const contractData = window.contractModule.getData();
+				if (contractData.entries && contractData.entries.length > 0) {
+					const kassenbuchEntries = contractData.entries.map(item => ({
+						id: `contract-${item.id}`,
+						date: item.date || new Date().toISOString().split('T')[0],
+						description: item.title || 'Contract Eintrag',
+						category: 'wohnen',
+						amount: -(item.amount || 0),
+						createdAt: new Date().toISOString(),
+						source: 'contract'
+					}));
+					
+					window.kassenbuchModule.setData({ entries: kassenbuchEntries });
+					console.log('[FABRIKAGE] Contract â†’ Kassenbuch: Daten gesendet');
+				}
+			}
+		} catch(e) {
+			console.error('[FABRIKAGE] sendContractToKassenbuch error:', e);
+		}
+	}
+	
+	// Auto-Sync alle 30 Sekunden
+	setInterval(sendContractToKassenbuch, 30000);
+	
+	console.log('[FABRIKAGE] Contract-Modul mit Kassenbuch verbunden');
+</script>
+</body>
+</html>

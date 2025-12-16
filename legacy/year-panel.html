@@ -1,0 +1,476 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zeiten & Erinnerungen - nBlockbuster</title>
+  <!-- BRANDING: .T. TogetherSystems - ModularFlux Architecture -->
+  <!-- VERSION: 3.0.0 -->
+  <!-- STANDARD: IBM STANDARD - PERMANENT AKTIV -->
+  <script src="../../js/console-error-controller.js"></script>
+  <script src="../../js/console-cache-system.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --accent2: #f59e0b;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #0f1419 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .header h1 {
+      color: var(--accent);
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    .year-selector {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .year-btn {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+    }
+    .year-btn:hover {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .year-btn.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #00100a;
+    }
+    .year-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .span-column {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .span-column h2 {
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-size: 24px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .span-column h2::before {
+      content: "“š ";
+    }
+    .item-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .item-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+    }
+    .item-card h3 {
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    .item-meta {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge.public-domain {
+      background: rgba(16, 185, 129, 0.3);
+    }
+    .badge.trailer {
+      background: rgba(245, 158, 11, 0.3);
+      color: var(--accent2);
+    }
+    .item-synopsis {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .item-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      color: #00100a;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+    .btn-secondary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .memory-wall {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+    .memory-wall h2 {
+      color: var(--accent2);
+      margin-bottom: 20px;
+    }
+    .memory-item {
+      background: var(--bg);
+      border-left: 4px solid var(--accent2);
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
+    .memory-alias {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .memory-text {
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .collections {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+    .collections h2 {
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .collection-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .collection-card:hover {
+      border-color: var(--accent);
+    }
+    .collection-card h3 {
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state::before {
+      content: "“­ ";
+      font-size: 48px;
+      display: block;
+      margin-bottom: 16px;
+    }
+  </style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>“š Zeiten & Erinnerungen</h1>
+      <p style="color: var(--muted); margin-top: 8px;">50+/50â€‘ Jahrspanels – Reine Quellen, geteilte Geschichten</p>
+    </div>
+
+    <div class="year-selector" id="yearSelector">
+      <!-- Wird dynamisch gefüllt -->
+    </div>
+
+    <div class="year-panel" id="yearPanel" style="display: none;">
+      <div class="span-column">
+        <h2>50+ (älter als 50 Jahre)</h2>
+        <div id="items50Plus">
+          <div class="empty-state">Lade Inhalte...</div>
+        </div>
+      </div>
+      <div class="span-column">
+        <h2>50â€‘ (jünger als 50 Jahre)</h2>
+        <div id="items50Minus">
+          <div class="empty-state">Lade Inhalte...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="collections" id="collections" style="display: none;">
+      <h2>“ Kuratierte Dossiers</h2>
+      <div id="collectionsList"></div>
+    </div>
+
+    <div class="memory-wall" id="memoryWall" style="display: none;">
+      <h2>’­ MemoryWall – Erinnerungen</h2>
+      <div id="memoriesList"></div>
+      <div style="margin-top: 24px;">
+        <button class="btn" onclick="showMemoryForm()">Erinnerung teilen</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin + '/api';
+    let currentYear = new Date().getFullYear() - 10; // Default: 10 Jahre zurück
+    
+    // Initialisiere
+    init();
+    
+    async function init() {
+      // Erstelle Year Selector (1900-2025)
+      renderYearSelector();
+      
+      // Lade aktuelles Jahr
+      await loadYear(currentYear);
+    }
+    
+    function renderYearSelector() {
+      const selector = document.getElementById('yearSelector');
+      const years = [];
+      
+      // 1900-2025
+      for (let y = 1900; y <= 2025; y += 10) {
+        years.push(y);
+      }
+      
+      selector.innerHTML = years.map(year => `
+        <button class="year-btn ${year === currentYear ? 'active' : ''}" 
+                onclick="selectYear(${year})">
+          ${year}s
+        </button>
+      `).join('');
+    }
+    
+    async function selectYear(year) {
+      currentYear = year;
+      document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      await loadYear(year);
+    }
+    
+    async function loadYear(year) {
+      try {
+        const response = await fetch(`${API_BASE}/nb/year/${year}`);
+        const data = await response.json();
+        
+        renderYearPanel(data);
+        renderCollections(data.collections || []);
+        renderMemoryWall(data.memories || []);
+      } catch (e) {
+        console.error('Load year error:', e);
+      }
+    }
+    
+    function renderYearPanel(data) {
+      document.getElementById('yearPanel').style.display = 'grid';
+      
+      // 50+ Items
+      const items50Plus = document.getElementById('items50Plus');
+      if (data.items50Plus && data.items50Plus.length > 0) {
+        items50Plus.innerHTML = data.items50Plus.map(item => renderItemCard(item)).join('');
+      } else {
+        items50Plus.innerHTML = '<div class="empty-state">Keine 50+ Inhalte für dieses Jahr</div>';
+      }
+      
+      // 50- Items
+      const items50Minus = document.getElementById('items50Minus');
+      if (data.items50Minus && data.items50Minus.length > 0) {
+        items50Minus.innerHTML = data.items50Minus.map(item => renderItemCard(item)).join('');
+      } else {
+        items50Minus.innerHTML = '<div class="empty-state">Keine 50â€‘ Inhalte für dieses Jahr</div>';
+      }
+    }
+    
+    function renderItemCard(item) {
+      const licenseBadge = item.license === 'public_domain' || item.license === 'public_domain_likely' 
+        ? '<span class="badge public-domain">Public Domain</span>'
+        : item.license === 'official_trailer'
+        ? '<span class="badge trailer">Official Trailer</span>'
+        : '<span class="badge">' + (item.license || 'Archive') + '</span>';
+      
+      return `
+        <div class="item-card" onclick="openItem('${item.id}')">
+          <h3>${item.title}</h3>
+          <div class="item-meta">
+            ${licenseBadge}
+            <span class="badge">${item.type}</span>
+            ${item.culture ? `<span class="badge">${item.culture}</span>` : ''}
+          </div>
+          <div class="item-synopsis">${item.synopsis || 'Keine Beschreibung verfügbar.'}</div>
+          <div class="item-actions">
+            <button class="btn" onclick="event.stopPropagation(); startHive('${item.id}', 'watch')">
+               Wabe starten
+            </button>
+            <button class="btn btn-secondary" onclick="event.stopPropagation(); openItem('${item.id}')">
+              “– Details
+            </button>
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderCollections(collections) {
+      if (collections.length === 0) {
+        document.getElementById('collections').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('collections').style.display = 'block';
+      document.getElementById('collectionsList').innerHTML = collections.map(collection => `
+        <div class="collection-card" onclick="openCollection('${collection.id}')">
+          <h3>${collection.title}</h3>
+          <p style="color: var(--muted); font-size: 14px; margin-top: 8px;">${collection.description || ''}</p>
+          <p style="color: var(--muted); font-size: 12px; margin-top: 4px;">
+            Jahre: ${Array.isArray(collection.years) ? collection.years.join(', ') : collection.years}
+          </p>
+        </div>
+      `).join('');
+    }
+    
+    function renderMemoryWall(memories) {
+      if (memories.length === 0) {
+        document.getElementById('memoryWall').style.display = 'none';
+        return;
+      }
+      
+      document.getElementById('memoryWall').style.display = 'block';
+      document.getElementById('memoriesList').innerHTML = memories.map(memory => `
+        <div class="memory-item">
+          <div class="memory-alias">${memory.alias}</div>
+          <div class="memory-text">${memory.text}</div>
+          ${memory.media_url ? `<img src="${memory.media_url}" style="max-width: 100%; margin-top: 12px; border-radius: 8px;">` : ''}
+        </div>
+      `).join('');
+    }
+    
+    async function openItem(itemId) {
+      window.location.href = `item-view.html?id=${itemId}`;
+    }
+    
+    async function startHive(itemId, mode) {
+      try {
+        const response = await fetch(`${API_BASE}/nb/hive/launch`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            itemId,
+            mode,
+            hiveType: 'PUBLIC_NUMBER',
+            seriousness: 'serious'
+          })
+        });
+        
+        const data = await response.json();
+        if (data.joinUrl) {
+          window.location.href = data.joinUrl;
+        }
+      } catch (e) {
+        console.error('Start hive error:', e);
+        alert('Fehler beim Starten der Wabe');
+      }
+    }
+    
+    function openCollection(collectionId) {
+      window.location.href = `collection-view.html?id=${collectionId}`;
+    }
+    
+    function showMemoryForm() {
+      const alias = prompt('Dein Alias:');
+      if (!alias) return;
+      
+      const text = prompt('Deine Erinnerung:');
+      if (!text) return;
+      
+      submitMemory(alias, text);
+    }
+    
+    async function submitMemory(alias, text) {
+      try {
+        const response = await fetch(`${API_BASE}/nb/memory`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            alias,
+            year: currentYear,
+            text
+          })
+        });
+        
+        const data = await response.json();
+        if (data.ok) {
+          alert('Erinnerung eingereicht. Wird moderiert.');
+          await loadYear(currentYear);
+        }
+      } catch (e) {
+        console.error('Submit memory error:', e);
+      }
+    }
+  </script>
+</body>
+</html>
+
+

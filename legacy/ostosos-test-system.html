@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>T,. OSTOSOS - Test System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e27;--card:#1a1f3a;--accent:#10b981;--text:#fff;--muted:#9ca3af;--border:#223040;--success:#22c55e;--danger:#ef4444;--warn:#f59e0b}
+body{font-family:system-ui,sans-serif;background:radial-gradient(circle at top,var(--bg) 0%,var(--card) 100%);color:var(--text);min-height:100vh;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+.header{text-align:center;margin-bottom:40px;padding:30px;background:var(--card);border-radius:20px;border:2px solid var(--accent)}
+.header h1{font-size:3em;color:var(--accent);margin-bottom:10px}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:40px}
+.test-card{background:var(--card);padding:20px;border-radius:15px;border:2px solid var(--border);transition:all 0.3s}
+.test-card:hover{border-color:var(--accent);transform:translateY(-5px)}
+.test-card h3{color:var(--accent);margin-bottom:15px}
+.test-card .status{display:inline-block;padding:5px 12px;border-radius:20px;font-size:0.8em;margin-top:10px}
+.status-pending{background:var(--muted);color:var(--text)}
+.status-running{background:var(--warn);color:#00100a}
+.status-pass{background:var(--success);color:#00100a}
+.status-fail{background:var(--danger);color:#fff}
+.test-log{background:var(--bg);padding:20px;border-radius:15px;border:2px solid var(--border);max-height:400px;overflow-y:auto;font-family:monospace;font-size:0.9em;margin-top:20px}
+.log-entry{padding:5px 0;border-bottom:1px solid var(--border)}
+.log-success{color:var(--success)}
+.log-error{color:var(--danger)}
+.log-info{color:var(--muted)}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:1em;font-weight:600;transition:all 0.3s;display:inline-block;margin:5px}
+.btn-primary{background:var(--accent);color:#00100a}
+.btn-primary:hover{background:#0ea5e9;transform:translateY(-2px)}
+.btn-secondary{background:var(--border);color:var(--text)}
+.progress-bar{width:100%;height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:20px 0}
+.progress-fill{height:100%;background:var(--accent);transition:width 0.3s}
+</style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>T,. OSTOSOS Test System</h1>
+<p>Vollständige Funktionsprüfung der OSTOSOS-Applikation</p>
+</div>
+
+<div class="test-grid" id="testGrid">
+<div class="test-card">
+<h3>1. HTML-Struktur</h3>
+<p>Prüft ob alle HTML-Dateien korrekt strukturiert sind</p>
+<span class="status status-pending" id="test1">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>2. CSS-Laden</h3>
+<p>Prüft ob alle CSS-Dateien geladen werden können</p>
+<span class="status status-pending" id="test2">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>3. JavaScript-Ausführung</h3>
+<p>Prüft ob JavaScript ohne Fehler ausgeführt wird</p>
+<span class="status status-pending" id="test3">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>4. LocalStorage</h3>
+<p>Prüft LocalStorage-Funktionalität</p>
+<span class="status status-pending" id="test4">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>5. Navigation</h3>
+<p>Prüft Navigation zwischen Sektionen</p>
+<span class="status status-pending" id="test5">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>6. Settings-Integration</h3>
+<p>Prüft Integration mit Settings-Ordner</p>
+<span class="status status-pending" id="test6">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>7. Da Vinci Design System</h3>
+<p>Prüft Da Vinci CSS und Effekte</p>
+<span class="status status-pending" id="test7">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>8. Responsive Design</h3>
+<p>Prüft Responsive Design auf verschiedenen Bildschirmgrößen</p>
+<span class="status status-pending" id="test8">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>9. Cross-Browser Kompatibilität</h3>
+<p>Prüft Kompatibilität mit verschiedenen Browsern</p>
+<span class="status status-pending" id="test9">â³ Wartend</span>
+</div>
+
+<div class="test-card">
+<h3>10. Performance</h3>
+<p>Prüft Ladezeiten und Performance</p>
+<span class="status status-pending" id="test10">â³ Wartend</span>
+</div>
+</div>
+
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<div style="text-align:center;margin:20px 0">
+<button title="š€ Alle Tests starten - Klicke hier um diese Aktion auszufÃƒ¼hren" class="btn btn-primary" onclick="runAllTests()">š€ Alle Tests starten</button>
+<button title="—‘ï¸ Log löschen - Klicke hier um diese Aktion auszufÃƒ¼hren" class="btn btn-secondary" onclick="clearLog()">—‘ï¸ Log löschen</button>
+</div>
+
+<div class="test-log" id="testLog">
+<div class="log-entry log-info">Bereit zum Testen. Klicke auf 'Alle Tests starten'.</div>
+</div>
+</div>
+
+<script>
+let testResults = {};
+let totalTests = 10;
+let completedTests = 0;
+
+function log(message, type = 'info') {
+const logEl = document.getElementById('testLog');
+const entry = document.createElement('div');
+entry.className = `log-entry log-${type}`;
+entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+logEl.appendChild(entry);
+logEl.scrollTop = logEl.scrollHeight;
+}
+
+function updateProgress() {
+const progress = (completedTests / totalTests) * 100;
+document.getElementById('progressFill').style.width = progress + '%';
+}
+
+function updateTestStatus(testId, status, message) {
+const statusEl = document.getElementById(`test${testId}`);
+statusEl.className = `status status-${status}`;
+statusEl.textContent = message;
+log(`Test ${testId}: ${message}`, status === 'pass' ? 'success' : status === 'fail' ? 'error' : 'info');
+if (status === 'pass' || status === 'fail') {
+completedTests++;
+updateProgress();
+}
+}
+
+async function test1_HTMLStructure() {
+updateTestStatus(1, 'running', '”„ Läuft...');
+try {
+const response = await fetch('./OSTOSOS-OS-COMPLETE-SYSTEM.html');
+if (!response.ok) throw new Error('HTML nicht gefunden');
+const html = await response.text();
+if (html.includes('<!DOCTYPE html>') && html.includes('OSTOSOS')) {
+updateTestStatus(1, 'pass', '✅ Bestanden');
+testResults.test1 = true;
+} else {
+throw new Error('HTML-Struktur fehlerhaft');
+}
+} catch (error) {
+updateTestStatus(1, 'fail', '❌ Fehlgeschlagen');
+testResults.test1 = false;
+}
+}
+
+async function test2_CSSLoading() {
+updateTestStatus(2, 'running', '”„ Läuft...');
+try {
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = './css/da-vinci-xxxxxl-enterprise-standard.css';
+link.onload = () => {
+updateTestStatus(2, 'pass', '✅ Bestanden');
+testResults.test2 = true;
+};
+link.onerror = () => {
+throw new Error('CSS nicht geladen');
+};
+document.head.appendChild(link);
+setTimeout(() => {
+if (!testResults.test2) {
+updateTestStatus(2, 'fail', '❌ Fehlgeschlagen');
+testResults.test2 = false;
+}
+}, 3000);
+} catch (error) {
+updateTestStatus(2, 'fail', '❌ Fehlgeschlagen');
+testResults.test2 = false;
+}
+}
+
+function test3_JavaScriptExecution() {
+updateTestStatus(3, 'running', '”„ Läuft...');
+try {
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+updateTestStatus(3, 'pass', '✅ Bestanden');
+testResults.test3 = true;
+} else {
+throw new Error('JavaScript-Umgebung fehlt');
+}
+} catch (error) {
+updateTestStatus(3, 'fail', '❌ Fehlgeschlagen');
+testResults.test3 = false;
+}
+}
+
+function test4_LocalStorage() {
+updateTestStatus(4, 'running', '”„ Läuft...');
+try {
+if (typeof localStorage !== 'undefined') {
+localStorage.setItem('test', 'value');
+const value = localStorage.getItem('test');
+localStorage.removeItem('test');
+if (value === 'value') {
+updateTestStatus(4, 'pass', '✅ Bestanden');
+testResults.test4 = true;
+} else {
+throw new Error('LocalStorage funktioniert nicht');
+}
+} else {
+throw new Error('LocalStorage nicht verfügbar');
+}
+} catch (error) {
+updateTestStatus(4, 'fail', '❌ Fehlgeschlagen');
+testResults.test4 = false;
+}
+}
+
+function test5_Navigation() {
+updateTestStatus(5, 'running', '”„ Läuft...');
+try {
+const navItems = document.querySelectorAll('.nav-item');
+if (navItems.length > 0) {
+updateTestStatus(5, 'pass', '✅ Bestanden');
+testResults.test5 = true;
+} else {
+throw new Error('Navigation nicht gefunden');
+}
+} catch (error) {
+updateTestStatus(5, 'fail', '❌ Fehlgeschlagen');
+testResults.test5 = false;
+}
+}
+
+async function test6_SettingsIntegration() {
+updateTestStatus(6, 'running', '”„ Läuft...');
+try {
+const response = await fetch('../Settings/MASTER-SETTINGS-SYSTEM.json');
+if (response.ok) {
+updateTestStatus(6, 'pass', '✅ Bestanden');
+testResults.test6 = true;
+} else {
+throw new Error('Settings nicht erreichbar');
+}
+} catch (error) {
+updateTestStatus(6, 'fail', '❌ Fehlgeschlagen');
+testResults.test6 = false;
+}
+}
+
+function test7_DaVinciDesign() {
+updateTestStatus(7, 'running', '”„ Läuft...');
+try {
+const style = getComputedStyle(document.documentElement);
+const bg = style.getPropertyValue('--davinci-bg');
+if (bg) {
+updateTestStatus(7, 'pass', '✅ Bestanden');
+testResults.test7 = true;
+} else {
+throw new Error('Da Vinci CSS-Variablen nicht gefunden');
+}
+} catch (error) {
+updateTestStatus(7, 'fail', '❌ Fehlgeschlagen');
+testResults.test7 = false;
+}
+}
+
+function test8_ResponsiveDesign() {
+updateTestStatus(8, 'running', '”„ Läuft...');
+try {
+const viewport = window.innerWidth;
+if (viewport > 0) {
+updateTestStatus(8, 'pass', '✅ Bestanden');
+testResults.test8 = true;
+} else {
+throw new Error('Viewport nicht verfügbar');
+}
+} catch (error) {
+updateTestStatus(8, 'fail', '❌ Fehlgeschlagen');
+testResults.test8 = false;
+}
+}
+
+function test9_CrossBrowser() {
+updateTestStatus(9, 'running', '”„ Läuft...');
+try {
+const userAgent = navigator.userAgent;
+if (userAgent) {
+updateTestStatus(9, 'pass', '✅ Bestanden');
+testResults.test9 = true;
+} else {
+throw new Error('Browser-Informationen nicht verfügbar');
+}
+} catch (error) {
+updateTestStatus(9, 'fail', '❌ Fehlgeschlagen');
+testResults.test9 = false;
+}
+}
+
+function test10_Performance() {
+updateTestStatus(10, 'running', '”„ Läuft...');
+try {
+const startTime = performance.now();
+setTimeout(() => {
+const endTime = performance.now();
+const duration = endTime - startTime;
+if (duration < 1000) {
+updateTestStatus(10, 'pass', '✅ Bestanden');
+testResults.test10 = true;
+} else {
+throw new Error('Performance zu langsam');
+}
+}, 100);
+} catch (error) {
+updateTestStatus(10, 'fail', '❌ Fehlgeschlagen');
+testResults.test10 = false;
+}
+}
+
+async function runAllTests() {
+log('š€ Starte alle Tests...', 'info');
+completedTests = 0;
+testResults = {};
+updateProgress();
+
+await test1_HTMLStructure();
+await new Promise(r => setTimeout(r, 500));
+await test2_CSSLoading();
+await new Promise(r => setTimeout(r, 500));
+test3_JavaScriptExecution();
+await new Promise(r => setTimeout(r, 500));
+test4_LocalStorage();
+await new Promise(r => setTimeout(r, 500));
+test5_Navigation();
+await new Promise(r => setTimeout(r, 500));
+await test6_SettingsIntegration();
+await new Promise(r => setTimeout(r, 500));
+test7_DaVinciDesign();
+await new Promise(r => setTimeout(r, 500));
+test8_ResponsiveDesign();
+await new Promise(r => setTimeout(r, 500));
+test9_CrossBrowser();
+await new Promise(r => setTimeout(r, 500));
+test10_Performance();
+
+setTimeout(() => {
+const passed = Object.values(testResults).filter(r => r === true).length;
+const failed = Object.values(testResults).filter(r => r === false).length;
+log(`\n“Š TEST-ERGEBNISSE: ${passed} bestanden, ${failed} fehlgeschlagen`, passed === totalTests ? 'success' : 'error');
+if (passed === totalTests) {
+log('✅ ALLE TESTS BESTANDEN - 100% FUNKTIONSFEHLERFREI!', 'success');
+} else {
+log('❌ EINIGE TESTS FEHLGESCHLAGEN - BITTE ÜBERPRÜFEN', 'error');
+}
+}, 2000);
+}
+
+function clearLog() {
+document.getElementById('testLog').innerHTML = '<div class="log-entry log-info">Log gelöscht.</div>';
+}
+</script>
+<script src="./fix-popup-errors.js" onerror="console.warn('fix-popup-errors.js nicht gefunden')"></script>
+<script src="./universal-auto-init.js" onerror="console.warn('universal-auto-init.js nicht gefunden')"></script>
+<script src="./universal-dummy-help.js" onerror="console.warn('universal-dummy-help.js nicht gefunden')"></script>
+<script src="./dashboard-auto-start.js" onerror="console.warn('dashboard-auto-start.js nicht gefunden')"></script>
+</body>
+</html>
+

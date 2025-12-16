@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSOS · tOS — Final Production Software Fabrication International TTT</title>
+<link rel="stylesheet" href="./css/osos-tos-production.css">
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+<body>
+<header>
+  <div class="brand">OSOS · tOS — Final Production Software Fabrication</div>
+  <div class="sub">Sovereign Localhost · Software > Hardware · International TTT</div>
+  <div style="margin-left:auto" class="pill" id="version">v2.0.0-factory</div>
+  <button title="â˜€ï¸ Light Mode - Klicke hier um diese Aktion auszufÃƒ¼hren" id="themeToggle" style="margin-left:10px;padding:4px 8px;background:#161b22;color:#e6edf3;border:1px solid #30363d;border-radius:6px;cursor:pointer">â˜€ï¸ Light Mode</button>
+</header>
+
+<main>
+  <!-- Search + Help -->
+  <section class="card" id="help">
+    <h2>Hilfe & Suche</h2>
+    <input class="search" id="searchBox" placeholder="Suche: identität, performance, sicherheit, mesh, telbank, diagramm…" autocomplete="on" title="Tippe einfach deine Frage ein - das System findet automatisch die passende Antwort." />
+    <div id="searchOut" class="row"></div>
+    <div class="list mono" id="assistOut"></div>
+  </section>
+
+  <!-- Identity & Audit -->
+  <section class="card" id="identity">
+    <h2>Identität & Audit</h2>
+    <div class="dummy-help-box" style="background:#1a1f3a;border:1px solid #10b981;border-radius:8px;padding:15px;margin-bottom:15px;font-size:0.9em">
+      <strong style="color:#10b981">â„¹ï¸ Was ist das?</strong>
+      <p style="margin:8px 0 0 0;color:#9ca3af">Hier erstellst du deine digitale Identität. Ein <strong>Public Key</strong> ist wie deine öffentliche Adresse - andere können dir damit Nachrichten senden. Ein <strong>Algo</strong> (Algorithmus) ist die Verschlüsselungsmethode. Ein <strong>Universe ID</strong> ist deine eindeutige System-ID. <strong>Device Class</strong> zeigt, ob du Desktop oder Mobile nutzt. Alles passiert automatisch - du klickst einfach auf "Schlüssel erzeugen".</p>
+    </div>
+    <div class="kv">
+      <div>Public Key:</div><div style="position:relative;display:inline-block;max-width:100%">
+        <div class="mono" id="pubkey" style="word-break:break-all;max-width:400px;overflow-wrap:break-word;display:inline-block;padding-right:35px">–</div>
+        <button id="copyPubKey" style="display:none;position:absolute;right:0;top:0;padding:4px 8px;font-size:0.9em;background:#10b981;color:#fff;border:none;border-radius:4px;cursor:pointer;white-space:nowrap" title="Public Key kopieren">“‹ Kopieren</button>
+      </div>
+      <div>Algo:</div><div class="mono" id="algo">–</div>
+      <div>Universe ID:</div><div class="mono" id="universe" style="word-break:break-all;max-width:400px;overflow-wrap:break-word">–</div>
+      <div>Device Class:</div><div class="mono" id="devclass">–</div>
+    </div>
+    <div class="row">
+      <button id="genKey" title="Erstellt automatisch einen Verschlüsselungsschlüssel für dich. Ein Klick genügt - alles andere passiert automatisch.">Schlüssel erzeugen</button>
+      <button id="exportKit" class="secondary" title="Exportiert deine Schlüssel als Backup-Datei. Wichtig: Speichere diese Datei sicher!">Recoveryâ€‘Kit exportieren</button>
+      <button id="sealSnap" class="danger" title="Versiegelt den aktuellen Systemzustand. Kann nicht rückgängig gemacht werden - nur verwenden wenn du sicher bist!">Snapshot versiegeln</button>
+    </div>
+    <div class="statusline muted">Status: <span id="idStatus">Bereit</span></div>
+    <div class="row">
+      <button title="Manifest erstellen & signieren - Klicke hier um diese Aktion auszufÃƒ¼hren" id="writeManifest">Manifest erstellen & signieren</button>
+      <button title="Auditâ€‘Log exportieren - Klicke hier um diese Aktion auszufÃƒ¼hren" id="exportLog" class="secondary">Auditâ€‘Log exportieren</button>
+    </div>
+  </section>
+
+  <!-- Performance -->
+  <section class="card" id="perf">
+    <h2>Performance Uplift (Software kitzelt Hardware)</h2>
+    <div class="dummy-help-box" style="background:#1a1f3a;border:1px solid #10b981;border-radius:8px;padding:15px;margin-bottom:15px;font-size:0.9em">
+      <strong style="color:#10b981">â„¹ï¸ Was ist das?</strong>
+      <p style="margin:8px 0 0 0;color:#9ca3af">Hier misst das System die Geschwindigkeit deines Computers. <strong>FPS</strong> (Frames per Second) zeigt, wie flüssig die Anzeige ist. <strong>Jank</strong> sind Ruckler. <strong>RTT</strong> (Round Trip Time) ist die Antwortzeit. <strong>Downlink</strong> ist deine Internet-Geschwindigkeit. Klicke auf "Baseline messen" - das System macht den Rest automatisch.</p>
+    </div>
+    <div class="row">
+      <button id="startBaseline" title="Misst automatisch die Systemleistung. Dauert ca. 10 Sekunden - einfach warten.">Baseline messen</button>
+      <button id="applyOptim" title="Wendet automatisch Optimierungen an. Das System wird schneller - du musst nichts tun.">Optimierer anwenden</button>
+      <span class="pill">Fenster: 5m rollend</span>
+    </div>
+    <div class="row"><span class="badge">Bars</span><span class="badge">Pie</span><span class="badge">Towers</span><span class="badge">Ribbons</span></div>
+    <div class="row">
+      <canvas id="bars"></canvas>
+    </div>
+    <div class="row">
+      <canvas id="pie"></canvas>
+    </div>
+    <div class="row">
+      <canvas id="towers"></canvas>
+    </div>
+    <div class="row">
+      <canvas id="ribbons"></canvas>
+    </div>
+    <div class="kv">
+      <div>FPS:</div><div class="mono" id="fps">–</div>
+      <div>Jank p95 (ms):</div><div class="mono" id="jank95">–</div>
+      <div>RTT p50 (ms):</div><div class="mono" id="rtt50">–</div>
+      <div>RTT p95 (ms):</div><div class="mono" id="rtt95">–</div>
+      <div>Downlink (Mbps):</div><div class="mono" id="downlink">–</div>
+      <div>Coalesceâ€‘Rate:</div><div class="mono" id="coal">–</div>
+    </div>
+    <div class="row">
+      <button title="Beweis erfassen & signieren - Klicke hier um diese Aktion auszufÃƒ¼hren" id="captureProof" class="secondary">Beweis erfassen & signieren</button>
+      <button title="Performanceâ€‘Export - Klicke hier um diese Aktion auszufÃƒ¼hren" id="exportPerf" class="secondary">Performanceâ€‘Export</button>
+    </div>
+  </section>
+
+  <!-- Security -->
+  <section class="card" id="security">
+    <h2>Sicherheit & Verifikation</h2>
+    <div class="dummy-help-box" style="background:#1a1f3a;border:1px solid #10b981;border-radius:8px;padding:15px;margin-bottom:15px;font-size:0.9em">
+      <strong style="color:#10b981">â„¹ï¸ Was ist das?</strong>
+      <p style="margin:8px 0 0 0;color:#9ca3af">Hier prüft das System die Sicherheit. Eine <strong>Hashâ€‘Kette</strong> ist eine Kette von Prüfsummen - wenn eine fehlt, wurde etwas manipuliert. <strong>Keyâ€‘Rotation</strong> bedeutet, dass alte Schlüssel durch neue ersetzt werden. <strong>Compliance</strong> prüft, ob alles den Regeln entspricht. Einfach auf "Hashâ€‘Kette prüfen" klicken - das System macht den Rest.</p>
+    </div>
+    <div class="row">
+      <button id="verifyChain" title="Prüft automatisch die Integrität des Systems. Dauert ca. 5 Sekunden.">Hashâ€‘Kette prüfen</button>
+      <button id="rotateKeys" class="secondary" title="Erstellt automatisch neue Verschlüsselungsschlüssel. Alte Schlüssel bleiben als Backup.">Keyâ€‘Rotation</button>
+      <button id="compliance" class="secondary" title="Prüft automatisch, ob alles den Sicherheitsregeln entspricht.">Complianceâ€‘Check</button>
+    </div>
+    <div class="statusline muted">Ergebnis: <span id="verifyStatus">–</span></div>
+  </section>
+
+  <!-- Mesh -->
+  <section class="card" id="mesh">
+    <h2>Netzwerk & Mesh</h2>
+    <div class="dummy-help-box" style="background:#1a1f3a;border:1px solid #10b981;border-radius:8px;padding:15px;margin-bottom:15px;font-size:0.9em">
+      <strong style="color:#10b981">â„¹ï¸ Was ist das?</strong>
+      <p style="margin:8px 0 0 0;color:#9ca3af"><strong>Mesh</strong> bedeutet, dass Geräte sich direkt verbinden - ohne Server dazwischen. <strong>P2P</strong> (Peer-to-Peer) ist die direkte Verbindung zwischen zwei Geräten. <strong>HMAC</strong> ist ein Sicherheitscode zur Verifizierung. <strong>Presence</strong> zeigt, ob jemand online ist. Einfach auf "P2P aktivieren" klicken - das System verbindet sich automatisch.</p>
+    </div>
+    <div class="row">
+      <button id="presence" title="Verifiziert automatisch deine Online-Präsenz. Passiert im Hintergrund.">Presence verify (HMAC)</button>
+      <button id="p2p" class="secondary" title="Aktiviert automatisch direkte Verbindungen zu anderen Geräten. Funktioniert nur lokal (im gleichen Netzwerk).">P2P aktivieren (lokal)</button>
+      <button id="publish" class="secondary" title="Veröffentlicht automatisch ausgewählte Daten. Du wählst was - das System macht den Rest.">Selektiv veröffentlichen</button>
+    </div>
+    <div class="kv">
+      <div>Peers:</div><div class="mono" id="peers">0</div>
+      <div>Token Window:</div><div class="mono" id="tokwin">5m</div>
+      <div>Last Publish:</div><div class="mono" id="lastPub">–</div>
+    </div>
+  </section>
+
+  <!-- Offline -->
+  <section class="card" id="offline">
+    <h2>Offlineâ€‘First & Service Worker</h2>
+    <div class="dummy-help-box" style="background:#1a1f3a;border:1px solid #10b981;border-radius:8px;padding:15px;margin-bottom:15px;font-size:0.9em">
+      <strong style="color:#10b981">â„¹ï¸ Was ist das?</strong>
+      <p style="margin:8px 0 0 0;color:#9ca3af"><strong>Offlineâ€‘First</strong> bedeutet, dass alles auch ohne Internet funktioniert. Ein <strong>Service Worker</strong> ist ein Hintergrundprogramm, das Daten speichert. <strong>Cachen</strong> bedeutet, dass Daten lokal gespeichert werden. Einfach auf "Offline aktivieren" klicken - das System speichert alles automatisch.</p>
+    </div>
+    <div class="row">
+      <button id="installSW" title="Aktiviert automatisch die Offline-Funktionalität. Das System speichert alles lokal - du kannst auch ohne Internet arbeiten.">Offline aktivieren</button>
+      <button id="cacheSelf" class="secondary" title="Speichert diese Seite automatisch lokal. Funktioniert dann auch ohne Internet.">Diese Datei cachen</button>
+    </div>
+    <div class="statusline muted">SW: <span id="swStatus">–</span></div>
+  </section>
+
+  <!-- Apps Hub -->
+  <section class="card" id="apps">
+    <h2>Apps Hub</h2>
+    <div class="row">
+      <button title="Telbank Transaktion signieren - Klicke hier um diese Aktion auszufÃƒ¼hren" id="telbank">Telbank Transaktion signieren</button>
+      <button title="Voucher einlösen - Klicke hier um diese Aktion auszufÃƒ¼hren" id="voucher">Voucher einlösen</button>
+      <button title="Vertrag signieren - Klicke hier um diese Aktion auszufÃƒ¼hren" id="legal">Vertrag signieren</button>
+      <button title="Honeycomb Prozess starten - Klicke hier um diese Aktion auszufÃƒ¼hren" id="honeycomb">Honeycomb Prozess starten</button>
+    </div>
+    <div class="list mono" id="appsOut"></div>
+  </section>
+
+  <!-- Developer Superkiste -->
+  <section class="card" id="devkit">
+    <h2>Developer Superkiste</h2>
+    <div class="row">
+      <button title="Profiler starten - Klicke hier um diese Aktion auszufÃƒ¼hren" id="profiler">Profiler starten</button>
+      <button title="Cryptoâ€‘Lab - Klicke hier um diese Aktion auszufÃƒ¼hren" id="cryptolab">Cryptoâ€‘Lab</button>
+      <button title="Mathâ€‘Solver - Klicke hier um diese Aktion auszufÃƒ¼hren" id="solver">Mathâ€‘Solver</button>
+      <button title="Diagrammâ€‘Generator - Klicke hier um diese Aktion auszufÃƒ¼hren" id="diagram">Diagrammâ€‘Generator</button>
+      <button title="Code Runner - Klicke hier um diese Aktion auszufÃƒ¼hren" id="runner">Code Runner</button>
+      <button title="Datasetâ€‘Sandbox - Klicke hier um diese Aktion auszufÃƒ¼hren" id="dataset">Datasetâ€‘Sandbox</button>
+      <button title="Netzâ€‘Graph - Klicke hier um diese Aktion auszufÃƒ¼hren" id="viznet">Netzâ€‘Graph</button>
+    </div>
+    <div id="devout" class="mono" style="white-space:pre-wrap;max-height:280px;overflow:auto;"></div>
+  </section>
+</main>
+
+<div class="footer">© OSOS · tOS — Final Production Software Fabrication International TTT · Sovereign Localhost</div>
+
+<!-- T,. Universal Auto-Init & Dummy-Help -->
+<script src="./universal-auto-init.js" onerror="console.warn('universal-auto-init.js nicht gefunden')"></script>
+<script src="./universal-dummy-help.js" onerror="console.warn('universal-dummy-help.js nicht gefunden')"></script>
+<script>
+// T,. Theme Switcher - Inline für file:// Protokoll
+(function() {
+  let currentTheme = 'dark';
+  
+  // Lade gespeichertes Theme (mit Fallback für file://)
+  try {
+    const saved = localStorage.getItem('osos-tos-theme');
+    if (saved) currentTheme = saved;
+  } catch(e) {
+    console.warn('localStorage nicht verfügbar (file:// Protokoll)');
+  }
+  
+  function applyTheme(themeId) {
+    currentTheme = themeId;
+    
+    // Speichere Theme (mit Fallback)
+    try {
+      localStorage.setItem('osos-tos-theme', themeId);
+    } catch(e) {
+      console.warn('localStorage nicht verfügbar');
+    }
+    
+    // Toggle Dark/Light via inline Styles (funktioniert immer)
+    if (themeId === 'light') {
+      document.body.style.background = '#ffffff';
+      document.body.style.color = '#000000';
+      document.querySelectorAll('section.card').forEach(card => {
+        card.style.background = '#f5f5f5';
+        card.style.color = '#000000';
+        card.style.borderColor = '#e0e0e0';
+      });
+      document.querySelectorAll('button').forEach(btn => {
+        btn.style.background = btn.classList.contains('secondary') ? '#e0e0e0' : '#007bff';
+        btn.style.color = '#000000';
+      });
+      document.querySelector('header').style.background = '#f8f9fa';
+      document.querySelector('header').style.color = '#000000';
+    } else {
+      document.body.style.background = '#0d1117';
+      document.body.style.color = '#e6edf3';
+      document.querySelectorAll('section.card').forEach(card => {
+        card.style.background = '#161b22';
+        card.style.color = '#e6edf3';
+        card.style.borderColor = '#30363d';
+      });
+      document.querySelectorAll('button').forEach(btn => {
+        btn.style.background = btn.classList.contains('secondary') ? '#21262d' : '#238636';
+        btn.style.color = '#e6edf3';
+      });
+      document.querySelector('header').style.background = '#161b22';
+      document.querySelector('header').style.color = '#e6edf3';
+    }
+    
+    // Update Button Text
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.textContent = themeId === 'light' ? 'Œ™ Dark Mode' : 'â˜€ï¸ Light Mode';
+      btn.style.background = themeId === 'light' ? '#21262d' : '#161b22';
+      btn.style.color = themeId === 'light' ? '#e6edf3' : '#e6edf3';
+    }
+  }
+  
+  // Theme Toggle Handler - sofort verfügbar
+  function initTheme() {
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.addEventListener('click', function() {
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
+      });
+      
+      // Initial Theme anwenden
+      applyTheme(currentTheme);
+    }
+  }
+  
+  // Sofort initialisieren wenn DOM ready, sonst warten
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTheme);
+  } else {
+    initTheme();
+  }
+  
+  // Export für externe Nutzung
+  window.OSOS_THEME_SWITCHER = {
+    applyTheme: applyTheme,
+    currentTheme: function() { return currentTheme; }
+  };
+})();
+</script>
+<script src="./osos-tos-production-core.js" onerror="console.warn('osos-tos-production-core.js nicht gefunden')"></script>
+<script src="./ui-theme-switcher-core.js" onerror="console.warn('ui-theme-switcher-core.js nicht gefunden')"></script>
+</body>
+</html>
+

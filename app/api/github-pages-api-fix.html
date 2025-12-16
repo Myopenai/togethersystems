@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GITHUB-PAGES-API-FIX</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>🔧 GITHUB PAGES API-FIX</h1>
+
+<h2>❌ PROBLEM</h2>
+
+Die App l&Auml;uft auf <strong>GitHub Pages</strong> (`https://myopenai.github.io/togethersystems/`), aber:
+
+- ❌ `/api/*` Endpunkte existieren <strong>NICHT</strong> auf GitHub Pages
+- ❌ GitHub Pages unterst&Uuml;tzt <strong>KEINE</strong> Serverless Functions
+- ❌ Die `functions/` Dateien funktionieren nur auf <strong>Cloudflare Pages</strong>
+
+<strong>Fehler:</strong>
+- `/api/autofix/notify` - 404 (Not Found)
+- `/api/autofix/errors` - 405 (Method Not Allowed)
+- `/api/voucher/list` - 404 (Not Found)
+- `/api/telemetry` - 405 (Method Not Allowed)
+
+---
+
+<h2>✅ L&Ouml;SUNG</h2>
+
+<h3>1. Autofix deaktivieren auf GitHub Pages</h3>
+
+<strong>Datei:</strong> `autofix-client.js`
+- ✅ Pr&Uuml;ft ob auf Cloudflare Pages
+- ✅ Deaktiviert Autofix auf GitHub Pages
+- ✅ Loggt Fehler nur in Console
+
+<h3>2. API-Calls deaktivieren auf GitHub Pages</h3>
+
+<strong>Datei:</strong> `manifest-portal.html`
+- ✅ `detectVoucherApiBase()` erkennt GitHub Pages
+- ✅ Gibt `null` zur&Uuml;ck (deaktiviert API-Calls)
+- ✅ Zeigt Warnung in Console
+
+---
+
+<h2>🎯 ERGEBNIS</h2>
+
+<strong>Auf GitHub Pages:</strong>
+- ✅ Keine 404/405 Fehler mehr
+- ✅ App funktioniert im Offline-Modus
+- ✅ Warnung in Console: "GitHub Pages erkannt: API-Funktionen nicht verf&Uuml;gbar"
+
+<strong>Auf Cloudflare Pages:</strong>
+- ✅ Alle API-Funktionen funktionieren
+- ✅ Autofix aktiv
+- ✅ Voucher-System aktiv
+
+---
+
+<h2>📋 N&Auml;CHSTE SCHRITTE</h2>
+
+<h3>Option 1: Auf Cloudflare Pages deployen (EMPFOHLEN)</h3>
+
+```powershell
+<h1>Mit Wrangler</h1>
+wrangler pages deploy . --project-name ts-portal
+```
+
+<strong>Vorteile:</strong>
+- ✅ Alle API-Funktionen funktionieren
+- ✅ D1-Datenbank verf&Uuml;gbar
+- ✅ R2 Storage verf&Uuml;gbar
+- ✅ WebSocket Support
+
+<h3>Option 2: GitHub Pages beibehalten</h3>
+
+<strong>Einschr&Auml;nkungen:</strong>
+- ⚠️ Keine API-Funktionen
+- ⚠️ Keine Datenbank
+- ⚠️ Nur statische HTML/CSS/JS
+- ✅ Aber: App funktioniert im Offline-Modus
+
+---
+
+<h2>✅ STATUS</h2>
+
+<strong>Alle Fehler behoben:</strong>
+- ✅ Autofix deaktiviert auf GitHub Pages
+- ✅ API-Calls deaktiviert auf GitHub Pages
+- ✅ Keine 404/405 Fehler mehr
+- ✅ App funktioniert im Offline-Modus
+
+<strong>Status:</strong> ✅ FERTIG
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Multi-Industry Docs{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/styles.min.css">
+    
+    <!-- Block for page-specific styles -->
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header__inner">
+            <a href="/" class="header__logo">
+                <i class="fas fa-book-open"></i> IndustryDocs
+            </a>
+            
+            <nav class="nav">
+                <a href="/" class="nav__link {% if currentPath === '/' %}nav__link--active{% endif %}">
+                    Home
+                </a>
+                <div class="dropdown">
+                    <button class="nav__link dropdown__toggle">
+                        Industries <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown__menu">
+                        <a href="/industries/ecommerce" class="dropdown__item">E-commerce</a>
+                        <a href="/industries/healthcare" class="dropdown__item">Healthcare</a>
+                        <a href="/industries/finance" class="dropdown__item">Finance</a>
+                        <a href="/industries/education" class="dropdown__item">Education</a>
+                    </div>
+                </div>
+                <a href="/api" class="nav__link">API</a>
+                <a href="/about" class="nav__link">About</a>
+                <button id="theme-toggle" class="btn btn--outline btn--sm" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search documentation..." autocomplete="off">
+                <button class="search-close" id="search-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-results" id="search-results"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container
+            {% if fullWidth %}
+                full-width
+            {% else %}
+                docs-container
+            {% endif %}">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__section">
+                    <h3 class="footer__title">Documentation</h3>
+                    <ul class="footer__links">
+                        <li><a href="/getting-started">Getting Started</a></li>
+                        <li><a href="/tutorials">Tutorials</a></li>
+                        <li><a href="/api">API Reference</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer__section">
+                    <h3 class="footer__title">Industries</h3>
+                    <ul class="footer__links">
+                        <li><a href="/industries/ecommerce">E-commerce</a></li>
+                        <li><a href="/industries/healthcare">Healthcare</a></li>
+                        <li><a href="/industries/finance">Finance</a></li>
+                        <li><a href="/industries/education">Education</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer__section">
+                    <h3 class="footer__title">Community</h3>
+                    <ul class="footer__links">
+                        <li><a href="https://github.com/your-org/industry-docs" target="_blank" rel="noopener">GitHub</a></li>
+                        <li><a href="https://twitter.com/yourhandle" target="_blank" rel="noopener">Twitter</a></li>
+                        <li><a href="https://discord.gg/yourinvite" target="_blank" rel="noopener">Discord</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer__section">
+                    <h3 class="footer__title">Legal</h3>
+                    <ul class="footer__links">
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/cookies">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer__copyright">
+                &copy; {{ now | date('Y') }} IndustryDocs. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/app.min.js"></script>
+    <script src="/js/search.min.js"></script>
+    
+    <!-- Block for page-specific scripts -->
+    {% block scripts %}{% endblock %}
+    
+    <!-- Initialize theme -->
+    <script>
+        // Check for saved theme preference or use system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.querySelector('#theme-toggle i').className = 'fas fa-sun';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.querySelector('#theme-toggle i').className = 'fas fa-moon';
+        }
+    </script>
+</body>
+</html>

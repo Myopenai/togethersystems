@@ -1,0 +1,1826 @@
+* { margin: 0; padding: 0; box-sizing: border-box;}
+img { border: 0; }
+body { margin: 0; padding: 0; background: var(--chino); }
+.clear { clear: both; }
+
+p, h1, h2, h3, h4, h5, h6, #mainContent ul, #mainContent ol {
+  /* margin-top: 1em; */
+  margin-bottom: 1em;
+}
+
+p, li {
+  line-height: 1.42;
+}
+
+p {
+  font-size: 1.1rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 550;
+}
+
+h1 {
+  font-size: 3rem;
+  line-height: 1.05;
+}
+
+html {
+  /* Standard colors. */
+  --orange-dim: #e05340;
+  --orange-dimmer: #ce3520;
+
+  /*MT: Updated in Julu 2025, some duplicated to maximize compatibility with old color variable names.*/
+  --orange: #DB6922;
+  --light-orange: #FAC19E; /* Added for consistency */
+  --washed-orange: #FAC19E;
+  --green:#5E9622;
+  --khaki-green: #5E9622 ;
+  --washed-green:#BCE68F;
+  --light-green: #BCE68F;
+  --navy:#154666;
+  --washed-blue:#8DC4E7;
+  --light-blue:#8DC4E7;
+  --teal:#22967F;
+  --washed-teal:#8FE6D4;
+
+  --black: #292A2E;
+  --grey: #5E616B;
+  --chino:#F3EFE3;
+  --white:#ffffff;
+
+  /* MT: Variables for some other commonly reused styling in the site */
+  --corner: 6px;
+  --border: solid 2px var(--black);
+  --btn-padding: 9px 21px 7px 20px; /* Sets padding for nav touch targets and buttons*/
+  --max-site-width: 1440px; /* This will set the max width for the content on the site*/
+  --sidebar-padding: 42px 40px;
+  --court-case-padding: 37px 35px;
+}
+
+/* Some Tachyons-like classes to apply those standard colors. */
+.bg-light-blue { background: var(--light-blue); }
+.bg-orange { background: var(--orange); }
+.orange { color: var(--orange); }
+.b--light-blue { border-color: var(--light-blue); }
+.navy { color: var(--navy); }
+
+
+/* ==========================================================================
+Custom Font (MT/2025)
+
+The whole site now ues Atkinson Hyperlegible Next. This is an open-source
+font designed by the Braille Institue to improve legibility and readability
+for individuals with low vision. 
+========================================================================== */
+
+@font-face {
+  font-family: 'AtkinsonHyperlegibleNext';
+  src: url("../fonts/AtkinsonHyperlegibleNextVF-Variable.e4a6903b3a05.woff2") format('woff2-variations');
+  font-weight: 300 700;
+  font-stretch: 100% 100%;
+  font-display: swap;
+}
+
+/* ==========================================================================
+RESPONSIVE GRID SYSTEM (MT/2025)
+========================================================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-gap: 20px;
+}
+
+/* Mobile breakpoint - below 800px */
+@media only screen and (max-width: 66.999em) {
+  .mobi0 { display: none; }
+  .mobi1 { grid-column-end: span 12; }
+  .mobi2 { grid-column-end: span 6; }
+  .mobi3 { grid-column-end: span 4; }
+  .mobi4 { grid-column-end: span 3; }
+  .mobi6 { grid-column-end: span 2; }
+  .mobi12 { grid-column-end: span 1; }
+}
+
+@media only screen and (min-width: 67em) {
+  .desk0 { display: none; }
+  .desk1 { grid-column-end: span 12; }
+  .desk2 { grid-column-end: span 6; }
+  .desk3 { grid-column-end: span 4; }
+  .desk4 { grid-column-end: span 3; }
+  .desk6 { grid-column-end: span 2; }
+  .desk8 { grid-column-end: span 8; }
+  .desk12 { grid-column-end: span 1; }
+}
+
+/* This class is for accessibility: visually hide content but keep for screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* =============================================================================================
+NOTIFICATION BAR (MT/2025)
+
+Adds a notification bar to the top of the page. This is used to display important information.
+================================================================================================ */
+
+a.notification-bar {
+  display: block;
+  background-color: var(--washed-green);
+  width: 100vw;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 1rem;
+  font-weight: 450;
+  color: var(--black);
+  text-decoration: none;
+  border-top: var(--border);
+  cursor: pointer;
+}
+
+a.notification-bar:hover {
+  text-decoration: underline;
+}
+
+a.notification-bar svg {
+  height: .9rem;
+  width: .9rem;
+  fill: var(--black);
+  transform: translateY(3px);
+}
+
+a.notification-bar:hover svg {
+  transform: translateY(3px);
+}
+
+/* =============================================================================================
+HEADER & PRIMARY NAVIGATION BAR (Desktop First) (MT/2025)
+================================================================================================ */
+
+.header-container {
+  background-color: var(--white);
+  position: relative;
+  z-index: 100;
+  padding: 1.55rem 0;
+  border-top: solid 2px var(--black);
+  border-bottom: solid 2px var(--black);
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+/* Make header sticky on mobile */
+@media screen and (max-width: 66.999em) {
+  html {
+    /* Ensure sticky header doesn't overlap internal link targets. */
+    scroll-padding-top: 120px;
+  }
+  .header-container {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+}
+
+.header-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+    max-width: var(--max-site-width);
+    margin: 0 auto;
+}
+
+
+
+#primary-nav-bar {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  width: 100%;
+}
+
+.header-logo {
+    height: 60px; 
+    width: auto;
+}
+
+a.header-logo-link:hover {
+  background: var(--white);
+}
+
+/* Desktop Main Menu List */
+#main-desktop-list {
+    list-style: none;
+    text-transform: uppercase;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+#main-desktop-list li {
+    position: relative; 
+    padding-left: 5px;
+    white-space: nowrap;
+}
+
+#main-desktop-list li > a {
+  display: inline-block;
+  color: var(--black);
+  text-decoration: none;
+  text-transform: none;
+  font-size: 1.2rem;
+  font-weight: 550;
+  padding: var(--btn-padding);
+  border-radius: var(--corner);
+  transition: color 0.2s ease-in-out; 
+}
+
+#main-desktop-list > li > a:hover, 
+#main-desktop-list > li:hover > a {
+  color: var(--grey);
+  background: none;
+}
+
+.menu-arrow {
+  vertical-align: middle;
+  width: 1rem;
+  height: 1rem;
+  transform: translateY(-1px);
+  transition: transform 75ms ease-in-out, fill 0.2s ease-in-out;
+  transform-origin: center center;
+}
+
+
+#main-desktop-list li a:hover .menu-arrow,
+#main-desktop-list li:hover .menu-arrow {
+    transform: rotate(180deg);
+}
+
+#main-desktop-list > li > a:hover .menu-arrow, 
+#main-desktop-list > li:hover > a .menu-arrow {
+  fill: var(--grey);
+}
+
+
+/* Submenu styling (desktop) */
+#main-desktop-list li ul.dropdown-menu-list {
+    display: none;
+    z-index: 1000;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-2px);
+    width: 340px;
+    text-transform: none;
+    background: var(--chino);
+    list-style: none; 
+    border: var(--border);
+}
+
+
+#main-desktop-list li:hover .dropdown-menu-list {
+    display: block;
+}
+
+#main-desktop-list li ul.dropdown-menu-list li {
+  padding: 0;
+  width: 100%; 
+  border-bottom: var(--border);
+}
+
+#main-desktop-list li ul.dropdown-menu-list li:hover {
+  background: var(--washed-green);
+}
+
+
+#main-desktop-list li ul.dropdown-menu-list li:last-child {
+  border-bottom: none; 
+}
+
+#main-desktop-list li ul.dropdown-menu-list a {
+  display: block;
+  border: none; 
+  padding: 29px 30px 27px;
+}
+
+#main-desktop-list li ul.dropdown-menu-list a h3 {
+  font-size: 1.1rem;
+  margin: 0;
+  padding: 0;
+  font-weight: 550;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+#main-desktop-list li ul.dropdown-menu-list p {
+  max-width: 100%;
+  text-wrap: wrap;
+  margin-block-end: 0;
+  color: var(--grey);
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+
+#main-desktop-list li a.desktop-donate-btn {
+  background: var(--washed-orange);
+  border: var(--border);
+  transition: all 200ms ease-in-out;
+}
+
+#main-desktop-list li a.desktop-donate-btn:hover {
+  background: var(--orange);
+  color: var(--white) !important;
+}
+
+
+
+/* =============================================================================================
+MOBILE NAVIGATION (Hidden by default, shown via media query/JS) (MT/2025)
+================================================================================================ */
+
+
+/* Mobile Nav Overlay (the full screen menu) */
+#main-mobile-nav {
+    display: flex; 
+    position: fixed;
+    top: 0;
+    right: 0; 
+    width: 100vw;
+    height: 100%;
+    background-color: var(--chino);
+    color: white;
+    overflow-y: auto; 
+    z-index: 300;
+    transform: translateX(100%); 
+    transition: transform 0.3s ease-out; 
+    -webkit-overflow-scrolling: touch; 
+    flex-direction: column; 
+    visibility: hidden; 
+}
+
+/* Class to apply when the mobile nav is OPEN */
+#main-mobile-nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+}
+
+/* Mobile Nav Header (logo and close button) */
+.mobile-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem;
+    background-color: var(--white);
+    border-bottom: var(--border);
+    border-top: var(--border);
+    position: sticky; 
+    top: 0;
+    z-index: 310; 
+}
+
+.mobile-logo-link img {
+    height: 50px; /* Smaller logo for mobile menu */
+    width: auto;
+}
+
+#mobile-nav-close {
+    background: transparent;
+    border: none;
+    color: var(--black);
+    font-size: 2rem; /* Larger 'X' icon */
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+    transform: translateY(5px);
+}
+
+#mobile-nav-close:hover {
+    color: var(--orange);
+}
+
+.mobile-nav-content {
+    flex-grow: 1;
+}
+
+.mobile-main-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-main-menu > li {
+    border-bottom: var(--border); /* Separator between main items */
+    background-color: var(--white);
+}
+
+.mobile-main-menu > li > a {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px 22px 20px;
+    color: var(--black);
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 550; 
+    text-transform: none; 
+}
+
+.mobile-main-menu > li > a .menu-arrow {
+    transition: transform 0.3s ease; /* For accordion arrow rotation */
+    transform-origin: center center;
+    fill: var(--black); 
+}
+
+/* Mobile Submenu Styling (Accordion style) */
+.mobile-main-menu ul { 
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 0; 
+    overflow: hidden;
+    transition: max-height 0.3s ease-out; /* Smooth expansion */
+}
+
+.mobile-main-menu ul li {
+    border-bottom: none; 
+}
+
+.mobile-main-menu ul li a,
+.mobile-main-menu .dropdown-menu-list li a,
+#main-mobile-nav .mobile-main-menu ul li a,
+#main-mobile-nav .mobile-main-menu .dropdown-menu-list li a {
+    display: block;
+    padding: 18px 20px 15px; 
+    color: var(--black);
+    text-decoration: none;
+    text-transform: none; 
+    background-color: var(--chino); 
+    border-top: solid 2px var(--white);
+}
+
+/* Target h3 elements within mobile submenu links */
+.mobile-main-menu ul li a h3,
+.mobile-main-menu .dropdown-menu-list li a h3,
+#main-mobile-nav .mobile-main-menu ul li a h3,
+#main-mobile-nav .mobile-main-menu .dropdown-menu-list li a h3 {
+    font-weight: 450;
+    font-size: 1.1rem;
+    margin: 0;
+    padding: 0;
+}
+
+/* Target p elements within mobile submenu links */
+.mobile-main-menu ul li a p,
+.mobile-main-menu .dropdown-menu-list li a p,
+#main-mobile-nav .mobile-main-menu ul li a p,
+#main-mobile-nav .mobile-main-menu .dropdown-menu-list li a p {
+  color: var(--grey);
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.2;
+  margin: 0;
+  padding-bottom: 6px;
+}
+
+.mobile-main-menu ul li:first-child a,
+.mobile-main-menu .dropdown-menu-list li:first-child a,
+#main-mobile-nav .mobile-main-menu ul li:first-child a,
+#main-mobile-nav .mobile-main-menu .dropdown-menu-list li:first-child a {
+    border-top: var(--border); /* First submenu item gets the main border */
+}
+
+/* Mobile Donate Button inside the menu */
+.mobile-main-menu .mobile-donate {
+  padding: 30px 20px 27px;
+}
+.mobile-main-menu .mobile-donate a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--btn-padding);
+    background-color: var(--washed-orange); 
+    transition: background-color 0.2s ease-out;
+    color: var(--black);
+    text-decoration: none;
+    text-transform: none;
+    font-size: 1.2rem;
+    font-weight: 550;
+    border-radius: var(--corner);
+    text-align: center;
+    width: 100%;
+    border: var(--border);
+    margin: 0 auto;
+    justify-content: center;
+}
+.mobile-donate a:hover {
+    background-color: var(--light-orange); /* Lighter orange on hover */
+}
+
+/* =============================================================================================
+RESPONSIVE ADJUSTMENTS (Media Queries) (MT/2025)
+================================================================================================ */
+
+@media screen and (min-width: 67em) {  /* Uses existing bigscreen breakpoint */
+    .header-inner {
+        padding: 0 1rem; 
+    }
+    
+    /* Add specific padding for screens 1440px and wider */
+    @media screen and (min-width: 1440px) {
+        .header-inner {
+            padding: 0; 
+        }
+    }
+
+    #mobile-menu-toggle {
+        display: none !important; 
+    }
+
+    #primary-nav-bar #main-desktop-list,
+    #primary-nav-bar .desktop-donate-btn {
+        display: flex !important; 
+    }
+
+    #main-mobile-nav {
+        visibility: hidden !important; 
+    }
+}
+
+@media screen and (max-width: 66.999em) { 
+    #primary-nav-bar #main-desktop-list,
+    #primary-nav-bar .desktop-donate-btn {
+        display: none !important; 
+    }
+    
+    #mobile-menu-toggle {
+        display: block !important; 
+        margin-left: auto; 
+        background: transparent;
+        border: none;
+        padding: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    #mobile-menu-toggle:hover {
+        transform: scale(1.1);
+    }
+    
+    .header-logo-link {
+        margin-right: 0; /* Remove extra margin on mobile logo */
+    }
+    .header-logo {
+        height: 50px; /* Smaller logo for mobile header */
+    }
+}
+
+
+
+
+/* =============================================================================================
+Site Footer (MT/2025)
+================================================================================================ */
+
+.footer-container {
+  width: 100%;
+  background: var(--white);
+}
+
+/* Decorative line above footer */
+.footer-container::before {
+    content: "";
+    display: block;
+    height: 21px;
+    background-color: var(--green);
+    border-top: var(--border);
+    border-bottom: var(--border);
+}
+
+.footer-inner {
+  max-width: var(--max-site-width);
+  margin: 45px auto 40px;
+  padding: 0;
+  display: grid;
+  grid-template-areas: 
+    "logo nav"
+    "social charity";
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: auto auto;
+  grid-row-gap: 60px
+}
+
+@media screen and (max-width: 1440px) and (min-width: 67em) {
+  .footer-inner {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
+
+.footer-inner #footer-logo-link { grid-area: logo;}
+.footer-inner #footer-logo-link:hover { background: var(--white); }
+
+.footer-inner .footer-nav {  
+  grid-area: nav; 
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.footer-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.footer-nav li {
+  position: relative;
+  white-space: nowrap;
+}
+
+.footer-nav a {
+  display: inline-block;
+  color: var(--black);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 450;
+  padding: var(--btn-padding);
+  border-radius: var(--corner);
+  transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+}
+
+.footer-nav a:hover,
+.footer-nav a:focus {
+  text-decoration: underline;
+  background: none;
+}
+
+#footer-donate-btn {
+  background: var(--washed-orange);
+  border: var(--border);
+  color: var(--black);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 450;
+  padding: var(--btn-padding);
+  border-radius: var(--corner);
+  transition: all 200ms ease-in-out;
+  align-self: flex-end;
+}
+
+#footer-donate-btn:hover,
+#footer-donate-btn:focus {
+  text-decoration: none;
+  background: var(--orange);
+  color: var(--white);
+}
+
+.footer-inner .charity-info {
+  grid-area: charity;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+
+.footer-inner .charity-info { 
+  grid-area: charity; 
+}
+
+.footer-inner .charity-info p {
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+
+.footer-inner .social-links { grid-area: social; }
+
+
+.footer-container .social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3em;
+  height: 3em;
+  margin: 0 0.25em;
+  border-radius: var(--corner);
+  border: var(--border);
+  box-sizing: border-box;
+}
+.footer-container .social-x { background:#C9CACF }
+.footer-container .social-facebook { background: var(--washed-blue); }
+.footer-container .social-youtube { background: #FA9E9E; }
+.footer-container .social-mastodon { background: var(--washed-green); }
+
+.footer-container .social-x:hover,
+.footer-container .social-x:focus {
+  background: #333333;
+}
+.footer-container .social-facebook:hover,
+.footer-container .social-facebook:focus {
+  background: #187BBA;
+}
+.footer-container .social-youtube:hover,
+.footer-container .social-youtube:focus {
+  background: #CC2929;
+}
+.footer-container .social-mastodon:hover,
+.footer-container .social-mastodon:focus {
+  background: var(--green);
+}
+
+.footer-container .social-links .fa-icon {
+  display: block;
+  width: 1.375em;
+  height: 1.375em;
+  fill: var(--black);
+  transition: color 0.2s, background 0.2s;
+}
+
+.footer-container .social-links a:hover .fa-icon,
+.footer-container .social-links a:focus .fa-icon {
+  transform: scale(0.99);
+  fill: var(--white);
+}
+
+.site-footer-info {
+  display: grid;
+  grid-template-areas: "privacy cc cclogo";
+  grid-template-columns: 4fr 7fr auto;
+  margin-top: 1rem;
+  width: 100%;
+  background: var(--chino);
+  border-top: var(--border);
+  border-bottom: var(--border);
+}
+
+.site-footer-info p {
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.site-footer-info .privacy-policy {
+  grid-area: privacy;
+  padding: 11px 10px 8px;
+}
+
+.site-footer-info .cc-license {
+  grid-area: cc;
+  text-align: right;
+  border-left: var(--border);
+  border-right: var(--border);
+  height: 100%;
+  padding: 11px 10px 10px;
+}
+
+.site-footer-info a.cc-logo {
+  grid-area: cclogo;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+
+@media screen and (max-width: 66.999em) { 
+
+ 
+  .footer-container .footer-inner {
+    grid-template-areas: 
+      "logo"
+      "charity"
+      "social";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-row-gap: 20px;
+    padding: 0 80px;
+    text-align: center;
+    align-items: center;
+    justify-items: center;
+    margin-top: 25px;
+    margin-bottom: 20px;
+  }
+
+  .footer-container .footer-inner .footer-nav {
+    display: none;
+  }
+
+  .footer-container .footer-inner .footer-logo {
+    height: 50px;
+    justify-self: center;
+  }
+
+  .footer-container .footer-inner .social-links {
+    justify-self: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .footer-container .footer-inner .social-links a {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .footer-container .footer-inner .charity-info {
+    justify-self: center;
+    text-align: center;
+    align-items: center;
+    padding: 0 px;
+  }
+
+  .footer-container .footer-inner .charity-info p {
+    line-height: 1.2;
+  }
+
+  .footer-container .footer-inner .charity-info p {
+    text-align: center;
+  }
+
+  .site-footer-info {
+    grid-template-areas:
+      "cclogo"
+      "cc"
+      "privacy";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .site-footer-info a.cc-logo:hover {
+    background: none;
+  }
+
+  .site-footer-info img {
+    margin: 10px auto 0;
+  }
+
+  .site-footer-info .cc-license p,
+  .site-footer-info .privacy-policy p {
+    text-align: center !important;
+  }
+
+  .site-footer-info .cc-license {
+    border-left: none;
+    border-right: none;
+    border-bottom: var(--border);
+    padding: 0 20px 20px;
+  }
+
+
+  
+
+}
+
+/* =============================================================================================
+end of footer
+================================================================================================ */
+
+
+.icon {
+  width: 40px;
+  height: 40px;
+  color: var(--black);
+}
+
+body {
+  /* Native font stack as per Bootstrap 5.1. */
+  font-family:
+    'AtkinsonHyperlegibleNext',
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue", Arial,
+    "Noto Sans",
+    "Liberation Sans",
+    sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 1.125rem;
+  font-weight: 375;
+  color: var(--black);
+}
+
+a {
+  text-decoration: underline;
+  transition: all .1s ease-out;
+  color: var(--black);
+}
+a:hover { background: var(--washed-green); }
+
+/* Missing links */
+a, form { position: relative; }
+.fixme,
+a[href$="#fixme"]:before,
+form[action$="#fixme"]:before {
+  border: 1px solid var(--orange);
+  border-radius: 6px;
+  content: '?';
+  font-size: 0.6rem;
+  color: var(--orange);
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  padding: 1px;
+  background: yellow;
+  /* opacity: 0.8; */
+  width: 12px;
+  text-align: center;
+}
+
+video {
+    max-width: 100%;
+}
+
+a.read-more {
+    cursor: pointer;
+    font-style: italic;
+}
+
+.btn-orange {
+  color: white;
+  background: var(--orange);
+  border: 1px solid var(--orange-dim);
+}
+.btn-orange:hover, .btn-orange:active {
+  background: var(--orange-dim);
+  text-decoration: none;
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+.btn-orange:focus {
+  box-shadow: 0 0 0 .25rem var(--orange-dim);
+}
+.btn-white {
+  color: var(--orange);
+  background: white;
+  border: 1px solid #777;
+}
+.btn-white:hover, .btn-white:active {
+  background: #eee;
+  text-decoration: none;
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+.btn-white:focus {
+  box-shadow: 0 0 0 .25rem #ddd;
+}
+
+a svg {
+  transition: all .2s ease;
+}
+a:hover svg {
+  transform: scale(1.1);
+}
+
+.toggle-control  {
+cursor: pointer;
+text-decoration: none; color: #557733;
+}
+.toggle-control:hover { text-decoration: underline; color: #577632; }
+
+/* FIXME: We should do this:          */
+/* http://www.waypointarts.com/blog/2013/06/29/fixing-a-side-bar-while-scrolling-until-bottom */
+.donate-sidebar {
+  background: var(--light-green) no-repeat;
+  position: sticky;
+  bottom: 0;
+  width: auto;
+  padding: 0.5rem 1rem;
+  margin: 0 -1rem;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #90d468;
+}
+
+.donate-sidebar:hover {
+  background: #a0d870;
+}
+
+p.footnote {
+    font-size: 85%;
+}
+
+h1 { margin-top: .75em; margin-bottom: .5em; }
+h2 { margin-top: .75em; margin-bottom: .5em; }
+h3 { margin-top: .6em; margin-bottom: .4em; }
+
+#mainContent ul, #mainContent ol { padding-left: 1.5em; }
+
+
+/* Header */
+
+body > header {
+  /* background: linear-gradient(to top right, white, white, var(--washed-blue) 80%); */
+  overflow: auto; /* Prevent logo top margin popping out. */
+}
+
+#conservancyheader img {
+  max-height: 75px;
+  width: auto;
+}
+
+@media screen and (min-width: 30em) {
+  #conservancyheader img {
+    max-height: 90px;
+  }
+}
+
+
+
+
+/* Navigation bar */
+#navbar-outer {
+  background: var(--navy);
+  position: relative;
+  z-index: 100;
+}
+#navbar ul {
+  list-style: none;
+  text-transform: uppercase;
+  padding: 0;
+}
+#navbar li {
+  background: var(--navy);
+  position: relative;
+  padding-left: .25rem;
+  padding-right: .25rem;
+}
+@media screen and (min-width: 30em) {
+  #navbar li {
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+}
+#navbar li > a {
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  padding: 0.25rem 0.25rem 0;
+  /* Invisible borders to keep things even. */
+  border-top: 0.20rem solid var(--navy);  /* A little less here. */
+  border-bottom: 0.25rem solid var(--navy);
+}
+
+@media screen and (min-width: 30em) {
+  #navbar li > a {
+    padding-left: .5rem;
+    padding-right: .5rem
+  }
+}
+
+.press-articles  li {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margins */
+    margin-top: 1.1em; margin-bottom: 1.1em;
+}
+
+#navbar li a:hover, #navbar li a:focus {
+  border-bottom: 0.25rem solid var(--light-green);
+}
+#navbar li { padding-bottom: 0.25rem; }
+
+/* Navbar submenus */
+#navbar li ul {
+  display: none;
+  z-index: 100;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 15rem;
+  text-transform: none;
+}
+#navbar li ul a {
+  font-weight: normal;
+}
+#navbar li:hover ul {
+  display: block;
+}
+/* Right-align the second last and last sub-menus. */
+#navbar li:nth-last-child(2) ul, #navbar li:nth-last-child(1) ul {
+  left: auto;
+  right: 0;
+  text-align: right;
+}
+
+#menu-icon:active, #search-icon:active {
+  transform: scale(1.1);
+}
+#navbar-outer { min-height: .5rem; }
+#navbar.mobile {
+  display: block;
+  max-width: 32rem;
+}
+#navbar.mobile.search { display: block; }
+#navbar.mobile li {
+  display: block;
+}
+#navbar.mobile ul {
+  padding-left: .5rem;
+  padding-right: .5rem;
+  display: block !important;
+  position: relative !important;
+  top: auto !important;
+  left: 0 !important;
+  right: auto !important;
+  text-align: left !important;
+}
+#navbar.mobile > ul > li {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
+#navbar.mobile > ul > li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+#navbar.mobile li ul {
+  margin-left: .5rem;
+}
+
+.fundraiser-top-text {
+  background: #F0FFB8;
+  margin-top: -.5rem;
+}
+.fundraiser-top-text p {
+  font-size: 110%;
+  font-style: italic;
+  text-align: center;
+}
+#siteprogressbar .goalText {
+  color: #557733;
+}
+#siteprogressbar .soFarText {
+  color: white;
+}
+#siteprogressbar .exceeded {
+  color: var(--khaki-green);
+}
+#siteprogressbar .progress {
+  background: linear-gradient(var(--khaki-green), #84a377, var(--khaki-green));
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  border: 1px solid #3f4439;
+}
+#siteprogressbar .final-goal {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border: 1px solid #9bac88;
+  border-left: none;
+}
+#siteprogressbar .progress.matched {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  font-size: 120%;
+}
+#siteprogressbar .progress.exceeded {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  background: linear-gradient(#84a377, var(--washed-green), #84a377);
+}
+#siteprogressbar {
+  background: linear-gradient(var(--washed-green), white, var(--washed-green));
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+  line-height: 1.3;
+  border-radius: 16px;
+}
+
+#container {
+  display: grid;
+  grid-template-areas: "main sidebar";
+  grid-template-columns: 7fr 4fr;
+  grid-gap: 2rem;
+  width: 100%;
+  margin: 0 auto;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  max-width: var(--max-site-width);
+  padding: 60px 0;
+}
+
+@media screen and (max-width: 1440px) and (min-width: 67em) {
+  #container {
+    padding: 0 25px;
+  }
+  
+}
+
+@media screen and (max-width: 66.999em) {
+  #container {
+    grid-template-columns: 1fr;
+  grid-template-areas: "main" "sidebar";
+  padding: 60px 20px;
+  }
+}
+
+
+#container #mainContent {
+  grid-area: main;
+  margin: 0 0 2rem;
+  padding: 0;
+  flex: 1 1 auto;
+}
+
+#container #sidebar {
+  grid-area: sidebar;
+  background-color: var(--washed-green);
+  border-radius: var(--corner);
+  border: var(--border);
+  padding: var(--sidebar-padding);
+  margin: 1rem 0 0;
+}
+
+@media screen and (min-width: 30em) {
+  
+}
+
+#container #sidebar li {
+  list-style: none;
+  margin-bottom: 0.8rem;
+}
+
+#container #sidebar li a {
+  padding: var(--btn-padding);
+  background: #eaf1f1;
+  border-radius: var(--corner);
+  color: var(--black);
+  border: var(--border);
+  text-decoration: none;
+  background: var(--white);
+  display: block;
+}
+#container #sidebar li a:hover { background: var(--green); color: var(--white); }
+
+#container #sidebar.Sponsors ul li.Sponsors a,
+#container #sidebar.Directors ul li.Directors a,
+#container #sidebar.Eval ul li.Eval a,
+#container #sidebar.Overview ul li.Overview a,
+#container #sidebar.Contact ul li.Contact a,
+#container #sidebar.Staff ul li.Staff a,
+#container #sidebar.Outside ul li.Outside a,
+#container #sidebar.Transparency ul li.Transparency a,
+#container #sidebar.License ul li.License a,
+#container #sidebar.Current ul li.Current a,
+#container #sidebar.Services ul li.Services a,
+#container #sidebar.Applying ul li.Applying a,
+#container #sidebar.VizioTopBar ul li.VizioTopBar a,
+#container #sidebar.VizioMain ul li.VizioMain a,
+#container #sidebar.VizioPressRelease ul li.VizioPressRelase a,
+#container #sidebar.VizioComplaint ul li.VizioComplaint a,
+#container #sidebar.VizioQandA ul li.VizioQandA a,
+#container #sidebar.VizioPressKit ul li.VizioPressKit a,
+#container #sidebar.VizioPhotoAssets ul li.VizioPhotoAssets a,
+#container #sidebar.VizioPress ul li.VizioPress a,
+#container #sidebar.IssuesInTheNews ul li.IssuesInTheNews a,
+#container #sidebar.Glossary ul li.Glossary a,
+#container #sidebar.CopyleftCompliance ul li.CopyleftCompliance a,
+#container #sidebar.HelpComply ul li.HelpComply a,
+#container #sidebar.CopyleftPrinciples ul li.CopyleftPrinciples a,
+#container #sidebar.EnforcementStrategy ul li.EnforcementStrategy a,
+#container #sidebar.CopyleftCompliance ul li.CopyleftCompliance a,
+#container #sidebar.LiberateFirmware ul li.LiberateFirmware a,
+#container #sidebar.GiveUpGitHub ul li.GiveUpGitHub a,
+#container #sidebar.ImpactLitigationCopyleft ul li.ImpactLitigationCopyleft a,
+#container #sidebar.CopyleftOrg ul li.CopyleftOrg a /* Never put a comma here */
+{
+    color: var(--white);
+    background: var(--green);
+}
+
+#container #sidebar h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+  font-weight: 550;
+}
+#container #sidebar hr {
+  width: 75%;
+ float: center;
+ clear: all;
+}
+
+#container #sidebar ul li:last-child {
+  margin-bottom: 2.5rem;
+}
+
+#container #sidebar ul:last-child li:last-child {
+  margin-bottom: 0;
+}
+
+.shaded { background: #F0FFB8; padding: .1em .5em; margin-bottom: .5em; }
+
+
+.column h2 { font-size: 1.25em; }
+.column h3 { font-size: 1.1em; }
+.column hr { width: 50%; margin-left: auto; margin-right: auto; }
+
+.column h2 a { text-decoration: none; color: #000000; }
+.column h2 a:hover { text-decoration: underline; }
+
+#conservancyfooter {
+  border-top: 1px solid #ccc;
+  text-align: center;
+  overflow: auto;
+  margin: 0;
+}
+
+@media screen and (min-width: 30em) {
+  #conservancyfooter {
+    margin: 0;
+  }
+}
+
+.continued {
+  display: block;
+  font-size: .9em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.date, .blog-tags, .blog-comments {
+  font-style: italic;
+  font-size: .9em;
+  margin-bottom: .3em;
+  margin-top: .3em;
+}
+
+a.feedlink /* RSS icon */ { display: block; float: right; font-size: 10pt; }
+
+blockquote, div.quote /* div.quote is used by conservancy whitepaper */ {
+  margin-left: 2em;
+  margin-right: 2em;
+  padding-left: 1em;
+  padding-right: 1em;
+  border: 1px solid #fff;
+  background: #eee;
+}
+
+.newsgraphic { float: right; }
+.newsgraphic img { border: 1px solid #000; }
+
+.picture {
+    text-align: center;
+    font-style: italic;
+}
+.picture img {
+    margin: 0 auto;
+    max-width: 100%;
+}
+.picture-small {
+    padding-left: 1em;
+    border: thin silver solid;
+    padding: 0.5em;
+    text-align: center;
+    font-style: italic;
+    font-size: 70%;
+    text-indent: 0;
+    margin: .25em;
+    min-width: 8%;
+    width: auto;
+    box-shadow: 1px 1px 2px rgba(0,0,0,.3);
+    margin-bottom: 1rem;
+}
+
+@media screen and (min-width: 30em) {
+  .picture-small {
+    max-width: 20rem;
+  }
+}
+
+.picture-small img {
+   width: 100%;
+}
+.picture-tiny {
+    padding-left: 1em;
+    border: thin silver solid;
+    padding: 0.5em;
+    text-align: center;
+    font-style: italic;
+    font-size: 50%;
+    text-indent: 0;
+    margin: .25em;
+    min-width: 4%;
+    max-width: 15%;
+    width: auto;
+}
+.picture-tiny img {
+   width: 100%;
+}
+
+
+.secondary_info { font-size: 83%; }
+.next_page_button { float: right; }
+.pagination_list { text-align: center; }
+.document_format { border: 1px solid #888; padding: .2em; background: #fff99d;}
+.copyright_info { font-size: 90%; }
+hr.footnote-separator { width: 80%; margin-left: auto; margin-right: auto; }
+.doc-footer { font-style: italic; }
+.doc-footer > *:first-child::before { content: "["; }
+.doc-footer > *:last-child::after   { content: "]"; }
+
+/* Resources pages */
+div.download-formats { margin-top: 2em; margin-bottom: 2em; }
+.download-formats p { display: inline; }
+#mainContent .download-formats ul { display: inline; list-style: none;
+                                    padding-left: 0; }
+.download-formats ul li { display: inline; padding-left: 2em; }
+
+/* Resources - book styles */
+hr.chapter-separator { display: none; }
+h2.likechapterHead { text-align: center; }
+h2.chapterHead { text-align: center; }
+#mainContent ul.author { list-style-type: none; padding-left: 0; }
+#mainContent div.footnotes { font-style: normal; } /* remove italics */
+span.sectionToc { padding-left: 2em; } /* indent TOC properly */
+span.subsectionToc { padding-left: 4em; }
+span.subsubsectionToc { padding-left: 6em;}
+.js, .js p, .js p.bibitem, .js p.bibitem-p { background-color: #cde7e9; }
+
+body.conservancy-Home #navbar ul li.Home > a,
+body.conservancy-Projects #navbar ul li.Projects > a,
+body.conservancy-WhoWeAre #navbar ul li.WhoWeAre > a,
+body.conservancy-WhatWeDo #navbar ul li.WhatWeDo > a,
+body.conservancy-Learn #navbar ul li.Learn > a,
+body.conservancy-news #navbar ul li.news > a,
+body.conservancy-blog #navbar ul li.blog > a,
+body.conservancy-About #navbar ul li.About > a,
+body.conservancy-Compliance #navbar ul li.compliance > a,
+body.conservancy-donate #navbar ul li.donate > a,
+body.conservancy-npoacct #navbar ul li.npoacct > a,
+body.conservancy-sponsors #navbar ul li.sponsors > a /* NO COMMA HERE! */
+{
+    border-bottom: 4px solid var(--khaki-green);
+}
+
+#supporters ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#supporters li:before {
+    content: '';
+    display: inline-block;
+    height: 2em;
+    width: 2em;
+    background-image: url("/static/img/conservancy-supporter-heart.bbde254e78e3.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding: 0.25em 1.2em 0.25em 0.25em;
+    vertical-align: middle;
+}
+
+#supporters li {
+    padding: 0.5em 2em 1em 2em;
+    margin-left: .25em;
+    list-style: none;
+}
+
+#sponsor ul {
+  clear: all;
+  margin-bottom: 10px;
+}
+
+#sponsor li {
+  width: 100%;
+  float: left;
+  margin-top: 10px;
+  text-align: center;
+  list-style: none;
+  margin-right: 5px;
+}
+
+ul#sponsor li:after {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 30%;
+    margin-left: 35%;
+    margin-right: 35%;
+    margin-top: 4px;
+    background: #afe478;
+}
+
+#subbox {
+   position: absolute;
+   padding-top: 10px;
+   right: 0px;
+   width: 200px;
+   font-size: 12px;
+}
+
+img.inside-faq {
+  max-width: 100%;
+  width: auto;
+  overflow: scroll;
+}
+pre {
+  overflow: auto;
+}
+
+.supporter-type-selector a {
+    font-size: 125%;
+    font-weight: normal;
+}
+
+.supporter-type-selector a.supporter-type-selector-selected {
+    font-size: 127%;
+    font-weight: bold;
+}
+
+/* Make dl's ( such as for FAQ entries) look nice on screens, both big and small. */
+
+dl {
+    border: 3px double #ccc;
+    padding: 0.5em;
+}
+dt {
+    text-align: center;
+    margin: 0em 1em 0.5em 0.5em;
+    font-weight: bold;
+    color: green; }
+dd {
+    margin: 0 0 1.5em 2em;
+}
+
+/* Fallback elements created by conservancy.js when no video source is
+   supported. */
+div.small-right, div.medium-right {
+    border: thick solid #577632;
+    padding: .3em;
+    text-align: center;
+}
+
+.breadcrumbs {
+  font-size: 14px;
+  padding: 0.5rem 0 0;
+}
+
+.breadcrumbs, .breadcrumbs a {
+  color: #777;
+}
+.breadcrumbs a {
+  padding: 0 0.5em;
+}
+.breadcrumbs a:first-child {
+  padding-left: 0;
+}
+.breadcrumbs span {
+  padding-left: 0.5em;
+}
+
+.press-release .date, .conservancy-blog .date {
+  margin-bottom: 1rem;
+}
+
+/* Expanding sections. */
+details summary {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.5rem 0;
+}
+
+.conservancy-sustainer #feature-menu li.sustainer a,
+.conservancy-donate #feature-menu li.donate a,
+.conservancy-Vizio #feature-menu li.vizio a
+{
+  background-color: var(--orange-dimmer);
+}
+
+.sponsor-logo-sizing {
+    max-height: 250px;
+    max-width:  250px;
+    width:      auto;
+    height:     auto;
+}
+
+/* =============================================================================================
+Court Case Page Styles (MT/2025)
+================================================================================================ */
+
+.case-header {
+  background: var(--washed-green);
+}
+
+.case-bar {
+  width: 100%;
+  height: 25px;
+  background-color: var(--green);
+  border-top: var(--border);
+  border-bottom: var(--border);
+}
+
+.case-info {
+  max-width: var(--max-site-width);
+  margin: 0 auto;
+}
+
+.case-info h1 {
+  margin: 0 0 10px;
+  padding: 0;
+  font-size: 3.75rem;
+  line-height: 1.05;
+}
+
+.case-info h4 {
+  font-weight: 400;
+}
+
+.case-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.case-info ul li span{
+  font-weight: 600;
+}
+
+@media screen and (max-width: 66.999em) { 
+  .case-info {
+    text-align: center;
+  }
+}
+
+.case-content {
+  width: 100%;
+  max-width: var(--max-site-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  grid-template-rows: auto;
+  grid-column-gap: 20px;
+  padding: 100px 0;
+}
+
+@media screen and (max-width: 1440px) and (min-width: 67em) {
+  .case-content {
+    padding: 100px 20px;
+  }
+  
+}
+
+@media screen and (max-width: 66.999em) {
+  .case-content {
+    grid-template-columns: 1fr;
+    padding: 100px 20px;
+  }
+}
+
+.case-content * {
+  margin-block-end: 0;
+}
+
+.case-content .case-content-left > *,
+.case-content .case-content-right > * {
+  padding: var(--court-case-padding);
+  border: var(--border);
+  border-radius: var(--corner);
+  background: var(--white);
+  margin-bottom: 20px;
+}
+
+.case-content h2 {
+  padding: 0;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 550;
+}
+
+.case-content p {
+  font-size: 1.1rem;
+  line-height: 1.42;
+  margin-top: 7px;
+}
+
+.case-content p + details > summary {
+  margin-top: 10px;
+}
+
+.case-content summary span.summary-title {
+  font-weight: 550;
+}
+
+.case-content summary .summary-title span {
+  font-weight: 375;
+}
+
+.case-content .legal-documents details li {
+  font-size: 0.95rem;
+  margin-left: 15px;
+  line-height: 1.2;
+  margin-bottom: 5px;
+}
+.case-content .why-case-matters {
+  background: var(--washed-orange);
+}
+
+.case-content .news-coverage-link {
+  background: var(--washed-green);
+  text-align: center;
+}
+
+
+.case-content .news-coverage-link h2 a {
+  text-decoration: none;
+}
+
+.case-content .news-coverage-link h2 a svg {
+  fill: var(--black);
+  height: 0.8em;
+  width: 0.8em;
+}
+
+.case-content .news-coverage-link h2 a:hover {
+  background: none;
+  text-decoration: underline;
+}
+
+.case-content .news-coverage-link h2 a:hover svg {
+  transform: scale(0.95);
+}
+
+.case-content .legal-documents summary {
+  cursor: pointer;
+}
+
+.case-content .legal-documents summary span {
+  transform: translateX(-15px)
+}
+
+.toggle-section summary .toggle-icon.minus { display: none; }
+.toggle-section[open] summary .toggle-icon.plus { display: none; }
+.toggle-section[open] summary .toggle-icon.minus { display: inline-block; }
+
+.toggle-icon {
+  width: 0.8rem;
+  height: 0.8rem;
+  vertical-align: top;
+  margin-right: 0 !important;
+  fill: #71747F;
+}
+
+
+/* Remove default triangle in most browsers */
+.toggle-section summary {
+  list-style: none;
+}
+
+/* Remove default triangle in WebKit browsers (Chrome, Safari, Edge) */
+.toggle-section summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Remove default triangle in Firefox */
+.toggle-section > summary::marker {
+  display: none;
+  font-size: 0;
+  color: transparent;
+}
+
+.toggle-section summary {
+  position: relative;
+  padding-left: 2.5em; /* Adjust to fit icon width + margin */
+  min-height: 1.5em;   /* Adjust to fit icon height */
+  display: block;      /* Not flex! */
+}
+
+.toggle-section .toggle-icon {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  /* width and height as needed */
+}
+
+.toggle-section .toggle-icon.plus,
+.toggle-section[open] .toggle-icon.minus,
+.toggle-section[open] .toggle-icon.plus  {
+  display: none;
+}
+
+.toggle-section .toggle-icon.plus,
+.toggle-section[open] .toggle-icon.minus  {
+  display: inline-block;
+}
+.toggle-section .summary-title {
+  display: block;
+  /* No extra indent needed, padding on summary handles it */
+}

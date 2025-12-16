@@ -1,0 +1,275 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node-Editor · XXXXXXLS · TogetherSystems</title>
+  <link rel="stylesheet" href="/assets/ultra.css">
+  <style>
+    #graph {
+      min-height: 500px;
+      background: radial-gradient(circle at center, rgba(20, 27, 63, 0.3) 0, rgba(5, 7, 17, 0.8) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      cursor: crosshair;
+    }
+    .node {
+      position: absolute;
+      padding: 12px 16px;
+      border: 2px solid rgba(57, 208, 255, 0.5);
+      background: rgba(57, 208, 255, 0.15);
+      border-radius: 12px;
+      cursor: move;
+      user-select: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(57, 208, 255, 0.2);
+      transition: all 0.2s;
+      min-width: 120px;
+      text-align: center;
+    }
+    .node:hover {
+      border-color: rgba(255, 107, 203, 0.8);
+      box-shadow: 0 12px 48px rgba(255, 107, 203, 0.3);
+      transform: scale(1.05);
+    }
+    .node.selected {
+      border-color: #ff6bcb;
+      box-shadow: 0 0 0 4px rgba(255, 107, 203, 0.2);
+    }
+    .link-line {
+      position: absolute;
+      pointer-events: none;
+      stroke: rgba(57, 208, 255, 0.6);
+      stroke-width: 2;
+      fill: none;
+    }
+    .link-line:hover {
+      stroke: rgba(255, 107, 203, 0.8);
+      stroke-width: 3;
+    }
+  </style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="logo"><span class="brand">.XLS.</span> Node-Editor</div>
+      <div>
+        <button class="btn" onclick="location.href='/'">Zurück</button>
+        <button class="btn btn-primary" onclick="exportGraph()">Export</button>
+      </div>
+    </header>
+    
+    <aside class="sidenav">
+      <nav class="nav">
+        <div class="nav-label">Aktionen</div>
+        <a href="#" onclick="addNode(); return false;">Node hinzufügen</a>
+        <a href="#" onclick="connectLast(); return false;">Letzte verbinden</a>
+        <a href="#" onclick="resetGraph(); return false;">Reset</a>
+        <div class="nav-label" style="margin-top:16px;">Info</div>
+        <div class="small" style="padding:10px;">
+          Ziehe Nodes zum Verschieben<br>
+          Klicke auf Nodes zum Auswählen<br>
+          Verbinde Nodes über Aktionen
+        </div>
+      </nav>
+    </aside>
+    
+    <main class="main">
+      <section class="card">
+        <h2>Graph Editor</h2>
+        <div id="graph" class="canvas-wrap"></div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="addNode()">Node hinzufügen</button>
+          <button class="btn" onclick="connectLast()">Letzte verbinden</button>
+          <button class="btn" onclick="connectSelected()">Ausgewählte verbinden</button>
+          <button class="btn" onclick="deleteSelected()">Ausgewählte löschen</button>
+          <button class="btn" onclick="resetGraph()">Reset</button>
+        </div>
+        <pre id="out" style="margin-top:12px;max-height:220px;overflow:auto;font-size:11px;"></pre>
+      </section>
+    </main>
+  </div>
+  
+  <script>
+    const nodes = [];
+    const links = [];
+    let selectedNode = null;
+    let dragging = false;
+    let dragOffset = { x: 0, y: 0 };
+    
+    function render() {
+      const el = document.getElementById('graph');
+      el.innerHTML = '';
+      
+      // Render Links
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      svg.style.position = 'absolute';
+      svg.style.top = '0';
+      svg.style.left = '0';
+      svg.style.pointerEvents = 'none';
+      svg.style.zIndex = '1';
+      
+      links.forEach(link => {
+        const fromNode = nodes.find(n => n.id === link.from);
+        const toNode = nodes.find(n => n.id === link.to);
+        if (fromNode && toNode) {
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', fromNode.x + 60);
+          line.setAttribute('y1', fromNode.y + 20);
+          line.setAttribute('x2', toNode.x + 60);
+          line.setAttribute('y2', toNode.y + 20);
+          line.setAttribute('stroke', 'rgba(57, 208, 255, 0.6)');
+          line.setAttribute('stroke-width', '2');
+          svg.appendChild(line);
+        }
+      });
+      el.appendChild(svg);
+      
+      // Render Nodes
+      nodes.forEach(n => {
+        const d = document.createElement('div');
+        d.className = 'node';
+        d.textContent = n.id;
+        d.style.left = n.x + 'px';
+        d.style.top = n.y + 'px';
+        d.style.zIndex = '10';
+        if (selectedNode === n.id) {
+          d.classList.add('selected');
+        }
+        
+        d.onmousedown = (e) => {
+          if (e.target === d) {
+            selectedNode = n.id;
+            dragging = true;
+            dragOffset.x = e.clientX - n.x;
+            dragOffset.y = e.clientY - n.y;
+            render();
+            e.preventDefault();
+          }
+        };
+        
+        d.onclick = (e) => {
+          if (!dragging) {
+            selectedNode = selectedNode === n.id ? null : n.id;
+            render();
+          }
+          e.stopPropagation();
+        };
+        
+        el.appendChild(d);
+      });
+      
+      // Update JSON output
+      document.getElementById('out').textContent = JSON.stringify({ nodes, links }, null, 2);
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+      if (dragging && selectedNode) {
+        const node = nodes.find(n => n.id === selectedNode);
+        if (node) {
+          const graphRect = document.getElementById('graph').getBoundingClientRect();
+          node.x = Math.max(0, Math.min(e.clientX - graphRect.left - dragOffset.x, graphRect.width - 120));
+          node.y = Math.max(0, Math.min(e.clientY - graphRect.top - dragOffset.y, graphRect.height - 40));
+          render();
+        }
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      dragging = false;
+    });
+    
+    function addNode() {
+      const graphRect = document.getElementById('graph').getBoundingClientRect();
+      nodes.push({
+        id: 'N-' + Math.random().toString(36).slice(2, 8).toUpperCase(),
+        x: 20 + Math.random() * (graphRect.width - 140),
+        y: 20 + Math.random() * (graphRect.height - 60)
+      });
+      render();
+    }
+    
+    function connectLast() {
+      if (nodes.length >= 2) {
+        const a = nodes[nodes.length - 2];
+        const b = nodes[nodes.length - 1];
+        links.push({
+          id: 'L-' + Math.random().toString(36).slice(2, 8).toUpperCase(),
+          from: a.id,
+          to: b.id,
+          type: 'INFORMATION'
+        });
+        render();
+      }
+    }
+    
+    function connectSelected() {
+      if (selectedNode) {
+        const selected = nodes.find(n => n.id === selectedNode);
+        const others = nodes.filter(n => n.id !== selectedNode);
+        if (others.length > 0) {
+          const target = others[Math.floor(Math.random() * others.length)];
+          links.push({
+            id: 'L-' + Math.random().toString(36).slice(2, 8).toUpperCase(),
+            from: selected.id,
+            to: target.id,
+            type: 'INFORMATION'
+          });
+          render();
+        }
+      }
+    }
+    
+    function deleteSelected() {
+      if (selectedNode) {
+        nodes.splice(nodes.findIndex(n => n.id === selectedNode), 1);
+        links.filter(l => l.from === selectedNode || l.to === selectedNode).forEach(l => {
+          links.splice(links.indexOf(l), 1);
+        });
+        selectedNode = null;
+        render();
+      }
+    }
+    
+    function resetGraph() {
+      if (confirm('Wirklich alle Nodes und Links löschen?')) {
+        nodes.splice(0);
+        links.splice(0);
+        selectedNode = null;
+        render();
+      }
+    }
+    
+    function exportGraph() {
+      const data = JSON.stringify({ nodes, links }, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `xxxxxxls-graph-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    // Initial render
+    render();
+    
+    // Add initial nodes
+    setTimeout(() => {
+      if (nodes.length === 0) {
+        addNode();
+        addNode();
+      }
+    }, 100);
+  </script>
+</body>
+</html>
+
+
+

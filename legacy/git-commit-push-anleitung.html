@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GIT-COMMIT-PUSH-ANLEITUNG</title>
+<style>
+body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>📤 GIT COMMIT & PUSH - ANLEITUNG</h1>
+
+<h2>✅ AUTOMATISCHES SKRIPT</h2>
+
+F&Uuml;hre das PowerShell-Skript aus:
+
+```powershell
+.\commit-and-push.ps1
+```
+
+Das Skript f&Uuml;hrt automatisch aus:
+1. `git status` - Zeigt alle &Auml;nderungen
+2. `git add .` - F&Uuml;gt alle Dateien hinzu
+3. `git commit -m "..."` - Erstellt Commit
+4. `git push origin main` - Pusht zu GitHub
+
+---
+
+<h2>🔧 MANUELLE AUSF&Uuml;HRUNG</h2>
+
+Falls das Skript nicht funktioniert, f&Uuml;hre diese Befehle manuell aus:
+
+```powershell
+<h1>1. Status pr&Uuml;fen</h1>
+git status
+
+<h1>2. Alle &Auml;nderungen hinzuf&Uuml;gen</h1>
+git add .
+
+<h1>3. Commit erstellen</h1>
+git commit -m "Alle kritischen Fehler behoben: Autofix, Service Worker, Bilder, Farbsplashes, Telbank-Links"
+
+<h1>4. Push zu GitHub</h1>
+git push origin main
+```
+
+---
+
+<h2>⚠️ FALLS PUSH FEHLSCHL&Auml;GT</h2>
+
+<h3>Problem: "Updates were rejected because the remote contains work"</h3>
+
+<strong>L&Ouml;sung:</strong>
+```powershell
+<h1>Remote-&Auml;nderungen holen und mergen</h1>
+git pull origin main --allow-unrelated-histories
+
+<h1>Falls Konflikte: Aufl&Ouml;sen, dann:</h1>
+git add .
+git commit -m "Merge remote changes"
+
+<h1>Dann pushen</h1>
+git push origin main
+```
+
+<h3>Problem: "Permission denied" oder "403 Forbidden"</h3>
+
+<strong>L&Ouml;sung:</strong>
+1. Alte Git-Credentials entfernen:
+   - Windows: Einstellungen → Anmeldeinformationsverwaltung → Windows-Anmeldeinformationsverwaltung
+   - Suche nach "github.com" und l&Ouml;sche Eintr&Auml;ge
+
+2. Neues Personal Access Token erstellen:
+   - GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Neuen Token mit `repo` Scope erstellen
+
+3. Token beim Push verwenden:
+   ```powershell
+   git push https://[TOKEN]@github.com/myopenai/togethersystems.git main
+   ```
+
+---
+
+<h2>✅ NACH ERFOLGREICHEM PUSH</h2>
+
+<h3>1. Browser-Cache leeren</h3>
+- <strong>Strg+Shift+R</strong> (Hard Reload)
+- Oder: Browser-Einstellungen → Verlauf l&Ouml;schen → Bilder und Dateien im Cache
+
+<h3>2. Service Worker aktualisieren</h3>
+1. <strong>DevTools &Ouml;ffnen</strong> (F12)
+2. <strong>Application</strong> Tab
+3. <strong>Service Workers</strong> (links)
+4. <strong>"Unregister"</strong> klicken
+5. Seite neu laden
+
+<h3>3. Seite neu laden</h3>
+- <strong>Strg+F5</strong> (Hard Reload)
+- Oder: Seite schlie&szlig;en und neu &Ouml;ffnen
+
+---
+
+<h2>📋 GE&Auml;NDERTE DATEIEN</h2>
+
+Folgende Dateien wurden ge&Auml;ndert:
+
+- ✅ `autofix-client.js` - `window.enqueueError` exportiert
+- ✅ `sw.js` - Cache-Name aktualisiert (v1 → v2)
+- ✅ `index.html` - Telbank-Link in Toolbar hinzugef&Uuml;gt
+- ✅ `KRITISCHE-FEHLER-BEHEBUNG-KOMPLETT.md` - Dokumentation
+- ✅ `ALLE-FEHLER-BEHOBEN.md` - Zusammenfassung
+
+---
+
+<h2>🎯 ERFOLG</h2>
+
+Nach erfolgreichem Push:
+- ✅ Alle &Auml;nderungen sind auf GitHub
+- ✅ Cloudflare Pages deployt automatisch (falls GitHub Actions konfiguriert)
+- ✅ Website wird aktualisiert
+
+<strong>Status:</strong> Bereit f&Uuml;r Deployment!
+</body>
+</html>

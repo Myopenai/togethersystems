@@ -1,0 +1,750 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fabrikage Scripts Dashboard - .T. TogetherSystems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(57, 208, 255, 0.1), rgba(245, 101, 255, 0.1));
+            border-radius: 16px;
+            border: 2px solid rgba(57, 208, 255, 0.3);
+            margin-bottom: 30px;
+        }
+
+        /* TTT Logo Styles */
+        .ttt-logo {
+            position: relative;
+            background: linear-gradient(135deg, #003399 0%, #002266 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 51, 153, 0.4);
+            overflow: visible;
+            margin: 0 auto;
+        }
+
+        .ttt-logo .star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #39d0ff;
+            margin-bottom: 15px;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .badge {
+            padding: 5px 15px;
+            background: rgba(57, 208, 255, 0.2);
+            border: 1px solid rgba(57, 208, 255, 0.4);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #39d0ff;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(57, 208, 255, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(57, 208, 255, 0.2);
+            color: #39d0ff;
+            border: 1px solid rgba(57, 208, 255, 0.4);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(57, 208, 255, 0.3);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #39d0ff;
+            box-shadow: 0 0 10px rgba(57, 208, 255, 0.3);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .scripts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .script-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(57, 208, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .script-card:hover {
+            border-color: #39d0ff;
+            box-shadow: 0 5px 20px rgba(57, 208, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .script-card.running {
+            border-color: #f565ff;
+            box-shadow: 0 5px 20px rgba(245, 101, 255, 0.3);
+        }
+
+        .script-card.success {
+            border-color: #00ff88;
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .script-card.error {
+            border-color: #ff4444;
+            box-shadow: 0 5px 20px rgba(255, 68, 68, 0.2);
+        }
+
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .script-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #39d0ff;
+            flex: 1;
+        }
+
+        .script-category {
+            padding: 4px 12px;
+            background: rgba(57, 208, 255, 0.2);
+            border: 1px solid rgba(57, 208, 255, 0.4);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #39d0ff;
+        }
+
+        .script-description {
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .script-functions {
+            margin-bottom: 15px;
+        }
+
+        .script-functions .label {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .script-functions .functions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .function-tag {
+            padding: 3px 8px;
+            background: rgba(245, 101, 255, 0.2);
+            border: 1px solid rgba(245, 101, 255, 0.4);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #f565ff;
+        }
+
+        .script-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-run {
+            flex: 1;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #39d0ff, #f565ff);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-run:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(57, 208, 255, 0.4);
+        }
+
+        .btn-run:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-info {
+            padding: 10px 15px;
+            background: rgba(57, 208, 255, 0.2);
+            border: 1px solid rgba(57, 208, 255, 0.4);
+            border-radius: 8px;
+            color: #39d0ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-info:hover {
+            background: rgba(57, 208, 255, 0.3);
+        }
+
+        .script-status {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .script-status.show {
+            display: block;
+        }
+
+        .script-status.running {
+            color: #f565ff;
+        }
+
+        .script-status.success {
+            color: #00ff88;
+        }
+
+        .script-status.error {
+            color: #ff4444;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(57, 208, 255, 0.3);
+            border-top-color: #39d0ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 30px;
+        }
+    </style>
+  <script src="./console-monitor.js"></script>
+  <script src="./http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="css/teladia-complete-design-system.css">
+</head>
+<body>
+    <div class="header">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&utm_medium=referral&utm_source=widget" target="_blank" style="text-decoration: none; display: inline-block; position: relative;">
+                <div class="ttt-logo" style="width: 120px; height: 120px; margin: 0 auto; cursor: pointer;">
+                    <div class="star" style="top: 5%; left: 50%; transform: translateX(-50%);"></div>
+                    <div class="star" style="top: 15%; right: 15%;"></div>
+                    <div class="star" style="top: 50%; right: 5%; transform: translateY(-50%);"></div>
+                    <div class="star" style="bottom: 15%; right: 15%;"></div>
+                    <div class="star" style="bottom: 5%; left: 50%; transform: translateX(-50%);"></div>
+                    <div class="star" style="bottom: 15%; left: 15%;"></div>
+                    <div class="star" style="top: 50%; left: 5%; transform: translateY(-50%);"></div>
+                    <div class="star" style="top: 15%; left: 15%;"></div>
+                    <div class="star" style="top: 25%; right: 25%;"></div>
+                    <div class="star" style="bottom: 25%; left: 25%;"></div>
+                    <div style="font-size: 2.5rem; font-weight: 700; color: #39d0ff; text-shadow: 0 0 10px rgba(57, 208, 255, 0.8), 0 0 20px rgba(57, 208, 255, 0.6); letter-spacing: 4px; z-index: 2; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">TTT</div>
+                    <div style="font-size: 0.5rem; color: #ffffff; margin-top: 5px; text-align: center; z-index: 2; line-height: 1.2;">Wer nicht will, macht nicht – T<sub>m</sub>, T<sub>e</sub>, & T<sub>a</sub></div>
+                </div>
+            </a>
+            <div style="margin-top: 10px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="https://github.com/Myopenai" target="_blank" style="color: #f565ff; text-decoration: none; font-size: 0.9rem;">GitHub: Myopenai</a>
+                <a href="https://www.gofundme.com/f/magnitudo?utm_campaign=unknown&utm_medium=referral&utm_source=widget" target="_blank" style="color: #39d0ff; text-decoration: none; font-size: 0.9rem;">Žµ Magnitudo Musica Mundo</a>
+            </div>
+        </div>
+        <h1>š€ FABRIKAGE SCRIPTS DASHBOARD</h1>
+        <div class="subtitle">.T. TogetherSystems - ModularFlux Architecture</div>
+        <div class="subtitle" style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">Fabriquations Software Automatizations Productions Industrial Software Products</div>
+        <div class="subtitle" style="font-size: 0.85rem; color: #39d0ff; margin-top: 10px;">
+            <a href="modular-fabrikageindex.html" style="color: #39d0ff; text-decoration: none; border: 1px solid rgba(57, 208, 255, 0.4); padding: 8px 16px; border-radius: 8px; display: inline-block; transition: all 0.3s;" onmouseover="this.style.background='rgba(57, 208, 255, 0.2)'" onmouseout="this.style.background='transparent'">
+                §© Modular Fabrikations-Baukasten öffnen
+            </a>
+        </div>
+        <div class="badges">
+            <span class="badge">Version 3.0.0</span>
+            <span class="badge">IBM STANDARD</span>
+            <span class="badge">Automatische Updates</span>
+            <span class="badge">Extended TTT System</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <input type="text" class="search-box" id="searchBox" placeholder="” Skripte durchsuchen...">
+        <button class="btn" onclick="refreshScripts()">”„ Aktualisieren</button>
+        <button class="btn btn-secondary" onclick="showAllScripts()">“‹ Alle anzeigen</button>
+        <button class="btn btn-secondary" onclick="filterByCategory('')">·ï¸ Kategorien</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="value" id="totalScripts">0</div>
+            <div class="label">Gesamt Skripte</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="runningScripts">0</div>
+            <div class="label">Laufend</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="successScripts">0</div>
+            <div class="label">Erfolgreich</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="errorScripts">0</div>
+            <div class="label">Fehler</div>
+        </div>
+    </div>
+
+    <div class="scripts-grid" id="scriptsGrid">
+        <div class="no-results">Lade Skripte...</div>
+    </div>
+
+    <div class="last-updated" id="lastUpdated">
+        Letzte Aktualisierung: Wird geladen...
+    </div>
+
+    <script>
+        let allScripts = [];
+        let runningScripts = new Set();
+        let scriptResults = {};
+
+        // Skript-Beschreibungen (wird automatisch erweitert)
+        const scriptDescriptions = {
+            'FABRIKAGE-COMPLETE-TEST-AND-VERIFY-ALL': {
+                category: 'Test & Verify',
+                description: 'Vollständiger Test aller Komponenten: Lokale Dateien, Localhost-Server, Online-Deploy, Fehlerfreiheit',
+                functions: ['Test', 'Verify', 'Localhost', 'Online-Deploy', 'Error-Check']
+            },
+            'FABRIKAGE-FIX-LOCALHOST-AND-VERIFY': {
+                category: 'Fix & Verify',
+                description: 'Fixt Localhost-Probleme und verifiziert alles',
+                functions: ['Fix', 'Localhost', 'Verify', 'Server-Config']
+            },
+            'FABRIKAGE-TEST-ONLINE-DEPLOY-AND-LOCALHOST': {
+                category: 'Test',
+                description: 'Testet Online-Deploy und Localhost vollständig',
+                functions: ['Test', 'Online-Deploy', 'Localhost', 'Verification']
+            },
+            'FABRIKAGE-FINAL-DEPLOY-ALL-SERVERS': {
+                category: 'Deploy',
+                description: 'Finale Deployment aller Änderungen zu allen Git-Repositories',
+                functions: ['Deploy', 'Git', 'Push', 'All-Repos']
+            },
+            'FABRIKAGE-ULTIMATE-COMPLETE-UPDATE-DEPLOY': {
+                category: 'Update & Deploy',
+                description: 'Komplettes System-Update, Fixes und Deployment',
+                functions: ['Update', 'Fix', 'Deploy', 'Standards']
+            },
+            'FABRIKAGE-ULTIMATE-MIRROR-ENFORCE-AND-REVALIDATE': {
+                category: 'Mirror',
+                description: 'Enforced Mirror-Modell mit vollständiger Revalidierung',
+                functions: ['Mirror', 'Enforce', 'Revalidate', 'Gates']
+            },
+            'FABRIKAGE-ULTIMATE-COMPLETE-ALL': {
+                category: 'Complete',
+                description: 'Ultimative komplette Ausführung aller Phasen',
+                functions: ['Complete', 'All-Phases', 'Standards', 'TUEV']
+            },
+            'FABRIKAGE-COMPLETE-STANDARDS-IMPLEMENTATION': {
+                category: 'Standards',
+                description: 'Verifiziert und implementiert Code-Mirror Standards',
+                functions: ['Standards', 'Code-Mirror', 'Validation']
+            },
+            'FABRIKAGE-ULTIMATE-MASTER-ALL-PHASES': {
+                category: 'Master',
+                description: 'Master-Orchestrierung aller Fabrikage-Phasen',
+                functions: ['Master', 'Orchestration', 'All-Phases']
+            },
+            'FABRIKAGE-ULTIMATE-ALL-STANDARDS-COMPLETE': {
+                category: 'Standards',
+                description: 'Alle Standards komplett: Code-Mirror, Branding, Version, API',
+                functions: ['Standards', 'Complete', 'Validation']
+            },
+            'FABRIKAGE-ULTIMATE-COMPLETE-STANDARDS-TUEV-DEPLOY': {
+                category: 'Standards & TUEV',
+                description: 'Standards-Check, TUEV-Test, Error-Fixing und Deployment',
+                functions: ['Standards', 'TUEV', 'Fix', 'Deploy']
+            },
+            'FABRIKAGE-COMPLETE-MIRROR-INTEGRATION': {
+                category: 'Mirror',
+                description: 'Komplette Code-Mirror Integration',
+                functions: ['Mirror', 'Integration', 'Sync']
+            },
+            'FABRIKAGE-MIRROR-VALIDATE-ALL-ERRORS': {
+                category: 'Mirror',
+                description: 'Validiert alle Fehler im Mirror-System',
+                functions: ['Mirror', 'Validate', 'Errors']
+            },
+            'FABRIKAGE-ERROR-PREVENTION-SYSTEM': {
+                category: 'Error Prevention',
+                description: 'Fehlerpräventions-System für proaktive Fehlervermeidung',
+                functions: ['Error-Prevention', 'Proactive', 'Validation']
+            },
+            'FABRIKAGE-100-PERCENT-FIX-ALL-AND-TEST': {
+                category: 'Fix & Test',
+                description: '100% Fix aller Fehler und vollständiger Test',
+                functions: ['Fix', 'Test', '100-Percent']
+            }
+        };
+
+        // Automatische Kategorisierung basierend auf Dateinamen
+        function categorizeScript(name) {
+            name = name.toUpperCase();
+            if (name.includes('TEST')) return 'Test';
+            if (name.includes('DEPLOY')) return 'Deploy';
+            if (name.includes('FIX')) return 'Fix';
+            if (name.includes('MIRROR')) return 'Mirror';
+            if (name.includes('STANDARD')) return 'Standards';
+            if (name.includes('COMPLETE') || name.includes('ALL')) return 'Complete';
+            if (name.includes('ERROR')) return 'Error Prevention';
+            if (name.includes('MASTER')) return 'Master';
+            if (name.includes('UPDATE')) return 'Update';
+            return 'Other';
+        }
+
+        // Lade Skripte vom Server
+        async function loadScripts() {
+            try {
+                // Versuche API-Endpoint (wenn Server läuft)
+                let response;
+                try {
+                    response = await fetch('/api/scripts/list');
+                } catch (e) {
+                    // Fallback: Lade direkt vom Dateisystem (für GitHub Pages)
+                    response = await fetch('/scripts-list.json');
+                }
+                
+                const data = await response.json();
+                allScripts = data.scripts || [];
+                renderScripts();
+                updateStats();
+                document.getElementById('lastUpdated').textContent = 
+                    `Letzte Aktualisierung: ${new Date().toLocaleString('de-DE')}`;
+            } catch (error) {
+                console.error('Fehler beim Laden der Skripte:', error);
+                // Fallback: Verwende statische Liste
+                allScripts = Object.keys(scriptDescriptions).map(k => k + '.ps1');
+                renderScripts();
+                updateStats();
+                document.getElementById('scriptsGrid').innerHTML = 
+                    '<div class="no-results">âš ï¸ Offline-Modus - Verwende statische Liste</div>';
+            }
+        }
+
+        // Rendere Skripte
+        function renderScripts(filteredScripts = null) {
+            const scripts = filteredScripts || allScripts;
+            const grid = document.getElementById('scriptsGrid');
+
+            if (scripts.length === 0) {
+                grid.innerHTML = '<div class="no-results">Keine Skripte gefunden</div>';
+                return;
+            }
+
+            grid.innerHTML = scripts.map(script => {
+                const name = script.replace('.ps1', '').replace('FABRIKAGE-', '');
+                const info = scriptDescriptions[script.replace('.ps1', '')] || {
+                    category: categorizeScript(script),
+                    description: 'Automatisch erkanntes Skript - Beschreibung wird aktualisiert',
+                    functions: [categorizeScript(script)]
+                };
+
+                const isRunning = runningScripts.has(script);
+                const result = scriptResults[script];
+                let cardClass = '';
+                if (isRunning) cardClass = 'running';
+                else if (result?.success) cardClass = 'success';
+                else if (result?.error) cardClass = 'error';
+
+                return `
+                    <div class="script-card ${cardClass}" id="card-${script}">
+                        <div class="script-header">
+                            <div class="script-name">${name}</div>
+                            <span class="script-category">${info.category}</span>
+                        </div>
+                        <div class="script-description">${info.description}</div>
+                        <div class="script-functions">
+                            <div class="label">Funktionen:</div>
+                            <div class="functions">
+                                ${info.functions.map(f => `<span class="function-tag">${f}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="script-actions">
+                            <button class="btn-run" onclick="runScript('${script}')" ${isRunning ? 'disabled' : ''}>
+                                ${isRunning ? '<span class="loading"></span>Läuft...' : '▶️ Ausführen'}
+                            </button>
+                            <button class="btn-info" onclick="showScriptInfo('${script}')">â„¹ï¸ Info</button>
+                        </div>
+                        ${result ? `
+                            <div class="script-status show ${result.success ? 'success' : 'error'}">
+                                ${result.success ? '✅ Erfolgreich' : '❌ Fehler'}: ${result.message || ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Führe Skript aus
+        async function runScript(scriptName) {
+            if (runningScripts.has(scriptName)) return;
+
+            runningScripts.add(scriptName);
+            updateStats();
+            renderScripts();
+
+            const card = document.getElementById(`card-${scriptName}`);
+            if (card) {
+                card.classList.add('running');
+            }
+
+            try {
+                // Versuche API-Endpoint (wenn Server läuft)
+                let response;
+                try {
+                    response = await fetch('/api/scripts/run', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ script: scriptName })
+                    });
+                } catch (e) {
+                    // Fallback: Zeige Hinweis für GitHub Pages
+                    throw new Error('');
+                }
+
+                const data = await response.json();
+                
+                scriptResults[scriptName] = {
+                    success: data.success !== false,
+                    message: data.message || data.output || (data.success ? 'Erfolgreich ausgeführt' : 'Fehler'),
+                    timestamp: new Date().toISOString()
+                };
+
+                if (card) {
+                    card.classList.remove('running');
+                    card.classList.add(data.success !== false ? 'success' : 'error');
+                }
+            } catch (error) {
+                scriptResults[scriptName] = {
+                    success: false,
+                    message: `Fehler: ${error.message}`,
+                    timestamp: new Date().toISOString()
+                };
+                if (card) {
+                    card.classList.remove('running');
+                    card.classList.add('error');
+                }
+            } finally {
+                runningScripts.delete(scriptName);
+                updateStats();
+                renderScripts();
+            }
+        }
+
+        // Zeige Skript-Info
+        function showScriptInfo(scriptName) {
+            const info = scriptDescriptions[scriptName.replace('.ps1', '')] || {
+                category: categorizeScript(scriptName),
+                description: 'Automatisch erkanntes Skript',
+                functions: []
+            };
+            alert(`Skript: ${scriptName}\n\nKategorie: ${info.category}\n\nBeschreibung: ${info.description}\n\nFunktionen: ${info.functions.join(', ')}`);
+        }
+
+        // Suche
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allScripts.filter(s => 
+                s.toLowerCase().includes(query) || 
+                (scriptDescriptions[s.replace('.ps1', '')]?.description || '').toLowerCase().includes(query)
+            );
+            renderScripts(filtered);
+        });
+
+        // Filter nach Kategorie
+        function filterByCategory(category) {
+            if (!category) {
+                const categories = [...new Set(allScripts.map(s => {
+                    const info = scriptDescriptions[s.replace('.ps1', '')];
+                    return info?.category || categorizeScript(s);
+                }))];
+                const choice = prompt(`Wähle Kategorie:\n${categories.map((c, i) => `${i + 1}. ${c}`).join('\n')}`);
+                if (choice && categories[parseInt(choice) - 1]) {
+                    category = categories[parseInt(choice) - 1];
+                } else {
+                    return;
+                }
+            }
+
+            const filtered = allScripts.filter(s => {
+                const info = scriptDescriptions[s.replace('.ps1', '')];
+                return (info?.category || categorizeScript(s)) === category;
+            });
+            renderScripts(filtered);
+        }
+
+        // Zeige alle Skripte
+        function showAllScripts() {
+            document.getElementById('searchBox').value = '';
+            renderScripts();
+        }
+
+        // Aktualisiere Skripte
+        function refreshScripts() {
+            loadScripts();
+        }
+
+        // Update Statistiken
+        function updateStats() {
+            document.getElementById('totalScripts').textContent = allScripts.length;
+            document.getElementById('runningScripts').textContent = runningScripts.size;
+            document.getElementById('successScripts').textContent = 
+                Object.values(scriptResults).filter(r => r.success).length;
+            document.getElementById('errorScripts').textContent = 
+                Object.values(scriptResults).filter(r => r.error).length;
+        }
+
+        // Auto-Refresh alle 30 Sekunden
+        setInterval(() => {
+            if (runningScripts.size === 0) {
+                loadScripts();
+            }
+        }, 30000);
+
+        // Initial Load
+        loadScripts();
+    </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,531 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dd5be Broadcast - Dating Portal</title>
+  <!-- BRANDING: .T. TogetherSystems - ModularFlux Architecture -->
+  <!-- VERSION: 3.0.0 -->
+  <!-- STANDARD: IBM STANDARD - PERMANENT AKTIV -->
+  <script src="../../js/console-error-controller.js"></script>
+  <script src="../../js/console-cache-system.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <script src="../love-score-engine.js"></script>
+  <script src="../ocr-engine.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --accent2: #f59e0b;
+      --accent3: #ef4444;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #0f1419 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .header h1 {
+      color: var(--accent);
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .nav-tab {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+    }
+    .nav-tab:hover {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .nav-tab.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #00100a;
+    }
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .panel h2 {
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    .input-group label {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .input-group textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 120px;
+    }
+    .input-group input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: #00100a;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+      width: 100%;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+    .btn-secondary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      margin-top: 12px;
+    }
+    .love-score-display {
+      margin-top: 24px;
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 12px;
+      border-left: 4px solid var(--accent);
+    }
+    .score-bar {
+      width: 100%;
+      height: 30px;
+      background: var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+      margin: 16px 0;
+      position: relative;
+    }
+    .score-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.5s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00100a;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .components {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .component {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .component-label {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .component-value {
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .interpretation {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .hive-rooms-list {
+      margin-top: 24px;
+    }
+    .hive-room-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .hive-room-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .hive-room-card h3 {
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .hive-room-meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1> dd5be Broadcast</h1>
+      <p>Bravo Echo Studio - Dating Portal mit Liebeserkennung</p>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('analyze')">“ Nachricht analysieren</button>
+      <button class="nav-tab" onclick="showTab('hive')"> Wabenräume</button>
+      <button class="nav-tab" onclick="showTab('ritual')">âœ¨ Spiel eröffnen</button>
+      <button class="nav-tab" onclick="showTab('memory')">“š Zeiten & Erinnerungen</button>
+    </div>
+
+    <!-- Tab: Nachricht analysieren -->
+    <div id="tab-analyze" class="main-content">
+      <div class="panel">
+        <h2>“ Nachricht analysieren</h2>
+        <div class="input-group">
+          <label>Text eingeben oder Bild hochladen:</label>
+          <textarea id="messageInput" placeholder="Beispiel: 'Kann ich dir helfen?' â†’ 'Nein.' â†’ 'Aber wenn du willst, bin ich da.'"></textarea>
+        </div>
+        <div class="input-group">
+          <label>Oder Bild/Brief hochladen (OCR):</label>
+          <input type="file" id="imageInput" accept="image/*">
+        </div>
+        <button class="btn" onclick="analyzeMessage()">” Analyse starten</button>
+        <button class="btn btn-secondary" onclick="clearAnalysis()">Löschen</button>
+      </div>
+
+      <div class="panel">
+        <h2>’š LoveScore Ergebnis</h2>
+        <div id="loveScoreDisplay" class="hidden">
+          <div class="love-score-display">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: var(--muted);">LoveScore</span>
+              <span id="scoreValue" style="color: var(--accent); font-size: 24px; font-weight: 700;">0</span>
+            </div>
+            <div class="score-bar">
+              <div id="scoreFill" class="score-fill" style="width: 0%;">0%</div>
+            </div>
+            
+            <div class="components">
+              <div class="component">
+                <div class="component-label">D</div>
+                <div id="compD" class="component-value">0</div>
+              </div>
+              <div class="component">
+                <div class="component-label">A</div>
+                <div id="compA" class="component-value">0</div>
+              </div>
+              <div class="component">
+                <div class="component-label">K</div>
+                <div id="compK" class="component-value">0</div>
+              </div>
+              <div class="component">
+                <div class="component-label">S</div>
+                <div id="compS" class="component-value">0</div>
+              </div>
+              <div class="component">
+                <div class="component-label">R</div>
+                <div id="compR" class="component-value">0</div>
+              </div>
+            </div>
+            
+            <div class="interpretation" id="interpretation">
+              Warte auf Analyse...
+            </div>
+            
+            <button class="btn btn-secondary" onclick="shareToHive()" style="margin-top: 16px;">
+               In Wabe teilen
+            </button>
+          </div>
+        </div>
+        <div id="noAnalysis" style="text-align: center; color: var(--muted); padding: 40px;">
+          Keine Analyse durchgeführt. Gebe einen Text ein oder lade ein Bild hoch.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Wabenräume -->
+    <div id="tab-hive" class="hidden">
+      <div class="panel">
+        <h2> Meine Wabenräume</h2>
+        <div class="hive-rooms-list" id="hiveRoomsList">
+          <div style="text-align: center; color: var(--muted); padding: 40px;">
+            Keine Wabenräume vorhanden. Erstelle einen neuen Raum über "Spiel eröffnen".
+          </div>
+        </div>
+        <button class="btn" onclick="showTab('ritual')" style="margin-top: 20px;">
+          âœ¨ Neuen Raum erstellen
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab: Ritual -->
+    <div id="tab-ritual" class="hidden">
+      <div class="panel">
+        <h2>âœ¨ Spiel eröffnen</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">
+          Ein Spiel oder eine Nachricht zu beginnen ist mehr als Zeitvertreib.
+          In vielen Kulturen wurde gespielt oder geschrieben, um Frieden und Nähe zu stiften.
+        </p>
+        <div class="input-group">
+          <label>Glückszahl wählen:</label>
+          <input type="number" id="luckyNumber" min="1" max="999999" value="777" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text);">
+        </div>
+        <div class="input-group">
+          <label>Wabenstil:</label>
+          <select id="hiveStyle" style="width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text);">
+            <option value="ruhig">Ruhig</option>
+            <option value="feierlich">Feierlich</option>
+            <option value="kreativ">Kreativ</option>
+            <option value="futuristisch">Futuristisch</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>
+            <input type="checkbox" id="promiseCheck" style="margin-right: 8px;">
+            Ich begegne anderen ohne Vorurteil und nutze diesen Raum für friedliche Begegnung.
+          </label>
+        </div>
+        <button class="btn" onclick="createHiveRoom()"> Wabe betreten</button>
+      </div>
+    </div>
+
+    <!-- Tab: Memory -->
+    <div id="tab-memory" class="hidden">
+      <div class="panel">
+        <h2>“š Zeiten & Erinnerungen</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">
+          Öffne den Nostalgie-Katalog (nBlockbuster) mit 50+/50â€‘ Jahrspanels.
+        </p>
+        <button class="btn" onclick="openNblockbuster()">“š Nostalgie-Katalog öffnen</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin + '/api';
+    let currentAnalysis = null;
+    const loveEngine = new LoveScoreEngine();
+    const ocrEngine = new OCREngine();
+
+    // Tab-Navigation
+    function showTab(tabName) {
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('[id^="tab-"]').forEach(panel => panel.classList.add('hidden'));
+      
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+    }
+
+    // Nachricht analysieren
+    async function analyzeMessage() {
+      const textInput = document.getElementById('messageInput').value.trim();
+      const imageInput = document.getElementById('imageInput').files[0];
+      
+      let text = textInput;
+      
+      // OCR falls Bild hochgeladen
+      if (imageInput && !text) {
+        try {
+          const ocrResult = await ocrEngine.extractTextFromFile(imageInput);
+          if (ocrResult.success) {
+            text = ocrResult.text;
+            document.getElementById('messageInput').value = text;
+          } else {
+            alert('OCR-Fehler: ' + (ocrResult.error || 'Unbekannter Fehler'));
+            return;
+          }
+        } catch (e) {
+          alert('OCR-Fehler: ' + e.message);
+          return;
+        }
+      }
+      
+      if (!text) {
+        alert('Bitte Text eingeben oder Bild hochladen');
+        return;
+      }
+      
+      // LoveScore berechnen
+      const result = loveEngine.calculateLoveScore(text, {
+        relationshipType: 'unknown',
+        historyScore: 0
+      });
+      
+      currentAnalysis = result;
+      
+      // Anzeige aktualisieren
+      displayLoveScore(result);
+    }
+
+    function displayLoveScore(result) {
+      document.getElementById('loveScoreDisplay').classList.remove('hidden');
+      document.getElementById('noAnalysis').classList.add('hidden');
+      
+      // Score
+      document.getElementById('scoreValue').textContent = result.score;
+      document.getElementById('scoreFill').style.width = result.score + '%';
+      document.getElementById('scoreFill').textContent = result.score + '%';
+      
+      // Komponenten
+      document.getElementById('compD').textContent = Math.round(result.components.D);
+      document.getElementById('compA').textContent = Math.round(result.components.A);
+      document.getElementById('compK').textContent = Math.round(result.components.K);
+      document.getElementById('compS').textContent = Math.round(result.components.S);
+      document.getElementById('compR').textContent = Math.round(result.components.R);
+      
+      // Interpretation
+      document.getElementById('interpretation').textContent = result.interpretation;
+      
+      if (result.containsLove) {
+        document.getElementById('interpretation').style.borderLeftColor = var(--accent3);
+        document.getElementById('interpretation').style.background = 'rgba(239, 68, 68, 0.1)';
+      }
+    }
+
+    function clearAnalysis() {
+      document.getElementById('messageInput').value = '';
+      document.getElementById('imageInput').value = '';
+      document.getElementById('loveScoreDisplay').classList.add('hidden');
+      document.getElementById('noAnalysis').classList.remove('hidden');
+      currentAnalysis = null;
+    }
+
+    async function shareToHive() {
+      if (!currentAnalysis) {
+        alert('Keine Analyse vorhanden');
+        return;
+      }
+      
+      // Öffne Ritual-Tab
+      showTab('ritual');
+      
+      // Optional: Text in HiveRoom posten
+      alert('Analyse wird in Wabe geteilt. Erstelle zuerst einen Wabenraum.');
+    }
+
+    async function createHiveRoom() {
+      const luckyNumber = parseInt(document.getElementById('luckyNumber').value);
+      const hiveStyle = document.getElementById('hiveStyle').value;
+      const promiseConfirmed = document.getElementById('promiseCheck').checked;
+      
+      if (!promiseConfirmed) {
+        alert('Bitte bestätige das Friedensversprechen');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE}/hive/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lucky_number: luckyNumber,
+            style: hiveStyle,
+            visibility: 'PUBLIC_NUMBER',
+            title: `Wabe ${luckyNumber}`
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.hive_room_id) {
+          alert(`Wabe ${luckyNumber} erstellt!`);
+          window.location.href = `/hive/${data.public_number || data.hive_room_id}`;
+        }
+      } catch (e) {
+        console.error('Create hive error:', e);
+        alert('Fehler beim Erstellen der Wabe');
+      }
+    }
+
+    function openNblockbuster() {
+      window.location.href = '../nblockbuster/frontend/year-panel.html';
+    }
+
+    // Image Input Handler
+    document.getElementById('imageInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        // Optional: Vorschau anzeigen
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          // Bild-Vorschau könnte hier angezeigt werden
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
+
+

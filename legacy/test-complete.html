@@ -1,0 +1,858 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Kompletter Funktions-Test · Modulares Fabrikage System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #0a0e14;
+      color: #e0e0e0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .test-header {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, rgba(57, 208, 255, 0.1), rgba(245, 101, 255, 0.1));
+      border-radius: 20px;
+      margin-bottom: 40px;
+      border: 2px solid rgba(57, 208, 255, 0.3);
+    }
+    
+    .test-header h1 {
+      font-size: 2.5rem;
+      color: #39d0ff;
+      margin-bottom: 10px;
+    }
+    
+    .test-section {
+      background: rgba(20, 25, 35, 0.8);
+      border: 1px solid rgba(57, 208, 255, 0.2);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 30px 0;
+    }
+    
+    .test-section h2 {
+      color: #39d0ff;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+    
+    .test-item {
+      background: rgba(57, 208, 255, 0.05);
+      border-left: 4px solid #39d0ff;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+    }
+    
+    .test-item.pass {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.05);
+    }
+    
+    .test-item.fail {
+      border-left-color: #ef4444;
+      background: rgba(239, 68, 68, 0.05);
+    }
+    
+    .test-item.running {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.05);
+    }
+    
+    .test-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    
+    .status-pass {
+      background: #10b981;
+      color: white;
+    }
+    
+    .status-fail {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .status-running {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    .btn {
+      background: linear-gradient(135deg, #39d0ff, #f565ff);
+      color: #020617;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    
+    .btn:hover {
+      opacity: 0.9;
+    }
+    
+    .summary {
+      background: linear-gradient(135deg, rgba(57, 208, 255, 0.2), rgba(245, 101, 255, 0.2));
+      border: 2px solid rgba(57, 208, 255, 0.5);
+      padding: 30px;
+      border-radius: 15px;
+      margin: 30px 0;
+      text-align: center;
+    }
+    
+    .summary h2 {
+      color: #39d0ff;
+      margin-bottom: 20px;
+    }
+    
+    .summary-stats {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #39d0ff;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #a0a0a0;
+      margin-top: 5px;
+    }
+  </style>
+  <script src="../console-monitor.js"></script>
+  <script src="../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../css/teladia-complete-design-system.css">
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>§ª Kompletter Funktions-Test</h1>
+      <p>Modulares Fabrikage System · 100%ige Funktionsprüfung</p>
+      <button class="btn" onclick="runAllTests()">▶️ Alle Tests starten</button>
+      <button class="btn" onclick="window.location.href='index.html'">â† Zurück zum System</button>
+    </div>
+    
+    <div id="test-results"></div>
+    
+    <div class="summary" id="summary" style="display:none">
+      <h2>Zusammenfassung</h2>
+      <div class="summary-stats">
+        <div class="stat">
+          <div class="stat-value" id="total-tests">0</div>
+          <div class="stat-label">Gesamt</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="passed-tests" style="color:#10b981">0</div>
+          <div class="stat-label">Bestanden</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="failed-tests" style="color:#ef4444">0</div>
+          <div class="stat-label">Fehlgeschlagen</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="success-rate">0%</div>
+          <div class="stat-label">Erfolgsrate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Lade alle Skripte für Tests -->
+  <script src="js/factory-engine.js"></script>
+  <script src="js/module-system.js"></script>
+  <script src="js/link-system.js"></script>
+  <script src="js/data-model.js"></script>
+  <script src="js/main.js"></script>
+  
+  <script>
+    // Test Framework
+    const TestRunner = {
+      tests: [],
+      results: {
+        total: 0,
+        passed: 0,
+        failed: 0
+      },
+      
+      addTest(name, fn) {
+        this.tests.push({ name, fn, status: 'pending' });
+      },
+      
+      async runAll() {
+        this.results = { total: 0, passed: 0, failed: 0 };
+        const container = document.getElementById('test-results');
+        container.innerHTML = '';
+        
+        for (let i = 0; i < this.tests.length; i++) {
+          const test = this.tests[i];
+          this.results.total++;
+          
+          const testItem = document.createElement('div');
+          testItem.className = 'test-item running';
+          testItem.id = `test-${i}`;
+          testItem.innerHTML = `
+            <strong>${test.name}</strong>
+            <span class="test-status status-running">Läuft...</span>
+            <div class="test-details"></div>
+          `;
+          container.appendChild(testItem);
+          
+          try {
+            const result = await test.fn();
+            if (result === true || (result && result.pass === true)) {
+              testItem.className = 'test-item pass';
+              testItem.querySelector('.test-status').className = 'test-status status-pass';
+              testItem.querySelector('.test-status').textContent = '✅ BESTANDEN';
+              testItem.querySelector('.test-details').innerHTML = result.message || 'Test erfolgreich';
+              this.results.passed++;
+            } else {
+              testItem.className = 'test-item fail';
+              testItem.querySelector('.test-status').className = 'test-status status-fail';
+              testItem.querySelector('.test-status').textContent = '❌ FEHLGESCHLAGEN';
+              testItem.querySelector('.test-details').innerHTML = result.message || result || 'Test fehlgeschlagen';
+              this.results.failed++;
+            }
+          } catch (e) {
+            testItem.className = 'test-item fail';
+            testItem.querySelector('.test-status').className = 'test-status status-fail';
+            testItem.querySelector('.test-status').textContent = '❌ FEHLER';
+            testItem.querySelector('.test-details').innerHTML = `Fehler: ${e.message}`;
+            this.results.failed++;
+          }
+        }
+        
+        this.showSummary();
+      },
+      
+      showSummary() {
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+        
+        document.getElementById('total-tests').textContent = this.results.total;
+        document.getElementById('passed-tests').textContent = this.results.passed;
+        document.getElementById('failed-tests').textContent = this.results.failed;
+        
+        const successRate = this.results.total > 0 
+          ? Math.round((this.results.passed / this.results.total) * 100) 
+          : 0;
+        document.getElementById('success-rate').textContent = successRate + '%';
+        
+        if (this.results.failed === 0) {
+          summary.style.borderColor = '#10b981';
+          summary.innerHTML = `
+            <h2 style="color:#10b981">Ž‰ ALLE TESTS BESTANDEN!</h2>
+            ${summary.innerHTML}
+          `;
+        }
+      }
+    };
+    
+    // ============================================================================
+    // TEST 1: FactoryEngine Initialisierung
+    // ============================================================================
+    TestRunner.addTest('FactoryEngine Initialisierung', () => {
+      if (typeof window.factoryEngine === 'undefined') {
+        return { pass: false, message: 'FactoryEngine ist nicht definiert' };
+      }
+      if (!window.factoryEngine.modules) {
+        return { pass: false, message: 'FactoryEngine.modules fehlt' };
+      }
+      if (!window.factoryEngine.links) {
+        return { pass: false, message: 'FactoryEngine.links fehlt' };
+      }
+      if (typeof window.factoryEngine.createModule !== 'function') {
+        return { pass: false, message: 'createModule Funktion fehlt' };
+      }
+      return { pass: true, message: 'FactoryEngine korrekt initialisiert' };
+    });
+    
+    // ============================================================================
+    // TEST 2: Module erstellen
+    // ============================================================================
+    TestRunner.addTest('Module erstellen (A-N)', async () => {
+      const modules = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
+      const created = [];
+      
+      for (const type of modules) {
+        const module = window.factoryEngine.createModule(type, 100, 100);
+        if (!module) {
+          return { pass: false, message: `Modul ${type} konnte nicht erstellt werden` };
+        }
+        if (module.type !== type) {
+          return { pass: false, message: `Modul ${type} hat falschen Typ` };
+        }
+        created.push(module);
+      }
+      
+      if (created.length !== modules.length) {
+        return { pass: false, message: `Nur ${created.length} von ${modules.length} Modulen erstellt` };
+      }
+      
+      return { pass: true, message: `${created.length} Module erfolgreich erstellt` };
+    });
+    
+    // ============================================================================
+    // TEST 3: Module verschieben
+    // ============================================================================
+    TestRunner.addTest('Module verschieben', () => {
+      const module = window.factoryEngine.createModule('A', 50, 50);
+      if (!module) {
+        return { pass: false, message: 'Modul konnte nicht erstellt werden' };
+      }
+      
+      window.factoryEngine.updateModulePosition(module.id, 200, 300);
+      const updated = window.factoryEngine.modules.get(module.id);
+      
+      if (updated.x !== 200 || updated.y !== 300) {
+        return { pass: false, message: `Position nicht aktualisiert: erwartet (200, 300), erhalten (${updated.x}, ${updated.y})` };
+      }
+      
+      return { pass: true, message: 'Modul erfolgreich verschoben' };
+    });
+    
+    // ============================================================================
+    // TEST 4: Module verbinden
+    // ============================================================================
+    TestRunner.addTest('Module verbinden', () => {
+      const module1 = window.factoryEngine.createModule('A', 100, 100);
+      const module2 = window.factoryEngine.createModule('B', 300, 100);
+      
+      if (!module1 || !module2) {
+        return { pass: false, message: 'Module konnten nicht erstellt werden' };
+      }
+      
+      const link = window.factoryEngine.createLink(
+        module1.id, 'material',
+        module2.id, 'material'
+      );
+      
+      if (!link) {
+        return { pass: false, message: 'Verbindung konnte nicht erstellt werden' };
+      }
+      
+      if (link.sourceModule !== module1.id || link.targetModule !== module2.id) {
+        return { pass: false, message: 'Verbindung hat falsche Module' };
+      }
+      
+      return { pass: true, message: 'Module erfolgreich verbunden' };
+    });
+    
+    // ============================================================================
+    // TEST 5: Module löschen
+    // ============================================================================
+    TestRunner.addTest('Module löschen', () => {
+      const module = window.factoryEngine.createModule('A', 100, 100);
+      if (!module) {
+        return { pass: false, message: 'Modul konnte nicht erstellt werden' };
+      }
+      
+      const moduleId = module.id;
+      window.factoryEngine.deleteModule(moduleId);
+      
+      if (window.factoryEngine.modules.has(moduleId)) {
+        return { pass: false, message: 'Modul wurde nicht gelöscht' };
+      }
+      
+      return { pass: true, message: 'Modul erfolgreich gelöscht' };
+    });
+    
+    // ============================================================================
+    // TEST 6: Verbindungen löschen
+    // ============================================================================
+    TestRunner.addTest('Verbindungen löschen', () => {
+      const module1 = window.factoryEngine.createModule('A', 100, 100);
+      const module2 = window.factoryEngine.createModule('B', 300, 100);
+      
+      const link = window.factoryEngine.createLink(
+        module1.id, 'material',
+        module2.id, 'material'
+      );
+      
+      if (!link) {
+        return { pass: false, message: 'Verbindung konnte nicht erstellt werden' };
+      }
+      
+      const linkId = link.id;
+      window.factoryEngine.deleteLink(linkId);
+      
+      if (window.factoryEngine.links.has(linkId)) {
+        return { pass: false, message: 'Verbindung wurde nicht gelöscht' };
+      }
+      
+      return { pass: true, message: 'Verbindung erfolgreich gelöscht' };
+    });
+    
+    // ============================================================================
+    // TEST 7: Speichern
+    // ============================================================================
+    TestRunner.addTest('Konfiguration speichern', () => {
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      const module = window.factoryEngine.createModule('A', 100, 100);
+      const data = window.factoryEngine.save();
+      
+      if (!data) {
+        return { pass: false, message: 'Speichern hat keine Daten zurückgegeben' };
+      }
+      
+      try {
+        const parsed = JSON.parse(data);
+        if (!parsed.modules || !Array.isArray(parsed.modules)) {
+          return { pass: false, message: 'Gespeicherte Daten haben falsches Format' };
+        }
+        if (parsed.modules.length !== 1) {
+          return { pass: false, message: `Erwartet 1 Modul, erhalten ${parsed.modules.length}` };
+        }
+      } catch (e) {
+        return { pass: false, message: `JSON-Parsing fehlgeschlagen: ${e.message}` };
+      }
+      
+      return { pass: true, message: 'Konfiguration erfolgreich gespeichert' };
+    });
+    
+    // ============================================================================
+    // TEST 8: Laden
+    // ============================================================================
+    TestRunner.addTest('Konfiguration laden', () => {
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      const module = window.factoryEngine.createModule('A', 100, 100);
+      const link = window.factoryEngine.createLink(
+        module.id, 'material',
+        window.factoryEngine.createModule('B', 300, 100).id, 'material'
+      );
+      
+      const savedData = window.factoryEngine.save();
+      
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      const loaded = window.factoryEngine.load(savedData);
+      
+      if (!loaded) {
+        return { pass: false, message: 'Laden hat false zurückgegeben' };
+      }
+      
+      if (window.factoryEngine.modules.size !== 2) {
+        return { pass: false, message: `Erwartet 2 Module, erhalten ${window.factoryEngine.modules.size}` };
+      }
+      
+      if (window.factoryEngine.links.size !== 1) {
+        return { pass: false, message: `Erwartet 1 Verbindung, erhalten ${window.factoryEngine.links.size}` };
+      }
+      
+      return { pass: true, message: 'Konfiguration erfolgreich geladen' };
+    });
+    
+    // ============================================================================
+    // TEST 9: Render-Funktionen
+    // ============================================================================
+    TestRunner.addTest('Render-Funktionen', () => {
+      if (typeof window.renderModules !== 'function') {
+        return { pass: false, message: 'renderModules Funktion fehlt' };
+      }
+      if (typeof window.renderLinks !== 'function') {
+        return { pass: false, message: 'renderLinks Funktion fehlt' };
+      }
+      
+      // Test ob Funktionen ohne Fehler laufen
+      try {
+        window.factoryEngine.modules.clear();
+        window.factoryEngine.links.clear();
+        window.factoryEngine.createModule('A', 100, 100);
+        window.renderModules();
+        window.renderLinks();
+      } catch (e) {
+        return { pass: false, message: `Render-Fehler: ${e.message}` };
+      }
+      
+      return { pass: true, message: 'Render-Funktionen funktionieren' };
+    });
+    
+    // ============================================================================
+    // TEST 10: DOM-Elemente
+    // ============================================================================
+    TestRunner.addTest('DOM-Elemente vorhanden', () => {
+      const required = [
+        'modules-container',
+        'links-svg',
+        'workspace',
+        'module-count',
+        'link-count',
+        'system-status'
+      ];
+      
+      const missing = [];
+      for (const id of required) {
+        if (!document.getElementById(id)) {
+          missing.push(id);
+        }
+      }
+      
+      if (missing.length > 0) {
+        return { pass: false, message: `Fehlende DOM-Elemente: ${missing.join(', ')}` };
+      }
+      
+      return { pass: true, message: 'Alle DOM-Elemente vorhanden' };
+    });
+    
+    // ============================================================================
+    // TEST 11: Module-Konfigurationen
+    // ============================================================================
+    TestRunner.addTest('Alle Module-Konfigurationen', () => {
+      const modules = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+      const missing = [];
+      
+      for (const type of modules) {
+        const config = window.factoryEngine.getModuleConfig(type);
+        if (!config || !config.name || config.name === 'Unbekannt') {
+          missing.push(type);
+        }
+      }
+      
+      if (missing.length > 0) {
+        return { pass: false, message: `Fehlende Konfigurationen: ${missing.join(', ')}` };
+      }
+      
+      return { pass: true, message: 'Alle 15 Module-Konfigurationen vorhanden' };
+    });
+    
+    // ============================================================================
+    // TEST 12: Port-Verbindungen
+    // ============================================================================
+    TestRunner.addTest('Port-Verbindungen validieren', () => {
+      const module1 = window.factoryEngine.createModule('A', 100, 100); // Output only
+      const module2 = window.factoryEngine.createModule('B', 300, 100); // Input + Output
+      
+      // Test: Output zu Input
+      const link1 = window.factoryEngine.createLink(
+        module1.id, 'material',
+        module2.id, 'material'
+      );
+      
+      if (!link1) {
+        return { pass: false, message: 'Output-zu-Input Verbindung fehlgeschlagen' };
+      }
+      
+      // Test: Selbst-Verbindung sollte fehlschlagen
+      const link2 = window.factoryEngine.createLink(
+        module1.id, 'material',
+        module1.id, 'material'
+      );
+      
+      if (link2) {
+        return { pass: false, message: 'Selbst-Verbindung sollte nicht möglich sein' };
+      }
+      
+      return { pass: true, message: 'Port-Verbindungen validiert' };
+    });
+    
+    // ============================================================================
+    // TEST 13: Update Counts
+    // ============================================================================
+    TestRunner.addTest('Update Counts', () => {
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      window.factoryEngine.createModule('A', 100, 100);
+      window.factoryEngine.createModule('B', 200, 100);
+      window.factoryEngine.updateCounts();
+      
+      const moduleCount = document.getElementById('module-count');
+      const linkCount = document.getElementById('link-count');
+      
+      if (!moduleCount || moduleCount.textContent !== '2') {
+        return { pass: false, message: `Module-Count falsch: erwartet 2, erhalten ${moduleCount ? moduleCount.textContent : 'null'}` };
+      }
+      
+      if (!linkCount || linkCount.textContent !== '0') {
+        return { pass: false, message: `Link-Count falsch: erwartet 0, erhalten ${linkCount ? linkCount.textContent : 'null'}` };
+      }
+      
+      return { pass: true, message: 'Counts korrekt aktualisiert' };
+    });
+    
+    // ============================================================================
+    // TEST 14: Inspector
+    // ============================================================================
+    TestRunner.addTest('Inspector anzeigen', () => {
+      const module = window.factoryEngine.createModule('A', 100, 100);
+      window.factoryEngine.selectModule(module.id);
+      
+      const inspector = document.getElementById('inspector');
+      const content = document.getElementById('inspector-content');
+      
+      if (!inspector || inspector.style.display === 'none') {
+        return { pass: false, message: 'Inspector wird nicht angezeigt' };
+      }
+      
+      if (!content || !content.innerHTML.includes(module.id)) {
+        return { pass: false, message: 'Inspector-Inhalt fehlt oder ist falsch' };
+      }
+      
+      return { pass: true, message: 'Inspector funktioniert korrekt' };
+    });
+    
+    // ============================================================================
+    // TEST 15: DataModel Export/Import
+    // ============================================================================
+    TestRunner.addTest('DataModel Export/Import', () => {
+      if (typeof window.DataModel === 'undefined') {
+        return { pass: false, message: 'DataModel ist nicht definiert' };
+      }
+      
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      const module = window.factoryEngine.createModule('A', 100, 100);
+      const json = window.DataModel.exportToJSON();
+      const csv = window.DataModel.exportToCSV();
+      
+      if (!json || !csv) {
+        return { pass: false, message: 'Export fehlgeschlagen' };
+      }
+      
+      const validated = window.DataModel.validate(json);
+      if (!validated) {
+        return { pass: false, message: 'Validierung fehlgeschlagen' };
+      }
+      
+      return { pass: true, message: 'DataModel Export/Import funktioniert' };
+    });
+    
+    // ============================================================================
+    // TEST 16: Fehlerbehandlung
+    // ============================================================================
+    TestRunner.addTest('Fehlerbehandlung', () => {
+      // Test: Ungültiges Modul
+      const invalidModule = window.factoryEngine.createModule('Z', 100, 100);
+      if (invalidModule && invalidModule.name === 'Unbekannt') {
+        // Das ist OK - sollte "Unbekannt" zurückgeben
+      }
+      
+      // Test: Ungültige Position
+      const module = window.factoryEngine.createModule('A', -100, -100);
+      if (module && (module.x < 0 || module.y < 0)) {
+        return { pass: false, message: 'Negative Positionen sollten nicht erlaubt sein' };
+      }
+      
+      // Test: Laden ungültiger Daten
+      const invalidLoad = window.factoryEngine.load('invalid json');
+      if (invalidLoad !== false) {
+        return { pass: false, message: 'Ungültige Daten sollten false zurückgeben' };
+      }
+      
+      return { pass: true, message: 'Fehlerbehandlung funktioniert' };
+    });
+    
+    // ============================================================================
+    // TEST 17: Komplexes Szenario
+    // ============================================================================
+    TestRunner.addTest('Komplexes Szenario', () => {
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      // Erstelle mehrere Module
+      const modules = [];
+      for (let i = 0; i < 5; i++) {
+        modules.push(window.factoryEngine.createModule('A', i * 150, 100));
+      }
+      
+      // Verbinde sie
+      for (let i = 0; i < modules.length - 1; i++) {
+        window.factoryEngine.createLink(
+          modules[i].id, 'material',
+          modules[i + 1].id, 'material'
+        );
+      }
+      
+      // Speichere
+      const saved = window.factoryEngine.save();
+      
+      // Lösche alles
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      // Lade wieder
+      const loaded = window.factoryEngine.load(saved);
+      
+      if (!loaded) {
+        return { pass: false, message: 'Komplexes Szenario: Laden fehlgeschlagen' };
+      }
+      
+      if (window.factoryEngine.modules.size !== 5) {
+        return { pass: false, message: `Komplexes Szenario: Erwartet 5 Module, erhalten ${window.factoryEngine.modules.size}` };
+      }
+      
+      if (window.factoryEngine.links.size !== 4) {
+        return { pass: false, message: `Komplexes Szenario: Erwartet 4 Verbindungen, erhalten ${window.factoryEngine.links.size}` };
+      }
+      
+      return { pass: true, message: 'Komplexes Szenario erfolgreich' };
+    });
+    
+    // ============================================================================
+    // TEST 18: Alle Module-Typen
+    // ============================================================================
+    TestRunner.addTest('Alle Module-Typen testen', () => {
+      const types = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
+      const failed = [];
+      
+      for (const type of types) {
+        const module = window.factoryEngine.createModule(type, 100, 100);
+        if (!module) {
+          failed.push(type);
+        } else {
+          const config = window.factoryEngine.getModuleConfig(type);
+          if (!config.ports || (!config.ports.input && !config.ports.output)) {
+            failed.push(type);
+          }
+        }
+      }
+      
+      if (failed.length > 0) {
+        return { pass: false, message: `Fehlgeschlagene Module: ${failed.join(', ')}` };
+      }
+      
+      return { pass: true, message: `Alle ${types.length} Module-Typen funktionieren` };
+    });
+    
+    // ============================================================================
+    // TEST 19: Performance
+    // ============================================================================
+    TestRunner.addTest('Performance-Test', () => {
+      window.factoryEngine.modules.clear();
+      window.factoryEngine.links.clear();
+      
+      const startTime = performance.now();
+      
+      // Erstelle 50 Module
+      for (let i = 0; i < 50; i++) {
+        window.factoryEngine.createModule('A', Math.random() * 1000, Math.random() * 1000);
+      }
+      
+      // Erstelle 25 Verbindungen
+      const moduleArray = Array.from(window.factoryEngine.modules.values());
+      for (let i = 0; i < 25 && i < moduleArray.length - 1; i++) {
+        window.factoryEngine.createLink(
+          moduleArray[i].id, 'material',
+          moduleArray[i + 1].id, 'material'
+        );
+      }
+      
+      // Render
+      window.renderModules();
+      window.renderLinks();
+      
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+      
+      if (duration > 1000) {
+        return { pass: false, message: `Performance zu langsam: ${duration.toFixed(2)}ms (erwartet < 1000ms)` };
+      }
+      
+      return { pass: true, message: `Performance OK: ${duration.toFixed(2)}ms für 50 Module + 25 Verbindungen` };
+    });
+    
+    // ============================================================================
+    // TEST 20: Edge Cases
+    // ============================================================================
+    TestRunner.addTest('Edge Cases', () => {
+      // Test: Leere Daten laden
+      const emptyLoad = window.factoryEngine.load('{}');
+      if (emptyLoad !== false) {
+        return { pass: false, message: 'Leere Daten sollten false zurückgeben' };
+      }
+      
+      // Test: Null/Undefined
+      const nullModule = window.factoryEngine.createModule(null, 100, 100);
+      if (nullModule) {
+        return { pass: false, message: 'Null-Modul sollte nicht erstellt werden' };
+      }
+      
+      // Test: Sehr große Positionen
+      const bigModule = window.factoryEngine.createModule('A', 999999, 999999);
+      if (!bigModule) {
+        return { pass: false, message: 'Große Positionen sollten erlaubt sein' };
+      }
+      
+      return { pass: true, message: 'Edge Cases behandelt' };
+    });
+    
+    // ============================================================================
+    // FUNKTIONEN
+    // ============================================================================
+    
+    async function runAllTests() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'â³ Tests laufen...';
+      
+      await TestRunner.runAll();
+      
+      btn.disabled = false;
+      btn.textContent = '▶️ Alle Tests starten';
+      
+      if (TestRunner.results.failed === 0) {
+        alert('Ž‰ ALLE TESTS BESTANDEN!');
+      } else {
+        alert(`âš ï¸ ${TestRunner.results.failed} von ${TestRunner.results.total} Tests fehlgeschlagen`);
+      }
+    }
+    
+    // Auto-Start bei Laden
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (typeof window.factoryEngine !== 'undefined') {
+          runAllTests();
+        } else {
+          document.getElementById('test-results').innerHTML = `
+            <div class="test-item fail">
+              <strong>KRITISCHER FEHLER</strong>
+              <span class="test-status status-fail">❌ FEHLER</span>
+              <div class="test-details">FactoryEngine konnte nicht geladen werden. Bitte prüfe die Browser-Konsole.</div>
+            </div>
+          `;
+        }
+      }, 500);
+    });
+  </script>
+</body>
+</html>

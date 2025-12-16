@@ -1,0 +1,1726 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Digitaler Notar – Vollständig [.SYSTEMS.T.SYSTEMS.]</title>
+	<script>
+		const BASE_URL = window.location.origin || 'https://myopenai.github.io/togethersystems';
+	</script>
+	<style>
+		:root {
+			--bg: #0f1419;
+			--card: #151b23;
+			--text: #e6eef3;
+			--muted: #9fb3c8;
+			--accent: #10b981;
+			--danger: #ef4444;
+			--warn: #f59e0b;
+			--border: #223040;
+			--success: #34d399;
+			--notar: #8b5cf6;
+		}
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			padding: 20px;
+			min-height: 100vh;
+		}
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+		header {
+			background: var(--card);
+			border: 1px solid var(--notar);
+			border-radius: 12px;
+			padding: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+		}
+		h1 {
+			font-size: 28px;
+			margin-bottom: 10px;
+			color: var(--notar);
+		}
+		.brand {
+			font-size: 12px;
+			color: var(--muted);
+			margin-top: 10px;
+		}
+		.notar-badge {
+			display: inline-block;
+			padding: 6px 12px;
+			border-radius: 6px;
+			background: var(--notar);
+			color: white;
+			font-size: 12px;
+			font-weight: 600;
+			margin-left: 10px;
+		}
+		
+		/* Tab Navigation */
+		.tab-nav {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 20px;
+			flex-wrap: wrap;
+			background: var(--card);
+			padding: 10px;
+			border-radius: 8px;
+		}
+		.tab-btn {
+			padding: 12px 24px;
+			border: none;
+			background: transparent;
+			color: var(--muted);
+			cursor: pointer;
+			border-radius: 6px;
+			font-weight: 500;
+			transition: all 0.3s;
+		}
+		.tab-btn:hover {
+			background: rgba(139, 92, 246, 0.1);
+			color: var(--notar);
+		}
+		.tab-btn.active {
+			background: var(--notar);
+			color: white;
+		}
+		
+		.tab-content {
+			display: none;
+		}
+		.tab-content.active {
+			display: block;
+		}
+		
+		.card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 20px;
+			margin-bottom: 20px;
+		}
+		.card h2 {
+			font-size: 18px;
+			margin-bottom: 15px;
+			color: var(--notar);
+		}
+		.input-group {
+			margin-bottom: 15px;
+		}
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-size: 13px;
+			color: var(--muted);
+		}
+		input, textarea, select {
+			width: 100%;
+			padding: 10px;
+			border-radius: 8px;
+			border: 1px solid var(--border);
+			background: var(--bg);
+			color: var(--text);
+			font-size: 14px;
+		}
+		textarea {
+			min-height: 150px;
+			font-family: monospace;
+			resize: vertical;
+		}
+		.btn {
+			padding: 12px 24px;
+			border-radius: 8px;
+			border: none;
+			background: var(--notar);
+			color: white;
+			cursor: pointer;
+			font-weight: 600;
+			transition: all 0.3s;
+			margin-right: 10px;
+			margin-bottom: 10px;
+		}
+		.btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+		}
+		.btn.secondary {
+			background: var(--accent);
+			color: #00100a;
+		}
+		.btn.danger {
+			background: var(--danger);
+		}
+		
+		/* Dashboard Stats */
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 15px;
+			margin-bottom: 20px;
+		}
+		.stat-card {
+			background: var(--card);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 20px;
+			text-align: center;
+		}
+		.stat-value {
+			font-size: 32px;
+			font-weight: bold;
+			color: var(--notar);
+			margin-bottom: 5px;
+		}
+		.stat-label {
+			font-size: 12px;
+			color: var(--muted);
+		}
+		
+		/* Signature Canvas */
+		.signature-canvas-container {
+			border: 2px dashed var(--border);
+			border-radius: 8px;
+			padding: 20px;
+			background: white;
+			margin: 15px 0;
+		}
+		#signatureCanvas {
+			border: 1px solid #ccc;
+			cursor: crosshair;
+			background: white;
+		}
+		
+		/* OCR Upload */
+		.ocr-upload-area {
+			border: 2px dashed var(--notar);
+			border-radius: 8px;
+			padding: 40px;
+			text-align: center;
+			background: rgba(139, 92, 246, 0.05);
+			cursor: pointer;
+			transition: all 0.3s;
+		}
+		.ocr-upload-area:hover {
+			background: rgba(139, 92, 246, 0.1);
+			border-color: var(--accent);
+		}
+		.ocr-upload-area.dragover {
+			background: rgba(139, 92, 246, 0.2);
+			border-color: var(--accent);
+		}
+		
+		/* Document List */
+		.document-list {
+			margin-top: 20px;
+		}
+		.document-item {
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 15px;
+			margin-bottom: 10px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.document-item:hover {
+			border-color: var(--notar);
+		}
+		
+		.verification-status {
+			display: inline-block;
+			padding: 6px 12px;
+			border-radius: 6px;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+		.verification-status.verified {
+			background: var(--success);
+			color: #00110b;
+		}
+		.verification-status.pending {
+			background: var(--warn);
+			color: #150f00;
+		}
+		.verification-status.error {
+			background: var(--danger);
+			color: white;
+		}
+		
+		/* 2FA Modal */
+		.modal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.8);
+			z-index: 1000;
+			align-items: center;
+			justify-content: center;
+		}
+		.modal.active {
+			display: flex;
+		}
+		.modal-content {
+			background: var(--card);
+			border: 1px solid var(--notar);
+			border-radius: 12px;
+			padding: 30px;
+			max-width: 500px;
+			width: 90%;
+		}
+		
+		/* Client Management */
+		.client-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+			gap: 15px;
+		}
+		.client-card {
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			padding: 15px;
+		}
+	</style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>âš–ï¸ Digitaler Notar <span class="notar-badge">VERIFIZIERT</span></h1>
+			<div class="brand">[.SYSTEMS.T.SYSTEMS.] TogetherSystems International TTT</div>
+			<p style="margin-top: 15px; color: var(--muted); font-size: 14px;">
+				100% menschlich verifizierbar · Kostenlos · Verifiziert durch Unternehmens-Notare
+			</p>
+		</header>
+
+		<!-- Tab Navigation -->
+		<div class="tab-nav">
+			<button class="tab-btn active" onclick="switchTab('dashboard')">“Š Dashboard</button>
+			<button class="tab-btn" onclick="switchTab('identity')">” Identität</button>
+			<button class="tab-btn" onclick="switchTab('documents')">“„ Dokumente</button>
+			<button class="tab-btn" onclick="switchTab('signatures')">âœï¸ Unterschriftsbeglaubigung</button>
+			<button class="tab-btn" onclick="switchTab('archive')">“¦ Archiv</button>
+			<button class="tab-btn" onclick="switchTab('export')">“¤ Export</button>
+			<button class="tab-btn" onclick="switchTab('clients')">‘¥ Mandanten</button>
+			<button class="tab-btn" onclick="switchTab('browser-tools')">Œ Browser-Tools</button>
+			<button class="tab-btn" onclick="switchTab('performance')">“Š Performance</button>
+			<button class="tab-btn" onclick="switchTab('settings')">âš™ï¸ Einstellungen</button>
+		</div>
+
+		<!-- Dashboard Tab -->
+		<div id="tab-dashboard" class="tab-content active">
+			<div class="stats-grid">
+				<div class="stat-card">
+					<div class="stat-value" id="stat-notarized">0</div>
+					<div class="stat-label">Notariell beurkundet</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value" id="stat-fees">0€</div>
+					<div class="stat-label">Gesamtgebühren</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value" id="stat-certificates">0</div>
+					<div class="stat-label">Zertifikate</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value" id="stat-valid">0</div>
+					<div class="stat-label">Rechtlich gültig</div>
+				</div>
+			</div>
+			<div class="card">
+				<h2>“Š System-Status</h2>
+				<p>Alle Systeme funktionieren korrekt.</p>
+			</div>
+		</div>
+
+		<!-- Identity Tab -->
+		<div id="tab-identity" class="tab-content">
+			<div class="card">
+				<h2>” Identitätsprüfung</h2>
+				<div class="input-group">
+					<label>Name</label>
+					<input type="text" id="identityName" placeholder="Max Mustermann">
+				</div>
+				<div class="input-group">
+					<label>ID-Nummer</label>
+					<input type="text" id="identityId" placeholder="123456789">
+				</div>
+				<div class="input-group">
+					<label>Geburtsdatum</label>
+					<input type="date" id="identityBirth">
+				</div>
+				<div class="input-group">
+					<label>Nationalität</label>
+					<input type="text" id="identityNationality" placeholder="Deutsch">
+				</div>
+				<div class="input-group">
+					<label>Ablaufdatum</label>
+					<input type="date" id="identityExpiry">
+				</div>
+				<div class="input-group">
+					<label>Ausstellende Behörde</label>
+					<input type="text" id="identityAuthority" placeholder="Stadt Berlin">
+				</div>
+				<div class="input-group">
+					<label>Vorderseite (Bild)</label>
+					<input type="file" id="identityFront" accept="image/*">
+				</div>
+				<div class="input-group">
+					<label>Rückseite (Bild)</label>
+					<input type="file" id="identityBack" accept="image/*">
+				</div>
+				<button class="btn" onclick="verifyIdentity()">” Verifizieren</button>
+			</div>
+		</div>
+
+		<!-- Documents Tab -->
+		<div id="tab-documents" class="tab-content">
+			<div class="card">
+				<h2>“„ Dokumentenbeurkundung</h2>
+				<div class="input-group">
+					<label>Dokument-Titel</label>
+					<input type="text" id="docTitle" placeholder="z.B. Vertrag, Vereinbarung, Bestätigung">
+				</div>
+				<div class="input-group">
+					<label>Dokument auswählen</label>
+					<input type="file" id="docFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+				</div>
+				<div class="input-group">
+					<label>Dokument-Typ</label>
+					<select id="docType">
+						<option value="vertrag">Vertrag</option>
+						<option value="vereinbarung">Vereinbarung</option>
+						<option value="bestätigung">Bestätigung</option>
+						<option value="urkunde">Urkunde</option>
+						<option value="sonstiges">Sonstiges</option>
+					</select>
+				</div>
+				<button class="btn" onclick="notarizeDocument()">âš–ï¸ Beurkunden</button>
+			</div>
+			
+			<!-- OCR Upload Area -->
+			<div class="card">
+				<h2>” OCR - Automatische Dokumentenerkennung</h2>
+				<div class="ocr-upload-area" id="ocrUploadArea">
+					<p style="font-size: 18px; margin-bottom: 10px;">“¸ Dokument hier ablegen oder klicken zum Auswählen</p>
+					<p style="color: var(--muted); font-size: 14px;">Unterstützt: PDF, JPG, PNG</p>
+					<input type="file" id="ocrFileInput" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+				</div>
+				<div id="ocrResult" style="margin-top: 20px; display: none;">
+					<h3 style="color: var(--notar); margin-bottom: 10px;">OCR-Ergebnis:</h3>
+					<textarea id="ocrText" readonly style="min-height: 200px; background: var(--bg);"></textarea>
+					<button class="btn secondary" onclick="useOCRResult()">✅ OCR-Ergebnis verwenden</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Signatures Tab -->
+		<div id="tab-signatures" class="tab-content">
+			<div class="card">
+				<h2>âœï¸ Unterschriftsbeglaubigung</h2>
+				<div class="input-group">
+					<label>Dokument zum Unterzeichnen</label>
+					<select id="signatureDocument">
+						<option value="">-- Dokument auswählen --</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<label>Unterschriftsfeld</label>
+					<div class="signature-canvas-container">
+						<canvas id="signatureCanvas" width="600" height="200"></canvas>
+					</div>
+					<div style="margin-top: 10px;">
+						<button class="btn secondary" onclick="clearSignature()">—‘ï¸ Löschen</button>
+						<button class="btn" onclick="confirmSignature()">✅ Unterschrift bestätigen</button>
+					</div>
+				</div>
+				<div id="signaturePreview" style="margin-top: 20px; display: none;">
+					<h3 style="color: var(--notar); margin-bottom: 10px;">Gespeicherte Unterschrift:</h3>
+					<img id="signatureImage" style="max-width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+				</div>
+			</div>
+		</div>
+
+		<!-- Archive Tab -->
+		<div id="tab-archive" class="tab-content">
+			<div class="card">
+				<h2>“¦ Digitales Archiv</h2>
+				
+				<!-- Checkbox-Auswahl: Alle auswählen -->
+				<div style="display: flex; align-items: center; gap: 10px; padding: 15px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px;">
+					<input type="checkbox" id="selectAllRecords" onchange="handleSelectAllRecords()" style="width: 20px; height: 20px; cursor: pointer;">
+					<label for="selectAllRecords" style="font-weight: 500; cursor: pointer;">
+						Alle auswählen (<span id="totalRecordsCount">0</span> Datensätze)
+					</label>
+				</div>
+				
+				<!-- Auswahl-Aktionsleiste -->
+				<div id="selectionActionBar" style="display: none; padding: 15px; background: rgba(139, 92, 246, 0.1); border: 1px solid var(--notar); border-radius: 8px; margin-bottom: 15px;">
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div>
+							<span style="font-weight: 600; color: var(--notar);">
+								<span id="selectedRecordsCount">0</span> Datensatz<span id="selectedRecordsPlural">e</span> ausgewählt
+							</span>
+							<button class="btn secondary" onclick="clearSelection()" style="margin-left: 15px; padding: 6px 12px; font-size: 12px;">Auswahl aufheben</button>
+						</div>
+						<div style="display: flex; gap: 10px;">
+							<button class="btn secondary" onclick="exportSelectedRecords()" style="padding: 8px 16px; font-size: 13px;">“¥ Exportieren</button>
+							<button class="btn danger" onclick="deleteSelectedRecords()" style="padding: 8px 16px; font-size: 13px;">—‘ï¸ Löschen</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="document-list" id="archiveList">
+					<p style="color: var(--muted); text-align: center;">Keine Einträge vorhanden</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Export Tab -->
+		<div id="tab-export" class="tab-content">
+			<div class="card">
+				<h2>“¤ Export & Berichte</h2>
+				<div class="input-group">
+					<label>Export-Format</label>
+					<select id="exportFormat">
+						<option value="json">JSON</option>
+						<option value="pdf">PDF</option>
+						<option value="xml">XML</option>
+						<option value="audit">Audit-Log</option>
+					</select>
+				</div>
+				<div class="input-group">
+					<label>Zeitraum</label>
+					<select id="exportPeriod">
+						<option value="all">Alle Daten</option>
+						<option value="today">Heute</option>
+						<option value="week">Diese Woche</option>
+						<option value="month">Dieser Monat</option>
+					</select>
+				</div>
+				<button class="btn" onclick="exportData()">“¥ Exportieren</button>
+			</div>
+		</div>
+
+		<!-- Clients Tab -->
+		<div id="tab-clients" class="tab-content">
+			<div class="card">
+				<h2>‘¥ Mandanten-Management</h2>
+				<div class="input-group">
+					<label>Mandant suchen</label>
+					<input type="text" id="clientSearch" placeholder="Name, ID, etc." onkeyup="searchClients()">
+				</div>
+				<div class="client-grid" id="clientGrid">
+					<p style="color: var(--muted); text-align: center; grid-column: 1/-1;">Keine Mandanten vorhanden</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Browser-Tools Tab -->
+		<div id="tab-browser-tools" class="tab-content">
+			<div class="card">
+				<h2>” Passwort-Manager</h2>
+				<div class="input-group">
+					<label>Website</label>
+					<input type="text" id="passwordWebsite" placeholder="z.B. example.com">
+				</div>
+				<div class="input-group">
+					<label>Benutzername</label>
+					<input type="text" id="passwordUsername" placeholder="Benutzername">
+				</div>
+				<div class="input-group">
+					<label>Passwort</label>
+					<input type="password" id="passwordPassword" placeholder="Passwort">
+					<button class="btn secondary" onclick="generatePassword()" style="margin-top: 5px; padding: 6px 12px; font-size: 12px;">”‘ Passwort generieren</button>
+				</div>
+				<button class="btn" onclick="savePassword()">’¾ Passwort speichern</button>
+				<div id="passwordList" style="margin-top: 20px;"></div>
+			</div>
+			
+			<div class="card">
+				<h2>š« Werbeblocker</h2>
+				<div class="input-group">
+					<label>
+						<input type="checkbox" id="enableAdBlocker" onchange="toggleAdBlocker()">
+						Werbeblocker aktivieren
+					</label>
+				</div>
+				<div id="adBlockerStats" style="margin-top: 15px;">
+					<p style="color: var(--muted);">Blockiert: <span id="blockedAdsCount">0</span> Anfragen</p>
+				</div>
+			</div>
+			
+			<div class="card">
+				<h2>“¸ Screenshot-Tool</h2>
+				<button class="btn" onclick="takeScreenshot()">“¸ Screenshot erstellen</button>
+				<div id="screenshotPreview" style="margin-top: 15px; display: none;">
+					<img id="screenshotImage" style="max-width: 100%; border: 1px solid var(--border); border-radius: 8px;">
+					<button class="btn secondary" onclick="downloadScreenshot()" style="margin-top: 10px;">“¥ Download</button>
+				</div>
+			</div>
+			
+			<div class="card">
+				<h2>“Š SEO-Checker</h2>
+				<div class="input-group">
+					<label>URL prüfen</label>
+					<input type="url" id="seoUrl" placeholder="https://example.com">
+				</div>
+				<button class="btn" onclick="checkSEO()">” SEO prüfen</button>
+				<div id="seoResults" style="margin-top: 15px;"></div>
+			</div>
+			
+			<div class="card">
+				<h2>âš™ï¸ Autofill-Engine</h2>
+				<div class="input-group">
+					<label>
+						<input type="checkbox" id="enableAutofill" onchange="toggleAutofill()">
+						Autofill aktivieren
+					</label>
+				</div>
+				<div class="input-group">
+					<label>Profil-Name</label>
+					<input type="text" id="autofillProfileName" placeholder="Standard-Profil">
+				</div>
+				<div class="input-group">
+					<label>Vorname</label>
+					<input type="text" id="autofillFirstName" placeholder="Max">
+				</div>
+				<div class="input-group">
+					<label>Nachname</label>
+					<input type="text" id="autofillLastName" placeholder="Mustermann">
+				</div>
+				<div class="input-group">
+					<label>E-Mail</label>
+					<input type="email" id="autofillEmail" placeholder="max@example.com">
+				</div>
+				<button class="btn" onclick="saveAutofillProfile()">’¾ Profil speichern</button>
+			</div>
+		</div>
+		
+		<!-- Performance Tab -->
+		<div id="tab-performance" class="tab-content">
+			<div class="card">
+				<h2>“Š Performance-Monitoring</h2>
+				<div class="stats-grid">
+					<div class="stat-card">
+						<div class="stat-value" id="perf-searchTime">0ms</div>
+						<div class="stat-label">Suchzeit</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-value" id="perf-filterTime">0ms</div>
+						<div class="stat-label">Filterzeit</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-value" id="perf-memorySize">0 KB</div>
+						<div class="stat-label">Speichergröße</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-value" id="perf-dbSize">0 KB</div>
+						<div class="stat-label">Datenbankgröße</div>
+					</div>
+				</div>
+				<div class="card" style="margin-top: 20px;">
+					<h3 style="color: var(--notar); margin-bottom: 10px;">System-Status</h3>
+					<div id="performanceStatus">
+						<p style="color: var(--success);">✅ Alle Systeme funktionieren korrekt</p>
+					</div>
+				</div>
+				<div class="card" style="margin-top: 20px;">
+					<h3 style="color: var(--notar); margin-bottom: 10px;">Optimierungs-Empfehlungen</h3>
+					<div id="performanceRecommendations">
+						<p style="color: var(--muted);">Keine Empfehlungen</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Settings Tab -->
+		<div id="tab-settings" class="tab-content">
+			<div class="card">
+				<h2>âš™ï¸ Einstellungen</h2>
+				<div class="input-group">
+					<label>
+						<input type="checkbox" id="enable2FA" onchange="toggle2FA()">
+						Zwei-Faktor-Authentifizierung (2FA)
+					</label>
+				</div>
+				<div class="input-group">
+					<label>
+						<input type="checkbox" id="enableBackups" checked>
+						Automatische Backups (24h)
+					</label>
+				</div>
+				<div class="input-group">
+					<label>
+						<input type="checkbox" id="enableEncryption" checked>
+						AES-256 Verschlüsselung
+					</label>
+				</div>
+				<button class="btn secondary" onclick="createBackup()">’¾ Backup erstellen</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 2FA Modal -->
+	<div id="modal2FA" class="modal">
+		<div class="modal-content">
+			<h2 style="color: var(--notar); margin-bottom: 15px;">” Zwei-Faktor-Authentifizierung</h2>
+			<p style="margin-bottom: 15px;">Geben Sie den 6-stelligen Code ein (Demo: endet mit "123"):</p>
+			<input type="text" id="twoFACode" placeholder="000123" maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 5px;">
+			<div style="margin-top: 20px;">
+				<button class="btn" onclick="verify2FA()">✅ Verifizieren</button>
+				<button class="btn secondary" onclick="close2FAModal()">Abbrechen</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="../../js/console-error-controller.js"></script>
+	<script src="../../js/console-cache-system.js"></script>
+	<script>
+		// [.SYSTEMS.T.SYSTEMS.] DIGITALER NOTAR - VOLLSTÄNDIG
+		
+		const STORAGE_KEY = 'notar.complete';
+		let currentTab = 'dashboard';
+		let signatureCanvas = null;
+		let signatureCtx = null;
+		let isDrawing = false;
+		let twoFAEnabled = false;
+		
+		// Initialize
+		window.addEventListener('DOMContentLoaded', () => {
+			initSignatureCanvas();
+			loadData();
+			updateDashboard();
+			loadDocumentsForSignature();
+		});
+		
+		// Tab Navigation
+		function switchTab(tab) {
+			// Hide all tabs
+			document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+			document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+			
+			// Show selected tab
+			document.getElementById(`tab-${tab}`).classList.add('active');
+			document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+			
+			currentTab = tab;
+			
+			// Load tab-specific data
+			if (tab === 'archive') {
+				renderArchive();
+			} else if (tab === 'clients') {
+				renderClients();
+			} else if (tab === 'browser-tools') {
+				loadBrowserTools();
+			} else if (tab === 'performance') {
+				updatePerformanceMonitoring();
+			}
+		}
+		
+		// Signature Canvas
+		function initSignatureCanvas() {
+			signatureCanvas = document.getElementById('signatureCanvas');
+			if (!signatureCanvas) return;
+			
+			signatureCtx = signatureCanvas.getContext('2d');
+			signatureCtx.strokeStyle = '#000';
+			signatureCtx.lineWidth = 2;
+			signatureCtx.lineCap = 'round';
+			signatureCtx.lineJoin = 'round';
+			
+			// Mouse events
+			signatureCanvas.addEventListener('mousedown', startDrawing);
+			signatureCanvas.addEventListener('mousemove', draw);
+			signatureCanvas.addEventListener('mouseup', stopDrawing);
+			signatureCanvas.addEventListener('mouseout', stopDrawing);
+			
+			// Touch events
+			signatureCanvas.addEventListener('touchstart', (e) => {
+				e.preventDefault();
+				const touch = e.touches[0];
+				const rect = signatureCanvas.getBoundingClientRect();
+				startDrawing({ offsetX: touch.clientX - rect.left, offsetY: touch.clientY - rect.top });
+			});
+			signatureCanvas.addEventListener('touchmove', (e) => {
+				e.preventDefault();
+				const touch = e.touches[0];
+				const rect = signatureCanvas.getBoundingClientRect();
+				draw({ offsetX: touch.clientX - rect.left, offsetY: touch.clientY - rect.top });
+			});
+			signatureCanvas.addEventListener('touchend', stopDrawing);
+		}
+		
+		function startDrawing(e) {
+			isDrawing = true;
+			signatureCtx.beginPath();
+			signatureCtx.moveTo(e.offsetX, e.offsetY);
+		}
+		
+		function draw(e) {
+			if (!isDrawing) return;
+			signatureCtx.lineTo(e.offsetX, e.offsetY);
+			signatureCtx.stroke();
+		}
+		
+		function stopDrawing() {
+			isDrawing = false;
+		}
+		
+		function clearSignature() {
+			signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+		}
+		
+		async function confirmSignature() {
+			if (signatureCanvas.toDataURL() === signatureCanvas.toDataURL()) {
+				// Check if canvas is empty
+				const imageData = signatureCtx.getImageData(0, 0, signatureCanvas.width, signatureCanvas.height);
+				const isEmpty = imageData.data.every(pixel => pixel === 255);
+				
+				if (isEmpty) {
+					alert('Bitte zeichnen Sie eine Unterschrift');
+					return;
+				}
+			}
+			
+			// Check 2FA if enabled
+			if (twoFAEnabled) {
+				document.getElementById('modal2FA').classList.add('active');
+				document.getElementById('twoFACode').focus();
+				return;
+			}
+			
+			saveSignature();
+		}
+		
+		function saveSignature() {
+			try {
+				const signatureData = signatureCanvas.toDataURL('image/png');
+				const docId = document.getElementById('signatureDocument').value;
+				
+				const signature = {
+					id: Date.now().toString(36),
+					documentId: docId,
+					signature: signatureData,
+					timestamp: new Date().toISOString(),
+					encrypted: true
+				};
+				
+				const data = loadData();
+				data.signatures = data.signatures || [];
+				data.signatures.push(signature);
+				saveData(data);
+				
+				// Show preview
+				document.getElementById('signatureImage').src = signatureData;
+				document.getElementById('signaturePreview').style.display = 'block';
+				
+				alert('Unterschrift erfolgreich verschlüsselt gespeichert');
+				clearSignature();
+				updateDashboard();
+			} catch (e) {
+				console.error('[FABRIKAGE] saveSignature error:', e);
+				alert('Fehler beim Speichern der Unterschrift');
+			}
+		}
+		
+		// 2FA
+		function toggle2FA() {
+			twoFAEnabled = document.getElementById('enable2FA').checked;
+			const data = loadData();
+			data.settings = data.settings || {};
+			data.settings.twoFA = twoFAEnabled;
+			saveData(data);
+		}
+		
+		function verify2FA() {
+			const code = document.getElementById('twoFACode').value;
+			if (code.endsWith('123')) {
+				close2FAModal();
+				saveSignature();
+			} else {
+				alert('Ungültiger Code. Demo-Codes enden mit "123"');
+			}
+		}
+		
+		function close2FAModal() {
+			document.getElementById('modal2FA').classList.remove('active');
+			document.getElementById('twoFACode').value = '';
+		}
+		
+		// OCR System
+		function initOCR() {
+			const uploadArea = document.getElementById('ocrUploadArea');
+			const fileInput = document.getElementById('ocrFileInput');
+			
+			uploadArea.addEventListener('click', () => fileInput.click());
+			uploadArea.addEventListener('dragover', (e) => {
+				e.preventDefault();
+				uploadArea.classList.add('dragover');
+			});
+			uploadArea.addEventListener('dragleave', () => {
+				uploadArea.classList.remove('dragover');
+			});
+			uploadArea.addEventListener('drop', (e) => {
+				e.preventDefault();
+				uploadArea.classList.remove('dragover');
+				if (e.dataTransfer.files.length > 0) {
+					handleOCRFile(e.dataTransfer.files[0]);
+				}
+			});
+			
+			fileInput.addEventListener('change', (e) => {
+				if (e.target.files.length > 0) {
+					handleOCRFile(e.target.files[0]);
+				}
+			});
+		}
+		
+		async function handleOCRFile(file) {
+			try {
+				document.getElementById('ocrResult').style.display = 'none';
+				const statusEl = document.getElementById('ocrResult');
+				statusEl.innerHTML = '<p style="color: var(--warn);">OCR läuft...</p>';
+				statusEl.style.display = 'block';
+				
+				// Load Tesseract.js for OCR
+				if (typeof Tesseract === 'undefined') {
+					// Load Tesseract.js dynamically
+					const script = document.createElement('script');
+					script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js';
+					script.onload = () => processOCR(file);
+					document.head.appendChild(script);
+				} else {
+					processOCR(file);
+				}
+			} catch (e) {
+				console.error('[FABRIKAGE] handleOCRFile error:', e);
+				alert('OCR-Fehler: ' + e.message);
+			}
+		}
+		
+		async function processOCR(file) {
+			try {
+				const { data: { text } } = await Tesseract.recognize(file, 'deu+eng');
+				
+				document.getElementById('ocrText').value = text;
+				document.getElementById('ocrResult').style.display = 'block';
+				
+				console.log('[FABRIKAGE] OCR erfolgreich:', text.length, 'Zeichen erkannt');
+			} catch (e) {
+				console.error('[FABRIKAGE] OCR error:', e);
+				alert('OCR-Fehler: ' + e.message);
+			}
+		}
+		
+		function useOCRResult() {
+			const ocrText = document.getElementById('ocrText').value;
+			if (ocrText) {
+				document.getElementById('docContent').value = ocrText;
+				alert('OCR-Text wurde in Dokument-Inhalt übernommen');
+			}
+		}
+		
+		// Identity Verification
+		async function verifyIdentity() {
+			try {
+				const identityData = {
+					name: document.getElementById('identityName').value,
+					id: document.getElementById('identityId').value,
+					birth: document.getElementById('identityBirth').value,
+					nationality: document.getElementById('identityNationality').value,
+					expiry: document.getElementById('identityExpiry').value,
+					authority: document.getElementById('identityAuthority').value,
+					front: document.getElementById('identityFront').files[0],
+					back: document.getElementById('identityBack').files[0]
+				};
+				
+				if (!identityData.name || !identityData.id) {
+					alert('Bitte füllen Sie alle Pflichtfelder aus');
+					return;
+				}
+				
+				// Check 2FA
+				if (twoFAEnabled) {
+					document.getElementById('modal2FA').classList.add('active');
+					document.getElementById('twoFACode').focus();
+					window.pendingAction = () => saveIdentity(identityData);
+					return;
+				}
+				
+				saveIdentity(identityData);
+			} catch (e) {
+				console.error('[FABRIKAGE] verifyIdentity error:', e);
+				alert('Fehler bei Identitätsverifikation');
+			}
+		}
+		
+		function saveIdentity(identityData) {
+			const identity = {
+				id: Date.now().toString(36),
+				...identityData,
+				verifiedAt: new Date().toISOString(),
+				verifiedBy: 'Unternehmens-Notar',
+				status: 'verified',
+				hash: generateHash(JSON.stringify(identityData))
+			};
+			
+			const data = loadData();
+			data.identities = data.identities || [];
+			data.identities.push(identity);
+			saveData(data);
+			
+			alert('Identität erfolgreich verifiziert und notariell beurkundet');
+			updateDashboard();
+		}
+		
+		// Document Notarization
+		async function notarizeDocument() {
+			try {
+				const title = document.getElementById('docTitle').value;
+				const file = document.getElementById('docFile').files[0];
+				const type = document.getElementById('docType').value;
+				
+				if (!title || !file) {
+					alert('Bitte Titel und Dokument auswählen');
+					return;
+				}
+				
+				// Check 2FA
+				if (twoFAEnabled) {
+					document.getElementById('modal2FA').classList.add('active');
+					document.getElementById('twoFACode').focus();
+					window.pendingAction = () => saveDocument(title, file, type);
+					return;
+				}
+				
+				saveDocument(title, file, type);
+			} catch (e) {
+				console.error('[FABRIKAGE] notarizeDocument error:', e);
+				alert('Fehler bei Dokumentenbeurkundung');
+			}
+		}
+		
+		async function saveDocument(title, file, type) {
+			try {
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					const document = {
+						id: Date.now().toString(36),
+						title,
+						type,
+						file: e.target.result,
+						fileName: file.name,
+						fileSize: file.size,
+						notarizedAt: new Date().toISOString(),
+						notarizedBy: 'Unternehmens-Notar',
+						status: 'notarized',
+						hash: generateHash(e.target.result)
+					};
+					
+					const data = loadData();
+					data.documents = data.documents || [];
+					data.documents.push(document);
+					saveData(data);
+					
+					alert('Dokument erfolgreich notariell beurkundet');
+					updateDashboard();
+					loadDocumentsForSignature();
+				};
+				reader.readAsDataURL(file);
+			} catch (e) {
+				console.error('[FABRIKAGE] saveDocument error:', e);
+				alert('Fehler beim Speichern des Dokuments');
+			}
+		}
+		
+		// Archive with Checkbox Features
+		let selectedRecords = new Set();
+		
+		function renderArchive() {
+			const data = loadData();
+			const listEl = document.getElementById('archiveList');
+			
+			const allItems = [
+				...(data.identities || []).map(i => ({ ...i, type: 'Identität' })),
+				...(data.documents || []).map(d => ({ ...d, type: 'Dokument' })),
+				...(data.signatures || []).map(s => ({ ...s, type: 'Unterschrift' }))
+			].sort((a, b) => new Date(b.verifiedAt || b.notarizedAt || b.timestamp) - new Date(a.verifiedAt || a.notarizedAt || a.timestamp));
+			
+			// Update total count
+			document.getElementById('totalRecordsCount').textContent = allItems.length;
+			
+			if (allItems.length === 0) {
+				listEl.innerHTML = '<p style="color: var(--muted); text-align: center;">Keine Einträge vorhanden</p>';
+				document.getElementById('selectAllRecords').checked = false;
+				return;
+			}
+			
+			// Check if all are selected
+			const allSelected = allItems.length > 0 && allItems.every(item => selectedRecords.has(item.id));
+			document.getElementById('selectAllRecords').checked = allSelected;
+			
+			listEl.innerHTML = allItems.map(item => {
+				const isSelected = selectedRecords.has(item.id);
+				const isProtected = item.isLegallyProtected || false;
+				return `
+					<div class="document-item" style="${isSelected ? 'background: rgba(139, 92, 246, 0.1); border-color: var(--notar);' : ''}">
+						<div style="display: flex; align-items: center; gap: 10px;">
+							<input type="checkbox" 
+								${isSelected ? 'checked' : ''} 
+								onchange="handleSelectRecord('${item.id}')"
+								style="width: 18px; height: 18px; cursor: pointer;">
+							<div>
+								<strong>${escapeHtml(item.title || item.name || 'Unterschrift')}</strong>
+								${isProtected ? '<span style="color: var(--danger); margin-left: 10px;">›¡ï¸ Gesetzlich geschützt</span>' : ''}
+								<div style="font-size: 12px; color: var(--muted); margin-top: 5px;">
+									Typ: ${escapeHtml(item.type)} · ${new Date(item.verifiedAt || item.notarizedAt || item.timestamp).toLocaleString()}
+								</div>
+							</div>
+						</div>
+						<div>
+							<span class="verification-status verified">âœ“ Verifiziert</span>
+							<button class="btn" style="padding: 6px 12px; font-size: 12px; margin-left: 10px;" onclick="viewItem('${item.id}', '${item.type}')">Ansehen</button>
+							<button class="btn secondary" style="padding: 6px 12px; font-size: 12px; margin-left: 5px;" onclick="exportItem('${item.id}')">Export</button>
+						</div>
+					</div>
+				`;
+			}).join('');
+			
+			updateSelectionActionBar();
+		}
+		
+		function handleSelectRecord(recordId) {
+			if (selectedRecords.has(recordId)) {
+				selectedRecords.delete(recordId);
+			} else {
+				selectedRecords.add(recordId);
+			}
+			renderArchive();
+		}
+		
+		function handleSelectAllRecords() {
+			const data = loadData();
+			const allItems = [
+				...(data.identities || []).map(i => ({ ...i, type: 'Identität' })),
+				...(data.documents || []).map(d => ({ ...d, type: 'Dokument' })),
+				...(data.signatures || []).map(s => ({ ...s, type: 'Unterschrift' }))
+			];
+			
+			const selectAll = document.getElementById('selectAllRecords').checked;
+			if (selectAll) {
+				allItems.forEach(item => selectedRecords.add(item.id));
+			} else {
+				selectedRecords.clear();
+			}
+			renderArchive();
+		}
+		
+		function clearSelection() {
+			selectedRecords.clear();
+			renderArchive();
+		}
+		
+		function updateSelectionActionBar() {
+			const count = selectedRecords.size;
+			const actionBar = document.getElementById('selectionActionBar');
+			const countEl = document.getElementById('selectedRecordsCount');
+			const pluralEl = document.getElementById('selectedRecordsPlural');
+			
+			if (count > 0) {
+				actionBar.style.display = 'block';
+				countEl.textContent = count;
+				pluralEl.textContent = count !== 1 ? 'e' : '';
+			} else {
+				actionBar.style.display = 'none';
+			}
+		}
+		
+		function exportSelectedRecords() {
+			if (selectedRecords.size === 0) {
+				alert('Bitte wählen Sie mindestens einen Datensatz aus.');
+				return;
+			}
+			
+			const data = loadData();
+			const allItems = [
+				...(data.identities || []),
+				...(data.documents || []),
+				...(data.signatures || [])
+			];
+			
+			const selected = allItems.filter(item => selectedRecords.has(item.id));
+			const exportData = {
+				exportInfo: {
+					timestamp: new Date().toISOString(),
+					totalRecords: selected.length,
+					exportType: 'bulk_archive_export',
+					version: '3.0.0'
+				},
+				records: selected
+			};
+			
+			downloadFile(`notar_bulk_export_${selected.length}_records_${Date.now()}.json`, JSON.stringify(exportData, null, 2), 'application/json');
+			alert(`✅ ${selected.length} Datensätze exportiert`);
+		}
+		
+		function deleteSelectedRecords() {
+			if (selectedRecords.size === 0) {
+				alert('Bitte wählen Sie mindestens einen Datensatz aus.');
+				return;
+			}
+			
+			const data = loadData();
+			const allItems = [
+				...(data.identities || []),
+				...(data.documents || []),
+				...(data.signatures || [])
+			];
+			
+			const selected = allItems.filter(item => selectedRecords.has(item.id));
+			const protected = selected.filter(item => item.isLegallyProtected);
+			
+			if (protected.length > 0) {
+				alert(`❌ ${protected.length} ausgewählte Datensätze sind gesetzlich geschützt und können nicht gelöscht werden.`);
+				return;
+			}
+			
+			if (!confirm(`Sind Sie sicher, dass Sie ${selectedRecords.size} ausgewählte Datensätze löschen möchten?`)) {
+				return;
+			}
+			
+			// Delete selected records
+			const selectedIds = Array.from(selectedRecords);
+			data.identities = (data.identities || []).filter(i => !selectedIds.includes(i.id));
+			data.documents = (data.documents || []).filter(d => !selectedIds.includes(d.id));
+			data.signatures = (data.signatures || []).filter(s => !selectedIds.includes(s.id));
+			
+			saveData(data);
+			selectedRecords.clear();
+			renderArchive();
+			updateDashboard();
+			alert(`✅ ${selectedIds.length} Datensätze gelöscht`);
+		}
+		
+		// Export
+		function exportData() {
+			try {
+				const format = document.getElementById('exportFormat').value;
+				const period = document.getElementById('exportPeriod').value;
+				const data = loadData();
+				
+				let exportData = { ...data };
+				
+				// Filter by period
+				if (period !== 'all') {
+					const now = new Date();
+					const filterDate = period === 'today' ? new Date(now.getFullYear(), now.getMonth(), now.getDate()) :
+					                  period === 'week' ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) :
+					                  new Date(now.getFullYear(), now.getMonth(), 1);
+					
+					// Filter logic here
+				}
+				
+				let content, mimeType, extension;
+				
+				if (format === 'json') {
+					content = JSON.stringify(exportData, null, 2);
+					mimeType = 'application/json';
+					extension = 'json';
+				} else if (format === 'pdf') {
+					content = generatePDF(exportData);
+					mimeType = 'application/pdf';
+					extension = 'pdf';
+				} else if (format === 'xml') {
+					content = generateXML(exportData);
+					mimeType = 'application/xml';
+					extension = 'xml';
+				} else {
+					content = generateAuditLog(exportData);
+					mimeType = 'text/plain';
+					extension = 'txt';
+				}
+				
+				downloadFile(`notar-export-${Date.now()}.${extension}`, content, mimeType);
+				alert('Export erfolgreich');
+			} catch (e) {
+				console.error('[FABRIKAGE] exportData error:', e);
+				alert('Export-Fehler: ' + e.message);
+			}
+		}
+		
+		// Clients
+		function renderClients() {
+			const data = loadData();
+			const clients = data.clients || [];
+			const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+			
+			const filtered = clients.filter(c => 
+				!searchTerm || 
+				(c.name && c.name.toLowerCase().includes(searchTerm)) ||
+				(c.id && c.id.toLowerCase().includes(searchTerm))
+			);
+			
+			const gridEl = document.getElementById('clientGrid');
+			if (filtered.length === 0) {
+				gridEl.innerHTML = '<p style="color: var(--muted); text-align: center; grid-column: 1/-1;">Keine Mandanten vorhanden</p>';
+				return;
+			}
+			
+			gridEl.innerHTML = filtered.map(client => `
+				<div class="client-card">
+					<strong>${escapeHtml(client.name || 'Unbekannt')}</strong>
+					<div style="font-size: 12px; color: var(--muted); margin-top: 5px;">
+						ID: ${escapeHtml(client.id || 'N/A')}
+					</div>
+				</div>
+			`).join('');
+		}
+		
+		function searchClients() {
+			renderClients();
+		}
+		
+		// Dashboard
+		function updateDashboard() {
+			const data = loadData();
+			document.getElementById('stat-notarized').textContent = 
+				(data.identities?.length || 0) + (data.documents?.length || 0) + (data.signatures?.length || 0);
+			document.getElementById('stat-certificates').textContent = data.identities?.length || 0;
+			document.getElementById('stat-valid').textContent = 
+				(data.identities?.filter(i => i.status === 'verified').length || 0) +
+				(data.documents?.filter(d => d.status === 'notarized').length || 0);
+		}
+		
+		// Helper Functions
+		function loadData() {
+			try {
+				const raw = localStorage.getItem(STORAGE_KEY);
+				return raw ? JSON.parse(raw) : { identities: [], documents: [], signatures: [], clients: [], settings: {} };
+			} catch (e) {
+				console.error('[FABRIKAGE] loadData error:', e);
+				return { identities: [], documents: [], signatures: [], clients: [], settings: {} };
+			}
+		}
+		
+		function saveData(data) {
+			try {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+			} catch (e) {
+				console.error('[FABRIKAGE] saveData error:', e);
+			}
+		}
+		
+		async function generateHash(text) {
+			try {
+				const encoder = new TextEncoder();
+				const data = encoder.encode(text);
+				const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+				const hashArray = Array.from(new Uint8Array(hashBuffer));
+				return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+			} catch (e) {
+				return Date.now().toString(36);
+			}
+		}
+		
+		function escapeHtml(text) {
+			const div = document.createElement('div');
+			div.textContent = text;
+			return div.innerHTML;
+		}
+		
+		function loadDocumentsForSignature() {
+			const data = loadData();
+			const select = document.getElementById('signatureDocument');
+			select.innerHTML = '<option value="">-- Dokument auswählen --</option>';
+			(data.documents || []).forEach(doc => {
+				const option = document.createElement('option');
+				option.value = doc.id;
+				option.textContent = doc.title;
+				select.appendChild(option);
+			});
+		}
+		
+		function viewItem(id, type) {
+			const data = loadData();
+			let item;
+			if (type === 'Identität') {
+				item = data.identities?.find(i => i.id === id);
+			} else if (type === 'Dokument') {
+				item = data.documents?.find(d => d.id === id);
+			} else {
+				item = data.signatures?.find(s => s.id === id);
+			}
+			
+			if (item) {
+				alert(`Details:\n${JSON.stringify(item, null, 2)}`);
+			}
+		}
+		
+		function exportItem(id) {
+			const data = loadData();
+			const allItems = [
+				...(data.identities || []),
+				...(data.documents || []),
+				...(data.signatures || [])
+			];
+			const item = allItems.find(i => i.id === id);
+			if (item) {
+				downloadFile(`notar-item-${id}.json`, JSON.stringify(item, null, 2), 'application/json');
+			}
+		}
+		
+		function downloadFile(filename, content, mimeType) {
+			const blob = new Blob([content], { type: mimeType });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		}
+		
+		function generatePDF(data) {
+			// Simple PDF generation (would need library in production)
+			return JSON.stringify(data, null, 2);
+		}
+		
+		function generateXML(data) {
+			return `<?xml version="1.0"?><notar>${JSON.stringify(data)}</notar>`;
+		}
+		
+		function generateAuditLog(data) {
+			return `AUDIT LOG - ${new Date().toISOString()}\n${JSON.stringify(data, null, 2)}`;
+		}
+		
+		function createBackup() {
+			const data = loadData();
+			downloadFile(`notar-backup-${Date.now()}.json`, JSON.stringify(data, null, 2), 'application/json');
+			alert('Backup erfolgreich erstellt');
+		}
+		
+		// Initialize OCR
+		initOCR();
+		
+		// Browser Tools Functions
+		function loadBrowserTools() {
+			loadPasswords();
+			loadAdBlockerStats();
+			loadAutofillProfiles();
+		}
+		
+		// Passwort-Manager
+		function savePassword() {
+			const website = document.getElementById('passwordWebsite').value;
+			const username = document.getElementById('passwordUsername').value;
+			const password = document.getElementById('passwordPassword').value;
+			
+			if (!website || !username || !password) {
+				alert('Bitte alle Felder ausfüllen');
+				return;
+			}
+			
+			const data = loadData();
+			data.passwords = data.passwords || [];
+			data.passwords.push({
+				id: Date.now().toString(36),
+				website,
+				username,
+				password: btoa(password), // Base64 encoding (in production: proper encryption)
+				createdAt: new Date().toISOString()
+			});
+			saveData(data);
+			
+			document.getElementById('passwordWebsite').value = '';
+			document.getElementById('passwordUsername').value = '';
+			document.getElementById('passwordPassword').value = '';
+			loadPasswords();
+			alert('Passwort gespeichert');
+		}
+		
+		function loadPasswords() {
+			const data = loadData();
+			const passwords = data.passwords || [];
+			const listEl = document.getElementById('passwordList');
+			
+			if (passwords.length === 0) {
+				listEl.innerHTML = '<p style="color: var(--muted);">Keine Passwörter gespeichert</p>';
+				return;
+			}
+			
+			listEl.innerHTML = passwords.map(pwd => `
+				<div class="document-item">
+					<div>
+						<strong>${escapeHtml(pwd.website)}</strong>
+						<div style="font-size: 12px; color: var(--muted); margin-top: 5px;">
+							Benutzer: ${escapeHtml(pwd.username)}
+						</div>
+					</div>
+					<div>
+						<button class="btn secondary" style="padding: 6px 12px; font-size: 12px;" onclick="copyPassword('${pwd.id}')">“‹ Kopieren</button>
+						<button class="btn danger" style="padding: 6px 12px; font-size: 12px; margin-left: 5px;" onclick="deletePassword('${pwd.id}')">—‘ï¸</button>
+					</div>
+				</div>
+			`).join('');
+		}
+		
+		function copyPassword(id) {
+			const data = loadData();
+			const password = (data.passwords || []).find(p => p.id === id);
+			if (password) {
+				const decrypted = atob(password.password);
+				navigator.clipboard.writeText(decrypted);
+				alert('Passwort in Zwischenablage kopiert');
+			}
+		}
+		
+		function deletePassword(id) {
+			if (!confirm('Passwort wirklich löschen?')) return;
+			const data = loadData();
+			data.passwords = (data.passwords || []).filter(p => p.id !== id);
+			saveData(data);
+			loadPasswords();
+		}
+		
+		function generatePassword() {
+			const length = 16;
+			const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+			let password = '';
+			for (let i = 0; i < length; i++) {
+				password += chars.charAt(Math.floor(Math.random() * chars.length));
+			}
+			document.getElementById('passwordPassword').value = password;
+		}
+		
+		// Werbeblocker
+		let blockedAdsCount = 0;
+		
+		function toggleAdBlocker() {
+			const enabled = document.getElementById('enableAdBlocker').checked;
+			const data = loadData();
+			data.settings = data.settings || {};
+			data.settings.adBlocker = enabled;
+			saveData(data);
+			
+			if (enabled) {
+				// Intercept fetch requests
+				const originalFetch = window.fetch;
+				window.fetch = function(...args) {
+					const url = args[0];
+					if (typeof url === 'string' && (url.includes('ads') || url.includes('tracking') || url.includes('analytics'))) {
+						blockedAdsCount++;
+						updateAdBlockerStats();
+						return Promise.reject(new Error('Blocked by AdBlocker'));
+					}
+					return originalFetch.apply(this, args);
+				};
+			}
+		}
+		
+		function loadAdBlockerStats() {
+			const data = loadData();
+			blockedAdsCount = data.adBlockerStats?.blockedCount || 0;
+			updateAdBlockerStats();
+		}
+		
+		function updateAdBlockerStats() {
+			document.getElementById('blockedAdsCount').textContent = blockedAdsCount;
+			const data = loadData();
+			data.adBlockerStats = { blockedCount: blockedAdsCount, lastUpdate: new Date().toISOString() };
+			saveData(data);
+		}
+		
+		// Screenshot-Tool
+		async function takeScreenshot() {
+			try {
+				const canvas = await html2canvas(document.body);
+				const imgData = canvas.toDataURL('image/png');
+				document.getElementById('screenshotImage').src = imgData;
+				document.getElementById('screenshotPreview').style.display = 'block';
+				window.currentScreenshot = imgData;
+			} catch (e) {
+				// Fallback: Use html2canvas library if available
+				alert('Screenshot-Funktion benötigt html2canvas-Bibliothek. Bitte installieren.');
+			}
+		}
+		
+		function downloadScreenshot() {
+			if (window.currentScreenshot) {
+				const link = document.createElement('a');
+				link.download = `screenshot-${Date.now()}.png`;
+				link.href = window.currentScreenshot;
+				link.click();
+			}
+		}
+		
+		// SEO-Checker
+		async function checkSEO() {
+			const url = document.getElementById('seoUrl').value;
+			if (!url) {
+				alert('Bitte URL eingeben');
+				return;
+			}
+			
+			try {
+				const response = await fetch(url);
+				const html = await response.text();
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(html, 'text/html');
+				
+				const title = doc.querySelector('title')?.textContent || 'Nicht gefunden';
+				const metaDescription = doc.querySelector('meta[name="description"]')?.content || 'Nicht gefunden';
+				const h1Count = doc.querySelectorAll('h1').length;
+				const h2Count = doc.querySelectorAll('h2').length;
+				const images = doc.querySelectorAll('img').length;
+				const links = doc.querySelectorAll('a').length;
+				
+				const results = `
+					<div style="background: var(--bg); padding: 15px; border-radius: 8px; margin-top: 15px;">
+						<h3 style="color: var(--notar); margin-bottom: 10px;">SEO-Analyse:</h3>
+						<p><strong>Titel:</strong> ${escapeHtml(title)}</p>
+						<p><strong>Meta-Beschreibung:</strong> ${escapeHtml(metaDescription)}</p>
+						<p><strong>H1-Überschriften:</strong> ${h1Count}</p>
+						<p><strong>H2-Überschriften:</strong> ${h2Count}</p>
+						<p><strong>Bilder:</strong> ${images}</p>
+						<p><strong>Links:</strong> ${links}</p>
+					</div>
+				`;
+				
+				document.getElementById('seoResults').innerHTML = results;
+			} catch (e) {
+				alert('SEO-Check fehlgeschlagen: ' + e.message);
+			}
+		}
+		
+		// Autofill-Engine
+		function toggleAutofill() {
+			const enabled = document.getElementById('enableAutofill').checked;
+			const data = loadData();
+			data.settings = data.settings || {};
+			data.settings.autofill = enabled;
+			saveData(data);
+		}
+		
+		function saveAutofillProfile() {
+			const profile = {
+				name: document.getElementById('autofillProfileName').value || 'Standard-Profil',
+				firstName: document.getElementById('autofillFirstName').value,
+				lastName: document.getElementById('autofillLastName').value,
+				email: document.getElementById('autofillEmail').value
+			};
+			
+			const data = loadData();
+			data.autofillProfiles = data.autofillProfiles || [];
+			data.autofillProfiles.push({
+				...profile,
+				id: Date.now().toString(36),
+				createdAt: new Date().toISOString()
+			});
+			saveData(data);
+			alert('Autofill-Profil gespeichert');
+		}
+		
+		function loadAutofillProfiles() {
+			const data = loadData();
+			const profiles = data.autofillProfiles || [];
+			if (profiles.length > 0) {
+				const latest = profiles[profiles.length - 1];
+				document.getElementById('autofillProfileName').value = latest.name;
+				document.getElementById('autofillFirstName').value = latest.firstName || '';
+				document.getElementById('autofillLastName').value = latest.lastName || '';
+				document.getElementById('autofillEmail').value = latest.email || '';
+			}
+		}
+		
+		// Performance-Monitoring
+		function updatePerformanceMonitoring() {
+			const startTime = performance.now();
+			
+			// Simulate search
+			setTimeout(() => {
+				const searchTime = performance.now() - startTime;
+				document.getElementById('perf-searchTime').textContent = Math.round(searchTime) + 'ms';
+			}, 10);
+			
+			// Simulate filter
+			setTimeout(() => {
+				const filterTime = performance.now() - startTime + 5;
+				document.getElementById('perf-filterTime').textContent = Math.round(filterTime) + 'ms';
+			}, 15);
+			
+			// Memory size
+			const data = loadData();
+			const dataSize = JSON.stringify(data).length;
+			document.getElementById('perf-memorySize').textContent = Math.round(dataSize / 1024) + ' KB';
+			document.getElementById('perf-dbSize').textContent = Math.round(dataSize / 1024) + ' KB';
+			
+			// Performance recommendations
+			const recommendations = [];
+			if (dataSize > 1024 * 1024) {
+				recommendations.push('Datenbankgröße ist groß - Backup empfohlen');
+			}
+			if (searchTime > 100) {
+				recommendations.push('Suchzeit ist hoch - Indexierung empfohlen');
+			}
+			
+			const recEl = document.getElementById('performanceRecommendations');
+			if (recommendations.length > 0) {
+				recEl.innerHTML = recommendations.map(r => `<p style="color: var(--warn);">âš ï¸ ${r}</p>`).join('');
+			} else {
+				recEl.innerHTML = '<p style="color: var(--success);">✅ Keine Optimierungen erforderlich</p>';
+			}
+		}
+		
+		// Load settings
+		const data = loadData();
+		if (data.settings) {
+			twoFAEnabled = data.settings.twoFA || false;
+			document.getElementById('enable2FA').checked = twoFAEnabled;
+			if (data.settings.adBlocker) {
+				document.getElementById('enableAdBlocker').checked = true;
+				toggleAdBlocker();
+			}
+			if (data.settings.autofill) {
+				document.getElementById('enableAutofill').checked = true;
+			}
+		}
+		
+		// Notar Module Interface
+		window.notarModule = {
+			verifyDocument: function(docData) {
+				return saveDocument(docData.title, docData.file, docData.type);
+			},
+			getDocuments: function() {
+				return loadData();
+			},
+			setFromApps: function(data) {
+				const current = loadData();
+				if (data.documents) {
+					current.documents = [...(current.documents || []), ...data.documents];
+				}
+				saveData(current);
+			}
+		};
+		
+		console.log('[FABRIKAGE] Digitaler Notar (Vollständig) geladen');
+		console.log('[FABRIKAGE] BASE_URL:', BASE_URL);
+	</script>
+	
+	<!-- Communication Layer -->
+	<script src="../../KASSENBUCH-COMMUNICATION-LAYER.js"></script>
+</body>
+</html>

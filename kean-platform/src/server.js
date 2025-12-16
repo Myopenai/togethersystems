@@ -3,9 +3,9 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const path = require('path');
+const portDiscovery = require('../../lib/port-discovery');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(helmet());
@@ -18,12 +18,53 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'UP' });
 });
 
+// Industries endpoint
+app.get('/industries/', (req, res) => {
+    res.json({
+        industries: [
+            { id: 1, name: 'Technology', slug: 'technology' },
+            { id: 2, name: 'Healthcare', slug: 'healthcare' },
+            { id: 3, name: 'Finance', slug: 'finance' },
+            { id: 4, name: 'Manufacturing', slug: 'manufacturing' }
+        ]
+    });
+});
+
+// Industry detail endpoint
+app.get('/industries/:slug', (req, res) => {
+    const industries = {
+        'technology': { id: 1, name: 'Technology', description: 'Tech sector' },
+        'healthcare': { id: 2, name: 'Healthcare', description: 'Healthcare sector' },
+        'finance': { id: 3, name: 'Finance', description: 'Finance sector' },
+        'manufacturing': { id: 4, name: 'Manufacturing', description: 'Manufacturing sector' }
+    };
+    const industry = industries[req.params.slug];
+    if (industry) {
+        res.json(industry);
+    } else {
+        res.status(404).json({ error: 'Industry not found' });
+    }
+});
+
 // Serve the main page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+(async () => {
+    try {
+        const PORT = await portDiscovery.findAvailablePort('web', 3001);
+        const localIP = portDiscovery.getLocalIP();
+        
+        app.listen(PORT, () => {
+            console.log(`🚀 KEAN Platform Server is running`);
+            console.log(`   Local: http://localhost:${PORT}`);
+            console.log(`   Network: http://${localIP}:${PORT}`);
+            console.log(`   Status: Online`);
+        });
+    } catch (err) {
+        console.error('Failed to start server:', err.message);
+        process.exit(1);
+    }
+})();

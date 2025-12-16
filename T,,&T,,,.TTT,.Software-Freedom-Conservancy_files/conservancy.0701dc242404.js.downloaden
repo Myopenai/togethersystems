@@ -1,0 +1,67 @@
+/* Copyright (C) 2012-2013 Denver Gingerich,
+** Copyright (C) 2013-2014 Bradley M. Kühn,
+** Copyright (C) 2016 Brett Smith.
+** License: GPLv3-or-later
+**  Find a copy of GPL at https://sfconservancy.org/GPLv3
+*/
+
+'use strict';
+
+function qs (selector, parent) {
+    return parent ? parent.querySelector(selector) : document.querySelector(selector);
+}
+
+function qsa (selector, parent) {
+    return parent ? parent.querySelectorAll(selector) : document.querySelectorAll(selector);
+}
+
+function hide(el) {
+    el.style.display = 'none';
+}
+
+function show(el) {
+    el.style.display = '';
+}
+
+function showVideoInnerHTML (event) {
+    let video = event.target.parentNode;
+    let div = document.createElement('div');
+    div.classList = video.classList;
+    div.innerHTML = video.innerHTML;
+    video.parentNode.replaceChild(div, video);
+}
+
+function toggleShirtSize (form) {
+    let wantShirt = form.elements['on0'].value === 'wantGiftYes';
+    let shirtSizeRow = qs('.t-shirt-size-selector', form);
+    let shirtSizeSelect = form.elements['os0'];
+    shirtSizeSelect.disabled = !wantShirt;
+    form.elements['no_shipping'].value = wantShirt ? '2' : '0';
+    if (wantShirt) {
+        show(shirtSizeRow);
+    } else {
+        hide(shirtSizeRow);
+    }
+}
+
+/* When the browser doesn't support any video source, replace it
+with the HTML inside the <video> element. */
+qsa('video').forEach(function(video, _index) {
+    let last_source = Array.from(qsa('source', video)).at(-1);
+    last_source.addEventListener('error', showVideoInnerHTML);
+});
+
+/* Hide the T-shirt size selector when not needed. */
+qsa('.supporter-form').forEach(function(form) {
+    toggleShirtSize(form);  // set initial state
+    form.addEventListener('change', () => toggleShirtSize(form));
+});
+
+// Open mobile/search menu.
+// qs('#menu-icon').addEventListener('click', function(event) {
+//     qs('#navbar').classList.toggle('mobile');
+// });
+// qs('#search-icon').addEventListener('click', function(event) {
+//     qs('#navbar').classList.toggle('mobile');
+//     qs('#search-query').focus();
+// });

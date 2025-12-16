@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Documentation | TogetherSystems</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-university"></i> Banking Documentation</h1>
+            <p class="subtitle">Secure, compliant banking solutions and integrations</p>
+        </header>
+
+        <nav class="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="Search banking docs..." id="searchInput">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div id="searchResults" class="search-results"></div>
+            <ul class="nav-menu">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="active"><a href="#overview"><i class="fas fa-university"></i> Banking</a>
+                    <ul class="submenu">
+                        <li><a href="#getting-started">Getting Started</a></li>
+                        <li><a href="#authentication">Authentication</a></li>
+                        <li><a href="#transactions">Transactions</a></li>
+                        <li><a href="#compliance">Compliance</a></li>
+                        <li><a href="#api">API Reference</a></li>
+                    </ul>
+                </li>
+                <li><a href="../templates/api-reference.html"><i class="fas fa-code"></i> API Reference</a></li>
+                <li><a href="../templates/compliance-reports.html"><i class="fas fa-shield-alt"></i> Compliance</a></li>
+            </ul>
+        </nav>
+
+        <main class="content" id="mainContent">
+            <section id="overview">
+                <div class="card">
+                    <h2>Banking Platform Overview</h2>
+                    <p>Comprehensive documentation for TogetherSystems Banking Platform, including API references, integration guides, and compliance information.</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>New:</strong> PSD2 and Open Banking compliance updates now available.
+                    </div>
+
+                    <div class="quick-links">
+                        <a href="#authentication" class="quick-link">
+                            <i class="fas fa-key"></i>
+                            <span>Authentication</span>
+                        </a>
+                        <a href="#transactions" class="quick-link">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Transactions</span>
+                        </a>
+                        <a href="#compliance" class="quick-link">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Compliance</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="getting-started">
+                <h2>Getting Started</h2>
+                <div class="card">
+                    <h3>Onboarding Process</h3>
+                    <ol class="steps">
+                        <li>Register your application in the Developer Portal</li>
+                        <li>Obtain API credentials (Client ID and Secret)</li>
+                        <li>Configure IP whitelisting and redirect URIs</li>
+                        <li>Implement OAuth 2.0 authentication flow</li>
+                        <li>Start making API calls in sandbox environment</li>
+                    </ol>
+
+                    <div class="code-tabs">
+                        <div class="tabs">
+                            <button class="tab-button active" data-tab="curl">cURL</button>
+                            <button class="tab-button" data-tab="node">Node.js</button>
+                            <button class="tab-button" data-tab="python">Python</button>
+                        </div>
+                        <div class="tab-content active" data-tab="curl">
+                            <pre><code class="bash"># Get your API key first
+curl -X POST https://api.togethersystems.com/oauth2/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d 'grant_type=client_credentials&client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET'</code></pre>
+                        </div>
+                        <div class="tab-content" data-tab="node">
+                            <pre><code class="javascript">const axios = require('axios');
+
+async function getAccessToken() {
+  const response = await axios.post('https://api.togethersystems.com/oauth2/token', 
+    'grant_type=client_credentials',
+    {
+      auth: {
+        username: 'YOUR_CLIENT_ID',
+        password: 'YOUR_CLIENT_SECRET'
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response.data.access_token;
+}</code></pre>
+                        </div>
+                        <div class="tab-content" data-tab="python">
+                            <pre><code class="python">import requests
+
+def get_access_token():
+    url = 'https://api.togethersystems.com/oauth2/token'
+    data = {'grant_type': 'client_credentials'}
+    response = requests.post(
+        url,
+        data=data,
+        auth=('YOUR_CLIENT_ID', 'YOUR_CLIENT_SECRET')
+    )
+    return response.json()['access_token']</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="authentication">
+                <h2>Authentication</h2>
+                <div class="card">
+                    <h3>OAuth 2.0 Flow</h3>
+                    <p>Our API uses OAuth 2.0 with PKCE for secure authentication. Follow these steps to authenticate:</p>
+                    
+                    <div class="auth-flow">
+                        <div class="flow-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Request Authorization</h4>
+                                <p>Redirect users to the authorization endpoint to grant permissions.</p>
+                                <pre><code class="http">GET /oauth2/authorize?response_type=code&client_id=YOUR_CLIENT_ID
+  &redirect_uri=YOUR_REDIRECT_URI&state=RANDOM_STRING&scope=transactions:read,accounts:read</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Exchange Code for Token</h4>
+                                <p>Exchange the authorization code for an access token.</p>
+                                <pre><code class="http">POST /oauth2/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&code=AUTH_CODE
+&redirect_uri=YOUR_REDIRECT_URI&client_id=YOUR_CLIENT_ID</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Use Access Token</h4>
+                                <p>Include the access token in the Authorization header of your API requests.</p>
+                                <pre><code class="http">GET /v1/accounts
+Authorization: Bearer YOUR_ACCESS_TOKEN</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> Never expose your client secret in client-side code. Use server-side authentication for production applications.
+                    </div>
+                </div>
+            </section>
+
+            <section id="transactions">
+                <h2>Transactions</h2>
+                <div class="card">
+                    <h3>Processing Transactions</h3>
+                    <p>Our API provides comprehensive transaction processing capabilities including payments, transfers, and standing orders.</p>
+                    
+                    <div class="endpoint">
+                        <div class="endpoint-header">
+                            <span class="method post">POST</span>
+                            <span class="path">/v1/transactions</span>
+                            <span class="label">Create Transaction</span>
+                        </div>
+                        
+                        <div class="endpoint-content">
+                            <h4>Request</h4>
+                            <pre><code class="json">{
+  "type": "payment",
+  "amount": {
+    "currency": "EUR",
+    "value": "100.00"
+  },
+  "debtor": {
+    "account": {
+      "iban": "DE89370400440532013000"
+    }
+  },
+  "creditor": {
+    "name": "Merchant Name",
+    "account": {
+      "iban": "DE75512108001245126199"
+    }
+  },
+  "remittanceInformation": "Invoice 12345"
+}</code></pre>
+                            
+                            <h4>Response</h4>
+                            <pre><code class="json">{
+  "transactionId": "1234567890",
+  "status": "pending",
+  "createdAt": "2025-12-15T20:00:00Z",
+  "_links": {
+    "self": {
+      "href": "/v1/transactions/1234567890"
+    },
+    "status": {
+      "href": "/v1/transactions/1234567890/status"
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="compliance">
+                <h2>Compliance</h2>
+                <div class="card">
+                    <h3>Regulatory Requirements</h3>
+                    <p>Our platform is designed to help you meet various regulatory requirements including PSD2, GDPR, and AML regulations.</p>
+                    
+                    <div class="compliance-grid">
+                        <div class="compliance-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Strong Customer Authentication (SCA)</h4>
+                            <p>Implements PSD2 SCA requirements with multiple authentication factors.</p>
+                        </div>
+                        <div class="compliance-item">
+                            <i class="fas fa-lock"></i>
+                            <h4>Data Protection</h4>
+                            <p>GDPR-compliant data processing and storage with encryption at rest and in transit.</p>
+                        </div>
+                        <div class="compliance-item">
+                            <i class="fas fa-search-dollar"></i>
+                            <h4>AML & KYC</h4>
+                            <p>Built-in anti-money laundering and know your customer checks.</p>
+                        </div>
+                        <div class="compliance-item">
+                            <i class="fas fa-file-invoice"></i>
+                            <h4>Audit Trail</h4>
+                            <p>Comprehensive logging of all actions for compliance reporting.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="api">
+                <h2>API Reference</h2>
+                <div class="card">
+                    <div class="api-tabs">
+                        <div class="tabs">
+                            <button class="tab-button active" data-tab="accounts">Accounts</button>
+                            <button class="tab-button" data-tab="transactions">Transactions</button>
+                            <button class="tab-button" data-tab="payments">Payments</button>
+                            <button class="tab-button" data-tab="cards">Cards</button>
+                        </div>
+                        
+                        <div class="tab-content active" data-tab="accounts">
+                            <h3>Account Management</h3>
+                            <p>Manage customer accounts, balances, and statements.</p>
+                            
+                            <div class="endpoint">
+                                <div class="endpoint-header">
+                                    <span class="method get">GET</span>
+                                    <span class="path">/v1/accounts</span>
+                                    <span class="label">List Accounts</span>
+                                </div>
+                                <p>Retrieve a list of accounts for the authenticated user.</p>
+                                <h4>Query Parameters</h4>
+                                <table class="params">
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    <tr>
+                                        <td><code>status</code></td>
+                                        <td>string</td>
+                                        <td>Filter by account status (active, inactive, closed)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>currency</code></td>
+                                        <td>string</td>
+                                        <td>Filter by currency code (e.g., EUR, USD)</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Other API tabs would go here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul>
+                        <li><a href="#getting-started">Getting Started</a></li>
+                        <li><a href="#api">API Reference</a></li>
+                        <li><a href="#compliance">Compliance</a></li>
+                        <li><a href="../tutorials">Tutorials</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://status.togethersystems.com">Status Page</a></li>
+                        <li><a href="https://support.togethersystems.com">Support Center</a></li>
+                        <li><a href="https://developer.togethersystems.com">Developer Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="../legal/terms">Terms of Service</a></li>
+                        <li><a href="../legal/privacy">Privacy Policy</a></li>
+                        <li><a href="../legal/security">Security</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> support@togethersystems.com</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Business St, City, Country</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 TogetherSystems. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="https://twitter.com/togethersystems" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://github.com/togethersystems" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/company/togethersystems" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/languages/http.min.js"></script>
+    <script>
+        // Initialize syntax highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+            
+            // Tab functionality
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    const container = button.closest('.code-tabs, .api-tabs');
+                    
+                    // Deactivate all tabs in this container
+                    container.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    
+                    // Activate current tab
+                    button.classList.add('active');
+                    container.querySelector(`.tab-content[data-tab="${tabId}"]`).classList.add('active');
+                });
+            });
+            
+            // Copy to clipboard functionality
+            document.querySelectorAll('pre code').forEach(block => {
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.innerHTML = '<i class="far fa-copy"></i>';
+                button.title = 'Copy to clipboard';
+                button.addEventListener('click', () => {
+                    navigator.clipboard.writeText(block.textContent).then(() => {
+                        const original = button.innerHTML;
+                        button.innerHTML = '<i class="fas fa-check"></i>';
+                        button.classList.add('copied');
+                        setTimeout(() => {
+                            button.innerHTML = original;
+                            button.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+                block.parentNode.insertBefore(button, block);
+            });
+        });
+    </script>
+    <script src="../js/main.js"></script>
+    <script src="../js/search.js"></script>
+</body>
+</html>

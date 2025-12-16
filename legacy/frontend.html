@@ -1,0 +1,479 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rauchfreie Reise - Manifest-Hive</title>
+  <!-- BRANDING: .T. TogetherSystems - ModularFlux Architecture -->
+  <!-- VERSION: 3.0.0 -->
+  <!-- STANDARD: IBM STANDARD - PERMANENT AKTIV -->
+  <script src="../../js/console-error-controller.js"></script>
+  <script src="../../js/console-cache-system.js"></script>
+  <script src="human-identity-db.js"></script>
+  <script src="game-engine.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --accent2: #f59e0b;
+      --border: #1f2937;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #0f1419 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .header h1 {
+      color: var(--accent);
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .journey-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stage {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .stage.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+    .stage.completed {
+      border-color: var(--success);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .stage h3 {
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .stage p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.3s;
+    }
+    .content-area {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .question-card {
+      margin-bottom: 24px;
+    }
+    .question-card h3 {
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .answer-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .answer-option {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .answer-option:hover {
+      border-color: var(--accent);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .recommendations {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--accent2);
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 24px;
+    }
+    .recommendations h4 {
+      color: var(--accent2);
+      margin-bottom: 12px;
+    }
+    .recommendation-item {
+      margin-bottom: 8px;
+      padding-left: 16px;
+      position: relative;
+    }
+    .recommendation-item::before {
+      content: "â†’";
+      position: absolute;
+      left: 0;
+      color: var(--accent2);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      color: #00100a;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+    .multidisciplinary-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .faculty-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .faculty-card h4 {
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .faculty-card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .faculty-card li {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+      padding-left: 16px;
+      position: relative;
+    }
+    .faculty-card li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+  </style>
+  <script src="../../../console-monitor.js"></script>
+  <script src="../../../http-resource-monitor-browser.js"></script>
+
+  <link rel="stylesheet" href="../../../css/teladia-complete-design-system.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>š­ Rauchfreie Reise</h1>
+      <p>Dein personalisiertes Programm zum Rauchstopp - basierend auf allen Fakultäten</p>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+
+    <div class="journey-map" id="journeyMap">
+      <!-- Wird dynamisch gefüllt -->
+    </div>
+
+    <div class="content-area" id="contentArea">
+      <p style="text-align: center; color: var(--muted);">Lade dein personalisiertes Programm...</p>
+    </div>
+
+    <div class="stats-grid" id="statsGrid" style="display: none;">
+      <!-- Wird dynamisch gefüllt -->
+    </div>
+
+    <div class="multidisciplinary-info" id="multidisciplinaryInfo" style="display: none;">
+      <!-- Wird dynamisch gefüllt -->
+    </div>
+  </div>
+
+  <script>
+    // Initialisierung
+    let game = null;
+    let humanIdentityDB = null;
+    let userProfile = {
+      id: 'user_' + Date.now(),
+      cigarettes_per_day: 20,
+      price_per_pack: 7.50,
+      stress_level: 7,
+      cannabis_use: false
+    };
+
+    async function init() {
+      // Initialisiere Human Identity DB
+      humanIdentityDB = new HumanIdentityDB();
+      humanIdentityDB.registerUser(userProfile.id, userProfile);
+      
+      // Initialisiere Game
+      game = new SmokeFreeJourneyGame(userProfile, humanIdentityDB);
+      
+      // Lade Spiel
+      await loadGame();
+    }
+
+    async function loadGame() {
+      const gameState = await game.play();
+      
+      // Zeige Journey Map
+      renderJourneyMap(gameState);
+      
+      // Zeige aktuelle Stage
+      renderCurrentStage(gameState);
+      
+      // Zeige Stats
+      renderStats(gameState);
+      
+      // Zeige multidisziplinäre Info
+      renderMultidisciplinaryInfo(gameState);
+    }
+
+    function renderJourneyMap(gameState) {
+      const stages = [
+        { id: 'awareness', name: 'Bewusstsein', desc: 'Erkenne deine Muster' },
+        { id: 'knowledge', name: 'Wissen', desc: 'Lerne über Wirkungen' },
+        { id: 'planning', name: 'Planung', desc: 'Erstelle deinen Plan' },
+        { id: 'action', name: 'Handlung', desc: 'Setze um' },
+        { id: 'maintenance', name: 'Aufrechterhaltung', desc: 'Bleibe rauchfrei' }
+      ];
+      
+      const map = document.getElementById('journeyMap');
+      map.innerHTML = stages.map(stage => {
+        const progress = game.progress[stage.id] || 0;
+        const isActive = game.currentStage === stage.id;
+        const isCompleted = progress >= 100;
+        
+        return `
+          <div class="stage ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}" 
+               onclick="selectStage('${stage.id}')">
+            <h3>${stage.name}</h3>
+            <p>${stage.desc}</p>
+            <div style="margin-top: 8px; font-size: 10px; color: var(--muted);">
+              ${Math.round(progress)}%
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCurrentStage(gameState) {
+      const content = document.getElementById('contentArea');
+      const questions = gameState.questions || [];
+      
+      if (questions.length === 0) {
+        content.innerHTML = `
+          <h2 style="color: var(--accent); margin-bottom: 16px;">${getStageName(gameState.current_stage)}</h2>
+          <p style="color: var(--muted);">Stage abgeschlossen. Weiter zum nächsten Schritt.</p>
+        `;
+        return;
+      }
+      
+      content.innerHTML = `
+        <h2 style="color: var(--accent); margin-bottom: 24px;">${getStageName(gameState.current_stage)}</h2>
+        ${questions.map((q, idx) => renderQuestion(q, idx)).join('')}
+        ${gameState.recommendations?.length > 0 ? renderRecommendations(gameState.recommendations) : ''}
+      `;
+    }
+
+    function renderQuestion(question, index) {
+      let inputHTML = '';
+      
+      if (question.type === 'number') {
+        inputHTML = `<input type="number" id="answer_${index}" class="answer-option" placeholder="Zahl eingeben" style="padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text);">`;
+      } else if (question.type === 'multiple_choice') {
+        inputHTML = question.options.map((opt, optIdx) => `
+          <div class="answer-option" onclick="selectAnswer(${index}, ${optIdx}, '${opt}')">
+            ${opt}
+          </div>
+        `).join('');
+      } else if (question.type === 'text') {
+        inputHTML = `<textarea id="answer_${index}" class="answer-option" placeholder="Deine Antwort..." style="padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); width: 100%; min-height: 100px;"></textarea>`;
+      }
+      
+      return `
+        <div class="question-card">
+          <h3>${question.question}</h3>
+          <div class="answer-options">
+            ${inputHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRecommendations(recommendations) {
+      return `
+        <div class="recommendations">
+          <h4>’¡ Personalisierte Empfehlungen</h4>
+          ${recommendations.map(rec => `
+            <div class="recommendation-item">
+              <strong>[${rec.source}]</strong> ${rec.recommendation}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderStats(gameState) {
+      const stats = gameState.stats || {};
+      const savings = game.calculateSavings(stats.days_smoke_free || 0);
+      
+      document.getElementById('statsGrid').style.display = 'grid';
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${savings.days_smoke_free}</div>
+          <div class="stat-label">Tage rauchfrei</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${savings.cigarettes_saved}</div>
+          <div class="stat-label">Zigaretten gespart</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">€${savings.money_saved}</div>
+          <div class="stat-label">Geld gespart</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${Math.round(gameState.progress)}%</div>
+          <div class="stat-label">Fortschritt</div>
+        </div>
+      `;
+      
+      document.getElementById('progressFill').style.width = gameState.progress + '%';
+    }
+
+    function renderMultidisciplinaryInfo(gameState) {
+      const data = gameState.data || {};
+      
+      document.getElementById('multidisciplinaryInfo').style.display = 'grid';
+      document.getElementById('multidisciplinaryInfo').innerHTML = `
+        ${data.medical ? `
+          <div class="faculty-card">
+            <h4>¥ Medizin</h4>
+            <ul>
+              ${data.medical.health_effects?.immediate?.slice(0, 5).map(effect => `<li>${effect}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+        ${data.psychological ? `
+          <div class="faculty-card">
+            <h4>§  Psychologie</h4>
+            <ul>
+              ${data.psychological.coping_strategies?.slice(0, 5).map(strategy => `<li>${strategy}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+        ${data.pharmacological ? `
+          <div class="faculty-card">
+            <h4>’Š Pharmakologie</h4>
+            <ul>
+              <li>Nikotinersatz: Pflaster, Kaugummi, Spray</li>
+              <li>Medikamente: Vareniclin, Bupropion</li>
+              <li>Natürlich: Rhodiola, L-Theanin, Ashwagandha</li>
+            </ul>
+          </div>
+        ` : ''}
+        ${data.sociological ? `
+          <div class="faculty-card">
+            <h4>‘¥ Soziologie</h4>
+            <ul>
+              <li>Soziale Unterstützung ist wichtig</li>
+              <li>Kulturelle Faktoren berücksichtigen</li>
+              <li>Wirtschaftliche Einsparungen: €2000-5000/Jahr</li>
+            </ul>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function getStageName(stageId) {
+      const names = {
+        awareness: 'Bewusstsein',
+        knowledge: 'Wissen',
+        planning: 'Planung',
+        action: 'Handlung',
+        maintenance: 'Aufrechterhaltung'
+      };
+      return names[stageId] || stageId;
+    }
+
+    function selectAnswer(questionIndex, optionIndex, answer) {
+      if (game) {
+        game.answerQuestion(questionIndex, answer);
+        loadGame();
+      }
+    }
+
+    function selectStage(stageId) {
+      if (game) {
+        game.currentStage = stageId;
+        loadGame();
+      }
+    }
+
+    // Initialisiere beim Laden
+    init();
+  </script>
+</body>
+</html>
+
+
