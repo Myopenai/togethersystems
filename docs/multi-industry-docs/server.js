@@ -10,6 +10,53 @@ const rfs = require('rotating-file-stream');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Define directories
+const ROOT_DIR = __dirname;
+const DIST_DIR = path.join(ROOT_DIR, 'dist');
+const CONTENT_DIR = path.join(ROOT_DIR, 'content');
+const LOGS_DIR = path.join(ROOT_DIR, 'logs');
+
+// Ensure required directories exist
+[CONTENT_DIR, DIST_DIR, LOGS_DIR].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+
+// Enable CORS for development
+app.use(cors());
+
+// Parse JSON bodies
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Logging
+app.use(morgan('dev'));
+
+// Serve static files from src directory
+app.use('/src', express.static(path.join(ROOT_DIR, 'src'), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        } else if (filePath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        }
+    }
+}));
+
+// Serve static files from dist directory
+app.use(express.static(DIST_DIR, {
+    extensions: ['html', 'htm'],
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        }
+    }
+}));
+
+// Serve static files from root directory for development
+app.use(express.static(ROOT_DIR));
+
 // Create a rotating write stream for logging
 const logDirectory = path.join(__dirname, 'logs');
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
@@ -20,19 +67,6 @@ const accessLogStream = rfs.createStream('access.log', {
   path: logDirectory,
   compress: 'gzip'
 });
-const DIST_DIR = path.join(__dirname, 'dist');
-const DATA_DIR = path.join(__dirname, 'data');
-const CONTENT_DIR = path.join(DATA_DIR, 'content');
-
-// Ensure data directories exist
-[DATA_DIR, CONTENT_DIR].forEach(dir => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-    console.log(`📁 Created directory: ${dir}`);
-  }
-});
-
-// Middleware
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
@@ -248,14 +282,24 @@ app.use(express.static(DIST_DIR, {
   etag: false
 }));
 
-// SPA route handling - redirect to index.html for client-side routing
-app.get('*', (req, res) => {
-  const filePath = path.join(DIST_DIR, 'index.html');
-  if (fs.existsSync(filePath)) {
-    res.sendFile(filePath);
-  } else {
-    res.status(404).json({ error: '404 Not Found' });
-  }
+// Handle SPA routing - serve editor.html for the root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(ROOT_DIR, 'editor.html'));
+});
+
+// Handle SPA routing - serve the requested file if it exists, otherwise serve editor.html
+app.get('*', (req, res, next) => {
+  const requestedPath = path.join(ROOT_DIR, req.path);
+  
+  // Check if the file exists
+  fs.access(requestedPath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // File doesn't exist, serve editor.html
+      return res.sendFile(path.join(ROOT_DIR, 'editor.html'));
+    }
+    // File exists, let Express handle it
+    next();
+  });
 });
 
 // ============ ERROR HANDLING ============
@@ -276,7 +320,7 @@ app.listen(PORT, () => {
   console.log('─'.repeat(50));
   console.log(`📍 Server running at: http://localhost:${PORT}`);
   console.log(`📁 Serving from: ${DIST_DIR}`);
-  console.log(`💾 Data stored in: ${DATA_DIR}`);
+  console.log(`💾 Content stored in: ${CONTENT_DIR}`);
   console.log('');
   console.log('📋 API Endpoints:');
   console.log('  GET  /api/health              - Health check');
@@ -287,10 +331,14 @@ app.listen(PORT, () => {
   console.log('  DELETE /api/content/:id       - Delete content');
   console.log('');
   console.log('🌍 Available Routes:');
-  console.log('  / or /index.html              - Home page');
-  console.log('  /industries/                  - Industries overview');
-  console.log('  /industries/:industry/        - Industry details');
+  console.log('  /                             - Markdown Editor');
+  console.log('  /editor.html                  - Markdown Editor');
+  console.log('  /api/markdown                - Convert Markdown to HTML');
+  console.log('  /api/files                   - List all markdown files');
+  console.log('  /api/files/:filename         - Get specific markdown file');
   console.log('');
+  console.log('─'.repeat(50));
+  console.log('📝 Editor available at: http://localhost:3000/editor.html');
   console.log('─'.repeat(50));
 });
 

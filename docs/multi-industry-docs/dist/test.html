@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Server Test Page</h1>
+    <p>If you can see this page, the server is running correctly!</p>
+    
+    <h2>API Status</h2>
+    <div id="apiStatus">Checking API status...</div>
+    
+    <h2>Available Routes</h2>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/industries/">Industries</a></li>
+        <li><a href="/industries/ecommerce/">E-commerce</a></li>
+        <li><a href="/test.html">This Test Page</a></li>
+    </ul>
+    
+    <script>
+        // Test API connection
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                const statusDiv = document.getElementById('apiStatus');
+                statusDiv.innerHTML = `<span class="success">API is working! Status: ${data.status}</span>`;
+                statusDiv.innerHTML += `<br>Server Time: ${data.timestamp}`;
+                statusDiv.innerHTML += `<br>Version: ${data.version}`;
+            })
+            .catch(error => {
+                document.getElementById('apiStatus').innerHTML = 
+                    `<span class="error">API Error: ${error.message}</span>`;
+            });
+    </script>
+</body>
+</html>
